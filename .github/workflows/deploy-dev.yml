@@ -28,13 +28,19 @@ jobs:
       matrix:
         include:
           - site: polokwane
+            site_upper: POLOKWANE
             pages_project: polokwanehub
           - site: pretoria
+            site_upper: PRETORIA
             pages_project: pretoriahub
           - site: capetown
+            site_upper: CAPETOWN
             pages_project: thecapetownhub
     env:
       SITE: ${{ matrix.site }}
+      # Same per-site credential secrets as deploy.yml — see its comment.
+      CLOUDFLARE_API_TOKEN: ${{ secrets[format('CLOUDFLARE_API_TOKEN_{0}', matrix.site_upper)] }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets[format('CLOUDFLARE_ACCOUNT_ID_{0}', matrix.site_upper)] }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -52,9 +58,6 @@ jobs:
       # No migrations, no routine-SQL apply, no snapshot commits here — this
       # branch is for reviewing code/content changes, not for mutating D1.
       - name: Fetch D1 data
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: npm run fetch-data
 
       - name: Select site assets
@@ -64,9 +67,6 @@ jobs:
         run: npx astro build
 
       - name: Deploy preview to Cloudflare Pages
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: npx wrangler pages deploy dist --project-name=${{ matrix.pages_project }} --branch=dev
 
   deploy-landing:
@@ -76,6 +76,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Deploy landing page to Cloudflare Pages
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Its own dedicated pair — this project isn't tied to any one
+          # site's account, so it doesn't reuse a per-site secret.
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN_DEV }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID_DEV }}
         run: npx wrangler pages deploy dev-landing --project-name=hub-platform-dev --branch=dev
