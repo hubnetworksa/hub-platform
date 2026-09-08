@@ -72,6 +72,18 @@ const themeCss = `:root {
       <meta name="google-site-verification" content={site.googleSiteVerification} />
     )}
 
+    <!-- Google Analytics (GA4) — each site has its own separate property,
+         rendered only once this site actually has a Measurement ID. -->
+    {site.googleAnalyticsId && (
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${site.googleAnalyticsId}`}></script>
+      <script define:vars={{ gaId: site.googleAnalyticsId }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', gaId);
+      </script>
+    )}
+
     <!-- AdSense loader. Auto ads (if enabled) are controlled from the AdSense
          dashboard per-site; no <ins class="adsbygoogle"> units are placed in
          markup here. Only rendered once this site has a publisher ID. -->

@@ -43,6 +43,7 @@ export interface Site {
   tagline: string;
   footerTagline: string;
   googleSiteVerification: string | null;
+  googleAnalyticsId: string | null;
   adsensePublisherId: string | null;
   features: SiteFeatures;
   theme: SiteTheme;
