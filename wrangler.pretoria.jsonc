@@ -1,0 +1,39 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pretoriahub",
+  "compatibility_date": "2026-08-31",
+  "pages_build_output_dir": "dist",
+
+  // Read by functions/_lib/site.ts at request time to pick this site's config
+  // out of sites/*.json — set separately for Preview vs Production in the
+  // Cloudflare Pages dashboard too (Settings → Environment variables);
+  // whatever's there overrides this file for an actual deployed build.
+  "vars": {
+    "SITE": "pretoria"
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pretoriahub-db",
+      "database_id": "0927f4c2-7507-42ac-a608-67c2380be14c",
+      "migrations_dir": "db/migrations/pretoria"
+    }
+  ],
+
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "pretoriahub-media"
+    }
+  ]
+
+  // Consolidation note (see plan): Pretoria previously sent email via Gmail
+  // SMTP (worker-mailer + compatibility_flags: ["nodejs_compat"] + a
+  // GMAIL_APP_PASSWORD Pages secret). That's been dropped in favour of the
+  // same mailto:<contactEmail> client-side approach Polokwane already used —
+  // no SMTP credentials to provision per site. See
+  // src/pages/{report-listing,request-removal,list-your-business}.astro.
+  // The GMAIL_APP_PASSWORD secret on the pretoriahub Pages project can be
+  // deleted once this is deployed.
+}

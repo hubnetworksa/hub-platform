@@ -1,0 +1,204 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Icon from '../../components/Icon.astro';
+// Tourism content is currently only authored for Polokwane — see tourism/index.astro's note.
+import { ATTRACTIONS } from '../../site-content/polokwane/tourism';
+import site from '../../site';
+
+const ICON_PIN = '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>';
+
+export function getStaticPaths() {
+  if (!site.features.tourism) return [];
+  return ATTRACTIONS.map((attraction) => ({ params: { slug: attraction.slug }, props: { attraction } }));
+}
+
+const { attraction } = Astro.props;
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
+const canonical = `${siteUrl}/tourism/${attraction.slug}/`;
+
+// "View on Google Maps" — search by name + address text (resolves to the real
+// place card for well-known POIs); falls back to coordinates if that's all we have.
+const mapsQuery = [attraction.name, attraction.address.streetAddress, attraction.address.addressLocality]
+  .filter(Boolean)
+  .join(', ');
+const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  mapsQuery || (attraction.geo ? `${attraction.geo.lat},${attraction.geo.lng}` : attraction.name),
+)}`;
+
+// TouristAttraction schema, per the CSC brief. openingHours / priceRange /
+// isAccessibleForFree are only emitted once the corresponding value has been
+// confirmed and set in site-content/polokwane/tourism.ts — wrong structured data is worse
+// than none.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TouristAttraction',
+  name: attraction.name,
+  description: attraction.metaDescription,
+  url: canonical,
+  address: {
+    '@type': 'PostalAddress',
+    ...(attraction.address.streetAddress ? { streetAddress: attraction.address.streetAddress } : {}),
+    addressLocality: attraction.address.addressLocality,
+    addressRegion: attraction.address.addressRegion,
+    ...(attraction.address.postalCode ? { postalCode: attraction.address.postalCode } : {}),
+    addressCountry: attraction.address.addressCountry,
+  },
+  ...(attraction.geo
+    ? { geo: { '@type': 'GeoCoordinates', latitude: attraction.geo.lat, longitude: attraction.geo.lng } }
+    : {}),
+  ...(attraction.openingHours && attraction.openingHours.length ? { openingHours: attraction.openingHours } : {}),
+  ...(attraction.priceRange ? { priceRange: attraction.priceRange } : {}),
+  ...(attraction.isAccessibleForFree !== undefined ? { isAccessibleForFree: attraction.isAccessibleForFree } : {}),
+};
+
+const paras = (text: string) => text.split(/\n{2,}/);
+---
+
+<BaseLayout title={attraction.pageTitle} description={attraction.metaDescription} canonical={canonical}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <PageBanner title={attraction.name} description={attraction.teaser}>
+    <Breadcrumbs
+      slot="breadcrumbs"
+      items={[
+        { label: 'Home', href: '/' },
+        { label: 'Tourism', href: '/tourism/' },
+        { label: attraction.name },
+      ]}
+    />
+  </PageBanner>
+
+  <section class="container" style="padding-top: 2rem; padding-bottom: 3rem; max-width: 760px;">
+    {/* IMAGE NEEDED: {attraction.imageNeeded} — no stock/generic bushveld photos. */}
+
+    <h2>What it is</h2>
+    {paras(attraction.whatItIs).map((p) => <p>{p}</p>)}
+
+    <h2>What you'll see &amp; do</h2>
+    {paras(attraction.whatToDo).map((p) => <p>{p}</p>)}
+
+    <h2>Practical info</h2>
+    <dl class="practical">
+      {attraction.practical.map((row) => (
+        <div class="practical-row">
+          <dt>{row.label}</dt>
+          <dd>{row.value}</dd>
+        </div>
+      ))}
+    </dl>
+
+    <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="btn btn-outline maps-btn">
+      <Icon path={ICON_PIN} size={16} /> View on Google Maps
+    </a>
+
+    {attraction.beforeYouGo.length > 0 && (
+      <div class="before-you-go">
+        <strong>Before you go — confirm these first</strong>
+        <ul>
+          {attraction.beforeYouGo.map((item) => <li>{item}</li>)}
+        </ul>
+        <p class="note">
+          Sources online disagree on the details above, so check the official source or phone the
+          venue before relying on them.
+        </p>
+      </div>
+    )}
+
+    <h2>Nearby</h2>
+    <p>{attraction.nearby}</p>
+    {attraction.tieIns.length > 0 && (
+      <ul class="tie-ins">
+        {attraction.tieIns.map((link) => (
+          <li><a href={link.href}>{link.label}</a></li>
+        ))}
+      </ul>
+    )}
+
+    <p style="margin-top: 2rem;">
+      <a href="/tourism/">← All {site.cityLabel} attractions</a>
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  h2 {
+    font-size: 1.1rem;
+    margin: 2rem 0 0.6rem;
+    color: var(--navy);
+  }
+  section :global(p) {
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .practical {
+    margin: 0.5rem 0 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    overflow: hidden;
+  }
+  .practical-row {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 0.75rem;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .practical-row:last-child {
+    border-bottom: none;
+  }
+  .practical dt {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .practical dd {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+  .maps-btn {
+    margin-top: 0.9rem;
+  }
+  @media (max-width: 520px) {
+    .practical-row {
+      grid-template-columns: 1fr;
+      gap: 0.15rem;
+    }
+  }
+  .before-you-go {
+    margin: 1.5rem 0 0;
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--warning, #9c5f00);
+    border-left-width: 4px;
+    border-radius: var(--radius);
+    background: rgba(156, 95, 0, 0.06);
+  }
+  .before-you-go strong {
+    color: var(--warning, #9c5f00);
+  }
+  .before-you-go ul {
+    margin: 0.5rem 0 0;
+    padding-left: 1.2rem;
+  }
+  .before-you-go li {
+    margin: 0.2rem 0;
+    line-height: 1.55;
+  }
+  .before-you-go .note {
+    margin: 0.6rem 0 0;
+    font-size: 0.86rem;
+    color: var(--text-muted);
+  }
+  .tie-ins {
+    margin: 0.6rem 0 0;
+    padding-left: 1.2rem;
+  }
+  .tie-ins li {
+    margin: 0.25rem 0;
+  }
+</style>

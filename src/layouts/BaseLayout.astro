@@ -1,0 +1,182 @@
+---
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+import site from '../site';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  /** When set, used verbatim as the <title> / OG / Twitter title instead of
+   *  the default "`${title} | ${site.siteName}`" — for pages given an exact
+   *  search-optimised meta title. */
+  titleOverride?: string;
+  /** For utility pages (report-listing/request-removal) that get a distinct
+   *  ?slug=&name= query string linked from every business page — without
+   *  this, Google discovers one crawlable URL per business for what's
+   *  really the same non-content form, which wastes crawl budget on
+   *  thousands of near-duplicate URLs. */
+  noindex?: boolean;
+}
+
+const { title, description, canonical, titleOverride, noindex } = Astro.props;
+const fullTitle = titleOverride ?? `${title} | ${site.siteName}`;
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
+const canonicalUrl = canonical ?? (siteUrl + Astro.url.pathname);
+
+const ICONS = {
+  home: '<path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v10h12V10"/>',
+  pin: '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>',
+  grid: '<rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/>',
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5v.01"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  building: '<path d="M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6"/>',
+  compass: '<circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-2 5-5 2 2-5 5-2Z"/>',
+};
+const { theme } = site;
+
+// Built as a raw string (not Astro's `define:vars`, whose inline style ends
+// up on whichever element wraps the <style> tag — not reliably <html> from
+// inside <head>) and injected via set:html below, so the :root rule really
+// is document-root-scoped regardless of where in <head> it sits. Values all
+// come from our own sites/<slug>.json, never user input.
+const themeCss = `:root {
+  --bg: ${theme.bg};
+  --bg-subtle: ${theme.bgSubtle};
+  --bg-card: ${theme.bgCard};
+  --border: ${theme.border};
+  --text: ${theme.text};
+  --text-muted: ${theme.textMuted};
+  --accent: ${theme.accent};
+  --accent-rgb: ${theme.accentRgb};
+  --accent-hover: ${theme.accentHover};
+  --accent-contrast: ${theme.accentContrast};
+  --navy: ${theme.navy};
+  --navy-rgb: ${theme.navyRgb};
+  --gradient: linear-gradient(135deg, ${theme.gradientFrom} 0%, ${theme.accent} 100%);
+  --danger: ${theme.danger};
+  --warning: ${theme.warning};
+  --brand-row-bg: ${theme.brandRowBg};
+  --brand-row-fg: ${theme.brandRowFg};
+  --brand-row-accent: ${theme.brandRowAccent};
+  --brand-row-muted: ${theme.brandRowMuted};
+}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {site.googleSiteVerification && (
+      <meta name="google-site-verification" content={site.googleSiteVerification} />
+    )}
+
+    <!-- AdSense loader. Auto ads (if enabled) are controlled from the AdSense
+         dashboard per-site; no <ins class="adsbygoogle"> units are placed in
+         markup here. Only rendered once this site has a publisher ID. -->
+    {site.adsensePublisherId && (
+      <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${site.adsensePublisherId}`} crossorigin="anonymous"></script>
+    )}
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content={site.siteName} />
+    <meta property="og:image" content={siteUrl + '/logo-icon.png'} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- Sitemap -->
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Square, multiple-of-48px icons — Google Search requires a square
+         favicon to show one at all instead of a generic globe; logo-icon.png
+         itself is a tall (537x620) non-square crop of the pin mark, which is
+         why it wasn't picked up. -->
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content={theme.navy} />
+
+    <style set:html={themeCss}></style>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
+
+    <header class="brand-row">
+      <div class="container">
+        <a href="/" class="logo">
+          <img src="/logo-icon.png" alt={site.siteName} width="40" height="46" />
+          <span class="logo-text">
+            <span class="logo-word">{site.cityLabel}<span>Hub</span></span>
+            <span class="logo-sub">Business Directory</span>
+          </span>
+        </a>
+        <p class="tagline">
+          <strong>Discover. Connect. Grow.</strong>
+          <span>{site.tagline}</span>
+        </p>
+      </div>
+    </header>
+
+    <nav class="site-nav" aria-label="Main">
+      <div class="container">
+        <div class="nav-links">
+          <a href="/"><Icon path={ICONS.home} size={16} /> Home</a>
+          <a href="/suburb/"><Icon path={ICONS.pin} size={16} /> Directory</a>
+          <a href="/category/"><Icon path={ICONS.grid} size={16} /> Categories</a>
+          <a href="/shopping-center/"><Icon path={ICONS.building} size={16} /> Shopping Centres</a>
+          {site.features.tourism && (
+            <a href="/tourism/"><Icon path={ICONS.compass} size={16} /> Tourism</a>
+          )}
+          <a href="/about/"><Icon path={ICONS.info} size={16} /> About Us</a>
+        </div>
+        <a href="/list-your-business/" class="btn btn-primary">
+          <Icon path={ICONS.plus} size={15} /> Add Your Business
+        </a>
+      </div>
+    </nav>
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <span>© {new Date().getFullYear()} {site.siteName} — {site.footerTagline}</span>
+        <nav style="display:flex;gap:1rem;">
+          <a href="/about/">About</a>
+          <a href="/partners/">Partners</a>
+          <a href="/privacy/">Privacy</a>
+          <a href="/terms/">Terms</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      // Deters casual copying only — not a real barrier (dev tools/view-source
+      // bypass this trivially) — real protection is the copyright notice in
+      // Terms plus hotlink protection on the actual image files.
+      document.addEventListener('contextmenu', (e) => {
+        if ((e.target as HTMLElement).tagName === 'IMG') e.preventDefault();
+      });
+      document.addEventListener('dragstart', (e) => {
+        if ((e.target as HTMLElement).tagName === 'IMG') e.preventDefault();
+      });
+    </script>
+  </body>
+</html>

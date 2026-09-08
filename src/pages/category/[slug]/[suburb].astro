@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BusinessCard from '../../../components/BusinessCard.astro';
+import PageBanner from '../../../components/PageBanner.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { categories, suburbs, businessesInSuburbAndCategory } from '../../../lib/data';
+import { groupForCategory } from '../../../lib/categoryGroups';
+import site from '../../../site';
+
+export function getStaticPaths() {
+  const paths = [];
+  for (const category of categories) {
+    for (const suburb of suburbs) {
+      const businesses = businessesInSuburbAndCategory(suburb.id, category.id);
+      // Only generate a page for combinations that actually have listings —
+      // otherwise this would be 57 x 16 mostly-empty pages, which is bad
+      // for SEO (thin content) rather than good for it.
+      if (businesses.length === 0) continue;
+      paths.push({ params: { slug: category.slug, suburb: suburb.slug }, props: { category, suburb, businesses } });
+    }
+  }
+  return paths;
+}
+
+const { category, suburb, businesses } = Astro.props;
+const group = groupForCategory(category.slug);
+---
+
+<BaseLayout
+  title={`${category.name} in ${suburb.name}`}
+  description={`${businesses.length} ${category.name} in ${suburb.name} — part of the Greater ${site.cityLabel} area.`}
+>
+  <PageBanner title={`${category.name} in ${suburb.name}`} description={`${businesses.length} listed.`} iconPath={group?.iconPath}>
+    <Breadcrumbs
+      slot="breadcrumbs"
+      items={[
+        { label: 'Categories', href: '/category/' },
+        { label: category.name, href: `/category/${category.slug}/` },
+        { label: suburb.name },
+      ]}
+    />
+  </PageBanner>
+
+  <section class="container" style="padding-top: 1.25rem; padding-bottom: 3rem;">
+    <a href={`/suburb/${suburb.slug}/`} class="btn btn-outline btn-sm">See all businesses in {suburb.name} →</a>
+    <div class="business-grid">
+      {businesses.map((business) => <BusinessCard business={business} showSuburb={false} />)}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .business-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+</style>

@@ -1,0 +1,41 @@
+{
+  "slug": "polokwane",
+  "siteName": "PolokwaneHub",
+  "cityLabel": "Polokwane",
+  "domain": "polokwanehub.com",
+  "pagesProjectName": "polokwanehub",
+  "pagesDevHost": "polokwanehub.pages.dev",
+  "dbName": "polokwanehub-db",
+  "r2Bucket": "polokwanehub-media",
+  "r2MediaPrefix": "polokwanehub-media",
+  "contactEmail": "hello@polokwanehub.com",
+  "bannerImage": "/hero-banner.png",
+  "tagline": "Your trusted directory of businesses in Polokwane and surrounding areas.",
+  "footerTagline": "Polokwane's local business directory.",
+  "googleSiteVerification": null,
+  "adsensePublisherId": "ca-pub-7239595592067933",
+  "features": {
+    "tourism": true
+  },
+  "theme": {
+    "bg": "#ffffff",
+    "bgSubtle": "#eef7ee",
+    "bgCard": "#ffffff",
+    "border": "#d9e8d9",
+    "text": "#101a33",
+    "textMuted": "#5b6b85",
+    "accent": "#4d9e2f",
+    "accentRgb": "77, 158, 47",
+    "accentHover": "#3d7d25",
+    "accentContrast": "#ffffff",
+    "navy": "#0f2e1a",
+    "navyRgb": "15, 46, 26",
+    "gradientFrom": "#6cbf3d",
+    "danger": "#c23838",
+    "warning": "#9c5f00",
+    "brandRowBg": "var(--navy)",
+    "brandRowFg": "#ffffff",
+    "brandRowAccent": "#8fdb63",
+    "brandRowMuted": "rgba(255, 255, 255, 0.7)"
+  }
+}

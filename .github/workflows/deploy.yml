@@ -1,0 +1,127 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  deployments: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - site: polokwane
+            pages_project: polokwanehub
+          - site: pretoria
+            pages_project: pretoriahub
+          - site: capetown
+            pages_project: thecapetownhub
+    env:
+      SITE: ${{ matrix.site }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply D1 migrations
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npm run db:migrate:remote
+
+      # The hourly research routine (a cloud agent with no Cloudflare
+      # credentials of its own) proposes new/enriched business data as SQL
+      # files under db/routine-updates/<site>/ and commits them. This is
+      # where those actually get applied. Every statement in these files
+      # must be idempotent (INSERT OR IGNORE / UPDATE ... WHERE x IS NULL)
+      # — see ROUTINE.<site>.md — since a file can be applied more than
+      # once safely.
+      - name: Apply pending routine SQL updates
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          shopt -s nullglob
+          files=(db/routine-updates/${{ matrix.site }}/*.sql)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No pending routine updates."
+          else
+            for f in "${files[@]}"; do
+              echo "Applying $f"
+              npx wrangler d1 execute "$(node -e "console.log(require('./sites/${{ matrix.site }}.json').dbName)")" \
+                --config "wrangler.${{ matrix.site }}.jsonc" --remote --file="$f"
+            done
+          fi
+
+      # Each matrix leg only ever touches its own db/routine-updates/<site>/
+      # and status/<site>/ paths, so these commits never conflict in
+      # *content* — only in git ref order, since all three legs push to the
+      # same main branch in parallel. Retry with a rebase pull handles that;
+      # a real conflict here would mean two legs touched the same file,
+      # which shouldn't happen by construction.
+      - name: Clear applied routine SQL files
+        run: |
+          shopt -s nullglob
+          files=(db/routine-updates/${{ matrix.site }}/*.sql)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No routine SQL files to clear."
+            exit 0
+          fi
+          git rm -q "${files[@]}"
+          git config user.name "hub-platform-bot"
+          git config user.email "actions@github.com"
+          git commit -m "Clear applied ${{ matrix.site }} routine SQL files [skip ci]"
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin main && git push && break
+            echo "Push attempt $i failed, retrying..."; sleep $((RANDOM % 5 + 1))
+          done
+
+      - name: Build with Astro
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler pages deploy dist --project-name=${{ matrix.pages_project }} --branch=main
+
+      # Refresh the committed snapshot the routine reads
+      # (status/<site>/db-snapshot.json) from the same data the build just
+      # fetched, so the next routine run sees today's real state. [skip ci]
+      # stops this push from re-triggering this same workflow.
+      - name: Refresh DB snapshot for the routine
+        run: |
+          node scripts/write-db-snapshot.mjs
+          git config user.name "hub-platform-bot"
+          git config user.email "actions@github.com"
+          git add status/${{ matrix.site }}/db-snapshot.json
+          if git diff --staged --quiet; then
+            echo "No snapshot changes"
+          else
+            git commit -m "Refresh ${{ matrix.site }} DB snapshot [skip ci]"
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main && git push && break
+              echo "Push attempt $i failed, retrying..."; sleep $((RANDOM % 5 + 1))
+            done
+          fi

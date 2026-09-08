@@ -1,0 +1,41 @@
+{
+  "slug": "pretoria",
+  "siteName": "PretoriaHub",
+  "cityLabel": "Pretoria",
+  "domain": "pretoriahub.com",
+  "pagesProjectName": "pretoriahub",
+  "pagesDevHost": "pretoriahub.pages.dev",
+  "dbName": "pretoriahub-db",
+  "r2Bucket": "pretoriahub-media",
+  "r2MediaPrefix": "pretoriahub-media",
+  "contactEmail": "hello@pretoriahub.com",
+  "bannerImage": "/hero-banner.jpg",
+  "tagline": "Your trusted directory of businesses in Pretoria and surrounding areas.",
+  "footerTagline": "Pretoria & Tshwane's local business directory.",
+  "googleSiteVerification": "uG-ZSHSSlYpFXQlPJoqYF_QzQnhDh1qftOpoQOx3aNg",
+  "adsensePublisherId": "ca-pub-5868369279571926",
+  "features": {
+    "tourism": false
+  },
+  "theme": {
+    "bg": "#ffffff",
+    "bgSubtle": "#eef3fc",
+    "bgCard": "#ffffff",
+    "border": "#dce6f5",
+    "text": "#101a33",
+    "textMuted": "#5b6b85",
+    "accent": "#1d6fe0",
+    "accentRgb": "29, 111, 224",
+    "accentHover": "#1557b0",
+    "accentContrast": "#ffffff",
+    "navy": "#0f1b3d",
+    "navyRgb": "15, 27, 61",
+    "gradientFrom": "#3a8dfb",
+    "danger": "#c23838",
+    "warning": "#9c5f00",
+    "brandRowBg": "var(--bg-card)",
+    "brandRowFg": "var(--navy)",
+    "brandRowAccent": "var(--accent)",
+    "brandRowMuted": "var(--text-muted)"
+  }
+}

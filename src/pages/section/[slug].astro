@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BusinessCard from '../../components/BusinessCard.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { categories, businessesInCategory, type Business } from '../../lib/data';
+import { CATEGORY_GROUPS } from '../../lib/categoryGroups';
+import site from '../../site';
+
+export function getStaticPaths() {
+  return CATEGORY_GROUPS.map((group) => ({ params: { slug: group.slug }, props: { group } }));
+}
+
+const { group } = Astro.props;
+const categoryBySlug = new Map(categories.map((c) => [c.slug, c]));
+
+const byCategory: { name: string; slug: string; businesses: Business[] }[] = [];
+for (const slug of group.categorySlugs) {
+  const category = categoryBySlug.get(slug);
+  if (!category) continue;
+  const businesses = businessesInCategory(category.id);
+  if (businesses.length === 0) continue;
+  byCategory.push({ name: category.name, slug: category.slug, businesses });
+}
+byCategory.sort((a, b) => b.businesses.length - a.businesses.length);
+const total = byCategory.reduce((sum, c) => sum + c.businesses.length, 0);
+---
+
+<BaseLayout
+  title={group.name}
+  description={`${total} ${group.name} businesses across ${site.cityLabel}.`}
+>
+  <PageBanner title={group.name} description={`${total} businesses listed in this section.`} iconPath={group.iconPath}>
+    <Breadcrumbs slot="breadcrumbs" items={[{ label: 'Categories', href: '/category/' }, { label: group.name }]} />
+  </PageBanner>
+
+  <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+    {byCategory.length === 0 ? (
+      <p style="color: var(--text-muted);">None listed yet.</p>
+    ) : (
+      byCategory.map((cat) => (
+        <div style="margin-top: 1.75rem;">
+          <div class="cat-head">
+            <h2>{cat.name} <span class="cat-count">({cat.businesses.length})</span></h2>
+            <a href={`/category/${cat.slug}/`} class="btn btn-outline btn-sm">View all {cat.name} →</a>
+          </div>
+          <div class="business-grid">
+            {cat.businesses.map((business) => <BusinessCard business={business} />)}
+          </div>
+        </div>
+      ))
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .cat-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .cat-head h2 {
+    font-size: 1.05rem;
+    margin: 0;
+  }
+  .cat-count {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 0.85rem;
+  }
+  .business-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.75rem;
+  }
+</style>

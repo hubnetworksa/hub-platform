@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site, { SITES } from '../site';
+
+// Every other site in the network, generated from sites/*.json — add a new
+// site there and it shows up here automatically, on every existing site,
+// with no page edits. Each card's background comes from that other site's
+// own public/ hero banner, loaded cross-origin (plain background-image, no
+// CORS needed) since Pages doesn't let one project read another's assets
+// at build time.
+const partners = Object.values(SITES).filter((s) => s.slug !== site.slug);
+---
+
+<BaseLayout title="Partner Sites" description={`${site.siteName}'s sister directory sites covering other South African cities.`}>
+  <section class="container partners-page">
+    <h1>Partner Sites</h1>
+    <p>
+      {site.siteName} is part of a small family of local business directories, each built the same
+      way — verified listings, real sources, no invented facts — for a different South African
+      city.
+    </p>
+
+    {partners.map((partner) => (
+      <a href={`https://${partner.domain}/`} target="_blank" rel="noopener" class="partner-card" style={`background-image: url('https://${partner.domain}${partner.bannerImage}')`}>
+        <div class="partner-card-overlay">
+          <span class="partner-card-eyebrow">Sister Site</span>
+          <h2>{partner.siteName}</h2>
+          <p>{partner.tagline}</p>
+          <span class="btn btn-primary btn-sm">Visit {partner.domain} →</span>
+        </div>
+      </a>
+    ))}
+  </section>
+</BaseLayout>
+
+<style>
+  .partners-page {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    max-width: 680px;
+  }
+  .partner-card {
+    position: relative;
+    display: block;
+    height: 280px;
+    margin: 1.75rem 0 1rem;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lift);
+    background-color: var(--bg-subtle);
+    background-size: cover;
+    background-position: center 70%;
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .partner-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(16, 26, 51, 0.18), 0 4px 10px rgba(16, 26, 51, 0.1);
+  }
+  .partner-card-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    gap: 0.15rem;
+    padding: 1.5rem;
+    background: linear-gradient(
+      to top,
+      rgba(var(--navy-rgb), 0.9) 0%,
+      rgba(var(--navy-rgb), 0.55) 45%,
+      rgba(var(--navy-rgb), 0.05) 85%
+    );
+  }
+  .partner-card-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #bcd2ff;
+  }
+  .partner-card-overlay h2 {
+    margin: 0.1rem 0 0.2rem;
+    color: #fff;
+    font-size: 1.5rem;
+  }
+  .partner-card-overlay p {
+    margin: 0 0 0.9rem;
+    color: rgba(255, 255, 255, 0.92);
+    max-width: 46ch;
+    font-size: 0.92rem;
+  }
+  @media (max-width: 640px) {
+    .partner-card {
+      height: 240px;
+    }
+  }
+</style>

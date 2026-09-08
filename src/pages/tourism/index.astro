@@ -1,0 +1,154 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+// Tourism content is currently only authored for Polokwane (site-content/polokwane/tourism.ts).
+// Once a second site gets its own, switch this to a per-site lookup like src/site-content/index.ts.
+import { TOURISM_OVERVIEW, ATTRACTIONS } from '../../site-content/polokwane/tourism';
+import site from '../../site';
+
+const ICON_COMPASS = '<circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-2 5-5 2 2-5 5-2Z"/>';
+
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
+
+// TouristDestination schema for the overview, per the CSC brief. Attraction
+// sub-pages each carry their own TouristAttraction schema.
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TouristDestination',
+  name: site.cityLabel,
+  description: TOURISM_OVERVIEW.metaDescription,
+  url: `${siteUrl}/tourism/`,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: site.cityLabel,
+    addressRegion: 'Limpopo',
+    addressCountry: 'ZA',
+  },
+  includesAttraction: ATTRACTIONS.map((a) => ({
+    '@type': 'TouristAttraction',
+    name: a.name,
+    url: `${siteUrl}/tourism/${a.slug}/`,
+  })),
+};
+---
+
+{site.features.tourism ? (
+<BaseLayout title={TOURISM_OVERVIEW.pageTitle} description={TOURISM_OVERVIEW.metaDescription}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <PageBanner
+    title={`Things to Do in ${site.cityLabel}`}
+    description="Attractions, nature reserves, museums and day trips."
+    iconPath={ICON_COMPASS}
+  >
+    <Breadcrumbs slot="breadcrumbs" items={[{ label: 'Home', href: '/' }, { label: 'Tourism' }]} />
+  </PageBanner>
+
+  <section class="container" style="padding-top: 2rem; padding-bottom: 1rem; max-width: 780px;">
+    <p class="lede">{TOURISM_OVERVIEW.intro}</p>
+  </section>
+
+  <section class="container" style="padding-bottom: 1rem;">
+    <h2>Top attractions &amp; day trips</h2>
+    <div class="attraction-grid">
+      {ATTRACTIONS.map((a) => (
+        <a class="attraction-card" href={`/tourism/${a.slug}/`}>
+          <span class="attraction-name">{a.name}</span>
+          <span class="attraction-teaser">{a.teaser}</span>
+          <span class="attraction-more">Read more →</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="container" style="padding-top: 1.5rem; padding-bottom: 1rem; max-width: 780px;">
+    <h2>Plan your visit</h2>
+    {TOURISM_OVERVIEW.practical.map((p) => (
+      <div class="plan-block">
+        <h3>{p.heading}</h3>
+        <p>{p.body}</p>
+      </div>
+    ))}
+  </section>
+
+  <section class="container" style="padding-top: 1rem; padding-bottom: 3rem; max-width: 780px;">
+    <h2>Where to eat &amp; stay</h2>
+    <p>
+      Browse <a href="/category/accommodation/">accommodation</a> and
+      {' '}<a href="/category/restaurants-takeaways/">restaurants &amp; takeaways</a> in the
+      directory, or start from a <a href="/suburb/">suburb</a> to find what's near you.
+    </p>
+  </section>
+</BaseLayout>
+) : (
+<BaseLayout title="Tourism" description={`Tourism content for ${site.cityLabel} is on the way.`}>
+  <section class="container" style="padding: 3rem 0;">
+    <h1>Tourism</h1>
+    <p>We're still putting together a tourism guide for {site.cityLabel} — check back soon.</p>
+  </section>
+</BaseLayout>
+)}
+
+<style>
+  .lede {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text);
+    margin: 0;
+  }
+  h2 {
+    font-size: 1.15rem;
+    margin: 0 0 1rem;
+  }
+  .attraction-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.85rem;
+  }
+  .attraction-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1.1rem 1.15rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+  .attraction-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+  .attraction-name {
+    font-weight: 800;
+    color: var(--navy);
+  }
+  .attraction-teaser {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+  }
+  .attraction-more {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-top: 0.15rem;
+  }
+  .plan-block {
+    margin-bottom: 1.1rem;
+  }
+  .plan-block h3 {
+    font-size: 0.98rem;
+    margin: 0 0 0.25rem;
+    color: var(--navy);
+  }
+  .plan-block p {
+    margin: 0;
+    color: var(--text);
+    line-height: 1.65;
+  }
+</style>

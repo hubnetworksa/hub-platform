@@ -1,0 +1,120 @@
+---
+import { suburbFor, categoriesFor, shoppingCenterFor, type Business } from '../lib/data';
+import { groupForCategory } from '../lib/categoryGroups';
+import Icon from './Icon.astro';
+
+interface Props {
+  business: Business;
+  showSuburb?: boolean;
+  // When set, clicking this card remembers "you came from this list" (see
+  // ListReturn.astro), so the business page can offer a "Back to <name>"
+  // link to whichever suburb/shopping-centre listing page the card lives
+  // on. Omit on pages where that doesn't apply (e.g. category pages).
+  listContext?: { kind: 'suburb' | 'shopping-center'; slug: string; name: string };
+}
+
+const { business, showSuburb = true, listContext } = Astro.props;
+const suburb = suburbFor(business);
+const cats = categoriesFor(business);
+const primary = cats[0];
+const primaryGroup = primary ? groupForCategory(primary.slug) : undefined;
+// Only ever shown when a real link exists — a business with no shopping
+// centre nearby just shows suburb/address as before, nothing invented.
+const center = shoppingCenterFor(business);
+---
+
+<a
+  class="business-card"
+  href={`/business/${business.slug}/`}
+  data-list-kind={listContext?.kind}
+  data-list-slug={listContext?.slug}
+  data-list-name={listContext?.name}
+>
+  <div class="business-card-top">
+    <h3>{business.name}</h3>
+    {primary && (
+      <span class="badge">
+        {primaryGroup && <Icon path={primaryGroup.iconPath} size={13} />}
+        {primary.name}
+      </span>
+    )}
+  </div>
+  <p class="business-card-meta">
+    {showSuburb && suburb && <span>{suburb.name}</span>}
+    {center ? (
+      <span class="at-center">{showSuburb && suburb ? ' · ' : ''}at {center.name}</span>
+    ) : (
+      business.address && <span>{showSuburb && suburb ? ' · ' : ''}{business.address}</span>
+    )}
+  </p>
+</a>
+
+<script>
+  // Astro dedupes this to a single copy per page no matter how many
+  // BusinessCards render, so one delegated listener covers every card.
+  // Only cards given a listContext prop carry data-list-kind at all.
+  document.addEventListener('click', (e) => {
+    const card = (e.target as HTMLElement).closest('a.business-card[data-list-kind]') as HTMLElement | null;
+    if (!card) return;
+    const kind = card.dataset.listKind;
+    const slug = card.dataset.listSlug;
+    const name = card.dataset.listName;
+    if (!kind || !slug || !name) return;
+    try {
+      sessionStorage.setItem('phub:lastList', JSON.stringify({ kind, slug, name, t: Date.now() }));
+    } catch {
+      /* sessionStorage unavailable — the back link just won't show */
+    }
+  });
+</script>
+
+<style>
+  .business-card {
+    display: block;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s, border-color 0.15s;
+  }
+  .business-card:hover {
+    box-shadow: var(--shadow);
+    border-color: var(--accent);
+  }
+  .business-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.75rem;
+  }
+  .business-card h3 {
+    margin: 0;
+    font-size: 1.02rem;
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.1);
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .business-card-meta {
+    margin: 0.35rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+  .at-center {
+    color: var(--accent);
+    font-weight: 600;
+  }
+</style>

@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../site';
+
+const VALUES = [
+  {
+    lead: 'Verified, not scraped.',
+    body: 'Listings are checked, not auto-imported from stale databases.',
+  },
+  {
+    lead: 'Privacy-respecting.',
+    body: "We publish business contact details only — never a business owner's personal name, phone number, or email.",
+  },
+  {
+    lead: 'Built for the whole city.',
+    body: 'Every suburb gets real coverage, not just the well-known ones.',
+  },
+  {
+    lead: 'Local first.',
+    body: `${site.siteName} is focused on ${site.cityLabel} specifically, not a generic template dropped onto a city name.`,
+  },
+];
+---
+
+<BaseLayout
+  title="About"
+  titleOverride={`About ${site.siteName} | ${site.cityLabel}'s Local Business Directory`}
+  description={`${site.siteName} connects residents and visitors with verified local businesses across ${site.cityLabel} — real listings, no clutter, built for the community.`}
+>
+  <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 680px;">
+    <h1>About {site.siteName}</h1>
+    <p class="lede">
+      {site.siteName} is {site.cityLabel}'s home for finding real, local businesses — restaurants, services,
+      shops, and everything in between. No fake listings, no outdated numbers, just a directory
+      built for people who actually live here and visitors trying to find their way around.
+    </p>
+
+    <h2>Our story</h2>
+    <p>
+      {site.siteName} started with a simple frustration: searching online for a business in {site.cityLabel}
+      too often turns up outdated Google listings, dead phone numbers, or nothing at all. We built
+      this directory to fix that — a single, well-organised place where every listing is checked,
+      every category makes sense, and every suburb in the city has its own space. Whether you're
+      new to {site.cityLabel}, growing up here, or just passing through, {site.siteName} is built
+      to get you a real answer, fast.
+    </p>
+
+    <h2>What we do</h2>
+    <p>
+      We list businesses across {site.cityLabel} by category and by suburb so
+      you can search the way you actually think about the city, not just by keyword. Every listing
+      includes verified business contact details, trading hours, and a clear description of what
+      the business offers. We also cover things to do, local attractions, and day trips around
+      {site.cityLabel}, so {site.siteName} works as a starting point for exploring the city, not just
+      finding a plumber.
+    </p>
+
+    <h2>Our values</h2>
+    <ul class="values">
+      {VALUES.map((v) => (
+        <li><strong>{v.lead}</strong> {v.body}</li>
+      ))}
+    </ul>
+
+    <h2>Sister sites</h2>
+    <p>
+      {site.siteName} is part of a small network of local directories, each built the same way for
+      its own city. See the full list on our <a href="/partners/">partner sites</a> page. Each site is
+      run independently, focused entirely on doing right by its own city.
+    </p>
+
+    <div class="cta">
+      <p>
+        Own a business in {site.cityLabel}? Add your listing and get found by people searching for exactly
+        what you offer — free to list, verified before it goes live.
+      </p>
+      <a href="/list-your-business/" class="btn btn-primary">Add your business</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lede {
+    font-size: 1.08rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  h2 {
+    font-size: 1.15rem;
+    margin: 2rem 0 0.5rem;
+    color: var(--navy);
+  }
+  p {
+    line-height: 1.7;
+  }
+  .values {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .values li {
+    padding-left: 1.1rem;
+    position: relative;
+    line-height: 1.6;
+  }
+  .values li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55rem;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .values strong {
+    color: var(--navy);
+  }
+  .cta {
+    margin-top: 2.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-subtle);
+  }
+  .cta p {
+    margin: 0 0 1rem;
+  }
+</style>

@@ -1,0 +1,263 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ListReturn from '../../components/ListReturn.astro';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls } from '../../lib/data';
+import { groupForCategory } from '../../lib/categoryGroups';
+import Icon from '../../components/Icon.astro';
+
+export function getStaticPaths() {
+  return businesses.map((business) => ({ params: { slug: business.slug }, props: { business } }));
+}
+
+const { business } = Astro.props;
+const suburb = suburbFor(business);
+const cats = categoriesFor(business);
+const sourceUrls = parseSourceUrls(business);
+const isOsmSourced = sourceUrls.some((u) => u.includes('openstreetmap.org'));
+// Non-URL provenance markers (see db/seed-data, functions/api/submit-business.ts)
+// get a human-readable label instead of showing the raw internal string.
+const SOURCE_LABELS: Record<string, string> = {
+  'owner-submitted': 'Submitted by the business owner.',
+  'scraped:google-places-no-website': 'Compiled from a publicly available Google Maps listing.',
+};
+// The actual URL (often the business's own website) stays internal for
+// provenance/compliance, but isn't given away as a free clickable link —
+// that's reserved for the future premium-listing feature. Shown as a
+// plain "Verified" label instead.
+const hasVerifiedUrlSource = sourceUrls.some((u) => /^https?:\/\//.test(u));
+const labelSources = sourceUrls.filter((u) => !/^https?:\/\//.test(u)).map((u) => SOURCE_LABELS[u] ?? u);
+// Only rendered when a real link exists — see shoppingCenterFor.
+const center = shoppingCenterFor(business);
+
+const ICONS = {
+  phone: '<path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
+  pin: '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>',
+  flag: '<path d="M5 21V4"/><path d="M5 4h13l-3 4 3 4H5"/>',
+  building: '<path d="M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6"/>',
+  trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+  check: '<circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: business.name,
+  description: business.description,
+  ...(business.address ? { address: { '@type': 'PostalAddress', streetAddress: business.address, addressLocality: suburb?.name, addressRegion: 'Limpopo', addressCountry: 'ZA' } } : {}),
+  ...(business.phone ? { telephone: business.phone } : {}),
+  ...(business.lat && business.lng ? { geo: { '@type': 'GeoCoordinates', latitude: business.lat, longitude: business.lng } } : {}),
+};
+---
+
+<BaseLayout title={business.name} description={business.description.slice(0, 155)}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <section class="container" style="padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;">
+    <Breadcrumbs
+      items={[
+        ...(suburb ? [{ label: suburb.name, href: `/suburb/${suburb.slug}/` }] : []),
+        ...(cats[0] ? [{ label: cats[0].name, href: `/category/${cats[0].slug}/` }] : []),
+        { label: business.name },
+      ]}
+    />
+    <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">{business.name}</h1>
+
+    <div class="tags">
+      {cats.map((c) => {
+        const g = groupForCategory(c.slug);
+        return (
+          <a class="badge" href={`/category/${c.slug}/`}>
+            {g && <Icon path={g.iconPath} size={13} />}
+            {c.name}
+          </a>
+        );
+      })}
+    </div>
+
+    <p style="margin-top: 1.25rem;">{business.description}</p>
+    {center && (
+      <a href={`/shopping-center/${center.slug}/`} class="located-at">
+        <Icon path={ICONS.building} size={15} /> Located at {center.name}
+      </a>
+    )}
+    {business.address && <p class="address">{business.address}{suburb && `, ${suburb.name}`}</p>}
+
+    <div class="actions">
+      {business.phone && (
+        <a href={`tel:${business.phone}`} class="btn btn-outline">
+          <Icon path={ICONS.phone} size={16} /> {business.phone}
+        </a>
+      )}
+      {business.email && (
+        <a href={`mailto:${business.email}`} class="btn btn-outline">
+          <Icon path={ICONS.mail} size={16} /> Email
+        </a>
+      )}
+      {(business.address || (business.lat && business.lng)) && (
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            `${business.name}${suburb ? `, ${suburb.name}` : ''}`
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-outline"
+        >
+          <Icon path={ICONS.pin} size={16} /> View on Google Maps
+        </a>
+      )}
+    </div>
+
+    <ListReturn />
+
+    <div class="hours-section">
+      <h2 class="hours-heading">
+        <Icon path={ICONS.clock} size={17} /> Trading Hours
+      </h2>
+      {business.hours ? (
+        <p class="hours-text">{business.hours}</p>
+      ) : (
+        <p class="hours-text hours-unavailable">Trading hours not available</p>
+      )}
+    </div>
+
+    {sourceUrls.length > 0 && (
+      <p class="source-note">
+        {isOsmSourced ? (
+          <>Sourced from OpenStreetMap ({sourceUrls.map((u, i) => <>{i > 0 && ', '}<a href={u} target="_blank" rel="noopener noreferrer">record</a></>)}), ODbL-licensed.</>
+        ) : (
+          <span class="source-line">
+            {hasVerifiedUrlSource && (
+              <span class="verified-badge">
+                <Icon path={ICONS.check} size={13} /> Verified
+              </span>
+            )}
+            {labelSources.length > 0 && <span>{labelSources.join(' ')}</span>}
+          </span>
+        )}
+      </p>
+    )}
+
+    <div class="listing-meta-links">
+      <a href={`/report-listing/?slug=${business.slug}&name=${encodeURIComponent(business.name)}`}>
+        <Icon path={ICONS.flag} size={13} /> Report this listing
+      </a>
+      <a href={`/request-removal/?slug=${business.slug}&name=${encodeURIComponent(business.name)}`}>
+        <Icon path={ICONS.trash} size={13} /> Request data removal
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    text-decoration: none;
+  }
+  .address {
+    color: var(--text-muted);
+    margin: 0.5rem 0 0;
+  }
+  .located-at {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.92rem;
+    text-decoration: none;
+  }
+  .located-at:hover {
+    text-decoration: underline;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+  .hours-section {
+    margin-top: 1.5rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+  }
+  .hours-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--navy);
+  }
+  .hours-text {
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
+    color: var(--text);
+    white-space: pre-line;
+  }
+  .hours-unavailable {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .source-note {
+    margin-top: 1.5rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    overflow-wrap: break-word;
+  }
+  .source-line {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: 700;
+    font-size: 0.76rem;
+    letter-spacing: 0.01em;
+    color: #1a8f5e;
+    background: rgba(26, 143, 94, 0.12);
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+  }
+  .listing-meta-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+  .listing-meta-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+  .listing-meta-links a:hover {
+    color: var(--text);
+    text-decoration: underline;
+  }
+</style>

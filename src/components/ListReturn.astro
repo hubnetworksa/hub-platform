@@ -1,0 +1,83 @@
+---
+// "Back to <wherever you came from>" link. Shows on the business page
+// whenever sessionStorage holds a recent (< 1hr) record of the last list
+// the visitor opened this business from — the homepage search (written by
+// SearchBox.astro) or a suburb/shopping-centre listing page (written by
+// BusinessCard.astro, when given a listContext prop). Whichever was
+// written most recently wins, since they share one key. It then persists
+// across pages for the rest of that browsing session (until a new search/
+// list click or the timeout), so the way back is always one click away.
+---
+
+<a id="list-return" class="list-return" hidden href="/">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M15 18l-6-6 6-6"></path>
+  </svg>
+  <span class="list-return-text">Back</span>
+</a>
+
+<script>
+  const KEY = 'phub:lastList';
+  const el = document.getElementById('list-return') as HTMLAnchorElement | null;
+  if (el) {
+    try {
+      const raw = sessionStorage.getItem(KEY);
+      const data = raw ? JSON.parse(raw) : null;
+      const fresh = data && typeof data.kind === 'string' && Date.now() - (data.t || 0) < 60 * 60 * 1000;
+      if (fresh) {
+        let href: string | null = null;
+        let label: string | null = null;
+        if (data.kind === 'search' && typeof data.q === 'string' && data.q) {
+          href = '/?q=' + encodeURIComponent(data.q);
+          label = `Back to results for “${data.q}”`;
+        } else if (data.kind === 'suburb' && typeof data.slug === 'string' && typeof data.name === 'string') {
+          href = `/suburb/${data.slug}/`;
+          label = `Back to ${data.name}`;
+        } else if (data.kind === 'shopping-center' && typeof data.slug === 'string' && typeof data.name === 'string') {
+          href = `/shopping-center/${data.slug}/`;
+          label = `Back to ${data.name}`;
+        }
+        if (href && label) {
+          el.href = href;
+          const labelEl = el.querySelector('.list-return-text');
+          if (labelEl) labelEl.textContent = label;
+          el.hidden = false;
+        }
+      }
+    } catch {
+      /* sessionStorage unavailable — leave the link hidden */
+    }
+  }
+</script>
+
+<style>
+  .list-return[hidden] {
+    display: none;
+  }
+  .list-return {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    max-width: 100%;
+    margin: 1.25rem 0 0;
+    padding: 0.4rem 0.85rem 0.4rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--bg-card);
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .list-return:hover {
+    border-color: var(--accent);
+  }
+  .list-return svg {
+    flex-shrink: 0;
+  }
+  .list-return-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>

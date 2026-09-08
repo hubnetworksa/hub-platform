@@ -1,0 +1,90 @@
+---
+import Icon from './Icon.astro';
+import site from '../site';
+
+interface Props {
+  title: string;
+  description?: string;
+  iconPath?: string;
+}
+const { title, description, iconPath } = Astro.props;
+const bannerStyle = `background-image: linear-gradient(to right, rgba(9, 26, 15, 0.6) 0%, rgba(9, 26, 15, 0.35) 45%, rgba(9, 26, 15, 0.05) 75%), url('${site.bannerImage}')`;
+---
+
+<section class="page-banner" style={bannerStyle}>
+  <div class="container page-banner-content">
+    <slot name="breadcrumbs" />
+    <h1>
+      {iconPath && <Icon path={iconPath} size={30} />}
+      {title}
+    </h1>
+    {description && <p>{description}</p>}
+  </div>
+  <span class="watermark" aria-hidden="true">© {site.siteName}</span>
+</section>
+
+<style>
+  .page-banner {
+    position: relative;
+    overflow: hidden;
+    /* Fixed, not min-height — every page using this component must render
+       at the exact same height regardless of how long its title/description
+       is, so background-size:contain sizes the photo identically everywhere
+       (own report: shopping-center pages looked different from category
+       pages; a taller box from a longer title changes how much of the
+       image "contain" fits, even with byte-identical CSS). */
+    height: 260px;
+    background-color: var(--bg-subtle);
+    /* background-image itself is set inline above (site.bannerImage differs
+       per site) — same banner photo and dark-to-clear legibility overlay as
+       the homepage hero (.hero-banner in src/pages/index.astro); keep the
+       gradient stops in sync between the two so every page's banner matches. */
+    /* cover, not contain — at this box shape (very wide, only 260px tall),
+       contain shrinks the image to ~580px wide and centers it, leaving huge
+       plain-colored gutters on both sides. cover fills the full width like
+       the homepage hero does with the same photo, trimming only a little
+       plain sky/foliage top and bottom — not the skyline itself. */
+    background-size: cover, cover;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-banner-content {
+    position: relative;
+    padding-top: 1.75rem;
+    padding-bottom: 2rem;
+  }
+  .page-banner-content h1 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.5rem 0 0.35rem;
+    color: #fff;
+    font-size: 1.7rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.55), 0 2px 18px rgba(0, 0, 0, 0.4);
+  }
+  .page-banner-content p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.95);
+    max-width: 60ch;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 1px 12px rgba(0, 0, 0, 0.45);
+  }
+  .watermark {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.6rem;
+    z-index: 2;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    user-select: none;
+  }
+  @media (max-width: 640px) {
+    .page-banner {
+      height: 220px;
+    }
+  }
+</style>

@@ -1,0 +1,285 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchBox from '../components/SearchBox.astro';
+import Icon from '../components/Icon.astro';
+import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory } from '../lib/data';
+import { CATEGORY_GROUPS } from '../lib/categoryGroups';
+import site from '../site';
+
+const groupCount = (group: (typeof CATEGORY_GROUPS)[number]) =>
+  categories
+    .filter((c) => group.categorySlugs.includes(c.slug))
+    .reduce((sum, c) => sum + businessesInCategory(c.id).length, 0);
+
+const topSuburbs = [...suburbs].sort((a, b) => businessesInSuburb(b.id).length - businessesInSuburb(a.id).length).slice(0, 8);
+
+const FEATURES = [
+  { label: 'Find Businesses', path: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.5-4.5"/>' },
+  { label: 'Connect Easily', path: '<rect x="3" y="8" width="8" height="8" rx="4"/><rect x="13" y="8" width="8" height="8" rx="4"/>' },
+  { label: 'Support Local', path: '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>' },
+  { label: 'Trusted Platform', path: '<path d="M12 3l7 3v6c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V6l7-3Z"/><path d="m9 12 2 2 4-4"/>' },
+];
+
+// WebSite + Organization structured data — Google's documented way to hint
+// the bold "sitename" shown in search results (otherwise it falls back to
+// the bare domain). No guarantee it switches over, or how fast — this is a
+// signal Google re-crawls and applies on its own schedule, not an instant switch.
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: site.siteName,
+    url: `https://${site.domain}/`,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: site.siteName,
+    url: `https://${site.domain}/`,
+    logo: `https://${site.domain}/logo-icon.png`,
+  },
+];
+---
+
+<BaseLayout
+  title={`${site.cityLabel} Business Directory`}
+  description={`Find businesses across ${site.cityLabel} and surrounding areas — browse by suburb or category to discover what's nearby.`}
+>
+  {jsonLd.map((d) => <script type="application/ld+json" set:html={JSON.stringify(d)} />)}
+
+  <section class="hero-banner" style={`background-image: linear-gradient(to right, rgba(9, 26, 15, 0.6) 0%, rgba(9, 26, 15, 0.35) 45%, rgba(9, 26, 15, 0.05) 75%), url('${site.bannerImage}')`}>
+    <div class="container hero-content">
+      <h1>Discover. Connect. Grow.</h1>
+      <p class="hero-sub">
+        Your trusted directory of {businesses.length.toLocaleString()} businesses across {suburbs.length} suburbs in {site.cityLabel} and surrounding areas.
+      </p>
+      <div class="search-card">
+        <SearchBox />
+      </div>
+      <div class="feature-row">
+        {FEATURES.map((f) => (
+          <div class="feature">
+            <span class="feature-icon"><Icon path={f.path} size={20} /></span>
+            <span class="feature-label">{f.label}</span>
+          </div>
+        ))}
+      </div>
+      <a href="/list-your-business/" class="btn btn-primary" style="margin-top: 1.5rem;">List your business — it's free</a>
+    </div>
+    <svg class="hero-wave" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0,55 C360,10 1080,95 1440,45 L1440,100 L0,100 Z" style="fill: var(--accent); opacity: 0.35;" />
+      <path d="M0,75 C420,35 1020,100 1440,60 L1440,100 L0,100 Z" style="fill: var(--navy);" />
+    </svg>
+    <span class="watermark" aria-hidden="true">© {site.siteName}</span>
+  </section>
+
+  <section class="container" style="padding-top: 2.5rem; padding-bottom: 2.5rem;">
+    <div class="section-head">
+      <h2>What are you looking for?</h2>
+      <a href="/category/" class="section-link">All categories →</a>
+    </div>
+    <div class="group-grid">
+      {CATEGORY_GROUPS.map((group) => (
+        <a class="group-tile" href={`/section/${group.slug}/`}>
+          <span class="group-icon"><Icon path={group.iconPath} size={26} /></span>
+          <span class="group-name">{group.name}</span>
+          <span class="group-count">{groupCount(group)} businesses</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="container" style="padding-bottom: 3rem;">
+    <div class="section-head">
+      <h2>Browse by suburb</h2>
+      <a href="/suburb/" class="section-link">All suburbs →</a>
+    </div>
+    <div class="chip-row">
+      {topSuburbs.map((s) => (
+        <a class="chip" href={`/suburb/${s.slug}/`}>{s.name} <span class="chip-count">{businessesInSuburb(s.id).length}</span></a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero-banner {
+    position: relative;
+    /* No overflow:hidden here — it would clip the search dropdown a second
+       way (on top of the stacking-context fix below) whenever results
+       extend past this section's bottom edge. Not needed for anything:
+       background-image already clips to its own box regardless, and the
+       wave SVG stays within bounds without it. */
+    z-index: 5;
+    min-height: 460px;
+    /* background-image itself is set inline above (site.bannerImage differs
+       per site) — dark-to-clear overlay keeps the headline/search text
+       legible over the sky no matter how bright that part of the photo is. */
+    background-size: cover, cover;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+  }
+  .hero-content {
+    position: relative;
+    padding-top: 3.5rem;
+    padding-bottom: 5.5rem;
+  }
+  .hero-content h1 {
+    font-size: 2.2rem;
+    margin: 0 0 0.6rem;
+    color: #fff;
+    max-width: 16ch;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.55), 0 2px 24px rgba(0, 0, 0, 0.4);
+  }
+  .hero-sub {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1.05rem;
+    max-width: 46ch;
+    margin: 0 0 1.5rem;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 1px 14px rgba(0, 0, 0, 0.45);
+  }
+  .search-card {
+    max-width: 480px;
+    background: var(--bg-card);
+    padding: 0.75rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lift);
+  }
+  .feature-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .feature {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    background: rgba(var(--accent-rgb), 0.12);
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .feature-label {
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #fff;
+    max-width: 8ch;
+    line-height: 1.2;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 1px 10px rgba(0, 0, 0, 0.45);
+  }
+  .feature-icon {
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.55);
+  }
+  .hero-wave {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 70px;
+    display: block;
+  }
+  .watermark {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 5rem;
+    z-index: 2;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    user-select: none;
+  }
+  @media (max-width: 720px) {
+    .hero-banner {
+      min-height: 320px;
+    }
+    .feature-label {
+      max-width: none;
+    }
+  }
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .section-head h2 {
+    font-size: 1.15rem;
+    margin: 0;
+  }
+  .section-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+  .group-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+  .group-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1.1rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: inherit;
+    background: var(--bg-card);
+    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  }
+  .group-tile:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+  .group-icon {
+    color: var(--accent);
+  }
+  .group-name {
+    font-weight: 700;
+  }
+  .group-count {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 0.9rem;
+    background: var(--bg-card);
+  }
+  .chip:hover {
+    border-color: var(--accent);
+  }
+  .chip-count {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+</style>

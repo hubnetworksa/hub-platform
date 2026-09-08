@@ -1,0 +1,166 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { categories, suburbs } from '../lib/data';
+import site from '../site';
+
+const sortedCategories = [...categories].sort((a, b) => a.name.localeCompare(b.name));
+const sortedSuburbs = [...suburbs].sort((a, b) => a.name.localeCompare(b.name));
+---
+
+<BaseLayout
+  title="List your business"
+  description={`List your business on ${site.siteName} for free.`}
+>
+  <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 560px;">
+    <h1>List your business</h1>
+    <p style="color: var(--text-muted);">Free — we check each submission before it goes live, usually within a day.</p>
+
+    <form id="listing-form">
+      <label>
+        Business name *
+        <input type="text" name="name" required maxlength="120" />
+      </label>
+      <label>
+        Category *
+        <select name="category" required>
+          <option value="" disabled selected>Choose a category</option>
+          {sortedCategories.map((c) => <option value={c.slug}>{c.name}</option>)}
+        </select>
+      </label>
+      <label>
+        Suburb *
+        <select name="suburb" required>
+          <option value="" disabled selected>Choose a suburb</option>
+          {sortedSuburbs.map((s) => <option value={s.slug}>{s.name}</option>)}
+        </select>
+      </label>
+      <label>
+        Description <span>(optional — a sentence or two about what you do)</span>
+        <textarea name="description" maxlength="600" rows="3"></textarea>
+      </label>
+      <label>
+        Address <span>(optional)</span>
+        <input type="text" name="address" maxlength="200" />
+      </label>
+      <label>
+        Phone <span>(optional)</span>
+        <input type="tel" name="phone" maxlength="30" />
+      </label>
+      <label>
+        Email <span>(optional, not shown publicly)</span>
+        <input type="email" name="email" maxlength="120" />
+      </label>
+      <label>
+        Website <span>(optional, stored but not shown publicly)</span>
+        <input type="url" name="website" maxlength="200" />
+      </label>
+
+      {/* honeypot — hidden from real users via CSS, bots tend to fill every field */}
+      <label class="hp-field" aria-hidden="true">
+        Leave this empty
+        <input type="text" name="company_url" tabindex="-1" autocomplete="off" />
+      </label>
+
+      <button type="submit" class="btn btn-primary">List my business</button>
+      <p id="form-status" role="status"></p>
+    </form>
+  </section>
+</BaseLayout>
+
+<script define:vars={{ contactEmail: site.contactEmail, siteName: site.siteName }}>
+  const loadedAt = Date.now();
+  const form = document.getElementById('listing-form') as HTMLFormElement;
+  const status = document.getElementById('form-status')!;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    status.textContent = 'Submitting…';
+    const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+    try {
+      const res = await fetch('/api/submit-business', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...data, loadedAt }),
+      });
+      const result = await res.json();
+      if (result.ok) {
+        // The listing is already safely saved server-side (pending review).
+        // Notifying us is a mailto: link, not server-side SMTP — this opens
+        // the visitor's own email app with the review link pre-filled;
+        // their mail client does the actual sending, and Cloudflare Email
+        // Routing on our side forwards it into our inbox from there.
+        const lines = [
+          `A new business listing was submitted on ${siteName}.`,
+          '',
+          `Name: ${data.name || ''}`,
+          `Category: ${data.category || ''}`,
+          `Suburb: ${data.suburb || ''}`,
+        ];
+        if (data.address) lines.push(`Address: ${data.address}`);
+        if (data.phone) lines.push(`Phone: ${data.phone}`);
+        if (data.email) lines.push(`Email: ${data.email}`);
+        if (data.website) lines.push(`Website: ${data.website}`);
+        if (data.description) lines.push(`Description: ${data.description}`);
+        lines.push('', `Review & approve: ${result.reviewUrl}`);
+        const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent(`New business listing to review: ${data.name || ''}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
+        status.innerHTML = `Thanks! We've opened your email app with a message to us so we can review it quickly — please hit send. If it didn't open, <a href="${mailto}">click here</a>.`;
+        form.reset();
+        window.location.href = mailto;
+      } else {
+        status.textContent = result.error || 'Something went wrong — please try again.';
+      }
+    } catch {
+      status.textContent = 'Something went wrong — please try again.';
+    }
+  });
+</script>
+
+<style>
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  label span {
+    font-weight: 400;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+  input, select, textarea {
+    font: inherit;
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  button {
+    align-self: flex-start;
+    border: none;
+    cursor: pointer;
+  }
+  #form-status {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+</style>

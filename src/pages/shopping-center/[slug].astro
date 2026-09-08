@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BusinessCard from '../../components/BusinessCard.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { shoppingCenters, businessesInShoppingCenter } from '../../lib/data';
+import site from '../../site';
+
+export function getStaticPaths() {
+  return shoppingCenters
+    .filter((c) => businessesInShoppingCenter(c.id).length > 0)
+    .map((center) => ({ params: { slug: center.slug }, props: { center } }));
+}
+
+const { center } = Astro.props;
+const businesses = businessesInShoppingCenter(center.id);
+---
+
+<BaseLayout
+  title={center.name}
+  description={center.description ?? `${businesses.length} businesses at ${center.name}, ${site.cityLabel}.`}
+>
+  <PageBanner title={center.name} description={`${businesses.length} businesses listed here.`}>
+    <Breadcrumbs slot="breadcrumbs" items={[{ label: 'Shopping Centres', href: '/shopping-center/' }, { label: center.name }]} />
+  </PageBanner>
+
+  <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+    {center.description && <p class="center-desc">{center.description}</p>}
+    {center.address && <p style="color: var(--text-muted); margin-top: 0;">{center.address}</p>}
+    <div class="business-grid">
+      {businesses.map((business) => (
+        <BusinessCard
+          business={business}
+          listContext={{ kind: 'shopping-center', slug: center.slug, name: center.name }}
+        />
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .center-desc {
+    max-width: 68ch;
+    margin: 0 0 0.4rem;
+    line-height: 1.65;
+    color: var(--text);
+  }
+  .business-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+</style>

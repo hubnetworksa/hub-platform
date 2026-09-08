@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import { shoppingCenters, businessesInShoppingCenter } from '../../lib/data';
+import site from '../../site';
+
+const withBusinesses = shoppingCenters
+  .map((c) => ({ center: c, count: businessesInShoppingCenter(c.id).length }))
+  .filter((c) => c.count > 0)
+  .sort((a, b) => b.count - a.count);
+---
+
+<BaseLayout
+  title="Shopping Centres & Malls"
+  description={`Browse ${site.cityLabel} businesses grouped by the specific shopping centre or mall they're located at.`}
+>
+  <PageBanner
+    title="Shopping Centres & Malls"
+    description="Businesses grouped by the specific centre they're located at — useful when a chain has several branches nearby."
+  />
+
+  <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+    {withBusinesses.length === 0 ? (
+      <p style="color: var(--text-muted);">None linked yet.</p>
+    ) : (
+      <div class="grid">
+        {withBusinesses.map(({ center, count }) => (
+          <a class="tile" href={`/shopping-center/${center.slug}/`}>
+            <strong>{center.name}</strong>
+            <span>{count} businesses</span>
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+  }
+  .tile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    background: var(--bg-card);
+  }
+  .tile:hover {
+    border-color: var(--accent);
+  }
+  .tile span {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+</style>

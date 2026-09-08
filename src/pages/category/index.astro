@@ -1,0 +1,143 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import { categories, businessesInCategory } from '../../lib/data';
+import { CATEGORY_GROUPS } from '../../lib/categoryGroups';
+import site from '../../site';
+
+const categoryBySlug = new Map(categories.map((c) => [c.slug, c]));
+---
+
+<BaseLayout
+  title="Categories"
+  description={`Every business category ${site.siteName} covers, organised by section — from food and shopping to trade services and professionals.`}
+>
+  <PageBanner title="Categories" description={`Browse ${site.cityLabel} businesses by section.`} />
+
+  <section class="container" style="padding-top: 1.5rem;">
+    <nav class="jump-nav" aria-label="Jump to section">
+      {CATEGORY_GROUPS.map((group) => (
+        <a href={`#${group.slug}`}><Icon path={group.iconPath} size={16} /> {group.name}</a>
+      ))}
+    </nav>
+  </section>
+
+  <section class="container" style="padding-bottom: 3rem;">
+    {CATEGORY_GROUPS.map((group) => {
+      const groupCategories = group.categorySlugs
+        .map((slug) => categoryBySlug.get(slug))
+        .filter((c): c is NonNullable<typeof c> => Boolean(c))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      const groupTotal = groupCategories.reduce((sum, c) => sum + businessesInCategory(c.id).length, 0);
+
+      return (
+        <div class="group-section" id={group.slug}>
+          <div class="group-section-head">
+            <h2>
+              <Icon path={group.iconPath} size={22} />
+              {group.name}
+              <span class="group-count">({groupTotal})</span>
+            </h2>
+            <a href={`/section/${group.slug}/`} class="btn btn-outline btn-sm">View all →</a>
+          </div>
+          <div class="category-grid">
+            {groupCategories.map((category) => (
+              <a class="category-tile" href={`/category/${category.slug}/`}>
+                <span class="icon"><Icon path={group.iconPath} size={18} /></span>
+                <strong>{category.name}</strong>
+                <span class="count">{businessesInCategory(category.id).length}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      );
+    })}
+  </section>
+</BaseLayout>
+
+<style>
+  .jump-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+  .jump-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 0.85rem;
+    background: var(--bg-card);
+  }
+  .jump-nav a:hover {
+    border-color: var(--accent);
+  }
+  .group-section {
+    margin-top: 2.25rem;
+    scroll-margin-top: 1rem;
+  }
+  .group-section:first-child {
+    margin-top: 0;
+  }
+  .group-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .group-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.15rem;
+    margin: 0;
+    color: var(--navy);
+  }
+  .group-section h2 :global(svg) {
+    color: var(--accent);
+  }
+  .group-count {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 0.85rem;
+  }
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.6rem;
+  }
+  .category-tile {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    background: var(--bg-card);
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .category-tile:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .category-tile .icon {
+    color: var(--accent);
+  }
+  .category-tile strong {
+    flex: 1;
+  }
+  .category-tile .count {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+</style>

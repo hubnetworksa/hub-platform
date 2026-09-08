@@ -1,0 +1,40 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "polokwanehub",
+  "compatibility_date": "2026-08-31",
+  "pages_build_output_dir": "dist",
+
+  // Read by functions/_lib/site.ts at request time to pick this site's config
+  // out of sites/*.json — set separately for Preview vs Production in the
+  // Cloudflare Pages dashboard too (Settings → Environment variables);
+  // whatever's there overrides this file for an actual deployed build.
+  "vars": {
+    "SITE": "polokwane"
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "polokwanehub-db",
+      "database_id": "d85f741d-b353-431b-9d6b-c55ae9c1656e",
+      "migrations_dir": "db/migrations/polokwane"
+    }
+  ],
+
+  "r2_buckets": [
+    {
+      "binding": "MEDIA",
+      "bucket_name": "polokwanehub-media"
+    }
+  ]
+
+  // No server-side email sending: Cloudflare's own send_email binding is
+  // Workers-only and Pages config validation rejects it outright
+  // ("Configuration file for Pages projects does not support 'send_email'"),
+  // confirmed by direct deploy attempt. Forms that need to reach the admin
+  // (report-listing, request-removal, list-your-business) build a
+  // mailto:<contactEmail> link client-side instead — the visitor's own mail
+  // client sends it, and Cloudflare Email Routing (dashboard-configured, not
+  // in this file) forwards it into the real inbox from there. See
+  // src/pages/{report-listing,request-removal,list-your-business}.astro.
+}

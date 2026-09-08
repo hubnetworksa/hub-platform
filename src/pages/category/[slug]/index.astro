@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BusinessCard from '../../../components/BusinessCard.astro';
+import PageBanner from '../../../components/PageBanner.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { categories, businessesInCategory, suburbFor, type Business } from '../../../lib/data';
+import { groupForCategory } from '../../../lib/categoryGroups';
+import site from '../../../site';
+
+export function getStaticPaths() {
+  return categories.map((category) => ({ params: { slug: category.slug }, props: { category } }));
+}
+
+const { category } = Astro.props;
+const businesses = businessesInCategory(category.id);
+
+const bySuburb = new Map<string, { name: string; businesses: Business[] }>();
+for (const business of businesses) {
+  const suburb = suburbFor(business);
+  if (!suburb) continue;
+  if (!bySuburb.has(suburb.slug)) bySuburb.set(suburb.slug, { name: suburb.name, businesses: [] });
+  bySuburb.get(suburb.slug)!.businesses.push(business);
+}
+const suburbGroups = [...bySuburb.entries()].sort((a, b) => b[1].businesses.length - a[1].businesses.length);
+const group = groupForCategory(category.slug);
+---
+
+<BaseLayout
+  title={category.name}
+  description={`${businesses.length} ${category.name} listed across ${site.cityLabel}, by suburb.`}
+>
+  <PageBanner title={category.name} description={`${businesses.length} listed, by suburb.`} iconPath={group?.iconPath}>
+    <Breadcrumbs
+      slot="breadcrumbs"
+      items={[
+        { label: 'Categories', href: '/category/' },
+        ...(group ? [{ label: group.name, href: `/section/${group.slug}/` }] : []),
+        { label: category.name },
+      ]}
+    />
+  </PageBanner>
+
+  <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+    {businesses.length === 0 ? (
+      <p style="color: var(--text-muted);">None listed yet.</p>
+    ) : (
+      suburbGroups.map(([slug, suburbGroup]) => (
+        <div style="margin-top: 1.75rem;">
+          <div class="cat-head">
+            <h2>{suburbGroup.name} <span class="cat-count">({suburbGroup.businesses.length})</span></h2>
+            <a href={`/category/${category.slug}/${slug}/`} class="btn btn-outline btn-sm">View all →</a>
+          </div>
+          <div class="business-grid">
+            {suburbGroup.businesses.map((business) => <BusinessCard business={business} showSuburb={false} />)}
+          </div>
+        </div>
+      ))
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .cat-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .cat-head h2 {
+    font-size: 1.05rem;
+    margin: 0;
+  }
+  .cat-count {
+    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 0.85rem;
+  }
+  .business-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.75rem;
+  }
+</style>

@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../site';
+---
+
+<BaseLayout
+  title="Request data removal"
+  description={`Request the removal of a business listing from ${site.siteName} under South Africa's Protection of Personal Information Act (POPIA).`}
+>
+  <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 560px;">
+    <h1>Request data removal</h1>
+    <p style="color: var(--text-muted);">
+      Under POPIA, you can ask us to remove personal or business information we hold about you.
+      We review every request by hand before anything is deleted — expect a reply within a few days.
+    </p>
+    <p id="business-name" style="color: var(--text-muted); font-weight: 600;">Loading listing…</p>
+
+    <form id="removal-form">
+      <label>
+        Why should this listing be removed? *
+        <textarea name="reason" required maxlength="1000" rows="4" placeholder="e.g. this is my business and I'd like it removed, this business has closed, this information is about me and I object to it being published..."></textarea>
+      </label>
+      <label>
+        Your relationship to this business <span>(optional)</span>
+        <input type="text" name="relationship" maxlength="200" placeholder="e.g. owner, employee, this listing is about me" />
+      </label>
+      <label>
+        Your email *
+        <span>required so we can confirm with you once it's removed</span>
+        <input type="email" name="requesterEmail" required maxlength="120" />
+      </label>
+
+      <button type="submit" class="btn btn-primary">Send removal request</button>
+      <p id="form-status" role="status"></p>
+    </form>
+  </section>
+</BaseLayout>
+
+<script define:vars={{ contactEmail: site.contactEmail, domain: site.domain }}>
+  const params = new URLSearchParams(location.search);
+  const slug = params.get('slug') || '';
+  const name = params.get('name') || '';
+
+  const nameEl = document.getElementById('business-name')!;
+  if (slug && name) {
+    nameEl.textContent = `Requesting removal of: ${name}`;
+  } else {
+    nameEl.textContent = 'No listing specified — go back to the business page and click "Request removal" there.';
+  }
+
+  const form = document.getElementById('removal-form') as HTMLFormElement;
+  const status = document.getElementById('form-status')!;
+
+  // No server round-trip — this opens the visitor's own email app with a
+  // pre-filled message to our contact address. Their mail client does the
+  // actual sending; Cloudflare Email Routing on our side just forwards it
+  // into our inbox from there.
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!slug || !name) {
+      status.textContent = 'No listing specified.';
+      return;
+    }
+    const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+    const businessUrl = `https://${domain}/business/${slug}/`;
+    const lines = [`Business: ${name}`, `Link: ${businessUrl}`, '', 'Reason:', data.reason || ''];
+    if (data.relationship) lines.push('', `Requester's relationship to the business: ${data.relationship}`);
+    lines.push('', `Requester's email: ${data.requesterEmail || ''}`);
+    const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent(`Data removal request: ${name}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
+    status.innerHTML = `Opening your email app to send this — if it didn't open, <a href="${mailto}">click here</a>.`;
+    window.location.href = mailto;
+  });
+</script>
+
+<style>
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  label span {
+    font-weight: 400;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+  input, textarea {
+    font: inherit;
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+  }
+  input:focus, textarea:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  button {
+    align-self: flex-start;
+    border: none;
+    cursor: pointer;
+  }
+  #form-status {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+</style>

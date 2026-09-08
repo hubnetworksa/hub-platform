@@ -1,0 +1,35 @@
+{
+  "name": "hub-platform",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "select-assets": "node scripts/select-site-assets.mjs",
+    "fetch-data": "node scripts/fetch-d1-data.mjs",
+    "predev": "npm run fetch-data && npm run select-assets",
+    "dev": "astro dev",
+    "prebuild": "npm run fetch-data && npm run select-assets",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "dev:polokwane": "cross-env SITE=polokwane npm run dev",
+    "dev:pretoria": "cross-env SITE=pretoria npm run dev",
+    "dev:capetown": "cross-env SITE=capetown npm run dev",
+    "build:polokwane": "cross-env SITE=polokwane npm run build",
+    "build:pretoria": "cross-env SITE=pretoria npm run build",
+    "build:capetown": "cross-env SITE=capetown npm run build",
+    "db:migrate:local": "node scripts/db-migrate.mjs --local",
+    "db:migrate:remote": "node scripts/db-migrate.mjs --remote"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
+    "astro": "^7.2.4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260831.1",
+    "cross-env": "^10.1.0",
+    "wrangler": "^4.105.0"
+  }
+}

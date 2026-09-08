@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import { suburbs, suburbBySlug, businessesInSuburb, type Suburb } from '../../lib/data';
+import { AREA_GROUPS } from '../../site-content';
+import site from '../../site';
+
+const byName = (a: Suburb, b: Suburb) => a.name.localeCompare(b.name);
+---
+
+<BaseLayout
+  title="Suburbs"
+  description={`Browse ${site.cityLabel} area by area, suburb by suburb — local businesses across ${suburbs.length} areas.`}
+>
+  <PageBanner title="Suburbs" description={`Every area ${site.siteName} covers, with the number of businesses listed so far.`} />
+
+  <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+    {AREA_GROUPS.map((area) => {
+      const inArea = area.suburbSlugs
+        .map((slug) => suburbBySlug(slug))
+        .filter((s): s is Suburb => Boolean(s))
+        .sort(byName);
+      if (inArea.length === 0) return null;
+      return (
+        <div style="margin-top: 2rem;">
+          <h2 style="font-size: 1.1rem;">{area.name}</h2>
+          <div class="suburb-grid">
+            {inArea.map((suburb) => (
+              <a class="suburb-tile" href={`/suburb/${suburb.slug}/`}>
+                <strong>{suburb.name}</strong>
+                <span>{businessesInSuburb(suburb.id).length} businesses</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      );
+    })}
+  </section>
+</BaseLayout>
+
+<style>
+  .suburb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  .suburb-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    background: var(--bg-card);
+  }
+  .suburb-tile:hover {
+    border-color: var(--accent);
+  }
+  .suburb-tile span {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+</style>

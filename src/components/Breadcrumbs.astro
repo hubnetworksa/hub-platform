@@ -1,0 +1,72 @@
+---
+interface Crumb {
+  label: string;
+  href?: string;
+}
+interface Props {
+  items: Crumb[];
+}
+const { items } = Astro.props;
+
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: item.label,
+    // Omitted for the last (current-page) item, which is standard —
+    // there's nothing further to link to since it's the page itself.
+    ...(item.href ? { item: siteUrl + item.href } : {}),
+  })),
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  {items.map((item, i) => (
+    <>
+      {item.href ? <a href={item.href}>{item.label}</a> : <span class="current">{item.label}</span>}
+      {i < items.length - 1 && <span class="sep" aria-hidden="true">›</span>}
+    </>
+  ))}
+</nav>
+
+<style>
+  .breadcrumbs {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  .breadcrumbs a {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .breadcrumbs a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .breadcrumbs .current {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 0.3rem 0.2rem;
+    overflow-wrap: break-word;
+    min-width: 0;
+  }
+  .breadcrumbs .sep {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+</style>
