@@ -16,24 +16,9 @@ for the hosted dev login) and it's what `.github/workflows/deploy.yml` /
 `deploy-dev.yml` assume: **one** shared `CLOUDFLARE_API_TOKEN` +
 `CLOUDFLARE_ACCOUNT_ID` secret pair authenticates every matrix leg. If
 Polokwane and/or Pretoria are currently sitting on a *different* Cloudflare
-account than the one you want to standardize on, migrate each one before
-continuing:
-- **D1**: `npx wrangler d1 export <old-db-name> --remote --output data.sql`
-  from the old account, then `npx wrangler d1 create <site>-db` and
-  `npx wrangler d1 execute <site>-db --remote --file=data.sql` on the target
-  account (needs `wrangler login` re-run against each account, or two API
-  tokens, one per account, used one at a time).
-- **R2**: `rclone` (configured with both accounts' S3-compatible R2
-  credentials) or `npx wrangler r2 object get/put` per object is the
-  practical option — there's no single `wrangler r2 bucket export` command.
-- **Pages + domain**: create the new Pages project on the target account
-  (step 2 below), get it working end-to-end, *then* move the custom domain
-  over (Cloudflare dashboard → the zone → DNS, or transfer the zone itself
-  if it's registered under the old account) — keep the old Pages project
-  around, undeployed, until DNS has actually cut over and you've confirmed
-  the new one is serving correctly.
-
-If everything's already on one account, skip straight to step 1.
+account than the one you're standardizing on, see the **"Migrating a site
+to the shared Cloudflare account"** section at the end of this file before
+continuing. If everything's already on one account, skip straight to step 1.
 
 ## 1. GitHub
 
@@ -186,3 +171,101 @@ Swap `polokwane` for `pretoria` or `capetown` throughout. `npm run
 dev:<site>` and `build:<site>` are shortcuts for `SITE=<site> npm run
 dev`/`build`; use the `SITE=<site> npm run <script>` form directly for
 anything else (`db:migrate:local`, `db:migrate:remote`, etc.).
+
+## Migrating a site to the shared Cloudflare account
+
+Only needed if a site's D1/R2/domain currently live under a *different*
+Cloudflare account than the one you're standardizing all three sites on
+(see the note at the top of this file). Do this once per site that needs
+to move, before pointing that site's Pages project at this repo.
+
+**You'll need:** owner/admin access to both the old and new Cloudflare
+accounts, and an API token for each (Dashboard → My Profile → API Tokens →
+Create Token — "Edit Cloudflare Workers"/D1/R2/Pages permissions). Keep
+them in two separate shell variables so you don't mix them up:
+
+```
+OLD_TOKEN=...   # old account
+NEW_TOKEN=...   # new (target) account, same as CLOUDFLARE_API_TOKEN in GitHub secrets
+```
+
+### 1. D1 data
+
+Don't just dump-and-restore the whole database wholesale — create the new
+database from this repo's own migrations first, so its schema (and
+wrangler's migration-tracking table) matches what the code expects, then
+copy over *only the data*:
+
+```bash
+# On the NEW account: create the database and apply this repo's schema migrations
+CLOUDFLARE_API_TOKEN=$NEW_TOKEN CLOUDFLARE_ACCOUNT_ID=<new-account-id> \
+  npx wrangler d1 create <site>-db --config wrangler.<slug>.jsonc
+# → copy the returned database_id into wrangler.<slug>.jsonc, then:
+SITE=<slug> npm run db:migrate:remote   # (uses CLOUDFLARE_API_TOKEN/ACCOUNT_ID from your shell env)
+
+# On the OLD account: export data only (no CREATE TABLE statements, which
+# would collide with the schema you just applied above)
+CLOUDFLARE_API_TOKEN=$OLD_TOKEN CLOUDFLARE_ACCOUNT_ID=<old-account-id> \
+  npx wrangler d1 export <old-db-name> --remote --no-schema --output=data.sql
+
+# Back on the NEW account: load that data into the freshly-schema'd database
+CLOUDFLARE_API_TOKEN=$NEW_TOKEN CLOUDFLARE_ACCOUNT_ID=<new-account-id> \
+  npx wrangler d1 execute <site>-db --config wrangler.<slug>.jsonc --remote --file=data.sql
+```
+
+If `data.sql` is large enough that `d1 execute --file` complains or times
+out, split it into a few files by table (`--table=<name>` on the export
+command) and execute them one at a time.
+
+### 2. R2 media
+
+There's no single "copy bucket to another account" command. For a
+directory-photos-sized bucket (tens of images, not millions), the
+practical option is [`rclone`](https://rclone.org/) configured with both
+accounts' R2 S3-compatible credentials (Dashboard → R2 → "Manage R2 API
+Tokens", **not** the general Cloudflare API token above — R2 uses its own
+Access Key ID/Secret pair):
+
+```bash
+rclone config   # add two remotes, e.g. "cf-old" and "cf-new", type "Cloudflare R2",
+                 # each with its own Access Key ID/Secret and account-specific endpoint
+                 # (https://<account-id>.r2.cloudflarestorage.com)
+
+npx wrangler r2 bucket create <site>-media --config wrangler.<slug>.jsonc   # on the new account
+rclone sync cf-old:<old-bucket-name> cf-new:<site>-media --progress
+```
+
+For just a handful of files, `npx wrangler r2 object get <old-bucket>/<key>
+--file=tmp` then `npx wrangler r2 object put <new-bucket>/<key>
+--file=tmp` per object works fine without installing anything extra.
+
+### 3. Domain / DNS
+
+You do **not** need to transfer the Cloudflare zone itself to make this
+work — a zone in one account can point at a Pages project in a different
+account via a plain CNAME, and Cloudflare's automatic CNAME flattening
+makes this work even at the bare apex (`polokwanehub.com`, not just
+`www`):
+
+1. In the **new** account's Pages project (Custom domains → Add), enter
+   the real domain. Cloudflare will show you the exact target hostname to
+   point at (`<project>.pages.dev`) and mark the domain "pending" until it
+   sees a matching DNS record.
+2. Wherever the domain's DNS is actually managed today (the old Cloudflare
+   account's zone, or elsewhere), add/update the record: CNAME `@` (or
+   `www`) → `<project>.pages.dev`. If that zone is on the old Cloudflare
+   account, add it there directly; Cloudflare's UI will flatten the apex
+   record automatically.
+3. Wait for DNS to propagate (usually fast on Cloudflare, occasionally up
+   to a few hours elsewhere) — the new Pages project's custom domain
+   should flip from "pending" to "active" once it sees the record.
+4. Only once step 3 shows active and you've spot-checked the live site:
+   remove the domain from the *old* Pages project (if it's a Cloudflare
+   Pages project too) so the two don't both claim it.
+
+Moving the DNS *zone itself* between accounts (so it's not just pointing
+cross-account, but actually managed under the new one) is a separate,
+purely organizational step you can do later if you want everything under
+one account for tidiness — dashboard → the zone → look for an account
+transfer/move option (exact wording varies by Cloudflare dashboard
+version). It's not required for the site to work.
