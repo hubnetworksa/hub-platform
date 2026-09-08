@@ -5,7 +5,7 @@
 // way src/data/*.json does for D1 content. public/ itself is gitignored for
 // these generated files; assets/sites/<SITE>/ is the real, committed source.
 
-import { readFile, writeFile, copyFile, readdir, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, copyFile, readdir, mkdir, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -18,7 +18,16 @@ const site = JSON.parse(await readFile(path.join(ROOT, 'sites', `${SITE}.json`),
 
 const assetsDir = path.join(ROOT, 'assets', 'sites', SITE);
 const publicDir = path.join(ROOT, 'public');
+
+// Wipe first, not just copy-over — CI always starts from a clean checkout so
+// this never matters there, but a local working directory that's built more
+// than one SITE in a row (e.g. testing all three back to back) would
+// otherwise carry a previous site's leftover files (a stale hero-banner.jpg
+// sitting alongside the current site's own hero-banner.png, etc.) straight
+// into the deployed dist.
+await rm(publicDir, { recursive: true, force: true });
 await mkdir(publicDir, { recursive: true });
+await writeFile(path.join(publicDir, '.gitkeep'), '');
 
 const files = (await readdir(assetsDir)).filter((f) => f !== 'README.md');
 for (const file of files) {
