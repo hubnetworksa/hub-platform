@@ -101,8 +101,18 @@ jobs:
       - name: Build with Astro
         run: npm run build
 
+      # `wrangler pages deploy` only ever reads a literal ./wrangler.jsonc
+      # in the working directory — it has no --config flag (unlike `d1`/`r2`
+      # subcommands, used with --config elsewhere in this workflow) — so the
+      # per-site config has to be copied into place under that exact name
+      # right before deploying, or this site's SITE var and D1/R2 bindings
+      # never reach the deployed Pages project (surfaces as a 500 from
+      # every request, since functions/_lib/site.ts's getSite() throws on a
+      # missing SITE).
       - name: Deploy to Cloudflare Pages
-        run: npx wrangler pages deploy dist --project-name=${{ matrix.pages_project }} --branch=main
+        run: |
+          cp wrangler.${{ matrix.site }}.jsonc wrangler.jsonc
+          npx wrangler pages deploy dist --project-name=${{ matrix.pages_project }} --branch=main --commit-dirty=true
 
       # Refresh the committed snapshot the routine reads
       # (status/<site>/db-snapshot.json) from the same data the build just

@@ -66,8 +66,13 @@ jobs:
       - name: Build with Astro
         run: npx astro build
 
+      # See the matching comment in deploy.yml — `wrangler pages deploy` only
+      # reads a literal ./wrangler.jsonc, no --config flag, so the per-site
+      # config has to be copied into place under that name right before this.
       - name: Deploy preview to Cloudflare Pages
-        run: npx wrangler pages deploy dist --project-name=${{ matrix.pages_project }} --branch=dev
+        run: |
+          cp wrangler.${{ matrix.site }}.jsonc wrangler.jsonc
+          npx wrangler pages deploy dist --project-name=${{ matrix.pages_project }} --branch=dev --commit-dirty=true
 
   deploy-landing:
     runs-on: ubuntu-latest
