@@ -1,39 +1,16 @@
-/* Palette is intentionally NOT hardcoded here — every color below is a CSS
-   custom property whose value is injected per-site by BaseLayout.astro from
-   sites/<slug>.json's `theme` block (see src/site.ts). This file defines the
-   default fallback values (Polokwane's palette) only so the page still looks
-   reasonable if that injection is ever skipped; the real value in use always
-   comes from BaseLayout's inline :root override. */
+/* Every color is a CSS custom property injected per-site by
+   BaseLayout.astro's inline <style set:html={themeCss}> from
+   sites/<slug>.json's `theme` block (see src/site.ts) — deliberately NOT
+   given any fallback values here. An earlier version of this file *did*
+   hardcode Polokwane's palette as a "just in case" fallback, which was a
+   real bug: that block happened to be emitted after the dynamic one in
+   the built HTML, so by normal CSS cascade order it silently overrode
+   every other site's real colors with Polokwane's, all the way through
+   to Pretoria/Cape Town's actual deployments. The dynamic injection always
+   runs (site.ts throws if SITE isn't set), so there's nothing for a
+   fallback to protect against — only genuinely shared, non-per-site
+   values belong in this rule. */
 :root {
-  --bg: #ffffff;
-  --bg-subtle: #eef7ee;
-  --bg-card: #ffffff;
-  --border: #d9e8d9;
-  --text: #101a33;
-  --text-muted: #5b6b85;
-
-  --accent: #4d9e2f;
-  --accent-rgb: 77, 158, 47;
-  --accent-hover: #3d7d25;
-  --accent-contrast: #ffffff;
-
-  /* Fixed brand tone regardless of light/dark mode — the persistent nav bar
-     and the logo's city-name text use this, not the page palette. */
-  --navy: #0f2e1a;
-  --navy-rgb: 15, 46, 26;
-
-  --gradient: linear-gradient(135deg, #6cbf3d 0%, var(--accent) 100%);
-  --danger: #c23838;
-  --warning: #9c5f00;
-
-  /* Brand row (logo + tagline) can be a dark bar with light text (Polokwane,
-     Cape Town) or a light bar with navy text (Pretoria) — both are just
-     different values of these four tokens, not different markup. */
-  --brand-row-bg: var(--navy);
-  --brand-row-fg: #ffffff;
-  --brand-row-accent: #8fdb63;
-  --brand-row-muted: rgba(255, 255, 255, 0.7);
-
   --radius: 10px;
   --radius-lg: 16px;
   --shadow: 0 1px 2px rgba(16, 26, 51, 0.05), 0 4px 12px rgba(16, 26, 51, 0.07);
