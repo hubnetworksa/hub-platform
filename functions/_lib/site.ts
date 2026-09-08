@@ -27,5 +27,12 @@ export function getSite(slug: string | undefined): Site {
 }
 
 export function allowedHostsFor(site: Site): string[] {
-  return [site.domain, `www.${site.domain}`, site.pagesDevHost];
+  // Includes the "dev." branch-preview alias (dev.<project>.pages.dev, used
+  // by the hosted dev environment — see deploy-dev.yml) alongside the bare
+  // pagesDevHost (the project's default/production preview alias) — without
+  // this, browsing the dev preview directly sends a Referer that matches
+  // neither the real domain nor the bare pages.dev host, so this hotlink
+  // guard 403s every logo-icon.png/hero-skyline.jpg/media request (visible
+  // as a missing logo image, broken banner, etc. only on the dev preview).
+  return [site.domain, `www.${site.domain}`, site.pagesDevHost, `dev.${site.pagesDevHost}`];
 }
