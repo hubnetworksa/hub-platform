@@ -12,19 +12,15 @@
     "SITE": "capetown"
   },
 
-  // database_id is filled in after `wrangler d1 create thecapetownhub-db` —
-  // see SETUP.md.
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "thecapetownhub-db",
-      "database_id": "REPLACE_AFTER_wrangler_d1_create",
+      "database_id": "12cf759f-20f6-41a1-a1a7-9ea6748c4b06",
       "migrations_dir": "db/migrations/capetown"
     }
   ],
 
-  // Filled in after `wrangler r2 bucket create thecapetownhub-media` — needs
-  // R2 write permission on the wrangler auth token first. See SETUP.md.
   "r2_buckets": [
     {
       "binding": "MEDIA",
