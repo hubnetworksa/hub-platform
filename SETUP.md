@@ -56,7 +56,40 @@ Repeat for `polokwane` (done already if migrating from the old repo),
    instead of production — this is what makes a `dev` branch push a safe
    place to try schema or data changes before they can touch production.
 
-## 3. The research routine (Claude account) — per site
+## 3. Hosted dev environment (login-gated)
+
+Pushing to the `dev` branch (`.github/workflows/deploy-dev.yml`) rebuilds
+all three sites read-only from their live data and deploys each as a
+Cloudflare Pages **preview** (via `wrangler pages deploy --branch=dev`),
+plus a tiny static landing page (`dev-landing/`) that links them together —
+this is the "one shared hosted dev environment" the whole team browses
+instead of running things locally. No migrations, no routine-SQL apply, no
+D1 writes happen on this branch — it's a safe read-only mirror of
+whatever's on the `dev` branch's code.
+
+1. Create a fourth Cloudflare Pages project named **`hub-platform-dev`**
+   (dashboard, or let the first `npx wrangler pages deploy dev-landing
+   --project-name=hub-platform-dev` create it) — this one has no D1/R2
+   bindings and no build step; it just serves the static `dev-landing/index.html`.
+2. Push a `dev` branch once to trigger `deploy-dev.yml` and get real URLs
+   for all four: `dev.polokwanehub.pages.dev`, `dev.pretoriahub.pages.dev`,
+   `dev.thecapetownhub.pages.dev`, and `hub-platform-dev.pages.dev`.
+3. In the Cloudflare **Zero Trust** dashboard (Access → Applications), add
+   a **Self-hosted** application covering all four of those hostnames
+   (Access supports multiple hostnames per application) with whatever
+   login method you want people to use — a one-time PIN emailed to an
+   allow-list of addresses is the simplest to set up, Google/GitHub SSO if
+   you'd rather not manage an allow-list by hand. This is what actually
+   shows the login page — nothing in this repo implements auth itself.
+   Logging in once covers all four hostnames (same Zero Trust team), so it
+   reads as one environment even though it's four small deployments under
+   the hood.
+4. Day to day: push your branch to `dev` (or merge a feature branch into
+   it), open `hub-platform-dev.pages.dev`, log in once, click through to
+   whichever city you want to check, and once you're happy merge `dev` →
+   `main` to run the real `deploy.yml` against production.
+
+## 4. The research routine (Claude account) — per site
 
 Each site has its own runbook (`ROUTINE.polokwane.md`, `ROUTINE.pretoria.md`
 — `ROUTINE.capetown.md` is a placeholder until Cape Town has real suburb
@@ -68,7 +101,7 @@ and `status/<slug>/routine-state.json` each run — make sure whichever agent
 you configure is told which site it owns and only touches that site's
 paths.
 
-## 4. Email
+## 5. Email
 
 No SMTP, no Pages secret, no credentials at all — every site uses the same
 client-side `mailto:` approach (see each `wrangler.<slug>.jsonc`'s
@@ -86,7 +119,7 @@ this deploys, delete the `GMAIL_APP_PASSWORD` secret from the old
   `reviewUrl`, so the admin still gets a link straight to
   `functions/verify-listing.ts`'s approve/reject page.
 
-## 5. Google / AdSense — per site
+## 6. Google / AdSense — per site
 
 Each site's `sites/<slug>.json` carries its own `googleSiteVerification`
 and `adsensePublisherId` (`null` renders neither tag/script — that's
@@ -99,7 +132,7 @@ Cape Town's state until it has its own). To onboard a site:
   instead, like Polokwane does, and leave this `null`) and set
   `googleSiteVerification`.
 
-## 6. Cape Town — content still to do
+## 7. Cape Town — content still to do
 
 Cape Town's `features.tourism` is `false` and its
 `src/site-content/capetown/areaGroups.ts` is empty — the site builds fine
@@ -113,9 +146,9 @@ like this (empty states everywhere) but isn't really usable until:
   borrowed from Pretoria, see that folder's `README.md`) with real Cape
   Town branding.
 - Business data itself comes from the same hourly-research-routine
-  mechanism as the other two sites, once step 3 above is set up for it.
+  mechanism as the other two sites, once step 4 above is set up for it.
 
-## 7. Local dev
+## 8. Local dev
 
 ```
 npm install

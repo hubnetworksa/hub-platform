@@ -62,9 +62,14 @@ error out immediately with a clear message if it isn't.
 ## Dev → all-three-production pipeline
 
 1. Develop locally with `SITE=<slug> npm run dev`.
-2. Push a branch other than `main` — each of the three Cloudflare Pages
-   projects auto-builds a **preview URL** for it (native Cloudflare Pages
-   branch previews, no extra setup) so you can check a real deployed build
-   before it goes live anywhere.
-3. Merge to `main` — the GitHub Actions matrix workflow builds and deploys
-   all three sites to their production domains in one push.
+2. Push to `dev` — `.github/workflows/deploy-dev.yml` rebuilds all three
+   sites read-only and deploys each as a Cloudflare Pages preview, plus a
+   small landing page (`dev-landing/`) linking them together as one hosted
+   dev environment. Cloudflare Access sits in front of all of it (one
+   login, configured once in the Cloudflare dashboard — see `SETUP.md`
+   "Hosted dev environment"), so this is a real hosted URL you (or anyone
+   you grant access to) can check a build on, not something running only
+   on your own machine.
+3. Merge `dev` → `main` — the GitHub Actions matrix workflow
+   (`deploy.yml`) builds and deploys all three sites to their production
+   domains in one push.

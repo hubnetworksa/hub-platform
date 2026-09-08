@@ -1,0 +1,81 @@
+name: Deploy hosted dev preview
+
+# Pushing to `dev` rebuilds all three sites as Cloudflare Pages *preview*
+# deployments (wrangler's --branch=dev gives each its own
+# dev.<project>.pages.dev URL) plus the small landing page that links them
+# together — see dev-landing/. Cloudflare Access sits in front of all four
+# hostnames (configured once in the Cloudflare dashboard, not here — see
+# SETUP.md "Hosted dev environment"), so this is the "hosted dev with a
+# login page" environment: merge dev -> main once you're happy with it here,
+# which runs deploy.yml against the real production domains.
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-dev
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - site: polokwane
+            pages_project: polokwanehub
+          - site: pretoria
+            pages_project: pretoriahub
+          - site: capetown
+            pages_project: thecapetownhub
+    env:
+      SITE: ${{ matrix.site }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Read-only: pulls this site's current *published* data for preview.
+      # No migrations, no routine-SQL apply, no snapshot commits here — this
+      # branch is for reviewing code/content changes, not for mutating D1.
+      - name: Fetch D1 data
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npm run fetch-data
+
+      - name: Select site assets
+        run: npm run select-assets
+
+      - name: Build with Astro
+        run: npx astro build
+
+      - name: Deploy preview to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler pages deploy dist --project-name=${{ matrix.pages_project }} --branch=dev
+
+  deploy-landing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Deploy landing page to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler pages deploy dev-landing --project-name=hub-platform-dev --branch=dev
