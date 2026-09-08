@@ -4,9 +4,36 @@ This repo builds three sites from one codebase — PolokwaneHub, PretoriaHub,
 and TheCapeTownHub — each its own Cloudflare Pages project, D1 database, and
 R2 bucket, selected at build/dev/request time by the `SITE` env var (see
 `README.md` for how that wiring works). Polokwane and Pretoria already have
-live infrastructure (migrated from their old standalone repos); Cape Town's
-still needs to be created from scratch. Steps below apply per-site — repeat
-for each one you're setting up.
+live infrastructure (migrated from their old standalone repos, which may
+have been on two different personal Cloudflare accounts); Cape Town's still
+needs to be created from scratch. Steps below apply per-site — repeat for
+each one you're setting up.
+
+**One Cloudflare account for the whole network** (decided 2026-09-08): all
+three sites' D1/R2/Pages live under a single Cloudflare account going
+forward — simpler to manage (one dashboard, one bill, one Zero Trust team
+for the hosted dev login) and it's what `.github/workflows/deploy.yml` /
+`deploy-dev.yml` assume: **one** shared `CLOUDFLARE_API_TOKEN` +
+`CLOUDFLARE_ACCOUNT_ID` secret pair authenticates every matrix leg. If
+Polokwane and/or Pretoria are currently sitting on a *different* Cloudflare
+account than the one you want to standardize on, migrate each one before
+continuing:
+- **D1**: `npx wrangler d1 export <old-db-name> --remote --output data.sql`
+  from the old account, then `npx wrangler d1 create <site>-db` and
+  `npx wrangler d1 execute <site>-db --remote --file=data.sql` on the target
+  account (needs `wrangler login` re-run against each account, or two API
+  tokens, one per account, used one at a time).
+- **R2**: `rclone` (configured with both accounts' S3-compatible R2
+  credentials) or `npx wrangler r2 object get/put` per object is the
+  practical option — there's no single `wrangler r2 bucket export` command.
+- **Pages + domain**: create the new Pages project on the target account
+  (step 2 below), get it working end-to-end, *then* move the custom domain
+  over (Cloudflare dashboard → the zone → DNS, or transfer the zone itself
+  if it's registered under the old account) — keep the old Pages project
+  around, undeployed, until DNS has actually cut over and you've confirmed
+  the new one is serving correctly.
+
+If everything's already on one account, skip straight to step 1.
 
 ## 1. GitHub
 
@@ -14,9 +41,8 @@ for each one you're setting up.
    settled on), then this repo inside it, as **private**.
 2. Push this codebase's `main` branch to it.
 3. Repo → Settings → Secrets and variables → Actions, add:
-   - `CLOUDFLARE_API_TOKEN` — one token with D1 edit, R2 edit, and Pages
-     edit permission, covering all three sites (or scope separate tokens
-     per site if you'd rather not share one credential across them).
+   - `CLOUDFLARE_API_TOKEN` — one token, scoped to the single Cloudflare
+     account above, with D1 edit, R2 edit, and Pages edit permission.
    - `CLOUDFLARE_ACCOUNT_ID`
 4. Pushing to `main` runs `.github/workflows/deploy.yml` — a matrix job,
    one leg per site, each applying that site's own D1 migrations, applying
@@ -26,8 +52,8 @@ for each one you're setting up.
 
 ## 2. Cloudflare — per site
 
-Repeat for `polokwane` (done already if migrating from the old repo),
-`pretoria` (same), and `capetown` (new):
+All on the one account from above. Repeat for `polokwane` (done already if
+migrating from the old repo), `pretoria` (same), and `capetown` (new):
 
 1. `npx wrangler login` if you haven't already.
 2. Create the D1 database: `npx wrangler d1 create <site>-db` (e.g.
