@@ -1,10 +1,14 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { generateUniqueSlug, insertApprovedBusiness } from '../../src/lib/business-submission';
 import { getSite } from '../_lib/site';
+import { triggerRebuild } from '../_lib/deploy-hook';
+import { sendEmail } from '../_lib/send-email';
 
 interface Env {
   DB: D1Database;
   SITE: string;
+  DEPLOY_HOOK_URL?: string;
+  RESEND_API_KEY?: string;
 }
 
 interface PendingRow {
@@ -19,6 +23,12 @@ interface PendingRow {
   description: string;
 }
 
+// This is the ADMIN's approve/reject step (reached from the emailed review
+// link — see functions/verify-listing.ts). Approving does NOT publish
+// directly — it hands off to the business owner for a second confirmation
+// (see functions/owner-confirm-listing.ts + functions/api/owner-confirm-listing.ts),
+// unless no owner email was given at all, in which case there's no one to
+// confirm with and it publishes immediately as before.
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const site = getSite(context.env.SITE);
   const form = await context.request.formData();
@@ -32,41 +42,92 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .first<PendingRow>();
 
   if (!row) {
-    return html(site, `<h1>Already handled</h1><p>This submission was already approved or rejected — no action taken.</p>`);
+    return html(site, `<h1>Already handled</h1><p>This submission was already actioned — no action taken.</p>`);
   }
 
-  // Delete first — makes double-submits (double-click, resubmit) a no-op
-  // rather than a double-publish, regardless of which branch runs below.
-  await db.prepare('DELETE FROM pending_submissions WHERE id = ?').bind(row.id).run();
-
   if (action !== 'approve') {
+    await db.prepare('DELETE FROM pending_submissions WHERE id = ?').bind(row.id).run();
     return html(site, `<h1>Rejected</h1><p>"${escapeHtml(row.name)}" was not published.</p>`);
   }
 
-  const category = await db.prepare('SELECT id FROM categories WHERE slug = ?').bind(row.category_slug).first<{ id: number }>();
-  const suburb = await db.prepare('SELECT id FROM suburbs WHERE slug = ?').bind(row.suburb_slug).first<{ id: number }>();
-  if (!category || !suburb) {
-    return html(site, `<h1>Couldn't publish</h1><p>The category or suburb on this submission no longer exists.</p>`);
+  // No email on file — there's no owner to confirm with, so publish
+  // immediately rather than block on a step that can never happen.
+  if (!row.email) {
+    await db.prepare('DELETE FROM pending_submissions WHERE id = ?').bind(row.id).run();
+
+    const category = await db.prepare('SELECT id FROM categories WHERE slug = ?').bind(row.category_slug).first<{ id: number }>();
+    const suburb = await db.prepare('SELECT id FROM suburbs WHERE slug = ?').bind(row.suburb_slug).first<{ id: number }>();
+    if (!category || !suburb) {
+      return html(site, `<h1>Couldn't publish</h1><p>The category or suburb on this submission no longer exists.</p>`);
+    }
+    const slug = await generateUniqueSlug(db, row.name, row.suburb_slug);
+    if (!slug) {
+      return html(site, `<h1>Couldn't publish</h1><p>Ran out of unique slug attempts for "${escapeHtml(row.name)}".</p>`);
+    }
+    await insertApprovedBusiness(db, {
+      slug,
+      name: row.name,
+      suburbId: suburb.id,
+      categoryId: category.id,
+      address: row.address,
+      phone: row.phone,
+      website: row.website,
+      email: row.email,
+      description: row.description,
+    });
+    await triggerRebuild(context.env.DEPLOY_HOOK_URL);
+
+    return html(site, `<h1>Published!</h1><p>No contact email was given on this submission, so it published immediately: <a href="https://${site.domain}/business/${slug}/">view listing</a></p>`);
   }
 
-  const slug = await generateUniqueSlug(db, row.name, row.suburb_slug);
-  if (!slug) {
-    return html(site, `<h1>Couldn't publish</h1><p>Ran out of unique slug attempts for "${escapeHtml(row.name)}".</p>`);
-  }
+  // Has an email — hand off to the owner for confirmation instead of
+  // publishing directly. Row stays in pending_submissions (not deleted)
+  // until the owner confirms or disputes.
+  const ownerToken = crypto.randomUUID();
+  await db
+    .prepare(`UPDATE pending_submissions SET owner_confirm_token = ?, admin_approved_at = datetime('now') WHERE id = ?`)
+    .bind(ownerToken, row.id)
+    .run();
 
-  await insertApprovedBusiness(db, {
-    slug,
-    name: row.name,
-    suburbId: suburb.id,
-    categoryId: category.id,
-    address: row.address,
-    phone: row.phone,
-    website: row.website,
-    email: row.email,
-    description: row.description,
+  const ownerConfirmUrl = `https://${site.domain}/owner-confirm-listing?token=${ownerToken}`;
+  const detailLines = [
+    `Name: ${row.name}`,
+    row.address && `Address: ${row.address}`,
+    row.phone && `Phone: ${row.phone}`,
+    row.website && `Website: ${row.website}`,
+    `Description: ${row.description}`,
+  ].filter(Boolean);
+  const bodyText = [
+    `Hi,`,
+    ``,
+    `Someone listed "${row.name}" on ${site.siteName} — before it goes live, please confirm the details below are correct:`,
+    ``,
+    ...detailLines,
+    ``,
+    `Confirm or dispute here: ${ownerConfirmUrl}`,
+  ].join('\n');
+  const subject = `Please confirm your ${site.siteName} listing: ${row.name}`;
+
+  const emailResult = await sendEmail(context.env, {
+    from: `${site.siteName} <${site.contactEmail}>`,
+    to: row.email,
+    subject,
+    text: bodyText,
   });
 
-  return html(site, `<h1>Published!</h1><p>"${escapeHtml(row.name)}" is now live: <a href="https://${site.domain}/business/${slug}/">view listing</a></p>`);
+  if (emailResult.sent) {
+    return html(site, `<h1>Approved — awaiting owner confirmation</h1><p>"${escapeHtml(row.name)}" won't publish yet. An email has been sent to <strong>${escapeHtml(row.email)}</strong> asking them to confirm the details before it goes live.</p>`);
+  }
+
+  // No RESEND_API_KEY configured for this site yet — fall back to opening
+  // the admin's own mail client instead of hard-failing.
+  const mailtoOwner = `mailto:${encodeURIComponent(row.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+  return html(site, `
+    <h1>Approved — awaiting owner confirmation</h1>
+    <p>"${escapeHtml(row.name)}" won't publish yet. An email is opening now, pre-filled to <strong>${escapeHtml(row.email)}</strong>, asking them to confirm the details before it goes live.</p>
+    <p>If it didn't open, <a href="${mailtoOwner}">click here to send it</a>.</p>
+    <script>window.location.href = ${JSON.stringify(mailtoOwner)};</script>
+  `);
 };
 
 function escapeHtml(s: string): string {

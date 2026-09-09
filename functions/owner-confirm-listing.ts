@@ -8,7 +8,7 @@ interface Env {
 }
 
 interface PendingRow {
-  token: string;
+  owner_confirm_token: string;
   name: string;
   category_slug: string;
   suburb_slug: string;
@@ -19,31 +19,30 @@ interface PendingRow {
   description: string;
 }
 
-// GET-only preview page reached from the emailed link. Deliberately does
-// NOT take action on the mere GET — email clients/providers (Gmail, Outlook
-// Safe Links, etc.) prefetch/scan links in emails, which would silently
-// "click" a GET-triggers-the-action link before a human ever saw it. The
-// actual approve/reject happens via the POST buttons on this page instead.
+// GET-only preview page reached from the "please confirm your listing"
+// email sent once an admin approves a submission (see
+// functions/api/confirm-listing.ts). Same GET-does-nothing pattern as
+// functions/verify-listing.ts, for the same reason (email prefetchers).
+// The actual publish/dispute happens via the POST buttons below, handled
+// by functions/api/owner-confirm-listing.ts.
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const site = getSite(context.env.SITE);
   const token = new URL(context.request.url).searchParams.get('token') ?? '';
   const row = await context.env.DB.prepare(
-    'SELECT token, name, category_slug, suburb_slug, address, phone, email, website, description FROM pending_submissions WHERE token = ?'
+    `SELECT owner_confirm_token, name, category_slug, suburb_slug, address, phone, email, website, description
+     FROM pending_submissions WHERE owner_confirm_token = ?`
   )
     .bind(token)
     .first<PendingRow>();
 
   if (!row) {
-    return html(site, `<h1>Nothing to review</h1><p>This submission has already been handled, or the link is invalid.</p>`);
+    return html(site, `<h1>Nothing to confirm</h1><p>This listing has already been published or disputed, or the link is invalid.</p>`);
   }
 
   const rowsHtml = [
     ['Name', row.name],
-    ['Category', row.category_slug],
-    ['Suburb', row.suburb_slug],
     ['Address', row.address],
     ['Phone', row.phone],
-    ['Email', row.email],
     ['Website', row.website],
   ]
     .filter(([, v]) => v)
@@ -51,19 +50,19 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .join('');
 
   return html(site, `
-    <h1>New business listing submitted</h1>
+    <h1>Confirm your ${site.siteName} listing</h1>
+    <p>Please check the details below before this goes live on ${site.siteName}.</p>
     <table class="data">${rowsHtml}</table>
     <p><strong>Description</strong><br>${escapeHtml(row.description)}</p>
-    <form method="POST" action="/api/confirm-listing" style="display:inline">
+    <form method="POST" action="/api/owner-confirm-listing" style="display:inline">
       <input type="hidden" name="token" value="${escapeHtml(token)}" />
-      <input type="hidden" name="action" value="approve" />
-      <button type="submit" class="approve">✅ Approve</button>
+      <input type="hidden" name="action" value="confirm" />
+      <button type="submit" class="approve">✅ Yes, this is correct — publish it</button>
     </form>
-    <p style="color:#5b6b85;font-size:0.85rem;">${row.email ? 'Approving emails the owner to confirm the details — it only actually publishes once they do.' : 'No email on file, so approving publishes immediately (no owner to confirm with).'}</p>
-    <form method="POST" action="/api/confirm-listing" style="display:inline">
+    <form method="POST" action="/api/owner-confirm-listing" style="display:inline">
       <input type="hidden" name="token" value="${escapeHtml(token)}" />
-      <input type="hidden" name="action" value="reject" />
-      <button type="submit" class="reject">❌ Reject</button>
+      <input type="hidden" name="action" value="dispute" />
+      <button type="submit" class="reject">❌ This isn't right</button>
     </form>
   `);
 };
@@ -71,7 +70,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 function html(site: { siteName: string }, body: string): Response {
   return new Response(
     `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Review listing — ${site.siteName}</title>
+    <title>Confirm your listing — ${site.siteName}</title>
     <style>
       body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;max-width:560px;margin:2rem auto;padding:0 1rem;color:#101a33}
       table.data{border-collapse:collapse;width:100%;margin:1rem 0}
