@@ -3,6 +3,7 @@ import { generateUniqueSlug, insertApprovedBusiness } from '../../src/lib/busine
 import { getSite } from '../_lib/site';
 import { triggerRebuild } from '../_lib/deploy-hook';
 import { sendEmail } from '../_lib/send-email';
+import { ownerConfirmEmailHtml } from '../_lib/email-template';
 
 interface Env {
   DB: D1Database;
@@ -108,11 +109,31 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   ].join('\n');
   const subject = `Please confirm your ${site.siteName} listing: ${row.name}`;
 
+  const ownerHtml = ownerConfirmEmailHtml(site, {
+    businessName: row.name,
+    address: row.address,
+    phone: row.phone,
+    website: row.website,
+    description: row.description,
+    confirmUrl: ownerConfirmUrl,
+  });
+
   const emailResult = await sendEmail(context.env, {
     from: `${site.siteName} <${site.contactEmail}>`,
     to: row.email,
     subject,
     text: bodyText,
+    html: ownerHtml,
+  });
+
+  // TEMP: a separate copy while trusting the flow on the first few real
+  // approvals — remove once confirmed reliable (user request, 2026-09-09).
+  await sendEmail(context.env, {
+    from: `${site.siteName} <${site.contactEmail}>`,
+    to: 'ethanmglindeque@gmail.com',
+    subject: `[monitor copy] ${subject}`,
+    text: bodyText,
+    html: ownerHtml,
   });
 
   if (emailResult.sent) {

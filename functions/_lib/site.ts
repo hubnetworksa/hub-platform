@@ -5,13 +5,28 @@ import capetown from '../../sites/capetown.json';
 // Duplicated shape from src/site.ts rather than imported — Pages Functions
 // are bundled separately from the Astro app (no shared Vite graph), and this
 // file only needs the fields functions actually read.
+export interface SiteTheme {
+  bg: string;
+  bgSubtle: string;
+  bgCard: string;
+  border: string;
+  text: string;
+  textMuted: string;
+  accent: string;
+  accentContrast: string;
+  navy: string;
+}
+
 export interface Site {
   slug: string;
   siteName: string;
+  cityLabel: string;
   domain: string;
   pagesDevHost: string;
   r2Bucket: string;
   contactEmail: string;
+  bannerImage: string;
+  theme: SiteTheme;
 }
 
 const SITES: Record<string, Site> = { polokwane, pretoria, capetown };

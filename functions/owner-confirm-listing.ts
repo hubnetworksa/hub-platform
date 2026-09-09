@@ -59,9 +59,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       <input type="hidden" name="action" value="confirm" />
       <button type="submit" class="approve">✅ Yes, this is correct — publish it</button>
     </form>
-    <form method="POST" action="/api/owner-confirm-listing" style="display:inline">
+    <form method="POST" action="/api/owner-confirm-listing">
       <input type="hidden" name="token" value="${escapeHtml(token)}" />
       <input type="hidden" name="action" value="dispute" />
+      <label for="reason" style="display:block;margin-top:1rem;font-size:0.9rem;color:#5b6b85;">What's wrong? (optional, helps us fix it)</label>
+      <textarea id="reason" name="reason" rows="3" style="width:100%;box-sizing:border-box;font:inherit;padding:0.5rem;border:1px solid #dce6f5;border-radius:6px;margin-top:0.3rem;"></textarea>
       <button type="submit" class="reject">❌ This isn't right</button>
     </form>
   `);

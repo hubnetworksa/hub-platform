@@ -11,6 +11,9 @@ export interface SendEmailOptions {
   to: string;
   subject: string;
   text: string;
+  /** Optional rich version — Resend sends this when present, with `text`
+   *  kept as the fallback for clients that don't render HTML. */
+  html?: string;
 }
 
 export async function sendEmail(
@@ -30,6 +33,7 @@ export async function sendEmail(
       to: [opts.to],
       subject: opts.subject,
       text: opts.text,
+      ...(opts.html ? { html: opts.html } : {}),
     }),
   });
 

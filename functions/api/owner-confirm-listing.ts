@@ -1,12 +1,14 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { generateUniqueSlug, insertApprovedBusiness } from '../../src/lib/business-submission';
-import { getSite } from '../_lib/site';
+import { getSite, type Site } from '../_lib/site';
 import { triggerRebuild } from '../_lib/deploy-hook';
+import { sendEmail } from '../_lib/send-email';
 
 interface Env {
   DB: D1Database;
   SITE: string;
   DEPLOY_HOOK_URL?: string;
+  RESEND_API_KEY?: string;
 }
 
 interface PendingRow {
@@ -29,6 +31,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const form = await context.request.formData();
   const token = String(form.get('token') ?? '');
   const action = String(form.get('action') ?? '');
+  const reason = String(form.get('reason') ?? '').trim();
   const db = context.env.DB;
 
   const row = await db
@@ -47,6 +50,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   await db.prepare('DELETE FROM pending_submissions WHERE id = ?').bind(row.id).run();
 
   if (action !== 'confirm') {
+    await notifyAdmin(context.env, site, {
+      outcome: 'disputed',
+      businessName: row.name,
+      detail: reason ? `Reason given: ${reason}` : 'No reason given.',
+    });
     return html(site, `<h1>Thanks for letting us know</h1><p>"${escapeHtml(row.name)}" won't be published. If you'd like to submit corrected details, or have any questions, email us at <a href="mailto:${site.contactEmail}">${site.contactEmail}</a>.</p>`);
   }
 
@@ -73,9 +81,33 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     description: row.description,
   });
   await triggerRebuild(context.env.DEPLOY_HOOK_URL);
+  await notifyAdmin(context.env, site, {
+    outcome: 'confirmed',
+    businessName: row.name,
+    detail: `Now live: https://${site.domain}/business/${slug}/`,
+  });
 
   return html(site, `<h1>Published!</h1><p>Thanks for confirming — "${escapeHtml(row.name)}" is going live now: <a href="https://${site.domain}/business/${slug}/">view listing</a>. It may take a few minutes to appear while the site rebuilds.</p>`);
 };
+
+// Best-effort notification back to the admin once the owner has acted —
+// failures here should never block the response shown to the owner.
+async function notifyAdmin(
+  env: { RESEND_API_KEY?: string },
+  site: Site,
+  data: { outcome: 'confirmed' | 'disputed'; businessName: string; detail: string }
+): Promise<void> {
+  const icon = data.outcome === 'confirmed' ? '✅' : '❌';
+  const subject = `${icon} ${data.businessName} — owner ${data.outcome}`;
+  const text = `"${data.businessName}" was ${data.outcome} by the business owner.\n\n${data.detail}`;
+  const from = `${site.siteName} <${site.contactEmail}>`;
+
+  await sendEmail(env, { from, to: site.contactEmail, subject, text });
+
+  // TEMP: a separate copy while trusting the flow on the first few real
+  // approvals — remove once confirmed reliable (user request, 2026-09-09).
+  await sendEmail(env, { from, to: 'ethanmglindeque@gmail.com', subject: `[monitor copy] ${subject}`, text });
+}
 
 function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
