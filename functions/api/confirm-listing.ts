@@ -8,7 +8,7 @@ import { ownerConfirmEmailHtml } from '../_lib/email-template';
 interface Env {
   DB: D1Database;
   SITE: string;
-  DEPLOY_HOOK_URL?: string;
+  GITHUB_DISPATCH_TOKEN?: string;
   RESEND_API_KEY?: string;
 }
 
@@ -76,7 +76,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       email: row.email,
       description: row.description,
     });
-    await triggerRebuild(context.env.DEPLOY_HOOK_URL);
+    await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
 
     return html(site, `<h1>Published!</h1><p>No contact email was given on this submission, so it published immediately: <a href="https://${site.domain}/business/${slug}/">view listing</a></p>`);
   }

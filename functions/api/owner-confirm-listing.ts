@@ -7,7 +7,7 @@ import { sendEmail } from '../_lib/send-email';
 interface Env {
   DB: D1Database;
   SITE: string;
-  DEPLOY_HOOK_URL?: string;
+  GITHUB_DISPATCH_TOKEN?: string;
   RESEND_API_KEY?: string;
 }
 
@@ -80,7 +80,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     email: row.email,
     description: row.description,
   });
-  await triggerRebuild(context.env.DEPLOY_HOOK_URL);
+  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
   await notifyAdmin(context.env, site, {
     outcome: 'confirmed',
     businessName: row.name,
