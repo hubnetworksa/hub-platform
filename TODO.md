@@ -25,12 +25,13 @@ Polokwane and Cape Town are still on `.pages.dev` only.
       and `GOOGLE_OAUTH_CLIENT_SECRET` are set on the `pretoriahub` Pages
       project (confirmed via `wrangler pages secret list`, 2026-09-10).
       Same still needed for Polokwane/Cape Town once their domains are live.
-- [ ] **Verify Google sign-in actually works end-to-end on `pretoriahub.com`**
-      — confirm the Google Cloud Console OAuth Client's redirect URI is
-      exactly `https://pretoriahub.com/api/auth/google/callback` and it's
-      under the right Google account/project, then do a real sign-in
-      through the browser. The secrets being set doesn't by itself prove
-      the Console-side config matches.
+- [x] **Verify Google sign-in works end-to-end on `pretoriahub.com`** —
+      confirmed working 2026-09-10, after rotating the Client ID/secret
+      pair and forcing a fresh Pages deployment (Cloudflare Pages only
+      applies new secrets to the *next* deployment, not the one already
+      live — direct `wrangler pages deploy` was used once to force that,
+      then the commit was pushed to `main` so the GitHub Actions pipeline
+      stays the source of truth going forward).
 - [ ] **Email Routing** on the new `pretoriahub.com` zone (`hubnetworksa`
       account) — forward `hello@pretoriahub.com` to a real inbox. Not
       confirmed set up yet on the new zone (the old zone under the
