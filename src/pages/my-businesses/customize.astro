@@ -3,62 +3,68 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="Customise business page" description="Preview and customise your business page.">
-  <section class="container" style="padding-top: 3rem; padding-bottom: 4rem; max-width: 960px;">
+  <section class="container" style="padding-top: 3rem; padding-bottom: 4rem; max-width: 1180px;">
     <div id="loading">Loading…</div>
 
     <div id="content" hidden>
       <a id="back-link" href="#" class="back-link">← Back to editing</a>
       <h1>Customise <span id="business-name-hl"></span></h1>
 
-      <div class="preview-panel">
-        <div class="preview-head">
-          <span>Live preview — this is your real business page</span>
-          <button type="button" id="refresh-preview" class="btn-outline btn-sm">↻ Refresh</button>
+      <div class="workspace">
+        <div class="controls-col">
+          <div id="upsell-photos" class="upsell" hidden>
+            <p><strong>Photos</strong> unlock at Verified Plus (R99/mo).</p>
+            <a href="#" class="upsell-link">Upgrade to add photos →</a>
+          </div>
+          <section id="photos-section" hidden>
+            <h2>Photos</h2>
+            <p id="photos-cap-label" class="muted"></p>
+            <div id="photo-grid" class="photo-grid"></div>
+            <form id="photo-upload-form">
+              <input type="file" name="photo" accept="image/*" id="photo-input" />
+              <button type="submit" class="btn btn-outline btn-sm">Upload photo</button>
+            </form>
+            <p id="photo-status" role="status" class="muted"></p>
+          </section>
+
+          <div id="upsell-template" class="upsell" hidden>
+            <p><strong>Page templates</strong> unlock at Featured (R199/mo).</p>
+            <a href="#" class="upsell-link">Upgrade to choose a template →</a>
+          </div>
+          <section id="template-picker" hidden>
+            <h2>Page template</h2>
+            <div class="option-grid">
+              <button type="button" class="tpl-btn" data-tpl="classic"><b>Classic</b><span>Clean &amp; simple</span></button>
+              <button type="button" class="tpl-btn" data-tpl="gallery"><b>Gallery-Forward</b><span>Photo leads the page</span></button>
+              <button type="button" class="tpl-btn" data-tpl="services"><b>Services Grid</b><span>Structured service cards</span></button>
+            </div>
+          </section>
+
+          <div id="upsell-blocks" class="upsell" hidden>
+            <p><strong>Custom sections</strong> (Our Story, Specials, Team, Gallery) unlock at Premium (R299/mo).</p>
+            <a href="#" class="upsell-link">Upgrade to Premium →</a>
+          </div>
+          <section id="block-editor" hidden>
+            <h2>Extra sections</h2>
+            <div id="blocks-list"></div>
+            <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
+          </section>
+
+          <button type="button" id="save-design-btn" class="btn btn-primary">Save design</button>
+          <p id="design-status" role="status" class="muted"></p>
         </div>
-        <iframe id="preview-frame" title="Business page preview" loading="lazy"></iframe>
-        <p class="preview-note">Changes below appear here after saving and the site's next rebuild — not instantly.</p>
-      </div>
 
-      <div id="upsell-photos" class="upsell" hidden>
-        <p><strong>Photos</strong> unlock at Verified Plus (R99/mo).</p>
-        <a href="#" class="upsell-link">Upgrade to add photos →</a>
-      </div>
-      <section id="photos-section" hidden>
-        <h2>Photos</h2>
-        <p id="photos-cap-label" class="muted"></p>
-        <div id="photo-grid" class="photo-grid"></div>
-        <form id="photo-upload-form">
-          <input type="file" name="photo" accept="image/*" id="photo-input" />
-          <button type="submit" class="btn btn-outline btn-sm">Upload photo</button>
-        </form>
-        <p id="photo-status" role="status" class="muted"></p>
-      </section>
-
-      <div id="upsell-template" class="upsell" hidden>
-        <p><strong>Page templates</strong> unlock at Featured (R199/mo).</p>
-        <a href="#" class="upsell-link">Upgrade to choose a template →</a>
-      </div>
-      <section id="template-picker" hidden>
-        <h2>Page template</h2>
-        <div class="option-grid">
-          <button type="button" class="tpl-btn" data-tpl="classic"><b>Classic</b><span>Clean &amp; simple</span></button>
-          <button type="button" class="tpl-btn" data-tpl="gallery"><b>Gallery-Forward</b><span>Photo leads the page</span></button>
-          <button type="button" class="tpl-btn" data-tpl="services"><b>Services Grid</b><span>Structured service cards</span></button>
+        <div class="preview-col">
+          <div class="preview-panel">
+            <div class="preview-head">
+              <span>Live preview</span>
+              <span class="preview-live-dot">● updates as you edit</span>
+            </div>
+            <div class="preview-body" id="preview-body"></div>
+            <p class="preview-note">This shows your unsaved changes exactly as visitors will see them. Click <strong>Save design</strong> to publish — the real page updates after the site's next rebuild.</p>
+          </div>
         </div>
-      </section>
-
-      <div id="upsell-blocks" class="upsell" hidden>
-        <p><strong>Custom sections</strong> (Our Story, Specials, Team, Gallery) unlock at Premium (R299/mo).</p>
-        <a href="#" class="upsell-link">Upgrade to Premium →</a>
       </div>
-      <section id="block-editor" hidden>
-        <h2>Extra sections</h2>
-        <div id="blocks-list"></div>
-        <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
-      </section>
-
-      <button type="button" id="save-design-btn" class="btn btn-primary">Save design</button>
-      <p id="design-status" role="status" class="muted"></p>
     </div>
   </section>
 </BaseLayout>
@@ -72,6 +78,69 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   let selectedTemplate = 'classic';
   interface CustomBlock { type: string; title: string; body: string }
   let blocks: CustomBlock[] = [];
+  interface Photo { id: number; r2_key: string }
+  let photos: Photo[] = [];
+  let business = { name: '', address: '', phone: '', website: '', description: '' };
+
+  const BLOCK_TITLES: Record<string, string> = { story: 'Our Story', specials: 'Specials & Promotions', team: 'Team', gallery: 'Gallery' };
+
+  // Inline SVG placeholder — no network dependency, and clearly marked as a
+  // sample so nobody mistakes it for a real uploaded photo.
+  function placeholderPhoto(label: string): string {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="220" viewBox="0 0 320 220">
+      <rect width="320" height="220" fill="#e2e8f0"/>
+      <g fill="#94a3b8"><circle cx="160" cy="88" r="26"/><path d="M96 168c0-30 28-46 64-46s64 16 64 46z"/></g>
+      <text x="160" y="196" font-family="sans-serif" font-size="12" fill="#64748b" text-anchor="middle">${label}</text>
+    </svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
+  const PLACEHOLDER_COUNT = 3;
+
+  function escapeHtml(s: string): string {
+    return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+  }
+
+  function renderPreview() {
+    const usingPlaceholders = photos.length === 0;
+    const galleryPhotos = usingPlaceholders
+      ? Array.from({ length: PLACEHOLDER_COUNT }, (_, i) => placeholderPhoto(`Sample photo ${i + 1}`))
+      : photos.map((p) => `/media/${p.r2_key}`);
+
+    const galleryHtml = (extraClass: string) => `
+      <div class="pv-gallery ${extraClass}">
+        ${galleryPhotos.map((src) => `<img src="${src}" alt="" />`).join('')}
+      </div>
+      ${usingPlaceholders ? '<p class="pv-sample-note">📷 Sample photos shown — upload your own above to replace them.</p>' : ''}
+    `;
+
+    const blocksHtml = blocks.length
+      ? `<div class="pv-blocks ${selectedTemplate === 'services' ? 'pv-blocks-grid' : ''}">
+          ${blocks.map((b) => `
+            <div class="pv-block">
+              <h3>${escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More')}</h3>
+              <p>${escapeHtml(b.body || '(empty — add some text)')}</p>
+            </div>`).join('')}
+        </div>`
+      : '';
+
+    const heroGallery = selectedTemplate === 'gallery' ? galleryHtml('pv-gallery-hero') : '';
+    const inlineGallery = selectedTemplate !== 'gallery' ? galleryHtml('') : '';
+
+    const body = document.getElementById('preview-body')!;
+    body.innerHTML = `
+      ${heroGallery}
+      <h1 class="pv-h1">${escapeHtml(business.name)}</h1>
+      <p class="pv-desc">${escapeHtml(business.description)}</p>
+      ${inlineGallery}
+      ${blocksHtml}
+      ${business.address ? `<p class="pv-address">📍 ${escapeHtml(business.address)}</p>` : ''}
+      <div class="pv-actions">
+        ${business.phone ? `<span class="pv-btn">📞 ${escapeHtml(business.phone)}</span>` : ''}
+        ${business.website ? `<span class="pv-btn">🔗 Visit website</span>` : ''}
+        <span class="pv-btn">📍 View on Google Maps</span>
+      </div>
+    `;
+  }
 
   function renderBlocks() {
     const list = document.getElementById('blocks-list')!;
@@ -98,12 +167,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     list.querySelectorAll('.block-row').forEach((row) => {
       const i = Number((row as HTMLElement).dataset.i);
-      row.querySelector('.block-type')!.addEventListener('change', (e) => { blocks[i].type = (e.target as HTMLSelectElement).value; });
-      row.querySelector('.block-title')!.addEventListener('input', (e) => { blocks[i].title = (e.target as HTMLInputElement).value; });
-      row.querySelector('.block-body')!.addEventListener('input', (e) => { blocks[i].body = (e.target as HTMLTextAreaElement).value; });
-      row.querySelector('.remove-block')!.addEventListener('click', () => { blocks.splice(i, 1); renderBlocks(); });
-      row.querySelector('.move-up')?.addEventListener('click', () => { if (i > 0) { [blocks[i - 1], blocks[i]] = [blocks[i], blocks[i - 1]]; renderBlocks(); } });
-      row.querySelector('.move-down')?.addEventListener('click', () => { if (i < blocks.length - 1) { [blocks[i + 1], blocks[i]] = [blocks[i], blocks[i + 1]]; renderBlocks(); } });
+      row.querySelector('.block-type')!.addEventListener('change', (e) => { blocks[i].type = (e.target as HTMLSelectElement).value; renderPreview(); });
+      row.querySelector('.block-title')!.addEventListener('input', (e) => { blocks[i].title = (e.target as HTMLInputElement).value; renderPreview(); });
+      row.querySelector('.block-body')!.addEventListener('input', (e) => { blocks[i].body = (e.target as HTMLTextAreaElement).value; renderPreview(); });
+      row.querySelector('.remove-block')!.addEventListener('click', () => { blocks.splice(i, 1); renderBlocks(); renderPreview(); });
+      row.querySelector('.move-up')?.addEventListener('click', () => { if (i > 0) { [blocks[i - 1], blocks[i]] = [blocks[i], blocks[i - 1]]; renderBlocks(); renderPreview(); } });
+      row.querySelector('.move-down')?.addEventListener('click', () => { if (i < blocks.length - 1) { [blocks[i + 1], blocks[i]] = [blocks[i], blocks[i + 1]]; renderBlocks(); renderPreview(); } });
     });
   }
 
@@ -111,6 +180,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     if (blocks.length >= 6) return;
     blocks.push({ type: 'story', title: '', body: '' });
     renderBlocks();
+    renderPreview();
   });
 
   async function init() {
@@ -134,13 +204,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     loading.hidden = true;
     content.hidden = false;
     document.getElementById('business-name-hl')!.textContent = data.business.name;
-
-    const previewUrl = `/business/${data.business.slug}/`;
-    const frame = document.getElementById('preview-frame') as HTMLIFrameElement;
-    frame.src = previewUrl;
-    document.getElementById('refresh-preview')!.addEventListener('click', () => {
-      frame.src = previewUrl + '?t=' + Date.now();
-    });
+    business = {
+      name: data.business.name,
+      address: data.business.address ?? '',
+      phone: data.business.phone ?? '',
+      website: data.business.website ?? '',
+      description: data.business.description ?? '',
+    };
 
     const tier = data.business.subscriptionTier as number;
 
@@ -160,6 +230,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           selectedTemplate = btn.dataset.tpl!;
           document.querySelectorAll('.tpl-btn').forEach((b) => b.classList.remove('active'));
           btn.classList.add('active');
+          renderPreview();
         });
       });
     } else {
@@ -173,6 +244,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     } else {
       document.getElementById('upsell-blocks')!.hidden = false;
     }
+
+    renderPreview();
   }
 
   async function loadPhotos() {
@@ -180,6 +253,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const res = await fetch(`/api/business-photos?businessId=${encodeURIComponent(businessId!)}`);
     const data = await res.json();
     if (!data.ok) return;
+    photos = data.photos;
     document.getElementById('photos-cap-label')!.textContent = `${data.photos.length} of ${data.cap} photos used`;
     grid.innerHTML = '';
     for (const photo of data.photos) {
@@ -188,10 +262,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       div.innerHTML = `<img src="/media/${photo.r2_key}" alt="" /><button type="button" data-id="${photo.id}">Remove</button>`;
       div.querySelector('button')!.addEventListener('click', async (e) => {
         await fetch(`/api/business-photos?photoId=${(e.target as HTMLElement).getAttribute('data-id')}`, { method: 'DELETE' });
-        loadPhotos();
+        await loadPhotos();
+        renderPreview();
       });
       grid.appendChild(div);
     }
+    renderPreview();
   }
 
   document.getElementById('photo-upload-form')!.addEventListener('submit', async (e) => {
@@ -206,7 +282,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const res = await fetch('/api/business-photos', { method: 'POST', body: fd });
     const result = await res.json();
     photoStatus.textContent = result.ok ? 'Uploaded.' : result.error || 'Could not upload.';
-    if (result.ok) { input.value = ''; loadPhotos(); }
+    if (result.ok) { input.value = ''; await loadPhotos(); }
   });
 
   document.getElementById('save-design-btn')!.addEventListener('click', async () => {
@@ -218,7 +294,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       body: JSON.stringify({ businessId: Number(businessId), templateId: selectedTemplate, customBlocks: blocks }),
     });
     const result = await res.json();
-    designStatus.textContent = result.ok ? 'Saved — the preview above will update after the next rebuild.' : result.error || 'Something went wrong.';
+    designStatus.textContent = result.ok ? 'Saved — the live business page will update after the next site rebuild.' : result.error || 'Something went wrong.';
   });
 
   init();
@@ -244,12 +320,26 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     color: var(--navy);
     margin: 0 0 0.5rem;
   }
+  .workspace {
+    display: grid;
+    grid-template-columns: minmax(280px, 380px) 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  @media (max-width: 860px) {
+    .workspace {
+      grid-template-columns: 1fr;
+    }
+  }
+  .preview-col {
+    position: sticky;
+    top: 1.5rem;
+  }
   .preview-panel {
     border: 1px solid var(--border);
     border-radius: var(--radius-lg, 16px);
     overflow: hidden;
     background: var(--bg-card);
-    margin-bottom: 2rem;
   }
   .preview-head {
     display: flex;
@@ -261,11 +351,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     color: var(--text-muted);
     border-bottom: 1px solid var(--border);
   }
-  #preview-frame {
-    width: 100%;
-    height: 520px;
-    border: none;
-    display: block;
+  .preview-live-dot {
+    color: #1a8f5e;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .preview-body {
+    padding: 1.5rem;
+    max-height: 640px;
+    overflow-y: auto;
   }
   .preview-note {
     margin: 0;
@@ -309,7 +403,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   }
   .option-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 0.6rem;
   }
   .tpl-btn {
@@ -398,5 +492,95 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   }
   #design-status {
     margin-top: 0.6rem;
+  }
+
+  /* --- live preview body — mirrors the real business page's look --- */
+  .preview-body :global(.pv-h1) {
+    margin: 0 0 0.6rem;
+    font-size: 1.4rem;
+    color: var(--navy);
+    overflow-wrap: break-word;
+  }
+  .preview-body :global(.pv-desc) {
+    margin: 0 0 1rem;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+  .preview-body :global(.pv-gallery) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+  }
+  .preview-body :global(.pv-gallery-hero) {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(140px, 1fr);
+    grid-template-columns: none;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  .preview-body :global(.pv-gallery img) {
+    width: 100%;
+    height: 90px;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+  .preview-body :global(.pv-gallery-hero img) {
+    height: 160px;
+    border-radius: var(--radius-lg, 16px);
+  }
+  .preview-body :global(.pv-sample-note) {
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .preview-body :global(.pv-blocks) {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1.25rem 0;
+  }
+  .preview-body :global(.pv-blocks-grid) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+  }
+  .preview-body :global(.pv-block) {
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+  }
+  .preview-body :global(.pv-block h3) {
+    margin: 0 0 0.35rem;
+    font-size: 0.95rem;
+    color: var(--navy);
+  }
+  .preview-body :global(.pv-block p) {
+    margin: 0;
+    font-size: 0.85rem;
+    white-space: pre-line;
+  }
+  .preview-body :global(.pv-address) {
+    margin: 0 0 0.75rem;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+  .preview-body :global(.pv-actions) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .preview-body :global(.pv-btn) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.82rem;
+    color: var(--text);
+    background: var(--bg-card);
   }
 </style>
