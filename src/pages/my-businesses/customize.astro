@@ -967,6 +967,13 @@ import site from '../../site';
     align-items: center;
     justify-content: center;
   }
+  /* `.photo-modal` and `[hidden]` have equal specificity, and this rule is
+     declared later, so without this override `display: flex` above always
+     wins and the modal stays visible (covering the whole page) regardless
+     of the hidden attribute — same bug class as `.upsell[hidden]` earlier. */
+  .photo-modal[hidden] {
+    display: none;
+  }
   .photo-modal-backdrop {
     position: absolute;
     inset: 0;
@@ -1004,6 +1011,12 @@ import site from '../../site';
   #design-actions {
     display: flex;
     gap: 0.6rem;
+  }
+  /* An ID selector always beats the browser's default `[hidden] { display:
+     none }` (attribute selector) on specificity alone, order aside — same
+     bug class as `.upsell[hidden]` and `.photo-modal[hidden]` above. */
+  #design-actions[hidden] {
+    display: none;
   }
   #publish-btn, #revert-btn {
     cursor: pointer;
