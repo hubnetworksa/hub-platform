@@ -80,9 +80,25 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   let blocks: CustomBlock[] = [];
   interface Photo { id: number; r2_key: string }
   let photos: Photo[] = [];
-  let business = { name: '', address: '', phone: '', website: '', description: '' };
+  interface CategoryTag { slug: string; name: string }
+  let business = { name: '', address: '', phone: '', website: '', description: '', hours: '', categories: [] as CategoryTag[], subscriptionTier: 0 };
 
   const BLOCK_TITLES: Record<string, string> = { story: 'Our Story', specials: 'Specials & Promotions', team: 'Team', gallery: 'Gallery' };
+
+  // Same icon paths as src/pages/business/[slug].astro's ICONS + Icon.astro's
+  // wrapper — kept in sync by hand since this preview can't import an
+  // Astro component at runtime.
+  const ICON_PATHS: Record<string, string> = {
+    check: '<circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+    phone: '<path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z"/>',
+    pin: '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>',
+    flag: '<path d="M5 21V4"/><path d="M5 4h13l-3 4 3 4H5"/>',
+    trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+  };
+  function icon(name: string, size = 16): string {
+    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;">${ICON_PATHS[name]}</svg>`;
+  }
 
   // Inline SVG placeholder — no network dependency, and clearly marked as a
   // sample so nobody mistakes it for a real uploaded photo.
@@ -100,44 +116,64 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
   }
 
+  // Mirrors src/pages/business/[slug].astro's actual markup and classes
+  // exactly (same class names, same conditional structure per template) so
+  // this really is a preview of the real page, not an approximation of it.
   function renderPreview() {
+    const isPaidTier = business.subscriptionTier >= 1;
+    const showClickableWebsite = isPaidTier && !!business.website;
+    const isPremium = business.subscriptionTier >= 4;
     const usingPlaceholders = photos.length === 0;
     const galleryPhotos = usingPlaceholders
       ? Array.from({ length: PLACEHOLDER_COUNT }, (_, i) => placeholderPhoto(`Sample photo ${i + 1}`))
       : photos.map((p) => `/media/${p.r2_key}`);
+    const sampleNote = usingPlaceholders ? '<p class="sample-note">📷 Sample photos shown — upload your own above to replace them.</p>' : '';
 
-    const galleryHtml = (extraClass: string) => `
-      <div class="pv-gallery ${extraClass}">
-        ${galleryPhotos.map((src) => `<img src="${src}" alt="" />`).join('')}
-      </div>
-      ${usingPlaceholders ? '<p class="pv-sample-note">📷 Sample photos shown — upload your own above to replace them.</p>' : ''}
-    `;
+    const heroGallery = selectedTemplate === 'gallery'
+      ? `<div class="hero-gallery">${galleryPhotos.map((src) => `<img src="${src}" alt="" />`).join('')}</div>${sampleNote}`
+      : '';
+    const inlineGallery = selectedTemplate !== 'gallery'
+      ? `<div class="photo-gallery${galleryPhotos.length > 5 ? ' carousel' : ''}">${galleryPhotos.map((src) => `<img src="${src}" alt="" />`).join('')}</div>${sampleNote}`
+      : '';
 
-    const blocksHtml = blocks.length
-      ? `<div class="pv-blocks ${selectedTemplate === 'services' ? 'pv-blocks-grid' : ''}">
+    const customBlocksHtml = isPremium && blocks.length
+      ? `<div class="custom-blocks${selectedTemplate === 'services' ? ' grid' : ''}">
           ${blocks.map((b) => `
-            <div class="pv-block">
-              <h3>${escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More')}</h3>
+            <div class="custom-block">
+              <h2>${escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More')}</h2>
               <p>${escapeHtml(b.body || '(empty — add some text)')}</p>
             </div>`).join('')}
         </div>`
       : '';
 
-    const heroGallery = selectedTemplate === 'gallery' ? galleryHtml('pv-gallery-hero') : '';
-    const inlineGallery = selectedTemplate !== 'gallery' ? galleryHtml('') : '';
+    const tagsHtml = `<div class="tags">
+      ${isPaidTier ? `<span class="badge tier-badge">${icon('check', 13)} Verified</span>` : ''}
+      ${business.categories.map((c) => `<span class="badge">${escapeHtml(c.name)}</span>`).join('')}
+    </div>`;
 
     const body = document.getElementById('preview-body')!;
     body.innerHTML = `
       ${heroGallery}
-      <h1 class="pv-h1">${escapeHtml(business.name)}</h1>
-      <p class="pv-desc">${escapeHtml(business.description)}</p>
+      <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">${escapeHtml(business.name)}</h1>
+      ${tagsHtml}
+      <p style="margin-top: 1.25rem;">${escapeHtml(business.description)}</p>
       ${inlineGallery}
-      ${blocksHtml}
-      ${business.address ? `<p class="pv-address">📍 ${escapeHtml(business.address)}</p>` : ''}
-      <div class="pv-actions">
-        ${business.phone ? `<span class="pv-btn">📞 ${escapeHtml(business.phone)}</span>` : ''}
-        ${business.website ? `<span class="pv-btn">🔗 Visit website</span>` : ''}
-        <span class="pv-btn">📍 View on Google Maps</span>
+      ${customBlocksHtml}
+      ${business.address ? `<p class="address">${escapeHtml(business.address)}</p>` : ''}
+      <div class="actions">
+        ${showClickableWebsite ? `<span class="btn btn-outline">${icon('pin')} Visit website</span>` : ''}
+        ${business.phone ? `<span class="btn btn-outline">${icon('phone')} ${escapeHtml(business.phone)}</span>` : ''}
+        <span class="btn btn-outline">${icon('pin')} View on Google Maps</span>
+      </div>
+      <div class="hours-section">
+        <h2 class="hours-heading">${icon('clock', 17)} Trading Hours</h2>
+        ${business.hours
+          ? `<p class="hours-text">${escapeHtml(business.hours)}</p>`
+          : '<p class="hours-text hours-unavailable">Trading hours not available</p>'}
+      </div>
+      <div class="listing-meta-links">
+        <span>${icon('flag', 13)} Report this listing</span>
+        <span>${icon('trash', 13)} Request data removal</span>
       </div>
     `;
   }
@@ -204,15 +240,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     loading.hidden = true;
     content.hidden = false;
     document.getElementById('business-name-hl')!.textContent = data.business.name;
+    const tier = data.business.subscriptionTier as number;
     business = {
       name: data.business.name,
       address: data.business.address ?? '',
       phone: data.business.phone ?? '',
       website: data.business.website ?? '',
       description: data.business.description ?? '',
+      hours: data.business.hours ?? '',
+      categories: Array.isArray(data.business.categories) ? data.business.categories : [],
+      subscriptionTier: tier,
     };
-
-    const tier = data.business.subscriptionTier as number;
 
     if (tier >= 2) {
       document.getElementById('photos-section')!.hidden = false;
@@ -494,93 +532,145 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     margin-top: 0.6rem;
   }
 
-  /* --- live preview body — mirrors the real business page's look --- */
-  .preview-body :global(.pv-h1) {
-    margin: 0 0 0.6rem;
-    font-size: 1.4rem;
-    color: var(--navy);
-    overflow-wrap: break-word;
+  /* --- live preview body — copied verbatim from src/pages/business/
+     [slug].astro's own <style> block, so this genuinely is the real page's
+     look, not an approximation of it. Every rule here needs :global()
+     since the markup is injected via innerHTML, same reason BusinessCard's
+     styles need it on the My Businesses page. --- */
+  .preview-body :global(.tags) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
   }
-  .preview-body :global(.pv-desc) {
-    margin: 0 0 1rem;
-    line-height: 1.6;
-    font-size: 0.95rem;
+  .preview-body :global(.badge) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    text-decoration: none;
   }
-  .preview-body :global(.pv-gallery) {
+  .preview-body :global(.address) {
+    color: var(--text-muted);
+    margin: 0.5rem 0 0;
+  }
+  .preview-body :global(.tier-badge) {
+    background: rgba(26, 143, 94, 0.12);
+    color: #1a8f5e;
+  }
+  .preview-body :global(.photo-gallery) {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 0.5rem;
-    margin-bottom: 0.4rem;
+    margin-top: 1.25rem;
   }
-  .preview-body :global(.pv-gallery-hero) {
+  .preview-body :global(.photo-gallery.carousel) {
     grid-auto-flow: column;
-    grid-auto-columns: minmax(140px, 1fr);
+    grid-auto-columns: minmax(160px, 220px);
     grid-template-columns: none;
     overflow-x: auto;
-    margin-bottom: 1rem;
   }
-  .preview-body :global(.pv-gallery img) {
+  .preview-body :global(.photo-gallery img) {
     width: 100%;
-    height: 90px;
+    height: 130px;
     object-fit: cover;
     border-radius: var(--radius);
+    border: 1px solid var(--border);
   }
-  .preview-body :global(.pv-gallery-hero img) {
-    height: 160px;
+  .preview-body :global(.hero-gallery) {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(180px, 1fr);
+    gap: 0.5rem;
+    overflow-x: auto;
+    margin-bottom: 0.5rem;
+  }
+  .preview-body :global(.hero-gallery img) {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
     border-radius: var(--radius-lg, 16px);
   }
-  .preview-body :global(.pv-sample-note) {
+  .preview-body :global(.sample-note) {
     margin: 0 0 1rem;
     font-size: 0.78rem;
     color: var(--text-muted);
     font-style: italic;
   }
-  .preview-body :global(.pv-blocks) {
+  .preview-body :global(.custom-blocks) {
+    margin-top: 1.75rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    margin: 1.25rem 0;
+    gap: 1.25rem;
   }
-  .preview-body :global(.pv-blocks-grid) {
+  .preview-body :global(.custom-blocks.grid) {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
   }
-  .preview-body :global(.pv-block) {
+  .preview-body :global(.custom-block) {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+  }
+  .preview-body :global(.custom-block h2) {
+    margin: 0 0 0.4rem;
+    font-size: 1rem;
+    color: var(--navy);
+  }
+  .preview-body :global(.custom-block p) {
+    margin: 0;
+    font-size: 0.9rem;
+    white-space: pre-line;
+  }
+  .preview-body :global(.actions) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+  .preview-body :global(.hours-section) {
+    margin-top: 1.5rem;
     padding: 0.9rem 1rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    background: var(--bg-subtle);
+    background: var(--bg-card);
   }
-  .preview-body :global(.pv-block h3) {
-    margin: 0 0 0.35rem;
+  .preview-body :global(.hours-heading) {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
     font-size: 0.95rem;
     color: var(--navy);
   }
-  .preview-body :global(.pv-block p) {
-    margin: 0;
-    font-size: 0.85rem;
+  .preview-body :global(.hours-text) {
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
+    color: var(--text);
     white-space: pre-line;
   }
-  .preview-body :global(.pv-address) {
-    margin: 0 0 0.75rem;
+  .preview-body :global(.hours-unavailable) {
     color: var(--text-muted);
-    font-size: 0.88rem;
+    font-style: italic;
   }
-  .preview-body :global(.pv-actions) {
+  .preview-body :global(.listing-meta-links) {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 1.25rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
   }
-  .preview-body :global(.pv-btn) {
+  .preview-body :global(.listing-meta-links span) {
     display: inline-flex;
     align-items: center;
-    gap: 0.3rem;
-    padding: 0.4rem 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    font-size: 0.82rem;
-    color: var(--text);
-    background: var(--bg-card);
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
   }
 </style>

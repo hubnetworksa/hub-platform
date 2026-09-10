@@ -26,11 +26,17 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .first<{ id: number; slug: string; name: string; address: string | null; phone: string | null; website: string | null; description: string; hours: string | null; owner_user_id: number | null; subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null; template_id: string; custom_blocks: string | null }>();
   if (!business || (business.owner_user_id !== user.id && !isAdminEmail(user.email))) return json({ ok: false, error: 'You do not own this business.' }, 403);
 
+  const categories = await db
+    .prepare('SELECT c.slug, c.name FROM business_categories bc JOIN categories c ON c.id = bc.category_id WHERE bc.business_id = ? ORDER BY bc.is_primary DESC')
+    .bind(businessId)
+    .all<{ slug: string; name: string }>();
+
   const tier = business.subscription_status === 'active' ? business.subscription_tier : 0;
   return json({
     ok: true,
     business: {
       id: business.id, slug: business.slug, name: business.name, address: business.address, phone: business.phone, website: business.website, description: business.description, hours: business.hours,
+      categories: categories.results,
       subscriptionTier: tier,
       subscriptionExpiresAt: business.subscription_expires_at,
       templateId: business.template_id,
