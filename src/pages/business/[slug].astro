@@ -4,6 +4,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
 import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, customBlocksFor, TIER_VERIFIED, TIER_VERIFIED_PLUS, TIER_FEATURED, TIER_PREMIUM } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
+import { renderCustomBlocksHtml } from '../../lib/blockRenderer';
 import Icon from '../../components/Icon.astro';
 
 export function getStaticPaths() {
@@ -37,7 +38,7 @@ const canChooseTemplate = business.subscription_tier >= TIER_FEATURED && busines
 const template = canChooseTemplate ? business.template_id : 'classic';
 const isPremium = business.subscription_tier >= TIER_PREMIUM && business.subscription_status === 'active';
 const customBlocks = isPremium ? customBlocksFor(business) : [];
-const BLOCK_TITLES: Record<string, string> = { story: 'Our Story', specials: 'Specials & Promotions', team: 'Team', gallery: 'Gallery' };
+const customBlocksHtml = renderCustomBlocksHtml(customBlocks, template);
 // Only rendered when a real link exists — see shoppingCenterFor.
 const center = shoppingCenterFor(business);
 
@@ -117,16 +118,7 @@ const jsonLd = {
       </div>
     )}
 
-    {customBlocks.length > 0 && (
-      <div class:list={['custom-blocks', { grid: template === 'services' }]}>
-        {customBlocks.map((block) => (
-          <div class="custom-block">
-            <h2>{block.title || BLOCK_TITLES[block.type] || 'More'}</h2>
-            <p>{block.body}</p>
-          </div>
-        ))}
-      </div>
-    )}
+    <Fragment set:html={customBlocksHtml} />
 
     {center && (
       <a href={`/shopping-center/${center.slug}/`} class="located-at">
@@ -309,6 +301,74 @@ const jsonLd = {
     margin: 0;
     font-size: 0.9rem;
     white-space: pre-line;
+  }
+  .placeholder-text {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .custom-block-photo {
+    padding: 0;
+    overflow: hidden;
+  }
+  .custom-block-photo img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+  .photo-placeholder {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  .photo-caption {
+    margin: 0;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  .custom-block-cta {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .cta-text {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .cta-btn {
+    display: inline-block;
+  }
+  .custom-block-testimonial {
+    text-align: center;
+    font-style: italic;
+  }
+  .testimonial-quote {
+    margin: 0 0 0.5rem;
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+  .testimonial-author {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-style: normal;
+    color: var(--text-muted);
+  }
+  .custom-block-divider {
+    background: none;
+    border: none;
+    padding: 0.5rem 0;
+  }
+  .custom-block-divider hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
   }
   .located-at {
     display: inline-flex;

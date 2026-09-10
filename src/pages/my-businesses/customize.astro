@@ -19,7 +19,7 @@ import site from '../../site';
         <div class="preview-frame">
           <div class="preview-body" id="preview-body"></div>
         </div>
-        <p class="preview-note">This shows your unsaved changes live. Click <strong>Save design</strong> below to publish — the real page updates after the site's next rebuild.</p>
+        <p class="preview-note">This shows your unsaved draft live. Your changes autosave as you go — click <strong>Publish changes</strong> below to make them go live on the real page.</p>
       </div>
     </div>
   </section>
@@ -64,8 +64,11 @@ import site from '../../site';
             <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
           </section>
 
-      <button type="button" id="save-design-btn" class="btn btn-primary">Save design</button>
-      <p id="design-status" role="status" class="muted"></p>
+      <div id="design-actions" hidden>
+        <button type="button" id="publish-btn" class="btn btn-primary" hidden>Publish changes</button>
+        <button type="button" id="revert-btn" class="btn btn-outline" hidden>Revert to published</button>
+      </div>
+      <p id="design-status" role="status" class="muted" hidden></p>
     </div>
   </section>
 </BaseLayout>
@@ -76,15 +79,32 @@ import site from '../../site';
   const loading = document.getElementById('loading')!;
   const content = document.getElementById('content')!;
 
+  interface CustomBlock { type: string; title: string; body: string; imageKey?: string }
   let selectedTemplate = 'classic';
-  interface CustomBlock { type: string; title: string; body: string }
   let blocks: CustomBlock[] = [];
+  let liveTemplateId = 'classic';
+  let liveBlocks: CustomBlock[] = [];
+  let hasUnpublishedChanges = false;
+  let draftUpdatedAt: string | null = null;
+  let tier = 0;
+  let canChooseTemplate = false;
+  let canUseBuilder = false;
   interface Photo { id: number; r2_key: string }
   let photos: Photo[] = [];
   interface CategoryTag { slug: string; name: string }
-  let business = { name: '', address: '', phone: '', website: '', description: '', hours: '', categories: [] as CategoryTag[], suburb: null as { slug: string; name: string } | null, subscriptionTier: 0 };
+  let business = { name: '', address: '', phone: '', website: '', description: '', hours: '', categories: [] as CategoryTag[], suburb: null as { slug: string; name: string } | null };
 
-  const BLOCK_TITLES: Record<string, string> = { story: 'Our Story', specials: 'Specials & Promotions', team: 'Team', gallery: 'Gallery' };
+  // Kept in sync by hand with src/lib/blockRenderer.ts's BLOCK_TITLES/
+  // BLOCK_TYPES — this client script can't import that Node/Astro module
+  // directly, same reason the icon paths below are hand-copied too.
+  const BLOCK_TITLES: Record<string, string> = {
+    story: 'Our Story', specials: 'Specials & Promotions', team: 'Team', gallery: 'Gallery',
+    photo: 'Photo', testimonial: 'Testimonial', cta: 'Call to Action', divider: 'Divider',
+  };
+  const BLOCK_TYPE_OPTIONS: [string, string][] = [
+    ['story', 'Our Story'], ['specials', 'Specials & Promotions'], ['team', 'Team'], ['gallery', 'Gallery'],
+    ['photo', 'Photo'], ['testimonial', 'Testimonial'], ['cta', 'Call to Action'], ['divider', 'Divider'],
+  ];
 
   // Same icon paths as src/pages/business/[slug].astro's ICONS + Icon.astro's
   // wrapper — kept in sync by hand since this preview can't import an
@@ -176,10 +196,40 @@ import site from '../../site';
   // this really is a preview of the real page, not an approximation of it.
   // Only touches #preview-dynamic — the chrome around it (rendered once by
   // renderChrome()) never needs to change while editing.
+  // Kept in sync by hand with src/lib/blockRenderer.ts's renderOneBlock —
+  // same reason as BLOCK_TITLES above.
+  function renderOneBlockPreview(b: CustomBlock): string {
+    const title = escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More');
+    const body = escapeHtml(b.body || '');
+    switch (b.type) {
+      case 'photo':
+        return `<div class="custom-block custom-block-photo">
+          ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen</div>'}
+          ${b.title ? `<p class="photo-caption">${title}</p>` : ''}
+        </div>`;
+      case 'divider':
+        return `<div class="custom-block custom-block-divider"><hr /></div>`;
+      case 'cta':
+        return `<div class="custom-block custom-block-cta">
+          <p class="cta-text">${title}</p>
+          <span class="btn btn-primary cta-btn">${body || 'Get in touch'}</span>
+        </div>`;
+      case 'testimonial':
+        return `<div class="custom-block custom-block-testimonial">
+          <p class="testimonial-quote">&ldquo;${body}&rdquo;</p>
+          <p class="testimonial-author">— ${title}</p>
+        </div>`;
+      default:
+        return `<div class="custom-block">
+          <h2>${title}</h2>
+          <p>${body.replace(/\n/g, '<br />') || '<span class="placeholder-text">(empty — add some text)</span>'}</p>
+        </div>`;
+    }
+  }
+
   function renderPreview() {
-    const isPaidTier = business.subscriptionTier >= 1;
+    const isPaidTier = tier >= 1;
     const showClickableWebsite = isPaidTier && !!business.website;
-    const isPremium = business.subscriptionTier >= 4;
     const usingPlaceholders = photos.length === 0;
     const galleryPhotos = usingPlaceholders
       ? Array.from({ length: PLACEHOLDER_COUNT }, (_, i) => placeholderPhoto(`Sample photo ${i + 1}`))
@@ -193,14 +243,8 @@ import site from '../../site';
       ? `<div class="photo-gallery${galleryPhotos.length > 5 ? ' carousel' : ''}">${galleryPhotos.map((src) => `<img src="${src}" alt="" />`).join('')}</div>${sampleNote}`
       : '';
 
-    const customBlocksHtml = isPremium && blocks.length
-      ? `<div class="custom-blocks${selectedTemplate === 'services' ? ' grid' : ''}">
-          ${blocks.map((b) => `
-            <div class="custom-block">
-              <h2>${escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More')}</h2>
-              <p>${escapeHtml(b.body || '(empty — add some text)')}</p>
-            </div>`).join('')}
-        </div>`
+    const customBlocksHtml = canUseBuilder && blocks.length
+      ? `<div class="custom-blocks${selectedTemplate === 'services' ? ' grid' : ''}">${blocks.map(renderOneBlockPreview).join('')}</div>`
       : '';
 
     const tagsHtml = `<div class="tags">
@@ -235,6 +279,37 @@ import site from '../../site';
     `;
   }
 
+  function blockFieldsHtml(b: CustomBlock): string {
+    const title = (b.title || '').replace(/"/g, '&quot;');
+    if (b.type === 'divider') {
+      return '<p class="muted block-hint">Just a horizontal divider — no text needed.</p>';
+    }
+    if (b.type === 'photo') {
+      const photoOptions = photos
+        .map((p) => `<option value="${p.r2_key}" ${b.imageKey === p.r2_key ? 'selected' : ''}>${p.r2_key.split('/').pop()}</option>`)
+        .join('');
+      return `
+        <select class="block-image">
+          <option value="">— Choose an uploaded photo —</option>
+          ${photoOptions}
+        </select>
+        <input class="block-title" type="text" placeholder="Caption (optional)" maxlength="60" value="${title}" />`;
+    }
+    if (b.type === 'cta') {
+      return `
+        <input class="block-title" type="text" placeholder="Headline, e.g. Ready to book?" maxlength="60" value="${title}" />
+        <input class="block-body" type="text" placeholder="Button text, e.g. Get in touch" maxlength="800" value="${(b.body || '').replace(/"/g, '&quot;')}" />`;
+    }
+    if (b.type === 'testimonial') {
+      return `
+        <textarea class="block-body" rows="2" maxlength="800" placeholder="Quote">${b.body || ''}</textarea>
+        <input class="block-title" type="text" placeholder="Author name" maxlength="60" value="${title}" />`;
+    }
+    return `
+      <input class="block-title" type="text" placeholder="Section title" maxlength="60" value="${title}" />
+      <textarea class="block-body" rows="2" maxlength="800" placeholder="Section text">${b.body || ''}</textarea>`;
+  }
+
   function renderBlocks() {
     const list = document.getElementById('blocks-list')!;
     list.innerHTML = blocks
@@ -242,13 +317,9 @@ import site from '../../site';
         (b, i) => `
       <div class="block-row" data-i="${i}">
         <select class="block-type">
-          <option value="story" ${b.type === 'story' ? 'selected' : ''}>Our Story</option>
-          <option value="specials" ${b.type === 'specials' ? 'selected' : ''}>Specials & Promotions</option>
-          <option value="team" ${b.type === 'team' ? 'selected' : ''}>Team</option>
-          <option value="gallery" ${b.type === 'gallery' ? 'selected' : ''}>Gallery</option>
+          ${BLOCK_TYPE_OPTIONS.map(([val, label]) => `<option value="${val}" ${b.type === val ? 'selected' : ''}>${label}</option>`).join('')}
         </select>
-        <input class="block-title" type="text" placeholder="Section title" maxlength="60" value="${b.title.replace(/"/g, '&quot;')}" />
-        <textarea class="block-body" rows="2" maxlength="800" placeholder="Section text">${b.body}</textarea>
+        ${blockFieldsHtml(b)}
         <div class="block-row-actions">
           <button type="button" class="move-up" ${i === 0 ? 'disabled' : ''}>↑</button>
           <button type="button" class="move-down" ${i === blocks.length - 1 ? 'disabled' : ''}>↓</button>
@@ -260,20 +331,103 @@ import site from '../../site';
 
     list.querySelectorAll('.block-row').forEach((row) => {
       const i = Number((row as HTMLElement).dataset.i);
-      row.querySelector('.block-type')!.addEventListener('change', (e) => { blocks[i].type = (e.target as HTMLSelectElement).value; renderPreview(); });
-      row.querySelector('.block-title')!.addEventListener('input', (e) => { blocks[i].title = (e.target as HTMLInputElement).value; renderPreview(); });
-      row.querySelector('.block-body')!.addEventListener('input', (e) => { blocks[i].body = (e.target as HTMLTextAreaElement).value; renderPreview(); });
-      row.querySelector('.remove-block')!.addEventListener('click', () => { blocks.splice(i, 1); renderBlocks(); renderPreview(); });
-      row.querySelector('.move-up')?.addEventListener('click', () => { if (i > 0) { [blocks[i - 1], blocks[i]] = [blocks[i], blocks[i - 1]]; renderBlocks(); renderPreview(); } });
-      row.querySelector('.move-down')?.addEventListener('click', () => { if (i < blocks.length - 1) { [blocks[i + 1], blocks[i]] = [blocks[i], blocks[i + 1]]; renderBlocks(); renderPreview(); } });
+      row.querySelector('.block-type')!.addEventListener('change', (e) => {
+        blocks[i].type = (e.target as HTMLSelectElement).value;
+        renderBlocks(); renderPreview(); scheduleAutosave();
+      });
+      row.querySelector('.block-title')?.addEventListener('input', (e) => { blocks[i].title = (e.target as HTMLInputElement).value; renderPreview(); scheduleAutosave(); });
+      row.querySelector('.block-body')?.addEventListener('input', (e) => { blocks[i].body = (e.target as HTMLInputElement | HTMLTextAreaElement).value; renderPreview(); scheduleAutosave(); });
+      row.querySelector('.block-image')?.addEventListener('change', (e) => { blocks[i].imageKey = (e.target as HTMLSelectElement).value || undefined; renderPreview(); scheduleAutosave(); });
+      row.querySelector('.remove-block')!.addEventListener('click', () => { blocks.splice(i, 1); renderBlocks(); renderPreview(); scheduleAutosave(); });
+      row.querySelector('.move-up')?.addEventListener('click', () => { if (i > 0) { [blocks[i - 1], blocks[i]] = [blocks[i], blocks[i - 1]]; renderBlocks(); renderPreview(); scheduleAutosave(); } });
+      row.querySelector('.move-down')?.addEventListener('click', () => { if (i < blocks.length - 1) { [blocks[i + 1], blocks[i]] = [blocks[i], blocks[i + 1]]; renderBlocks(); renderPreview(); scheduleAutosave(); } });
     });
   }
 
   document.getElementById('add-block-btn')!.addEventListener('click', () => {
-    if (blocks.length >= 6) return;
+    if (blocks.length >= 10) return;
     blocks.push({ type: 'story', title: '', body: '' });
     renderBlocks();
     renderPreview();
+    scheduleAutosave();
+  });
+
+  let autosaveTimer: number | undefined;
+  function scheduleAutosave() {
+    hasUnpublishedChanges = true;
+    updateDesignStatus();
+    window.clearTimeout(autosaveTimer);
+    autosaveTimer = window.setTimeout(doAutosave, 900);
+  }
+
+  async function doAutosave() {
+    const designStatus = document.getElementById('design-status')!;
+    designStatus.textContent = 'Saving…';
+    const res = await fetch('/api/business-design', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ businessId: Number(businessId), action: 'autosave', templateId: selectedTemplate, blocks }),
+    });
+    const result = await res.json();
+    if (result.ok) {
+      draftUpdatedAt = result.draftUpdatedAt;
+    } else {
+      designStatus.textContent = result.error || 'Could not save your draft.';
+      return;
+    }
+    updateDesignStatus();
+  }
+
+  function updateDesignStatus() {
+    const designStatus = document.getElementById('design-status')!;
+    const publishBtn = document.getElementById('publish-btn') as HTMLButtonElement;
+    const revertBtn = document.getElementById('revert-btn') as HTMLButtonElement;
+    publishBtn.hidden = !hasUnpublishedChanges;
+    revertBtn.hidden = !hasUnpublishedChanges;
+    if (hasUnpublishedChanges) {
+      designStatus.textContent = draftUpdatedAt
+        ? `Draft saved ${new Date(draftUpdatedAt).toLocaleTimeString()} — not published yet.`
+        : 'Draft saved — not published yet.';
+    } else {
+      designStatus.textContent = 'Everything here is published and live.';
+    }
+  }
+
+  document.getElementById('publish-btn')!.addEventListener('click', async () => {
+    const designStatus = document.getElementById('design-status')!;
+    designStatus.textContent = 'Publishing…';
+    const res = await fetch('/api/business-design', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ businessId: Number(businessId), action: 'publish' }),
+    });
+    const result = await res.json();
+    if (result.ok) {
+      liveTemplateId = selectedTemplate;
+      liveBlocks = JSON.parse(JSON.stringify(blocks));
+      hasUnpublishedChanges = false;
+      updateDesignStatus();
+      designStatus.textContent = 'Published! Your live page will update shortly.';
+    } else {
+      designStatus.textContent = result.error || 'Could not publish.';
+    }
+  });
+
+  document.getElementById('revert-btn')!.addEventListener('click', async () => {
+    if (!window.confirm('Discard your unpublished changes and go back to what is currently live?')) return;
+    await fetch('/api/business-design', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ businessId: Number(businessId), action: 'revert' }),
+    });
+    selectedTemplate = liveTemplateId;
+    blocks = JSON.parse(JSON.stringify(liveBlocks));
+    hasUnpublishedChanges = false;
+    draftUpdatedAt = null;
+    document.querySelectorAll<HTMLButtonElement>('.tpl-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.tpl === selectedTemplate));
+    renderBlocks();
+    renderPreview();
+    updateDesignStatus();
   });
 
   async function init() {
@@ -284,21 +438,35 @@ import site from '../../site';
     (document.getElementById('back-link') as HTMLAnchorElement).href = `/my-businesses/edit/?id=${businessId}`;
     document.querySelectorAll<HTMLAnchorElement>('.upsell-link').forEach((a) => (a.href = `/my-businesses/upgrade/?id=${businessId}`));
 
-    const res = await fetch(`/api/update-business?id=${encodeURIComponent(businessId)}`);
-    if (res.status === 401) {
+    const [updateRes, designRes] = await Promise.all([
+      fetch(`/api/update-business?id=${encodeURIComponent(businessId)}`),
+      fetch(`/api/business-design?businessId=${encodeURIComponent(businessId)}`),
+    ]);
+    if (updateRes.status === 401 || designRes.status === 401) {
       window.location.href = '/login/';
       return;
     }
-    const data = await res.json();
-    if (!data.ok) {
-      loading.textContent = data.error || 'Could not load this business.';
+    const data = await updateRes.json();
+    const design = await designRes.json();
+    if (!data.ok || !design.ok) {
+      loading.textContent = data.error || design.error || 'Could not load this business.';
       return;
     }
     loading.hidden = true;
     content.hidden = false;
     document.getElementById('content2')!.hidden = false;
     document.getElementById('business-name-hl')!.textContent = data.business.name;
-    const tier = data.business.subscriptionTier as number;
+
+    tier = design.tier;
+    canChooseTemplate = design.canChooseTemplate;
+    canUseBuilder = design.canUseBuilder;
+    selectedTemplate = design.templateId ?? 'classic';
+    blocks = Array.isArray(design.blocks) ? design.blocks : [];
+    liveTemplateId = design.liveTemplateId ?? 'classic';
+    liveBlocks = Array.isArray(design.liveBlocks) ? design.liveBlocks : [];
+    hasUnpublishedChanges = !!design.hasUnpublishedChanges;
+    draftUpdatedAt = design.draftUpdatedAt ?? null;
+
     business = {
       name: data.business.name,
       address: data.business.address ?? '',
@@ -308,7 +476,6 @@ import site from '../../site';
       hours: data.business.hours ?? '',
       categories: Array.isArray(data.business.categories) ? data.business.categories : [],
       suburb: data.business.suburb ?? null,
-      subscriptionTier: tier,
     };
     renderChrome();
 
@@ -319,9 +486,10 @@ import site from '../../site';
       document.getElementById('upsell-photos')!.hidden = false;
     }
 
-    if (tier >= 3) {
-      selectedTemplate = data.business.templateId ?? 'classic';
+    if (canChooseTemplate) {
       document.getElementById('template-picker')!.hidden = false;
+      document.getElementById('design-actions')!.hidden = false;
+      document.getElementById('design-status')!.hidden = false;
       document.querySelectorAll<HTMLButtonElement>('.tpl-btn').forEach((btn) => {
         if (btn.dataset.tpl === selectedTemplate) btn.classList.add('active');
         btn.addEventListener('click', () => {
@@ -329,20 +497,21 @@ import site from '../../site';
           document.querySelectorAll('.tpl-btn').forEach((b) => b.classList.remove('active'));
           btn.classList.add('active');
           renderPreview();
+          scheduleAutosave();
         });
       });
     } else {
       document.getElementById('upsell-template')!.hidden = false;
     }
 
-    if (tier >= 4) {
-      blocks = Array.isArray(data.business.customBlocks) ? data.business.customBlocks : [];
+    if (canUseBuilder) {
       document.getElementById('block-editor')!.hidden = false;
       renderBlocks();
     } else {
       document.getElementById('upsell-blocks')!.hidden = false;
     }
 
+    updateDesignStatus();
     renderPreview();
   }
 
@@ -381,18 +550,6 @@ import site from '../../site';
     const result = await res.json();
     photoStatus.textContent = result.ok ? 'Uploaded.' : result.error || 'Could not upload.';
     if (result.ok) { input.value = ''; await loadPhotos(); }
-  });
-
-  document.getElementById('save-design-btn')!.addEventListener('click', async () => {
-    const designStatus = document.getElementById('design-status')!;
-    designStatus.textContent = 'Saving…';
-    const res = await fetch('/api/update-business', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ businessId: Number(businessId), templateId: selectedTemplate, customBlocks: blocks }),
-    });
-    const result = await res.json();
-    designStatus.textContent = result.ok ? 'Saved — the live business page will update after the next site rebuild.' : result.error || 'Something went wrong.';
   });
 
   init();
@@ -575,12 +732,21 @@ import site from '../../site';
     gap: 0.6rem;
     align-items: center;
   }
-  #save-design-btn {
-    border: none;
+  #design-actions {
+    display: flex;
+    gap: 0.6rem;
+  }
+  #publish-btn, #revert-btn {
     cursor: pointer;
+  }
+  #publish-btn {
+    border: none;
   }
   #design-status {
     margin-top: 0.6rem;
+  }
+  .block-hint {
+    margin: 0;
   }
 
   /* --- live preview body — copied verbatim from src/pages/business/
@@ -708,6 +874,74 @@ import site from '../../site';
     margin: 0;
     font-size: 0.9rem;
     white-space: pre-line;
+  }
+  .preview-body :global(.placeholder-text) {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .preview-body :global(.custom-block-photo) {
+    padding: 0;
+    overflow: hidden;
+  }
+  .preview-body :global(.custom-block-photo img) {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+  .preview-body :global(.photo-placeholder) {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  .preview-body :global(.photo-caption) {
+    margin: 0;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  .preview-body :global(.custom-block-cta) {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .preview-body :global(.cta-text) {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .preview-body :global(.cta-btn) {
+    display: inline-block;
+  }
+  .preview-body :global(.custom-block-testimonial) {
+    text-align: center;
+    font-style: italic;
+  }
+  .preview-body :global(.testimonial-quote) {
+    margin: 0 0 0.5rem;
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+  .preview-body :global(.testimonial-author) {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-style: normal;
+    color: var(--text-muted);
+  }
+  .preview-body :global(.custom-block-divider) {
+    background: none;
+    border: none;
+    padding: 0.5rem 0;
+  }
+  .preview-body :global(.custom-block-divider hr) {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
   }
   .preview-body :global(.actions) {
     display: flex;
