@@ -3,6 +3,7 @@ import { generateUniqueSlug, insertApprovedBusiness } from '../../src/lib/busine
 import { getSite, type Site } from '../_lib/site';
 import { triggerRebuild } from '../_lib/deploy-hook';
 import { sendEmail } from '../_lib/send-email';
+import { listingLiveEmailHtml } from '../_lib/email-template';
 import { logActivity } from '../_lib/activity-log';
 
 interface Env {
@@ -85,14 +86,24 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     ownerUserId: row.submitted_by_user_id,
   });
   await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
-  await logActivity(db, 'owner_confirmed', row.name, `Published: https://${site.domain}/business/${slug}/`);
+  const listingUrl = `https://${site.domain}/business/${slug}/`;
+  await logActivity(db, 'owner_confirmed', row.name, `Published: ${listingUrl}`);
   await notifyAdmin(context.env, site, {
     outcome: 'confirmed',
     businessName: row.name,
-    detail: `Now live: https://${site.domain}/business/${slug}/`,
+    detail: `Now live: ${listingUrl}`,
   });
+  if (row.email) {
+    await sendEmail(context.env, {
+      from: `${site.siteName} <${site.contactEmail}>`,
+      to: row.email,
+      subject: `You're live on ${site.siteName}: ${row.name}`,
+      text: `Thanks for confirming — "${row.name}" is now published on ${site.siteName}.\n\nView your listing: ${listingUrl}`,
+      html: listingLiveEmailHtml(site, { businessName: row.name, listingUrl }),
+    });
+  }
 
-  return html(site, `<h1>Published!</h1><p>Thanks for confirming — "${escapeHtml(row.name)}" is going live now: <a href="https://${site.domain}/business/${slug}/">view listing</a>. It may take a few minutes to appear while the site rebuilds.</p>`);
+  return html(site, `<h1>Published!</h1><p>Thanks for confirming — "${escapeHtml(row.name)}" is going live now: <a href="${listingUrl}">view listing</a>. It may take a few minutes to appear while the site rebuilds.</p>`);
 };
 
 // Best-effort notification back to the admin once the owner has acted —
