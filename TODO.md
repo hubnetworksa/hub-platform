@@ -49,9 +49,23 @@ Polokwane and Cape Town are still on `.pages.dev` only.
 - [ ] **One more D1 backup + merge pass** for Pretoria — same process as
       `db/backups/old-pretoriahub-2026-09-10.sql`, in case the old site
       collected anything between that backup and the actual cutover.
-- [ ] **End-to-end smoke test on `pretoriahub.com`** — register, log in
-      (password + Google once OAuth is set up), submit → approve →
-      owner-confirm a listing, file + approve a claim — confirm every
+- [x] **Email pipeline confirmed end-to-end on `pretoriahub.com`**
+      (2026-09-10): Resend → Cloudflare Email Routing → Gmail forwarding
+      → delivered to `hubnetworksa@gmail.com`. Took two real fixes to get
+      here, both consequences of the domain moving to a fresh Cloudflare
+      zone: (1) `hello@pretoriahub.com` got auto-suppressed in Resend
+      after early hard bounces during the transition window — had to be
+      un-suppressed in Resend's dashboard; (2) Cloudflare Email Routing
+      requires a DMARC record to exist for Gmail to accept forwarded mail
+      (`developers.cloudflare.com/email-routing/postmaster/`) — added
+      `_dmarc.pretoriahub.com` = `v=DMARC1; p=none; rua=mailto:hubnetworksa@gmail.com`.
+      Also had to hit "Restart verification" in Resend's own domain page
+      after their Cloudflare auto-configure, since it doesn't reliably
+      re-check on its own after a domain move.
+- [ ] **Full flow smoke test on `pretoriahub.com`** — register, log in
+      (password + Google — Google already confirmed working), submit →
+      approve → owner-confirm a listing (now sends a "you're live" email
+      too — confirm that arrives), file + approve a claim — confirm every
       emailed link uses `pretoriahub.com` and actually resolves.
 - [ ] AdSense — confirm `https://pretoriahub.com/ads.txt` serves correctly
       post-cutover, add the domain as a Site once the hubnetworksa AdSense
