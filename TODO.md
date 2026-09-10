@@ -62,11 +62,18 @@ Polokwane and Cape Town are still on `.pages.dev` only.
       Also had to hit "Restart verification" in Resend's own domain page
       after their Cloudflare auto-configure, since it doesn't reliably
       re-check on its own after a domain move.
-- [ ] **Full flow smoke test on `pretoriahub.com`** — register, log in
-      (password + Google — Google already confirmed working), submit →
-      approve → owner-confirm a listing (now sends a "you're live" email
-      too — confirm that arrives), file + approve a claim — confirm every
-      emailed link uses `pretoriahub.com` and actually resolves.
+- [x] **Full flow smoke test on `pretoriahub.com`** — confirmed 2026-09-10
+      end-to-end against production: register → submit (logged in, with
+      owner email) → admin approve → owner confirm → published, with
+      correct auto-link to the submitter's account (My Businesses showed
+      it) and the new "you're live" email sent. Second business submitted
+      anonymously with no email → published immediately (no owner-confirm
+      needed), then claimed by a second test user → admin-approved the
+      claim → ownership correctly transferred. Every emailed link
+      (`/verify-listing`, `/owner-confirm-listing`, `/review-claim`,
+      `/claim-document/...`) resolved with 200. All test businesses/
+      users/sessions/claims/activity-log rows and the uploaded R2
+      document were deleted afterward.
 - [ ] AdSense — confirm `https://pretoriahub.com/ads.txt` serves correctly
       post-cutover, add the domain as a Site once the hubnetworksa AdSense
       account is approved (see the AdSense item below).
