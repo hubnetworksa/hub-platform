@@ -77,14 +77,22 @@ const themeCss = `:root {
     )}
 
     <!-- Google Analytics (GA4) — each site has its own separate property,
-         rendered only once this site actually has a Measurement ID. -->
+         rendered only once this site actually has a Measurement ID.
+         Guarded on the real production hostname at runtime: the hosted dev
+         preview (dev.<project>.pages.dev) and any other preview deployment
+         serve this exact same build, so without this check every real
+         browser visit while testing there would land as a genuine pageview
+         in production Analytics — this isn't a build-time distinction since
+         both environments deploy the identical dist/ output. -->
     {site.googleAnalyticsId && (
       <script async src={`https://www.googletagmanager.com/gtag/js?id=${site.googleAnalyticsId}`}></script>
-      <script define:vars={{ gaId: site.googleAnalyticsId }}>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', gaId);
+      <script define:vars={{ gaId: site.googleAnalyticsId, prodHost: site.domain }}>
+        if (location.hostname === prodHost) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag('js', new Date());
+          gtag('config', gaId);
+        }
       </script>
     )}
 

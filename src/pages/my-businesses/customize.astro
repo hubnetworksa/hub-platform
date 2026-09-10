@@ -1,17 +1,31 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import site from '../../site';
 ---
 
 <BaseLayout title="Customise business page" description="Preview and customise your business page.">
-  <section class="container" style="padding-top: 3rem; padding-bottom: 4rem; max-width: 1180px;">
+  <section class="container" style="padding-top: 3rem; padding-bottom: 1.5rem; max-width: 1180px;">
     <div id="loading">Loading…</div>
 
     <div id="content" hidden>
       <a id="back-link" href="#" class="back-link">← Back to editing</a>
       <h1>Customise <span id="business-name-hl"></span></h1>
 
-      <div class="workspace">
-        <div class="controls-col">
+      <div class="preview-panel">
+        <div class="preview-head">
+          <span>Live preview — this is exactly what visitors will see</span>
+          <span class="preview-live-dot">● updates as you edit</span>
+        </div>
+        <div class="preview-frame">
+          <div class="preview-body" id="preview-body"></div>
+        </div>
+        <p class="preview-note">This shows your unsaved changes live. Click <strong>Save design</strong> below to publish — the real page updates after the site's next rebuild.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container" style="padding-top: 1.5rem; padding-bottom: 4rem; max-width: 680px;">
+    <div id="content2" hidden>
           <div id="upsell-photos" class="upsell" hidden>
             <p><strong>Photos</strong> unlock at Verified Plus (R99/mo).</p>
             <a href="#" class="upsell-link">Upgrade to add photos →</a>
@@ -50,26 +64,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
           </section>
 
-          <button type="button" id="save-design-btn" class="btn btn-primary">Save design</button>
-          <p id="design-status" role="status" class="muted"></p>
-        </div>
-
-        <div class="preview-col">
-          <div class="preview-panel">
-            <div class="preview-head">
-              <span>Live preview</span>
-              <span class="preview-live-dot">● updates as you edit</span>
-            </div>
-            <div class="preview-body" id="preview-body"></div>
-            <p class="preview-note">This shows your unsaved changes exactly as visitors will see them. Click <strong>Save design</strong> to publish — the real page updates after the site's next rebuild.</p>
-          </div>
-        </div>
-      </div>
+      <button type="button" id="save-design-btn" class="btn btn-primary">Save design</button>
+      <p id="design-status" role="status" class="muted"></p>
     </div>
   </section>
 </BaseLayout>
 
-<script>
+<script define:vars={{ SITE_NAME: site.siteName, CITY_LABEL: site.cityLabel, SITE_TAGLINE: site.tagline }}>
   const params = new URLSearchParams(window.location.search);
   const businessId = params.get('id');
   const loading = document.getElementById('loading')!;
@@ -81,7 +82,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   interface Photo { id: number; r2_key: string }
   let photos: Photo[] = [];
   interface CategoryTag { slug: string; name: string }
-  let business = { name: '', address: '', phone: '', website: '', description: '', hours: '', categories: [] as CategoryTag[], subscriptionTier: 0 };
+  let business = { name: '', address: '', phone: '', website: '', description: '', hours: '', categories: [] as CategoryTag[], suburb: null as { slug: string; name: string } | null, subscriptionTier: 0 };
 
   const BLOCK_TITLES: Record<string, string> = { story: 'Our Story', specials: 'Specials & Promotions', team: 'Team', gallery: 'Gallery' };
 
@@ -116,9 +117,65 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
   }
 
+  // Full page chrome (header/nav/footer), rendered once — it never changes
+  // while editing a template/section, so there's no reason to rebuild it
+  // on every keystroke the way the content below it does. Copied verbatim
+  // from src/layouts/BaseLayout.astro.
+  function renderChrome() {
+    const crumbs = [
+      ...(business.suburb ? [`<a href="/suburb/${business.suburb.slug}/">${escapeHtml(business.suburb.name)}</a>`] : []),
+      ...(business.categories[0] ? [`<a href="/category/${business.categories[0].slug}/">${escapeHtml(business.categories[0].name)}</a>`] : []),
+      `<span class="current">${escapeHtml(business.name)}</span>`,
+    ];
+    const breadcrumbsHtml = `<nav class="breadcrumbs" aria-label="Breadcrumb">${crumbs
+      .map((c, i) => c + (i < crumbs.length - 1 ? '<span class="sep" aria-hidden="true">›</span>' : ''))
+      .join('')}</nav>`;
+
+    document.getElementById('preview-body')!.innerHTML = `
+      <header class="brand-row">
+        <div class="container">
+          <a href="/" class="logo">
+            <img src="/logo-icon.png" alt="${escapeHtml(SITE_NAME)}" width="40" height="46" />
+            <span class="logo-text">
+              <span class="logo-word">${escapeHtml(CITY_LABEL)}<span>Hub</span></span>
+              <span class="logo-sub">Business Directory</span>
+            </span>
+          </a>
+          <p class="tagline">
+            <strong>Discover. Connect. Grow.</strong>
+            <span>${escapeHtml(SITE_TAGLINE)}</span>
+          </p>
+        </div>
+      </header>
+      <nav class="site-nav" aria-label="Main">
+        <div class="container">
+          <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/suburb/">Directory</a>
+            <a href="/category/">Categories</a>
+            <a href="/about/">About Us</a>
+          </div>
+        </div>
+      </nav>
+      <main>
+        <section class="container" style="padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;">
+          ${breadcrumbsHtml}
+          <div id="preview-dynamic"></div>
+        </section>
+      </main>
+      <footer class="site-footer">
+        <div class="container">
+          <span>© ${new Date().getFullYear()} ${escapeHtml(SITE_NAME)}</span>
+        </div>
+      </footer>
+    `;
+  }
+
   // Mirrors src/pages/business/[slug].astro's actual markup and classes
   // exactly (same class names, same conditional structure per template) so
   // this really is a preview of the real page, not an approximation of it.
+  // Only touches #preview-dynamic — the chrome around it (rendered once by
+  // renderChrome()) never needs to change while editing.
   function renderPreview() {
     const isPaidTier = business.subscriptionTier >= 1;
     const showClickableWebsite = isPaidTier && !!business.website;
@@ -151,7 +208,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       ${business.categories.map((c) => `<span class="badge">${escapeHtml(c.name)}</span>`).join('')}
     </div>`;
 
-    const body = document.getElementById('preview-body')!;
+    const body = document.getElementById('preview-dynamic')!;
     body.innerHTML = `
       ${heroGallery}
       <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">${escapeHtml(business.name)}</h1>
@@ -239,6 +296,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     }
     loading.hidden = true;
     content.hidden = false;
+    document.getElementById('content2')!.hidden = false;
     document.getElementById('business-name-hl')!.textContent = data.business.name;
     const tier = data.business.subscriptionTier as number;
     business = {
@@ -249,8 +307,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       description: data.business.description ?? '',
       hours: data.business.hours ?? '',
       categories: Array.isArray(data.business.categories) ? data.business.categories : [],
+      suburb: data.business.suburb ?? null,
       subscriptionTier: tier,
     };
+    renderChrome();
 
     if (tier >= 2) {
       document.getElementById('photos-section')!.hidden = false;
@@ -358,21 +418,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     color: var(--navy);
     margin: 0 0 0.5rem;
   }
-  .workspace {
-    display: grid;
-    grid-template-columns: minmax(280px, 380px) 1fr;
-    gap: 2rem;
-    align-items: start;
-  }
-  @media (max-width: 860px) {
-    .workspace {
-      grid-template-columns: 1fr;
-    }
-  }
-  .preview-col {
-    position: sticky;
-    top: 1.5rem;
-  }
   .preview-panel {
     border: 1px solid var(--border);
     border-radius: var(--radius-lg, 16px);
@@ -394,9 +439,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     font-size: 0.78rem;
     font-weight: 600;
   }
-  .preview-body {
-    padding: 1.5rem;
-    max-height: 640px;
+  .preview-frame {
+    max-height: 720px;
     overflow-y: auto;
   }
   .preview-note {
@@ -417,6 +461,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     background: var(--bg-subtle);
     border: 1px dashed var(--border);
     margin-bottom: 1.5rem;
+  }
+  /* `.upsell` and `[hidden]` have equal specificity, and this rule is
+     declared later, so without this override `display: flex` above wins
+     and the hidden attribute is silently ignored — exactly what was
+     showing every upsell notice at once regardless of tier. */
+  .upsell[hidden] {
+    display: none;
   }
   .upsell p {
     margin: 0;
@@ -537,6 +588,37 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
      look, not an approximation of it. Every rule here needs :global()
      since the markup is injected via innerHTML, same reason BusinessCard's
      styles need it on the My Businesses page. --- */
+  /* Breadcrumbs — copied from src/components/Breadcrumbs.astro's own
+     scoped styles, same reason as everything else in this block. */
+  .preview-body :global(.breadcrumbs) {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-bottom: 0.5rem;
+  }
+  .preview-body :global(.breadcrumbs a) {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .preview-body :global(.breadcrumbs .current) {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 0.3rem 0.2rem;
+  }
+  .preview-body :global(.breadcrumbs .sep) {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
   .preview-body :global(.tags) {
     display: flex;
     flex-wrap: wrap;
