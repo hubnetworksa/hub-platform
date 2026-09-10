@@ -1,0 +1,320 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Upgrade to Premium" description="Choose a Premium Listing plan to get your business seen.">
+  <section class="container" style="padding-top: 3rem; padding-bottom: 4rem; max-width: 920px;">
+    <div id="loading">Loading…</div>
+
+    <div id="content" hidden>
+      <a id="back-link" href="#" class="back-link">← Back to editing</a>
+      <h1>Get <span id="business-name-hl"></span> seen</h1>
+      <p class="lede">Every rand buys everything from the tier below it, plus one new thing — pick the plan that fits.</p>
+
+      <div class="tier-cards">
+        <article class="tier-card" data-tier="1">
+          <div class="tier-card-head">
+            <h2>Verified</h2>
+            <div class="tier-price">R50<span>/mo</span></div>
+          </div>
+          <ul>
+            <li>Clickable website link</li>
+            <li>"Verified" badge on your listing</li>
+          </ul>
+          <button type="button" class="choose-btn" data-tier="1">Choose Verified</button>
+        </article>
+
+        <article class="tier-card" data-tier="2">
+          <div class="tier-card-head">
+            <h2>Verified Plus</h2>
+            <div class="tier-price">R99<span>/mo</span></div>
+          </div>
+          <ul>
+            <li>Everything in Verified</li>
+            <li>No ads on your page</li>
+            <li>Up to 5 photos</li>
+            <li>Custom accent colour</li>
+          </ul>
+          <button type="button" class="choose-btn" data-tier="2">Choose Verified Plus</button>
+        </article>
+
+        <article class="tier-card featured" data-tier="3">
+          <div class="tier-ribbon">Most popular</div>
+          <div class="tier-card-head">
+            <h2>Featured</h2>
+            <div class="tier-price">R199<span>/mo</span></div>
+          </div>
+          <ul>
+            <li>Everything in Verified Plus</li>
+            <li>Choose a page template</li>
+            <li>Up to 15 photos</li>
+            <li>Featured placement in your category &amp; suburb</li>
+            <li>Featured on the homepage</li>
+            <li>Search ranking boost</li>
+          </ul>
+          <button type="button" class="choose-btn primary" data-tier="3">Choose Featured</button>
+        </article>
+
+        <article class="tier-card premium" data-tier="4">
+          <div class="tier-card-head">
+            <h2>Premium</h2>
+            <div class="tier-price">R299<span>/mo</span></div>
+          </div>
+          <ul>
+            <li>Everything in Featured</li>
+            <li><strong>Top Spot</strong> — the very top of your category &amp; suburb</li>
+            <li>Full page customisation — add your own sections</li>
+            <li>Up to 30 photos</li>
+            <li>Top priority in search results</li>
+          </ul>
+          <button type="button" class="choose-btn" data-tier="4">Choose Premium</button>
+        </article>
+      </div>
+
+      <p id="upgrade-status" role="status"></p>
+
+      <div id="manage-section" hidden>
+        <p class="muted" id="current-plan-label"></p>
+        <button type="button" id="cancel-btn" class="cancel-link">Cancel subscription</button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const businessId = params.get('id');
+  const loading = document.getElementById('loading')!;
+  const content = document.getElementById('content')!;
+
+  async function init() {
+    if (!businessId) {
+      loading.textContent = 'No business specified.';
+      return;
+    }
+    (document.getElementById('back-link') as HTMLAnchorElement).href = `/my-businesses/edit/?id=${businessId}`;
+
+    const res = await fetch(`/api/update-business?id=${encodeURIComponent(businessId)}`);
+    if (res.status === 401) {
+      window.location.href = '/login/';
+      return;
+    }
+    const data = await res.json();
+    if (!data.ok) {
+      loading.textContent = data.error || 'Could not load this business.';
+      return;
+    }
+    loading.hidden = true;
+    content.hidden = false;
+    document.getElementById('business-name-hl')!.textContent = data.business.name;
+
+    const tier = data.business.subscriptionTier as number;
+    const tierNames = ['Free', 'Verified', 'Verified Plus', 'Featured', 'Premium'];
+
+    document.querySelectorAll<HTMLElement>('.tier-card').forEach((card) => {
+      const cardTier = Number(card.dataset.tier);
+      const btn = card.querySelector('.choose-btn') as HTMLButtonElement;
+      if (cardTier === tier) {
+        card.classList.add('current');
+        btn.textContent = 'Current plan';
+        btn.disabled = true;
+      }
+    });
+
+    if (tier > 0) {
+      document.getElementById('manage-section')!.hidden = false;
+      document.getElementById('current-plan-label')!.textContent =
+        `You're on ${tierNames[tier]}` +
+        (data.business.subscriptionExpiresAt ? ` · renews ${new Date(data.business.subscriptionExpiresAt).toLocaleDateString()}` : '');
+    }
+
+    document.querySelectorAll<HTMLButtonElement>('.choose-btn:not(:disabled)').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const status = document.getElementById('upgrade-status')!;
+        document.querySelectorAll<HTMLButtonElement>('.choose-btn').forEach((b) => (b.disabled = true));
+        status.textContent = 'Redirecting to PayFast…';
+        const r = await fetch('/api/subscribe/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId: Number(businessId), tier: Number(btn.dataset.tier) }),
+        });
+        const result = await r.json();
+        if (result.ok) {
+          window.location.href = result.redirectUrl;
+        } else {
+          status.textContent = result.error || 'Could not start checkout.';
+          document.querySelectorAll<HTMLButtonElement>('.choose-btn:not(.current .choose-btn)').forEach((b) => (b.disabled = false));
+        }
+      });
+    });
+
+    document.getElementById('cancel-btn')?.addEventListener('click', async () => {
+      if (!confirm("Cancel your subscription? You'll keep your current tier until the paid period ends, then it reverts to Free.")) return;
+      const cancelBtn = document.getElementById('cancel-btn') as HTMLButtonElement;
+      cancelBtn.disabled = true;
+      const status = document.getElementById('upgrade-status')!;
+      status.textContent = 'Cancelling…';
+      const r = await fetch('/api/subscribe/cancel', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ businessId: Number(businessId) }),
+      });
+      const result = await r.json();
+      status.textContent = result.ok ? "Cancelled — you'll keep your tier until the current period ends." : result.error || 'Could not cancel.';
+      cancelBtn.disabled = false;
+      if (result.ok) cancelBtn.hidden = true;
+    });
+  }
+
+  init();
+</script>
+
+<style>
+  .back-link {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+  }
+  .back-link:hover {
+    text-decoration: underline;
+  }
+  h1 {
+    margin: 1rem 0 0.4rem;
+    font-size: 1.7rem;
+    color: var(--navy);
+  }
+  .lede {
+    margin: 0 0 2rem;
+    color: var(--text-muted);
+    max-width: 60ch;
+  }
+  .tier-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    align-items: stretch;
+  }
+  .tier-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: 1.4rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    background: var(--bg-card);
+  }
+  .tier-card.featured {
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px -10px rgba(var(--accent-rgb), 0.35);
+  }
+  .tier-card.premium {
+    border-color: var(--navy);
+  }
+  .tier-card.current {
+    background: var(--bg-subtle);
+  }
+  .tier-ribbon {
+    position: absolute;
+    top: -0.6rem;
+    left: 1.1rem;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+  }
+  .tier-card-head h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--navy);
+  }
+  .tier-price {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--accent);
+    margin-top: 0.2rem;
+  }
+  .tier-price span {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .tier-card ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    font-size: 0.88rem;
+  }
+  .tier-card li {
+    padding-left: 1.2rem;
+    position: relative;
+  }
+  .tier-card li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .choose-btn {
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.7rem 1rem;
+    font-weight: 700;
+    font-size: 0.92rem;
+    cursor: pointer;
+    background: var(--bg-subtle);
+    color: var(--navy);
+    border: 1px solid var(--border);
+  }
+  .choose-btn.primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+  }
+  .choose-btn:disabled {
+    opacity: 0.65;
+    cursor: default;
+  }
+  #upgrade-status {
+    margin-top: 1.25rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+  #manage-section {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .muted {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  .cancel-link {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+  }
+  .cancel-link:hover {
+    color: var(--danger, #c23838);
+  }
+</style>

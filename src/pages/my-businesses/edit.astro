@@ -48,16 +48,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     </form>
 
     <section id="upgrade-section" hidden>
-      <h2>Premium Listing</h2>
-      <p id="current-tier-label" class="muted"></p>
-      <div class="tier-grid">
-        <button type="button" class="tier-btn" data-tier="1"><b>Verified</b><span>R50/mo</span></button>
-        <button type="button" class="tier-btn" data-tier="2"><b>Verified Plus</b><span>R99/mo</span></button>
-        <button type="button" class="tier-btn" data-tier="3"><b>Featured</b><span>R199/mo</span></button>
-        <button type="button" class="tier-btn" data-tier="4"><b>Premium</b><span>R299/mo</span></button>
-      </div>
-      <p id="upgrade-status" role="status" class="muted"></p>
-      <button type="button" id="cancel-btn" class="btn btn-outline btn-sm" hidden>Cancel subscription</button>
+      <a id="upgrade-cta" class="upgrade-cta" href="#">
+        <span class="upgrade-cta-icon">🚀</span>
+        <span class="upgrade-cta-text">
+          <strong id="upgrade-cta-title">Upgrade to Premium</strong>
+          <span id="upgrade-cta-sub">Get your business seen — from R50/month</span>
+        </span>
+        <span class="upgrade-cta-arrow">→</span>
+      </a>
     </section>
 
     <section id="photos-section" hidden>
@@ -149,30 +147,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     (form.elements.namedItem('hours') as HTMLTextAreaElement).value = data.business.hours ?? '';
 
     const tierNames = ['Free', 'Verified', 'Verified Plus', 'Featured', 'Premium'];
-    document.getElementById('current-tier-label')!.textContent =
-      `Current tier: ${tierNames[data.business.subscriptionTier] ?? 'Free'}` +
-      (data.business.subscriptionTier > 0 && data.business.subscriptionExpiresAt
-        ? ` · renews ${new Date(data.business.subscriptionExpiresAt).toLocaleDateString()}`
-        : '');
+    const tier = data.business.subscriptionTier;
+    const cta = document.getElementById('upgrade-cta') as HTMLAnchorElement;
+    cta.href = `/my-businesses/upgrade/?id=${businessId}`;
+    if (tier > 0) {
+      document.getElementById('upgrade-cta-title')!.textContent = `${tierNames[tier]} listing`;
+      document.getElementById('upgrade-cta-sub')!.textContent = data.business.subscriptionExpiresAt
+        ? `Manage your plan · renews ${new Date(data.business.subscriptionExpiresAt).toLocaleDateString()}`
+        : 'Manage your plan';
+      cta.classList.add('is-active');
+    }
     document.getElementById('upgrade-section')!.hidden = false;
-    document.querySelectorAll<HTMLButtonElement>('.tier-btn').forEach((btn) => {
-      if (Number(btn.dataset.tier) === data.business.subscriptionTier) btn.classList.add('active');
-      btn.addEventListener('click', async () => {
-        const upgradeStatus = document.getElementById('upgrade-status')!;
-        upgradeStatus.textContent = 'Redirecting to PayFast…';
-        const res = await fetch('/api/subscribe/start', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ businessId: Number(businessId), tier: Number(btn.dataset.tier) }),
-        });
-        const result = await res.json();
-        if (result.ok) {
-          window.location.href = result.redirectUrl;
-        } else {
-          upgradeStatus.textContent = result.error || 'Could not start checkout.';
-        }
-      });
-    });
 
     if (data.business.subscriptionTier >= 2) {
       document.getElementById('photos-section')!.hidden = false;
@@ -196,28 +181,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       blocks = Array.isArray(data.business.customBlocks) ? data.business.customBlocks : [];
       document.getElementById('block-editor')!.hidden = false;
       renderBlocks();
-    }
-
-    if (data.business.subscriptionTier > 0) {
-      const cancelBtn = document.getElementById('cancel-btn') as HTMLButtonElement;
-      cancelBtn.hidden = false;
-      cancelBtn.addEventListener('click', async () => {
-        if (!confirm('Cancel your subscription? You keep your current tier until the paid period ends, then it reverts to Free.')) return;
-        cancelBtn.disabled = true;
-        const upgradeStatus = document.getElementById('upgrade-status')!;
-        upgradeStatus.textContent = 'Cancelling…';
-        const res = await fetch('/api/subscribe/cancel', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ businessId: Number(businessId) }),
-        });
-        const result = await res.json();
-        upgradeStatus.textContent = result.ok
-          ? 'Cancelled — you keep your tier until the current period ends.'
-          : result.error || 'Could not cancel.';
-        cancelBtn.disabled = false;
-        if (result.ok) cancelBtn.hidden = true;
-      });
     }
   }
 
@@ -318,25 +281,58 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     gap: 0.6rem;
     margin-top: 0.75rem;
   }
-  .tier-btn {
+  .upgrade-cta {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: var(--radius-lg, 16px);
+    background: linear-gradient(135deg, var(--accent), var(--navy));
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 6px 20px -6px rgba(var(--accent-rgb), 0.55);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .upgrade-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px -6px rgba(var(--accent-rgb), 0.6);
+  }
+  .upgrade-cta-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+  .upgrade-cta-text {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
-    padding: 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
-    cursor: pointer;
-    font: inherit;
-    text-align: left;
+    gap: 0.15rem;
+    flex: 1;
   }
-  .tier-btn span {
-    color: var(--text-muted);
+  .upgrade-cta-text strong {
+    font-size: 1.05rem;
+  }
+  .upgrade-cta-text span {
     font-size: 0.85rem;
+    opacity: 0.9;
   }
-  .tier-btn.active {
-    border-color: var(--accent);
-    background: rgba(var(--accent-rgb), 0.08);
+  .upgrade-cta-arrow {
+    font-size: 1.3rem;
+    opacity: 0.85;
+  }
+  .upgrade-cta.is-active {
+    background: var(--bg-card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    box-shadow: none;
+  }
+  .upgrade-cta.is-active .upgrade-cta-text strong {
+    color: var(--navy);
+  }
+  .upgrade-cta.is-active .upgrade-cta-text span {
+    color: var(--text-muted);
+    opacity: 1;
+  }
+  .upgrade-cta.is-active .upgrade-cta-arrow {
+    color: var(--accent);
   }
   .tpl-btn {
     display: flex;
