@@ -118,6 +118,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         card.classList.add('current');
         btn.textContent = 'Current plan';
         btn.disabled = true;
+      } else if (cardTier < tier) {
+        // Already above this tier — nothing useful to offer here, and
+        // "Downgrade" reads as a bad idea we're suggesting. Just remove it.
+        btn.remove();
       }
     });
 
