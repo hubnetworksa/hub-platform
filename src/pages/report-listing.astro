@@ -32,15 +32,18 @@ import site from '../site';
   const slug = params.get('slug') || '';
   const name = params.get('name') || '';
 
-  const nameEl = document.getElementById('business-name')!;
+  // NOTE: define:vars forces this script to stay inline and unprocessed by
+  // Astro/Vite (no TypeScript stripping) — it must be plain browser JS, or
+  // it throws a SyntaxError on load and never runs at all.
+  const nameEl = document.getElementById('business-name');
   if (slug && name) {
     nameEl.textContent = `Reporting an issue with: ${name}`;
   } else {
     nameEl.textContent = 'No listing specified — go back to the business page and click "Report this listing" there.';
   }
 
-  const form = document.getElementById('report-form') as HTMLFormElement;
-  const status = document.getElementById('form-status')!;
+  const form = document.getElementById('report-form');
+  const status = document.getElementById('form-status');
 
   // No server round-trip — this opens the visitor's own email app with a
   // pre-filled message to our contact address. Their mail client does the
@@ -52,7 +55,7 @@ import site from '../site';
       status.textContent = 'No listing specified.';
       return;
     }
-    const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+    const data = Object.fromEntries(new FormData(form).entries());
     const businessUrl = `https://${domain}/business/${slug}/`;
     const lines = [`Business: ${name}`, `Link: ${businessUrl}`, '', "What's wrong:", data.issue || ''];
     if (data.reporterEmail) lines.push('', `Reply to: ${data.reporterEmail}`);

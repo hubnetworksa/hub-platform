@@ -69,10 +69,13 @@ const sortedSuburbs = [...suburbs].sort((a, b) => a.name.localeCompare(b.name));
 </BaseLayout>
 
 <script define:vars={{ contactEmail: site.contactEmail, siteName: site.siteName }}>
+  // NOTE: define:vars forces this script to stay inline and unprocessed by
+  // Astro/Vite (no TypeScript stripping) — it must be plain browser JS, or
+  // it throws a SyntaxError on load and never runs at all.
   const loadedAt = Date.now();
-  const form = document.getElementById('listing-form') as HTMLFormElement;
-  const status = document.getElementById('form-status')!;
-  const authCheck = document.getElementById('auth-check')!;
+  const form = document.getElementById('listing-form');
+  const status = document.getElementById('form-status');
+  const authCheck = document.getElementById('auth-check');
 
   (async () => {
     const res = await fetch('/api/me');
@@ -87,7 +90,7 @@ const sortedSuburbs = [...suburbs].sort((a, b) => a.name.localeCompare(b.name));
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     status.textContent = 'Submitting…';
-    const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+    const data = Object.fromEntries(new FormData(form).entries());
     try {
       const res = await fetch('/api/submit-business', {
         method: 'POST',
