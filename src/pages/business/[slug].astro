@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls } from '../../lib/data';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, TIER_VERIFIED, TIER_VERIFIED_PLUS } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
 import Icon from '../../components/Icon.astro';
 
@@ -21,12 +21,16 @@ const SOURCE_LABELS: Record<string, string> = {
   'owner-submitted': 'Submitted by the business owner.',
   'scraped:google-places-no-website': 'Compiled from a publicly available Google Maps listing.',
 };
-// The actual URL (often the business's own website) stays internal for
-// provenance/compliance, but isn't given away as a free clickable link —
-// that's reserved for the future premium-listing feature. Shown as a
-// plain "Verified" label instead.
+// The actual URL (often the business's own website) only becomes a
+// clickable link once the owner is on a paid tier (Verified, R50, and up)
+// — see the Premium Listings plan. Below that it's still verified
+// internally for provenance/compliance, just shown as a plain label.
 const hasVerifiedUrlSource = sourceUrls.some((u) => /^https?:\/\//.test(u));
 const labelSources = sourceUrls.filter((u) => !/^https?:\/\//.test(u)).map((u) => SOURCE_LABELS[u] ?? u);
+const isPaidTier = business.subscription_tier >= TIER_VERIFIED && business.subscription_status === 'active';
+const showClickableWebsite = isPaidTier && !!business.website;
+const noAds = business.subscription_tier >= TIER_VERIFIED_PLUS && business.subscription_status === 'active';
+const photos = photosFor(business);
 // Only rendered when a real link exists — see shoppingCenterFor.
 const center = shoppingCenterFor(business);
 
@@ -53,7 +57,7 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={business.name} description={business.description.slice(0, 155)}>
+<BaseLayout title={business.name} description={business.description.slice(0, 155)} noAds={noAds}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <section class="container" style="padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;">
@@ -67,6 +71,11 @@ const jsonLd = {
     <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">{business.name}</h1>
 
     <div class="tags">
+      {isPaidTier && (
+        <span class="badge tier-badge">
+          <Icon path={ICONS.check} size={13} /> Verified
+        </span>
+      )}
       {cats.map((c) => {
         const g = groupForCategory(c.slug);
         return (
@@ -79,6 +88,21 @@ const jsonLd = {
     </div>
 
     <p style="margin-top: 1.25rem;">{business.description}</p>
+
+    {photos.length > 0 && (
+      <div class:list={['photo-gallery', { carousel: photos.length > 5 }]}>
+        {photos.map((photo) => (
+          <img
+            src={`/media/${photo.r2_key}`}
+            alt={photo.caption ?? business.name}
+            loading="lazy"
+            width="320"
+            height="220"
+          />
+        ))}
+      </div>
+    )}
+
     {center && (
       <a href={`/shopping-center/${center.slug}/`} class="located-at">
         <Icon path={ICONS.building} size={15} /> Located at {center.name}
@@ -87,6 +111,11 @@ const jsonLd = {
     {business.address && <p class="address">{business.address}{suburb && `, ${suburb.name}`}</p>}
 
     <div class="actions">
+      {showClickableWebsite && (
+        <a href={business.website!} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+          <Icon path={ICONS.pin} size={16} /> Visit website
+        </a>
+      )}
       {business.phone && (
         <a href={`tel:${business.phone}`} class="btn btn-outline">
           <Icon path={ICONS.phone} size={16} /> {business.phone}
@@ -183,6 +212,35 @@ const jsonLd = {
   .address {
     color: var(--text-muted);
     margin: 0.5rem 0 0;
+  }
+  .tier-badge {
+    background: rgba(26, 143, 94, 0.12);
+    color: #1a8f5e;
+  }
+  .photo-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+  .photo-gallery.carousel {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(160px, 220px);
+    grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 0.4rem;
+  }
+  .photo-gallery img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    scroll-snap-align: start;
+  }
+  .photo-gallery.carousel img {
+    height: 150px;
   }
   .located-at {
     display: inline-flex;

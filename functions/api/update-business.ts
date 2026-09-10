@@ -21,14 +21,18 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (!businessId) return json({ ok: false, error: 'Missing business.' }, 400);
 
   const business = await db
-    .prepare('SELECT id, name, address, phone, website, description, hours, owner_user_id FROM businesses WHERE id = ?')
+    .prepare('SELECT id, name, address, phone, website, description, hours, owner_user_id, subscription_tier, subscription_status, subscription_expires_at FROM businesses WHERE id = ?')
     .bind(businessId)
-    .first<{ id: number; name: string; address: string | null; phone: string | null; website: string | null; description: string; hours: string | null; owner_user_id: number | null }>();
+    .first<{ id: number; name: string; address: string | null; phone: string | null; website: string | null; description: string; hours: string | null; owner_user_id: number | null; subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null }>();
   if (!business || (business.owner_user_id !== user.id && !isAdminEmail(user.email))) return json({ ok: false, error: 'You do not own this business.' }, 403);
 
   return json({
     ok: true,
-    business: { id: business.id, name: business.name, address: business.address, phone: business.phone, website: business.website, description: business.description, hours: business.hours },
+    business: {
+      id: business.id, name: business.name, address: business.address, phone: business.phone, website: business.website, description: business.description, hours: business.hours,
+      subscriptionTier: business.subscription_status === 'active' ? business.subscription_tier : 0,
+      subscriptionExpiresAt: business.subscription_expires_at,
+    },
   });
 };
 

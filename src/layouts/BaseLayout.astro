@@ -17,9 +17,12 @@ interface Props {
    *  really the same non-content form, which wastes crawl budget on
    *  thousands of near-duplicate URLs. */
   noindex?: boolean;
+  /** Verified Plus (R99) and up never load the ads script on their own
+   *  business page — see the Premium Listings plan. */
+  noAds?: boolean;
 }
 
-const { title, description, canonical, titleOverride, noindex } = Astro.props;
+const { title, description, canonical, titleOverride, noindex, noAds } = Astro.props;
 const fullTitle = titleOverride ?? `${title} | ${site.siteName}`;
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
 const canonicalUrl = canonical ?? (siteUrl + Astro.url.pathname);
@@ -88,7 +91,7 @@ const themeCss = `:root {
     <!-- AdSense loader. Auto ads (if enabled) are controlled from the AdSense
          dashboard per-site; no <ins class="adsbygoogle"> units are placed in
          markup here. Only rendered once this site has a publisher ID. -->
-    {site.adsensePublisherId && (
+    {site.adsensePublisherId && !noAds && (
       <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${site.adsensePublisherId}`} crossorigin="anonymous"></script>
     )}
     <title>{fullTitle}</title>

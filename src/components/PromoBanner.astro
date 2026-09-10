@@ -1,0 +1,114 @@
+---
+// Renders a promoted-listing band — either the Premium "Top Spot" banner or
+// the Featured strip — on a category/suburb listing page. Always sits above
+// the regular (unpromoted) list; never appears on a competitor's own
+// business page (see the plan's "what the research says to avoid" section —
+// that's the exact mechanic that generated years of "pay to play" backlash
+// against Yelp). The disclosure label is not decorative: SA's ARB Code and
+// FTC guidance both require paid placement to be clearly, consistently
+// labelled as such.
+import { suburbFor, categoriesFor, type Business } from '../lib/data';
+import { groupForCategory } from '../lib/categoryGroups';
+import Icon from './Icon.astro';
+
+interface Props {
+  businesses: Business[];
+  kind: 'top-spot' | 'featured';
+}
+
+const { businesses, kind } = Astro.props;
+const label = kind === 'top-spot' ? 'Premium listing' : 'Featured';
+---
+
+{businesses.length > 0 && (
+  <div class:list={['promo-band', kind]}>
+    {businesses.map((business) => {
+      const suburb = suburbFor(business);
+      const primary = categoriesFor(business)[0];
+      const group = primary ? groupForCategory(primary.slug) : undefined;
+      return (
+        <a class="promo-card" href={`/business/${business.slug}/`}>
+          <span class="promo-label">{label}</span>
+          <h3>{business.name}</h3>
+          <p class="promo-meta">
+            {group && <Icon path={group.iconPath} size={13} />}
+            {primary?.name}
+            {suburb && ` · ${suburb.name}`}
+          </p>
+          {business.description && <p class="promo-desc">{business.description}</p>}
+        </a>
+      );
+    })}
+  </div>
+)}
+
+<style>
+  .promo-band {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .promo-band.top-spot {
+    grid-template-columns: 1fr;
+  }
+  .promo-band.featured {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+  .promo-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.25rem;
+    position: relative;
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+  .top-spot .promo-card {
+    background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.14), rgba(var(--accent-rgb), 0.04));
+    border: 1px solid rgba(var(--accent-rgb), 0.35);
+  }
+  .featured .promo-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+  }
+  .promo-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+  }
+  .promo-label {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--bg-card);
+    border: 1px solid rgba(var(--accent-rgb), 0.4);
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    margin-bottom: 0.5rem;
+  }
+  .promo-card h3 {
+    margin: 0 0 0.3rem;
+    font-size: 1.1rem;
+  }
+  .promo-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  .promo-desc {
+    margin: 0.5rem 0 0;
+    font-size: 0.85rem;
+    color: var(--text);
+    max-width: 60ch;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+</style>

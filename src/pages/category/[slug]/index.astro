@@ -3,7 +3,8 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import BusinessCard from '../../../components/BusinessCard.astro';
 import PageBanner from '../../../components/PageBanner.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
-import { categories, businessesInCategory, suburbFor, type Business } from '../../../lib/data';
+import PromoBanner from '../../../components/PromoBanner.astro';
+import { categories, businessesInCategory, suburbFor, topSpotInCategory, featuredInCategory, type Business } from '../../../lib/data';
 import { groupForCategory } from '../../../lib/categoryGroups';
 import site from '../../../site';
 
@@ -23,6 +24,8 @@ for (const business of businesses) {
 }
 const suburbGroups = [...bySuburb.entries()].sort((a, b) => b[1].businesses.length - a[1].businesses.length);
 const group = groupForCategory(category.slug);
+const topSpot = topSpotInCategory(category.id);
+const featured = featuredInCategory(category.id);
 ---
 
 <BaseLayout
@@ -41,6 +44,8 @@ const group = groupForCategory(category.slug);
   </PageBanner>
 
   <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+    <PromoBanner businesses={topSpot} kind="top-spot" />
+    <PromoBanner businesses={featured} kind="featured" />
     {businesses.length === 0 ? (
       <p style="color: var(--text-muted);">None listed yet.</p>
     ) : (

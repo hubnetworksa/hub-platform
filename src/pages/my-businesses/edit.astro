@@ -31,6 +31,29 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <button type="submit" class="btn btn-primary">Save changes</button>
       <p id="form-status" role="status"></p>
     </form>
+
+    <section id="upgrade-section" hidden>
+      <h2>Premium Listing</h2>
+      <p id="current-tier-label" class="muted"></p>
+      <div class="tier-grid">
+        <button type="button" class="tier-btn" data-tier="1"><b>Verified</b><span>R50/mo</span></button>
+        <button type="button" class="tier-btn" data-tier="2"><b>Verified Plus</b><span>R99/mo</span></button>
+        <button type="button" class="tier-btn" data-tier="3"><b>Featured</b><span>R199/mo</span></button>
+        <button type="button" class="tier-btn" data-tier="4"><b>Premium</b><span>R299/mo</span></button>
+      </div>
+      <p id="upgrade-status" role="status" class="muted"></p>
+    </section>
+
+    <section id="photos-section" hidden>
+      <h2>Photos</h2>
+      <p id="photos-cap-label" class="muted"></p>
+      <div id="photo-grid" class="photo-grid"></div>
+      <form id="photo-upload-form">
+        <input type="file" name="photo" accept="image/*" id="photo-input" />
+        <button type="submit" class="btn btn-outline btn-sm">Upload photo</button>
+      </form>
+      <p id="photo-status" role="status" class="muted"></p>
+    </section>
   </section>
 </BaseLayout>
 
@@ -64,7 +87,72 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     (form.elements.namedItem('website') as HTMLInputElement).value = data.business.website ?? '';
     (form.elements.namedItem('description') as HTMLTextAreaElement).value = data.business.description ?? '';
     (form.elements.namedItem('hours') as HTMLTextAreaElement).value = data.business.hours ?? '';
+
+    const tierNames = ['Free', 'Verified', 'Verified Plus', 'Featured', 'Premium'];
+    document.getElementById('current-tier-label')!.textContent =
+      `Current tier: ${tierNames[data.business.subscriptionTier] ?? 'Free'}` +
+      (data.business.subscriptionTier > 0 && data.business.subscriptionExpiresAt
+        ? ` · renews ${new Date(data.business.subscriptionExpiresAt).toLocaleDateString()}`
+        : '');
+    document.getElementById('upgrade-section')!.hidden = false;
+    document.querySelectorAll<HTMLButtonElement>('.tier-btn').forEach((btn) => {
+      if (Number(btn.dataset.tier) === data.business.subscriptionTier) btn.classList.add('active');
+      btn.addEventListener('click', async () => {
+        const upgradeStatus = document.getElementById('upgrade-status')!;
+        upgradeStatus.textContent = 'Redirecting to PayFast…';
+        const res = await fetch('/api/subscribe/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId: Number(businessId), tier: Number(btn.dataset.tier) }),
+        });
+        const result = await res.json();
+        if (result.ok) {
+          window.location.href = result.redirectUrl;
+        } else {
+          upgradeStatus.textContent = result.error || 'Could not start checkout.';
+        }
+      });
+    });
+
+    if (data.business.subscriptionTier >= 2) {
+      document.getElementById('photos-section')!.hidden = false;
+      await loadPhotos();
+    }
   }
+
+  async function loadPhotos() {
+    const grid = document.getElementById('photo-grid')!;
+    const res = await fetch(`/api/business-photos?businessId=${encodeURIComponent(businessId!)}`);
+    const data = await res.json();
+    if (!data.ok) return;
+    document.getElementById('photos-cap-label')!.textContent = `${data.photos.length} of ${data.cap} photos used`;
+    grid.innerHTML = '';
+    for (const photo of data.photos) {
+      const div = document.createElement('div');
+      div.className = 'photo-thumb';
+      div.innerHTML = `<img src="/media/${photo.r2_key}" alt="" /><button type="button" data-id="${photo.id}">Remove</button>`;
+      div.querySelector('button')!.addEventListener('click', async (e) => {
+        await fetch(`/api/business-photos?photoId=${(e.target as HTMLElement).getAttribute('data-id')}`, { method: 'DELETE' });
+        loadPhotos();
+      });
+      grid.appendChild(div);
+    }
+  }
+
+  document.getElementById('photo-upload-form')!.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('photo-input') as HTMLInputElement;
+    const photoStatus = document.getElementById('photo-status')!;
+    if (!input.files?.[0]) return;
+    photoStatus.textContent = 'Uploading…';
+    const fd = new FormData();
+    fd.append('businessId', businessId!);
+    fd.append('photo', input.files[0]);
+    const res = await fetch('/api/business-photos', { method: 'POST', body: fd });
+    const result = await res.json();
+    photoStatus.textContent = result.ok ? 'Uploaded.' : result.error || 'Could not upload.';
+    if (result.ok) { input.value = ''; loadPhotos(); }
+  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -113,5 +201,70 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     font-size: 0.9rem;
     color: var(--text-muted);
     margin: 0;
+  }
+  #upgrade-section, #photos-section {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .muted {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+  .tier-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+  }
+  .tier-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+  }
+  .tier-btn span {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  .tier-btn.active {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.08);
+  }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+  }
+  .photo-thumb {
+    position: relative;
+  }
+  .photo-thumb img {
+    width: 100%;
+    height: 90px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .photo-thumb button {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  #photo-upload-form {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
   }
 </style>
