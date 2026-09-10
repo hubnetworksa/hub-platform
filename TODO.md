@@ -42,11 +42,10 @@ Polokwane and Cape Town are still on `.pages.dev` only.
       `sites/pretoria.json`) and submit `/sitemap-index.xml`. The domain's
       old TXT-based verification records belonged to the old zone/account
       and don't need recreating.
-- [ ] **Old Pretoria repo (GRimkiller360 account) cleanup** — remove
-      `pretoriahub.com` from that Pages project's custom domains (it's
-      orphaned there now anyway since the zone moved); decide whether to
-      archive the repo or just leave it deployed-but-unreachable at its
-      own `.pages.dev` URL.
+- [x] **Old Pretoria repo (GRimkiller360 account) cleanup** — removed
+      `pretoriahub.com` from that Pages project's custom domains,
+      2026-09-10. Still undecided: archive the repo, or just leave it
+      deployed-but-unreachable at its own `.pages.dev` URL.
 - [ ] **One more D1 backup + merge pass** for Pretoria — same process as
       `db/backups/old-pretoriahub-2026-09-10.sql`, in case the old site
       collected anything between that backup and the actual cutover.
