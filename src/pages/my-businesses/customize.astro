@@ -872,7 +872,11 @@ import site from '../../site';
     border-color: var(--accent);
     background: rgba(var(--accent-rgb), 0.08);
   }
-  .block-row {
+  /* :global() throughout this block — every .block-row is built at runtime
+     in renderBlocks() via innerHTML, so (same reason as .photo-thumb above)
+     Astro's scoped-style data attribute never reaches these elements and a
+     plain scoped selector would silently never match them. */
+  :global(.block-row) {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
@@ -882,7 +886,7 @@ import site from '../../site';
     background: var(--bg-card);
     margin-bottom: 0.6rem;
   }
-  .block-row select, .block-row input, .block-row textarea {
+  :global(.block-row select), :global(.block-row input), :global(.block-row textarea) {
     font: inherit;
     padding: 0.45rem 0.6rem;
     border-radius: var(--radius);
@@ -890,15 +894,15 @@ import site from '../../site';
     background: var(--bg-subtle);
     color: var(--text);
   }
-  .block-row-head {
+  :global(.block-row-head) {
     display: flex;
     align-items: center;
     gap: 0.5rem;
   }
-  .block-row-head select {
+  :global(.block-row-head select) {
     flex: 1;
   }
-  .drag-handle {
+  :global(.drag-handle) {
     cursor: grab;
     color: var(--text-muted);
     font-size: 0.9rem;
@@ -907,17 +911,17 @@ import site from '../../site';
     touch-action: none;
     padding: 0 0.2rem;
   }
-  .drag-handle:active {
+  :global(.drag-handle:active) {
     cursor: grabbing;
   }
-  .block-row-ghost {
+  :global(.block-row-ghost) {
     opacity: 0.4;
   }
-  .block-row-actions {
+  :global(.block-row-actions) {
     display: flex;
     gap: 0.4rem;
   }
-  .block-row-actions button {
+  :global(.block-row-actions button) {
     font-size: 0.78rem;
     border: 1px solid var(--border);
     background: var(--bg-subtle);
@@ -1032,7 +1036,7 @@ import site from '../../site';
   #design-status {
     margin-top: 0.6rem;
   }
-  .block-hint {
+  :global(.block-hint) {
     margin: 0;
   }
 
