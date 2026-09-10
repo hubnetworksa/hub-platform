@@ -2,8 +2,19 @@
 // Vanilla JS, no framework — index is only fetched on first interaction.
 // Matching splits the query into words and requires every word to match
 // somewhere (name/category/suburb) rather than the whole phrase needing to
-// appear as one literal substring — that's what let "plumber seshego"
-// fail before, since no single field contains that exact phrase.
+// appear as one literal substring — that's what let "plumber seshego" fail
+// on Polokwane before, since no single field contains that exact phrase.
+//
+// The placeholder's example suburb used to be hardcoded as "Seshego" (a
+// real Polokwane suburb, from that same bug-fix testing) — but this
+// component is shared across all 3 sites, so it was showing "Seshego" as
+// an example on PretoriaHub too, where it isn't even a real place. Picked
+// dynamically per site instead: whichever suburb actually has the most
+// listings, so the example is always a real, populated area for whichever
+// site renders this.
+import { suburbs, businessesInSuburb } from '../lib/data';
+
+const exampleSuburb = [...suburbs].sort((a, b) => businessesInSuburb(b.id).length - businessesInSuburb(a.id).length)[0]?.slug ?? '';
 ---
 
 <div class="search-box" id="hub-search">
@@ -13,7 +24,7 @@
   </svg>
   <input
     type="search"
-    placeholder="Search businesses, e.g. &quot;plumber Seshego&quot;"
+    placeholder={`Search businesses, e.g. "plumber ${exampleSuburb}"`}
     aria-label="Search businesses"
     autocomplete="off"
   />
