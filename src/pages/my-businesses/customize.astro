@@ -73,6 +73,7 @@ import site from '../../site';
   </section>
 </BaseLayout>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
 <script define:vars={{ SITE_NAME: site.siteName, CITY_LABEL: site.cityLabel, SITE_TAGLINE: site.tagline }}>
   const params = new URLSearchParams(window.location.search);
   const businessId = params.get('id');
@@ -105,6 +106,8 @@ import site from '../../site';
     ['story', 'Our Story'], ['specials', 'Specials & Promotions'], ['team', 'Team'], ['gallery', 'Gallery'],
     ['photo', 'Photo'], ['testimonial', 'Testimonial'], ['cta', 'Call to Action'], ['divider', 'Divider'],
   ];
+  // Loaded via the <script src> tag above this one.
+  declare const Sortable: any;
 
   // Same icon paths as src/pages/business/[slug].astro's ICONS + Icon.astro's
   // wrapper — kept in sync by hand since this preview can't import an
@@ -316,9 +319,12 @@ import site from '../../site';
       .map(
         (b, i) => `
       <div class="block-row" data-i="${i}">
-        <select class="block-type">
-          ${BLOCK_TYPE_OPTIONS.map(([val, label]) => `<option value="${val}" ${b.type === val ? 'selected' : ''}>${label}</option>`).join('')}
-        </select>
+        <div class="block-row-head">
+          <span class="drag-handle" title="Drag to reorder">⠿⠿</span>
+          <select class="block-type">
+            ${BLOCK_TYPE_OPTIONS.map(([val, label]) => `<option value="${val}" ${b.type === val ? 'selected' : ''}>${label}</option>`).join('')}
+          </select>
+        </div>
         ${blockFieldsHtml(b)}
         <div class="block-row-actions">
           <button type="button" class="move-up" ${i === 0 ? 'disabled' : ''}>↑</button>
@@ -351,6 +357,28 @@ import site from '../../site';
     renderPreview();
     scheduleAutosave();
   });
+
+  // Sortable is attached to the container once — it reads whatever child
+  // rows exist at drag time, so it survives renderBlocks() re-rendering
+  // those rows on every edit without needing to be re-created.
+  let sortableInited = false;
+  function initSortable() {
+    if (sortableInited || typeof Sortable === 'undefined') return;
+    sortableInited = true;
+    Sortable.create(document.getElementById('blocks-list'), {
+      handle: '.drag-handle',
+      animation: 150,
+      ghostClass: 'block-row-ghost',
+      onEnd: (evt: { oldIndex: number; newIndex: number }) => {
+        if (evt.oldIndex === evt.newIndex) return;
+        const [moved] = blocks.splice(evt.oldIndex, 1);
+        blocks.splice(evt.newIndex, 0, moved);
+        renderBlocks();
+        renderPreview();
+        scheduleAutosave();
+      },
+    });
+  }
 
   let autosaveTimer: number | undefined;
   function scheduleAutosave() {
@@ -507,6 +535,7 @@ import site from '../../site';
     if (canUseBuilder) {
       document.getElementById('block-editor')!.hidden = false;
       renderBlocks();
+      initSortable();
     } else {
       document.getElementById('upsell-blocks')!.hidden = false;
     }
@@ -689,6 +718,29 @@ import site from '../../site';
     border: 1px solid var(--border);
     background: var(--bg-subtle);
     color: var(--text);
+  }
+  .block-row-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .block-row-head select {
+    flex: 1;
+  }
+  .drag-handle {
+    cursor: grab;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    letter-spacing: -0.15em;
+    user-select: none;
+    touch-action: none;
+    padding: 0 0.2rem;
+  }
+  .drag-handle:active {
+    cursor: grabbing;
+  }
+  .block-row-ghost {
+    opacity: 0.4;
   }
   .block-row-actions {
     display: flex;
