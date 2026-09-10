@@ -32,6 +32,7 @@ const ICONS = {
   plus: '<path d="M12 5v14M5 12h14"/>',
   building: '<path d="M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6"/>',
   compass: '<circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-2 5-5 2 2-5 5-2Z"/>',
+  shield: '<path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/>',
 };
 const { theme } = site;
 
@@ -156,6 +157,8 @@ const themeCss = `:root {
             <a href="/tourism/"><Icon path={ICONS.compass} size={16} /> Tourism</a>
           )}
           <a href="/about/"><Icon path={ICONS.info} size={16} /> About Us</a>
+          <a href="/my-businesses/">My Businesses</a>
+          <a href="/admin/" id="admin-nav-link" class="admin-nav-link" hidden><Icon path={ICONS.shield} size={16} /> Admin Dashboard</a>
         </div>
         <a href="/list-your-business/" class="btn btn-primary">
           <Icon path={ICONS.plus} size={15} /> Add Your Business
@@ -189,6 +192,18 @@ const themeCss = `:root {
       document.addEventListener('dragstart', (e) => {
         if ((e.target as HTMLElement).tagName === 'IMG') e.preventDefault();
       });
+    </script>
+
+    <script>
+      // Reveals the Admin Dashboard nav link only for the one admin
+      // account — everyone else never sees it, since the site is static
+      // and can't know login state at build time.
+      fetch('/api/me')
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (data?.isAdmin) document.getElementById('admin-nav-link')!.hidden = false;
+        })
+        .catch(() => {});
     </script>
   </body>
 </html>

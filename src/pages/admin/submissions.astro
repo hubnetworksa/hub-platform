@@ -1,0 +1,233 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Pending Submissions" description="Review new business submissions.">
+  <section class="admin-wrap">
+    <div id="loading" class="loading">Loading…</div>
+
+    <div id="content" class="admin" hidden>
+      <a href="/admin/" class="back-link">← Admin Dashboard</a>
+      <div class="panel-title-row">
+        <h1>Pending submissions</h1>
+        <div class="bulk-actions">
+          <button id="bulk-approve" class="btn-sm btn-approve" disabled>Approve selected</button>
+          <button id="bulk-reject" class="btn-sm btn-reject" disabled>Reject selected</button>
+        </div>
+      </div>
+      <ul id="submissions-list" class="item-list"></ul>
+      <p id="submissions-empty" class="empty-state" hidden>Nothing waiting for approval.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  async function postForm(url: string, params: Record<string, string>): Promise<void> {
+    await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(params) });
+  }
+
+  function renderSubmission(s: {
+    token: string; name: string; category_slug: string; suburb_slug: string;
+    address: string | null; phone: string | null; email: string | null; website: string | null;
+    description: string; status: string;
+  }): string {
+    const canAct = s.status === 'Pending your approval';
+    const details = [s.category_slug, s.suburb_slug, s.address, s.phone, s.email, s.website].filter(Boolean).join(' · ');
+    return `
+      <li class="admin-row">
+        ${canAct ? `<input type="checkbox" class="submission-check" data-token="${s.token}" />` : ''}
+        <div class="admin-row-main">
+          <strong>${s.name}</strong>
+          <span class="row-detail">${details}</span>
+          <span class="row-detail">${s.description}</span>
+        </div>
+        ${canAct
+          ? `<div class="row-actions">
+              <button class="btn-sm btn-approve" data-action="approve" data-token="${s.token}">Approve</button>
+              <button class="btn-sm btn-reject" data-action="reject" data-token="${s.token}">Reject</button>
+            </div>`
+          : `<span class="status-badge status-pending">${s.status}</span>`
+        }
+      </li>`;
+  }
+
+  function updateBulkButtons() {
+    const anyChecked = document.querySelectorAll('.submission-check:checked').length > 0;
+    (document.getElementById('bulk-approve') as HTMLButtonElement).disabled = !anyChecked;
+    (document.getElementById('bulk-reject') as HTMLButtonElement).disabled = !anyChecked;
+  }
+
+  async function init() {
+    const me = await fetch('/api/me');
+    if (me.status === 401) {
+      window.location.href = '/login/?next=/admin/submissions/';
+      return;
+    }
+    const meData = await me.json();
+    if (!meData.isAdmin) {
+      window.location.href = '/my-businesses/';
+      return;
+    }
+
+    const res = await fetch('/api/admin/overview');
+    const data = await res.json();
+    document.getElementById('loading')!.hidden = true;
+    document.getElementById('content')!.hidden = false;
+
+    const list = document.getElementById('submissions-list')!;
+    if (data.submissions.length === 0) {
+      document.getElementById('submissions-empty')!.hidden = false;
+    } else {
+      list.innerHTML = data.submissions.map(renderSubmission).join('');
+    }
+    updateBulkButtons();
+  }
+
+  document.getElementById('content')!.addEventListener('change', (e) => {
+    if ((e.target as HTMLElement).classList.contains('submission-check')) updateBulkButtons();
+  });
+
+  document.getElementById('bulk-approve')!.addEventListener('click', async () => {
+    const tokens = [...document.querySelectorAll('.submission-check:checked')].map((el) => (el as HTMLElement).dataset.token!);
+    for (const token of tokens) await postForm('/api/confirm-listing', { token, action: 'approve' });
+    init();
+  });
+  document.getElementById('bulk-reject')!.addEventListener('click', async () => {
+    const tokens = [...document.querySelectorAll('.submission-check:checked')].map((el) => (el as HTMLElement).dataset.token!);
+    for (const token of tokens) await postForm('/api/confirm-listing', { token, action: 'reject' });
+    init();
+  });
+
+  document.getElementById('content')!.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-action]') as HTMLButtonElement | null;
+    if (!btn) return;
+    btn.disabled = true;
+    await postForm('/api/confirm-listing', { token: btn.dataset.token!, action: btn.dataset.action! });
+    init();
+  });
+
+  init();
+</script>
+
+<style>
+  .admin-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+  .loading {
+    color: var(--text-muted);
+  }
+  .admin {
+    width: 100%;
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .back-link {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+  }
+  .back-link:hover {
+    text-decoration: underline;
+  }
+  .panel-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .panel-title-row h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--navy);
+  }
+  .bulk-actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .item-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  :global(.admin-row) {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+  }
+  :global(.admin-row-main) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.9rem;
+    min-width: 0;
+  }
+  :global(.row-detail) {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    overflow-wrap: break-word;
+  }
+  :global(.row-actions) {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  :global(.btn-sm) {
+    border-radius: var(--radius);
+    padding: 0.35rem 0.7rem;
+    font-weight: 700;
+    font-size: 0.78rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  :global(.btn-approve) {
+    border: none;
+    background: var(--accent);
+    color: #fff;
+  }
+  :global(.btn-reject) {
+    border: 1px solid var(--danger, #c23838);
+    background: #fff;
+    color: var(--danger, #c23838);
+  }
+  :global(.btn-sm:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  :global(.status-badge) {
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    height: fit-content;
+  }
+  :global(.status-pending) {
+    color: #9c5f00;
+    background: rgba(156, 95, 0, 0.12);
+  }
+  :global(.submission-check) {
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+  }
+  .empty-state {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+</style>

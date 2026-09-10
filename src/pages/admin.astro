@@ -1,0 +1,223 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Admin Dashboard" description="Approve submissions and manage the site.">
+  <section class="admin-wrap">
+    <div id="loading" class="loading">Loading…</div>
+
+    <div id="content" class="admin" hidden>
+      <div class="admin-header">
+        <div>
+          <h1>Admin Dashboard</h1>
+          <div id="health-row" class="health-row"></div>
+        </div>
+        <div class="header-actions">
+          <button id="rebuild-btn" class="btn-outline">Rebuild now</button>
+          <button id="logout-btn" class="btn-outline">Log out</button>
+        </div>
+      </div>
+
+      <div id="stats-strip" class="stats-strip"></div>
+
+      <div class="nav-grid">
+        <a href="/admin/submissions/" class="nav-card">
+          <strong id="count-submissions">–</strong>
+          <span>Pending submissions</span>
+        </a>
+        <a href="/admin/claims/" class="nav-card">
+          <strong id="count-claims">–</strong>
+          <span>Pending business claims</span>
+        </a>
+        <a href="/admin/reports/" class="nav-card">
+          <strong id="count-reports">–</strong>
+          <span>Reports &amp; removal requests</span>
+        </a>
+        <a href="/admin/businesses/" class="nav-card">
+          <strong id="count-businesses">–</strong>
+          <span>Businesses</span>
+        </a>
+        <a href="/admin/users/" class="nav-card">
+          <strong id="count-users">–</strong>
+          <span>Users</span>
+        </a>
+        <a href="/admin/activity/" class="nav-card">
+          <strong>→</strong>
+          <span>Recent activity</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  async function postJson(url: string, body: unknown): Promise<{ ok: boolean }> {
+    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    return { ok: res.ok };
+  }
+
+  async function init() {
+    const me = await fetch('/api/me');
+    if (me.status === 401) {
+      window.location.href = '/login/?next=/admin/';
+      return;
+    }
+    const meData = await me.json();
+    if (!meData.isAdmin) {
+      window.location.href = '/my-businesses/';
+      return;
+    }
+
+    const res = await fetch('/api/admin/overview');
+    const data = await res.json();
+    document.getElementById('loading')!.hidden = true;
+    document.getElementById('content')!.hidden = false;
+
+    document.getElementById('stats-strip')!.innerHTML = `
+      <div class="stat"><strong>${data.stats.businesses}</strong><span>Businesses</span></div>
+      <div class="stat"><strong>${data.stats.users}</strong><span>Users</span></div>
+      <div class="stat"><strong>${data.stats.pendingSubmissions}</strong><span>Pending submissions</span></div>
+      <div class="stat"><strong>${data.stats.pendingClaims}</strong><span>Pending claims</span></div>
+      <div class="stat"><strong>${data.stats.openReports}</strong><span>Open reports</span></div>
+    `;
+
+    document.getElementById('health-row')!.innerHTML = `
+      <span class="health-dot ${data.health.resendConfigured ? 'health-ok' : 'health-bad'}">● Resend</span>
+      <span class="health-dot ${data.health.dispatchConfigured ? 'health-ok' : 'health-bad'}">● Rebuild trigger</span>
+    `;
+
+    document.getElementById('count-submissions')!.textContent = String(data.stats.pendingSubmissions);
+    document.getElementById('count-claims')!.textContent = String(data.stats.pendingClaims);
+    document.getElementById('count-reports')!.textContent = String(data.stats.openReports);
+    document.getElementById('count-businesses')!.textContent = String(data.stats.businesses);
+    document.getElementById('count-users')!.textContent = String(data.stats.users);
+  }
+
+  document.getElementById('rebuild-btn')!.addEventListener('click', async (e) => {
+    const btn = e.currentTarget as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = 'Rebuilding…';
+    await postJson('/api/admin/rebuild', {});
+    btn.textContent = 'Rebuild now';
+    btn.disabled = false;
+  });
+
+  document.getElementById('logout-btn')!.addEventListener('click', async () => {
+    await fetch('/api/logout', { method: 'POST' });
+    window.location.href = '/';
+  });
+
+  init();
+</script>
+
+<style>
+  .admin-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+  .loading {
+    color: var(--text-muted);
+  }
+  .admin {
+    width: 100%;
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .admin-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .admin-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--navy);
+  }
+  .header-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+  .btn-outline {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+
+  :global(.health-row) {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.4rem;
+  }
+  :global(.health-dot) {
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  :global(.health-ok) {
+    color: #1a8f5e;
+  }
+  :global(.health-bad) {
+    color: var(--danger, #c23838);
+  }
+
+  :global(.stats-strip) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 0.75rem;
+  }
+  :global(.stat) {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.9rem 0.75rem;
+    text-align: center;
+  }
+  :global(.stat strong) {
+    display: block;
+    font-size: 1.4rem;
+    color: var(--navy);
+  }
+  :global(.stat span) {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+  }
+
+  .nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.9rem;
+  }
+  .nav-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 1.4rem 1.25rem;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .nav-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 14px rgba(16, 26, 51, 0.08);
+  }
+  .nav-card strong {
+    font-size: 1.8rem;
+    color: var(--accent);
+  }
+  .nav-card span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--navy);
+  }
+</style>

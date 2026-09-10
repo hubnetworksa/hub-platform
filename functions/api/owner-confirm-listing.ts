@@ -3,6 +3,7 @@ import { generateUniqueSlug, insertApprovedBusiness } from '../../src/lib/busine
 import { getSite, type Site } from '../_lib/site';
 import { triggerRebuild } from '../_lib/deploy-hook';
 import { sendEmail } from '../_lib/send-email';
+import { logActivity } from '../_lib/activity-log';
 
 interface Env {
   DB: D1Database;
@@ -21,6 +22,7 @@ interface PendingRow {
   email: string | null;
   website: string | null;
   description: string;
+  submitted_by_user_id: number | null;
 }
 
 // The business owner's confirm/dispute step, reached from the email sent
@@ -36,7 +38,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const row = await db
     .prepare(
-      `SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description
+      `SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id
        FROM pending_submissions WHERE owner_confirm_token = ?`
     )
     .bind(token)
@@ -50,6 +52,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   await db.prepare('DELETE FROM pending_submissions WHERE id = ?').bind(row.id).run();
 
   if (action !== 'confirm') {
+    await logActivity(db, 'owner_disputed', row.name, reason ? `Reason given: ${reason}` : 'No reason given.');
     await notifyAdmin(context.env, site, {
       outcome: 'disputed',
       businessName: row.name,
@@ -79,8 +82,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     website: row.website,
     email: row.email,
     description: row.description,
+    ownerUserId: row.submitted_by_user_id,
   });
   await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+  await logActivity(db, 'owner_confirmed', row.name, `Published: https://${site.domain}/business/${slug}/`);
   await notifyAdmin(context.env, site, {
     outcome: 'confirmed',
     businessName: row.name,

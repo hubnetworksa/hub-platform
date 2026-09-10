@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Edit business" description="Edit your business listing details.">
+  <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 560px;">
+    <div id="loading">Loading…</div>
+
+    <form id="edit-form" hidden>
+      <h1 id="business-name"></h1>
+      <label>
+        Address
+        <input type="text" name="address" maxlength="200" />
+      </label>
+      <label>
+        Phone
+        <input type="tel" name="phone" maxlength="30" />
+      </label>
+      <label>
+        Website
+        <input type="url" name="website" maxlength="200" />
+      </label>
+      <label>
+        Description
+        <textarea name="description" maxlength="600" rows="4"></textarea>
+      </label>
+      <label>
+        Hours
+        <textarea name="hours" maxlength="400" rows="3" placeholder="e.g. Mon-Fri 8am-5pm"></textarea>
+      </label>
+      <button type="submit" class="btn btn-primary">Save changes</button>
+      <p id="form-status" role="status"></p>
+    </form>
+  </section>
+</BaseLayout>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const businessId = params.get('id');
+  const loading = document.getElementById('loading')!;
+  const form = document.getElementById('edit-form') as HTMLFormElement;
+  const status = document.getElementById('form-status')!;
+
+  async function init() {
+    if (!businessId) {
+      loading.textContent = 'No business specified.';
+      return;
+    }
+    const res = await fetch(`/api/update-business?id=${encodeURIComponent(businessId)}`);
+    if (res.status === 401) {
+      window.location.href = '/login/';
+      return;
+    }
+    const data = await res.json();
+    if (!data.ok) {
+      loading.textContent = data.error || 'Could not load this business.';
+      return;
+    }
+    loading.hidden = true;
+    form.hidden = false;
+    document.getElementById('business-name')!.textContent = data.business.name;
+    (form.elements.namedItem('address') as HTMLInputElement).value = data.business.address ?? '';
+    (form.elements.namedItem('phone') as HTMLInputElement).value = data.business.phone ?? '';
+    (form.elements.namedItem('website') as HTMLInputElement).value = data.business.website ?? '';
+    (form.elements.namedItem('description') as HTMLTextAreaElement).value = data.business.description ?? '';
+    (form.elements.namedItem('hours') as HTMLTextAreaElement).value = data.business.hours ?? '';
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    status.textContent = 'Saving…';
+    const data = Object.fromEntries(new FormData(form).entries());
+    const res = await fetch('/api/update-business', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...data, businessId: Number(businessId) }),
+    });
+    const result = await res.json();
+    status.textContent = result.ok ? 'Saved.' : result.error || 'Something went wrong.';
+  });
+
+  init();
+</script>
+
+<style>
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  input, textarea {
+    font: inherit;
+    padding: 0.6rem 0.75rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+  }
+  button {
+    align-self: flex-start;
+    border: none;
+    cursor: pointer;
+  }
+  #form-status {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,450 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import site from '../../site';
+
+const ICONS = {
+  search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+  building: '<path d="M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6"/>',
+  upload: '<path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 20h14"/>',
+  file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/>',
+  x: '<path d="M18 6 6 18M6 6l12 12"/>',
+  check: '<circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5"/>',
+};
+---
+
+<BaseLayout title="Claim a business" description={`Claim an existing business listing on ${site.siteName}.`}>
+  <section class="claim-wrap">
+    <div class="claim-card">
+      <h1>Claim a business</h1>
+      <p class="subtitle">Find your business, then upload a document proving you own it — a business registration certificate, ID, or letterhead all work. An admin reviews every claim before access is granted.</p>
+
+      <div id="search-section" class="step">
+        <span class="step-label">1. Find your business</span>
+        <div class="combobox">
+          <Icon path={ICONS.search} size={17} />
+          <input type="text" id="search-input" autocomplete="off" placeholder="Start typing a business name…" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="search-results" />
+          <span id="search-spinner" class="spinner" hidden></span>
+          <ul id="search-results" class="results-dropdown" role="listbox" hidden></ul>
+        </div>
+      </div>
+
+      <div id="selected-section" class="step" hidden>
+        <span class="step-label">Claiming</span>
+        <div class="selected-chip">
+          <Icon path={ICONS.building} size={16} />
+          <span id="selected-name"></span>
+          <button type="button" id="change-selection" class="chip-clear" aria-label="Change business">
+            <Icon path={ICONS.x} size={14} />
+          </button>
+        </div>
+      </div>
+
+      <form id="claim-form" hidden>
+        <div class="step">
+          <span class="step-label">2. Upload proof of ownership</span>
+          <label for="documents-input" class="dropzone">
+            <Icon path={ICONS.upload} size={22} />
+            <span class="dropzone-text">Click to choose files, or drag them here</span>
+            <span class="dropzone-hint">PDF or image, up to 5 files, 10MB each</span>
+          </label>
+          <input type="file" id="documents-input" name="documents" multiple accept=".pdf,image/*" required hidden />
+          <ul id="file-list" class="file-list"></ul>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit claim</button>
+        <p id="form-status" role="status"></p>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const searchSection = document.getElementById('search-section')!;
+  const selectedSection = document.getElementById('selected-section')!;
+  const searchInput = document.getElementById('search-input') as HTMLInputElement;
+  const resultsList = document.getElementById('search-results')!;
+  const claimForm = document.getElementById('claim-form') as HTMLFormElement;
+  const selectedName = document.getElementById('selected-name')!;
+  const changeBtn = document.getElementById('change-selection')!;
+  const filesInput = document.getElementById('documents-input') as HTMLInputElement;
+  const fileList = document.getElementById('file-list')!;
+  const dropzone = document.querySelector('.dropzone') as HTMLLabelElement;
+  const spinner = document.getElementById('search-spinner')!;
+  const status = document.getElementById('form-status')!;
+  let selectedId: number | null = null;
+  let debounceTimer: number;
+  let activeIndex = -1;
+
+  const BUILDING_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6"/></svg>`;
+
+  function closeResults() {
+    resultsList.hidden = true;
+    resultsList.innerHTML = '';
+    searchInput.setAttribute('aria-expanded', 'false');
+    activeIndex = -1;
+  }
+
+  function highlight(index: number) {
+    const items = [...resultsList.querySelectorAll('button[data-id]')];
+    items.forEach((el, i) => el.classList.toggle('active', i === index));
+    items[index]?.scrollIntoView({ block: 'nearest' });
+    activeIndex = index;
+  }
+
+  (async () => {
+    const res = await fetch('/api/me');
+    if (res.status === 401) {
+      window.location.href = `/login/?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+    }
+  })();
+
+  function selectBusiness(id: number, name: string) {
+    selectedId = id;
+    selectedName.textContent = name;
+    searchSection.hidden = true;
+    selectedSection.hidden = false;
+    claimForm.hidden = false;
+    closeResults();
+    searchInput.value = '';
+  }
+
+  // Arriving from a business page's "Claim it" button — skip the search step.
+  const params = new URLSearchParams(window.location.search);
+  const preselectId = params.get('businessId');
+  const preselectName = params.get('name');
+  if (preselectId && preselectName) selectBusiness(Number(preselectId), preselectName);
+
+  changeBtn.addEventListener('click', () => {
+    selectedId = null;
+    searchSection.hidden = false;
+    selectedSection.hidden = true;
+    claimForm.hidden = true;
+  });
+
+  searchInput.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    const q = searchInput.value.trim();
+    if (q.length < 2) {
+      spinner.hidden = true;
+      closeResults();
+      return;
+    }
+    spinner.hidden = false;
+    debounceTimer = window.setTimeout(async () => {
+      const res = await fetch(`/api/search-businesses?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      spinner.hidden = true;
+      resultsList.hidden = false;
+      searchInput.setAttribute('aria-expanded', 'true');
+      resultsList.innerHTML = data.results.length
+        ? data.results
+            .map(
+              (b: { id: number; name: string }, i: number) =>
+                `<li role="option"><button type="button" data-id="${b.id}" data-name="${b.name}" data-index="${i}">${BUILDING_SVG}<span>${b.name}</span></button></li>`
+            )
+            .join('')
+        : '<li class="no-results">No matches found.</li>';
+      activeIndex = -1;
+    }, 250);
+  });
+
+  searchInput.addEventListener('keydown', (e) => {
+    const items = resultsList.querySelectorAll('button[data-id]');
+    if (resultsList.hidden || items.length === 0) return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      highlight((activeIndex + 1) % items.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      highlight((activeIndex - 1 + items.length) % items.length);
+    } else if (e.key === 'Enter' && activeIndex >= 0) {
+      e.preventDefault();
+      const btn = items[activeIndex] as HTMLButtonElement;
+      selectBusiness(Number(btn.dataset.id), btn.dataset.name ?? '');
+    } else if (e.key === 'Escape') {
+      closeResults();
+    }
+  });
+
+  resultsList.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-id]') as HTMLButtonElement | null;
+    if (!btn) return;
+    selectBusiness(Number(btn.dataset.id), btn.dataset.name ?? '');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!(e.target as HTMLElement).closest('.combobox')) closeResults();
+  });
+
+  function renderFileList() {
+    const files = [...(filesInput.files ?? [])];
+    fileList.innerHTML = files.map((f) => `<li><span>${f.name}</span></li>`).join('');
+  }
+  filesInput.addEventListener('change', renderFileList);
+
+  dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('drag-over');
+  });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('drag-over');
+    if (e.dataTransfer?.files.length) {
+      filesInput.files = e.dataTransfer.files;
+      renderFileList();
+    }
+  });
+
+  claimForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!selectedId) return;
+    status.textContent = 'Submitting…';
+    const formData = new FormData(claimForm);
+    formData.set('businessId', String(selectedId));
+    try {
+      const res = await fetch('/api/claim-business', { method: 'POST', body: formData });
+      if (res.status === 401) {
+        window.location.href = '/login/';
+        return;
+      }
+      const result = await res.json();
+      status.textContent = result.ok ? "Claim submitted — we'll review it and be in touch." : result.error || 'Something went wrong.';
+      if (result.ok) claimForm.reset();
+    } catch {
+      status.textContent = 'Something went wrong — please try again.';
+    }
+  });
+</script>
+
+<style>
+  .claim-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+  .claim-card {
+    width: 100%;
+    max-width: 520px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: var(--shadow-lift, 0 8px 30px rgba(0, 0, 0, 0.08));
+    padding: 2.25rem 2rem;
+  }
+  .claim-card h1 {
+    margin: 0 0 0.5rem;
+    font-size: 1.5rem;
+    color: var(--navy);
+  }
+  .subtitle {
+    margin: 0 0 1.75rem;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  .step {
+    margin-bottom: 1.5rem;
+  }
+  .step-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+
+  .combobox {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0 0.85rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .combobox input {
+    flex: 1;
+    border: none;
+    background: none;
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 0.7rem 0;
+    color: var(--text);
+  }
+  .combobox input:focus {
+    outline: none;
+  }
+  .combobox:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.12);
+    background: var(--bg-card);
+  }
+
+  .spinner {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .results-dropdown {
+    list-style: none;
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    margin: 0;
+    padding: 0.4rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    box-shadow: 0 12px 28px rgba(16, 26, 51, 0.14);
+    max-height: 280px;
+    overflow-y: auto;
+    animation: dropdown-in 0.12s ease-out;
+  }
+  @keyframes dropdown-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  /* :global() — these rows are rendered via client-side innerHTML, so
+     they never get Astro's build-time scoping attribute; plain scoped
+     selectors here would silently match nothing. */
+  :global(.results-dropdown li + li) {
+    margin-top: 0.15rem;
+  }
+  :global(.results-dropdown button) {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    text-align: left;
+    padding: 0.6rem 0.7rem;
+    border-radius: calc(var(--radius) - 4px);
+    border: none;
+    background: none;
+    color: var(--text);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.92rem;
+  }
+  :global(.results-dropdown button svg) {
+    flex-shrink: 0;
+    color: var(--text-muted);
+  }
+  :global(.results-dropdown button:hover),
+  :global(.results-dropdown button.active) {
+    background: rgba(var(--accent-rgb), 0.09);
+  }
+  :global(.results-dropdown button.active svg),
+  :global(.results-dropdown button:hover svg) {
+    color: var(--accent);
+  }
+  :global(.no-results) {
+    padding: 0.7rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .selected-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    color: var(--navy);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .selected-chip span:not(.chip-clear) {
+    flex: 1;
+  }
+  .chip-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.2rem;
+    border-radius: 50%;
+  }
+  .chip-clear:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--text);
+  }
+
+  .dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    text-align: center;
+    padding: 1.75rem 1rem;
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .dropzone:hover, .dropzone.drag-over {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.06);
+  }
+  .dropzone-text {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 0.92rem;
+  }
+  .dropzone-hint {
+    font-size: 0.8rem;
+  }
+  .file-list {
+    list-style: none;
+    margin: 0.6rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  :global(.file-list li) {
+    font-size: 0.85rem;
+    color: var(--text);
+    background: var(--bg-subtle);
+    border-radius: calc(var(--radius) - 4px);
+    padding: 0.4rem 0.6rem;
+  }
+
+  form button[type="submit"] {
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    padding: 0.75rem 1rem;
+    font-weight: 700;
+  }
+  #form-status {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin: 0.75rem 0 0;
+    min-height: 1.2em;
+  }
+</style>

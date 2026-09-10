@@ -1,5 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSite } from '../_lib/site';
+import { getSessionUser } from '../_lib/auth';
 
 interface Env {
   DB: D1Database;
@@ -77,14 +78,19 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return json({ ok: false, error: 'Unknown category or suburb.' }, 400);
   }
 
+  // Not required (anonymous submission is still allowed), but if the
+  // submitter is logged in this lets the eventual published business show
+  // up under their "My Businesses" once approved+confirmed.
+  const sessionUser = await getSessionUser(context.request, db);
+
   const token = crypto.randomUUID();
   await db
     .prepare(
       `INSERT INTO pending_submissions
-        (token, name, category_slug, suburb_slug, address, phone, email, website, description)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        (token, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
-    .bind(token, name, categorySlug, suburbSlug, address, phone, email, website, description)
+    .bind(token, name, categorySlug, suburbSlug, address, phone, email, website, description, sessionUser?.id ?? null)
     .run();
 
   const reviewUrl = `https://${site.domain}/verify-listing?token=${token}`;

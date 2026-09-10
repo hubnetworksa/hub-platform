@@ -180,6 +180,19 @@ h1, h2, h3, h4, h5, h6, p, a {
   background: rgba(255, 255, 255, 0.08);
   color: #fff;
 }
+.admin-nav-link {
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+.admin-nav-link:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+/* .nav-links a sets display:inline-flex with higher specificity than the
+   browser's default [hidden]{display:none}, which silently defeats the
+   `hidden` attribute on the admin nav link — it would otherwise show for
+   every visitor regardless of login state. */
+.nav-links a[hidden] {
+  display: none !important;
+}
 
 main {
   display: block;

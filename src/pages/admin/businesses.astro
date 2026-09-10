@@ -1,0 +1,259 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Manage Businesses" description="Publish, hide, edit, delete, or reassign any business.">
+  <section class="admin-wrap">
+    <div id="loading" class="loading">Loading…</div>
+
+    <div id="content" class="admin" hidden>
+      <a href="/admin/" class="back-link">← Admin Dashboard</a>
+      <h1>Businesses</h1>
+
+      <div class="panel">
+        <h2>Hidden businesses</h2>
+        <p class="panel-hint">Not on the public site — used for test listings.</p>
+        <ul id="hidden-list" class="item-list"></ul>
+        <p id="hidden-empty" class="empty-state" hidden>Nothing hidden right now.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Find any business</h2>
+        <p class="panel-hint">Publish, hide, edit, delete, or reassign the owner.</p>
+        <input type="text" id="manage-search-input" autocomplete="off" placeholder="Search by name…" />
+        <ul id="manage-search-results" class="item-list"></ul>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  async function postJson(url: string, body: unknown): Promise<void> {
+    await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  }
+
+  function renderToggleRow(b: { id: number; name: string; status: string }): string {
+    const isPublished = b.status === 'published';
+    return `
+      <li class="admin-row">
+        <div class="admin-row-main">
+          <strong>${b.name}</strong>
+          <span class="row-detail">status: ${b.status}</span>
+        </div>
+        <div class="row-actions">
+          <button class="btn-sm btn-approve" data-toggle="${isPublished ? 'hide' : 'publish'}" data-business-id="${b.id}">${isPublished ? 'Hide' : 'Publish'}</button>
+          <a href="/my-businesses/edit/?id=${b.id}" class="btn-sm btn-outline">Edit</a>
+          <button class="btn-sm btn-outline" data-reassign="${b.id}" data-business-name="${b.name}">Reassign</button>
+          <button class="btn-sm btn-reject" data-delete="${b.id}" data-business-name="${b.name}">Delete</button>
+        </div>
+      </li>`;
+  }
+
+  async function loadHidden() {
+    const res = await fetch('/api/admin/overview');
+    const data = await res.json();
+    const list = document.getElementById('hidden-list')!;
+    const empty = document.getElementById('hidden-empty')!;
+    empty.hidden = true;
+    if (data.hidden.length === 0) {
+      empty.hidden = false;
+      list.innerHTML = '';
+    } else {
+      list.innerHTML = data.hidden.map(renderToggleRow).join('');
+    }
+  }
+
+  let searchDebounce: number;
+  document.getElementById('manage-search-input')!.addEventListener('input', (e) => {
+    clearTimeout(searchDebounce);
+    const q = (e.target as HTMLInputElement).value.trim();
+    const results = document.getElementById('manage-search-results')!;
+    if (q.length < 2) {
+      results.innerHTML = '';
+      return;
+    }
+    searchDebounce = window.setTimeout(async () => {
+      const res = await fetch(`/api/admin/search-businesses?q=${encodeURIComponent(q)}`);
+      const data = await res.json();
+      results.innerHTML = data.results.map(renderToggleRow).join('') || '<li class="empty-state">No matches.</li>';
+    }, 300);
+  });
+
+  async function init() {
+    const me = await fetch('/api/me');
+    if (me.status === 401) {
+      window.location.href = '/login/?next=/admin/businesses/';
+      return;
+    }
+    const meData = await me.json();
+    if (!meData.isAdmin) {
+      window.location.href = '/my-businesses/';
+      return;
+    }
+
+    document.getElementById('loading')!.hidden = true;
+    document.getElementById('content')!.hidden = false;
+    await loadHidden();
+  }
+
+  document.getElementById('content')!.addEventListener('click', async (e) => {
+    const toggleBtn = (e.target as HTMLElement).closest('button[data-toggle]') as HTMLButtonElement | null;
+    if (toggleBtn) {
+      toggleBtn.disabled = true;
+      const newStatus = toggleBtn.dataset.toggle === 'publish' ? 'published' : 'rejected';
+      await postJson('/api/admin/toggle-business-status', { businessId: Number(toggleBtn.dataset.businessId), status: newStatus });
+      loadHidden();
+      (document.getElementById('manage-search-input') as HTMLInputElement).dispatchEvent(new Event('input'));
+      return;
+    }
+
+    const reassignBtn = (e.target as HTMLElement).closest('button[data-reassign]') as HTMLButtonElement | null;
+    if (reassignBtn) {
+      const name = reassignBtn.dataset.businessName;
+      const email = window.prompt(`Set the owner's email for "${name}" (leave blank to unlink):`);
+      if (email === null) return;
+      reassignBtn.disabled = true;
+      await postJson('/api/admin/set-business-owner', { businessId: Number(reassignBtn.dataset.reassign), userEmail: email.trim() || null });
+      loadHidden();
+      return;
+    }
+
+    const deleteBtn = (e.target as HTMLElement).closest('button[data-delete]') as HTMLButtonElement | null;
+    if (deleteBtn) {
+      if (!window.confirm(`Permanently delete "${deleteBtn.dataset.businessName}"? This can't be undone.`)) return;
+      deleteBtn.disabled = true;
+      await postJson('/api/admin/delete-business', { businessId: Number(deleteBtn.dataset.delete) });
+      loadHidden();
+      (document.getElementById('manage-search-input') as HTMLInputElement).dispatchEvent(new Event('input'));
+      return;
+    }
+  });
+
+  init();
+</script>
+
+<style>
+  .admin-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+  .loading {
+    color: var(--text-muted);
+  }
+  .admin {
+    width: 100%;
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .back-link {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+  }
+  .back-link:hover {
+    text-decoration: underline;
+  }
+  h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--navy);
+  }
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 1.5rem;
+  }
+  .panel h2 {
+    margin: 0 0 0.4rem;
+    font-size: 1rem;
+    color: var(--navy);
+  }
+  .panel-hint {
+    margin: 0 0 0.9rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  #manage-search-input {
+    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
+    padding: 0.55rem 0.75rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    color: var(--text);
+    margin-bottom: 0.6rem;
+  }
+  .item-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  :global(.admin-row) {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+  }
+  :global(.admin-row-main) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.9rem;
+    min-width: 0;
+  }
+  :global(.row-detail) {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+  :global(.row-actions) {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  :global(.btn-sm) {
+    border-radius: var(--radius);
+    padding: 0.35rem 0.7rem;
+    font-weight: 700;
+    font-size: 0.78rem;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+  }
+  :global(.btn-approve) {
+    border: none;
+    background: var(--accent);
+    color: #fff;
+  }
+  :global(.btn-reject) {
+    border: 1px solid var(--danger, #c23838);
+    background: #fff;
+    color: var(--danger, #c23838);
+  }
+  :global(.btn-outline) {
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+  }
+  .empty-state {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+</style>

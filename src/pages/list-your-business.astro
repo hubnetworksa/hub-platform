@@ -14,8 +14,9 @@ const sortedSuburbs = [...suburbs].sort((a, b) => a.name.localeCompare(b.name));
   <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 560px;">
     <h1>List your business</h1>
     <p style="color: var(--text-muted);">Free — we check each submission before it goes live, usually within a day.</p>
+    <p id="auth-check">Checking your account…</p>
 
-    <form id="listing-form">
+    <form id="listing-form" hidden>
       <label>
         Business name *
         <input type="text" name="name" required maxlength="120" />
@@ -71,6 +72,17 @@ const sortedSuburbs = [...suburbs].sort((a, b) => a.name.localeCompare(b.name));
   const loadedAt = Date.now();
   const form = document.getElementById('listing-form') as HTMLFormElement;
   const status = document.getElementById('form-status')!;
+  const authCheck = document.getElementById('auth-check')!;
+
+  (async () => {
+    const res = await fetch('/api/me');
+    if (res.status === 401) {
+      window.location.href = '/login/?next=/list-your-business/';
+      return;
+    }
+    authCheck.hidden = true;
+    form.hidden = false;
+  })();
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();

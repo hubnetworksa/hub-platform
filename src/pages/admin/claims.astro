@@ -1,0 +1,165 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Pending Claims" description="Review business ownership claims.">
+  <section class="admin-wrap">
+    <div id="loading" class="loading">Loading…</div>
+
+    <div id="content" class="admin" hidden>
+      <a href="/admin/" class="back-link">← Admin Dashboard</a>
+      <h1>Pending business claims</h1>
+      <ul id="claims-list" class="item-list"></ul>
+      <p id="claims-empty" class="empty-state" hidden>No claims waiting for review.</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  async function postForm(url: string, params: Record<string, string>): Promise<void> {
+    await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(params) });
+  }
+
+  function renderClaim(c: { businessName: string; claimantEmail: string; reviewToken: string; documentKeys: string[] }): string {
+    const docs = c.documentKeys
+      .map((key, i) => `<a href="/claim-document/${key}?token=${encodeURIComponent(c.reviewToken)}" target="_blank" rel="noopener">Document ${i + 1}</a>`)
+      .join(' · ');
+    return `
+      <li class="admin-row">
+        <div class="admin-row-main">
+          <strong>${c.businessName}</strong>
+          <span class="row-detail">Claimed by ${c.claimantEmail}</span>
+          <span class="row-detail">${docs}</span>
+        </div>
+        <div class="row-actions">
+          <button class="btn-sm btn-approve" data-action="approve" data-token="${c.reviewToken}">Approve</button>
+          <button class="btn-sm btn-reject" data-action="reject" data-token="${c.reviewToken}">Reject</button>
+        </div>
+      </li>`;
+  }
+
+  async function init() {
+    const me = await fetch('/api/me');
+    if (me.status === 401) {
+      window.location.href = '/login/?next=/admin/claims/';
+      return;
+    }
+    const meData = await me.json();
+    if (!meData.isAdmin) {
+      window.location.href = '/my-businesses/';
+      return;
+    }
+
+    const res = await fetch('/api/admin/overview');
+    const data = await res.json();
+    document.getElementById('loading')!.hidden = true;
+    document.getElementById('content')!.hidden = false;
+
+    const list = document.getElementById('claims-list')!;
+    if (data.claims.length === 0) {
+      document.getElementById('claims-empty')!.hidden = false;
+    } else {
+      list.innerHTML = data.claims.map(renderClaim).join('');
+    }
+  }
+
+  document.getElementById('content')!.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-action]') as HTMLButtonElement | null;
+    if (!btn) return;
+    btn.disabled = true;
+    await postForm('/api/review-claim', { token: btn.dataset.token!, action: btn.dataset.action! });
+    init();
+  });
+
+  init();
+</script>
+
+<style>
+  .admin-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+  .loading {
+    color: var(--text-muted);
+  }
+  .admin {
+    width: 100%;
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .back-link {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+  }
+  .back-link:hover {
+    text-decoration: underline;
+  }
+  h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--navy);
+  }
+  .item-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  :global(.admin-row) {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+  }
+  :global(.admin-row-main) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.9rem;
+    min-width: 0;
+  }
+  :global(.row-detail) {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    overflow-wrap: break-word;
+  }
+  :global(.row-actions) {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+  :global(.btn-sm) {
+    border-radius: var(--radius);
+    padding: 0.35rem 0.7rem;
+    font-weight: 700;
+    font-size: 0.78rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  :global(.btn-approve) {
+    border: none;
+    background: var(--accent);
+    color: #fff;
+  }
+  :global(.btn-reject) {
+    border: 1px solid var(--danger, #c23838);
+    background: #fff;
+    color: var(--danger, #c23838);
+  }
+  .empty-state {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+</style>

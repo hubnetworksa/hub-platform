@@ -22,20 +22,26 @@ export async function sendEmail(
 ): Promise<{ sent: boolean }> {
   if (!env.RESEND_API_KEY) return { sent: false };
 
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: opts.from,
-      to: [opts.to],
-      subject: opts.subject,
-      text: opts.text,
-      ...(opts.html ? { html: opts.html } : {}),
-    }),
-  });
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: opts.from,
+        to: [opts.to],
+        subject: opts.subject,
+        text: opts.text,
+        ...(opts.html ? { html: opts.html } : {}),
+      }),
+    });
 
-  return { sent: res.ok };
+    if (!res.ok) console.error('Resend send failed', res.status, await res.text());
+    return { sent: res.ok };
+  } catch (err) {
+    console.error('Resend send threw', err);
+    return { sent: false };
+  }
 }

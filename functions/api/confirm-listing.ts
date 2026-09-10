@@ -4,6 +4,7 @@ import { getSite } from '../_lib/site';
 import { triggerRebuild } from '../_lib/deploy-hook';
 import { sendEmail } from '../_lib/send-email';
 import { ownerConfirmEmailHtml } from '../_lib/email-template';
+import { logActivity } from '../_lib/activity-log';
 
 interface Env {
   DB: D1Database;
@@ -22,6 +23,7 @@ interface PendingRow {
   email: string | null;
   website: string | null;
   description: string;
+  submitted_by_user_id: number | null;
 }
 
 // This is the ADMIN's approve/reject step (reached from the emailed review
@@ -38,7 +40,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const db = context.env.DB;
 
   const row = await db
-    .prepare('SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description FROM pending_submissions WHERE token = ?')
+    .prepare('SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id FROM pending_submissions WHERE token = ?')
     .bind(token)
     .first<PendingRow>();
 
@@ -48,6 +50,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   if (action !== 'approve') {
     await db.prepare('DELETE FROM pending_submissions WHERE id = ?').bind(row.id).run();
+    await logActivity(db, 'submission_rejected', row.name, 'Rejected by admin.');
     return html(site, `<h1>Rejected</h1><p>"${escapeHtml(row.name)}" was not published.</p>`);
   }
 
@@ -75,8 +78,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       website: row.website,
       email: row.email,
       description: row.description,
+      ownerUserId: row.submitted_by_user_id,
     });
     await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+    await logActivity(db, 'submission_approved', row.name, 'No email on file — published immediately.');
 
     return html(site, `<h1>Published!</h1><p>No contact email was given on this submission, so it published immediately: <a href="https://${site.domain}/business/${slug}/">view listing</a></p>`);
   }
@@ -137,6 +142,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   });
 
   if (emailResult.sent) {
+    await logActivity(db, 'submission_approved', row.name, `Awaiting owner confirmation — emailed ${row.email}.`);
     return html(site, `<h1>Approved — awaiting owner confirmation</h1><p>"${escapeHtml(row.name)}" won't publish yet. An email has been sent to <strong>${escapeHtml(row.email)}</strong> asking them to confirm the details before it goes live.</p>`);
   }
 

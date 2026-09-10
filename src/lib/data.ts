@@ -52,6 +52,7 @@ export interface Business {
   source_urls: string;
   shopping_center_id: number | null;
   hours: string | null;
+  owner_user_id: number | null;
 }
 
 interface BusinessCategoryLink {
