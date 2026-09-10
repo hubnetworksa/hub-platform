@@ -28,35 +28,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         Hours
         <textarea name="hours" maxlength="400" rows="3" placeholder="e.g. Mon-Fri 8am-5pm"></textarea>
       </label>
-      <div id="template-picker" hidden>
-        <label>Page template</label>
-        <div class="tier-grid">
-          <button type="button" class="tpl-btn" data-tpl="classic"><b>Classic</b><span>Clean & simple</span></button>
-          <button type="button" class="tpl-btn" data-tpl="gallery"><b>Gallery-Forward</b><span>Photo leads the page</span></button>
-          <button type="button" class="tpl-btn" data-tpl="services"><b>Services Grid</b><span>Structured service cards</span></button>
-        </div>
-      </div>
-
-      <div id="block-editor" hidden>
-        <label>Extra sections (Premium)</label>
-        <div id="blocks-list"></div>
-        <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
-      </div>
-
       <button type="submit" class="btn btn-primary">Save changes</button>
       <p id="form-status" role="status"></p>
     </form>
 
-    <section id="photos-section" hidden>
-      <h2>Photos</h2>
-      <p id="photos-cap-label" class="muted"></p>
-      <div id="photo-grid" class="photo-grid"></div>
-      <form id="photo-upload-form">
-        <input type="file" name="photo" accept="image/*" id="photo-input" />
-        <button type="submit" class="btn btn-outline btn-sm">Upload photo</button>
-      </form>
-      <p id="photo-status" role="status" class="muted"></p>
-    </section>
+    <a id="customize-cta" class="customize-cta" href="#" hidden>
+      <span class="customize-cta-icon">🎨</span>
+      <span class="customize-cta-text">
+        <strong>Customise business page</strong>
+        <span>Preview your page and manage photos, template &amp; layout</span>
+      </span>
+      <span class="customize-cta-arrow">→</span>
+    </a>
   </section>
 </BaseLayout>
 
@@ -66,50 +49,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   const loading = document.getElementById('loading')!;
   const form = document.getElementById('edit-form') as HTMLFormElement;
   const status = document.getElementById('form-status')!;
-
-  let selectedTemplate = 'classic';
-  interface CustomBlock { type: string; title: string; body: string }
-  let blocks: CustomBlock[] = [];
-
-  function renderBlocks() {
-    const list = document.getElementById('blocks-list')!;
-    list.innerHTML = blocks
-      .map(
-        (b, i) => `
-      <div class="block-row" data-i="${i}">
-        <select class="block-type">
-          <option value="story" ${b.type === 'story' ? 'selected' : ''}>Our Story</option>
-          <option value="specials" ${b.type === 'specials' ? 'selected' : ''}>Specials & Promotions</option>
-          <option value="team" ${b.type === 'team' ? 'selected' : ''}>Team</option>
-          <option value="gallery" ${b.type === 'gallery' ? 'selected' : ''}>Gallery</option>
-        </select>
-        <input class="block-title" type="text" placeholder="Section title" maxlength="60" value="${b.title.replace(/"/g, '&quot;')}" />
-        <textarea class="block-body" rows="2" maxlength="800" placeholder="Section text">${b.body}</textarea>
-        <div class="block-row-actions">
-          <button type="button" class="move-up" ${i === 0 ? 'disabled' : ''}>↑</button>
-          <button type="button" class="move-down" ${i === blocks.length - 1 ? 'disabled' : ''}>↓</button>
-          <button type="button" class="remove-block">Remove</button>
-        </div>
-      </div>`
-      )
-      .join('');
-
-    list.querySelectorAll('.block-row').forEach((row) => {
-      const i = Number((row as HTMLElement).dataset.i);
-      row.querySelector('.block-type')!.addEventListener('change', (e) => { blocks[i].type = (e.target as HTMLSelectElement).value; });
-      row.querySelector('.block-title')!.addEventListener('input', (e) => { blocks[i].title = (e.target as HTMLInputElement).value; });
-      row.querySelector('.block-body')!.addEventListener('input', (e) => { blocks[i].body = (e.target as HTMLTextAreaElement).value; });
-      row.querySelector('.remove-block')!.addEventListener('click', () => { blocks.splice(i, 1); renderBlocks(); });
-      row.querySelector('.move-up')?.addEventListener('click', () => { if (i > 0) { [blocks[i - 1], blocks[i]] = [blocks[i], blocks[i - 1]]; renderBlocks(); } });
-      row.querySelector('.move-down')?.addEventListener('click', () => { if (i < blocks.length - 1) { [blocks[i + 1], blocks[i]] = [blocks[i], blocks[i + 1]]; renderBlocks(); } });
-    });
-  }
-
-  document.getElementById('add-block-btn')!.addEventListener('click', () => {
-    if (blocks.length >= 6) return;
-    blocks.push({ type: 'story', title: '', body: '' });
-    renderBlocks();
-  });
 
   async function init() {
     if (!businessId) {
@@ -135,66 +74,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     (form.elements.namedItem('description') as HTMLTextAreaElement).value = data.business.description ?? '';
     (form.elements.namedItem('hours') as HTMLTextAreaElement).value = data.business.hours ?? '';
 
-    const tier = data.business.subscriptionTier;
-
-    if (data.business.subscriptionTier >= 2) {
-      document.getElementById('photos-section')!.hidden = false;
-      await loadPhotos();
-    }
-
-    if (data.business.subscriptionTier >= 3) {
-      selectedTemplate = data.business.templateId ?? 'classic';
-      document.getElementById('template-picker')!.hidden = false;
-      document.querySelectorAll<HTMLButtonElement>('.tpl-btn').forEach((btn) => {
-        if (btn.dataset.tpl === selectedTemplate) btn.classList.add('active');
-        btn.addEventListener('click', () => {
-          selectedTemplate = btn.dataset.tpl!;
-          document.querySelectorAll('.tpl-btn').forEach((b) => b.classList.remove('active'));
-          btn.classList.add('active');
-        });
-      });
-    }
-
-    if (data.business.subscriptionTier >= 4) {
-      blocks = Array.isArray(data.business.customBlocks) ? data.business.customBlocks : [];
-      document.getElementById('block-editor')!.hidden = false;
-      renderBlocks();
-    }
+    const cta = document.getElementById('customize-cta') as HTMLAnchorElement;
+    cta.href = `/my-businesses/customize/?id=${businessId}`;
+    cta.hidden = false;
   }
-
-  async function loadPhotos() {
-    const grid = document.getElementById('photo-grid')!;
-    const res = await fetch(`/api/business-photos?businessId=${encodeURIComponent(businessId!)}`);
-    const data = await res.json();
-    if (!data.ok) return;
-    document.getElementById('photos-cap-label')!.textContent = `${data.photos.length} of ${data.cap} photos used`;
-    grid.innerHTML = '';
-    for (const photo of data.photos) {
-      const div = document.createElement('div');
-      div.className = 'photo-thumb';
-      div.innerHTML = `<img src="/media/${photo.r2_key}" alt="" /><button type="button" data-id="${photo.id}">Remove</button>`;
-      div.querySelector('button')!.addEventListener('click', async (e) => {
-        await fetch(`/api/business-photos?photoId=${(e.target as HTMLElement).getAttribute('data-id')}`, { method: 'DELETE' });
-        loadPhotos();
-      });
-      grid.appendChild(div);
-    }
-  }
-
-  document.getElementById('photo-upload-form')!.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const input = document.getElementById('photo-input') as HTMLInputElement;
-    const photoStatus = document.getElementById('photo-status')!;
-    if (!input.files?.[0]) return;
-    photoStatus.textContent = 'Uploading…';
-    const fd = new FormData();
-    fd.append('businessId', businessId!);
-    fd.append('photo', input.files[0]);
-    const res = await fetch('/api/business-photos', { method: 'POST', body: fd });
-    const result = await res.json();
-    photoStatus.textContent = result.ok ? 'Uploaded.' : result.error || 'Could not upload.';
-    if (result.ok) { input.value = ''; loadPhotos(); }
-  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -203,7 +86,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const res = await fetch('/api/update-business', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...data, businessId: Number(businessId), templateId: selectedTemplate, customBlocks: blocks }),
+      body: JSON.stringify({ ...data, businessId: Number(businessId) }),
     });
     const result = await res.json();
     status.textContent = result.ok ? 'Saved.' : result.error || 'Something went wrong.';
@@ -244,102 +127,43 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     color: var(--text-muted);
     margin: 0;
   }
-  #photos-section {
-    margin-top: 2.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-  }
-  .muted {
-    color: var(--text-muted);
-    font-size: 0.88rem;
-  }
-  .tier-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 0.6rem;
-    margin-top: 0.75rem;
-  }
-  .tpl-btn {
+  .customize-cta {
     display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    padding: 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
-    cursor: pointer;
-    font: inherit;
-    text-align: left;
-  }
-  .tpl-btn span {
-    color: var(--text-muted);
-    font-size: 0.82rem;
-  }
-  .tpl-btn.active {
-    border-color: var(--accent);
-    background: rgba(var(--accent-rgb), 0.08);
-  }
-  #template-picker, #block-editor {
-    margin-top: 0.5rem;
-  }
-  .block-row {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    padding: 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
-    margin-bottom: 0.6rem;
-  }
-  .block-row select, .block-row input, .block-row textarea {
-    font: inherit;
-    padding: 0.45rem 0.6rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--bg-subtle);
-    color: var(--text);
-  }
-  .block-row-actions {
-    display: flex;
-    gap: 0.4rem;
-  }
-  .block-row-actions button {
-    font-size: 0.78rem;
-    border: 1px solid var(--border);
-    background: var(--bg-subtle);
-    border-radius: var(--radius);
-    cursor: pointer;
-    padding: 0.3rem 0.55rem;
-  }
-  .photo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 0.5rem;
-    margin: 0.75rem 0;
-  }
-  .photo-thumb {
-    position: relative;
-  }
-  .photo-thumb img {
-    width: 100%;
-    height: 90px;
-    object-fit: cover;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-  }
-  .photo-thumb button {
-    width: 100%;
-    margin-top: 0.25rem;
-    font-size: 0.75rem;
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    border-radius: var(--radius);
-    cursor: pointer;
-  }
-  #photo-upload-form {
-    display: flex;
-    gap: 0.6rem;
     align-items: center;
+    gap: 0.9rem;
+    margin-top: 2rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: var(--radius-lg, 16px);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .customize-cta:hover {
+    border-color: var(--accent);
+    box-shadow: 0 6px 18px -8px rgba(var(--accent-rgb), 0.35);
+  }
+  .customize-cta-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+  .customize-cta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex: 1;
+  }
+  .customize-cta-text strong {
+    font-size: 1.02rem;
+    color: var(--navy);
+  }
+  .customize-cta-text span {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  .customize-cta-arrow {
+    font-size: 1.3rem;
+    color: var(--accent);
   }
 </style>

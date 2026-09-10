@@ -1,0 +1,402 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Customise business page" description="Preview and customise your business page.">
+  <section class="container" style="padding-top: 3rem; padding-bottom: 4rem; max-width: 960px;">
+    <div id="loading">Loading…</div>
+
+    <div id="content" hidden>
+      <a id="back-link" href="#" class="back-link">← Back to editing</a>
+      <h1>Customise <span id="business-name-hl"></span></h1>
+
+      <div class="preview-panel">
+        <div class="preview-head">
+          <span>Live preview — this is your real business page</span>
+          <button type="button" id="refresh-preview" class="btn-outline btn-sm">↻ Refresh</button>
+        </div>
+        <iframe id="preview-frame" title="Business page preview" loading="lazy"></iframe>
+        <p class="preview-note">Changes below appear here after saving and the site's next rebuild — not instantly.</p>
+      </div>
+
+      <div id="upsell-photos" class="upsell" hidden>
+        <p><strong>Photos</strong> unlock at Verified Plus (R99/mo).</p>
+        <a href="#" class="upsell-link">Upgrade to add photos →</a>
+      </div>
+      <section id="photos-section" hidden>
+        <h2>Photos</h2>
+        <p id="photos-cap-label" class="muted"></p>
+        <div id="photo-grid" class="photo-grid"></div>
+        <form id="photo-upload-form">
+          <input type="file" name="photo" accept="image/*" id="photo-input" />
+          <button type="submit" class="btn btn-outline btn-sm">Upload photo</button>
+        </form>
+        <p id="photo-status" role="status" class="muted"></p>
+      </section>
+
+      <div id="upsell-template" class="upsell" hidden>
+        <p><strong>Page templates</strong> unlock at Featured (R199/mo).</p>
+        <a href="#" class="upsell-link">Upgrade to choose a template →</a>
+      </div>
+      <section id="template-picker" hidden>
+        <h2>Page template</h2>
+        <div class="option-grid">
+          <button type="button" class="tpl-btn" data-tpl="classic"><b>Classic</b><span>Clean &amp; simple</span></button>
+          <button type="button" class="tpl-btn" data-tpl="gallery"><b>Gallery-Forward</b><span>Photo leads the page</span></button>
+          <button type="button" class="tpl-btn" data-tpl="services"><b>Services Grid</b><span>Structured service cards</span></button>
+        </div>
+      </section>
+
+      <div id="upsell-blocks" class="upsell" hidden>
+        <p><strong>Custom sections</strong> (Our Story, Specials, Team, Gallery) unlock at Premium (R299/mo).</p>
+        <a href="#" class="upsell-link">Upgrade to Premium →</a>
+      </div>
+      <section id="block-editor" hidden>
+        <h2>Extra sections</h2>
+        <div id="blocks-list"></div>
+        <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
+      </section>
+
+      <button type="button" id="save-design-btn" class="btn btn-primary">Save design</button>
+      <p id="design-status" role="status" class="muted"></p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const businessId = params.get('id');
+  const loading = document.getElementById('loading')!;
+  const content = document.getElementById('content')!;
+
+  let selectedTemplate = 'classic';
+  interface CustomBlock { type: string; title: string; body: string }
+  let blocks: CustomBlock[] = [];
+
+  function renderBlocks() {
+    const list = document.getElementById('blocks-list')!;
+    list.innerHTML = blocks
+      .map(
+        (b, i) => `
+      <div class="block-row" data-i="${i}">
+        <select class="block-type">
+          <option value="story" ${b.type === 'story' ? 'selected' : ''}>Our Story</option>
+          <option value="specials" ${b.type === 'specials' ? 'selected' : ''}>Specials & Promotions</option>
+          <option value="team" ${b.type === 'team' ? 'selected' : ''}>Team</option>
+          <option value="gallery" ${b.type === 'gallery' ? 'selected' : ''}>Gallery</option>
+        </select>
+        <input class="block-title" type="text" placeholder="Section title" maxlength="60" value="${b.title.replace(/"/g, '&quot;')}" />
+        <textarea class="block-body" rows="2" maxlength="800" placeholder="Section text">${b.body}</textarea>
+        <div class="block-row-actions">
+          <button type="button" class="move-up" ${i === 0 ? 'disabled' : ''}>↑</button>
+          <button type="button" class="move-down" ${i === blocks.length - 1 ? 'disabled' : ''}>↓</button>
+          <button type="button" class="remove-block">Remove</button>
+        </div>
+      </div>`
+      )
+      .join('');
+
+    list.querySelectorAll('.block-row').forEach((row) => {
+      const i = Number((row as HTMLElement).dataset.i);
+      row.querySelector('.block-type')!.addEventListener('change', (e) => { blocks[i].type = (e.target as HTMLSelectElement).value; });
+      row.querySelector('.block-title')!.addEventListener('input', (e) => { blocks[i].title = (e.target as HTMLInputElement).value; });
+      row.querySelector('.block-body')!.addEventListener('input', (e) => { blocks[i].body = (e.target as HTMLTextAreaElement).value; });
+      row.querySelector('.remove-block')!.addEventListener('click', () => { blocks.splice(i, 1); renderBlocks(); });
+      row.querySelector('.move-up')?.addEventListener('click', () => { if (i > 0) { [blocks[i - 1], blocks[i]] = [blocks[i], blocks[i - 1]]; renderBlocks(); } });
+      row.querySelector('.move-down')?.addEventListener('click', () => { if (i < blocks.length - 1) { [blocks[i + 1], blocks[i]] = [blocks[i], blocks[i + 1]]; renderBlocks(); } });
+    });
+  }
+
+  document.getElementById('add-block-btn')!.addEventListener('click', () => {
+    if (blocks.length >= 6) return;
+    blocks.push({ type: 'story', title: '', body: '' });
+    renderBlocks();
+  });
+
+  async function init() {
+    if (!businessId) {
+      loading.textContent = 'No business specified.';
+      return;
+    }
+    (document.getElementById('back-link') as HTMLAnchorElement).href = `/my-businesses/edit/?id=${businessId}`;
+    document.querySelectorAll<HTMLAnchorElement>('.upsell-link').forEach((a) => (a.href = `/my-businesses/upgrade/?id=${businessId}`));
+
+    const res = await fetch(`/api/update-business?id=${encodeURIComponent(businessId)}`);
+    if (res.status === 401) {
+      window.location.href = '/login/';
+      return;
+    }
+    const data = await res.json();
+    if (!data.ok) {
+      loading.textContent = data.error || 'Could not load this business.';
+      return;
+    }
+    loading.hidden = true;
+    content.hidden = false;
+    document.getElementById('business-name-hl')!.textContent = data.business.name;
+
+    const previewUrl = `/business/${data.business.slug}/`;
+    const frame = document.getElementById('preview-frame') as HTMLIFrameElement;
+    frame.src = previewUrl;
+    document.getElementById('refresh-preview')!.addEventListener('click', () => {
+      frame.src = previewUrl + '?t=' + Date.now();
+    });
+
+    const tier = data.business.subscriptionTier as number;
+
+    if (tier >= 2) {
+      document.getElementById('photos-section')!.hidden = false;
+      await loadPhotos();
+    } else {
+      document.getElementById('upsell-photos')!.hidden = false;
+    }
+
+    if (tier >= 3) {
+      selectedTemplate = data.business.templateId ?? 'classic';
+      document.getElementById('template-picker')!.hidden = false;
+      document.querySelectorAll<HTMLButtonElement>('.tpl-btn').forEach((btn) => {
+        if (btn.dataset.tpl === selectedTemplate) btn.classList.add('active');
+        btn.addEventListener('click', () => {
+          selectedTemplate = btn.dataset.tpl!;
+          document.querySelectorAll('.tpl-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+    } else {
+      document.getElementById('upsell-template')!.hidden = false;
+    }
+
+    if (tier >= 4) {
+      blocks = Array.isArray(data.business.customBlocks) ? data.business.customBlocks : [];
+      document.getElementById('block-editor')!.hidden = false;
+      renderBlocks();
+    } else {
+      document.getElementById('upsell-blocks')!.hidden = false;
+    }
+  }
+
+  async function loadPhotos() {
+    const grid = document.getElementById('photo-grid')!;
+    const res = await fetch(`/api/business-photos?businessId=${encodeURIComponent(businessId!)}`);
+    const data = await res.json();
+    if (!data.ok) return;
+    document.getElementById('photos-cap-label')!.textContent = `${data.photos.length} of ${data.cap} photos used`;
+    grid.innerHTML = '';
+    for (const photo of data.photos) {
+      const div = document.createElement('div');
+      div.className = 'photo-thumb';
+      div.innerHTML = `<img src="/media/${photo.r2_key}" alt="" /><button type="button" data-id="${photo.id}">Remove</button>`;
+      div.querySelector('button')!.addEventListener('click', async (e) => {
+        await fetch(`/api/business-photos?photoId=${(e.target as HTMLElement).getAttribute('data-id')}`, { method: 'DELETE' });
+        loadPhotos();
+      });
+      grid.appendChild(div);
+    }
+  }
+
+  document.getElementById('photo-upload-form')!.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('photo-input') as HTMLInputElement;
+    const photoStatus = document.getElementById('photo-status')!;
+    if (!input.files?.[0]) return;
+    photoStatus.textContent = 'Uploading…';
+    const fd = new FormData();
+    fd.append('businessId', businessId!);
+    fd.append('photo', input.files[0]);
+    const res = await fetch('/api/business-photos', { method: 'POST', body: fd });
+    const result = await res.json();
+    photoStatus.textContent = result.ok ? 'Uploaded.' : result.error || 'Could not upload.';
+    if (result.ok) { input.value = ''; loadPhotos(); }
+  });
+
+  document.getElementById('save-design-btn')!.addEventListener('click', async () => {
+    const designStatus = document.getElementById('design-status')!;
+    designStatus.textContent = 'Saving…';
+    const res = await fetch('/api/update-business', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ businessId: Number(businessId), templateId: selectedTemplate, customBlocks: blocks }),
+    });
+    const result = await res.json();
+    designStatus.textContent = result.ok ? 'Saved — the preview above will update after the next rebuild.' : result.error || 'Something went wrong.';
+  });
+
+  init();
+</script>
+
+<style>
+  .back-link {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+  }
+  .back-link:hover {
+    text-decoration: underline;
+  }
+  h1 {
+    margin: 1rem 0 1.5rem;
+    font-size: 1.5rem;
+    color: var(--navy);
+  }
+  h2 {
+    font-size: 1.05rem;
+    color: var(--navy);
+    margin: 0 0 0.5rem;
+  }
+  .preview-panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    overflow: hidden;
+    background: var(--bg-card);
+    margin-bottom: 2rem;
+  }
+  .preview-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--bg-subtle);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  #preview-frame {
+    width: 100%;
+    height: 520px;
+    border: none;
+    display: block;
+  }
+  .preview-note {
+    margin: 0;
+    padding: 0.6rem 1rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+  .upsell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    border: 1px dashed var(--border);
+    margin-bottom: 1.5rem;
+  }
+  .upsell p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  .upsell-link {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .upsell-link:hover {
+    text-decoration: underline;
+  }
+  #photos-section, #template-picker, #block-editor {
+    margin-bottom: 2rem;
+  }
+  .muted {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+  .option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.6rem;
+  }
+  .tpl-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+  }
+  .tpl-btn span {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+  .tpl-btn.active {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.08);
+  }
+  .block-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    margin-bottom: 0.6rem;
+  }
+  .block-row select, .block-row input, .block-row textarea {
+    font: inherit;
+    padding: 0.45rem 0.6rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    color: var(--text);
+  }
+  .block-row-actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .block-row-actions button {
+    font-size: 0.78rem;
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    border-radius: var(--radius);
+    cursor: pointer;
+    padding: 0.3rem 0.55rem;
+  }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+  }
+  .photo-thumb {
+    position: relative;
+  }
+  .photo-thumb img {
+    width: 100%;
+    height: 90px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .photo-thumb button {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  #photo-upload-form {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  #save-design-btn {
+    border: none;
+    cursor: pointer;
+  }
+  #design-status {
+    margin-top: 0.6rem;
+  }
+</style>

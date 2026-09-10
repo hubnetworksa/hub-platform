@@ -21,16 +21,16 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (!businessId) return json({ ok: false, error: 'Missing business.' }, 400);
 
   const business = await db
-    .prepare('SELECT id, name, address, phone, website, description, hours, owner_user_id, subscription_tier, subscription_status, subscription_expires_at, template_id, custom_blocks FROM businesses WHERE id = ?')
+    .prepare('SELECT id, slug, name, address, phone, website, description, hours, owner_user_id, subscription_tier, subscription_status, subscription_expires_at, template_id, custom_blocks FROM businesses WHERE id = ?')
     .bind(businessId)
-    .first<{ id: number; name: string; address: string | null; phone: string | null; website: string | null; description: string; hours: string | null; owner_user_id: number | null; subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null; template_id: string; custom_blocks: string | null }>();
+    .first<{ id: number; slug: string; name: string; address: string | null; phone: string | null; website: string | null; description: string; hours: string | null; owner_user_id: number | null; subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null; template_id: string; custom_blocks: string | null }>();
   if (!business || (business.owner_user_id !== user.id && !isAdminEmail(user.email))) return json({ ok: false, error: 'You do not own this business.' }, 403);
 
   const tier = business.subscription_status === 'active' ? business.subscription_tier : 0;
   return json({
     ok: true,
     business: {
-      id: business.id, name: business.name, address: business.address, phone: business.phone, website: business.website, description: business.description, hours: business.hours,
+      id: business.id, slug: business.slug, name: business.name, address: business.address, phone: business.phone, website: business.website, description: business.description, hours: business.hours,
       subscriptionTier: tier,
       subscriptionExpiresAt: business.subscription_expires_at,
       templateId: business.template_id,
