@@ -74,9 +74,20 @@ Polokwane and Cape Town are still on `.pages.dev` only.
       `/claim-document/...`) resolved with 200. All test businesses/
       users/sessions/claims/activity-log rows and the uploaded R2
       document were deleted afterward.
-- [ ] AdSense — confirm `https://pretoriahub.com/ads.txt` serves correctly
-      post-cutover, add the domain as a Site once the hubnetworksa AdSense
-      account is approved (see the AdSense item below).
+- [x] **Owner-confirmation reminder + expiry** — added 2026-09-10:
+      `functions/api/admin/process-owner-reminders.ts` (one per site,
+      gated on a `CRON_SECRET` shared secret, not a browser session) sends
+      a reminder email 3 days after admin approval if the owner still
+      hasn't confirmed, then deletes the pending submission (never
+      published) if there's still no response 4 days after that reminder.
+      Runs daily via `.github/workflows/owner-reminders.yml`. New
+      `reminder_sent_at` column on `pending_submissions` (migration per
+      site). `CRON_SECRET` set as both a GitHub Actions secret and a
+      Cloudflare Pages secret on all 3 projects.
+- [x] AdSense — `https://pretoriahub.com/ads.txt` confirmed serving the
+      shared `pub-7060187043058790` line correctly post-cutover
+      (2026-09-10) — though see below, this ID is being replaced with a
+      Pretoria-specific one, not kept long-term.
 - [ ] Polokwane and Cape Town domain cutovers — repeat this whole
       checklist for each once their real domains are ready to move.
 
@@ -92,12 +103,17 @@ Polokwane and Cape Town are still on `.pages.dev` only.
 - [ ] Same Resend setup for Cape Town, once it has a registered domain.
 - [ ] Add a custom 404 page (currently missing — unmatched URLs return 200
       with homepage content instead of a real 404).
-- [x] AdSense: all 3 sites now share the new consolidated publisher ID
-      `ca-pub-7060187043058790` (2026-09-09). Still pending on the Google
-      side: old Polokwane/Pretoria AdSense accounts need to be closed and
-      the new hubnetworksa account resubmitted/approved (blocked on a
-      Google duplicate-account flag as of 2026-09-09); once approved, add
-      each live domain as a Site under that one account.
+- [ ] **AdSense decision reversed (2026-09-10): each site will use its
+      own separate publisher ID/account, not the shared
+      `ca-pub-7060187043058790` all 3 currently use.** The consolidated ID
+      is a placeholder until each site's own ID exists — don't build
+      anything new on the assumption it's shared. Per site, once its own
+      ID is approved: update `adsensePublisherId` in `sites/<slug>.json`
+      and that site's `ads.txt`/AdSense script tag (currently generated
+      from the same field, so this should be a small, mechanical change
+      once the actual IDs are in hand — not done yet, IDs not ready).
+      The `hubnetworksa` account's duplicate-account flag did clear
+      2026-09-10, which unblocks getting those per-site approvals moving.
 - [ ] Search Console verification for Polokwane and Cape Town (each needs
       its own unique HTML-tag code from Search Console, under the
       hubnetworksa Google account — only Pretoria has one so far).

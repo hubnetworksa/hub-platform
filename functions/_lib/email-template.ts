@@ -123,6 +123,52 @@ export function listingLiveEmailHtml(site: Site, data: ListingLiveEmailData): st
 </html>`;
 }
 
+export interface OwnerReminderEmailData {
+  businessName: string;
+  confirmUrl: string;
+}
+
+export function ownerReminderEmailHtml(site: Site, data: OwnerReminderEmailData): string {
+  const t = site.theme;
+  const bannerUrl = `https://${site.domain}${site.bannerImage}`;
+  const logoUrl = `https://${site.domain}/logo-icon.png`;
+
+  return `<!doctype html>
+<html>
+<body style="margin:0;padding:0;background:${t.bgSubtle};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${t.bgSubtle};padding:24px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:${t.bgCard};border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);max-width:560px;">
+          <tr>
+            <td>
+              <img src="${bannerUrl}" width="560" alt="${escapeHtml(site.siteName)}" style="display:block;width:100%;max-width:560px;height:160px;object-fit:cover;">
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px 8px;">
+              <img src="${logoUrl}" width="36" height="41" alt="" style="display:block;margin-bottom:12px;">
+              <h1 style="margin:0 0 4px;font-size:20px;color:${t.navy};">Still waiting on your confirmation</h1>
+              <p style="margin:0 0 20px;color:${t.textMuted};font-size:14px;line-height:1.5;">
+                A few days ago, <strong style="color:${t.text};">${escapeHtml(data.businessName)}</strong> was submitted to ${escapeHtml(site.siteName)} — it's still waiting on your confirmation before it can go live.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 32px 28px;">
+              <a href="${data.confirmUrl}" style="display:inline-block;background:${t.accent};color:${t.accentContrast};text-decoration:none;font-weight:700;font-size:15px;padding:12px 24px;border-radius:8px;">Review &amp; confirm listing →</a>
+              <p style="margin:16px 0 0;color:${t.textMuted};font-size:12px;">If we don't hear back in a few more days, it won't be published.</p>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:20px 0 0;color:${t.textMuted};font-size:12px;">${escapeHtml(site.siteName)} · ${escapeHtml(site.contactEmail)}</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
 function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>)[c]!);
 }
