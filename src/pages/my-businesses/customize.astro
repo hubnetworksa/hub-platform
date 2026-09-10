@@ -931,10 +931,15 @@ import site from '../../site';
     gap: 0.5rem;
     margin: 0.75rem 0;
   }
-  .photo-thumb {
+  /* :global() because these elements are built dynamically in loadPhotos()
+     via innerHTML — Astro only stamps its scoped-style data attribute onto
+     elements present in the template at build time, so a plain (scoped)
+     selector here would silently never match them, and the thumbnail would
+     render at its native full size instead of the intended small crop. */
+  :global(.photo-thumb) {
     position: relative;
   }
-  .photo-thumb img {
+  :global(.photo-thumb img) {
     width: 100%;
     height: 90px;
     object-fit: cover;
@@ -942,7 +947,7 @@ import site from '../../site';
     border: 1px solid var(--border);
     cursor: zoom-in;
   }
-  .photo-thumb button {
+  :global(.photo-thumb button) {
     width: 100%;
     margin-top: 0.25rem;
     font-size: 0.75rem;
