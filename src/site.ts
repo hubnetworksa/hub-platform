@@ -33,6 +33,11 @@ export interface Site {
   siteName: string;
   cityLabel: string;
   domain: string;
+  /** Whether `domain`'s DNS/nameservers actually point at this Cloudflare
+   *  Pages project yet — gates the .pages.dev -> domain redirect in
+   *  functions/_middleware.ts so a not-yet-cut-over site doesn't redirect
+   *  visitors to a domain that isn't live here. */
+  domainLive: boolean;
   pagesProjectName: string;
   pagesDevHost: string;
   dbName: string;

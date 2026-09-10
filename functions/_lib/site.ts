@@ -22,6 +22,7 @@ export interface Site {
   siteName: string;
   cityLabel: string;
   domain: string;
+  domainLive: boolean;
   pagesDevHost: string;
   r2Bucket: string;
   contactEmail: string;

@@ -2,6 +2,63 @@
 
 Last updated: 2026-09-10
 
+## Domain cutover checklist (per site)
+
+**Pretoria: cut over 2026-09-10.** `pretoriahub.com` moved from the
+personal Cloudflare account to `hubnetworksa` (Registrar account move,
+accepted same day), the zone is Active there, and the domain now resolves
+straight to hub-platform (`/api/me` and `/register/` both confirmed live
+at `pretoriahub.com` — those routes never existed on the old repo).
+Polokwane and Cape Town are still on `.pages.dev` only.
+
+- [x] Cloudflare Registrar account move for `pretoriahub.com` (personal →
+      `hubnetworksa`) — submitted and accepted 2026-09-10.
+- [x] Attach `pretoriahub.com` as a custom domain on the `pretoriahub`
+      Pages project (`hubnetworksa` account) — done 2026-09-10.
+- [x] Re-enable the `.pages.dev` → custom-domain redirect in
+      `functions/_middleware.ts` for Pretoria — done 2026-09-10, gated on
+      a new `domainLive` field in `sites/<slug>.json` (`true` for Pretoria,
+      `false` for Polokwane/Cape Town) so it only fires for a site whose
+      domain is actually live — set `domainLive: true` for each site as
+      its own cutover happens.
+- [x] **Google OAuth Client for `pretoriahub.com`** — `GOOGLE_OAUTH_CLIENT_ID`
+      and `GOOGLE_OAUTH_CLIENT_SECRET` are set on the `pretoriahub` Pages
+      project (confirmed via `wrangler pages secret list`, 2026-09-10).
+      Same still needed for Polokwane/Cape Town once their domains are live.
+- [ ] **Verify Google sign-in actually works end-to-end on `pretoriahub.com`**
+      — confirm the Google Cloud Console OAuth Client's redirect URI is
+      exactly `https://pretoriahub.com/api/auth/google/callback` and it's
+      under the right Google account/project, then do a real sign-in
+      through the browser. The secrets being set doesn't by itself prove
+      the Console-side config matches.
+- [ ] **Email Routing** on the new `pretoriahub.com` zone (`hubnetworksa`
+      account) — forward `hello@pretoriahub.com` to a real inbox. Not
+      confirmed set up yet on the new zone (the old zone under the
+      personal account had it; that config did not carry over with the
+      account move).
+- [ ] **Search Console** — verify `pretoriahub.com` under `hubnetworksa`'s
+      Search Console (meta-tag code already wired into
+      `sites/pretoria.json`) and submit `/sitemap-index.xml`. The domain's
+      old TXT-based verification records belonged to the old zone/account
+      and don't need recreating.
+- [ ] **Old Pretoria repo (GRimkiller360 account) cleanup** — remove
+      `pretoriahub.com` from that Pages project's custom domains (it's
+      orphaned there now anyway since the zone moved); decide whether to
+      archive the repo or just leave it deployed-but-unreachable at its
+      own `.pages.dev` URL.
+- [ ] **One more D1 backup + merge pass** for Pretoria — same process as
+      `db/backups/old-pretoriahub-2026-09-10.sql`, in case the old site
+      collected anything between that backup and the actual cutover.
+- [ ] **End-to-end smoke test on `pretoriahub.com`** — register, log in
+      (password + Google once OAuth is set up), submit → approve →
+      owner-confirm a listing, file + approve a claim — confirm every
+      emailed link uses `pretoriahub.com` and actually resolves.
+- [ ] AdSense — confirm `https://pretoriahub.com/ads.txt` serves correctly
+      post-cutover, add the domain as a Site once the hubnetworksa AdSense
+      account is approved (see the AdSense item below).
+- [ ] Polokwane and Cape Town domain cutovers — repeat this whole
+      checklist for each once their real domains are ready to move.
+
 ## hub-platform (Polokwane / Pretoria / Cape Town)
 
 - [x] Set `GITHUB_DISPATCH_TOKEN` secret on all 3 Cloudflare Pages projects
