@@ -78,6 +78,14 @@ import site from '../../site';
       <p id="design-status" role="status" class="muted" hidden></p>
     </div>
   </section>
+
+  <div id="photo-modal" class="photo-modal" hidden>
+    <div id="photo-modal-backdrop" class="photo-modal-backdrop"></div>
+    <div class="photo-modal-content">
+      <button type="button" id="photo-modal-close" class="photo-modal-close" aria-label="Close">×</button>
+      <img id="photo-modal-img" src="" alt="Full-size uploaded photo" />
+    </div>
+  </div>
 </BaseLayout>
 
 <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
@@ -659,7 +667,8 @@ import site from '../../site';
     for (const photo of data.photos) {
       const div = document.createElement('div');
       div.className = 'photo-thumb';
-      div.innerHTML = `<img src="/media/${photo.r2_key}" alt="" /><button type="button" data-id="${photo.id}">Remove</button>`;
+      div.innerHTML = `<img src="/media/${photo.r2_key}" alt="Uploaded photo — click to view full size" /><button type="button" data-id="${photo.id}">Remove</button>`;
+      div.querySelector('img').addEventListener('click', () => openPhotoModal(`/media/${photo.r2_key}`));
       div.querySelector('button').addEventListener('click', async (e) => {
         await fetch(`/api/business-photos?photoId=${e.target.getAttribute('data-id')}`, { method: 'DELETE' });
         await loadPhotos();
@@ -669,6 +678,25 @@ import site from '../../site';
     }
     renderPreview();
   }
+
+  // Clicking an uploaded photo's thumbnail opens it full-size in a modal,
+  // instead of the thumbnail growing/whatever a plain <img> would otherwise
+  // do — the customize page itself never displays the full-resolution image.
+  const photoModal = document.getElementById('photo-modal');
+  const photoModalImg = document.getElementById('photo-modal-img');
+  function openPhotoModal(src) {
+    photoModalImg.src = src;
+    photoModal.hidden = false;
+  }
+  function closePhotoModal() {
+    photoModal.hidden = true;
+    photoModalImg.src = '';
+  }
+  document.getElementById('photo-modal-close').addEventListener('click', closePhotoModal);
+  document.getElementById('photo-modal-backdrop').addEventListener('click', closePhotoModal);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !photoModal.hidden) closePhotoModal();
+  });
 
   document.getElementById('photo-upload-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -912,6 +940,7 @@ import site from '../../site';
     object-fit: cover;
     border-radius: var(--radius);
     border: 1px solid var(--border);
+    cursor: zoom-in;
   }
   .photo-thumb button {
     width: 100%;
@@ -926,6 +955,51 @@ import site from '../../site';
     display: flex;
     gap: 0.6rem;
     align-items: center;
+  }
+  /* Clicking a thumbnail opens the real photo here, full-size — the
+     customize page itself never displays anything but small cropped
+     thumbnails, however large the uploaded original is. */
+  .photo-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .photo-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+  }
+  .photo-modal-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+  .photo-modal-content img {
+    display: block;
+    max-width: 90vw;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    border-radius: var(--radius);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  }
+  .photo-modal-close {
+    position: absolute;
+    top: -0.9rem;
+    right: -0.9rem;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 999px;
+    border: none;
+    background: var(--bg-card);
+    color: var(--text);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   }
   #design-actions {
     display: flex;
