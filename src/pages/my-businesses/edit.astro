@@ -28,6 +28,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         Hours
         <textarea name="hours" maxlength="400" rows="3" placeholder="e.g. Mon-Fri 8am-5pm"></textarea>
       </label>
+      <div id="template-picker" hidden>
+        <label>Page template</label>
+        <div class="tier-grid">
+          <button type="button" class="tpl-btn" data-tpl="classic"><b>Classic</b><span>Clean & simple</span></button>
+          <button type="button" class="tpl-btn" data-tpl="gallery"><b>Gallery-Forward</b><span>Photo leads the page</span></button>
+          <button type="button" class="tpl-btn" data-tpl="services"><b>Services Grid</b><span>Structured service cards</span></button>
+        </div>
+      </div>
+
+      <div id="block-editor" hidden>
+        <label>Extra sections (Premium)</label>
+        <div id="blocks-list"></div>
+        <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
+      </div>
+
       <button type="submit" class="btn btn-primary">Save changes</button>
       <p id="form-status" role="status"></p>
     </form>
@@ -42,6 +57,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <button type="button" class="tier-btn" data-tier="4"><b>Premium</b><span>R299/mo</span></button>
       </div>
       <p id="upgrade-status" role="status" class="muted"></p>
+      <button type="button" id="cancel-btn" class="btn btn-outline btn-sm" hidden>Cancel subscription</button>
     </section>
 
     <section id="photos-section" hidden>
@@ -63,6 +79,50 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   const loading = document.getElementById('loading')!;
   const form = document.getElementById('edit-form') as HTMLFormElement;
   const status = document.getElementById('form-status')!;
+
+  let selectedTemplate = 'classic';
+  interface CustomBlock { type: string; title: string; body: string }
+  let blocks: CustomBlock[] = [];
+
+  function renderBlocks() {
+    const list = document.getElementById('blocks-list')!;
+    list.innerHTML = blocks
+      .map(
+        (b, i) => `
+      <div class="block-row" data-i="${i}">
+        <select class="block-type">
+          <option value="story" ${b.type === 'story' ? 'selected' : ''}>Our Story</option>
+          <option value="specials" ${b.type === 'specials' ? 'selected' : ''}>Specials & Promotions</option>
+          <option value="team" ${b.type === 'team' ? 'selected' : ''}>Team</option>
+          <option value="gallery" ${b.type === 'gallery' ? 'selected' : ''}>Gallery</option>
+        </select>
+        <input class="block-title" type="text" placeholder="Section title" maxlength="60" value="${b.title.replace(/"/g, '&quot;')}" />
+        <textarea class="block-body" rows="2" maxlength="800" placeholder="Section text">${b.body}</textarea>
+        <div class="block-row-actions">
+          <button type="button" class="move-up" ${i === 0 ? 'disabled' : ''}>↑</button>
+          <button type="button" class="move-down" ${i === blocks.length - 1 ? 'disabled' : ''}>↓</button>
+          <button type="button" class="remove-block">Remove</button>
+        </div>
+      </div>`
+      )
+      .join('');
+
+    list.querySelectorAll('.block-row').forEach((row) => {
+      const i = Number((row as HTMLElement).dataset.i);
+      row.querySelector('.block-type')!.addEventListener('change', (e) => { blocks[i].type = (e.target as HTMLSelectElement).value; });
+      row.querySelector('.block-title')!.addEventListener('input', (e) => { blocks[i].title = (e.target as HTMLInputElement).value; });
+      row.querySelector('.block-body')!.addEventListener('input', (e) => { blocks[i].body = (e.target as HTMLTextAreaElement).value; });
+      row.querySelector('.remove-block')!.addEventListener('click', () => { blocks.splice(i, 1); renderBlocks(); });
+      row.querySelector('.move-up')?.addEventListener('click', () => { if (i > 0) { [blocks[i - 1], blocks[i]] = [blocks[i], blocks[i - 1]]; renderBlocks(); } });
+      row.querySelector('.move-down')?.addEventListener('click', () => { if (i < blocks.length - 1) { [blocks[i + 1], blocks[i]] = [blocks[i], blocks[i + 1]]; renderBlocks(); } });
+    });
+  }
+
+  document.getElementById('add-block-btn')!.addEventListener('click', () => {
+    if (blocks.length >= 6) return;
+    blocks.push({ type: 'story', title: '', body: '' });
+    renderBlocks();
+  });
 
   async function init() {
     if (!businessId) {
@@ -118,6 +178,47 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       document.getElementById('photos-section')!.hidden = false;
       await loadPhotos();
     }
+
+    if (data.business.subscriptionTier >= 3) {
+      selectedTemplate = data.business.templateId ?? 'classic';
+      document.getElementById('template-picker')!.hidden = false;
+      document.querySelectorAll<HTMLButtonElement>('.tpl-btn').forEach((btn) => {
+        if (btn.dataset.tpl === selectedTemplate) btn.classList.add('active');
+        btn.addEventListener('click', () => {
+          selectedTemplate = btn.dataset.tpl!;
+          document.querySelectorAll('.tpl-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+    }
+
+    if (data.business.subscriptionTier >= 4) {
+      blocks = Array.isArray(data.business.customBlocks) ? data.business.customBlocks : [];
+      document.getElementById('block-editor')!.hidden = false;
+      renderBlocks();
+    }
+
+    if (data.business.subscriptionTier > 0) {
+      const cancelBtn = document.getElementById('cancel-btn') as HTMLButtonElement;
+      cancelBtn.hidden = false;
+      cancelBtn.addEventListener('click', async () => {
+        if (!confirm('Cancel your subscription? You keep your current tier until the paid period ends, then it reverts to Free.')) return;
+        cancelBtn.disabled = true;
+        const upgradeStatus = document.getElementById('upgrade-status')!;
+        upgradeStatus.textContent = 'Cancelling…';
+        const res = await fetch('/api/subscribe/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId: Number(businessId) }),
+        });
+        const result = await res.json();
+        upgradeStatus.textContent = result.ok
+          ? 'Cancelled — you keep your tier until the current period ends.'
+          : result.error || 'Could not cancel.';
+        cancelBtn.disabled = false;
+        if (result.ok) cancelBtn.hidden = true;
+      });
+    }
   }
 
   async function loadPhotos() {
@@ -161,7 +262,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const res = await fetch('/api/update-business', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...data, businessId: Number(businessId) }),
+      body: JSON.stringify({ ...data, businessId: Number(businessId), templateId: selectedTemplate, customBlocks: blocks }),
     });
     const result = await res.json();
     status.textContent = result.ok ? 'Saved.' : result.error || 'Something went wrong.';
@@ -236,6 +337,59 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .tier-btn.active {
     border-color: var(--accent);
     background: rgba(var(--accent-rgb), 0.08);
+  }
+  .tpl-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+  }
+  .tpl-btn span {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+  .tpl-btn.active {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.08);
+  }
+  #template-picker, #block-editor {
+    margin-top: 0.5rem;
+  }
+  .block-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    margin-bottom: 0.6rem;
+  }
+  .block-row select, .block-row input, .block-row textarea {
+    font: inherit;
+    padding: 0.45rem 0.6rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    color: var(--text);
+  }
+  .block-row-actions {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .block-row-actions button {
+    font-size: 0.78rem;
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    border-radius: var(--radius);
+    cursor: pointer;
+    padding: 0.3rem 0.55rem;
   }
   .photo-grid {
     display: grid;

@@ -41,6 +41,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
           <strong id="count-users">–</strong>
           <span>Users</span>
         </a>
+        <a href="/admin/subscriptions/" class="nav-card">
+          <strong id="count-subscriptions">–</strong>
+          <span>Active subscriptions</span>
+        </a>
         <a href="/admin/activity/" class="nav-card">
           <strong>→</strong>
           <span>Recent activity</span>
@@ -79,6 +83,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <div class="stat"><strong>${data.stats.pendingSubmissions}</strong><span>Pending submissions</span></div>
       <div class="stat"><strong>${data.stats.pendingClaims}</strong><span>Pending claims</span></div>
       <div class="stat"><strong>${data.stats.openReports}</strong><span>Open reports</span></div>
+      <div class="stat"><strong>${data.stats.activeSubscriptions}</strong><span>Active subscriptions</span></div>
     `;
 
     document.getElementById('health-row')!.innerHTML = `
@@ -91,6 +96,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     document.getElementById('count-reports')!.textContent = String(data.stats.openReports);
     document.getElementById('count-businesses')!.textContent = String(data.stats.businesses);
     document.getElementById('count-users')!.textContent = String(data.stats.users);
+    document.getElementById('count-subscriptions')!.textContent = String(data.stats.activeSubscriptions);
   }
 
   document.getElementById('rebuild-btn')!.addEventListener('click', async (e) => {

@@ -21,7 +21,7 @@
 </div>
 
 <script>
-  type Row = { n: string; s: string; sb: string; c: string; g: string };
+  type Row = { n: string; s: string; sb: string; c: string; g: string; t: number };
 
   const root = document.getElementById('hub-search')!;
   const input = root.querySelector('input') as HTMLInputElement;
@@ -54,7 +54,9 @@
         else if (sub.includes(word)) score += 2;
         else allMatched = false;
       }
-      if (allMatched) scored.push({ row, score });
+      // Boost only applies once a row has already matched every query
+      // word — a Premium subscription never surfaces an irrelevant result.
+      if (allMatched) scored.push({ row, score: score + (row.t >= 4 ? 5 : row.t >= 3 ? 2 : 0) });
     }
     scored.sort((a, b) => b.score - a.score || a.row.n.localeCompare(b.row.n));
     return scored.map((s) => s.row);

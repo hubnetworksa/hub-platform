@@ -59,6 +59,25 @@ export interface Business {
   subscription_tier: number;
   subscription_status: string | null;
   subscription_expires_at: string | null;
+  template_id: 'classic' | 'gallery' | 'services';
+  /** JSON-encoded CustomBlock[] — Premium only, parse with customBlocksFor(). */
+  custom_blocks: string | null;
+}
+
+export interface CustomBlock {
+  type: 'story' | 'specials' | 'team' | 'gallery';
+  title: string;
+  body: string;
+}
+
+export function customBlocksFor(business: Business): CustomBlock[] {
+  if (!business.custom_blocks) return [];
+  try {
+    const parsed = JSON.parse(business.custom_blocks);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 }
 
 export interface BusinessPhoto {
@@ -150,6 +169,12 @@ export const topSpotInCategory = (categoryId: number) => tierBand(businessesInCa
 export const featuredInCategory = (categoryId: number) => tierBand(businessesInCategory(categoryId), TIER_FEATURED, `category:${categoryId}`);
 export const topSpotInSuburb = (suburbId: number) => tierBand(businessesInSuburb(suburbId), TIER_PREMIUM, `suburb:${suburbId}`);
 export const featuredInSuburb = (suburbId: number) => tierBand(businessesInSuburb(suburbId), TIER_FEATURED, `suburb:${suburbId}`);
+
+// Homepage "Featured businesses" section — across every category, not
+// scoped to one. Capped by the caller; the whole site's Premium+Featured
+// roster could exceed what belongs on a homepage.
+export const topSpotSitewide = () => tierBand(businesses, TIER_PREMIUM, 'sitewide');
+export const featuredSitewide = () => tierBand(businesses, TIER_FEATURED, 'sitewide');
 
 // Only meaningful when it actually has businesses linked — a shopping
 // centre imported from OSM with nothing nearby yet shouldn't be treated

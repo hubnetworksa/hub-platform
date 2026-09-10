@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, TIER_VERIFIED, TIER_VERIFIED_PLUS } from '../../lib/data';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, customBlocksFor, TIER_VERIFIED, TIER_VERIFIED_PLUS, TIER_FEATURED, TIER_PREMIUM } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
 import Icon from '../../components/Icon.astro';
 
@@ -31,6 +31,13 @@ const isPaidTier = business.subscription_tier >= TIER_VERIFIED && business.subsc
 const showClickableWebsite = isPaidTier && !!business.website;
 const noAds = business.subscription_tier >= TIER_VERIFIED_PLUS && business.subscription_status === 'active';
 const photos = photosFor(business);
+// Template choice only takes effect at Featured and up — a lapsed/free
+// business always falls back to Classic regardless of what's stored.
+const canChooseTemplate = business.subscription_tier >= TIER_FEATURED && business.subscription_status === 'active';
+const template = canChooseTemplate ? business.template_id : 'classic';
+const isPremium = business.subscription_tier >= TIER_PREMIUM && business.subscription_status === 'active';
+const customBlocks = isPremium ? customBlocksFor(business) : [];
+const BLOCK_TITLES: Record<string, string> = { story: 'Our Story', specials: 'Specials & Promotions', team: 'Team', gallery: 'Gallery' };
 // Only rendered when a real link exists — see shoppingCenterFor.
 const center = shoppingCenterFor(business);
 
@@ -61,6 +68,13 @@ const jsonLd = {
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <section class="container" style="padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;">
+    {template === 'gallery' && photos.length > 0 && (
+      <div class="hero-gallery">
+        {photos.map((photo) => (
+          <img src={`/media/${photo.r2_key}`} alt={photo.caption ?? business.name} loading="lazy" width="700" height="360" />
+        ))}
+      </div>
+    )}
     <Breadcrumbs
       items={[
         ...(suburb ? [{ label: suburb.name, href: `/suburb/${suburb.slug}/` }] : []),
@@ -89,7 +103,7 @@ const jsonLd = {
 
     <p style="margin-top: 1.25rem;">{business.description}</p>
 
-    {photos.length > 0 && (
+    {template !== 'gallery' && photos.length > 0 && (
       <div class:list={['photo-gallery', { carousel: photos.length > 5 }]}>
         {photos.map((photo) => (
           <img
@@ -99,6 +113,17 @@ const jsonLd = {
             width="320"
             height="220"
           />
+        ))}
+      </div>
+    )}
+
+    {customBlocks.length > 0 && (
+      <div class:list={['custom-blocks', { grid: template === 'services' }]}>
+        {customBlocks.map((block) => (
+          <div class="custom-block">
+            <h2>{block.title || BLOCK_TITLES[block.type] || 'More'}</h2>
+            <p>{block.body}</p>
+          </div>
         ))}
       </div>
     )}
@@ -241,6 +266,49 @@ const jsonLd = {
   }
   .photo-gallery.carousel img {
     height: 150px;
+  }
+  .hero-gallery {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(240px, 1fr);
+    gap: 0.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin-bottom: 0.5rem;
+  }
+  .hero-gallery img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    scroll-snap-align: start;
+  }
+  .custom-blocks {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .custom-blocks.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  .custom-block {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+  }
+  .custom-block h2 {
+    margin: 0 0 0.4rem;
+    font-size: 1rem;
+    color: var(--navy);
+  }
+  .custom-block p {
+    margin: 0;
+    font-size: 0.9rem;
+    white-space: pre-line;
   }
   .located-at {
     display: inline-flex;

@@ -35,9 +35,10 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .prepare("SELECT id, kind, business_slug, business_name, reason, relationship, requester_email, created_at FROM reports WHERE status = 'open' ORDER BY created_at DESC")
     .all<{ id: number; kind: string; business_slug: string; business_name: string; reason: string; relationship: string | null; requester_email: string | null; created_at: string }>();
 
-  const [businessCount, userCount] = await Promise.all([
+  const [businessCount, userCount, subCount] = await Promise.all([
     db.prepare("SELECT COUNT(*) AS n FROM businesses WHERE status = 'published'").first<{ n: number }>(),
     db.prepare('SELECT COUNT(*) AS n FROM users').first<{ n: number }>(),
+    db.prepare("SELECT COUNT(*) AS n FROM businesses WHERE subscription_status = 'active'").first<{ n: number }>(),
   ]);
 
   return json({
@@ -60,6 +61,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       pendingSubmissions: submissions.results.length,
       pendingClaims: claims.results.length,
       openReports: reports.results.length,
+      activeSubscriptions: subCount?.n ?? 0,
     },
     health: {
       resendConfigured: Boolean(context.env.RESEND_API_KEY),

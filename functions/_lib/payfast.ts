@@ -112,6 +112,60 @@ export async function signFields(fields: Record<string, string | undefined>, pas
   return md5(buildSignatureString(fields, passphrase));
 }
 
+// The Subscriptions REST API uses a DIFFERENT signature scheme than the
+// checkout/ITN flow above: headers + params merged, sorted alphabetically
+// (PHP `ksort` — the opposite rule from the fixed field order used for
+// checkout), passphrase appended, MD5'd, sent as a `signature` header
+// rather than a form field. Confirmed against PayFast's own SDK source
+// (Auth.php / PayFastApi.php), used here only for cancelling a
+// subscription — pause/resume/update follow the identical pattern if
+// ever needed.
+async function signApiRequest(
+  passphrase: string,
+  headers: Record<string, string>,
+  params: Record<string, string>
+): Promise<string> {
+  const merged: Record<string, string> = { ...headers, ...params };
+  const keys = Object.keys(merged).sort();
+  const parts = keys.map((k) => `${k}=${phpUrlEncode(merged[k])}`);
+  parts.push(`passphrase=${phpUrlEncode(passphrase)}`);
+  return md5(parts.join('&'));
+}
+
+export interface CancelResult {
+  ok: boolean;
+  status: number;
+  body: string;
+}
+
+// PUT /subscriptions/{token}/cancel — stops future billing on PayFast's
+// side. This is the one API call that actually matters for user trust:
+// a "Cancel" button that only updates our own database without calling
+// this would keep charging the owner's card while claiming to have
+// cancelled.
+export async function cancelPayfastSubscription(env: PayfastEnv, token: string): Promise<CancelResult> {
+  const merchantId = env.PAYFAST_MERCHANT_ID!;
+  const passphrase = env.PAYFAST_PASSPHRASE!;
+  const timestamp = new Date().toISOString().slice(0, 19); // PayFast expects no milliseconds/offset
+  const headers = { 'merchant-id': merchantId, version: 'v1', timestamp };
+  const signature = await signApiRequest(passphrase, headers, {});
+
+  const isSandbox = (env.PAYFAST_HOST ?? '').includes('sandbox');
+  const url = `https://api.payfast.co.za/subscriptions/${encodeURIComponent(token)}/cancel${isSandbox ? '?testing=true' : ''}`;
+
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'merchant-id': merchantId,
+      version: 'v1',
+      timestamp,
+      signature,
+    },
+  });
+  const body = await res.text();
+  return { ok: res.ok, status: res.status, body };
+}
+
 // Checks the incoming ITN's host actually resolves to one of PayFast's own
 // hostnames, per their own SDK's `pfValidIP()` — this Function receives
 // the request directly (no reverse proxy to trust blindly), so the
