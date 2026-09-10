@@ -14,12 +14,19 @@ import site from '../../site';
       <div class="preview-panel">
         <div class="preview-head">
           <span>Live preview — this is exactly what visitors will see</span>
-          <span class="preview-live-dot">● updates as you edit</span>
+          <div class="preview-head-right">
+            <div class="preview-width-toggle" role="group" aria-label="Preview width">
+              <button type="button" class="width-btn active" data-width="desktop">Desktop</button>
+              <button type="button" class="width-btn" data-width="tablet">Tablet</button>
+              <button type="button" class="width-btn" data-width="mobile">Mobile</button>
+            </div>
+            <span class="preview-live-dot">● updates as you edit</span>
+          </div>
         </div>
         <div class="preview-frame">
           <div class="preview-body" id="preview-body"></div>
         </div>
-        <p class="preview-note">This shows your unsaved draft live. Your changes autosave as you go — click <strong>Publish changes</strong> below to make them go live on the real page.</p>
+        <p class="preview-note">Click any headline or text above to edit it directly. This shows your unsaved draft live — changes autosave as you go, and <strong>Publish changes</strong> below makes them go live on the real page.</p>
       </div>
     </div>
   </section>
@@ -140,6 +147,32 @@ import site from '../../site';
     return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
+  // Phase 4 — click-to-edit directly in the live preview. Each custom-block
+  // text field renders as a contenteditable element carrying its block
+  // index + field name; a single delegated listener set (below, attached
+  // once to #preview-dynamic) handles typing, clearing the placeholder on
+  // focus, and restoring it on blur if left empty. The shown fallback text
+  // when a field is empty must match src/lib/blockRenderer.ts's own
+  // fallback exactly — this preview has to show what a real visitor would
+  // actually see, unedited fields included.
+  const EMPTY_BODY_PLACEHOLDER_HTML = '<span class="placeholder-text">(empty — add some text)</span>';
+
+  function editableEl(tag, cssClass, index, field, value, fallback, multiline) {
+    const isEmpty = !value;
+    const shown = escapeHtml(isEmpty ? fallback : value);
+    const classes = ['cb-field', cssClass, isEmpty ? 'is-placeholder' : ''].filter(Boolean).join(' ');
+    const attrs = [
+      `class="${classes}"`,
+      'contenteditable="true"',
+      `data-block-index="${index}"`,
+      `data-field="${field}"`,
+      `data-fallback="${escapeHtml(fallback)}"`,
+      isEmpty ? 'data-placeholder="true"' : '',
+      multiline ? 'data-multiline="true"' : '',
+    ].filter(Boolean).join(' ');
+    return `<${tag} ${attrs}>${shown}</${tag}>`;
+  }
+
   // Full page chrome (header/nav/footer), rendered once — it never changes
   // while editing a template/section, so there's no reason to rebuild it
   // on every keystroke the way the content below it does. Copied verbatim
@@ -201,32 +234,44 @@ import site from '../../site';
   // renderChrome()) never needs to change while editing.
   // Kept in sync by hand with src/lib/blockRenderer.ts's renderOneBlock —
   // same reason as BLOCK_TITLES above.
-  function renderOneBlockPreview(b) {
-    const title = escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More');
-    const body = escapeHtml(b.body || '');
+  function renderOneBlockPreview(b, index) {
     switch (b.type) {
-      case 'photo':
+      case 'photo': {
+        const altText = escapeHtml(b.title || 'Photo');
         return `<div class="custom-block custom-block-photo">
-          ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen</div>'}
-          ${b.title ? `<p class="photo-caption">${title}</p>` : ''}
+          ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${altText}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one from the section list below</div>'}
+          ${editableEl('p', 'photo-caption', index, 'title', b.title, 'Add a caption (optional)')}
         </div>`;
+      }
       case 'divider':
         return `<div class="custom-block custom-block-divider"><hr /></div>`;
       case 'cta':
         return `<div class="custom-block custom-block-cta">
-          <p class="cta-text">${title}</p>
-          <span class="btn btn-primary cta-btn">${body || 'Get in touch'}</span>
+          ${editableEl('p', 'cta-text', index, 'title', b.title, BLOCK_TITLES.cta)}
+          ${editableEl('span', 'btn btn-primary cta-btn', index, 'body', b.body, 'Get in touch')}
         </div>`;
       case 'testimonial':
         return `<div class="custom-block custom-block-testimonial">
-          <p class="testimonial-quote">&ldquo;${body}&rdquo;</p>
-          <p class="testimonial-author">— ${title}</p>
+          <p class="testimonial-quote">&ldquo;${editableEl('span', 'cb-field-inline', index, 'body', b.body, '', true)}&rdquo;</p>
+          <p class="testimonial-author">— ${editableEl('span', 'cb-field-inline', index, 'title', b.title, BLOCK_TITLES.testimonial)}</p>
         </div>`;
-      default:
+      default: {
+        const titleEl = editableEl('h2', '', index, 'title', b.title, BLOCK_TITLES[b.type] || 'More');
+        const bodyHtml = b.body ? escapeHtml(b.body).replace(/\n/g, '<br />') : EMPTY_BODY_PLACEHOLDER_HTML;
+        const bodyAttrs = [
+          'class="cb-field' + (b.body ? '' : ' is-placeholder') + '"',
+          'contenteditable="true"',
+          `data-block-index="${index}"`,
+          'data-field="body"',
+          'data-fallback=""',
+          'data-multiline="true"',
+          b.body ? '' : 'data-placeholder="true" data-html-fallback="true"',
+        ].filter(Boolean).join(' ');
         return `<div class="custom-block">
-          <h2>${title}</h2>
-          <p>${body.replace(/\n/g, '<br />') || '<span class="placeholder-text">(empty — add some text)</span>'}</p>
+          ${titleEl}
+          <p ${bodyAttrs}>${bodyHtml}</p>
         </div>`;
+      }
     }
   }
 
@@ -282,8 +327,10 @@ import site from '../../site';
     `;
   }
 
+  // Text fields are edited inline, directly in the live preview (click any
+  // headline/body there) — the sidebar only holds what can't be edited that
+  // way: which photo a photo block uses.
   function blockFieldsHtml(b) {
-    const title = (b.title || '').replace(/"/g, '&quot;');
     if (b.type === 'divider') {
       return '<p class="muted block-hint">Just a horizontal divider — no text needed.</p>';
     }
@@ -296,21 +343,9 @@ import site from '../../site';
           <option value="">— Choose an uploaded photo —</option>
           ${photoOptions}
         </select>
-        <input class="block-title" type="text" placeholder="Caption (optional)" maxlength="60" value="${title}" />`;
+        <p class="muted block-hint">Caption is editable directly in the preview above.</p>`;
     }
-    if (b.type === 'cta') {
-      return `
-        <input class="block-title" type="text" placeholder="Headline, e.g. Ready to book?" maxlength="60" value="${title}" />
-        <input class="block-body" type="text" placeholder="Button text, e.g. Get in touch" maxlength="800" value="${(b.body || '').replace(/"/g, '&quot;')}" />`;
-    }
-    if (b.type === 'testimonial') {
-      return `
-        <textarea class="block-body" rows="2" maxlength="800" placeholder="Quote">${b.body || ''}</textarea>
-        <input class="block-title" type="text" placeholder="Author name" maxlength="60" value="${title}" />`;
-    }
-    return `
-      <input class="block-title" type="text" placeholder="Section title" maxlength="60" value="${title}" />
-      <textarea class="block-body" rows="2" maxlength="800" placeholder="Section text">${b.body || ''}</textarea>`;
+    return '<p class="muted block-hint">Text is editable directly in the preview above.</p>';
   }
 
   function renderBlocks() {
@@ -341,14 +376,82 @@ import site from '../../site';
         blocks[i].type = e.target.value;
         renderBlocks(); renderPreview(); scheduleAutosave();
       });
-      row.querySelector('.block-title')?.addEventListener('input', (e) => { blocks[i].title = e.target.value; renderPreview(); scheduleAutosave(); });
-      row.querySelector('.block-body')?.addEventListener('input', (e) => { blocks[i].body = e.target.value; renderPreview(); scheduleAutosave(); });
       row.querySelector('.block-image')?.addEventListener('change', (e) => { blocks[i].imageKey = e.target.value || undefined; renderPreview(); scheduleAutosave(); });
       row.querySelector('.remove-block').addEventListener('click', () => { blocks.splice(i, 1); renderBlocks(); renderPreview(); scheduleAutosave(); });
       row.querySelector('.move-up')?.addEventListener('click', () => { if (i > 0) { [blocks[i - 1], blocks[i]] = [blocks[i], blocks[i - 1]]; renderBlocks(); renderPreview(); scheduleAutosave(); } });
       row.querySelector('.move-down')?.addEventListener('click', () => { if (i < blocks.length - 1) { [blocks[i + 1], blocks[i]] = [blocks[i], blocks[i + 1]]; renderBlocks(); renderPreview(); scheduleAutosave(); } });
     });
   }
+
+  // Delegated once onto the stable #preview-dynamic container (renderPreview()
+  // replaces its children on every edit, but the container itself never gets
+  // recreated, so a single set of listeners here survives every re-render).
+  function initInlineEditing() {
+    const container = document.getElementById('preview-dynamic');
+    if (!container || container.dataset.editingInited) return;
+    container.dataset.editingInited = 'true';
+
+    container.addEventListener('focusin', (e) => {
+      const el = e.target.closest('[data-field]');
+      if (!el || el.dataset.placeholder !== 'true') return;
+      el.textContent = '';
+      el.classList.remove('is-placeholder');
+      delete el.dataset.placeholder;
+    });
+
+    container.addEventListener('input', (e) => {
+      const el = e.target.closest('[data-field]');
+      if (!el) return;
+      const i = Number(el.dataset.blockIndex);
+      if (!blocks[i]) return;
+      blocks[i][el.dataset.field] = el.textContent;
+      scheduleAutosave();
+    });
+
+    container.addEventListener('keydown', (e) => {
+      const el = e.target.closest('[data-field]');
+      if (!el || e.key !== 'Enter') return;
+      e.preventDefault();
+      if (el.dataset.multiline === 'true') {
+        document.execCommand('insertText', false, '\n');
+      } else {
+        el.blur();
+      }
+    });
+
+    container.addEventListener('focusout', (e) => {
+      const el = e.target.closest('[data-field]');
+      if (!el) return;
+      const i = Number(el.dataset.blockIndex);
+      if (!blocks[i]) return;
+      const field = el.dataset.field;
+      const value = el.textContent.trim();
+      blocks[i][field] = value;
+      if (!value) {
+        if (el.dataset.htmlFallback === 'true') {
+          el.innerHTML = EMPTY_BODY_PLACEHOLDER_HTML;
+        } else {
+          el.textContent = el.dataset.fallback || '';
+        }
+        el.classList.add('is-placeholder');
+        el.dataset.placeholder = 'true';
+      }
+      scheduleAutosave();
+    });
+  }
+
+  // Preview width toggle (Phase 5) — these buttons are static markup, always
+  // present regardless of tier, so they're wired up immediately rather than
+  // inside init().
+  document.querySelectorAll('.width-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.width-btn').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const frame = document.querySelector('.preview-frame');
+      frame.classList.remove('width-desktop', 'width-tablet', 'width-mobile');
+      frame.classList.add(`width-${btn.dataset.width}`);
+    });
+  });
 
   document.getElementById('add-block-btn').addEventListener('click', () => {
     if (blocks.length >= 10) return;
@@ -506,6 +609,7 @@ import site from '../../site';
       suburb: data.business.suburb ?? null,
     };
     renderChrome();
+    initInlineEditing();
 
     if (tier >= 2) {
       document.getElementById('photos-section').hidden = false;
@@ -620,14 +724,53 @@ import site from '../../site';
     color: var(--text-muted);
     border-bottom: 1px solid var(--border);
   }
+  .preview-head-right {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+  .preview-width-toggle {
+    display: flex;
+    gap: 0.25rem;
+  }
+  .width-btn {
+    font: inherit;
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--text-muted);
+  }
+  .width-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.08);
+    font-weight: 600;
+  }
   .preview-live-dot {
     color: #1a8f5e;
     font-size: 0.78rem;
     font-weight: 600;
+    white-space: nowrap;
   }
   .preview-frame {
     max-height: 720px;
     overflow-y: auto;
+    transition: max-width 0.2s ease;
+  }
+  .preview-frame.width-tablet {
+    max-width: 768px;
+    margin: 0 auto;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+  .preview-frame.width-mobile {
+    max-width: 390px;
+    margin: 0 auto;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
   }
   .preview-note {
     margin: 0;
@@ -930,6 +1073,36 @@ import site from '../../site';
   .preview-body :global(.placeholder-text) {
     color: var(--text-muted);
     font-style: italic;
+  }
+  /* Phase 4 — click-to-edit affordance for every editable field in the
+     preview. Kept subtle at rest (a dashed underline hints it's clickable
+     without looking like a form), stronger on hover/focus so it's obvious
+     once you're interacting with it. */
+  .preview-body :global(.cb-field) {
+    outline: none;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px transparent;
+    text-decoration: underline dashed transparent 1px;
+    text-underline-offset: 3px;
+    transition: background-color 0.15s, box-shadow 0.15s;
+  }
+  .preview-body :global(.cb-field:hover) {
+    background: rgba(var(--accent-rgb), 0.06);
+    text-decoration-color: rgba(var(--accent-rgb), 0.5);
+  }
+  .preview-body :global(.cb-field:focus) {
+    background: rgba(var(--accent-rgb), 0.08);
+    box-shadow: 0 0 0 2px var(--accent);
+    text-decoration: none;
+  }
+  .preview-body :global(.cb-field.is-placeholder) {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .preview-body :global(.cb-field-inline.is-placeholder) {
+    display: inline-block;
+    min-width: 3em;
+    min-height: 1em;
   }
   .preview-body :global(.custom-block-photo) {
     padding: 0;
