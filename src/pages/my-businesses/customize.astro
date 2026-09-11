@@ -437,6 +437,16 @@ import site from '../../site';
     .gjs-photo img { max-width: 100%; border-radius: 10px; }
     .gjs-starter-name { font-size: 2rem; color: var(--page-secondary); margin: 0 0 0.5rem; }
     .gjs-starter-desc { color: var(--page-muted); font-size: 1.05rem; }
+    .gjs-gallery-starter { grid-template-columns: repeat(3, 1fr); margin-bottom: 1rem; }
+    .gjs-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.6rem 0; }
+    .gjs-badge { display: inline-flex; align-items: center; font-size: 0.8rem; color: var(--page-primary); background: rgba(42, 93, 176, 0.1); padding: 0.2rem 0.7rem; border-radius: 999px; }
+    .gjs-badge-verified { background: rgba(26, 143, 94, 0.12); color: #1a8f5e; }
+    .gjs-address { color: var(--page-muted); margin: 0.5rem 0; }
+    .gjs-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1rem 0; }
+    .gjs-action-btn { display: inline-block; padding: 0.55rem 1.1rem; border: 1px solid #d7dde8; border-radius: 999px; color: var(--page-secondary); font-size: 0.9rem; }
+    .gjs-hours { margin: 1rem 0; padding: 1rem; border: 1px solid #d7dde8; border-radius: 10px; }
+    .gjs-hours h3 { margin: 0 0 0.4rem; color: var(--page-secondary); font-size: 1rem; }
+    .gjs-hours p { margin: 0; color: var(--page-muted); white-space: pre-line; }
   `;
 
   function blockHtml(name) {
@@ -464,10 +474,44 @@ import site from '../../site';
     }
   }
 
+  // A real starting point — the page as it actually looks today (photos,
+  // name, categories, description, address, contact buttons, hours) —
+  // rather than a blank canvas or just the name/description. Every piece
+  // is a real, separate, movable/resizable/editable element from the
+  // start, built around instead of built from scratch.
   function starterProject() {
-    // A real starting point, not a blank canvas — the business's own name
-    // and description, editable like anything else.
-    return `<div class="gjs-text-section"><h2 class="gjs-starter-name">${escapeHtml(business.name)}</h2><p class="gjs-starter-desc">${escapeHtml(business.description)}</p></div>`;
+    const isPaidTier = tier >= 1;
+    const showClickableWebsite = isPaidTier && !!business.website;
+    const usingPlaceholders = photos.length === 0;
+    const galleryPhotos = usingPlaceholders
+      ? Array.from({ length: 3 }, (_, i) => placeholderImage(`Sample photo ${i + 1}`))
+      : photos.map((p) => `/media/${p.r2_key}`);
+
+    const galleryHtml = `<div class="gjs-gallery gjs-gallery-starter">${galleryPhotos.map((src) => `<img src="${src}" />`).join('')}</div>`;
+
+    const tagsHtml = `<div class="gjs-tags">
+      ${isPaidTier ? '<span class="gjs-badge gjs-badge-verified">✓ Verified</span>' : ''}
+      ${business.categories.map((c) => `<span class="gjs-badge">${escapeHtml(c.name)}</span>`).join('')}
+    </div>`;
+
+    const actionsHtml = `<div class="gjs-actions">
+      ${showClickableWebsite ? '<span class="gjs-action-btn">Visit website</span>' : ''}
+      ${business.phone ? `<span class="gjs-action-btn">${escapeHtml(business.phone)}</span>` : ''}
+      <span class="gjs-action-btn">View on Google Maps</span>
+    </div>`;
+
+    const hoursHtml = `<div class="gjs-hours">
+      <h3>Trading Hours</h3>
+      <p>${business.hours ? escapeHtml(business.hours) : 'Trading hours not available'}</p>
+    </div>`;
+
+    return `
+      ${galleryHtml}
+      <div class="gjs-text-section gjs-starter-heading"><h2 class="gjs-starter-name">${escapeHtml(business.name)}</h2>${tagsHtml}<p class="gjs-starter-desc">${escapeHtml(business.description)}</p></div>
+      ${business.address ? `<p class="gjs-address">${escapeHtml(business.address)}</p>` : ''}
+      ${actionsHtml}
+      ${hoursHtml}
+    `;
   }
 
   function applyThemeToCanvas() {
