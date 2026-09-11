@@ -2,7 +2,7 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../_lib/auth';
 import { triggerRebuild } from '../_lib/deploy-hook';
 import { logActivity } from '../_lib/activity-log';
-import { BLOCK_TYPES, MIN_BLOCK_HEIGHT, MAX_BLOCK_HEIGHT, MIN_COL_SPAN, MAX_COL_SPAN, CORE_ITEM_IDS } from '../../src/lib/blockRenderer';
+import { BLOCK_TYPES, MIN_BLOCK_HEIGHT, MAX_BLOCK_HEIGHT, MIN_COL_SPAN, MAX_COL_SPAN } from '../../src/lib/blockRenderer';
 
 interface Env {
   DB: D1Database;
@@ -61,8 +61,13 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const blocks = row.draft_blocks ?? row.custom_blocks;
   const pageColors = row.draft_page_colors ?? row.page_colors;
 
-  const liveBlocks = row.custom_blocks ? JSON.parse(row.custom_blocks) : [];
-  const draftBlocks = blocks ? JSON.parse(blocks) : [];
+  // Defensive: drop any leftover "core" kind item (the page's fixed
+  // info, briefly stored as a movable block during an earlier build of
+  // this feature that's since been reverted) rather than hand the client
+  // something it no longer knows how to render.
+  const dropStrayCoreItems = (arr: unknown): unknown[] => (Array.isArray(arr) ? arr.filter((b) => !(b && typeof b === 'object' && (b as { kind?: string }).kind === 'core')) : []);
+  const liveBlocks = dropStrayCoreItems(row.custom_blocks ? JSON.parse(row.custom_blocks) : []);
+  const draftBlocks = dropStrayCoreItems(blocks ? JSON.parse(blocks) : []);
   const livePageColors = row.page_colors ? JSON.parse(row.page_colors) : {};
   const draftPageColors = pageColors ? JSON.parse(pageColors) : {};
   const hasUnpublishedChanges =
@@ -102,38 +107,26 @@ function sanitizePageColors(input: unknown): Record<string, string> {
   return out;
 }
 
-type SanitizedBlock = { kind?: 'core'; coreId?: string; type: string; title: string; body: string; imageKey?: string; side?: 'left' | 'right'; heightPx?: number; colSpan?: number };
+type SanitizedBlock = { type: string; title: string; body: string; imageKey?: string; side?: 'left' | 'right'; heightPx?: number; colSpan?: number };
 
 function sanitizeBlocks(input: unknown): SanitizedBlock[] {
   if (!Array.isArray(input)) return [];
   return input
-    .slice(0, 30)
+    .slice(0, 10)
     .filter((b): b is Record<string, unknown> => typeof b === 'object' && b !== null)
-    .map((b): SanitizedBlock => {
-      const sizing = {
-        ...(typeof b.heightPx === 'number' && Number.isFinite(b.heightPx)
-          ? { heightPx: Math.round(Math.min(MAX_BLOCK_HEIGHT, Math.max(MIN_BLOCK_HEIGHT, b.heightPx))) }
-          : {}),
-        ...(typeof b.colSpan === 'number' && Number.isFinite(b.colSpan)
-          ? { colSpan: Math.round(Math.min(MAX_COL_SPAN, Math.max(MIN_COL_SPAN, b.colSpan))) }
-          : {}),
-      };
-      // A core item (the page's name/address/a contact button/etc.,
-      // repositioned like any section) never carries its own title/body/
-      // image — that always comes fresh from the business record when
-      // rendering, never from what a request stored here.
-      if (b.kind === 'core' && (CORE_ITEM_IDS as readonly string[]).includes(String(b.coreId))) {
-        return { kind: 'core', coreId: String(b.coreId), type: 'core', title: '', body: '', ...sizing };
-      }
-      return {
-        type: (BLOCK_TYPES as readonly string[]).includes(String(b.type)) ? String(b.type) : 'story',
-        title: typeof b.title === 'string' ? b.title.slice(0, 60) : '',
-        body: typeof b.body === 'string' ? b.body.slice(0, 800) : '',
-        ...(typeof b.imageKey === 'string' ? { imageKey: b.imageKey.slice(0, 300) } : {}),
-        ...(b.side === 'left' || b.side === 'right' ? { side: b.side } : {}),
-        ...sizing,
-      };
-    });
+    .map((b): SanitizedBlock => ({
+      type: (BLOCK_TYPES as readonly string[]).includes(String(b.type)) ? String(b.type) : 'story',
+      title: typeof b.title === 'string' ? b.title.slice(0, 60) : '',
+      body: typeof b.body === 'string' ? b.body.slice(0, 800) : '',
+      ...(typeof b.imageKey === 'string' ? { imageKey: b.imageKey.slice(0, 300) } : {}),
+      ...(b.side === 'left' || b.side === 'right' ? { side: b.side } : {}),
+      ...(typeof b.heightPx === 'number' && Number.isFinite(b.heightPx)
+        ? { heightPx: Math.round(Math.min(MAX_BLOCK_HEIGHT, Math.max(MIN_BLOCK_HEIGHT, b.heightPx))) }
+        : {}),
+      ...(typeof b.colSpan === 'number' && Number.isFinite(b.colSpan)
+        ? { colSpan: Math.round(Math.min(MAX_COL_SPAN, Math.max(MIN_COL_SPAN, b.colSpan))) }
+        : {}),
+    }));
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {

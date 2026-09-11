@@ -9,19 +9,10 @@
 //
 // Renders the custom sections an owner appends to their page — drag to
 // reorder or place side by side, drag an edge to resize width or height,
-// click text to edit it in place. The page's core info (name, address,
-// etc.) is a separate, similarly free-form layer — see the core-item
-// rendering in src/pages/business/[slug].astro — so this file only ever
-// deals with the sections an owner explicitly added.
+// click text to edit it in place. The page's core info (name/description/
+// photos/address/hours) is fixed and never rendered through here — an
+// owner can only append sections below it and set the page's colors.
 export interface CustomBlock {
-  /** 'core' for one of the page's fixed info pieces (name, address, a
-   *  contact button, etc.), repositioned/resized like any other item but
-   *  never carrying its own content — see coreId. Absent (or 'custom')
-   *  for an owner-added section, which does carry its own content below. */
-  kind?: 'core' | 'custom';
-  /** kind: 'core' only — which piece of the page's info this is. See
-   *  CORE_ITEM_IDS. */
-  coreId?: string;
   type: string;
   title: string;
   body: string;
@@ -50,31 +41,16 @@ export const MAX_BLOCK_HEIGHT = 480;
 export const MIN_COL_SPAN = 3;
 export const MAX_COL_SPAN = 12;
 
-// The page's core info, expressed as the same kind of grid item as an
-// owner-added section — see the per-id rendering in
-// src/pages/business/[slug].astro (needs live business/suburb/category
-// data a shared renderer here has no access to). A stored block with
-// kind 'core' only ever carries coreId/colSpan/heightPx — its actual
-// content always comes fresh from the business record, never from what's
-// stored, so editing a business's name/address/etc. still only happens
-// on the real edit form, not by typing into the page-builder grid.
-export const CORE_ITEM_IDS = [
-  'name', 'tags', 'description', 'address',
-  'action-website', 'action-phone', 'action-email', 'action-maps',
-  'hours',
-] as const;
 function heightStyle(block: CustomBlock, prop: 'min-height' | 'height'): string {
   if (!block.heightPx) return '';
   return `${prop}:${block.heightPx}px;`;
 }
 
-// The one style attribute on each item's outer div (core or custom) —
+// The one style attribute on each block's outer .custom-block div —
 // always carries --col-span (read by the CSS grid-column rule) and, when
-// the item's been resized taller, min-height (a floor, so a photo type's
-// own extra height rule below never conflicts with it). Exported since
-// business/[slug].astro's core-item rendering needs the exact same
-// wrapper style a custom block gets.
-export function outerStyleAttr(block: CustomBlock): string {
+// the block's been resized taller, min-height (a floor, so a photo type's
+// own extra height rule below never conflicts with it).
+function outerStyleAttr(block: CustomBlock): string {
   return ` style="--col-span:${block.colSpan || MAX_COL_SPAN};${heightStyle(block, 'min-height')}"`;
 }
 
@@ -148,14 +124,14 @@ function renderOneBlock(block: CustomBlock, index: number): string {
   }
 }
 
-// The one grid that holds everything on a Premium page: the fixed info
-// (name, address, a contact button, hours — kind 'core', rendered by the
-// caller-supplied renderCoreItem since only the page itself has the live
-// business/suburb/category data those need) interleaved, in whatever
-// order they're stored in, with the sections an owner explicitly added
-// (kind 'custom' or unset, rendered here as always).
-export function renderFullLayoutHtml(items: CustomBlock[], renderCoreItem: (item: CustomBlock) => string): string {
-  if (!items.length) return '';
-  const html = items.map((item, i) => (item.kind === 'core' ? renderCoreItem(item) : renderOneBlock(item, i))).join('');
-  return `<div class="custom-blocks">${html}</div>`;
+export function renderCustomBlocksHtml(blocks: CustomBlock[]): string {
+  // Defensive: an earlier build of this feature briefly let a business's
+  // stored blocks carry the page's fixed info (name/address/etc.) as a
+  // "core" kind item mixed in with real sections. That's gone now, but a
+  // business that saved a draft/live layout during that window could
+  // still have one sitting in its data — silently drop it rather than
+  // let this file's default case render it as a broken empty section.
+  const sections = blocks.filter((b: { kind?: string }) => b.kind !== 'core');
+  if (!sections.length) return '';
+  return `<div class="custom-blocks">${sections.map(renderOneBlock).join('')}</div>`;
 }

@@ -4,7 +4,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
 import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, customBlocksFor, pageColorsFor, TIER_VERIFIED, TIER_VERIFIED_PLUS, TIER_FEATURED, TIER_PREMIUM } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
-import { renderFullLayoutHtml, outerStyleAttr, escapeHtml, type CustomBlock } from '../../lib/blockRenderer';
+import { renderCustomBlocksHtml } from '../../lib/blockRenderer';
 import Icon from '../../components/Icon.astro';
 
 export function getStaticPaths() {
@@ -39,14 +39,13 @@ const template = canChooseTemplate ? business.template_id : 'classic';
 const isPremium = business.subscription_tier >= TIER_PREMIUM && business.subscription_status === 'active';
 // Premium businesses lose the automatic photo gallery entirely (guarded
 // out above) — their photos only appear where they place a Photo, Banner,
-// or Image+Text section. Everything about the page — its fixed info
-// (name, tags, description, address, contact actions, trading hours) and
-// any sections an owner adds — lives in one ordered, freely
-// drag/resize/reposition-able layout, edited in place on this very page
-// (see the edit-mode script below) — not a separate preview. See
-// DEFAULT_CORE_LAYOUT/coreItemHtml further down for how the fixed info
-// pieces render.
-const storedBlocks = isPremium ? customBlocksFor(business) : [];
+// or Image+Text section. The page's fixed info (name, tags, description,
+// address, contact actions, trading hours) never moves and isn't
+// restyled — an owner can only append sections below it and set the
+// page's overall colors, edited in place on this very page (see the
+// edit-mode script below) — not a separate preview.
+const customBlocks = isPremium ? customBlocksFor(business) : [];
+const customBlocksHtml = renderCustomBlocksHtml(customBlocks);
 
 // Owner-chosen page colors (Premium only) — applied as CSS custom property
 // overrides on this page's own content wrapper only, so the shared site
@@ -80,72 +79,6 @@ const ICONS = {
   badge: '<path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4Z"/><path d="m9.5 12 1.8 1.8L15 10"/>',
 };
 
-function svgIcon(path: string, size = 20): string {
-  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;">${path}</svg>`;
-}
-
-// One grid item per fixed info piece. Content always comes straight from
-// `business`/`suburb`/`cats` (the exact same data the old hard-coded JSX
-// used) — a stored core block only ever says WHERE this piece sits and
-// how big it is, never what it says, so renaming a business or changing
-// its phone number still only happens on the real edit form. Returning
-// '' (rather than the wrapper with empty content) is deliberate: it lets
-// a business missing some optional field (no email, no coordinates) just
-// not occupy a grid slot, instead of leaving a blank box.
-function coreItemInner(coreId: string): string {
-  switch (coreId) {
-    case 'name':
-      return `<h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">${escapeHtml(business.name)}</h1>`;
-    case 'tags': {
-      const badges = [
-        ...(isPaidTier ? [`<span class="badge tier-badge">${svgIcon(ICONS.check, 13)} Verified</span>`] : []),
-        ...cats.map((c) => {
-          const g = groupForCategory(c.slug);
-          return `<a class="badge" href="/category/${c.slug}/">${g ? svgIcon(g.iconPath, 13) : ''}${escapeHtml(c.name)}</a>`;
-        }),
-      ].join('');
-      return `<div class="tags">${badges}</div>`;
-    }
-    case 'description':
-      return `<p style="margin-top: 1.25rem;">${escapeHtml(business.description)}</p>`;
-    case 'address':
-      return business.address ? `<p class="address">${escapeHtml(business.address)}${suburb ? `, ${escapeHtml(suburb.name)}` : ''}</p>` : '';
-    case 'action-website':
-      return showClickableWebsite ? `<a href="${business.website}" target="_blank" rel="noopener noreferrer" class="btn btn-outline">${svgIcon(ICONS.pin, 16)} Visit website</a>` : '';
-    case 'action-phone':
-      return business.phone ? `<a href="tel:${business.phone}" class="btn btn-outline">${svgIcon(ICONS.phone, 16)} ${escapeHtml(business.phone)}</a>` : '';
-    case 'action-email':
-      return business.email ? `<a href="mailto:${business.email}" class="btn btn-outline">${svgIcon(ICONS.mail, 16)} Email</a>` : '';
-    case 'action-maps':
-      return business.address || (business.lat && business.lng)
-        ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${business.name}${suburb ? `, ${suburb.name}` : ''}`)}" target="_blank" rel="noopener noreferrer" class="btn btn-outline">${svgIcon(ICONS.pin, 16)} View on Google Maps</a>`
-        : '';
-    case 'hours':
-      return `<div class="hours-section"><h2 class="hours-heading">${svgIcon(ICONS.clock, 17)} Trading Hours</h2>${
-        business.hours ? `<p class="hours-text">${escapeHtml(business.hours)}</p>` : '<p class="hours-text hours-unavailable">Trading hours not available</p>'
-      }</div>`;
-    default:
-      return '';
-  }
-}
-
-function coreItemHtml(item: CustomBlock): string {
-  const inner = coreItemInner(item.coreId ?? '');
-  if (!inner) return '';
-  return `<div class="core-item" data-core-id="${item.coreId}"${outerStyleAttr(item)}>${inner}</div>`;
-}
-
-// A Premium business that has never actually customized its layout
-// (dragged/resized anything) keeps rendering through the exact same
-// hard-coded markup below as every other tier — see the
-// `!hasCustomLayout` guards further down — so nothing about the default
-// page changes just because this feature exists. This unified renderer
-// only takes over once `storedBlocks` actually contains a core item,
-// meaning the owner has used the editor at least once and it's been
-// published.
-const hasCustomLayout = storedBlocks.some((b) => b.kind === 'core');
-const fullLayoutHtml = hasCustomLayout ? renderFullLayoutHtml(storedBlocks, coreItemHtml) : '';
-
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
@@ -176,30 +109,27 @@ const jsonLd = {
         ))}
       </div>
     )}
-    {(!isPremium || !hasCustomLayout) && (
-      <>
-        <h1 data-core-id="name" style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">{business.name}</h1>
+    <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">{business.name}</h1>
 
-        <div class="tags" data-core-id="tags">
-          {isPaidTier && (
-            <span class="badge tier-badge">
-              <Icon path={ICONS.check} size={13} /> Verified
-            </span>
-          )}
-          {cats.map((c) => {
-            const g = groupForCategory(c.slug);
-            return (
-              <a class="badge" href={`/category/${c.slug}/`}>
-                {g && <Icon path={g.iconPath} size={13} />}
-                {c.name}
-              </a>
-            );
-          })}
-        </div>
+    <div class="tags">
+      {isPaidTier && (
+        <span class="badge tier-badge">
+          <Icon path={ICONS.check} size={13} /> Verified
+        </span>
+      )}
+      {cats.map((c) => {
+        const g = groupForCategory(c.slug);
+        return (
+          <a class="badge" href={`/category/${c.slug}/`}>
+            {g && <Icon path={g.iconPath} size={13} />}
+            {c.name}
+          </a>
+        );
+      })}
+    </div>
 
-        <p data-core-id="description" style="margin-top: 1.25rem;">{business.description}</p>
-      </>
-    )}
+    <p style="margin-top: 1.25rem;">{business.description}</p>
+
     {!isPremium && template !== 'gallery' && photos.length > 0 && (
       <div class:list={['photo-gallery', { carousel: photos.length > 5 }]}>
         {photos.map((photo) => (
@@ -218,7 +148,7 @@ const jsonLd = {
   {isPremium && (
     <section class="container" style="padding-top: 0.5rem; padding-bottom: 0.5rem;">
       <div id="custom-blocks-mount">
-        {hasCustomLayout && <Fragment set:html={fullLayoutHtml} />}
+        <Fragment set:html={customBlocksHtml} />
       </div>
         <button type="button" id="edit-page-toggle" class="edit-page-toggle" hidden>
           Edit this page
@@ -227,7 +157,7 @@ const jsonLd = {
           <div class="design-bar-row">
             <strong>Editing your page</strong>
             <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
-            <span class="design-bar-hint">Everything below — your business info and any sections you add — can be dragged to reorder or placed side by side, and resized from any edge. Click a section's text to edit it (your business info itself still comes from your business's edit page).</span>
+            <span class="design-bar-hint">Your business name, description, address, contact buttons, and hours always stay exactly where they are — only the sections you add here can be dragged to reorder, placed beside each other, resized from any edge, or edited by clicking their text.</span>
           </div>
           <div class="design-bar-row">
             <label>Primary <input type="color" id="color-primary" value="#2563eb" /></label>
@@ -248,57 +178,50 @@ const jsonLd = {
         <Icon path={ICONS.building} size={15} /> Located at {center.name}
       </a>
     )}
-    {(!isPremium || !hasCustomLayout) && (
-      <>
-        {business.address && <p class="address" data-core-id="address">{business.address}{suburb && `, ${suburb.name}`}</p>}
+    {business.address && <p class="address">{business.address}{suburb && `, ${suburb.name}`}</p>}
 
-        <div class="actions">
-          {showClickableWebsite && (
-            <a href={business.website!} target="_blank" rel="noopener noreferrer" class="btn btn-outline" data-core-id="action-website">
-              <Icon path={ICONS.pin} size={16} /> Visit website
-            </a>
-          )}
-          {business.phone && (
-            <a href={`tel:${business.phone}`} class="btn btn-outline" data-core-id="action-phone">
-              <Icon path={ICONS.phone} size={16} /> {business.phone}
-            </a>
-          )}
-          {business.email && (
-            <a href={`mailto:${business.email}`} class="btn btn-outline" data-core-id="action-email">
-              <Icon path={ICONS.mail} size={16} /> Email
-            </a>
-          )}
-          {(business.address || (business.lat && business.lng)) && (
-            <a
-              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                `${business.name}${suburb ? `, ${suburb.name}` : ''}`
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-outline"
-              data-core-id="action-maps"
-            >
-              <Icon path={ICONS.pin} size={16} /> View on Google Maps
-            </a>
-          )}
-        </div>
-      </>
-    )}
+    <div class="actions">
+      {showClickableWebsite && (
+        <a href={business.website!} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+          <Icon path={ICONS.pin} size={16} /> Visit website
+        </a>
+      )}
+      {business.phone && (
+        <a href={`tel:${business.phone}`} class="btn btn-outline">
+          <Icon path={ICONS.phone} size={16} /> {business.phone}
+        </a>
+      )}
+      {business.email && (
+        <a href={`mailto:${business.email}`} class="btn btn-outline">
+          <Icon path={ICONS.mail} size={16} /> Email
+        </a>
+      )}
+      {(business.address || (business.lat && business.lng)) && (
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            `${business.name}${suburb ? `, ${suburb.name}` : ''}`
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn btn-outline"
+        >
+          <Icon path={ICONS.pin} size={16} /> View on Google Maps
+        </a>
+      )}
+    </div>
 
     <ListReturn />
 
-    {(!isPremium || !hasCustomLayout) && (
-      <div class="hours-section" data-core-id="hours">
-        <h2 class="hours-heading">
-          <Icon path={ICONS.clock} size={17} /> Trading Hours
-        </h2>
-        {business.hours ? (
-          <p class="hours-text">{business.hours}</p>
-        ) : (
-          <p class="hours-text hours-unavailable">Trading hours not available</p>
-        )}
-      </div>
-    )}
+    <div class="hours-section">
+      <h2 class="hours-heading">
+        <Icon path={ICONS.clock} size={17} /> Trading Hours
+      </h2>
+      {business.hours ? (
+        <p class="hours-text">{business.hours}</p>
+      ) : (
+        <p class="hours-text hours-unavailable">Trading hours not available</p>
+      )}
+    </div>
 
     {!business.owner_user_id && (
       <div class="claim-callout">
@@ -348,29 +271,6 @@ const jsonLd = {
     (async function () {
       const toggleBtn = document.getElementById('edit-page-toggle');
       if (!toggleBtn) return;
-
-      // The page's fixed info (name, address, a contact button, hours)
-      // always carries a data-core-id marker, wherever it actually lives:
-      // wrapped in a .core-item (once a custom layout's been published)
-      // or, for the default/never-customized page, right on the real
-      // element itself (the <h1>, the address <p>, each action <a>, the
-      // hours <div>) — see the matching data-core-id attributes in the
-      // frontmatter above. Capturing that real HTML now, before anything
-      // else touches the DOM, means the editor never has to regenerate a
-      // business's name/address/phone/etc. from scratch in JS — it just
-      // re-uses what the server already rendered, so there's no way for
-      // the two to drift out of sync, and no visible difference between
-      // a page that's been customized and one that hasn't.
-      const coreItemHtmlCache = {};
-      document.querySelectorAll('[data-core-id]').forEach((el) => {
-        coreItemHtmlCache[el.dataset.coreId] = el.classList.contains('core-item') ? el.innerHTML : el.outerHTML;
-      });
-      const CORE_ORDER = ['name', 'tags', 'description', 'address', 'action-website', 'action-phone', 'action-email', 'action-maps', 'hours'];
-      const CORE_LABELS = {
-        name: 'Business name', tags: 'Category tags', description: 'Description', address: 'Address',
-        'action-website': 'Website button', 'action-phone': 'Phone button', 'action-email': 'Email button', 'action-maps': 'Maps button',
-        hours: 'Trading hours',
-      };
 
       const designBar = document.getElementById('design-bar');
       const mount = document.getElementById('custom-blocks-mount');
@@ -473,41 +373,21 @@ const jsonLd = {
         </div>`;
       }
 
-      function wrapGridItem(b, i, inner) {
-        return `
-          <div class="grid-stack-item" data-i="${i}" gs-auto-position="true" gs-w="${b.colSpan || MAX_COL_SPAN}" gs-h="10" gs-min-w="${MIN_COL_SPAN}" gs-max-w="${MAX_COL_SPAN}">
-            <div class="grid-stack-item-content editable-block">
-              ${inner}
-            </div>
-          </div>`;
-      }
-
-      // A core item is the page's own real, already-rendered fixed info —
-      // see coreItemHtmlCache above — just given a drag handle and a
-      // label instead of a section's full toolbar: it can't change type,
-      // can't take a different photo, and can't be removed (only added
-      // sections can).
-      function renderCoreItem(b, i) {
-        const html = coreItemHtmlCache[b.coreId];
-        if (!html) return '';
-        return wrapGridItem(b, i, `
-          <div class="block-toolbar core-toolbar">
-            <span class="block-drag-handle" title="Drag to reorder">⠿</span>
-            <span class="core-item-label">${CORE_LABELS[b.coreId] || b.coreId}</span>
-          </div>
-          <div class="core-item" data-core-id="${b.coreId}">${html}</div>
-        `);
-      }
-
       // Mirrors src/lib/blockRenderer.ts's renderOneBlock, plus the
       // grid-stack-item wrapper, edit toolbar, and contenteditable fields
       // this page's static build never needs — kept in sync by hand, same
       // reason customize.astro's copy used to be.
-      function renderCustomItem(b, i) {
+      function renderOneBlock(b, i) {
         const title = escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More');
         const body = escapeHtml(b.body || '');
         const toolbar = blockToolbarHtml(b);
-        const wrap = (inner) => wrapGridItem(b, i, `${toolbar}${inner}`);
+        const wrap = (inner) => `
+          <div class="grid-stack-item" data-i="${i}" gs-auto-position="true" gs-w="${b.colSpan || MAX_COL_SPAN}" gs-h="10" gs-min-w="${MIN_COL_SPAN}" gs-max-w="${MAX_COL_SPAN}">
+            <div class="grid-stack-item-content editable-block">
+              ${toolbar}
+              ${inner}
+            </div>
+          </div>`;
 
         switch (b.type) {
           case 'banner':
@@ -559,13 +439,9 @@ const jsonLd = {
         }
       }
 
-      function renderItem(b, i) {
-        return b.kind === 'core' ? renderCoreItem(b, i) : renderCustomItem(b, i);
-      }
-
       function renderBlocks() {
         if (blocksGrid) { blocksGrid.destroy(false); blocksGrid = null; }
-        mount.innerHTML = `<div class="grid-stack" id="blocks-grid">${blocks.map(renderItem).join('')}</div>`;
+        mount.innerHTML = `<div class="grid-stack" id="blocks-grid">${blocks.map(renderOneBlock).join('')}</div>`;
 
         const container = document.getElementById('blocks-grid');
         blocksGrid = GridStack.init(
@@ -581,10 +457,6 @@ const jsonLd = {
           container
         );
 
-        // Core items (the page's name/address/a contact button/etc.) have
-        // no type/image/side to change and can't be removed — only the
-        // sections an owner explicitly added can. Their toolbar simply
-        // doesn't have those controls, so these all no-op via ?. for them.
         container.querySelectorAll('.grid-stack-item').forEach((item) => {
           item.querySelector('.block-type')?.addEventListener('change', (e) => {
             blocks[Number(item.dataset.i)].type = e.target.value;
@@ -725,28 +597,8 @@ const jsonLd = {
         if (photoData.ok) photos = photoData.photos;
       }
 
-      // Mirrors the same seeding the static build does (see
-      // DEFAULT_CORE_LAYOUT in the frontmatter): if this business has
-      // never had its layout customized, there are no kind:'core' items
-      // in what's stored yet, so the editor starts from the page's real,
-      // current default arrangement instead of an empty one. Built from
-      // coreItemHtmlCache's own keys, which only exist for info the
-      // business actually has (see coreItemHtml's early return on the
-      // server) — so a business with no email never gets a stray "Email
-      // button" tile to drag around.
-      function seedCoreItems(arr) {
-        if (arr.some((b) => b.kind === 'core')) return arr;
-        const availableActions = CORE_ORDER.filter((id) => id.startsWith('action-') && coreItemHtmlCache[id]);
-        const actionSpan = Math.max(MIN_COL_SPAN, Math.floor(MAX_COL_SPAN / Math.max(1, availableActions.length)));
-        const seeded = CORE_ORDER.filter((id) => coreItemHtmlCache[id]).map((id) => ({
-          kind: 'core', coreId: id, type: 'core', title: '', body: '',
-          colSpan: id.startsWith('action-') ? actionSpan : MAX_COL_SPAN,
-        }));
-        return [...seeded, ...arr];
-      }
-
-      blocks = seedCoreItems(Array.isArray(design.blocks) ? design.blocks : []);
-      liveBlocks = seedCoreItems(Array.isArray(design.liveBlocks) ? design.liveBlocks : []);
+      blocks = Array.isArray(design.blocks) ? design.blocks : [];
+      liveBlocks = Array.isArray(design.liveBlocks) ? design.liveBlocks : [];
       pageColors = design.pageColors && typeof design.pageColors === 'object' ? { ...design.pageColors } : {};
       livePageColors = design.livePageColors && typeof design.livePageColors === 'object' ? { ...design.livePageColors } : {};
       hasUnpublishedChanges = !!design.hasUnpublishedChanges;
@@ -772,7 +624,7 @@ const jsonLd = {
       });
 
       addBlockBtn.addEventListener('click', () => {
-        if (blocks.filter((b) => b.kind !== 'core').length >= 10) return;
+        if (blocks.length >= 10) return;
         blocks.push({ type: 'story', title: '', body: '' });
         renderBlocks();
         scheduleAutosave();
@@ -930,27 +782,17 @@ const jsonLd = {
     :global(#custom-blocks-mount .custom-blocks) {
       grid-template-columns: 1fr;
     }
-    :global(.custom-block), :global(.core-item) {
+    :global(.custom-block) {
       grid-column: 1 / -1 !important;
     }
   }
-  :global(.custom-block), :global(.core-item) {
+  :global(.custom-block) {
     grid-column: span var(--col-span, 12);
     min-width: 140px;
-  }
-  :global(.custom-block) {
     padding: 1rem 1.1rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--bg-card);
-  }
-  /* A core item (the page's name/address/a contact button/etc.) keeps its
-     existing bare look — no card border/background — since it's the same
-     piece of content the page always had, just now repositionable. */
-  :global(.core-item) {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
   }
   /* Same floor inside the editor, where GridStack (not CSS Grid) is what
      actually controls each section's width — belt-and-braces against a
@@ -1169,8 +1011,7 @@ const jsonLd = {
     overflow: hidden;
     box-sizing: border-box;
   }
-  :global(.editable-block > .custom-block),
-  :global(.editable-block > .core-item) {
+  :global(.editable-block > .custom-block) {
     flex: 1 1 auto;
     min-height: 0;
   }
@@ -1267,14 +1108,6 @@ const jsonLd = {
     border-radius: 3px;
     background: var(--accent);
     opacity: 0.7;
-  }
-  :global(.core-toolbar) {
-    background: rgba(var(--accent-rgb), 0.1);
-  }
-  :global(.core-item-label) {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    font-style: italic;
   }
   :global(.grid-stack-item > .ui-resizable-e),
   :global(.grid-stack-item > .ui-resizable-w) {
