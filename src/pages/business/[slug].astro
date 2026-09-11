@@ -4,7 +4,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
 import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, customBlocksFor, pageColorsFor, TIER_VERIFIED, TIER_VERIFIED_PLUS, TIER_FEATURED, TIER_PREMIUM } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
-import { renderFullLayoutHtml, outerStyleAttr, escapeHtml, MIN_COL_SPAN, MAX_COL_SPAN, type CustomBlock } from '../../lib/blockRenderer';
+import { renderFullLayoutHtml, outerStyleAttr, escapeHtml, type CustomBlock } from '../../lib/blockRenderer';
 import Icon from '../../components/Icon.astro';
 
 export function getStaticPaths() {
@@ -135,32 +135,16 @@ function coreItemHtml(item: CustomBlock): string {
   return `<div class="core-item" data-core-id="${item.coreId}"${outerStyleAttr(item)}>${inner}</div>`;
 }
 
-// The page exactly as it's always looked, expressed as the same ordered,
-// sized layout an owner's added sections use — this is what a Premium
-// business starts from before ever touching the "Edit this page" button,
-// so a page nobody has customized yet still renders byte-for-byte what
-// it always has (name full width, four contact buttons sharing a row,
-// etc.), just now through the one rendering path instead of two.
-function coreItem(coreId: string, colSpan: number): CustomBlock {
-  return { kind: 'core', coreId, type: 'core', title: '', body: '', colSpan };
-}
-const actionCoreIds = [
-  showClickableWebsite && 'action-website',
-  business.phone && 'action-phone',
-  business.email && 'action-email',
-  (business.address || (business.lat && business.lng)) && 'action-maps',
-].filter((id): id is string => typeof id === 'string');
-const DEFAULT_CORE_LAYOUT: CustomBlock[] = [
-  coreItem('name', MAX_COL_SPAN),
-  coreItem('tags', MAX_COL_SPAN),
-  coreItem('description', MAX_COL_SPAN),
-  coreItem('address', MAX_COL_SPAN),
-  ...actionCoreIds.map((id) => coreItem(id, Math.max(MIN_COL_SPAN, Math.floor(MAX_COL_SPAN / actionCoreIds.length)))),
-  coreItem('hours', MAX_COL_SPAN),
-];
+// A Premium business that has never actually customized its layout
+// (dragged/resized anything) keeps rendering through the exact same
+// hard-coded markup below as every other tier — see the
+// `!hasCustomLayout` guards further down — so nothing about the default
+// page changes just because this feature exists. This unified renderer
+// only takes over once `storedBlocks` actually contains a core item,
+// meaning the owner has used the editor at least once and it's been
+// published.
 const hasCustomLayout = storedBlocks.some((b) => b.kind === 'core');
-const fullLayout: CustomBlock[] = isPremium ? (hasCustomLayout ? storedBlocks : [...DEFAULT_CORE_LAYOUT, ...storedBlocks]) : [];
-const fullLayoutHtml = renderFullLayoutHtml(fullLayout, coreItemHtml);
+const fullLayoutHtml = hasCustomLayout ? renderFullLayoutHtml(storedBlocks, coreItemHtml) : '';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -185,18 +169,18 @@ const jsonLd = {
         { label: business.name },
       ]}
     />
-    {!isPremium && (
+    {!isPremium && template === 'gallery' && photos.length > 0 && (
+      <div class="hero-gallery">
+        {photos.map((photo) => (
+          <img src={`/media/${photo.r2_key}`} alt={photo.caption ?? business.name} loading="lazy" width="700" height="360" />
+        ))}
+      </div>
+    )}
+    {(!isPremium || !hasCustomLayout) && (
       <>
-        {template === 'gallery' && photos.length > 0 && (
-          <div class="hero-gallery">
-            {photos.map((photo) => (
-              <img src={`/media/${photo.r2_key}`} alt={photo.caption ?? business.name} loading="lazy" width="700" height="360" />
-            ))}
-          </div>
-        )}
-        <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">{business.name}</h1>
+        <h1 data-core-id="name" style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">{business.name}</h1>
 
-        <div class="tags">
+        <div class="tags" data-core-id="tags">
           {isPaidTier && (
             <span class="badge tier-badge">
               <Icon path={ICONS.check} size={13} /> Verified
@@ -213,29 +197,28 @@ const jsonLd = {
           })}
         </div>
 
-        <p style="margin-top: 1.25rem;">{business.description}</p>
-
-        {template !== 'gallery' && photos.length > 0 && (
-          <div class:list={['photo-gallery', { carousel: photos.length > 5 }]}>
-            {photos.map((photo) => (
-              <img
-                src={`/media/${photo.r2_key}`}
-                alt={photo.caption ?? business.name}
-                loading="lazy"
-                width="320"
-                height="220"
-              />
-            ))}
-          </div>
-        )}
+        <p data-core-id="description" style="margin-top: 1.25rem;">{business.description}</p>
       </>
+    )}
+    {!isPremium && template !== 'gallery' && photos.length > 0 && (
+      <div class:list={['photo-gallery', { carousel: photos.length > 5 }]}>
+        {photos.map((photo) => (
+          <img
+            src={`/media/${photo.r2_key}`}
+            alt={photo.caption ?? business.name}
+            loading="lazy"
+            width="320"
+            height="220"
+          />
+        ))}
+      </div>
     )}
   </section>
 
   {isPremium && (
     <section class="container" style="padding-top: 0.5rem; padding-bottom: 0.5rem;">
       <div id="custom-blocks-mount">
-        <Fragment set:html={fullLayoutHtml} />
+        {hasCustomLayout && <Fragment set:html={fullLayoutHtml} />}
       </div>
         <button type="button" id="edit-page-toggle" class="edit-page-toggle" hidden>
           Edit this page
@@ -265,23 +248,23 @@ const jsonLd = {
         <Icon path={ICONS.building} size={15} /> Located at {center.name}
       </a>
     )}
-    {!isPremium && (
+    {(!isPremium || !hasCustomLayout) && (
       <>
-        {business.address && <p class="address">{business.address}{suburb && `, ${suburb.name}`}</p>}
+        {business.address && <p class="address" data-core-id="address">{business.address}{suburb && `, ${suburb.name}`}</p>}
 
         <div class="actions">
           {showClickableWebsite && (
-            <a href={business.website!} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+            <a href={business.website!} target="_blank" rel="noopener noreferrer" class="btn btn-outline" data-core-id="action-website">
               <Icon path={ICONS.pin} size={16} /> Visit website
             </a>
           )}
           {business.phone && (
-            <a href={`tel:${business.phone}`} class="btn btn-outline">
+            <a href={`tel:${business.phone}`} class="btn btn-outline" data-core-id="action-phone">
               <Icon path={ICONS.phone} size={16} /> {business.phone}
             </a>
           )}
           {business.email && (
-            <a href={`mailto:${business.email}`} class="btn btn-outline">
+            <a href={`mailto:${business.email}`} class="btn btn-outline" data-core-id="action-email">
               <Icon path={ICONS.mail} size={16} /> Email
             </a>
           )}
@@ -293,6 +276,7 @@ const jsonLd = {
               target="_blank"
               rel="noopener noreferrer"
               class="btn btn-outline"
+              data-core-id="action-maps"
             >
               <Icon path={ICONS.pin} size={16} /> View on Google Maps
             </a>
@@ -303,8 +287,8 @@ const jsonLd = {
 
     <ListReturn />
 
-    {!isPremium && (
-      <div class="hours-section">
+    {(!isPremium || !hasCustomLayout) && (
+      <div class="hours-section" data-core-id="hours">
         <h2 class="hours-heading">
           <Icon path={ICONS.clock} size={17} /> Trading Hours
         </h2>
@@ -365,18 +349,21 @@ const jsonLd = {
       const toggleBtn = document.getElementById('edit-page-toggle');
       if (!toggleBtn) return;
 
-      // The page's fixed info (name, address, a contact button, hours) is
-      // always server-rendered as .core-item[data-core-id] elements — the
-      // exact same markup this business's real, published page shows,
-      // whether or not its layout has ever been customized (see
-      // DEFAULT_CORE_LAYOUT in the frontmatter above). Capturing that real
-      // HTML now, before anything else touches the DOM, means the editor
-      // never has to regenerate a business's name/address/phone/etc. from
-      // scratch in JS — it just re-uses what the server already rendered,
-      // so there's no way for the two to drift out of sync.
+      // The page's fixed info (name, address, a contact button, hours)
+      // always carries a data-core-id marker, wherever it actually lives:
+      // wrapped in a .core-item (once a custom layout's been published)
+      // or, for the default/never-customized page, right on the real
+      // element itself (the <h1>, the address <p>, each action <a>, the
+      // hours <div>) — see the matching data-core-id attributes in the
+      // frontmatter above. Capturing that real HTML now, before anything
+      // else touches the DOM, means the editor never has to regenerate a
+      // business's name/address/phone/etc. from scratch in JS — it just
+      // re-uses what the server already rendered, so there's no way for
+      // the two to drift out of sync, and no visible difference between
+      // a page that's been customized and one that hasn't.
       const coreItemHtmlCache = {};
-      document.querySelectorAll('#custom-blocks-mount .core-item[data-core-id]').forEach((el) => {
-        coreItemHtmlCache[el.dataset.coreId] = el.innerHTML;
+      document.querySelectorAll('[data-core-id]').forEach((el) => {
+        coreItemHtmlCache[el.dataset.coreId] = el.classList.contains('core-item') ? el.innerHTML : el.outerHTML;
       });
       const CORE_ORDER = ['name', 'tags', 'description', 'address', 'action-website', 'action-phone', 'action-email', 'action-maps', 'hours'];
       const CORE_LABELS = {
