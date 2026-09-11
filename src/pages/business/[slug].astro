@@ -37,7 +37,13 @@ const photos = photosFor(business);
 const canChooseTemplate = business.subscription_tier >= TIER_FEATURED && business.subscription_status === 'active';
 const template = canChooseTemplate ? business.template_id : 'classic';
 const isPremium = business.subscription_tier >= TIER_PREMIUM && business.subscription_status === 'active';
-const customBlocks = isPremium ? customBlocksFor(business) : [];
+// The real free-form page builder (GrapesJS) — once a Premium business has
+// published anything with it, its captured HTML/CSS takes over the content
+// area entirely, superseding the older stacked-blocks system below. A
+// Premium business that hasn't touched the new builder yet still renders
+// through the old system, so nothing regresses for it.
+const usesNewBuilder = isPremium && !!business.page_html;
+const customBlocks = isPremium && !usesNewBuilder ? customBlocksFor(business) : [];
 const customBlocksHtml = renderCustomBlocksHtml(customBlocks);
 const needsExtraFont = usesExtraFont(customBlocks);
 
@@ -52,7 +58,7 @@ function hexToRgbTriple(hex: string): string {
   return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
 }
 
-const pageColors = isPremium ? pageColorsFor(business) : {};
+const pageColors = isPremium && !usesNewBuilder ? pageColorsFor(business) : {};
 const pageColorVars = [
   pageColors.primary ? `--accent:${pageColors.primary};--accent-rgb:${hexToRgbTriple(pageColors.primary)}` : '',
   pageColors.secondary ? `--navy:${pageColors.secondary}` : '',
@@ -88,13 +94,6 @@ const jsonLd = {
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <section class="container" style={`padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;${pageColorVars ? `;${pageColorVars}` : ''}`}>
-    {!isPremium && template === 'gallery' && photos.length > 0 && (
-      <div class="hero-gallery">
-        {photos.map((photo) => (
-          <img src={`/media/${photo.r2_key}`} alt={photo.caption ?? business.name} loading="lazy" width="700" height="360" />
-        ))}
-      </div>
-    )}
     <Breadcrumbs
       items={[
         ...(suburb ? [{ label: suburb.name, href: `/suburb/${suburb.slug}/` }] : []),
@@ -102,42 +101,58 @@ const jsonLd = {
         { label: business.name },
       ]}
     />
-    <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">{business.name}</h1>
+    {usesNewBuilder ? (
+      <>
+        <style set:html={business.page_css ?? ''} />
+        <Fragment set:html={business.page_html} />
+      </>
+    ) : (
+      <>
+        {!isPremium && template === 'gallery' && photos.length > 0 && (
+          <div class="hero-gallery">
+            {photos.map((photo) => (
+              <img src={`/media/${photo.r2_key}`} alt={photo.caption ?? business.name} loading="lazy" width="700" height="360" />
+            ))}
+          </div>
+        )}
+        <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">{business.name}</h1>
 
-    <div class="tags">
-      {isPaidTier && (
-        <span class="badge tier-badge">
-          <Icon path={ICONS.check} size={13} /> Verified
-        </span>
-      )}
-      {cats.map((c) => {
-        const g = groupForCategory(c.slug);
-        return (
-          <a class="badge" href={`/category/${c.slug}/`}>
-            {g && <Icon path={g.iconPath} size={13} />}
-            {c.name}
-          </a>
-        );
-      })}
-    </div>
+        <div class="tags">
+          {isPaidTier && (
+            <span class="badge tier-badge">
+              <Icon path={ICONS.check} size={13} /> Verified
+            </span>
+          )}
+          {cats.map((c) => {
+            const g = groupForCategory(c.slug);
+            return (
+              <a class="badge" href={`/category/${c.slug}/`}>
+                {g && <Icon path={g.iconPath} size={13} />}
+                {c.name}
+              </a>
+            );
+          })}
+        </div>
 
-    <p style="margin-top: 1.25rem;">{business.description}</p>
+        <p style="margin-top: 1.25rem;">{business.description}</p>
 
-    {!isPremium && template !== 'gallery' && photos.length > 0 && (
-      <div class:list={['photo-gallery', { carousel: photos.length > 5 }]}>
-        {photos.map((photo) => (
-          <img
-            src={`/media/${photo.r2_key}`}
-            alt={photo.caption ?? business.name}
-            loading="lazy"
-            width="320"
-            height="220"
-          />
-        ))}
-      </div>
+        {!isPremium && template !== 'gallery' && photos.length > 0 && (
+          <div class:list={['photo-gallery', { carousel: photos.length > 5 }]}>
+            {photos.map((photo) => (
+              <img
+                src={`/media/${photo.r2_key}`}
+                alt={photo.caption ?? business.name}
+                loading="lazy"
+                width="320"
+                height="220"
+              />
+            ))}
+          </div>
+        )}
+
+        <Fragment set:html={customBlocksHtml} />
+      </>
     )}
-
-    <Fragment set:html={customBlocksHtml} />
 
     {center && (
       <a href={`/shopping-center/${center.slug}/`} class="located-at">

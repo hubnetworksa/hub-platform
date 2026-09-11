@@ -64,8 +64,19 @@ export interface Business {
    *  only, parse with customBlocksFor(). */
   custom_blocks: string | null;
   /** JSON-encoded {primary?, secondary?, background?} hex colors — Premium
-   *  only, parse with pageColorsFor(). */
+   *  only, used by businesses that haven't published anything with the
+   *  GrapesJS builder yet (see page_html below), parse with
+   *  pageColorsFor(). */
   page_colors: string | null;
+  /** Captured output of the GrapesJS page builder (editor.getHtml()),
+   *  already sanitized server-side in functions/api/business-design.ts —
+   *  Premium only. Once set, this replaces custom_blocks/page_colors
+   *  entirely for that business; see usesNewBuilder in
+   *  src/pages/business/[slug].astro. */
+  page_html: string | null;
+  /** Captured output of the GrapesJS page builder (editor.getCss()) —
+   *  paired with page_html above. */
+  page_css: string | null;
 }
 
 export function customBlocksFor(business: Business): CustomBlock[] {

@@ -43,7 +43,7 @@ async function main() {
   const suburbs = query('SELECT id, slug, name, region, bio, landmarks, lat, lng, image_key FROM suburbs ORDER BY name;');
   const categories = query('SELECT id, slug, name FROM categories ORDER BY name;');
   const businesses = query(
-    `SELECT id, slug, name, suburb_id, address, phone, website, email, description, lat, lng, source_urls, shopping_center_id, description_enriched_at, hours, owner_user_id, subscription_tier, subscription_status, subscription_expires_at, template_id, custom_blocks
+    `SELECT id, slug, name, suburb_id, address, phone, website, email, description, lat, lng, source_urls, shopping_center_id, description_enriched_at, hours, owner_user_id, subscription_tier, subscription_status, subscription_expires_at, template_id, custom_blocks, page_colors, page_html, page_css
      FROM businesses WHERE status = 'published' ORDER BY name;`
   );
   const businessCategories = query('SELECT business_id, category_id, is_primary FROM business_categories;');
