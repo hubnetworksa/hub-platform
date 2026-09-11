@@ -437,16 +437,21 @@ import site from '../../site';
   // x/y/w/h) never drifts out of sync with what's actually on screen.
   let gridInstance = null;
 
+  // A small cellHeight gives fine-grained control over each card's real
+  // height (see renderLayoutGrid below) — GridStack's own "size to content"
+  // option didn't reliably take effect here, so height is computed by hand
+  // instead of trusted to the library.
+  const CELL_HEIGHT = 12;
+
   function initLayoutGrid() {
     if (gridInstance) return;
     gridInstance = GridStack.init(
       {
         column: GRID_COLUMNS,
-        cellHeight: 76,
+        cellHeight: CELL_HEIGHT,
         margin: 8,
         float: true, // blocks stay exactly where dropped — no auto-compaction
         handle: '.item-drag-handle',
-        sizeToContent: true, // a card's real height follows its content
       },
       '#layout-grid'
     );
@@ -464,6 +469,11 @@ import site from '../../site';
   // Rebuilds every card from scratch — blocks.length maxes out at 10, so
   // there's no real cost to just clearing and re-adding rather than
   // diffing, and it keeps "the data model is the source of truth" simple.
+  // Each card is added at a placeholder height, then immediately measured
+  // and resized to fit its real (rendered) content — without this, a card
+  // taller than its box just overflows past it instead of pushing anything
+  // out of the way, since GridStack still thinks it's only as tall as the
+  // box, and every other card/element below ends up overlapping it.
   function renderLayoutGrid() {
     gridInstance.removeAll(false);
     blocks.forEach((b, i) => {
@@ -473,6 +483,9 @@ import site from '../../site';
       el.dataset.i = String(i);
       el.innerHTML = `<div class="grid-stack-item-content">${blockCardHtml(b, i)}</div>`;
       gridInstance.addWidget(el, { x: col, y: row - 1, w, h: 1, id: String(i) });
+      const contentHeight = el.querySelector('.grid-stack-item-content').scrollHeight;
+      const rows = Math.max(1, Math.ceil(contentHeight / CELL_HEIGHT));
+      gridInstance.update(el, { h: rows });
     });
   }
 
@@ -1034,13 +1047,25 @@ import site from '../../site';
     width: 100%;
   }
   :global(.drag-handle) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.9rem;
+    height: 1.9rem;
     cursor: grab;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 1rem;
     letter-spacing: -0.15em;
     user-select: none;
     touch-action: none;
-    padding: 0 0.1rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  :global(.drag-handle:hover) {
+    border-color: var(--accent);
+    color: var(--accent);
   }
   :global(.drag-handle:active) {
     cursor: grabbing;
