@@ -155,7 +155,7 @@ const jsonLd = {
           <div class="design-bar-row">
             <strong>Editing your page</strong>
             <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
-            <span class="design-bar-hint">Drag a section to reorder it. Drag a photo section's bottom edge to resize its photo. Click any text to edit it.</span>
+            <span class="design-bar-hint">Drag a section to reorder it or place it beside another one. Drag its side edge to resize width, or (for photo sections) its bottom edge to resize height. Click any text to edit it.</span>
           </div>
           <div class="design-bar-row">
             <label>Primary <input type="color" id="color-primary" value="#2563eb" /></label>
@@ -288,6 +288,8 @@ const jsonLd = {
       const SIZED_TYPES = new Set(['banner', 'photo', 'side-image']);
       const MIN_BLOCK_HEIGHT = 100;
       const MAX_BLOCK_HEIGHT = 480;
+      const MIN_COL_SPAN = 3;
+      const MAX_COL_SPAN = 12;
       const DEFAULT_BLOCK_HEIGHT = { banner: 220, photo: 220, 'side-image': 200 };
       const GRID_CELL_HEIGHT = 20;
       const GRID_MARGIN = 8;
@@ -370,10 +372,10 @@ const jsonLd = {
       function renderOneBlock(b, i) {
         const title = escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More');
         const body = escapeHtml(b.body || '');
-        const resizable = SIZED_TYPES.has(b.type);
+        const resizeHeight = SIZED_TYPES.has(b.type);
         const toolbar = blockToolbarHtml(b);
         const wrap = (inner) => `
-          <div class="grid-stack-item" data-i="${i}" gs-auto-position="true" gs-h="10" ${resizable ? '' : 'gs-no-resize="true"'}>
+          <div class="grid-stack-item${resizeHeight ? ' resize-height' : ''}" data-i="${i}" gs-auto-position="true" gs-w="${b.colSpan || MAX_COL_SPAN}" gs-h="10" gs-min-w="${MIN_COL_SPAN}" gs-max-w="${MAX_COL_SPAN}">
             <div class="grid-stack-item-content editable-block">
               ${toolbar}
               ${inner}
@@ -437,11 +439,11 @@ const jsonLd = {
         const container = document.getElementById('blocks-grid');
         blocksGrid = GridStack.init(
           {
-            column: 1,
+            column: 12,
             float: false,
             cellHeight: GRID_CELL_HEIGHT,
             margin: GRID_MARGIN,
-            resizable: { handles: 's', autoHide: false },
+            resizable: { handles: 'e, se, s, sw, w', autoHide: false },
             draggable: { cancel: 'button, select, input, textarea, option, [contenteditable]' },
             disableOneColumnMode: true,
           },
@@ -482,25 +484,45 @@ const jsonLd = {
           if (SIZED_TYPES.has(b.type)) {
             const photoH = b.heightPx || DEFAULT_BLOCK_HEIGHT[b.type] || 220;
             const toRows = (px) => Math.ceil((toolbarH + px + GRID_MARGIN * 3) / GRID_CELL_HEIGHT);
-            blocksGrid.update(item, { h: toRows(photoH), minH: toRows(MIN_BLOCK_HEIGHT), maxH: toRows(MAX_BLOCK_HEIGHT) });
+            blocksGrid.update(item, { h: toRows(photoH), minH: toRows(MIN_BLOCK_HEIGHT), maxH: toRows(MAX_BLOCK_HEIGHT), minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN });
           } else {
             const contentEl = item.querySelector('.grid-stack-item-content');
-            blocksGrid.update(item, { h: Math.ceil((contentEl.scrollHeight + GRID_MARGIN * 2) / GRID_CELL_HEIGHT) });
+            blocksGrid.update(item, { h: Math.ceil((contentEl.scrollHeight + GRID_MARGIN * 2) / GRID_CELL_HEIGHT), minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN });
           }
         });
 
         blocksGrid.on('change', () => {
-          const items = Array.from(container.querySelectorAll('.grid-stack-item')).sort(
-            (a, b) => (a.gridstackNode?.y ?? 0) - (b.gridstackNode?.y ?? 0)
-          );
+          const items = Array.from(container.querySelectorAll('.grid-stack-item'));
           items.forEach((item) => {
+            const node = item.gridstackNode;
             const b = blocks[Number(item.dataset.i)];
+            if (!node || !b) return;
+            b.colSpan = node.w;
             if (SIZED_TYPES.has(b.type)) {
               const img = item.querySelector('img');
               if (img && img.clientHeight > 0) {
                 b.heightPx = Math.round(Math.min(MAX_BLOCK_HEIGHT, Math.max(MIN_BLOCK_HEIGHT, img.clientHeight)));
               }
+            } else {
+              // A width change can make text wrap differently — re-measure
+              // and grow the row if the new width needs more height than
+              // it currently has (never shrink here, so a manual height
+              // pick via the corner handle on a resizable type isn't
+              // relevant here, and we never fight a still-in-progress
+              // drag by shrinking under the user's cursor).
+              const contentEl = item.querySelector('.grid-stack-item-content');
+              const neededRows = Math.ceil((contentEl.scrollHeight + GRID_MARGIN * 2) / GRID_CELL_HEIGHT);
+              if (node.h < neededRows) blocksGrid.update(item, { h: neededRows });
             }
+          });
+          // Sort top-to-bottom, then left-to-right within a row, so the
+          // stored array order matches how the real page's CSS Grid
+          // auto-flow will read it back — that's the only layout data
+          // that gets persisted (see colSpan above); explicit x/y aren't.
+          items.sort((a, b) => {
+            const na = a.gridstackNode, nb = b.gridstackNode;
+            if (!na || !nb) return 0;
+            return na.y - nb.y || na.x - nb.x;
           });
           blocks = items.map((item) => blocks[Number(item.dataset.i)]);
           items.forEach((item, newIndex) => { item.dataset.i = String(newIndex); });
@@ -738,12 +760,27 @@ const jsonLd = {
   :global(#custom-blocks-mount .grid-stack) {
     margin-top: 1.75rem;
   }
+  /* 12-column grid so two sections can sit side by side — a section's own
+     --col-span (set by dragging its side resize handle in edit mode)
+     decides how many of the 12 columns it takes up, defaulting to all 12
+     (full width) when unset. grid-auto-flow just packs sections left to
+     right in their stored order, wrapping to a new row when one doesn't
+     fit — no explicit row/position bookkeeping needed. */
   :global(#custom-blocks-mount .custom-blocks) {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
     gap: 1.25rem;
   }
+  @media (max-width: 640px) {
+    :global(#custom-blocks-mount .custom-blocks) {
+      grid-template-columns: 1fr;
+    }
+    :global(.custom-block) {
+      grid-column: 1 / -1 !important;
+    }
+  }
   :global(.custom-block) {
+    grid-column: span var(--col-span, 12);
     padding: 1rem 1.1rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -1032,12 +1069,22 @@ const jsonLd = {
     font-style: italic;
     opacity: 0.8;
   }
-  /* GridStack's own resize handle — hidden by default until hover
+  /* GridStack's own resize handles — hidden by default until hover
      (.ui-resizable-handle{display:none!important} in its stylesheet) and,
-     for the plain 's' handle used here, otherwise invisible even when
-     shown. autoHide is off in the JS init; this gives it a real,
-     always-visible grip bar. */
-  :global(.grid-stack-item > .ui-resizable-s) {
+     for the plain 'e'/'w'/'s' handles used here, otherwise invisible even
+     when shown (only the diagonal corners get a default icon). autoHide
+     is off in the JS init; these give each one a real, always-visible
+     grip bar instead. Width (e/w) is enabled on every section; height
+     (s/se/sw) only on sections with a photo — GridStack has no per-handle
+     enable/disable API, so a text section's height handles are just
+     hidden here rather than resized away, via the .resize-height marker
+     class renderOneBlock only adds to photo-bearing block types. */
+  :global(.grid-stack-item:not(.resize-height) > .ui-resizable-s),
+  :global(.grid-stack-item:not(.resize-height) > .ui-resizable-se),
+  :global(.grid-stack-item:not(.resize-height) > .ui-resizable-sw) {
+    display: none !important;
+  }
+  :global(.grid-stack-item.resize-height > .ui-resizable-s) {
     height: 16px !important;
     bottom: -8px !important;
     display: flex !important;
@@ -1045,10 +1092,33 @@ const jsonLd = {
     justify-content: center;
     z-index: 2;
   }
-  :global(.grid-stack-item > .ui-resizable-s::after) {
+  :global(.grid-stack-item.resize-height > .ui-resizable-s::after) {
     content: '';
     width: 48px;
     height: 5px;
+    border-radius: 3px;
+    background: var(--accent);
+    opacity: 0.7;
+  }
+  :global(.grid-stack-item > .ui-resizable-e),
+  :global(.grid-stack-item > .ui-resizable-w) {
+    width: 16px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  :global(.grid-stack-item > .ui-resizable-e) {
+    right: -8px !important;
+  }
+  :global(.grid-stack-item > .ui-resizable-w) {
+    left: -8px !important;
+  }
+  :global(.grid-stack-item > .ui-resizable-e::after),
+  :global(.grid-stack-item > .ui-resizable-w::after) {
+    content: '';
+    width: 5px;
+    height: 48px;
     border-radius: 3px;
     background: var(--accent);
     opacity: 0.7;

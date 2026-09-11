@@ -2,7 +2,7 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../_lib/auth';
 import { triggerRebuild } from '../_lib/deploy-hook';
 import { logActivity } from '../_lib/activity-log';
-import { BLOCK_TYPES, MIN_BLOCK_HEIGHT, MAX_BLOCK_HEIGHT } from '../../src/lib/blockRenderer';
+import { BLOCK_TYPES, MIN_BLOCK_HEIGHT, MAX_BLOCK_HEIGHT, MIN_COL_SPAN, MAX_COL_SPAN } from '../../src/lib/blockRenderer';
 
 interface Env {
   DB: D1Database;
@@ -102,7 +102,7 @@ function sanitizePageColors(input: unknown): Record<string, string> {
   return out;
 }
 
-function sanitizeBlocks(input: unknown): { type: string; title: string; body: string; imageKey?: string; side?: 'left' | 'right'; heightPx?: number }[] {
+function sanitizeBlocks(input: unknown): { type: string; title: string; body: string; imageKey?: string; side?: 'left' | 'right'; heightPx?: number; colSpan?: number }[] {
   if (!Array.isArray(input)) return [];
   return input
     .slice(0, 10)
@@ -115,6 +115,9 @@ function sanitizeBlocks(input: unknown): { type: string; title: string; body: st
       ...(b.side === 'left' || b.side === 'right' ? { side: b.side } : {}),
       ...(typeof b.heightPx === 'number' && Number.isFinite(b.heightPx)
         ? { heightPx: Math.round(Math.min(MAX_BLOCK_HEIGHT, Math.max(MIN_BLOCK_HEIGHT, b.heightPx))) }
+        : {}),
+      ...(typeof b.colSpan === 'number' && Number.isFinite(b.colSpan)
+        ? { colSpan: Math.round(Math.min(MAX_COL_SPAN, Math.max(MIN_COL_SPAN, b.colSpan))) }
         : {}),
     }));
 }
