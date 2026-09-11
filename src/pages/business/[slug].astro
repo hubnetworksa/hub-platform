@@ -157,7 +157,7 @@ const jsonLd = {
           <div class="design-bar-row">
             <strong>Editing your page</strong>
             <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
-            <span class="design-bar-hint">Your business name, description, address, contact buttons, and hours always stay exactly where they are — only the sections you add here can be dragged to reorder, placed beside each other, resized from any edge, or edited by clicking their text.</span>
+            <span class="design-bar-hint">Your business name, description, address, contact buttons, and hours always stay exactly where they are — only the sections you add here can be dragged to reorder, placed beside each other, resized from any edge, or edited by clicking their text. Use a section's "Layout" option to stretch it full width or make it a side panel using the empty space next to the page.</span>
           </div>
           <div class="design-bar-row">
             <label>Primary <input type="color" id="color-primary" value="#2563eb" /></label>
@@ -354,6 +354,13 @@ const jsonLd = {
         return `<select class="block-image" title="Choose photo"><option value="">— No photo —</option>${options}</select>`;
       }
 
+      const BLEED_OPTIONS = [
+        ['', 'Normal (within the page)'],
+        ['full', 'Full width (edge to edge)'],
+        ['left', 'Side panel — left'],
+        ['right', 'Side panel — right'],
+      ];
+
       function blockToolbarHtml(b) {
         const sidePicker = b.type === 'side-image'
           ? `<select class="block-side" title="Photo side">
@@ -362,6 +369,9 @@ const jsonLd = {
             </select>`
           : '';
         const photoPicker = SIZED_TYPES.has(b.type) ? photoPickerHtml(b) : '';
+        const bleedPicker = `<select class="block-bleed" title="Layout">
+          ${BLEED_OPTIONS.map(([val, label]) => `<option value="${val}" ${(b.bleed || '') === val ? 'selected' : ''}>${label}</option>`).join('')}
+        </select>`;
         return `<div class="block-toolbar">
           <span class="block-drag-handle" title="Drag to reorder">⠿</span>
           <select class="block-type" title="Section type">
@@ -369,8 +379,10 @@ const jsonLd = {
           </select>
           ${sidePicker}
           ${photoPicker}
+          ${bleedPicker}
           <button type="button" class="remove-block" title="Remove section" aria-label="Remove section">✕</button>
-        </div>`;
+        </div>
+        ${b.bleed ? `<div class="bleed-note">${b.bleed === 'full' ? 'Stretches edge to edge of the browser when published.' : `Becomes a panel on the ${b.bleed} edge of the browser when published.`}</div>` : ''}`;
       }
 
       // Mirrors src/lib/blockRenderer.ts's renderOneBlock, plus the
@@ -381,8 +393,9 @@ const jsonLd = {
         const title = escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More');
         const body = escapeHtml(b.body || '');
         const toolbar = blockToolbarHtml(b);
+        const bleedClass = b.bleed ? ` bleed-${b.bleed}` : '';
         const wrap = (inner) => `
-          <div class="grid-stack-item" data-i="${i}" gs-auto-position="true" gs-w="${b.colSpan || MAX_COL_SPAN}" gs-h="10" gs-min-w="${MIN_COL_SPAN}" gs-max-w="${MAX_COL_SPAN}">
+          <div class="grid-stack-item${bleedClass}" data-i="${i}" gs-auto-position="true" gs-w="${b.bleed === 'full' ? MAX_COL_SPAN : (b.colSpan || MAX_COL_SPAN)}" gs-h="10" gs-min-w="${MIN_COL_SPAN}" gs-max-w="${MAX_COL_SPAN}">
             <div class="grid-stack-item-content editable-block">
               ${toolbar}
               ${inner}
@@ -473,6 +486,13 @@ const jsonLd = {
             renderBlocks();
             scheduleAutosave();
           });
+          item.querySelector('.block-bleed')?.addEventListener('change', (e) => {
+            const b = blocks[Number(item.dataset.i)];
+            if (e.target.value) b.bleed = e.target.value;
+            else delete b.bleed;
+            renderBlocks();
+            scheduleAutosave();
+          });
           item.querySelector('.remove-block')?.addEventListener('click', () => {
             blocks.splice(Number(item.dataset.i), 1);
             renderBlocks();
@@ -491,10 +511,16 @@ const jsonLd = {
           const contentEl = item.querySelector('.grid-stack-item-content');
           const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
           const toRows = (px) => Math.ceil((px + GRID_MARGIN * 2) / GRID_CELL_HEIGHT);
+          // A "full width" section always spans the whole grid row (its
+          // real width comes from bleeding to 100vw on the real page, not
+          // from colSpan) — lock its width so dragging e/w does nothing,
+          // rather than changing a colSpan number that would have no
+          // visible effect once published.
+          const widthBounds = b.bleed === 'full' ? { minW: MAX_COL_SPAN, maxW: MAX_COL_SPAN } : { minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN };
           if (b.heightPx) {
-            blocksGrid.update(item, { h: toRows(toolbarH + b.heightPx), minH: toRows(toolbarH + MIN_BLOCK_HEIGHT), maxH: toRows(toolbarH + MAX_BLOCK_HEIGHT), minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN });
+            blocksGrid.update(item, { h: toRows(toolbarH + b.heightPx), minH: toRows(toolbarH + MIN_BLOCK_HEIGHT), maxH: toRows(toolbarH + MAX_BLOCK_HEIGHT), ...widthBounds });
           } else {
-            blocksGrid.update(item, { h: toRows(contentEl.scrollHeight), minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN });
+            blocksGrid.update(item, { h: toRows(contentEl.scrollHeight), ...widthBounds });
           }
         });
 
@@ -1070,6 +1096,21 @@ const jsonLd = {
     color: var(--text-muted);
     cursor: pointer;
   }
+  :global(.bleed-note) {
+    flex: 0 0 auto;
+    font-size: 0.75rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  /* A visible accent border in the editor for a bleed section, since the
+     editor's own canvas can't actually show it stretching past the page
+     — the note above says what it'll do once published instead. */
+  :global(.grid-stack-item.bleed-full > .grid-stack-item-content),
+  :global(.grid-stack-item.bleed-left > .grid-stack-item-content),
+  :global(.grid-stack-item.bleed-right > .grid-stack-item-content) {
+    outline: 2px dashed var(--accent);
+    outline-offset: 2px;
+  }
   :global([contenteditable='true']) {
     outline: 2px dashed transparent;
     border-radius: 4px;
@@ -1131,6 +1172,13 @@ const jsonLd = {
     border-radius: 3px;
     background: var(--accent);
     opacity: 0.7;
+  }
+  /* A "full width" section's width is locked (minW == maxW in the JS),
+     so its e/w handles wouldn't do anything if dragged — hidden rather
+     than left as a non-functional affordance. */
+  :global(.grid-stack-item.bleed-full > .ui-resizable-e),
+  :global(.grid-stack-item.bleed-full > .ui-resizable-w) {
+    display: none !important;
   }
   .located-at {
     display: inline-flex;
