@@ -65,6 +65,15 @@ import site from '../../site';
             <p><strong>Custom sections</strong> (Our Story, Specials, Team, Gallery) unlock at Premium (R299/mo).</p>
             <a href="#" class="upsell-link">Upgrade to Premium →</a>
           </div>
+          <section id="page-colors" hidden>
+            <h2>Page colors</h2>
+            <p class="muted layout-hint">Recolor your whole page — everything except the site header stays yours. Leave any of these on "Default" to keep the site's own color there.</p>
+            <div class="color-picker-row">
+              <label>Primary <input type="color" id="color-primary" value="#2563eb" /> <button type="button" class="color-clear-btn" data-key="primary">Default</button></label>
+              <label>Secondary <input type="color" id="color-secondary" value="#0f172a" /> <button type="button" class="color-clear-btn" data-key="secondary">Default</button></label>
+              <label>Background <input type="color" id="color-background" value="#ffffff" /> <button type="button" class="color-clear-btn" data-key="background">Default</button></label>
+            </div>
+          </section>
           <section id="block-editor" hidden>
             <h2>Extra sections</h2>
             <p class="muted layout-hint">Each section shows a small toolbar directly in the live preview above — drag its handle to move it, drag its bottom-right corner to resize it, or use the toolbar to change its type, style, or remove it.</p>
@@ -104,6 +113,8 @@ import site from '../../site';
   let blocks = [];
   let liveTemplateId = 'classic';
   let liveBlocks = [];
+  let pageColors = {};
+  let livePageColors = {};
   let hasUnpublishedChanges = false;
   let draftUpdatedAt = null;
   let tier = 0;
@@ -191,6 +202,27 @@ import site from '../../site';
 
   function escapeHtml(s) {
     return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  // Kept in sync by hand with src/pages/business/[slug].astro's own
+  // hexToRgbTriple + pageColorVars — this preview has to apply the exact
+  // same overrides the real page would, on the same #preview-dynamic
+  // wrapper that plays the same role as that page's content <section>
+  // (i.e. everything except the chrome rendered once by renderChrome()).
+  function hexToRgbTriple(hex) {
+    const clean = hex.replace('#', '');
+    const full = clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean;
+    const n = parseInt(full, 16);
+    return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
+  }
+
+  function applyPageColors() {
+    const el = document.getElementById('preview-dynamic');
+    const decls = [];
+    if (pageColors.primary) decls.push(`--accent:${pageColors.primary}`, `--accent-rgb:${hexToRgbTriple(pageColors.primary)}`);
+    if (pageColors.secondary) decls.push(`--navy:${pageColors.secondary}`);
+    if (pageColors.background) decls.push(`--bg:${pageColors.background}`, `--bg-card:${pageColors.background}`);
+    el.style.cssText = decls.join(';');
   }
 
   // Phase 4 — click-to-edit directly in the live preview. Each custom-block
@@ -337,6 +369,7 @@ import site from '../../site';
   // a template switch) would destroy that instance's state along with
   // whatever the owner was in the middle of doing.
   function renderPreview() {
+    applyPageColors();
     const isPaidTier = tier >= 1;
     const showClickableWebsite = isPaidTier && !!business.website;
     const usingPlaceholders = photos.length === 0;
@@ -630,6 +663,22 @@ import site from '../../site';
     });
   });
 
+  // Page colors — also static markup, wired up immediately.
+  ['primary', 'secondary', 'background'].forEach((key) => {
+    document.getElementById(`color-${key}`).addEventListener('input', (e) => {
+      pageColors[key] = e.target.value;
+      applyPageColors();
+      scheduleAutosave();
+    });
+  });
+  document.querySelectorAll('.color-clear-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      delete pageColors[btn.dataset.key];
+      applyPageColors();
+      scheduleAutosave();
+    });
+  });
+
   document.getElementById('add-block-btn').addEventListener('click', () => {
     if (blocks.length >= 10) return;
     const nextRow = blocks.reduce((max, b, i) => Math.max(max, layoutOf(b, i).row), 0) + 1;
@@ -652,7 +701,7 @@ import site from '../../site';
     const res = await fetch('/api/business-design', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ businessId: Number(businessId), action: 'autosave', templateId: selectedTemplate, blocks }),
+      body: JSON.stringify({ businessId: Number(businessId), action: 'autosave', templateId: selectedTemplate, blocks, pageColors }),
     });
     const result = await res.json();
     if (result.ok) {
@@ -691,6 +740,7 @@ import site from '../../site';
     if (result.ok) {
       liveTemplateId = selectedTemplate;
       liveBlocks = JSON.parse(JSON.stringify(blocks));
+      livePageColors = { ...pageColors };
       hasUnpublishedChanges = false;
       updateDesignStatus();
       designStatus.textContent = 'Published! Your live page will update shortly.';
@@ -708,9 +758,13 @@ import site from '../../site';
     });
     selectedTemplate = liveTemplateId;
     blocks = JSON.parse(JSON.stringify(liveBlocks));
+    pageColors = { ...livePageColors };
     hasUnpublishedChanges = false;
     draftUpdatedAt = null;
     document.querySelectorAll('.tpl-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.tpl === selectedTemplate));
+    ['primary', 'secondary', 'background'].forEach((key) => {
+      document.getElementById(`color-${key}`).value = pageColors[key] || (key === 'background' ? '#ffffff' : key === 'secondary' ? '#0f172a' : '#2563eb');
+    });
     renderPreview();
     updateDesignStatus();
   });
@@ -749,6 +803,8 @@ import site from '../../site';
     blocks = Array.isArray(design.blocks) ? design.blocks : [];
     liveTemplateId = design.liveTemplateId ?? 'classic';
     liveBlocks = Array.isArray(design.liveBlocks) ? design.liveBlocks : [];
+    pageColors = design.pageColors && typeof design.pageColors === 'object' ? { ...design.pageColors } : {};
+    livePageColors = design.livePageColors && typeof design.livePageColors === 'object' ? { ...design.livePageColors } : {};
     hasUnpublishedChanges = !!design.hasUnpublishedChanges;
     draftUpdatedAt = design.draftUpdatedAt ?? null;
 
@@ -791,6 +847,10 @@ import site from '../../site';
     }
 
     if (canUseBuilder) {
+      document.getElementById('page-colors').hidden = false;
+      ['primary', 'secondary', 'background'].forEach((key) => {
+        if (pageColors[key]) document.getElementById(`color-${key}`).value = pageColors[key];
+      });
       document.getElementById('block-editor').hidden = false;
       // Backfill layout on load so the grid canvas always has concrete
       // coordinates to render from, even for blocks saved before this
@@ -989,7 +1049,7 @@ import site from '../../site';
   .upsell-link:hover {
     text-decoration: underline;
   }
-  #photos-section, #template-picker, #block-editor {
+  #photos-section, #template-picker, #page-colors, #block-editor {
     margin-bottom: 2rem;
   }
   .muted {
@@ -1000,6 +1060,38 @@ import site from '../../site';
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 0.6rem;
+  }
+  .color-picker-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+  .color-picker-row label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .color-picker-row input[type='color'] {
+    width: 2.2rem;
+    height: 2.2rem;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: none;
+    cursor: pointer;
+  }
+  .color-clear-btn {
+    font-size: 0.75rem;
+    font-weight: 400;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--text-muted);
   }
   .tpl-btn {
     display: flex;

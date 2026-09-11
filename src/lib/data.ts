@@ -60,14 +60,12 @@ export interface Business {
   subscription_status: string | null;
   subscription_expires_at: string | null;
   template_id: 'classic' | 'gallery' | 'services';
-  /** JSON-encoded CustomBlock[] — Premium only, parse with customBlocksFor(). */
+  /** JSON-encoded CustomBlock[] (see src/lib/blockRenderer.ts) — Premium
+   *  only, parse with customBlocksFor(). */
   custom_blocks: string | null;
-}
-
-export interface CustomBlock {
-  type: 'story' | 'specials' | 'team' | 'gallery';
-  title: string;
-  body: string;
+  /** JSON-encoded {primary?, secondary?, background?} hex colors — Premium
+   *  only, parse with pageColorsFor(). */
+  page_colors: string | null;
 }
 
 export function customBlocksFor(business: Business): CustomBlock[] {
@@ -77,6 +75,22 @@ export function customBlocksFor(business: Business): CustomBlock[] {
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
+  }
+}
+
+export interface PageColors {
+  primary?: string;
+  secondary?: string;
+  background?: string;
+}
+
+export function pageColorsFor(business: Business): PageColors {
+  if (!business.page_colors) return {};
+  try {
+    const parsed = JSON.parse(business.page_colors);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
   }
 }
 

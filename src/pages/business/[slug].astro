@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, customBlocksFor, TIER_VERIFIED, TIER_VERIFIED_PLUS, TIER_FEATURED, TIER_PREMIUM } from '../../lib/data';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, customBlocksFor, pageColorsFor, TIER_VERIFIED, TIER_VERIFIED_PLUS, TIER_FEATURED, TIER_PREMIUM } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
 import { renderCustomBlocksHtml, usesExtraFont, EXTRA_FONTS_QUERY } from '../../lib/blockRenderer';
 import Icon from '../../components/Icon.astro';
@@ -40,6 +40,24 @@ const isPremium = business.subscription_tier >= TIER_PREMIUM && business.subscri
 const customBlocks = isPremium ? customBlocksFor(business) : [];
 const customBlocksHtml = renderCustomBlocksHtml(customBlocks);
 const needsExtraFont = usesExtraFont(customBlocks);
+
+// Owner-chosen page colors (Premium only) — applied as CSS custom property
+// overrides on this page's own content wrapper only, so the shared site
+// header/nav/footer (outside this wrapper, in BaseLayout) always stay the
+// site's own branding regardless of what an owner picks for their page.
+function hexToRgbTriple(hex: string): string {
+  const clean = hex.replace('#', '');
+  const full = clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean;
+  const n = parseInt(full, 16);
+  return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
+}
+
+const pageColors = isPremium ? pageColorsFor(business) : {};
+const pageColorVars = [
+  pageColors.primary ? `--accent:${pageColors.primary};--accent-rgb:${hexToRgbTriple(pageColors.primary)}` : '',
+  pageColors.secondary ? `--navy:${pageColors.secondary}` : '',
+  pageColors.background ? `--bg:${pageColors.background};--bg-card:${pageColors.background}` : '',
+].filter(Boolean).join(';');
 // Only rendered when a real link exists — see shoppingCenterFor.
 const center = shoppingCenterFor(business);
 
@@ -69,7 +87,7 @@ const jsonLd = {
 <BaseLayout title={business.name} description={business.description.slice(0, 155)} noAds={noAds} extraFonts={needsExtraFont ? EXTRA_FONTS_QUERY : undefined}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-  <section class="container" style="padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;">
+  <section class="container" style={`padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;${pageColorVars ? `;${pageColorVars}` : ''}`}>
     {!isPremium && template === 'gallery' && photos.length > 0 && (
       <div class="hero-gallery">
         {photos.map((photo) => (
