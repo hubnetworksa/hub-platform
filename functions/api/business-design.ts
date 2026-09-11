@@ -2,7 +2,7 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../_lib/auth';
 import { triggerRebuild } from '../_lib/deploy-hook';
 import { logActivity } from '../_lib/activity-log';
-import { sanitizeOwnerHtml } from '../_lib/sanitize-html';
+import { BLOCK_TYPES, MIN_BLOCK_HEIGHT, MAX_BLOCK_HEIGHT } from '../../src/lib/blockRenderer';
 
 interface Env {
   DB: D1Database;
@@ -16,19 +16,18 @@ interface BusinessRow {
   subscription_tier: number;
   subscription_status: string | null;
   template_id: string;
+  custom_blocks: string | null;
   draft_template_id: string | null;
-  page_design: string | null;
-  draft_page_design: string | null;
-  page_html: string | null;
-  page_css: string | null;
+  draft_blocks: string | null;
   draft_updated_at: string | null;
+  page_colors: string | null;
+  draft_page_colors: string | null;
 }
 
 async function loadOwned(db: D1Database, businessId: number, userId: number, isAdmin: boolean): Promise<BusinessRow | null> {
   const row = await db
     .prepare(
-      `SELECT id, name, owner_user_id, subscription_tier, subscription_status, template_id, draft_template_id,
-              page_design, draft_page_design, page_html, page_css, draft_updated_at
+      `SELECT id, name, owner_user_id, subscription_tier, subscription_status, template_id, custom_blocks, draft_template_id, draft_blocks, draft_updated_at, page_colors, draft_page_colors
        FROM businesses WHERE id = ?`
     )
     .bind(businessId)
@@ -41,18 +40,10 @@ function tierOf(row: BusinessRow): number {
   return row.subscription_status === 'active' ? row.subscription_tier : 0;
 }
 
-// The full free-form builder is Premium (4) only. Template *choice* (not
-// the builder) is Featured (3) and up — a business that later upgrades to
-// Premium leaves template_id behind entirely; the builder is its own page
-// design regardless of whatever template was last chosen.
+// Extra sections (Premium, 4) and up. Template *choice* (not sections) is
+// Featured (3) and up, unchanged.
 const TIER_BUILDER = 4;
 const TIER_TEMPLATE = 3;
-
-// Generous but bounded — a real page's design JSON/HTML/CSS is a few KB to
-// a few hundred KB; this just guards against something pathological.
-const MAX_DESIGN_JSON_LENGTH = 1_500_000;
-const MAX_HTML_LENGTH = 400_000;
-const MAX_CSS_LENGTH = 300_000;
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const db = context.env.DB;
@@ -64,27 +55,20 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (!row) return json({ ok: false, error: 'You do not own this business.' }, 403);
 
   const tier = tierOf(row);
+  // No draft started yet — seed the response from the live/published
+  // values so the builder opens showing what's actually live.
   const templateId = row.draft_template_id ?? row.template_id;
-  // No draft started yet — seed from the live design so the builder opens
-  // showing what's actually live.
-  const designJson = row.draft_page_design ?? row.page_design;
+  const blocks = row.draft_blocks ?? row.custom_blocks;
+  const pageColors = row.draft_page_colors ?? row.page_colors;
+
+  const liveBlocks = row.custom_blocks ? JSON.parse(row.custom_blocks) : [];
+  const draftBlocks = blocks ? JSON.parse(blocks) : [];
+  const livePageColors = row.page_colors ? JSON.parse(row.page_colors) : {};
+  const draftPageColors = pageColors ? JSON.parse(pageColors) : {};
   const hasUnpublishedChanges =
     (row.draft_template_id !== null && row.draft_template_id !== row.template_id) ||
-    (row.draft_page_design !== null && row.draft_page_design !== row.page_design);
-
-  function parseJson(s: string | null): unknown {
-    if (!s) return null;
-    try {
-      return JSON.parse(s);
-    } catch {
-      return null;
-    }
-  }
-  const pageDesign = parseJson(designJson);
-  // Separate from pageDesign above (which is draft-seeded-from-live) —
-  // "Revert to published" needs the *actual* live project JSON, not
-  // whatever the draft currently holds.
-  const livePageDesign = parseJson(row.page_design);
+    (row.draft_blocks !== null && row.draft_blocks !== row.custom_blocks) ||
+    (row.draft_page_colors !== null && row.draft_page_colors !== row.page_colors);
 
   return json({
     ok: true,
@@ -93,14 +77,47 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     canUseBuilder: tier >= TIER_BUILDER,
     templateId,
     liveTemplateId: row.template_id,
-    pageDesign,
-    livePageDesign,
-    livePageHtml: row.page_html,
-    livePageCss: row.page_css,
+    blocks: draftBlocks,
+    liveBlocks,
+    pageColors: draftPageColors,
+    livePageColors,
     hasUnpublishedChanges,
     draftUpdatedAt: row.draft_updated_at,
   });
 };
+
+const HEX_COLOR = /^#[0-9a-f]{6}$|^#[0-9a-f]{3}$/i;
+
+// Owner-chosen page-wide colors — a raw hex value, not a fixed palette key,
+// since this is a genuine color picker. Only three keys exist; anything
+// else in the request body is ignored.
+function sanitizePageColors(input: unknown): Record<string, string> {
+  if (typeof input !== 'object' || input === null) return {};
+  const s = input as Record<string, unknown>;
+  const out: Record<string, string> = {};
+  for (const key of ['primary', 'secondary', 'background']) {
+    const v = s[key];
+    if (typeof v === 'string' && HEX_COLOR.test(v)) out[key] = v;
+  }
+  return out;
+}
+
+function sanitizeBlocks(input: unknown): { type: string; title: string; body: string; imageKey?: string; side?: 'left' | 'right'; heightPx?: number }[] {
+  if (!Array.isArray(input)) return [];
+  return input
+    .slice(0, 10)
+    .filter((b): b is Record<string, unknown> => typeof b === 'object' && b !== null)
+    .map((b) => ({
+      type: (BLOCK_TYPES as readonly string[]).includes(String(b.type)) ? String(b.type) : 'story',
+      title: typeof b.title === 'string' ? b.title.slice(0, 60) : '',
+      body: typeof b.body === 'string' ? b.body.slice(0, 800) : '',
+      ...(typeof b.imageKey === 'string' ? { imageKey: b.imageKey.slice(0, 300) } : {}),
+      ...(b.side === 'left' || b.side === 'right' ? { side: b.side } : {}),
+      ...(typeof b.heightPx === 'number' && Number.isFinite(b.heightPx)
+        ? { heightPx: Math.round(Math.min(MAX_BLOCK_HEIGHT, Math.max(MIN_BLOCK_HEIGHT, b.heightPx))) }
+        : {}),
+    }));
+}
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const db = context.env.DB;
@@ -123,69 +140,37 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   if (action === 'autosave') {
     if (tier < TIER_TEMPLATE) return json({ ok: false, error: 'Not available on your tier.' }, 403);
-
-    if (tier >= TIER_BUILDER) {
-      // Below Premium, template_id is a simple three-way choice; the
-      // builder is a different, richer thing entirely, so it gets its own
-      // branch rather than trying to share validation with the template
-      // dropdown below.
-      let designJson: string | null = null;
-      if (body.pageDesign !== undefined && body.pageDesign !== null) {
-        const serialized = JSON.stringify(body.pageDesign);
-        if (serialized.length > MAX_DESIGN_JSON_LENGTH) {
-          return json({ ok: false, error: 'That page design is too large to save.' }, 400);
-        }
-        designJson = serialized;
-      }
-      await db
-        .prepare(`UPDATE businesses SET draft_page_design = ?, draft_updated_at = datetime('now') WHERE id = ?`)
-        .bind(designJson, businessId)
-        .run();
-      return json({ ok: true, draftUpdatedAt: new Date().toISOString() });
-    }
-
     const templateId = typeof body.templateId === 'string' && ['classic', 'gallery', 'services'].includes(body.templateId) ? body.templateId : row.template_id;
+    // A business below Premium can still hold template_id via Featured,
+    // but sections and page colors only ever come from a Premium session —
+    // never trust a lapsed/lower tier's request to write them.
+    const blocks = tier >= TIER_BUILDER ? sanitizeBlocks(body.blocks) : (row.draft_blocks ? JSON.parse(row.draft_blocks) : []);
+    const pageColors = tier >= TIER_BUILDER ? sanitizePageColors(body.pageColors) : (row.draft_page_colors ? JSON.parse(row.draft_page_colors) : {});
     await db
-      .prepare(`UPDATE businesses SET draft_template_id = ?, draft_updated_at = datetime('now') WHERE id = ?`)
-      .bind(templateId, businessId)
+      .prepare(`UPDATE businesses SET draft_template_id = ?, draft_blocks = ?, draft_page_colors = ?, draft_updated_at = datetime('now') WHERE id = ?`)
+      .bind(templateId, JSON.stringify(blocks), JSON.stringify(pageColors), businessId)
       .run();
     return json({ ok: true, draftUpdatedAt: new Date().toISOString() });
   }
 
   if (action === 'publish') {
-    if (tier >= TIER_BUILDER) {
-      const rawHtml = typeof body.pageHtml === 'string' ? body.pageHtml.slice(0, MAX_HTML_LENGTH) : '';
-      const rawCss = typeof body.pageCss === 'string' ? body.pageCss.slice(0, MAX_CSS_LENGTH) : '';
-      const safeHtml = await sanitizeOwnerHtml(rawHtml);
-      const designJson = row.draft_page_design ?? row.page_design;
-      await db
-        .prepare(`UPDATE businesses SET page_design = ?, page_html = ?, page_css = ?, updated_at = datetime('now') WHERE id = ?`)
-        .bind(designJson, safeHtml, rawCss, businessId)
-        .run();
-    } else {
-      const templateId = row.draft_template_id ?? row.template_id;
-      await db
-        .prepare(`UPDATE businesses SET template_id = ?, updated_at = datetime('now') WHERE id = ?`)
-        .bind(templateId, businessId)
-        .run();
-    }
+    const templateId = row.draft_template_id ?? row.template_id;
+    const blocks = row.draft_blocks ?? row.custom_blocks ?? '[]';
+    const pageColors = row.draft_page_colors ?? row.page_colors ?? '{}';
+    await db
+      .prepare(`UPDATE businesses SET template_id = ?, custom_blocks = ?, page_colors = ?, updated_at = datetime('now') WHERE id = ?`)
+      .bind(templateId, blocks, pageColors, businessId)
+      .run();
     await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
     await logActivity(db, 'design_published', row.name, 'Owner published page design changes.');
     return json({ ok: true });
   }
 
   if (action === 'revert') {
-    if (tier >= TIER_BUILDER) {
-      await db
-        .prepare(`UPDATE businesses SET draft_page_design = ?, draft_updated_at = datetime('now') WHERE id = ?`)
-        .bind(row.page_design, businessId)
-        .run();
-    } else {
-      await db
-        .prepare(`UPDATE businesses SET draft_template_id = ?, draft_updated_at = datetime('now') WHERE id = ?`)
-        .bind(row.template_id, businessId)
-        .run();
-    }
+    await db
+      .prepare(`UPDATE businesses SET draft_template_id = ?, draft_blocks = ?, draft_page_colors = ?, draft_updated_at = datetime('now') WHERE id = ?`)
+      .bind(row.template_id, row.custom_blocks, row.page_colors, businessId)
+      .run();
     return json({ ok: true });
   }
 

@@ -3,15 +3,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import site from '../../site';
 ---
 
-<BaseLayout title="Customise business page" description="Design your business page.">
-  <div id="loading" class="container" style="padding: 3rem 1.5rem;">Loading…</div>
+<BaseLayout title="Customise business page" description="Preview and customise your business page.">
+  <section class="container" style="padding-top: 3rem; padding-bottom: 1.5rem; max-width: 1180px;">
+    <div id="loading">Loading…</div>
 
-  <!-- Tier 2-3: photos + template choice, no free-form builder. Unchanged
-       narrow layout from before the page builder existed. -->
-  <div id="basic-view" hidden>
-    <section class="container" style="padding-top: 3rem; padding-bottom: 1.5rem; max-width: 1180px;">
-      <a id="back-link-basic" href="#" class="back-link">← Back to editing</a>
-      <h1>Customise <span id="business-name-hl-basic"></span></h1>
+    <div id="content" hidden>
+      <a id="back-link" href="#" class="back-link">← Back to editing</a>
+      <h1>Customise <span id="business-name-hl"></span></h1>
 
       <div class="preview-panel">
         <div class="preview-head">
@@ -21,10 +19,13 @@ import site from '../../site';
         <div class="preview-frame">
           <div class="preview-body" id="preview-body"></div>
         </div>
+        <p class="preview-note">This shows your unsaved draft live. Changes autosave as you go — click <strong>Publish changes</strong> below to make them go live on the real page.</p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="container" style="padding-top: 1.5rem; padding-bottom: 4rem; max-width: 680px;">
+  <section class="container" style="padding-top: 1.5rem; padding-bottom: 4rem; max-width: 680px;">
+    <div id="content2" hidden>
       <div id="upsell-photos" class="upsell" hidden>
         <p><strong>Photos</strong> unlock at Verified Plus (R99/mo).</p>
         <a href="#" class="upsell-link">Upgrade to add photos →</a>
@@ -32,12 +33,12 @@ import site from '../../site';
       <section id="photos-section" hidden>
         <h2>Photos</h2>
         <p id="photos-cap-label" class="muted"></p>
-        <div id="photo-grid-basic" class="photo-grid"></div>
-        <form id="photo-upload-form-basic">
-          <input type="file" name="photo" accept="image/*" id="photo-input-basic" />
+        <div id="photo-grid" class="photo-grid"></div>
+        <form id="photo-upload-form">
+          <input type="file" name="photo" accept="image/*" id="photo-input" />
           <button type="submit" class="btn btn-outline btn-sm">Upload photo</button>
         </form>
-        <p id="photo-status-basic" role="status" class="muted"></p>
+        <p id="photo-status" role="status" class="muted"></p>
       </section>
 
       <div id="upsell-template" class="upsell" hidden>
@@ -53,70 +54,33 @@ import site from '../../site';
         </div>
       </section>
 
-      <div id="upsell-builder" class="upsell" hidden>
-        <p><strong>The full page designer</strong> — drag banners, images and sections anywhere — unlocks at Premium (R299/mo).</p>
+      <div id="upsell-blocks" class="upsell" hidden>
+        <p><strong>Custom sections and page colors</strong> unlock at Premium (R299/mo).</p>
         <a href="#" class="upsell-link">Upgrade to Premium →</a>
       </div>
+      <section id="page-colors" hidden>
+        <h2>Page colors</h2>
+        <p class="muted">Sets your whole page's colors in one place — everything except the site header stays yours. Leave any of these on "Default" to keep the site's own color.</p>
+        <div class="color-picker-row">
+          <label>Primary <input type="color" id="color-primary" value="#2563eb" /> <button type="button" class="color-clear-btn" data-key="primary">Default</button></label>
+          <label>Secondary <input type="color" id="color-secondary" value="#0f172a" /> <button type="button" class="color-clear-btn" data-key="secondary">Default</button></label>
+          <label>Background <input type="color" id="color-background" value="#ffffff" /> <button type="button" class="color-clear-btn" data-key="background">Default</button></label>
+        </div>
+      </section>
+      <section id="block-editor" hidden>
+        <h2>Extra sections</h2>
+        <p class="muted">Your page above (name, description, photos, address, hours) always looks like every other listing — you can only add sections below it. Drag the <strong>⠿ handle</strong> to reorder a section, and drag a photo section's bottom edge to resize its photo.</p>
+        <div id="blocks-grid" class="grid-stack"></div>
+        <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
+      </section>
 
-      <div id="design-actions-basic" hidden>
-        <button type="button" id="publish-btn-basic" class="btn btn-primary" hidden>Publish changes</button>
-        <button type="button" id="revert-btn-basic" class="btn btn-outline" hidden>Revert to published</button>
+      <div id="design-actions" hidden>
+        <button type="button" id="publish-btn" class="btn btn-primary" hidden>Publish changes</button>
+        <button type="button" id="revert-btn" class="btn btn-outline" hidden>Revert to published</button>
       </div>
-      <p id="design-status-basic" role="status" class="muted" hidden></p>
-    </section>
-  </div>
-
-  <!-- Tier 4 (Premium): the real page designer. -->
-  <div id="builder-view" hidden>
-    <div class="builder-topbar">
-      <a id="back-link-builder" href="#" class="back-link">← Back</a>
-      <h1 class="builder-title">Design <span id="business-name-hl-builder"></span></h1>
-      <div class="builder-topbar-actions">
-        <span id="builder-status" class="muted" role="status"></span>
-        <button type="button" id="builder-help-btn" class="btn btn-outline btn-sm">How this works</button>
-        <button type="button" id="builder-revert-btn" class="btn btn-outline btn-sm" hidden>Revert to published</button>
-        <button type="button" id="builder-publish-btn" class="btn btn-primary btn-sm" hidden>Publish changes</button>
-      </div>
+      <p id="design-status" role="status" class="muted" hidden></p>
     </div>
-
-    <div id="builder-help" class="builder-help" hidden>
-      <h2>How to design your page</h2>
-      <ol>
-        <li><strong>Drag a block</strong> from the panel on the right onto your page — a banner, an image beside text, a gallery, a quote, a button.</li>
-        <li><strong>Click any text</strong> to edit it right there.</li>
-        <li><strong>Drag an element</strong> to move it anywhere. <strong>Drag its edge</strong> to resize it.</li>
-        <li><strong>Click an element</strong>, then use the Style tab on the right to change its color, text size, or spacing.</li>
-        <li>Use <strong>Theme</strong> at the top to set your page's overall colors in one place.</li>
-        <li>Check <strong>Tablet</strong> and <strong>Mobile</strong> at the top to make sure your page still looks right on smaller screens — adjust anything that needs it for each one.</li>
-        <li>Click <strong>Publish changes</strong> when you're happy. Your draft autosaves as you go either way, so you'll never lose work.</li>
-      </ol>
-      <button type="button" id="builder-help-close" class="btn btn-primary btn-sm">Got it</button>
-    </div>
-
-    <div id="builder-theme" class="builder-theme" hidden>
-      <h2>Page theme</h2>
-      <p class="muted">Sets your page's overall colors in one place — everything on your page uses these unless you override a specific section's style. Leave on "Default" to use the site's own color.</p>
-      <div class="color-picker-row">
-        <label>Primary <input type="color" id="theme-primary" value="#2a5db0" /> <button type="button" class="color-clear-btn" data-key="primary">Default</button></label>
-        <label>Secondary <input type="color" id="theme-secondary" value="#16233d" /> <button type="button" class="color-clear-btn" data-key="secondary">Default</button></label>
-        <label>Background <input type="color" id="theme-background" value="#ffffff" /> <button type="button" class="color-clear-btn" data-key="background">Default</button></label>
-      </div>
-      <button type="button" id="builder-theme-close" class="btn btn-outline btn-sm">Done</button>
-    </div>
-
-    <div id="gjs-editor"></div>
-
-    <div class="builder-photos-panel">
-      <h2>Your photos</h2>
-      <p class="muted">Upload photos here, then double-click any image block on your page to choose one.</p>
-      <div id="photo-grid" class="photo-grid"></div>
-      <form id="photo-upload-form">
-        <input type="file" name="photo" accept="image/*" id="photo-input" />
-        <button type="submit" class="btn btn-outline btn-sm">Upload photo</button>
-      </form>
-      <p id="photo-status" role="status" class="muted"></p>
-    </div>
-  </div>
+  </section>
 
   <div id="photo-modal" class="photo-modal" hidden>
     <div id="photo-modal-backdrop" class="photo-modal-backdrop"></div>
@@ -127,90 +91,100 @@ import site from '../../site';
   </div>
 </BaseLayout>
 
-<link is:inline rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/grapesjs/0.23.6/css/grapes.min.css" />
-<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/grapesjs/0.23.6/grapes.min.js"></script>
+<link is:inline rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.5.1/gridstack.min.css" />
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.5.1/gridstack-all.min.js"></script>
+
 <script define:vars={{ SITE_NAME: site.siteName, CITY_LABEL: site.cityLabel, SITE_TAGLINE: site.tagline }}>
   // NOTE: define:vars forces this whole script to stay inline, unprocessed
   // by Astro/Vite — no TypeScript syntax (no `interface`, no type
   // annotations, no `as X` casts), it must be plain browser JS or it never
-  // parses at all in a real browser. See the git history of this file for
-  // the exact bug this comment is warning about.
+  // parses at all in a real browser.
   const params = new URLSearchParams(window.location.search);
   const businessId = params.get('id');
   const loading = document.getElementById('loading');
+  const content = document.getElementById('content');
 
+  let selectedTemplate = 'classic';
+  let blocks = [];
+  let blocksGrid = null;
+  const GRID_CELL_HEIGHT = 20;
+  const GRID_MARGIN = 8;
+  const DEFAULT_BLOCK_HEIGHT = { banner: 220, photo: 220, 'side-image': 200 };
+  let liveTemplateId = 'classic';
+  let liveBlocks = [];
+  let pageColors = {};
+  let livePageColors = {};
+  let hasUnpublishedChanges = false;
+  let draftUpdatedAt = null;
   let tier = 0;
   let canChooseTemplate = false;
   let canUseBuilder = false;
-  let business = { name: '', address: '', phone: '', website: '', description: '', hours: '', categories: [], suburb: null };
   let photos = [];
+  let business = { name: '', address: '', phone: '', website: '', description: '', hours: '', categories: [], suburb: null };
 
-  // --- Basic view (tier 2-3) state — unchanged in spirit from before the
-  // full builder existed: a small hand-rendered preview, no free-form canvas.
-  let selectedTemplate = 'classic';
-  let liveTemplateId = 'classic';
-  let hasUnpublishedChangesBasic = false;
-  let draftUpdatedAtBasic = null;
+  // Kept in sync by hand with src/lib/blockRenderer.ts's BLOCK_TITLES/
+  // BLOCK_TYPES — this client script can't import that Node/Astro module
+  // directly, same reason the icon paths below are hand-copied too.
+  const BLOCK_TITLES = {
+    banner: 'Banner', 'side-image': 'Image + Text', story: 'Our Story', specials: 'Specials & Promotions',
+    team: 'Team', gallery: 'Gallery', photo: 'Photo', testimonial: 'Testimonial', cta: 'Call to Action', divider: 'Divider',
+  };
+  const BLOCK_TYPE_OPTIONS = [
+    ['banner', 'Banner'], ['side-image', 'Image + Text'], ['story', 'Our Story'], ['specials', 'Specials & Promotions'],
+    ['team', 'Team'], ['gallery', 'Gallery'], ['photo', 'Photo'], ['testimonial', 'Testimonial'], ['cta', 'Call to Action'], ['divider', 'Divider'],
+  ];
 
-  // --- Builder (tier 4) state
-  let editor = null;
-  let theme = {};
-  let liveTheme = {};
-  // What the editor loads on open — draft-seeded-from-live.
-  let initialDesignJson = null;
-  // The actual last-published project — kept separately so "Revert to
-  // published" restores the real thing, not whatever the draft holds.
-  let publishedDesignJson = null;
-  let hasUnpublishedChangesBuilder = false;
-  let draftUpdatedAtBuilder = null;
-
-  function escapeHtml(s) {
-    return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  function hexToRgbTriple(hex) {
+    const clean = hex.replace('#', '');
+    const full = clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean;
+    const n = parseInt(full, 16);
+    return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
   }
 
-  // Inline SVG placeholder for image blocks before a real photo is chosen —
-  // no network dependency, clearly marked as a sample.
-  function placeholderImage(label) {
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="400" viewBox="0 0 640 400">
-      <rect width="640" height="400" fill="#e2e8f0"/>
-      <g fill="#94a3b8"><circle cx="320" cy="160" r="46"/><path d="M200 320c0-60 54-92 120-92s120 32 120 92z"/></g>
-      <text x="320" y="360" font-family="sans-serif" font-size="20" fill="#64748b" text-anchor="middle">${label}</text>
-    </svg>`;
-    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-  }
-
-  // ===================== BASIC VIEW (tier 2-3) =====================
   // Same icon paths as src/pages/business/[slug].astro's ICONS + Icon.astro's
-  // wrapper — kept in sync by hand since this preview can't import an Astro
-  // component at runtime.
+  // wrapper — kept in sync by hand since this preview can't import an
+  // Astro component at runtime.
   const ICON_PATHS = {
     check: '<circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5"/>',
     clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
     phone: '<path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z"/>',
     pin: '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>',
+    flag: '<path d="M5 21V4"/><path d="M5 4h13l-3 4 3 4H5"/>',
+    trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
   };
   function icon(name, size = 16) {
     return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;">${ICON_PATHS[name]}</svg>`;
   }
 
-  function renderBasicPreview() {
-    const isPaidTier = tier >= 1;
-    const showClickableWebsite = isPaidTier && !!business.website;
-    const usingPlaceholders = photos.length === 0;
-    const galleryPhotos = usingPlaceholders
-      ? Array.from({ length: 3 }, (_, i) => placeholderImage(`Sample photo ${i + 1}`))
-      : photos.map((p) => `/media/${p.r2_key}`);
-    const sampleNote = usingPlaceholders ? '<p class="sample-note">📷 Sample photos shown — upload your own above to replace them.</p>' : '';
-    const heroGallery = selectedTemplate === 'gallery'
-      ? `<div class="hero-gallery">${galleryPhotos.map((src) => `<img src="${src}" alt="" />`).join('')}</div>${sampleNote}`
-      : '';
-    const inlineGallery = selectedTemplate !== 'gallery'
-      ? `<div class="photo-gallery${galleryPhotos.length > 5 ? ' carousel' : ''}">${galleryPhotos.map((src) => `<img src="${src}" alt="" />`).join('')}</div>${sampleNote}`
-      : '';
-    const tagsHtml = `<div class="tags">
-      ${isPaidTier ? `<span class="badge tier-badge">${icon('check', 13)} Verified</span>` : ''}
-      ${business.categories.map((c) => `<span class="badge">${escapeHtml(c.name)}</span>`).join('')}
-    </div>`;
+  // Inline SVG placeholder — no network dependency, and clearly marked as a
+  // sample so nobody mistakes it for a real uploaded photo.
+  function placeholderPhoto(label) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="220" viewBox="0 0 320 220">
+      <rect width="320" height="220" fill="#e2e8f0"/>
+      <g fill="#94a3b8"><circle cx="160" cy="88" r="26"/><path d="M96 168c0-30 28-46 64-46s64 16 64 46z"/></g>
+      <text x="160" y="196" font-family="sans-serif" font-size="12" fill="#64748b" text-anchor="middle">${label}</text>
+    </svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
+  const PLACEHOLDER_COUNT = 3;
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  // Full page chrome (header/nav/footer), rendered once — it never changes
+  // while editing, so there's no reason to rebuild it on every keystroke
+  // the way the content below it does. Copied verbatim from
+  // src/layouts/BaseLayout.astro.
+  function renderChrome() {
+    const crumbs = [
+      ...(business.suburb ? [`<a href="/suburb/${business.suburb.slug}/">${escapeHtml(business.suburb.name)}</a>`] : []),
+      ...(business.categories[0] ? [`<a href="/category/${business.categories[0].slug}/">${escapeHtml(business.categories[0].name)}</a>`] : []),
+      `<span class="current">${escapeHtml(business.name)}</span>`,
+    ];
+    const breadcrumbsHtml = `<nav class="breadcrumbs" aria-label="Breadcrumb">${crumbs
+      .map((c, i) => c + (i < crumbs.length - 1 ? '<span class="sep" aria-hidden="true">›</span>' : ''))
+      .join('')}</nav>`;
 
     document.getElementById('preview-body').innerHTML = `
       <header class="brand-row">
@@ -222,137 +196,376 @@ import site from '../../site';
               <span class="logo-sub">Business Directory</span>
             </span>
           </a>
-          <p class="tagline"><strong>Discover. Connect. Grow.</strong><span>${escapeHtml(SITE_TAGLINE)}</span></p>
+          <p class="tagline">
+            <strong>Discover. Connect. Grow.</strong>
+            <span>${escapeHtml(SITE_TAGLINE)}</span>
+          </p>
         </div>
       </header>
       <nav class="site-nav" aria-label="Main">
         <div class="container">
-          <div class="nav-links"><a href="/">Home</a><a href="/suburb/">Directory</a><a href="/category/">Categories</a><a href="/about/">About Us</a></div>
+          <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/suburb/">Directory</a>
+            <a href="/category/">Categories</a>
+            <a href="/about/">About Us</a>
+          </div>
         </div>
       </nav>
       <main>
-        <section class="container" style="padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;">
-          ${heroGallery}
-          <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">${escapeHtml(business.name)}</h1>
-          ${tagsHtml}
-          <p style="margin-top: 1.25rem;">${escapeHtml(business.description)}</p>
-          ${inlineGallery}
-          ${business.address ? `<p class="address">${escapeHtml(business.address)}</p>` : ''}
-          <div class="actions">
-            ${showClickableWebsite ? `<span class="btn btn-outline">${icon('pin')} Visit website</span>` : ''}
-            ${business.phone ? `<span class="btn btn-outline">${icon('phone')} ${escapeHtml(business.phone)}</span>` : ''}
-            <span class="btn btn-outline">${icon('pin')} View on Google Maps</span>
-          </div>
-          <div class="hours-section">
-            <h2 class="hours-heading">${icon('clock', 17)} Trading Hours</h2>
-            ${business.hours ? `<p class="hours-text">${escapeHtml(business.hours)}</p>` : '<p class="hours-text hours-unavailable">Trading hours not available</p>'}
-          </div>
+        <section class="container" id="preview-dynamic" style="padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;">
+          ${breadcrumbsHtml}
+          <div id="preview-content"></div>
         </section>
       </main>
       <footer class="site-footer">
-        <div class="container"><span>© ${new Date().getFullYear()} ${escapeHtml(SITE_NAME)}</span></div>
+        <div class="container">
+          <span>© ${new Date().getFullYear()} ${escapeHtml(SITE_NAME)}</span>
+        </div>
       </footer>
     `;
   }
 
-  async function loadPhotosInto(gridId, capLabelId) {
-    const grid = document.getElementById(gridId);
-    const res = await fetch(`/api/business-photos?businessId=${encodeURIComponent(businessId)}`);
-    const data = await res.json();
-    if (!data.ok) return;
-    photos = data.photos;
-    if (capLabelId) document.getElementById(capLabelId).textContent = `${data.photos.length} of ${data.cap} photos used`;
-    grid.innerHTML = '';
-    for (const photo of data.photos) {
-      const div = document.createElement('div');
-      div.className = 'photo-thumb';
-      div.innerHTML = `<img src="/media/${photo.r2_key}" alt="Uploaded photo — click to view full size" /><button type="button" data-id="${photo.id}">Remove</button>`;
-      div.querySelector('img').addEventListener('click', () => openPhotoModal(`/media/${photo.r2_key}`));
-      div.querySelector('button').addEventListener('click', async (e) => {
-        await fetch(`/api/business-photos?photoId=${e.target.getAttribute('data-id')}`, { method: 'DELETE' });
-        await loadPhotosInto(gridId, capLabelId);
-        if (gridId === 'photo-grid-basic') renderBasicPreview();
-        if (gridId === 'photo-grid') refreshAssetManager();
+  // Mirrors src/lib/blockRenderer.ts's renderOneBlock exactly — kept in
+  // sync by hand, same reason as BLOCK_TITLES above.
+  const SIZED_TYPES = new Set(['banner', 'photo', 'side-image']);
+  const MIN_BLOCK_HEIGHT = 100;
+  const MAX_BLOCK_HEIGHT = 480;
+  function heightStyleAttr(b, prop) {
+    if (!SIZED_TYPES.has(b.type) || !b.heightPx) return '';
+    return ` style="${prop}:${b.heightPx}px"`;
+  }
+  function renderOneBlockPreview(b) {
+    const title = escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More');
+    const body = escapeHtml(b.body || '');
+    switch (b.type) {
+      case 'banner':
+        return `<div class="custom-block custom-block-banner"${heightStyleAttr(b, 'min-height')}>
+          ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one below</div>'}
+          <div class="banner-overlay">
+            <h2>${title}</h2>
+            ${b.body ? `<p>${body}</p>` : ''}
+          </div>
+        </div>`;
+      case 'side-image': {
+        const side = b.side === 'right' ? ' side-right' : '';
+        return `<div class="custom-block custom-block-side-image${side}">
+          ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy"${heightStyleAttr(b, 'height')} />` : '<div class="photo-placeholder">No photo chosen — pick one below</div>'}
+          <div class="side-image-text">
+            <h3>${title}</h3>
+            <p>${body || '<span class="placeholder-text">(empty — add some text)</span>'}</p>
+          </div>
+        </div>`;
+      }
+      case 'photo':
+        return `<div class="custom-block custom-block-photo">
+          ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy"${heightStyleAttr(b, 'height')} />` : '<div class="photo-placeholder">No photo chosen — pick one below</div>'}
+          ${b.title ? `<p class="photo-caption">${title}</p>` : ''}
+        </div>`;
+      case 'divider':
+        return `<div class="custom-block custom-block-divider"><hr /></div>`;
+      case 'cta':
+        return `<div class="custom-block custom-block-cta">
+          <p class="cta-text">${title}</p>
+          <span class="btn btn-primary cta-btn">${body || 'Get in touch'}</span>
+        </div>`;
+      case 'testimonial':
+        return `<div class="custom-block custom-block-testimonial">
+          <p class="testimonial-quote">&ldquo;${body}&rdquo;</p>
+          <p class="testimonial-author">— ${title}</p>
+        </div>`;
+      default:
+        return `<div class="custom-block">
+          <h2>${title}</h2>
+          <p>${body.replace(/\n/g, '<br />') || '<span class="placeholder-text">(empty — add some text)</span>'}</p>
+        </div>`;
+    }
+  }
+
+  function applyPageColors() {
+    const el = document.getElementById('preview-dynamic');
+    if (!el) return;
+    const decls = [];
+    if (pageColors.primary) decls.push(`--accent:${pageColors.primary}`, `--accent-rgb:${hexToRgbTriple(pageColors.primary)}`);
+    if (pageColors.secondary) decls.push(`--navy:${pageColors.secondary}`);
+    if (pageColors.background) decls.push(`--bg:${pageColors.background}`, `--bg-card:${pageColors.background}`);
+    el.style.cssText = decls.join(';');
+  }
+
+  function renderPreview() {
+    applyPageColors();
+    const isPaidTier = tier >= 1;
+    const showClickableWebsite = isPaidTier && !!business.website;
+    const usingPlaceholders = photos.length === 0;
+    const galleryPhotos = usingPlaceholders
+      ? Array.from({ length: PLACEHOLDER_COUNT }, (_, i) => placeholderPhoto(`Sample photo ${i + 1}`))
+      : photos.map((p) => `/media/${p.r2_key}`);
+    const sampleNote = usingPlaceholders ? '<p class="sample-note">📷 Sample photos shown — upload your own above to replace them.</p>' : '';
+
+    const heroGallery = selectedTemplate === 'gallery'
+      ? `<div class="hero-gallery">${galleryPhotos.map((src) => `<img src="${src}" alt="" />`).join('')}</div>${sampleNote}`
+      : '';
+    const inlineGallery = selectedTemplate !== 'gallery'
+      ? `<div class="photo-gallery${galleryPhotos.length > 5 ? ' carousel' : ''}">${galleryPhotos.map((src) => `<img src="${src}" alt="" />`).join('')}</div>${sampleNote}`
+      : '';
+
+    const customBlocksHtml = canUseBuilder && blocks.length
+      ? `<div class="custom-blocks">${blocks.map(renderOneBlockPreview).join('')}</div>`
+      : '';
+
+    const tagsHtml = `<div class="tags">
+      ${isPaidTier ? `<span class="badge tier-badge">${icon('check', 13)} Verified</span>` : ''}
+      ${business.categories.map((c) => `<span class="badge">${escapeHtml(c.name)}</span>`).join('')}
+    </div>`;
+
+    document.getElementById('preview-content').innerHTML = `
+      ${heroGallery}
+      <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">${escapeHtml(business.name)}</h1>
+      ${tagsHtml}
+      <p style="margin-top: 1.25rem;">${escapeHtml(business.description)}</p>
+      ${inlineGallery}
+      ${customBlocksHtml}
+      ${business.address ? `<p class="address">${escapeHtml(business.address)}</p>` : ''}
+      <div class="actions">
+        ${showClickableWebsite ? `<span class="btn btn-outline">${icon('pin')} Visit website</span>` : ''}
+        ${business.phone ? `<span class="btn btn-outline">${icon('phone')} ${escapeHtml(business.phone)}</span>` : ''}
+        <span class="btn btn-outline">${icon('pin')} View on Google Maps</span>
+      </div>
+      <div class="hours-section">
+        <h2 class="hours-heading">${icon('clock', 17)} Trading Hours</h2>
+        ${business.hours
+          ? `<p class="hours-text">${escapeHtml(business.hours)}</p>`
+          : '<p class="hours-text hours-unavailable">Trading hours not available</p>'}
+      </div>
+      <div class="listing-meta-links">
+        <span>${icon('flag', 13)} Report this listing</span>
+        <span>${icon('trash', 13)} Request data removal</span>
+      </div>
+    `;
+  }
+
+  function blockFieldsHtml(b) {
+    const title = (b.title || '').replace(/"/g, '&quot;');
+    const bodyEsc = (b.body || '');
+    if (b.type === 'divider') {
+      return '<p class="muted block-hint">Just a horizontal divider — no text needed.</p>';
+    }
+    const photoOptions = photos
+      .map((p) => `<option value="${p.r2_key}" ${b.imageKey === p.r2_key ? 'selected' : ''}>${p.r2_key.split('/').pop()}</option>`)
+      .join('');
+    const photoPicker = `
+      <select class="block-image">
+        <option value="">— Choose an uploaded photo —</option>
+        ${photoOptions}
+      </select>`;
+    if (b.type === 'photo') {
+      return `${photoPicker}
+        <input class="block-title" type="text" placeholder="Caption (optional)" maxlength="60" value="${title}" />`;
+    }
+    if (b.type === 'banner') {
+      return `${photoPicker}
+        <input class="block-title" type="text" placeholder="Headline" maxlength="60" value="${title}" />
+        <input class="block-body" type="text" placeholder="Short line under the headline (optional)" maxlength="200" value="${bodyEsc.replace(/"/g, '&quot;')}" />`;
+    }
+    if (b.type === 'side-image') {
+      return `${photoPicker}
+        <select class="block-side">
+          <option value="left" ${b.side !== 'right' ? 'selected' : ''}>Photo on the left</option>
+          <option value="right" ${b.side === 'right' ? 'selected' : ''}>Photo on the right</option>
+        </select>
+        <input class="block-title" type="text" placeholder="Section title" maxlength="60" value="${title}" />
+        <textarea class="block-body" rows="2" maxlength="800" placeholder="Section text">${bodyEsc}</textarea>`;
+    }
+    if (b.type === 'cta') {
+      return `
+        <input class="block-title" type="text" placeholder="Headline, e.g. Ready to book?" maxlength="60" value="${title}" />
+        <input class="block-body" type="text" placeholder="Button text, e.g. Get in touch" maxlength="800" value="${bodyEsc.replace(/"/g, '&quot;')}" />`;
+    }
+    if (b.type === 'testimonial') {
+      return `
+        <textarea class="block-body" rows="2" maxlength="800" placeholder="Quote">${bodyEsc}</textarea>
+        <input class="block-title" type="text" placeholder="Author name" maxlength="60" value="${title}" />`;
+    }
+    return `
+      <input class="block-title" type="text" placeholder="Section title" maxlength="60" value="${title}" />
+      <textarea class="block-body" rows="2" maxlength="800" placeholder="Section text">${bodyEsc}</textarea>`;
+  }
+
+  // Only banner/photo/side-image blocks carry a real photo an owner might
+  // want taller or shorter — text-only sections (story, testimonial, etc.)
+  // always size to their own text, so they get no resize handle at all.
+  function miniPreviewImg(b) {
+    const src = b.imageKey ? `/media/${b.imageKey}` : placeholderPhoto('No photo chosen');
+    return `<img src="${src}" alt="" />`;
+  }
+
+  function renderBlocks() {
+    const container = document.getElementById('blocks-grid');
+    if (blocksGrid) {
+      blocksGrid.destroy(false);
+      blocksGrid = null;
+    }
+
+    container.innerHTML = blocks
+      .map((b, i) => {
+        const resizable = SIZED_TYPES.has(b.type);
+        return `
+      <div class="grid-stack-item" data-i="${i}" gs-auto-position="true" gs-h="10" ${resizable ? '' : 'gs-no-resize="true"'}>
+        <div class="grid-stack-item-content block-row">
+          <div class="block-row-fixed">
+            <div class="block-row-head">
+              <span class="block-drag-handle" title="Drag to reorder">⠿</span>
+              <select class="block-type">
+                ${BLOCK_TYPE_OPTIONS.map(([val, label]) => `<option value="${val}" ${b.type === val ? 'selected' : ''}>${label}</option>`).join('')}
+              </select>
+              <button type="button" class="remove-block" title="Remove section" aria-label="Remove section">✕</button>
+            </div>
+            ${blockFieldsHtml(b)}
+          </div>
+          ${resizable ? `<div class="block-size-preview">${miniPreviewImg(b)}</div>` : ''}
+        </div>
+      </div>`;
+      })
+      .join('');
+
+    blocksGrid = GridStack.init(
+      {
+        column: 1,
+        float: false,
+        cellHeight: GRID_CELL_HEIGHT,
+        margin: GRID_MARGIN,
+        handle: '.block-drag-handle',
+        resizable: { handles: 's' },
+        disableOneColumnMode: true,
+      },
+      container
+    );
+
+    container.querySelectorAll('.grid-stack-item').forEach((item) => {
+      item.querySelector('.block-type').addEventListener('change', (e) => {
+        const idx = Number(item.dataset.i);
+        blocks[idx].type = e.target.value;
+        renderBlocks(); renderPreview(); scheduleAutosave();
       });
-      grid.appendChild(div);
-    }
-  }
-
-  async function initBasicView() {
-    document.getElementById('basic-view').hidden = false;
-    document.getElementById('back-link-basic').href = `/my-businesses/edit/?id=${businessId}`;
-    document.getElementById('business-name-hl-basic').textContent = business.name;
-    document.querySelectorAll('.upsell-link').forEach((a) => (a.href = `/my-businesses/upgrade/?id=${businessId}`));
-
-    if (tier >= 2) {
-      document.getElementById('photos-section').hidden = false;
-      await loadPhotosInto('photo-grid-basic', 'photos-cap-label');
-    } else {
-      document.getElementById('upsell-photos').hidden = false;
-    }
-
-    if (canChooseTemplate) {
-      document.getElementById('template-picker').hidden = false;
-      document.getElementById('design-actions-basic').hidden = false;
-      document.getElementById('design-status-basic').hidden = false;
-      document.querySelectorAll('.tpl-btn').forEach((btn) => {
-        if (btn.dataset.tpl === selectedTemplate) btn.classList.add('active');
-        btn.addEventListener('click', () => {
-          selectedTemplate = btn.dataset.tpl;
-          document.querySelectorAll('.tpl-btn').forEach((b) => b.classList.remove('active'));
-          btn.classList.add('active');
-          renderBasicPreview();
-          scheduleBasicAutosave();
-        });
+      item.querySelector('.block-title')?.addEventListener('input', (e) => { blocks[Number(item.dataset.i)].title = e.target.value; renderPreview(); scheduleAutosave(); });
+      item.querySelector('.block-body')?.addEventListener('input', (e) => { blocks[Number(item.dataset.i)].body = e.target.value; renderPreview(); scheduleAutosave(); });
+      item.querySelector('.block-image')?.addEventListener('change', (e) => {
+        const idx = Number(item.dataset.i);
+        blocks[idx].imageKey = e.target.value || undefined;
+        const img = item.querySelector('.block-size-preview img');
+        if (img) img.src = e.target.value ? `/media/${e.target.value}` : placeholderPhoto('No photo chosen');
+        renderPreview(); scheduleAutosave();
       });
-    } else {
-      document.getElementById('upsell-template').hidden = false;
-    }
+      item.querySelector('.block-side')?.addEventListener('change', (e) => { blocks[Number(item.dataset.i)].side = e.target.value; renderPreview(); scheduleAutosave(); });
+      item.querySelector('.remove-block').addEventListener('click', () => { blocks.splice(Number(item.dataset.i), 1); renderBlocks(); renderPreview(); scheduleAutosave(); });
+    });
 
-    if (!canUseBuilder) {
-      document.getElementById('upsell-builder').hidden = false;
-    }
+    // Give each row exactly the height it needs: a resizable row starts at
+    // its saved (or default) photo height, and can be dragged between a
+    // floor (fields still fit) and MAX_BLOCK_HEIGHT; a text-only row is
+    // measured and locked to its own content height so nothing clips or
+    // leaves dead space below it — the same overflow bug fixed once
+    // already for this grid's previous incarnation.
+    container.querySelectorAll('.grid-stack-item').forEach((item) => {
+      const idx = Number(item.dataset.i);
+      const b = blocks[idx];
+      const fixedH = item.querySelector('.block-row-fixed').scrollHeight;
+      if (SIZED_TYPES.has(b.type)) {
+        const photoH = b.heightPx || DEFAULT_BLOCK_HEIGHT[b.type] || 220;
+        const toRows = (px) => Math.ceil((fixedH + px + GRID_MARGIN * 3) / GRID_CELL_HEIGHT);
+        blocksGrid.update(item, { h: toRows(photoH), minH: toRows(MIN_BLOCK_HEIGHT), maxH: toRows(MAX_BLOCK_HEIGHT) });
+      } else {
+        blocksGrid.update(item, { h: Math.ceil((fixedH + GRID_MARGIN * 2) / GRID_CELL_HEIGHT) });
+      }
+    });
 
-    updateBasicStatus();
-    renderBasicPreview();
+    blocksGrid.on('change', () => {
+      const items = Array.from(container.querySelectorAll('.grid-stack-item')).sort(
+        (a, b) => (a.gridstackNode?.y ?? 0) - (b.gridstackNode?.y ?? 0)
+      );
+      items.forEach((item) => {
+        const b = blocks[Number(item.dataset.i)];
+        if (SIZED_TYPES.has(b.type)) {
+          const img = item.querySelector('.block-size-preview img');
+          if (img && img.clientHeight > 0) {
+            b.heightPx = Math.round(Math.min(MAX_BLOCK_HEIGHT, Math.max(MIN_BLOCK_HEIGHT, img.clientHeight)));
+          }
+        }
+      });
+      blocks = items.map((item) => blocks[Number(item.dataset.i)]);
+      items.forEach((item, newIndex) => { item.dataset.i = String(newIndex); });
+      renderPreview();
+      scheduleAutosave();
+    });
   }
 
-  let basicAutosaveTimer;
-  function scheduleBasicAutosave() {
-    hasUnpublishedChangesBasic = true;
-    updateBasicStatus();
-    window.clearTimeout(basicAutosaveTimer);
-    basicAutosaveTimer = window.setTimeout(doBasicAutosave, 900);
+  document.getElementById('add-block-btn').addEventListener('click', () => {
+    if (blocks.length >= 10) return;
+    blocks.push({ type: 'story', title: '', body: '' });
+    renderBlocks();
+    renderPreview();
+    scheduleAutosave();
+  });
+
+  ['primary', 'secondary', 'background'].forEach((key) => {
+    document.getElementById(`color-${key}`).addEventListener('input', (e) => {
+      pageColors[key] = e.target.value;
+      renderPreview();
+      scheduleAutosave();
+    });
+  });
+  document.querySelectorAll('.color-clear-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      delete pageColors[btn.dataset.key];
+      renderPreview();
+      scheduleAutosave();
+    });
+  });
+
+  let autosaveTimer;
+  function scheduleAutosave() {
+    hasUnpublishedChanges = true;
+    updateDesignStatus();
+    window.clearTimeout(autosaveTimer);
+    autosaveTimer = window.setTimeout(doAutosave, 900);
   }
-  async function doBasicAutosave() {
-    const status = document.getElementById('design-status-basic');
-    status.textContent = 'Saving…';
+
+  async function doAutosave() {
+    const designStatus = document.getElementById('design-status');
+    designStatus.textContent = 'Saving…';
     const res = await fetch('/api/business-design', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ businessId: Number(businessId), action: 'autosave', templateId: selectedTemplate }),
+      body: JSON.stringify({ businessId: Number(businessId), action: 'autosave', templateId: selectedTemplate, blocks, pageColors }),
     });
     const result = await res.json();
     if (result.ok) {
-      draftUpdatedAtBasic = result.draftUpdatedAt;
-      updateBasicStatus();
+      draftUpdatedAt = result.draftUpdatedAt;
     } else {
-      status.textContent = result.error || 'Could not save your draft.';
+      designStatus.textContent = result.error || 'Could not save your draft.';
+      return;
+    }
+    updateDesignStatus();
+  }
+
+  function updateDesignStatus() {
+    const designStatus = document.getElementById('design-status');
+    const publishBtn = document.getElementById('publish-btn');
+    const revertBtn = document.getElementById('revert-btn');
+    publishBtn.hidden = !hasUnpublishedChanges;
+    revertBtn.hidden = !hasUnpublishedChanges;
+    if (hasUnpublishedChanges) {
+      designStatus.textContent = draftUpdatedAt
+        ? `Draft saved ${new Date(draftUpdatedAt).toLocaleTimeString()} — not published yet.`
+        : 'Draft saved — not published yet.';
+    } else {
+      designStatus.textContent = 'Everything here is published and live.';
     }
   }
-  function updateBasicStatus() {
-    const status = document.getElementById('design-status-basic');
-    const publishBtn = document.getElementById('publish-btn-basic');
-    const revertBtn = document.getElementById('revert-btn-basic');
-    publishBtn.hidden = !hasUnpublishedChangesBasic;
-    revertBtn.hidden = !hasUnpublishedChangesBasic;
-    status.textContent = hasUnpublishedChangesBasic
-      ? (draftUpdatedAtBasic ? `Draft saved ${new Date(draftUpdatedAtBasic).toLocaleTimeString()} — not published yet.` : 'Draft saved — not published yet.')
-      : 'Everything here is published and live.';
-  }
-  document.getElementById('publish-btn-basic').addEventListener('click', async () => {
-    const status = document.getElementById('design-status-basic');
-    status.textContent = 'Publishing…';
+
+  document.getElementById('publish-btn').addEventListener('click', async () => {
+    const designStatus = document.getElementById('design-status');
+    designStatus.textContent = 'Publishing…';
     const res = await fetch('/api/business-design', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -361,14 +574,17 @@ import site from '../../site';
     const result = await res.json();
     if (result.ok) {
       liveTemplateId = selectedTemplate;
-      hasUnpublishedChangesBasic = false;
-      updateBasicStatus();
-      status.textContent = 'Published! Your live page will update shortly.';
+      liveBlocks = JSON.parse(JSON.stringify(blocks));
+      livePageColors = { ...pageColors };
+      hasUnpublishedChanges = false;
+      updateDesignStatus();
+      designStatus.textContent = 'Published! Your live page will update shortly.';
     } else {
-      status.textContent = result.error || 'Could not publish.';
+      designStatus.textContent = result.error || 'Could not publish.';
     }
   });
-  document.getElementById('revert-btn-basic').addEventListener('click', async () => {
+
+  document.getElementById('revert-btn').addEventListener('click', async () => {
     if (!window.confirm('Discard your unpublished changes and go back to what is currently live?')) return;
     await fetch('/api/business-design', {
       method: 'POST',
@@ -376,409 +592,137 @@ import site from '../../site';
       body: JSON.stringify({ businessId: Number(businessId), action: 'revert' }),
     });
     selectedTemplate = liveTemplateId;
-    hasUnpublishedChangesBasic = false;
-    draftUpdatedAtBasic = null;
+    blocks = JSON.parse(JSON.stringify(liveBlocks));
+    pageColors = { ...livePageColors };
+    hasUnpublishedChanges = false;
+    draftUpdatedAt = null;
     document.querySelectorAll('.tpl-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.tpl === selectedTemplate));
-    renderBasicPreview();
-    updateBasicStatus();
-  });
-  document.getElementById('photo-upload-form-basic').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const input = document.getElementById('photo-input-basic');
-    const status = document.getElementById('photo-status-basic');
-    if (!input.files?.[0]) return;
-    status.textContent = 'Uploading…';
-    const fd = new FormData();
-    fd.append('businessId', businessId);
-    fd.append('photo', input.files[0]);
-    const res = await fetch('/api/business-photos', { method: 'POST', body: fd });
-    const result = await res.json();
-    status.textContent = result.ok ? 'Uploaded.' : result.error || 'Could not upload.';
-    if (result.ok) { input.value = ''; await loadPhotosInto('photo-grid-basic', 'photos-cap-label'); renderBasicPreview(); }
-  });
-
-  // ===================== BUILDER (tier 4) =====================
-  // Real block HTML — this is what actually renders on the published page
-  // (via editor.getHtml()/getCss()), so it's written with the site's own
-  // look, not a synthetic "card". Colors reference --page-primary/
-  // --page-secondary/--page-bg (declared on the canvas :root with sensible
-  // defaults) so the Theme panel's page-wide colors genuinely reach every
-  // block instead of being scoped to one sub-wrapper.
-  const CANVAS_CSS = `
-    :root {
-      --page-primary: #2a5db0;
-      --page-secondary: #16233d;
-      --page-bg: #ffffff;
-      --page-muted: #5b6b85;
-    }
-    body { margin: 0; font-family: 'Nunito', system-ui, sans-serif; color: var(--page-secondary); background: var(--page-bg); }
-    .gjs-banner { position: relative; overflow: hidden; border-radius: 12px; min-height: 220px; display: flex; align-items: center; justify-content: center; text-align: center; }
-    .gjs-banner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
-    .gjs-banner-overlay { position: relative; z-index: 1; background: rgba(15,23,42,0.42); color: #fff; padding: 2.5rem 1.5rem; width: 100%; }
-    .gjs-banner-overlay h2 { margin: 0 0 0.5rem; font-size: 1.8rem; }
-    .gjs-banner-overlay p { margin: 0; font-size: 1.05rem; opacity: 0.92; }
-    .gjs-side { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
-    .gjs-side.reverse { flex-direction: row-reverse; }
-    .gjs-side img { flex: 1 1 260px; max-width: 100%; border-radius: 10px; object-fit: cover; height: 220px; }
-    .gjs-side-text { flex: 1 1 260px; }
-    .gjs-side-text h3 { margin: 0 0 0.5rem; color: var(--page-secondary); }
-    .gjs-side-text p { margin: 0; color: var(--page-muted); }
-    .gjs-gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
-    .gjs-gallery img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; }
-    .gjs-testimonial { text-align: center; padding: 1.5rem; font-style: italic; }
-    .gjs-testimonial p.quote { font-size: 1.15rem; color: var(--page-secondary); margin: 0 0 0.5rem; }
-    .gjs-testimonial p.author { font-style: normal; font-weight: 600; color: var(--page-muted); margin: 0; }
-    .gjs-cta { text-align: center; padding: 2rem 1rem; }
-    .gjs-cta h3 { margin: 0 0 1rem; color: var(--page-secondary); }
-    .gjs-cta-btn { display: inline-block; background: var(--page-primary); color: #fff; padding: 0.75rem 1.75rem; border-radius: 999px; font-weight: 700; text-decoration: none; }
-    .gjs-text-section h3 { color: var(--page-secondary); margin: 0 0 0.5rem; }
-    .gjs-text-section p { color: var(--page-muted); margin: 0; white-space: pre-line; }
-    .gjs-divider { border: none; border-top: 1px solid #d7dde8; margin: 0.5rem 0; }
-    .gjs-photo img { max-width: 100%; border-radius: 10px; }
-    .gjs-starter-name { font-size: 2rem; color: var(--page-secondary); margin: 0 0 0.5rem; }
-    .gjs-starter-desc { color: var(--page-muted); font-size: 1.05rem; }
-    .gjs-gallery-starter { grid-template-columns: repeat(3, 1fr); margin-bottom: 1rem; }
-    .gjs-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.6rem 0; }
-    .gjs-badge { display: inline-flex; align-items: center; font-size: 0.8rem; color: var(--page-primary); background: rgba(42, 93, 176, 0.1); padding: 0.2rem 0.7rem; border-radius: 999px; }
-    .gjs-badge-verified { background: rgba(26, 143, 94, 0.12); color: #1a8f5e; }
-    .gjs-address { color: var(--page-muted); margin: 0.5rem 0; }
-    .gjs-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1rem 0; }
-    .gjs-action-btn { display: inline-block; padding: 0.55rem 1.1rem; border: 1px solid #d7dde8; border-radius: 999px; color: var(--page-secondary); font-size: 0.9rem; }
-    .gjs-hours { margin: 1rem 0; padding: 1rem; border: 1px solid #d7dde8; border-radius: 10px; }
-    .gjs-hours h3 { margin: 0 0 0.4rem; color: var(--page-secondary); font-size: 1rem; }
-    .gjs-hours p { margin: 0; color: var(--page-muted); white-space: pre-line; }
-  `;
-
-  function blockHtml(name) {
-    switch (name) {
-      case 'banner':
-        return `<div class="gjs-banner"><img src="${placeholderImage('Banner photo')}" /><div class="gjs-banner-overlay"><h2>Your headline here</h2><p>A short line about your business</p></div></div>`;
-      case 'side-left':
-        return `<div class="gjs-side"><img src="${placeholderImage('Photo')}" /><div class="gjs-side-text"><h3>Section heading</h3><p>Tell visitors about this — what makes it worth knowing.</p></div></div>`;
-      case 'side-right':
-        return `<div class="gjs-side reverse"><img src="${placeholderImage('Photo')}" /><div class="gjs-side-text"><h3>Section heading</h3><p>Tell visitors about this — what makes it worth knowing.</p></div></div>`;
-      case 'photo':
-        return `<div class="gjs-photo"><img src="${placeholderImage('Photo')}" /></div>`;
-      case 'gallery':
-        return `<div class="gjs-gallery">${[1, 2, 3].map((i) => `<img src="${placeholderImage('Photo ' + i)}" />`).join('')}</div>`;
-      case 'testimonial':
-        return `<div class="gjs-testimonial"><p class="quote">"Excellent service, highly recommend."</p><p class="author">— A happy customer</p></div>`;
-      case 'cta':
-        return `<div class="gjs-cta"><h3>Ready to get in touch?</h3><a href="#" class="gjs-cta-btn">Contact us</a></div>`;
-      case 'text':
-        return `<div class="gjs-text-section"><h3>Section title</h3><p>Write something here.</p></div>`;
-      case 'divider':
-        return `<hr class="gjs-divider" />`;
-      default:
-        return '';
-    }
-  }
-
-  // A real starting point — the page as it actually looks today (photos,
-  // name, categories, description, address, contact buttons, hours) —
-  // rather than a blank canvas or just the name/description. Every piece
-  // is a real, separate, movable/resizable/editable element from the
-  // start, built around instead of built from scratch.
-  function starterProject() {
-    const isPaidTier = tier >= 1;
-    const showClickableWebsite = isPaidTier && !!business.website;
-    const usingPlaceholders = photos.length === 0;
-    const galleryPhotos = usingPlaceholders
-      ? Array.from({ length: 3 }, (_, i) => placeholderImage(`Sample photo ${i + 1}`))
-      : photos.map((p) => `/media/${p.r2_key}`);
-
-    const galleryHtml = `<div class="gjs-gallery gjs-gallery-starter">${galleryPhotos.map((src) => `<img src="${src}" />`).join('')}</div>`;
-
-    const tagsHtml = `<div class="gjs-tags">
-      ${isPaidTier ? '<span class="gjs-badge gjs-badge-verified">✓ Verified</span>' : ''}
-      ${business.categories.map((c) => `<span class="gjs-badge">${escapeHtml(c.name)}</span>`).join('')}
-    </div>`;
-
-    const actionsHtml = `<div class="gjs-actions">
-      ${showClickableWebsite ? '<span class="gjs-action-btn">Visit website</span>' : ''}
-      ${business.phone ? `<span class="gjs-action-btn">${escapeHtml(business.phone)}</span>` : ''}
-      <span class="gjs-action-btn">View on Google Maps</span>
-    </div>`;
-
-    const hoursHtml = `<div class="gjs-hours">
-      <h3>Trading Hours</h3>
-      <p>${business.hours ? escapeHtml(business.hours) : 'Trading hours not available'}</p>
-    </div>`;
-
-    return `
-      ${galleryHtml}
-      <div class="gjs-text-section gjs-starter-heading"><h2 class="gjs-starter-name">${escapeHtml(business.name)}</h2>${tagsHtml}<p class="gjs-starter-desc">${escapeHtml(business.description)}</p></div>
-      ${business.address ? `<p class="gjs-address">${escapeHtml(business.address)}</p>` : ''}
-      ${actionsHtml}
-      ${hoursHtml}
-    `;
-  }
-
-  function applyThemeToCanvas() {
-    if (!editor) return;
-    const doc = editor.Canvas.getDocument();
-    if (!doc) return;
-    const decls = [];
-    if (theme.primary) decls.push(`--page-primary:${theme.primary}`);
-    if (theme.secondary) decls.push(`--page-secondary:${theme.secondary}`);
-    if (theme.background) decls.push(`--page-bg:${theme.background}`);
-    doc.documentElement.style.cssText = decls.join(';');
-  }
-
-  function initBuilderChrome() {
-    document.getElementById('builder-view').hidden = false;
-    document.getElementById('back-link-builder').href = `/my-businesses/edit/?id=${businessId}`;
-    document.getElementById('business-name-hl-builder').textContent = business.name;
-
-    document.getElementById('builder-help-btn').addEventListener('click', () => {
-      document.getElementById('builder-help').hidden = false;
-    });
-    document.getElementById('builder-help-close').addEventListener('click', () => {
-      document.getElementById('builder-help').hidden = true;
-    });
-    document.getElementById('builder-theme-close').addEventListener('click', () => {
-      document.getElementById('builder-theme').hidden = true;
-    });
     ['primary', 'secondary', 'background'].forEach((key) => {
-      document.getElementById(`theme-${key}`).addEventListener('input', (e) => {
-        theme[key] = e.target.value;
-        applyThemeToCanvas();
-        scheduleBuilderAutosave();
-      });
+      document.getElementById(`color-${key}`).value = pageColors[key] || (key === 'background' ? '#ffffff' : key === 'secondary' ? '#0f172a' : '#2563eb');
     });
-    document.querySelectorAll('#builder-theme .color-clear-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        delete theme[btn.dataset.key];
-        applyThemeToCanvas();
-        scheduleBuilderAutosave();
-      });
-    });
+    renderBlocks();
+    renderPreview();
+    updateDesignStatus();
+  });
 
-    document.getElementById('builder-publish-btn').addEventListener('click', doBuilderPublish);
-    document.getElementById('builder-revert-btn').addEventListener('click', doBuilderRevert);
-
-    // First time anyone opens the builder, show the instructions
-    // automatically — after that, it's one click away via "How this works".
-    let seenHelp = false;
-    try { seenHelp = window.localStorage.getItem(`builderHelpSeen:${businessId}`) === 'true'; } catch {}
-    if (!seenHelp) {
-      document.getElementById('builder-help').hidden = false;
-      try { window.localStorage.setItem(`builderHelpSeen:${businessId}`, 'true'); } catch {}
+  async function init() {
+    if (!businessId) {
+      loading.textContent = 'No business specified.';
+      return;
     }
-  }
+    document.getElementById('back-link').href = `/my-businesses/edit/?id=${businessId}`;
+    document.querySelectorAll('.upsell-link').forEach((a) => (a.href = `/my-businesses/upgrade/?id=${businessId}`));
 
-  function initGrapesJs() {
-    editor = grapesjs.init({
-      container: '#gjs-editor',
-      height: '76vh',
-      fromElement: false,
-      storageManager: false,
-      deviceManager: {
-        devices: [
-          { id: 'desktop', name: 'Desktop', width: '' },
-          { id: 'tablet', name: 'Tablet', width: '768px', widthMedia: '992px' },
-          { id: 'mobile', name: 'Mobile', width: '375px', widthMedia: '575px' },
-        ],
-      },
-      styleManager: {
-        sectors: [
-          {
-            name: 'Background & text',
-            open: true,
-            properties: [
-              { property: 'background-color', name: 'Background', type: 'color' },
-              { property: 'color', name: 'Text color', type: 'color' },
-            ],
-          },
-          {
-            name: 'Text style',
-            open: false,
-            properties: [
-              {
-                property: 'font-size', name: 'Size', type: 'select',
-                options: [{ value: '0.85rem', name: 'Small' }, { value: '1rem', name: 'Normal' }, { value: '1.4rem', name: 'Large' }, { value: '2.2rem', name: 'Extra large' }],
-              },
-              {
-                property: 'text-align', name: 'Align', type: 'radio',
-                options: [{ value: 'left', name: 'Left' }, { value: 'center', name: 'Center' }, { value: 'right', name: 'Right' }],
-              },
-              {
-                property: 'font-weight', name: 'Weight', type: 'select',
-                options: [{ value: '400', name: 'Normal' }, { value: '700', name: 'Bold' }],
-              },
-            ],
-          },
-          {
-            name: 'Spacing',
-            open: false,
-            properties: [
-              {
-                property: 'padding', name: 'Padding', type: 'select',
-                options: [{ value: '0.5rem', name: 'Compact' }, { value: '1.5rem', name: 'Comfortable' }, { value: '3rem', name: 'Spacious' }],
-              },
-            ],
-          },
-        ],
-      },
-      blockManager: {
-        blocks: [
-          { id: 'banner', label: 'Banner', category: 'Sections', content: blockHtml('banner') },
-          { id: 'side-left', label: 'Image + text', category: 'Sections', content: blockHtml('side-left') },
-          { id: 'side-right', label: 'Text + image', category: 'Sections', content: blockHtml('side-right') },
-          { id: 'gallery', label: 'Photo gallery', category: 'Sections', content: blockHtml('gallery') },
-          { id: 'testimonial', label: 'Testimonial', category: 'Sections', content: blockHtml('testimonial') },
-          { id: 'cta', label: 'Call to action', category: 'Sections', content: blockHtml('cta') },
-          { id: 'text', label: 'Text section', category: 'Sections', content: blockHtml('text') },
-          { id: 'divider', label: 'Divider', category: 'Sections', content: blockHtml('divider') },
-          { id: 'photo', label: 'Single photo', category: 'Sections', content: blockHtml('photo') },
-        ],
-      },
-    });
+    const [updateRes, designRes] = await Promise.all([
+      fetch(`/api/update-business?id=${encodeURIComponent(businessId)}`),
+      fetch(`/api/business-design?businessId=${encodeURIComponent(businessId)}`),
+    ]);
+    if (updateRes.status === 401 || designRes.status === 401) {
+      window.location.href = '/login/';
+      return;
+    }
+    const data = await updateRes.json();
+    const design = await designRes.json();
+    if (!data.ok || !design.ok) {
+      loading.textContent = data.error || design.error || 'Could not load this business.';
+      return;
+    }
+    loading.hidden = true;
+    content.hidden = false;
+    document.getElementById('content2').hidden = false;
+    document.getElementById('business-name-hl').textContent = data.business.name;
 
-    editor.on('load', () => {
-      const doc = editor.Canvas.getDocument();
-      const style = doc.createElement('style');
-      style.textContent = CANVAS_CSS;
-      doc.head.appendChild(style);
-      applyThemeToCanvas();
+    tier = design.tier;
+    canChooseTemplate = design.canChooseTemplate;
+    canUseBuilder = design.canUseBuilder;
+    selectedTemplate = design.templateId ?? 'classic';
+    blocks = Array.isArray(design.blocks) ? design.blocks : [];
+    liveTemplateId = design.liveTemplateId ?? 'classic';
+    liveBlocks = Array.isArray(design.liveBlocks) ? design.liveBlocks : [];
+    pageColors = design.pageColors && typeof design.pageColors === 'object' ? { ...design.pageColors } : {};
+    livePageColors = design.livePageColors && typeof design.livePageColors === 'object' ? { ...design.livePageColors } : {};
+    hasUnpublishedChanges = !!design.hasUnpublishedChanges;
+    draftUpdatedAt = design.draftUpdatedAt;
 
-      if (initialDesignJson) {
-        editor.loadProjectData(initialDesignJson);
-      } else {
-        editor.setComponents(starterProject());
-      }
-      editor.on('update', () => scheduleBuilderAutosave());
-    });
-  }
+    business = {
+      name: data.business.name,
+      address: data.business.address ?? '',
+      phone: data.business.phone ?? '',
+      website: data.business.website ?? '',
+      description: data.business.description ?? '',
+      hours: data.business.hours ?? '',
+      categories: Array.isArray(data.business.categories) ? data.business.categories : [],
+      suburb: data.business.suburb ?? null,
+    };
+    renderChrome();
 
-  let builderAutosaveTimer;
-  function scheduleBuilderAutosave() {
-    hasUnpublishedChangesBuilder = true;
-    updateBuilderStatus();
-    window.clearTimeout(builderAutosaveTimer);
-    builderAutosaveTimer = window.setTimeout(doBuilderAutosave, 1200);
-  }
-  async function doBuilderAutosave() {
-    const status = document.getElementById('builder-status');
-    status.textContent = 'Saving…';
-    const projectData = editor.getProjectData();
-    projectData.__theme = theme;
-    const res = await fetch('/api/business-design', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ businessId: Number(businessId), action: 'autosave', pageDesign: projectData }),
-    });
-    const result = await res.json();
-    if (result.ok) {
-      draftUpdatedAtBuilder = result.draftUpdatedAt;
-      updateBuilderStatus();
+    if (tier >= 2) {
+      document.getElementById('photos-section').hidden = false;
+      await loadPhotos();
     } else {
-      status.textContent = result.error || 'Could not save your draft.';
+      document.getElementById('upsell-photos').hidden = false;
     }
-  }
-  function updateBuilderStatus() {
-    const status = document.getElementById('builder-status');
-    document.getElementById('builder-publish-btn').hidden = !hasUnpublishedChangesBuilder;
-    document.getElementById('builder-revert-btn').hidden = !hasUnpublishedChangesBuilder;
-    status.textContent = hasUnpublishedChangesBuilder
-      ? (draftUpdatedAtBuilder ? `Draft saved ${new Date(draftUpdatedAtBuilder).toLocaleTimeString()} — not published yet.` : 'Draft saved — not published yet.')
-      : 'Everything here is published and live.';
-  }
-  async function doBuilderPublish() {
-    const status = document.getElementById('builder-status');
-    status.textContent = 'Publishing…';
-    const projectData = editor.getProjectData();
-    projectData.__theme = theme;
-    const res = await fetch('/api/business-design', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        businessId: Number(businessId),
-        action: 'publish',
-        pageDesign: projectData,
-        pageHtml: editor.getHtml(),
-        pageCss: editor.getCss(),
-      }),
-    });
-    const result = await res.json();
-    if (result.ok) {
-      liveTheme = { ...theme };
-      publishedDesignJson = projectData;
-      hasUnpublishedChangesBuilder = false;
-      updateBuilderStatus();
-      status.textContent = 'Published! Your live page will update shortly.';
+
+    if (canChooseTemplate) {
+      document.getElementById('template-picker').hidden = false;
+      document.querySelectorAll('.tpl-btn').forEach((btn) => {
+        if (btn.dataset.tpl === selectedTemplate) btn.classList.add('active');
+        btn.addEventListener('click', () => {
+          selectedTemplate = btn.dataset.tpl;
+          document.querySelectorAll('.tpl-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          renderPreview();
+          scheduleAutosave();
+        });
+      });
     } else {
-      status.textContent = result.error || 'Could not publish.';
+      document.getElementById('upsell-template').hidden = false;
     }
-  }
-  const THEME_DEFAULTS = { primary: '#2a5db0', secondary: '#16233d', background: '#ffffff' };
-  async function doBuilderRevert() {
-    if (!window.confirm('Discard your unpublished changes and go back to what is currently live?')) return;
-    await fetch('/api/business-design', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ businessId: Number(businessId), action: 'revert' }),
-    });
-    theme = { ...liveTheme };
-    ['primary', 'secondary', 'background'].forEach((key) => {
-      document.getElementById(`theme-${key}`).value = theme[key] || THEME_DEFAULTS[key];
-    });
-    if (publishedDesignJson) editor.loadProjectData(publishedDesignJson);
-    else editor.setComponents(starterProject());
-    applyThemeToCanvas();
-    hasUnpublishedChangesBuilder = false;
-    draftUpdatedAtBuilder = null;
-    updateBuilderStatus();
-  }
 
-  function refreshAssetManager() {
-    if (!editor) return;
-    const am = editor.AssetManager;
-    am.clear();
-    am.add(photos.map((p) => ({ type: 'image', src: `/media/${p.r2_key}` })));
-  }
-
-  document.getElementById('photo-upload-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const input = document.getElementById('photo-input');
-    const status = document.getElementById('photo-status');
-    if (!input.files?.[0]) return;
-    status.textContent = 'Uploading…';
-    const fd = new FormData();
-    fd.append('businessId', businessId);
-    fd.append('photo', input.files[0]);
-    const res = await fetch('/api/business-photos', { method: 'POST', body: fd });
-    const result = await res.json();
-    status.textContent = result.ok ? 'Uploaded — now double-click an image block to use it.' : result.error || 'Could not upload.';
-    if (result.ok) {
-      input.value = '';
-      await loadPhotosInto('photo-grid', null);
-      refreshAssetManager();
+    if (canUseBuilder) {
+      document.getElementById('design-actions').hidden = false;
+      document.getElementById('design-status').hidden = false;
+      document.getElementById('page-colors').hidden = false;
+      ['primary', 'secondary', 'background'].forEach((key) => {
+        if (pageColors[key]) document.getElementById(`color-${key}`).value = pageColors[key];
+      });
+      document.getElementById('block-editor').hidden = false;
+      renderBlocks();
+    } else {
+      document.getElementById('upsell-blocks').hidden = false;
     }
-  });
 
-  async function initBuilderView(design) {
-    // pageDesign is draft-seeded-from-live (it's what the editor should
-    // load right now); livePageDesign is the actual last-published project,
-    // kept separately so "Revert to published" restores the real thing
-    // instead of whatever the current draft happens to hold.
-    theme = design.pageDesign && design.pageDesign.__theme ? { ...design.pageDesign.__theme } : {};
-    liveTheme = design.livePageDesign && design.livePageDesign.__theme ? { ...design.livePageDesign.__theme } : {};
-    initialDesignJson = design.pageDesign || null;
-    publishedDesignJson = design.livePageDesign || null;
-    hasUnpublishedChangesBuilder = !!design.hasUnpublishedChanges;
-    draftUpdatedAtBuilder = design.draftUpdatedAt;
-
-    initBuilderChrome();
-    ['primary', 'secondary', 'background'].forEach((key) => {
-      if (theme[key]) document.getElementById(`theme-${key}`).value = theme[key];
-    });
-    await loadPhotosInto('photo-grid', null);
-    initGrapesJs();
-    updateBuilderStatus();
+    updateDesignStatus();
+    renderPreview();
   }
 
-  // ===================== Photo modal (shared) =====================
+  async function loadPhotos() {
+    const grid = document.getElementById('photo-grid');
+    const res = await fetch(`/api/business-photos?businessId=${encodeURIComponent(businessId)}`);
+    const data = await res.json();
+    if (!data.ok) return;
+    photos = data.photos;
+    document.getElementById('photos-cap-label').textContent = `${data.photos.length} of ${data.cap} photos used`;
+    grid.innerHTML = '';
+    for (const photo of data.photos) {
+      const div = document.createElement('div');
+      div.className = 'photo-thumb';
+      div.innerHTML = `<img src="/media/${photo.r2_key}" alt="Uploaded photo — click to view full size" /><button type="button" data-id="${photo.id}">Remove</button>`;
+      div.querySelector('img').addEventListener('click', () => openPhotoModal(`/media/${photo.r2_key}`));
+      div.querySelector('button').addEventListener('click', async (e) => {
+        await fetch(`/api/business-photos?photoId=${e.target.getAttribute('data-id')}`, { method: 'DELETE' });
+        await loadPhotos();
+        renderPreview();
+        if (canUseBuilder) renderBlocks();
+      });
+      grid.appendChild(div);
+    }
+    renderPreview();
+  }
+
+  // Clicking an uploaded photo's thumbnail opens it full-size in a modal,
+  // instead of the thumbnail growing/whatever a plain <img> would otherwise
+  // do — the customize page itself never displays the full-resolution image.
   const photoModal = document.getElementById('photo-modal');
   const photoModalImg = document.getElementById('photo-modal-img');
   function openPhotoModal(src) {
@@ -795,134 +739,644 @@ import site from '../../site';
     if (e.key === 'Escape' && !photoModal.hidden) closePhotoModal();
   });
 
-  // ===================== Boot =====================
-  async function init() {
-    if (!businessId) {
-      loading.textContent = 'No business specified.';
-      return;
+  document.getElementById('photo-upload-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('photo-input');
+    const photoStatus = document.getElementById('photo-status');
+    if (!input.files?.[0]) return;
+    photoStatus.textContent = 'Uploading…';
+    const fd = new FormData();
+    fd.append('businessId', businessId);
+    fd.append('photo', input.files[0]);
+    const res = await fetch('/api/business-photos', { method: 'POST', body: fd });
+    const result = await res.json();
+    photoStatus.textContent = result.ok ? 'Uploaded.' : result.error || 'Could not upload.';
+    if (result.ok) {
+      input.value = '';
+      await loadPhotos();
+      if (canUseBuilder) renderBlocks();
     }
-    const [updateRes, designRes] = await Promise.all([
-      fetch(`/api/update-business?id=${encodeURIComponent(businessId)}`),
-      fetch(`/api/business-design?businessId=${encodeURIComponent(businessId)}`),
-    ]);
-    if (updateRes.status === 401 || designRes.status === 401) {
-      window.location.href = '/login/';
-      return;
-    }
-    const data = await updateRes.json();
-    const design = await designRes.json();
-    if (!data.ok || !design.ok) {
-      loading.textContent = data.error || design.error || 'Could not load this business.';
-      return;
-    }
-    loading.hidden = true;
-
-    business = {
-      name: data.business.name,
-      address: data.business.address ?? '',
-      phone: data.business.phone ?? '',
-      website: data.business.website ?? '',
-      description: data.business.description ?? '',
-      hours: data.business.hours ?? '',
-      categories: Array.isArray(data.business.categories) ? data.business.categories : [],
-      suburb: data.business.suburb ?? null,
-    };
-    tier = design.tier;
-    canChooseTemplate = design.canChooseTemplate;
-    canUseBuilder = design.canUseBuilder;
-    selectedTemplate = design.templateId ?? 'classic';
-    liveTemplateId = design.liveTemplateId ?? 'classic';
-    hasUnpublishedChangesBasic = !!design.hasUnpublishedChanges;
-    draftUpdatedAtBasic = design.draftUpdatedAt;
-
-    if (canUseBuilder) {
-      await initBuilderView(design);
-    } else {
-      await initBasicView();
-    }
-  }
+  });
 
   init();
 </script>
 
 <style>
-  .back-link { color: var(--accent); font-weight: 600; font-size: 0.88rem; text-decoration: none; }
-  .back-link:hover { text-decoration: underline; }
-  h1 { margin: 1rem 0 1.5rem; font-size: 1.5rem; color: var(--navy); }
-  h2 { font-size: 1.05rem; color: var(--navy); margin: 0 0 0.5rem; }
-  .muted { color: var(--text-muted); font-size: 0.88rem; }
+  .back-link {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+  }
+  .back-link:hover {
+    text-decoration: underline;
+  }
+  h1 {
+    margin: 1rem 0 1.5rem;
+    font-size: 1.5rem;
+    color: var(--navy);
+  }
+  h2 {
+    font-size: 1.05rem;
+    color: var(--navy);
+    margin: 0 0 0.5rem;
+  }
+  .preview-panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    overflow: hidden;
+    background: var(--bg-card);
+  }
+  .preview-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--bg-subtle);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .preview-live-dot {
+    color: #1a8f5e;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .preview-frame {
+    max-height: 720px;
+    overflow-y: auto;
+  }
+  .preview-note {
+    margin: 0;
+    padding: 0.6rem 1rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+  .upsell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    border: 1px dashed var(--border);
+    margin-bottom: 1.5rem;
+  }
+  /* `.upsell` and `[hidden]` have equal specificity, and this rule is
+     declared later, so without this override `display: flex` above wins
+     and the hidden attribute is silently ignored — exactly what was
+     showing every upsell notice at once regardless of tier. */
+  .upsell[hidden] {
+    display: none;
+  }
+  .upsell p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  .upsell-link {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .upsell-link:hover {
+    text-decoration: underline;
+  }
+  #photos-section, #template-picker, #page-colors, #block-editor {
+    margin-bottom: 2rem;
+  }
+  .muted {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+  .option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.6rem;
+  }
+  .tpl-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+  }
+  .tpl-btn span {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+  .tpl-btn.active {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.08);
+  }
+  .color-picker-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: 0.75rem;
+  }
+  .color-picker-row label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .color-picker-row input[type='color'] {
+    width: 2.2rem;
+    height: 2.2rem;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: none;
+    cursor: pointer;
+  }
+  .color-clear-btn {
+    font-size: 0.75rem;
+    font-weight: 400;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--text-muted);
+  }
+  #blocks-grid.grid-stack {
+    margin-bottom: 0.75rem;
+  }
+  .block-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .block-row-fixed {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 0 0 auto;
+  }
+  .block-row select, .block-row input, .block-row textarea {
+    font: inherit;
+    padding: 0.45rem 0.6rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    color: var(--text);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .block-row-head {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .block-row-head select {
+    flex: 1 1 auto;
+  }
+  .block-drag-handle, .remove-block {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+  .block-drag-handle {
+    cursor: grab;
+    user-select: none;
+  }
+  .block-drag-handle:active {
+    cursor: grabbing;
+  }
+  .remove-block {
+    cursor: pointer;
+  }
+  .block-hint {
+    margin: 0;
+  }
+  .block-size-preview {
+    flex: 1 1 auto;
+    min-height: 40px;
+    overflow: hidden;
+    border-radius: var(--radius);
+    cursor: ns-resize;
+  }
+  .block-size-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+  }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+  }
+  .photo-thumb {
+    position: relative;
+  }
+  .photo-thumb img {
+    width: 100%;
+    height: 90px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    cursor: zoom-in;
+  }
+  .photo-thumb button {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  #photo-upload-form {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  #design-actions {
+    display: flex;
+    gap: 0.6rem;
+  }
+  #design-actions[hidden] {
+    display: none;
+  }
+  #publish-btn {
+    border: none;
+    cursor: pointer;
+  }
+  #revert-btn {
+    cursor: pointer;
+  }
+  #design-status {
+    margin-top: 0.6rem;
+  }
+  /* Clicking a thumbnail opens the real photo here, full-size — the
+     customize page itself never displays anything but small cropped
+     thumbnails, however large the uploaded original is. */
+  .photo-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .photo-modal[hidden] {
+    display: none;
+  }
+  .photo-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+  }
+  .photo-modal-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+  .photo-modal-content img {
+    display: block;
+    max-width: 90vw;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    border-radius: var(--radius);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  }
+  .photo-modal-close {
+    position: absolute;
+    top: -0.9rem;
+    right: -0.9rem;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 999px;
+    border: none;
+    background: var(--bg-card);
+    color: var(--text);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
 
-  /* ---------- Basic view (tier 2-3) ---------- */
-  .preview-panel { border: 1px solid var(--border); border-radius: var(--radius-lg, 16px); overflow: hidden; background: var(--bg-card); }
-  .preview-head { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: var(--bg-subtle); font-size: 0.85rem; color: var(--text-muted); border-bottom: 1px solid var(--border); }
-  .preview-live-dot { color: #1a8f5e; font-size: 0.78rem; font-weight: 600; white-space: nowrap; }
-  .preview-frame { max-height: 640px; overflow-y: auto; }
-  .upsell { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; padding: 1rem 1.1rem; border-radius: var(--radius); background: var(--bg-subtle); border: 1px dashed var(--border); margin-bottom: 1.5rem; }
-  .upsell[hidden] { display: none; }
-  .upsell p { margin: 0; font-size: 0.9rem; }
-  .upsell-link { color: var(--accent); font-weight: 700; font-size: 0.88rem; text-decoration: none; white-space: nowrap; }
-  .upsell-link:hover { text-decoration: underline; }
-  #photos-section, #template-picker { margin-bottom: 2rem; }
-  .option-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.6rem; }
-  .tpl-btn { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card); cursor: pointer; font: inherit; text-align: left; }
-  .tpl-btn span { color: var(--text-muted); font-size: 0.82rem; }
-  .tpl-btn.active { border-color: var(--accent); background: rgba(var(--accent-rgb), 0.08); }
-  #design-actions-basic { display: flex; gap: 0.6rem; }
-  #design-actions-basic[hidden] { display: none; }
-  #publish-btn-basic { border: none; cursor: pointer; }
-  #revert-btn-basic { cursor: pointer; }
-  #design-status-basic { margin-top: 0.6rem; }
-
-  /* live preview body — copied verbatim from src/pages/business/[slug].astro */
-  .preview-body :global(.tags) { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-  .preview-body :global(.badge) { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.78rem; color: var(--accent); background: rgba(var(--accent-rgb), 0.1); padding: 0.2rem 0.6rem; border-radius: 999px; text-decoration: none; }
-  .preview-body :global(.address) { color: var(--text-muted); margin: 0.5rem 0 0; }
-  .preview-body :global(.tier-badge) { background: rgba(26, 143, 94, 0.12); color: #1a8f5e; }
-  .preview-body :global(.photo-gallery) { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.5rem; margin-top: 1.25rem; }
-  .preview-body :global(.photo-gallery.carousel) { grid-auto-flow: column; grid-auto-columns: minmax(160px, 220px); grid-template-columns: none; overflow-x: auto; }
-  .preview-body :global(.photo-gallery img) { width: 100%; height: 130px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border); }
-  .preview-body :global(.hero-gallery) { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(180px, 1fr); gap: 0.5rem; overflow-x: auto; margin-bottom: 0.5rem; }
-  .preview-body :global(.hero-gallery img) { width: 100%; height: 180px; object-fit: cover; border-radius: var(--radius-lg, 16px); }
-  .preview-body :global(.sample-note) { margin: 0 0 1rem; font-size: 0.78rem; color: var(--text-muted); font-style: italic; }
-  .preview-body :global(.actions) { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.5rem; }
-  .preview-body :global(.hours-section) { margin-top: 1.5rem; padding: 0.9rem 1rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card); }
-  .preview-body :global(.hours-heading) { display: flex; align-items: center; gap: 0.4rem; margin: 0; font-size: 0.95rem; color: var(--navy); }
-  .preview-body :global(.hours-text) { margin: 0.5rem 0 0; font-size: 0.9rem; color: var(--text); white-space: pre-line; }
-  .preview-body :global(.hours-unavailable) { color: var(--text-muted); font-style: italic; }
-
-  /* ---------- Builder (tier 4) ---------- */
-  .builder-topbar { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border); background: var(--bg-card); flex-wrap: wrap; }
-  .builder-title { margin: 0; font-size: 1.05rem; flex: 1; min-width: 160px; }
-  .builder-topbar-actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
-  #builder-status { font-size: 0.82rem; }
-  #builder-publish-btn, #builder-revert-btn, #builder-help-btn { cursor: pointer; }
-  #builder-publish-btn { border: none; }
-
-  .builder-help, .builder-theme { padding: 1.25rem 1.5rem; background: var(--accent-soft, var(--bg-subtle)); border-bottom: 1px solid var(--border); }
-  .builder-help h2, .builder-theme h2 { margin-top: 0; }
-  .builder-help ol { margin: 0 0 1rem; padding-left: 1.3rem; }
-  .builder-help li { margin-bottom: 0.5rem; max-width: 62ch; }
-  .builder-help button, .builder-theme button { cursor: pointer; }
-
-  .color-picker-row { display: flex; flex-wrap: wrap; gap: 1.25rem; margin: 1rem 0; }
-  .color-picker-row label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.88rem; font-weight: 600; color: var(--text); }
-  .color-picker-row input[type='color'] { width: 2.2rem; height: 2.2rem; padding: 0; border: 1px solid var(--border); border-radius: var(--radius); background: none; cursor: pointer; }
-  .color-clear-btn { font-size: 0.75rem; font-weight: 400; padding: 0.25rem 0.5rem; border: 1px solid var(--border); background: var(--bg-card); border-radius: var(--radius); cursor: pointer; color: var(--text-muted); }
-
-  #gjs-editor { border-bottom: 1px solid var(--border); }
-
-  .builder-photos-panel { padding: 1.25rem 1.5rem 2.5rem; max-width: 900px; }
-  .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.5rem; margin: 0.75rem 0; }
-  .photo-thumb { position: relative; }
-  .photo-thumb img { width: 100%; height: 90px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border); cursor: zoom-in; }
-  .photo-thumb button { width: 100%; margin-top: 0.25rem; font-size: 0.75rem; border: 1px solid var(--border); background: var(--bg-card); border-radius: var(--radius); cursor: pointer; }
-  #photo-upload-form { display: flex; gap: 0.6rem; align-items: center; }
-
-  /* ---------- Photo modal (shared) ---------- */
-  .photo-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; }
-  .photo-modal[hidden] { display: none; }
-  .photo-modal-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.7); }
-  .photo-modal-content { position: relative; max-width: 90vw; max-height: 90vh; }
-  .photo-modal-content img { display: block; max-width: 90vw; max-height: 90vh; width: auto; height: auto; border-radius: var(--radius); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); }
-  .photo-modal-close { position: absolute; top: -0.9rem; right: -0.9rem; width: 2.2rem; height: 2.2rem; border-radius: 999px; border: none; background: var(--bg-card); color: var(--text); font-size: 1.3rem; line-height: 1; cursor: pointer; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); }
+  /* --- live preview body — copied verbatim from src/pages/business/
+     [slug].astro's own <style> block, so this genuinely is the real page's
+     look, not an approximation of it. Every rule here needs :global()
+     since the markup is injected via innerHTML. --- */
+  .preview-body :global(.breadcrumbs) {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-bottom: 0.5rem;
+  }
+  .preview-body :global(.breadcrumbs a) {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .preview-body :global(.breadcrumbs .current) {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 0.3rem 0.2rem;
+  }
+  .preview-body :global(.breadcrumbs .sep) {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+  .preview-body :global(.tags) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .preview-body :global(.badge) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.78rem;
+    color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    text-decoration: none;
+  }
+  .preview-body :global(.address) {
+    color: var(--text-muted);
+    margin: 0.5rem 0 0;
+  }
+  .preview-body :global(.tier-badge) {
+    background: rgba(26, 143, 94, 0.12);
+    color: #1a8f5e;
+  }
+  .preview-body :global(.photo-gallery) {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+  .preview-body :global(.photo-gallery.carousel) {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(160px, 220px);
+    grid-template-columns: none;
+    overflow-x: auto;
+  }
+  .preview-body :global(.photo-gallery img) {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .preview-body :global(.hero-gallery) {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(180px, 1fr);
+    gap: 0.5rem;
+    overflow-x: auto;
+    margin-bottom: 0.5rem;
+  }
+  .preview-body :global(.hero-gallery img) {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: var(--radius-lg, 16px);
+  }
+  .preview-body :global(.sample-note) {
+    margin: 0 0 1rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .preview-body :global(.custom-blocks) {
+    margin-top: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .preview-body :global(.custom-block) {
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+  }
+  .preview-body :global(.custom-block h2) {
+    margin: 0 0 0.4rem;
+    font-size: 1rem;
+    color: var(--navy);
+  }
+  .preview-body :global(.custom-block p) {
+    margin: 0;
+    font-size: 0.9rem;
+    white-space: pre-line;
+  }
+  .preview-body :global(.placeholder-text) {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .preview-body :global(.custom-block-banner) {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+    min-height: 180px;
+    display: flex;
+    align-items: flex-end;
+  }
+  .preview-body :global(.custom-block-banner img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+  .preview-body :global(.banner-overlay) {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 1.25rem;
+    background: linear-gradient(0deg, rgba(15, 23, 42, 0.65) 0%, rgba(15, 23, 42, 0) 100%);
+    color: #fff;
+  }
+  .preview-body :global(.banner-overlay h2) {
+    margin: 0 0 0.3rem;
+    color: #fff;
+    font-size: 1.2rem;
+  }
+  .preview-body :global(.banner-overlay p) {
+    margin: 0;
+    opacity: 0.95;
+  }
+  .preview-body :global(.custom-block-side-image) {
+    display: flex;
+    gap: 1.1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .preview-body :global(.custom-block-side-image.side-right) {
+    flex-direction: row-reverse;
+  }
+  .preview-body :global(.custom-block-side-image img) {
+    flex: 1 1 200px;
+    max-width: 100%;
+    height: 170px;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+  .preview-body :global(.side-image-text) {
+    flex: 1 1 200px;
+  }
+  .preview-body :global(.side-image-text h3) {
+    margin: 0 0 0.35rem;
+    color: var(--navy);
+  }
+  .preview-body :global(.side-image-text p) {
+    margin: 0;
+    color: var(--text-muted);
+    white-space: pre-line;
+  }
+  .preview-body :global(.custom-block-photo) {
+    padding: 0;
+    overflow: hidden;
+  }
+  .preview-body :global(.custom-block-photo img) {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+  .preview-body :global(.photo-placeholder) {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  .preview-body :global(.photo-caption) {
+    margin: 0;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  .preview-body :global(.custom-block-cta) {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .preview-body :global(.cta-text) {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  .preview-body :global(.cta-btn) {
+    display: inline-block;
+  }
+  .preview-body :global(.custom-block-testimonial) {
+    text-align: center;
+    font-style: italic;
+  }
+  .preview-body :global(.testimonial-quote) {
+    margin: 0 0 0.5rem;
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+  .preview-body :global(.testimonial-author) {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-style: normal;
+    color: var(--text-muted);
+  }
+  .preview-body :global(.custom-block-divider) {
+    background: none;
+    border: none;
+    padding: 0.5rem 0;
+  }
+  .preview-body :global(.custom-block-divider hr) {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+  .preview-body :global(.actions) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+  .preview-body :global(.hours-section) {
+    margin-top: 1.5rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+  }
+  .preview-body :global(.hours-heading) {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--navy);
+  }
+  .preview-body :global(.hours-text) {
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
+    color: var(--text);
+    white-space: pre-line;
+  }
+  .preview-body :global(.hours-unavailable) {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .preview-body :global(.listing-meta-links) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+  .preview-body :global(.listing-meta-links span) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
 </style>

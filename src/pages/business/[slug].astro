@@ -4,7 +4,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
 import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, customBlocksFor, pageColorsFor, TIER_VERIFIED, TIER_VERIFIED_PLUS, TIER_FEATURED, TIER_PREMIUM } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
-import { renderCustomBlocksHtml, usesExtraFont, EXTRA_FONTS_QUERY } from '../../lib/blockRenderer';
+import { renderCustomBlocksHtml } from '../../lib/blockRenderer';
 import Icon from '../../components/Icon.astro';
 
 export function getStaticPaths() {
@@ -37,15 +37,14 @@ const photos = photosFor(business);
 const canChooseTemplate = business.subscription_tier >= TIER_FEATURED && business.subscription_status === 'active';
 const template = canChooseTemplate ? business.template_id : 'classic';
 const isPremium = business.subscription_tier >= TIER_PREMIUM && business.subscription_status === 'active';
-// The real free-form page builder (GrapesJS) — once a Premium business has
-// published anything with it, its captured HTML/CSS takes over the content
-// area entirely, superseding the older stacked-blocks system below. A
-// Premium business that hasn't touched the new builder yet still renders
-// through the old system, so nothing regresses for it.
-const usesNewBuilder = isPremium && !!business.page_html;
-const customBlocks = isPremium && !usesNewBuilder ? customBlocksFor(business) : [];
+// Premium businesses can append pre-built sections (banner, image+text,
+// gallery, testimonial, call to action, etc.) below the fixed page layout
+// below — the layout itself (name/description/photos/address/hours) never
+// moves or gets restyled; an owner can only add to it and set the page's
+// overall colors. Deliberately simple: no free positioning, no resizing,
+// no per-block style panel.
+const customBlocks = isPremium ? customBlocksFor(business) : [];
 const customBlocksHtml = renderCustomBlocksHtml(customBlocks);
-const needsExtraFont = usesExtraFont(customBlocks);
 
 // Owner-chosen page colors (Premium only) — applied as CSS custom property
 // overrides on this page's own content wrapper only, so the shared site
@@ -58,7 +57,7 @@ function hexToRgbTriple(hex: string): string {
   return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
 }
 
-const pageColors = isPremium && !usesNewBuilder ? pageColorsFor(business) : {};
+const pageColors = isPremium ? pageColorsFor(business) : {};
 const pageColorVars = [
   pageColors.primary ? `--accent:${pageColors.primary};--accent-rgb:${hexToRgbTriple(pageColors.primary)}` : '',
   pageColors.secondary ? `--navy:${pageColors.secondary}` : '',
@@ -90,7 +89,7 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={business.name} description={business.description.slice(0, 155)} noAds={noAds} extraFonts={needsExtraFont ? EXTRA_FONTS_QUERY : undefined}>
+<BaseLayout title={business.name} description={business.description.slice(0, 155)} noAds={noAds}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <section class="container" style={`padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;${pageColorVars ? `;${pageColorVars}` : ''}`}>
@@ -101,58 +100,49 @@ const jsonLd = {
         { label: business.name },
       ]}
     />
-    {usesNewBuilder ? (
-      <>
-        <style set:html={business.page_css ?? ''} />
-        <Fragment set:html={business.page_html} />
-      </>
-    ) : (
-      <>
-        {!isPremium && template === 'gallery' && photos.length > 0 && (
-          <div class="hero-gallery">
-            {photos.map((photo) => (
-              <img src={`/media/${photo.r2_key}`} alt={photo.caption ?? business.name} loading="lazy" width="700" height="360" />
-            ))}
-          </div>
-        )}
-        <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">{business.name}</h1>
-
-        <div class="tags">
-          {isPaidTier && (
-            <span class="badge tier-badge">
-              <Icon path={ICONS.check} size={13} /> Verified
-            </span>
-          )}
-          {cats.map((c) => {
-            const g = groupForCategory(c.slug);
-            return (
-              <a class="badge" href={`/category/${c.slug}/`}>
-                {g && <Icon path={g.iconPath} size={13} />}
-                {c.name}
-              </a>
-            );
-          })}
-        </div>
-
-        <p style="margin-top: 1.25rem;">{business.description}</p>
-
-        {!isPremium && template !== 'gallery' && photos.length > 0 && (
-          <div class:list={['photo-gallery', { carousel: photos.length > 5 }]}>
-            {photos.map((photo) => (
-              <img
-                src={`/media/${photo.r2_key}`}
-                alt={photo.caption ?? business.name}
-                loading="lazy"
-                width="320"
-                height="220"
-              />
-            ))}
-          </div>
-        )}
-
-        <Fragment set:html={customBlocksHtml} />
-      </>
+    {template === 'gallery' && photos.length > 0 && (
+      <div class="hero-gallery">
+        {photos.map((photo) => (
+          <img src={`/media/${photo.r2_key}`} alt={photo.caption ?? business.name} loading="lazy" width="700" height="360" />
+        ))}
+      </div>
     )}
+    <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">{business.name}</h1>
+
+    <div class="tags">
+      {isPaidTier && (
+        <span class="badge tier-badge">
+          <Icon path={ICONS.check} size={13} /> Verified
+        </span>
+      )}
+      {cats.map((c) => {
+        const g = groupForCategory(c.slug);
+        return (
+          <a class="badge" href={`/category/${c.slug}/`}>
+            {g && <Icon path={g.iconPath} size={13} />}
+            {c.name}
+          </a>
+        );
+      })}
+    </div>
+
+    <p style="margin-top: 1.25rem;">{business.description}</p>
+
+    {template !== 'gallery' && photos.length > 0 && (
+      <div class:list={['photo-gallery', { carousel: photos.length > 5 }]}>
+        {photos.map((photo) => (
+          <img
+            src={`/media/${photo.r2_key}`}
+            alt={photo.caption ?? business.name}
+            loading="lazy"
+            width="320"
+            height="220"
+          />
+        ))}
+      </div>
+    )}
+
+    <Fragment set:html={customBlocksHtml} />
 
     {center && (
       <a href={`/shopping-center/${center.slug}/`} class="located-at">
@@ -309,42 +299,20 @@ const jsonLd = {
     border-radius: var(--radius-lg);
     scroll-snap-align: start;
   }
-  /* Free-form layout: a 12-column grid where each block's grid-column/
-     grid-row (set inline per block by blockRenderer.ts, from its stored
-     `layout`) places it — auto row height, so nothing ever clips no matter
-     how the owner arranged things. A container query (not a viewport media
-     query) collapses it to one stacked column once its own box narrows
-     below 640px, ignoring the stored placement entirely, so a layout
-     that's a careful 3-across row on desktop never produces a broken,
-     overlapping mess on a phone. Container-based (rather than viewport-
-     based) so the same rule also drives the customize page's own preview
-     frame correctly when its width toggle narrows just the preview, not
-     the real browser viewport. */
-  .custom-blocks-container {
-    container-type: inline-size;
-  }
+  /* Sections an owner adds always stack in order, below the fixed page
+     layout above — no free positioning, matching how simple this needs to
+     stay for owners who just want their page to look good. */
   .custom-blocks {
     margin-top: 1.75rem;
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-auto-rows: auto;
-    gap: 1.25rem 1rem;
-  }
-  @container (max-width: 640px) {
-    .custom-blocks {
-      grid-template-columns: 1fr;
-    }
-    .custom-block {
-      grid-column: 1 / -1 !important;
-      grid-row: auto !important;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
   }
   .custom-block {
     padding: 1rem 1.1rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--bg-card);
-    min-width: 0;
   }
   .custom-block h2 {
     margin: 0 0 0.4rem;
@@ -359,6 +327,67 @@ const jsonLd = {
   .placeholder-text {
     color: var(--text-muted);
     font-style: italic;
+  }
+  .custom-block-banner {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+    min-height: 220px;
+    display: flex;
+    align-items: flex-end;
+  }
+  .custom-block-banner img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+  .custom-block-banner .banner-overlay {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 1.5rem;
+    background: linear-gradient(0deg, rgba(15, 23, 42, 0.65) 0%, rgba(15, 23, 42, 0) 100%);
+    color: #fff;
+  }
+  .custom-block-banner .banner-overlay h2 {
+    margin: 0 0 0.35rem;
+    color: #fff;
+    font-size: 1.4rem;
+  }
+  .custom-block-banner .banner-overlay p {
+    margin: 0;
+    opacity: 0.95;
+  }
+  .custom-block-side-image {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .custom-block-side-image.side-right {
+    flex-direction: row-reverse;
+  }
+  .custom-block-side-image img {
+    flex: 1 1 220px;
+    max-width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+  .custom-block-side-image .side-image-text {
+    flex: 1 1 220px;
+  }
+  .custom-block-side-image .side-image-text h3 {
+    margin: 0 0 0.4rem;
+    color: var(--navy);
+  }
+  .custom-block-side-image .side-image-text p {
+    margin: 0;
+    color: var(--text-muted);
+    white-space: pre-line;
   }
   .custom-block-photo {
     padding: 0;
