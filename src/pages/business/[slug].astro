@@ -93,7 +93,8 @@ const jsonLd = {
 <BaseLayout title={business.name} description={business.description.slice(0, 155)} noAds={noAds}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-  <section id="page-content" class="container" style={`padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;${pageColorVars ? `;${pageColorVars}` : ''}`}>
+  <div id="page-content" style={pageColorVars || null}>
+  <section class="container" style="padding-top: 2rem; padding-bottom: 0; max-width: 720px;">
     <Breadcrumbs
       items={[
         ...(suburb ? [{ label: suburb.name, href: `/suburb/${suburb.slug}/` }] : []),
@@ -142,12 +143,13 @@ const jsonLd = {
         ))}
       </div>
     )}
+  </section>
 
-    <div id="custom-blocks-mount">
-      <Fragment set:html={customBlocksHtml} />
-    </div>
-    {isPremium && (
-      <>
+  {isPremium && (
+    <section class="container" style="padding-top: 0.5rem; padding-bottom: 0.5rem;">
+      <div id="custom-blocks-mount">
+        <Fragment set:html={customBlocksHtml} />
+      </div>
         <button type="button" id="edit-page-toggle" class="edit-page-toggle" hidden>
           Edit this page
         </button>
@@ -167,9 +169,10 @@ const jsonLd = {
             <button type="button" id="revert-btn" class="btn btn-outline btn-sm" hidden>Revert to published</button>
           </div>
         </div>
-      </>
-    )}
+    </section>
+  )}
 
+  <section class="container" style="padding-top: 0; padding-bottom: 2rem; max-width: 720px;">
     {center && (
       <a href={`/shopping-center/${center.slug}/`} class="located-at">
         <Icon path={ICONS.building} size={15} /> Located at {center.name}
@@ -257,6 +260,7 @@ const jsonLd = {
       </a>
     </div>
   </section>
+  </div>
 </BaseLayout>
 
 {isPremium && (
@@ -321,7 +325,11 @@ const jsonLd = {
         if (pageColors.primary) decls.push(`--accent:${pageColors.primary}`, `--accent-rgb:${hexToRgbTriple(pageColors.primary)}`);
         if (pageColors.secondary) decls.push(`--navy:${pageColors.secondary}`);
         if (pageColors.background) decls.push(`--bg:${pageColors.background}`, `--bg-card:${pageColors.background}`);
-        pageContent.style.cssText = `padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;${decls.length ? ';' + decls.join(';') : ''}`;
+        // #page-content is a plain wrapper div around all three of this
+        // page's <section>s (narrow reading column, wide sections area,
+        // narrow reading column again) — it carries no layout of its own,
+        // only these custom properties, which every section inherits.
+        pageContent.style.cssText = decls.join(';');
       }
 
       function loadGridStack() {
@@ -781,10 +789,19 @@ const jsonLd = {
   }
   :global(.custom-block) {
     grid-column: span var(--col-span, 12);
+    min-width: 140px;
     padding: 1rem 1.1rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--bg-card);
+  }
+  /* Same floor inside the editor, where GridStack (not CSS Grid) is what
+     actually controls each section's width — belt-and-braces against a
+     section ever rendering pathologically narrow (text wrapping one
+     letter per line) if a resize handle gets dragged near MIN_COL_SPAN
+     on a narrower viewport than the editor was built for. */
+  :global(.grid-stack-item) {
+    min-width: 140px;
   }
   :global(.custom-block h2) {
     margin: 0 0 0.4rem;
