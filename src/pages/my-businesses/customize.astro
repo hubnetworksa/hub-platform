@@ -435,7 +435,7 @@ import site from '../../site';
         cellHeight: GRID_CELL_HEIGHT,
         margin: GRID_MARGIN,
         handle: '.block-drag-handle',
-        resizable: { handles: 's' },
+        resizable: { handles: 's', autoHide: false },
         disableOneColumnMode: true,
       },
       container
@@ -914,7 +914,14 @@ import site from '../../site';
   #blocks-grid.grid-stack {
     margin-bottom: 0.75rem;
   }
-  .block-row {
+  /* Everything below targets elements built by renderBlocks() via
+     innerHTML — Astro only stamps its data-astro-cid scoping attribute on
+     elements present in the static template at build time, so a scoped
+     (non-:global) selector here would silently match nothing at all, and
+     the whole block editor would render as unstyled, un-laid-out raw HTML.
+     Same bug class as .preview-body's rules below, just missed here once
+     already. */
+  :global(.block-row) {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -925,13 +932,13 @@ import site from '../../site';
     box-sizing: border-box;
     overflow: hidden;
   }
-  .block-row-fixed {
+  :global(.block-row-fixed) {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
     flex: 0 0 auto;
   }
-  .block-row select, .block-row input, .block-row textarea {
+  :global(.block-row select), :global(.block-row input), :global(.block-row textarea) {
     font: inherit;
     padding: 0.45rem 0.6rem;
     border-radius: var(--radius);
@@ -941,15 +948,15 @@ import site from '../../site';
     width: 100%;
     box-sizing: border-box;
   }
-  .block-row-head {
+  :global(.block-row-head) {
     display: flex;
     align-items: center;
     gap: 0.4rem;
   }
-  .block-row-head select {
+  :global(.block-row-head select) {
     flex: 1 1 auto;
   }
-  .block-drag-handle, .remove-block {
+  :global(.block-drag-handle), :global(.remove-block) {
     flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
@@ -962,32 +969,54 @@ import site from '../../site';
     color: var(--text-muted);
     font-size: 0.95rem;
   }
-  .block-drag-handle {
+  :global(.block-drag-handle) {
     cursor: grab;
     user-select: none;
   }
-  .block-drag-handle:active {
+  :global(.block-drag-handle:active) {
     cursor: grabbing;
   }
-  .remove-block {
+  :global(.remove-block) {
     cursor: pointer;
   }
-  .block-hint {
+  :global(.block-hint) {
     margin: 0;
   }
-  .block-size-preview {
+  :global(.block-size-preview) {
     flex: 1 1 auto;
     min-height: 40px;
     overflow: hidden;
     border-radius: var(--radius);
-    cursor: ns-resize;
+    position: relative;
   }
-  .block-size-preview img {
+  :global(.block-size-preview img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
     pointer-events: none;
+  }
+  /* GridStack's own resize handle — hidden by default until hover
+     (.ui-resizable-handle{display:none!important} in its stylesheet) and,
+     for the plain 's' handle we use, otherwise invisible even when shown.
+     Business owners won't discover a hover-only, textureless 10px strip,
+     so autoHide is turned off in the JS init and this gives it a real,
+     always-visible grip bar to grab. */
+  :global(.grid-stack-item > .ui-resizable-s) {
+    height: 16px !important;
+    bottom: -8px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  :global(.grid-stack-item > .ui-resizable-s::after) {
+    content: '';
+    width: 48px;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--accent);
+    opacity: 0.7;
   }
   .photo-grid {
     display: grid;
@@ -995,10 +1024,13 @@ import site from '../../site';
     gap: 0.5rem;
     margin: 0.75rem 0;
   }
-  .photo-thumb {
+  /* .photo-thumb and its children are built via document.createElement in
+     loadPhotos(), so — same reason as the block editor's styles above —
+     these need :global() or they silently match nothing. */
+  :global(.photo-thumb) {
     position: relative;
   }
-  .photo-thumb img {
+  :global(.photo-thumb img) {
     width: 100%;
     height: 90px;
     object-fit: cover;
@@ -1006,7 +1038,7 @@ import site from '../../site';
     border: 1px solid var(--border);
     cursor: zoom-in;
   }
-  .photo-thumb button {
+  :global(.photo-thumb button) {
     width: 100%;
     margin-top: 0.25rem;
     font-size: 0.75rem;
