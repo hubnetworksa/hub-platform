@@ -7,15 +7,21 @@
 // after a few more feature requests. Now there's only one implementation
 // to drift.
 //
-// Deliberately simple by design, not by omission: the page's layout is
-// fixed (name/description/photos/address/hours never move or get
-// restyled) — an owner can only append pre-built sections, drag them to
-// reorder or place them side by side, drag a section's edge to resize its
-// width and (for photo sections) its height, and set the page's overall
-// colors. No per-block style panel — that was tried and was too complex
-// for owners who just want their page to look good without learning an
-// editor.
+// Renders the custom sections an owner appends to their page — drag to
+// reorder or place side by side, drag an edge to resize width or height,
+// click text to edit it in place. The page's core info (name, address,
+// etc.) is a separate, similarly free-form layer — see the core-item
+// rendering in src/pages/business/[slug].astro — so this file only ever
+// deals with the sections an owner explicitly added.
 export interface CustomBlock {
+  /** 'core' for one of the page's fixed info pieces (name, address, a
+   *  contact button, etc.), repositioned/resized like any other item but
+   *  never carrying its own content — see coreId. Absent (or 'custom')
+   *  for an owner-added section, which does carry its own content below. */
+  kind?: 'core' | 'custom';
+  /** kind: 'core' only — which piece of the page's info this is. See
+   *  CORE_ITEM_IDS. */
+  coreId?: string;
   type: string;
   title: string;
   body: string;
@@ -25,10 +31,11 @@ export interface CustomBlock {
   imageKey?: string;
   /** 'side-image' only — which side the image sits on. */
   side?: 'left' | 'right';
-  /** 'banner'/'photo'/'side-image' only — image height in px, set by
-   *  dragging the block's bottom resize handle. Ignored by text-only
-   *  block types, which always size to their content instead. Falls
-   *  back to each type's own CSS default when unset. */
+  /** Height in px, set by dragging the block's bottom resize handle —
+   *  applies to every block type. For banner/photo/side-image this also
+   *  sets the photo's own height; for text types it's a floor (the box
+   *  can always grow taller than its text, never clips shorter). Falls
+   *  back to each type's own natural/CSS-default height when unset. */
   heightPx?: number;
   /** How many of the page's 12 layout columns this section spans (3-12),
    *  set by dragging the block's side resize handle — this is what lets
@@ -42,19 +49,33 @@ export const MIN_BLOCK_HEIGHT = 100;
 export const MAX_BLOCK_HEIGHT = 480;
 export const MIN_COL_SPAN = 3;
 export const MAX_COL_SPAN = 12;
-const SIZED_TYPES = new Set(['banner', 'photo', 'side-image']);
 
+// The page's core info, expressed as the same kind of grid item as an
+// owner-added section — see the per-id rendering in
+// src/pages/business/[slug].astro (needs live business/suburb/category
+// data a shared renderer here has no access to). A stored block with
+// kind 'core' only ever carries coreId/colSpan/heightPx — its actual
+// content always comes fresh from the business record, never from what's
+// stored, so editing a business's name/address/etc. still only happens
+// on the real edit form, not by typing into the page-builder grid.
+export const CORE_ITEM_IDS = [
+  'name', 'tags', 'description', 'address',
+  'action-website', 'action-phone', 'action-email', 'action-maps',
+  'hours',
+] as const;
 function heightStyle(block: CustomBlock, prop: 'min-height' | 'height'): string {
-  if (!SIZED_TYPES.has(block.type) || !block.heightPx) return '';
+  if (!block.heightPx) return '';
   return `${prop}:${block.heightPx}px;`;
 }
 
-// The one style attribute on each block's outer .custom-block div — always
-// carries --col-span (read by the .custom-block CSS rule as a CSS Grid
-// span), plus min-height for a resized banner (photo/side-image's own img
-// height is set separately, see below).
-function outerStyleAttr(block: CustomBlock, extra: string = ''): string {
-  return ` style="--col-span:${block.colSpan || MAX_COL_SPAN};${extra}"`;
+// The one style attribute on each item's outer div (core or custom) —
+// always carries --col-span (read by the CSS grid-column rule) and, when
+// the item's been resized taller, min-height (a floor, so a photo type's
+// own extra height rule below never conflicts with it). Exported since
+// business/[slug].astro's core-item rendering needs the exact same
+// wrapper style a custom block gets.
+export function outerStyleAttr(block: CustomBlock): string {
+  return ` style="--col-span:${block.colSpan || MAX_COL_SPAN};${heightStyle(block, 'min-height')}"`;
 }
 
 export const BLOCK_TYPES = ['banner', 'side-image', 'story', 'specials', 'team', 'gallery', 'photo', 'testimonial', 'cta', 'divider'] as const;
@@ -82,7 +103,7 @@ function renderOneBlock(block: CustomBlock, index: number): string {
 
   switch (block.type) {
     case 'banner':
-      return `<div class="custom-block custom-block-banner" data-block-index="${index}"${outerStyleAttr(block, heightStyle(block, 'min-height'))}>
+      return `<div class="custom-block custom-block-banner" data-block-index="${index}"${outerStyleAttr(block)}>
         ${block.imageKey ? `<img src="/media/${block.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen</div>'}
         <div class="banner-overlay">
           <h2 data-field="title">${title}</h2>
@@ -127,7 +148,14 @@ function renderOneBlock(block: CustomBlock, index: number): string {
   }
 }
 
-export function renderCustomBlocksHtml(blocks: CustomBlock[]): string {
-  if (!blocks.length) return '';
-  return `<div class="custom-blocks">${blocks.map(renderOneBlock).join('')}</div>`;
+// The one grid that holds everything on a Premium page: the fixed info
+// (name, address, a contact button, hours — kind 'core', rendered by the
+// caller-supplied renderCoreItem since only the page itself has the live
+// business/suburb/category data those need) interleaved, in whatever
+// order they're stored in, with the sections an owner explicitly added
+// (kind 'custom' or unset, rendered here as always).
+export function renderFullLayoutHtml(items: CustomBlock[], renderCoreItem: (item: CustomBlock) => string): string {
+  if (!items.length) return '';
+  const html = items.map((item, i) => (item.kind === 'core' ? renderCoreItem(item) : renderOneBlock(item, i))).join('');
+  return `<div class="custom-blocks">${html}</div>`;
 }
