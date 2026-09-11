@@ -21,6 +21,14 @@ const site = JSON.parse(await readFile(path.join(ROOT, 'sites', `${SITE}.json`),
 const DB_NAME = site.dbName;
 const REMOTE = !process.argv.includes('--local');
 const OUT_DIR = path.join(ROOT, 'src', 'data');
+// Every site's D1 database is shared between its production build and its
+// hosted dev preview — a test business used to verify the (dev-only) page
+// builder is a real row in the same database production reads from. Its
+// `status` alone can't tell "show on dev" apart from "show on production",
+// since both builds run this identical query. is_test does: only the dev
+// preview's deploy workflow sets INCLUDE_TEST_DATA=true, so a test business
+// never reaches a production build regardless of its status.
+const INCLUDE_TEST_DATA = process.env.INCLUDE_TEST_DATA === 'true';
 // --file mode uploads the file and only returns execution stats, not row
 // data, so SELECTs have to go through --command instead. Invoking
 // wrangler.js directly via `node` (rather than npx/npx.cmd) sidesteps
@@ -44,7 +52,7 @@ async function main() {
   const categories = query('SELECT id, slug, name FROM categories ORDER BY name;');
   const businesses = query(
     `SELECT id, slug, name, suburb_id, address, phone, website, email, description, lat, lng, source_urls, shopping_center_id, description_enriched_at, hours, owner_user_id, subscription_tier, subscription_status, subscription_expires_at, template_id, custom_blocks, page_colors, page_html, page_css
-     FROM businesses WHERE status = 'published' ORDER BY name;`
+     FROM businesses WHERE status = 'published'${INCLUDE_TEST_DATA ? '' : ' AND is_test = 0'} ORDER BY name;`
   );
   const businessCategories = query('SELECT business_id, category_id, is_primary FROM business_categories;');
   const shoppingCenters = query('SELECT id, slug, name, suburb_id, address, lat, lng, type, description FROM shopping_centers ORDER BY name;');
