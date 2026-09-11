@@ -45,7 +45,16 @@ const isPremium = business.subscription_tier >= TIER_PREMIUM && business.subscri
 // page's overall colors, edited in place on this very page (see the
 // edit-mode script below) — not a separate preview.
 const customBlocks = isPremium ? customBlocksFor(business) : [];
-const customBlocksHtml = renderCustomBlocksHtml(customBlocks);
+const mainBlocks = customBlocks.filter((b) => b.zone !== 'left' && b.zone !== 'right');
+const leftBlocks = customBlocks.filter((b) => b.zone === 'left');
+const rightBlocks = customBlocks.filter((b) => b.zone === 'right');
+const customBlocksHtml = renderCustomBlocksHtml(mainBlocks);
+const leftBlocksHtml = renderCustomBlocksHtml(leftBlocks);
+const rightBlocksHtml = renderCustomBlocksHtml(rightBlocks);
+// Sidebars only exist in the markup at all once an owner has actually put
+// a section in one — otherwise the page is just the plain single centered
+// column it's always been, byte-for-byte.
+const hasSidebars = leftBlocks.length > 0 || rightBlocks.length > 0;
 
 // Owner-chosen page colors (Premium only) — applied as CSS custom property
 // overrides on this page's own content wrapper only, so the shared site
@@ -94,6 +103,13 @@ const jsonLd = {
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <div id="page-content" style={pageColorVars || null}>
+  <div id="page-sidebar-layout" class:list={['page-sidebar-layout', { 'has-sidebars': hasSidebars }]}>
+  {isPremium && (
+    <aside class="page-sidebar page-sidebar-left" id="sidebar-left-mount" hidden={leftBlocks.length === 0}>
+      <Fragment set:html={leftBlocksHtml} />
+    </aside>
+  )}
+  <div class="page-main-column">
   <section class="container" style="padding-top: 2rem; padding-bottom: 0; max-width: 720px;">
     <Breadcrumbs
       items={[
@@ -157,7 +173,7 @@ const jsonLd = {
           <div class="design-bar-row">
             <strong>Editing your page</strong>
             <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
-            <span class="design-bar-hint">Your business name, description, address, contact buttons, and hours always stay exactly where they are — only the sections you add here can be dragged to reorder, placed beside each other, resized from any edge, or edited by clicking their text. Use a section's "Layout" option to stretch it full width or make it a side panel using the empty space next to the page.</span>
+            <span class="design-bar-hint">Your business name, description, address, contact buttons, and hours always stay exactly where they are — only the sections you add here can be dragged to reorder, placed beside each other, resized from any edge, or edited by clicking their text. Use a section's "Position" option to move it into a sidebar running alongside your whole page instead — you'll see it appear there once you publish.</span>
           </div>
           <div class="design-bar-row">
             <label>Primary <input type="color" id="color-primary" value="#2563eb" /></label>
@@ -261,6 +277,13 @@ const jsonLd = {
     </div>
   </section>
   </div>
+  {isPremium && (
+    <aside class="page-sidebar page-sidebar-right" id="sidebar-right-mount" hidden={rightBlocks.length === 0}>
+      <Fragment set:html={rightBlocksHtml} />
+    </aside>
+  )}
+  </div>
+  </div>
 </BaseLayout>
 
 {isPremium && (
@@ -294,7 +317,6 @@ const jsonLd = {
       const MAX_BLOCK_HEIGHT = 480;
       const MIN_COL_SPAN = 3;
       const MAX_COL_SPAN = 12;
-      const DEFAULT_BLOCK_HEIGHT = { banner: 220, photo: 220, 'side-image': 200 };
       const GRID_CELL_HEIGHT = 20;
       const GRID_MARGIN = 8;
 
@@ -308,7 +330,6 @@ const jsonLd = {
       let editing = false;
       let blocksGrid = null;
       let gridStackLoading = null;
-      let bleedResizeListenerAdded = false;
 
       function escapeHtml(s) {
         return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -355,14 +376,13 @@ const jsonLd = {
         return `<select class="block-image" title="Choose photo"><option value="">— No photo —</option>${options}</select>`;
       }
 
-      const BLEED_OPTIONS = [
-        ['', 'Normal (within the page)'],
-        ['full', 'Full width (edge to edge)'],
-        ['left', 'Side panel — left'],
-        ['right', 'Side panel — right'],
+      const ZONE_OPTIONS = [
+        ['', 'Main content'],
+        ['left', 'Left sidebar'],
+        ['right', 'Right sidebar'],
       ];
 
-      function blockToolbarHtml(b) {
+      function blockToolbarHtml(b, dragHandle) {
         const sidePicker = b.type === 'side-image'
           ? `<select class="block-side" title="Photo side">
               <option value="left" ${b.side !== 'right' ? 'selected' : ''}>Photo left</option>
@@ -370,168 +390,145 @@ const jsonLd = {
             </select>`
           : '';
         const photoPicker = SIZED_TYPES.has(b.type) ? photoPickerHtml(b) : '';
-        const bleedPicker = `<select class="block-bleed" title="Layout">
-          ${BLEED_OPTIONS.map(([val, label]) => `<option value="${val}" ${(b.bleed || '') === val ? 'selected' : ''}>${label}</option>`).join('')}
+        // A sidebar runs the full height of the page, alongside the
+        // fixed content, not inside the narrow column below the
+        // description the way a main-content section does — so moving a
+        // block here or there is a real page-position change, not just a
+        // resize, and it's a plain dropdown rather than something you'd
+        // drag.
+        const zonePicker = `<select class="block-zone" title="Position">
+          ${ZONE_OPTIONS.map(([val, label]) => `<option value="${val}" ${(b.zone || '') === val ? 'selected' : ''}>${label}</option>`).join('')}
         </select>`;
-        // A side panel's width is a fraction of the *browser*, not of the
-        // page's 12-column grid the way colSpan works for a normal
-        // section — so it can't come from GridStack's own e/w drag handle
-        // (that always resizes relative to the grid, and this item is
-        // pinned to the grid's full width regardless — see wrap() below).
-        // colSpan is reused as that fraction (still 3-12, out of 12) but
-        // set from this dedicated picker instead.
-        const panelWidthPicker = (b.bleed === 'left' || b.bleed === 'right')
-          ? `<select class="block-panel-width" title="Panel width">
-              ${[3, 4, 6, 8, 9].map((n) => `<option value="${n}" ${(b.colSpan || 4) === n ? 'selected' : ''}>${Math.round((n / MAX_COL_SPAN) * 100)}% of the browser</option>`).join('')}
-            </select>`
-          : '';
         return `<div class="block-toolbar">
-          <span class="block-drag-handle" title="Drag to reorder">⠿</span>
+          ${dragHandle ? '<span class="block-drag-handle" title="Drag to reorder">⠿</span>' : ''}
           <select class="block-type" title="Section type">
             ${BLOCK_TYPE_OPTIONS.map(([val, label]) => `<option value="${val}" ${b.type === val ? 'selected' : ''}>${label}</option>`).join('')}
           </select>
           ${sidePicker}
           ${photoPicker}
-          ${bleedPicker}
-          ${panelWidthPicker}
+          ${zonePicker}
           <button type="button" class="remove-block" title="Remove section" aria-label="Remove section">✕</button>
         </div>`;
       }
 
-      // Mirrors src/lib/blockRenderer.ts's renderOneBlock, plus the
-      // grid-stack-item wrapper, edit toolbar, and contenteditable fields
-      // this page's static build never needs — kept in sync by hand, same
-      // reason customize.astro's copy used to be.
-      function renderOneBlock(b, i) {
+      // The actual section markup — identical to
+      // src/lib/blockRenderer.ts's renderOneBlock plus the
+      // contenteditable fields this page's static build never needs
+      // (kept in sync by hand, same reason customize.astro's copy used
+      // to be) — shared by both the main-content GridStack canvas and a
+      // sidebar's plain list, since a section looks the same wherever
+      // it's placed.
+      function renderBlockContent(b) {
         const title = escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More');
         const body = escapeHtml(b.body || '');
-        const toolbar = blockToolbarHtml(b);
-        const bleedClass = b.bleed ? ` bleed-${b.bleed}` : '';
-        // A bled section always takes its own full row in the editor grid
-        // too (gs-w locked to 12), matching how it always spans the full
-        // grid row on the real page (see blockRenderer.ts's wrapBleed) —
-        // colSpan still decides a side panel's actual width, just applied
-        // to .bleed-preview-inner in real browser pixels (see
-        // positionBleedPreview) instead of to the grid item itself.
-        const wrap = (inner) => `
-          <div class="grid-stack-item${bleedClass}" data-i="${i}" gs-auto-position="true" gs-w="${b.bleed ? MAX_COL_SPAN : (b.colSpan || MAX_COL_SPAN)}" gs-h="10" gs-min-w="${b.bleed ? MAX_COL_SPAN : MIN_COL_SPAN}" gs-max-w="${MAX_COL_SPAN}">
-            <div class="grid-stack-item-content editable-block${b.bleed ? ' editable-block-bleed' : ''}">
-              ${toolbar}
-              ${b.bleed ? `<div class="bleed-preview-inner">${inner}</div>` : inner}
-            </div>
-          </div>`;
 
         switch (b.type) {
           case 'banner':
-            return wrap(`
+            return `
               <div class="custom-block custom-block-banner">
                 ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one above</div>'}
                 <div class="banner-overlay">
                   <h2 contenteditable="true" data-field="title">${title}</h2>
                   <p contenteditable="true" data-field="body" data-placeholder="Optional short line (click to add)">${body}</p>
                 </div>
-              </div>`);
+              </div>`;
           case 'side-image': {
             const side = b.side === 'right' ? ' side-right' : '';
-            return wrap(`
+            return `
               <div class="custom-block custom-block-side-image${side}">
                 ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one above</div>'}
                 <div class="side-image-text">
                   <h3 contenteditable="true" data-field="title">${title}</h3>
                   <p contenteditable="true" data-field="body" data-multiline="true" data-placeholder="Section text">${body}</p>
                 </div>
-              </div>`);
+              </div>`;
           }
           case 'photo':
-            return wrap(`
+            return `
               <div class="custom-block custom-block-photo">
                 ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one above</div>'}
                 <p class="photo-caption" contenteditable="true" data-field="title" data-placeholder="Add a caption (optional)">${b.title ? title : ''}</p>
-              </div>`);
+              </div>`;
           case 'divider':
-            return wrap(`<div class="custom-block custom-block-divider"><hr /></div>`);
+            return `<div class="custom-block custom-block-divider"><hr /></div>`;
           case 'cta':
-            return wrap(`
+            return `
               <div class="custom-block custom-block-cta">
                 <p class="cta-text" contenteditable="true" data-field="title">${title}</p>
                 <span class="btn btn-primary cta-btn" contenteditable="true" data-field="body">${body || 'Get in touch'}</span>
-              </div>`);
+              </div>`;
           case 'testimonial':
-            return wrap(`
+            return `
               <div class="custom-block custom-block-testimonial">
                 <p class="testimonial-quote">&ldquo;<span contenteditable="true" data-field="body" data-multiline="true" data-placeholder="Quote text">${body}</span>&rdquo;</p>
                 <p class="testimonial-author">— <span contenteditable="true" data-field="title" data-placeholder="Author name">${b.title ? escapeHtml(b.title) : ''}</span></p>
-              </div>`);
+              </div>`;
           default:
-            return wrap(`
+            return `
               <div class="custom-block">
                 <h2 contenteditable="true" data-field="title">${title}</h2>
                 <p contenteditable="true" data-field="body" data-multiline="true" data-placeholder="Section text">${body}</p>
-              </div>`);
+              </div>`;
         }
       }
 
-      // Makes a bled section's preview actually stretch to the real
-      // browser edges while editing, instead of just describing what it
-      // will do once published — the same CSS trick used on the real
-      // page (position:relative + left:50% + translateX(-50%)) only
-      // re-centers correctly when its containing block is itself
-      // centered in the viewport, which a GridStack item nested inside
-      // the narrow editor canvas isn't. Computing the exact pixels
-      // directly from the item's real on-screen position sidesteps that
-      // rather than fighting GridStack for control of its own element.
-      function positionBleedPreview(item, b) {
-        const inner = item.querySelector('.bleed-preview-inner');
-        if (!inner || !b || !b.bleed) return;
-        const rect = item.getBoundingClientRect();
-        const vw = document.documentElement.clientWidth;
-        let width, marginLeft;
-        if (b.bleed === 'full') {
-          width = vw;
-          marginLeft = -rect.left;
-        } else {
-          width = vw * ((b.colSpan || 4) / MAX_COL_SPAN);
-          marginLeft = b.bleed === 'left' ? -rect.left : vw - width - rect.left;
-        }
-        inner.style.width = `${Math.max(0, width)}px`;
-        inner.style.marginLeft = `${marginLeft}px`;
+      // Main-content sections live in the GridStack canvas (drag to
+      // reorder/place side by side, drag an edge to resize) exactly as
+      // before.
+      function renderMainItem(b, i) {
+        const toolbar = blockToolbarHtml(b, true);
+        return `
+          <div class="grid-stack-item" data-i="${i}" gs-auto-position="true" gs-w="${b.colSpan || MAX_COL_SPAN}" gs-h="10" gs-min-w="${MIN_COL_SPAN}" gs-max-w="${MAX_COL_SPAN}">
+            <div class="grid-stack-item-content editable-block">
+              ${toolbar}
+              ${renderBlockContent(b)}
+            </div>
+          </div>`;
       }
 
-      function positionAllBleedPreviews() {
-        if (!blocksGrid) return;
-        document.querySelectorAll('#blocks-grid > .grid-stack-item').forEach((item) => {
-          positionBleedPreview(item, blocks[Number(item.dataset.i)]);
-        });
+      // A sidebar section is a real top-level element running alongside
+      // the whole page (see #sidebar-left-mount/#sidebar-right-mount),
+      // not a narrow column below the description — there's no 2D
+      // placement to speak of, so it's just a plain stacked list with
+      // Up/Down to reorder, no drag/resize.
+      function renderSidebarItem(b, i, isFirst, isLast) {
+        const toolbar = blockToolbarHtml(b, false);
+        return `
+          <div class="sidebar-block" data-i="${i}">
+            ${toolbar}
+            <div class="sidebar-block-move">
+              <button type="button" class="move-up" ${isFirst ? 'disabled' : ''} title="Move up">↑</button>
+              <button type="button" class="move-down" ${isLast ? 'disabled' : ''} title="Move down">↓</button>
+            </div>
+            ${renderBlockContent(b)}
+          </div>`;
       }
 
-      if (!bleedResizeListenerAdded) {
-        bleedResizeListenerAdded = true;
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-          window.clearTimeout(resizeTimer);
-          resizeTimer = window.setTimeout(positionAllBleedPreviews, 100);
-        });
-      }
-
-      function renderBlocks() {
-        if (blocksGrid) { blocksGrid.destroy(false); blocksGrid = null; }
-        mount.innerHTML = `<div class="grid-stack" id="blocks-grid">${blocks.map(renderOneBlock).join('')}</div>`;
-
-        const container = document.getElementById('blocks-grid');
-        blocksGrid = GridStack.init(
-          {
-            column: 12,
-            float: false,
-            cellHeight: GRID_CELL_HEIGHT,
-            margin: GRID_MARGIN,
-            resizable: { handles: 'e, se, s, sw, w', autoHide: false },
-            draggable: { cancel: 'button, select, input, textarea, option, [contenteditable]' },
-            disableOneColumnMode: true,
-          },
-          container
+      function renderSidebar(zone, mountEl) {
+        const zoneBlocks = blocks.filter((b) => b.zone === zone);
+        const asideEl = mountEl.closest('.page-sidebar');
+        asideEl.hidden = zoneBlocks.length === 0;
+        mountEl.innerHTML = zoneBlocks
+          .map((b, i) => renderSidebarItem(b, blocks.indexOf(b), i === 0, i === zoneBlocks.length - 1))
+          .join('');
+        wireBlockControls(mountEl);
+        document.getElementById('page-sidebar-layout').classList.toggle(
+          'has-sidebars',
+          blocks.some((b) => b.zone === 'left') || blocks.some((b) => b.zone === 'right')
         );
+      }
 
-        container.querySelectorAll('.grid-stack-item').forEach((item) => {
+      function renderSidebars() {
+        renderSidebar('left', document.getElementById('sidebar-left-mount'));
+        renderSidebar('right', document.getElementById('sidebar-right-mount'));
+      }
+
+      // Shared by both the GridStack canvas and the plain sidebar lists —
+      // the type/image/side/zone/remove controls work the same everywhere;
+      // only sidebar items additionally get the Up/Down buttons (see
+      // renderSidebarItem).
+      function wireBlockControls(root) {
+        root.querySelectorAll('[data-i]').forEach((item) => {
           item.querySelector('.block-type')?.addEventListener('change', (e) => {
             blocks[Number(item.dataset.i)].type = e.target.value;
             renderBlocks();
@@ -547,21 +544,36 @@ const jsonLd = {
             renderBlocks();
             scheduleAutosave();
           });
-          item.querySelector('.block-bleed')?.addEventListener('change', (e) => {
+          item.querySelector('.block-zone')?.addEventListener('change', (e) => {
             const b = blocks[Number(item.dataset.i)];
-            if (e.target.value) {
-              b.bleed = e.target.value;
-              if ((b.bleed === 'left' || b.bleed === 'right') && ![3, 4, 6, 8, 9].includes(b.colSpan)) b.colSpan = 4;
-            } else {
-              delete b.bleed;
-            }
+            if (e.target.value) b.zone = e.target.value;
+            else delete b.zone;
             renderBlocks();
             scheduleAutosave();
           });
-          item.querySelector('.block-panel-width')?.addEventListener('change', (e) => {
-            blocks[Number(item.dataset.i)].colSpan = Number(e.target.value);
-            renderBlocks();
-            scheduleAutosave();
+          item.querySelector('.move-up')?.addEventListener('click', () => {
+            const idx = Number(item.dataset.i);
+            const zone = blocks[idx].zone;
+            const zoneIndices = blocks.map((b, i) => (b.zone === zone ? i : -1)).filter((i) => i >= 0);
+            const pos = zoneIndices.indexOf(idx);
+            if (pos > 0) {
+              const swapWith = zoneIndices[pos - 1];
+              [blocks[idx], blocks[swapWith]] = [blocks[swapWith], blocks[idx]];
+              renderBlocks();
+              scheduleAutosave();
+            }
+          });
+          item.querySelector('.move-down')?.addEventListener('click', () => {
+            const idx = Number(item.dataset.i);
+            const zone = blocks[idx].zone;
+            const zoneIndices = blocks.map((b, i) => (b.zone === zone ? i : -1)).filter((i) => i >= 0);
+            const pos = zoneIndices.indexOf(idx);
+            if (pos >= 0 && pos < zoneIndices.length - 1) {
+              const swapWith = zoneIndices[pos + 1];
+              [blocks[idx], blocks[swapWith]] = [blocks[swapWith], blocks[idx]];
+              renderBlocks();
+              scheduleAutosave();
+            }
           });
           item.querySelector('.remove-block')?.addEventListener('click', () => {
             blocks.splice(Number(item.dataset.i), 1);
@@ -569,6 +581,29 @@ const jsonLd = {
             scheduleAutosave();
           });
         });
+      }
+
+      function renderBlocks() {
+        renderSidebars();
+        if (blocksGrid) { blocksGrid.destroy(false); blocksGrid = null; }
+        const mainBlocks = blocks.filter((b) => !b.zone);
+        mount.innerHTML = `<div class="grid-stack" id="blocks-grid">${mainBlocks.map((b) => renderMainItem(b, blocks.indexOf(b))).join('')}</div>`;
+
+        const container = document.getElementById('blocks-grid');
+        blocksGrid = GridStack.init(
+          {
+            column: 12,
+            float: false,
+            cellHeight: GRID_CELL_HEIGHT,
+            margin: GRID_MARGIN,
+            resizable: { handles: 'e, se, s, sw, w', autoHide: false },
+            draggable: { cancel: 'button, select, input, textarea, option, [contenteditable]' },
+            disableOneColumnMode: true,
+          },
+          container
+        );
+
+        wireBlockControls(container);
 
         // Give each row exactly the height it needs (or, if it's been
         // dragged taller than that, exactly the height it was set to) —
@@ -581,24 +616,12 @@ const jsonLd = {
           const contentEl = item.querySelector('.grid-stack-item-content');
           const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
           const toRows = (px) => Math.ceil((px + GRID_MARGIN * 2) / GRID_CELL_HEIGHT);
-          // A bled section (full width or a side panel) always spans the
-          // whole grid row in the editor, matching how it always spans
-          // the full grid row on the real page too — its real width
-          // comes from the bleed itself (100vw, or colSpan applied as a
-          // fraction of the browser instead of the grid — see the Panel
-          // width picker), not from GridStack's own e/w drag, so that's
-          // locked here rather than left to silently do nothing.
-          const widthBounds = b.bleed ? { minW: MAX_COL_SPAN, maxW: MAX_COL_SPAN } : { minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN };
           if (b.heightPx) {
-            blocksGrid.update(item, { h: toRows(toolbarH + b.heightPx), minH: toRows(toolbarH + MIN_BLOCK_HEIGHT), maxH: toRows(toolbarH + MAX_BLOCK_HEIGHT), ...widthBounds });
+            blocksGrid.update(item, { h: toRows(toolbarH + b.heightPx), minH: toRows(toolbarH + MIN_BLOCK_HEIGHT), maxH: toRows(toolbarH + MAX_BLOCK_HEIGHT), minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN });
           } else {
-            blocksGrid.update(item, { h: toRows(contentEl.scrollHeight), ...widthBounds });
+            blocksGrid.update(item, { h: toRows(contentEl.scrollHeight), minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN });
           }
         });
-
-        // Wait a frame so the sizing pass above has actually painted
-        // before measuring anything's real on-screen position.
-        window.requestAnimationFrame(positionAllBleedPreviews);
 
         blocksGrid.on('change', () => {
           const items = Array.from(container.querySelectorAll('.grid-stack-item'));
@@ -606,11 +629,7 @@ const jsonLd = {
             const node = item.gridstackNode;
             const b = blocks[Number(item.dataset.i)];
             if (!node || !b) return;
-            // A bled item's node.w is pinned to the full grid width (see
-            // widthBounds above) and doesn't mean anything as a colSpan —
-            // its colSpan (a side panel's width, as a fraction of the
-            // browser) only ever comes from the Panel width picker.
-            if (!b.bleed) b.colSpan = node.w;
+            b.colSpan = node.w;
             const contentEl = item.querySelector('.grid-stack-item-content');
             const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
             const naturalH = contentEl.scrollHeight;
@@ -637,28 +656,44 @@ const jsonLd = {
             if (!na || !nb) return 0;
             return na.y - nb.y || na.x - nb.x;
           });
-          blocks = items.map((item) => blocks[Number(item.dataset.i)]);
+          // Only reorders the main-content blocks (the ones actually in
+          // this GridStack canvas) — sidebar blocks live outside it
+          // entirely and must be carried over untouched, not dropped.
+          const sidebarBlocks = blocks.filter((b) => b.zone === 'left' || b.zone === 'right');
+          const reorderedMain = items.map((item) => blocks[Number(item.dataset.i)]);
+          blocks = [...reorderedMain, ...sidebarBlocks];
           items.forEach((item, newIndex) => { item.dataset.i = String(newIndex); });
-          positionAllBleedPreviews();
           scheduleAutosave();
         });
 
-        container.addEventListener('input', (e) => {
-          const fieldEl = e.target.closest('[data-field]');
-          if (!fieldEl) return;
-          if (fieldEl.innerText.trim() === '') fieldEl.innerHTML = '';
-          const item = fieldEl.closest('.grid-stack-item');
-          blocks[Number(item.dataset.i)][fieldEl.dataset.field] = fieldEl.innerText;
-          scheduleAutosave();
-        });
-        container.addEventListener('keydown', (e) => {
-          const fieldEl = e.target.closest('[data-field]');
-          if (fieldEl && e.key === 'Enter' && fieldEl.dataset.multiline !== 'true') {
-            e.preventDefault();
-            fieldEl.blur();
-          }
-        });
       }
+
+      // Attached once, on the element that contains the main GridStack
+      // canvas *and* both sidebar lists (#page-sidebar-layout), rather
+      // than per-container — a sidebar's own mount element is never
+      // destroyed/recreated the way the GridStack canvas is on every
+      // renderBlocks(), so attaching this inside renderBlocks() would
+      // otherwise stack up duplicate listeners on it every time. [data-i]
+      // identifies a block the same way in every container (see
+      // renderMainItem/renderSidebarItem), so one delegated pair of
+      // listeners covers all of them.
+      const layoutRoot = document.getElementById('page-sidebar-layout');
+      layoutRoot.addEventListener('input', (e) => {
+        const fieldEl = e.target.closest('[data-field]');
+        if (!fieldEl) return;
+        if (fieldEl.innerText.trim() === '') fieldEl.innerHTML = '';
+        const item = fieldEl.closest('[data-i]');
+        if (!item) return;
+        blocks[Number(item.dataset.i)][fieldEl.dataset.field] = fieldEl.innerText;
+        scheduleAutosave();
+      });
+      layoutRoot.addEventListener('keydown', (e) => {
+        const fieldEl = e.target.closest('[data-field]');
+        if (fieldEl && e.key === 'Enter' && fieldEl.dataset.multiline !== 'true') {
+          e.preventDefault();
+          fieldEl.blur();
+        }
+      });
 
       let autosaveTimer;
       function scheduleAutosave() {
@@ -797,6 +832,38 @@ const jsonLd = {
 )}
 
 <style>
+  /* Inert (a plain block, no layout of its own) until an owner has
+     actually placed a section in a sidebar — see hasSidebars. A business
+     that never touches this looks exactly as it always has: the page's
+     three sections just stack normally, one after another. */
+  .page-sidebar-layout.has-sidebars {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 720px minmax(0, 1fr);
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  .page-sidebar-layout.has-sidebars .page-main-column {
+    grid-column: 2;
+  }
+  .page-sidebar {
+    min-width: 0;
+    padding-top: 2rem;
+  }
+  .page-sidebar[hidden] {
+    display: none;
+  }
+  @media (max-width: 1100px) {
+    .page-sidebar-layout.has-sidebars {
+      grid-template-columns: 1fr;
+      max-width: 720px;
+    }
+    .page-sidebar-layout.has-sidebars .page-main-column,
+    .page-sidebar-layout.has-sidebars .page-sidebar {
+      grid-column: 1;
+    }
+  }
   .tags {
     display: flex;
     flex-wrap: wrap;
@@ -1109,6 +1176,36 @@ const jsonLd = {
     font-size: 0.82rem;
     color: var(--text-muted);
   }
+  :global(.page-sidebar) {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  :global(.sidebar-block) {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    padding: 0.5rem;
+  }
+  :global(.sidebar-block-move) {
+    display: flex;
+    gap: 0.35rem;
+    margin: 0.4rem 0;
+  }
+  :global(.sidebar-block-move button) {
+    flex: 1 1 auto;
+    font-size: 0.8rem;
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    border-radius: var(--radius);
+    cursor: pointer;
+    padding: 0.25rem;
+    color: var(--text-muted);
+  }
+  :global(.sidebar-block-move button:disabled) {
+    opacity: 0.4;
+    cursor: default;
+  }
   /* Everything below is :global() for the same reason as the
      .custom-block rules above — built at runtime, never present at
      Astro's build time. */
@@ -1121,25 +1218,6 @@ const jsonLd = {
   :global(.editable-block > .custom-block) {
     flex: 1 1 auto;
     min-height: 0;
-  }
-  /* A bled section's preview is deliberately allowed to spill outside
-     its own grid slot sideways — see positionBleedPreview, which is what
-     actually sets its width/position in real pixels. Height still comes
-     from the normal sizing pass, so only horizontal overflow is opened
-     up here. */
-  :global(.editable-block-bleed) {
-    overflow-x: visible;
-  }
-  :global(.editable-block > .bleed-preview-inner) {
-    flex: 1 1 auto;
-    min-height: 0;
-  }
-  :global(.bleed-preview-inner) {
-    position: relative;
-    box-sizing: border-box;
-  }
-  :global(.bleed-preview-inner > .custom-block) {
-    height: 100%;
   }
   :global(.editable-block .custom-block-photo img),
   :global(.editable-block .custom-block-side-image img) {
@@ -1195,21 +1273,6 @@ const jsonLd = {
     background: var(--bg-card);
     color: var(--text-muted);
     cursor: pointer;
-  }
-  :global(.bleed-note) {
-    flex: 0 0 auto;
-    font-size: 0.75rem;
-    color: var(--accent);
-    margin-bottom: 0.5rem;
-  }
-  /* A visible accent border in the editor for a bleed section, since the
-     editor's own canvas can't actually show it stretching past the page
-     — the note above says what it'll do once published instead. */
-  :global(.grid-stack-item.bleed-full > .grid-stack-item-content),
-  :global(.grid-stack-item.bleed-left > .grid-stack-item-content),
-  :global(.grid-stack-item.bleed-right > .grid-stack-item-content) {
-    outline: 2px dashed var(--accent);
-    outline-offset: 2px;
   }
   :global([contenteditable='true']) {
     outline: 2px dashed transparent;
@@ -1272,13 +1335,6 @@ const jsonLd = {
     border-radius: 3px;
     background: var(--accent);
     opacity: 0.7;
-  }
-  /* A "full width" section's width is locked (minW == maxW in the JS),
-     so its e/w handles wouldn't do anything if dragged — hidden rather
-     than left as a non-functional affordance. */
-  :global(.grid-stack-item.bleed-full > .ui-resizable-e),
-  :global(.grid-stack-item.bleed-full > .ui-resizable-w) {
-    display: none !important;
   }
   .located-at {
     display: inline-flex;

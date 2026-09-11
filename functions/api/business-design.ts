@@ -107,7 +107,7 @@ function sanitizePageColors(input: unknown): Record<string, string> {
   return out;
 }
 
-type SanitizedBlock = { type: string; title: string; body: string; imageKey?: string; side?: 'left' | 'right'; heightPx?: number; colSpan?: number; bleed?: 'full' | 'left' | 'right' };
+type SanitizedBlock = { type: string; title: string; body: string; imageKey?: string; side?: 'left' | 'right'; heightPx?: number; colSpan?: number; zone?: 'left' | 'right' };
 
 function sanitizeBlocks(input: unknown): SanitizedBlock[] {
   if (!Array.isArray(input)) return [];
@@ -126,7 +126,7 @@ function sanitizeBlocks(input: unknown): SanitizedBlock[] {
       ...(typeof b.colSpan === 'number' && Number.isFinite(b.colSpan)
         ? { colSpan: Math.round(Math.min(MAX_COL_SPAN, Math.max(MIN_COL_SPAN, b.colSpan))) }
         : {}),
-      ...(b.bleed === 'full' || b.bleed === 'left' || b.bleed === 'right' ? { bleed: b.bleed } : {}),
+      ...(b.zone === 'left' || b.zone === 'right' ? { zone: b.zone } : {}),
     }));
 }
 
