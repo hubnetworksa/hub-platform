@@ -94,7 +94,7 @@ const jsonLd = {
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <div id="page-content" style={pageColorVars || null}>
-  <section class="container" style={`padding-top: 2rem; padding-bottom: 0;${isPremium ? '' : ' max-width: 720px;'}`}>
+  <section class="container" style="padding-top: 2rem; padding-bottom: 0; max-width: 720px;">
     <Breadcrumbs
       items={[
         ...(suburb ? [{ label: suburb.name, href: `/suburb/${suburb.slug}/` }] : []),
@@ -146,7 +146,7 @@ const jsonLd = {
   </section>
 
   {isPremium && (
-    <section class="container" style="padding-top: 0.5rem; padding-bottom: 0.5rem;">
+    <section class="container" style="padding-top: 0.5rem; padding-bottom: 0.5rem; max-width: 720px;">
       <div id="custom-blocks-mount">
         <Fragment set:html={customBlocksHtml} />
       </div>
@@ -172,7 +172,7 @@ const jsonLd = {
     </section>
   )}
 
-  <section class="container" style={`padding-top: 0; padding-bottom: 2rem;${isPremium ? '' : ' max-width: 720px;'}`}>
+  <section class="container" style="padding-top: 0; padding-bottom: 2rem; max-width: 720px;">
     {center && (
       <a href={`/shopping-center/${center.slug}/`} class="located-at">
         <Icon path={ICONS.building} size={15} /> Located at {center.name}
