@@ -2,7 +2,8 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../_lib/auth';
 import { triggerRebuild } from '../_lib/deploy-hook';
 import { logActivity } from '../_lib/activity-log';
-import { BLOCK_TYPES } from '../../src/lib/blockRenderer';
+import { BLOCK_TYPES, GRID_COLUMNS, BG_STYLES, TEXT_COLORS, FONT_STYLES, SPACING_STYLES } from '../../src/lib/blockRenderer';
+import type { BlockLayout, BlockStyle } from '../../src/lib/blockRenderer';
 
 interface Env {
   DB: D1Database;
@@ -76,16 +77,44 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   });
 };
 
-function sanitizeBlocks(input: unknown): { type: string; title: string; body: string; imageKey?: string }[] {
+function clamp(n: unknown, min: number, max: number, fallback: number): number {
+  const v = Number(n);
+  return Number.isFinite(v) ? Math.min(max, Math.max(min, Math.round(v))) : fallback;
+}
+
+function sanitizeLayout(input: unknown, index: number): BlockLayout {
+  if (typeof input !== 'object' || input === null) return { row: index + 1, col: 0, w: GRID_COLUMNS };
+  const l = input as Record<string, unknown>;
+  return {
+    row: clamp(l.row, 1, 500, index + 1),
+    col: clamp(l.col, 0, GRID_COLUMNS - 1, 0),
+    w: clamp(l.w, 1, GRID_COLUMNS, GRID_COLUMNS),
+  };
+}
+
+function sanitizeStyle(input: unknown): BlockStyle | undefined {
+  if (typeof input !== 'object' || input === null) return undefined;
+  const s = input as Record<string, unknown>;
+  const style: BlockStyle = {};
+  if (typeof s.bg === 'string' && s.bg in BG_STYLES) style.bg = s.bg as BlockStyle['bg'];
+  if (typeof s.color === 'string' && s.color in TEXT_COLORS) style.color = s.color as BlockStyle['color'];
+  if (typeof s.font === 'string' && s.font in FONT_STYLES) style.font = s.font as BlockStyle['font'];
+  if (typeof s.spacing === 'string' && s.spacing in SPACING_STYLES) style.spacing = s.spacing as BlockStyle['spacing'];
+  return Object.keys(style).length ? style : undefined;
+}
+
+function sanitizeBlocks(input: unknown): { type: string; title: string; body: string; imageKey?: string; layout?: BlockLayout; style?: BlockStyle }[] {
   if (!Array.isArray(input)) return [];
   return input
     .slice(0, 10)
     .filter((b): b is Record<string, unknown> => typeof b === 'object' && b !== null)
-    .map((b) => ({
+    .map((b, i) => ({
       type: (BLOCK_TYPES as readonly string[]).includes(String(b.type)) ? String(b.type) : 'story',
       title: typeof b.title === 'string' ? b.title.slice(0, 60) : '',
       body: typeof b.body === 'string' ? b.body.slice(0, 800) : '',
       ...(typeof b.imageKey === 'string' ? { imageKey: b.imageKey.slice(0, 300) } : {}),
+      layout: sanitizeLayout(b.layout, i),
+      ...(sanitizeStyle(b.style) ? { style: sanitizeStyle(b.style) } : {}),
     }));
 }
 

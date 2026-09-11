@@ -4,7 +4,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
 import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, customBlocksFor, TIER_VERIFIED, TIER_VERIFIED_PLUS, TIER_FEATURED, TIER_PREMIUM } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
-import { renderCustomBlocksHtml } from '../../lib/blockRenderer';
+import { renderCustomBlocksHtml, usesExtraFont, EXTRA_FONTS_QUERY } from '../../lib/blockRenderer';
 import Icon from '../../components/Icon.astro';
 
 export function getStaticPaths() {
@@ -38,7 +38,8 @@ const canChooseTemplate = business.subscription_tier >= TIER_FEATURED && busines
 const template = canChooseTemplate ? business.template_id : 'classic';
 const isPremium = business.subscription_tier >= TIER_PREMIUM && business.subscription_status === 'active';
 const customBlocks = isPremium ? customBlocksFor(business) : [];
-const customBlocksHtml = renderCustomBlocksHtml(customBlocks, template);
+const customBlocksHtml = renderCustomBlocksHtml(customBlocks);
+const needsExtraFont = usesExtraFont(customBlocks);
 // Only rendered when a real link exists — see shoppingCenterFor.
 const center = shoppingCenterFor(business);
 
@@ -65,7 +66,7 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={business.name} description={business.description.slice(0, 155)} noAds={noAds}>
+<BaseLayout title={business.name} description={business.description.slice(0, 155)} noAds={noAds} extraFonts={needsExtraFont ? EXTRA_FONTS_QUERY : undefined}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <section class="container" style="padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;">
@@ -275,22 +276,42 @@ const jsonLd = {
     border-radius: var(--radius-lg);
     scroll-snap-align: start;
   }
+  /* Free-form layout: a 12-column grid where each block's grid-column/
+     grid-row (set inline per block by blockRenderer.ts, from its stored
+     `layout`) places it — auto row height, so nothing ever clips no matter
+     how the owner arranged things. A container query (not a viewport media
+     query) collapses it to one stacked column once its own box narrows
+     below 640px, ignoring the stored placement entirely, so a layout
+     that's a careful 3-across row on desktop never produces a broken,
+     overlapping mess on a phone. Container-based (rather than viewport-
+     based) so the same rule also drives the customize page's own preview
+     frame correctly when its width toggle narrows just the preview, not
+     the real browser viewport. */
+  .custom-blocks-container {
+    container-type: inline-size;
+  }
   .custom-blocks {
     margin-top: 1.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-  .custom-blocks.grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: auto;
+    gap: 1.25rem 1rem;
+  }
+  @container (max-width: 640px) {
+    .custom-blocks {
+      grid-template-columns: 1fr;
+    }
+    .custom-block {
+      grid-column: 1 / -1 !important;
+      grid-row: auto !important;
+    }
   }
   .custom-block {
     padding: 1rem 1.1rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--bg-card);
+    min-width: 0;
   }
   .custom-block h2 {
     margin: 0 0 0.4rem;

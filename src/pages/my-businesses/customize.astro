@@ -67,7 +67,8 @@ import site from '../../site';
           </div>
           <section id="block-editor" hidden>
             <h2>Extra sections</h2>
-            <div id="blocks-list"></div>
+            <p class="muted layout-hint">Drag a card to move it, drag its bottom-right corner to resize it — the live preview above updates as you go.</p>
+            <div id="layout-grid" class="grid-stack"></div>
             <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
           </section>
 
@@ -88,7 +89,8 @@ import site from '../../site';
   </div>
 </BaseLayout>
 
-<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<link is:inline rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.5.1/gridstack.min.css" />
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.5.1/gridstack-all.min.js"></script>
 <script define:vars={{ SITE_NAME: site.siteName, CITY_LABEL: site.cityLabel, SITE_TAGLINE: site.tagline }}>
   // NOTE: define:vars forces this whole script to stay inline, unprocessed
   // by Astro/Vite — no TypeScript syntax here (no `interface`, no type
@@ -122,7 +124,44 @@ import site from '../../site';
     ['story', 'Our Story'], ['specials', 'Specials & Promotions'], ['team', 'Team'], ['gallery', 'Gallery'],
     ['photo', 'Photo'], ['testimonial', 'Testimonial'], ['cta', 'Call to Action'], ['divider', 'Divider'],
   ];
-  // Sortable is loaded as a global by the <script src> tag above this one.
+  // GridStack is loaded as a global by the <script src> tag above this one.
+
+  // Kept in sync by hand with src/lib/blockRenderer.ts's GRID_COLUMNS/
+  // BG_STYLES/TEXT_COLORS/FONT_STYLES/SPACING_STYLES — same reason as
+  // BLOCK_TITLES above. A block missing `layout` (saved before this
+  // feature existed) falls back to one full-width block per row, in
+  // array order, matching how it always rendered.
+  const GRID_COLUMNS = 12;
+  const BG_STYLES = { none: 'transparent', card: 'var(--bg-card)', subtle: 'var(--bg-subtle)', tint: 'rgba(var(--accent-rgb), 0.08)', accent: 'var(--accent)', navy: 'var(--navy)' };
+  const TEXT_COLORS = { default: 'var(--text)', muted: 'var(--text-muted)', white: '#ffffff', accent: 'var(--accent)' };
+  const FONT_STYLES = { default: 'inherit', serif: "'Playfair Display', Georgia, serif", rounded: "'Quicksand', inherit" };
+  const SPACING_STYLES = { compact: '0.6rem 0.75rem', comfortable: '1rem 1.1rem', spacious: '1.75rem 1.85rem' };
+  // Each row also gets its own "Default" button (prepended in swatchRow,
+  // not listed here) which clears the property entirely rather than
+  // mapping to one of these — leaving it unset so the block falls back to
+  // its type's own normal CSS, exactly like a block saved before per-block
+  // styling existed.
+  const BG_OPTIONS = [['none', 'Transparent'], ['card', 'Card'], ['subtle', 'Subtle'], ['tint', 'Tint'], ['accent', 'Accent'], ['navy', 'Navy']];
+  const COLOR_OPTIONS = [['muted', 'Muted'], ['white', 'White'], ['accent', 'Accent']];
+  const FONT_OPTIONS = [['serif', 'Serif'], ['rounded', 'Rounded']];
+  const SPACING_OPTIONS = [['compact', 'Compact'], ['comfortable', 'Comfortable'], ['spacious', 'Spacious']];
+
+  function layoutOf(b, i) {
+    return b.layout || { row: i + 1, col: 0, w: GRID_COLUMNS };
+  }
+
+  function blockStyleAttr(style) {
+    if (!style) return '';
+    const decls = [];
+    if (style.bg && BG_STYLES[style.bg]) {
+      decls.push(`background:${BG_STYLES[style.bg]}`);
+      if (style.bg === 'accent' || style.bg === 'navy') decls.push('color:#fff');
+    }
+    if (style.color && TEXT_COLORS[style.color]) decls.push(`color:${TEXT_COLORS[style.color]}`);
+    if (style.font && FONT_STYLES[style.font]) decls.push(`font-family:${FONT_STYLES[style.font]}`);
+    if (style.spacing && SPACING_STYLES[style.spacing]) decls.push(`padding:${SPACING_STYLES[style.spacing]}`);
+    return decls.length ? ` style="${decls.join(';')}"` : '';
+  }
 
   // Same icon paths as src/pages/business/[slug].astro's ICONS + Icon.astro's
   // wrapper — kept in sync by hand since this preview can't import an
@@ -243,23 +282,28 @@ import site from '../../site';
   // Kept in sync by hand with src/lib/blockRenderer.ts's renderOneBlock —
   // same reason as BLOCK_TITLES above.
   function renderOneBlockPreview(b, index) {
+    const { row, col, w } = layoutOf(b, index);
+    const gridStyle = `grid-column:${col + 1} / span ${w};grid-row:${row}`;
+    const extraStyle = blockStyleAttr(b.style);
+    const styleAttr = extraStyle ? extraStyle.replace(' style="', ` style="${gridStyle};`) : ` style="${gridStyle}"`;
+
     switch (b.type) {
       case 'photo': {
         const altText = escapeHtml(b.title || 'Photo');
-        return `<div class="custom-block custom-block-photo">
+        return `<div class="custom-block custom-block-photo"${styleAttr}>
           ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${altText}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one from the section list below</div>'}
           ${editableEl('p', 'photo-caption', index, 'title', b.title, 'Add a caption (optional)')}
         </div>`;
       }
       case 'divider':
-        return `<div class="custom-block custom-block-divider"><hr /></div>`;
+        return `<div class="custom-block custom-block-divider"${styleAttr}><hr /></div>`;
       case 'cta':
-        return `<div class="custom-block custom-block-cta">
+        return `<div class="custom-block custom-block-cta"${styleAttr}>
           ${editableEl('p', 'cta-text', index, 'title', b.title, BLOCK_TITLES.cta)}
           ${editableEl('span', 'btn btn-primary cta-btn', index, 'body', b.body, 'Get in touch')}
         </div>`;
       case 'testimonial':
-        return `<div class="custom-block custom-block-testimonial">
+        return `<div class="custom-block custom-block-testimonial"${styleAttr}>
           <p class="testimonial-quote">&ldquo;${editableEl('span', 'cb-field-inline', index, 'body', b.body, '', true)}&rdquo;</p>
           <p class="testimonial-author">— ${editableEl('span', 'cb-field-inline', index, 'title', b.title, BLOCK_TITLES.testimonial)}</p>
         </div>`;
@@ -275,7 +319,7 @@ import site from '../../site';
           'data-multiline="true"',
           b.body ? '' : 'data-placeholder="true" data-html-fallback="true"',
         ].filter(Boolean).join(' ');
-        return `<div class="custom-block">
+        return `<div class="custom-block"${styleAttr}>
           ${titleEl}
           <p ${bodyAttrs}>${bodyHtml}</p>
         </div>`;
@@ -300,7 +344,7 @@ import site from '../../site';
       : '';
 
     const customBlocksHtml = canUseBuilder && blocks.length
-      ? `<div class="custom-blocks${selectedTemplate === 'services' ? ' grid' : ''}">${blocks.map(renderOneBlockPreview).join('')}</div>`
+      ? `<div class="custom-blocks-container"><div class="custom-blocks">${blocks.map(renderOneBlockPreview).join('')}</div></div>`
       : '';
 
     const tagsHtml = `<div class="tags">
@@ -335,59 +379,146 @@ import site from '../../site';
     `;
   }
 
-  // Text fields are edited inline, directly in the live preview (click any
-  // headline/body there) — the sidebar only holds what can't be edited that
-  // way: which photo a photo block uses.
-  function blockFieldsHtml(b) {
+  // Text is edited inline, directly in the live preview (click any
+  // headline/body there) — each card in the layout grid only holds what
+  // can't be edited that way: the block's type, which photo a photo block
+  // uses, and its visual style.
+  function swatchRow(i, prop, options, current, label) {
+    const clearBtn = `<button type="button" class="swatch-btn ${!current ? 'active' : ''}" data-i="${i}" data-prop="${prop}" data-val="">Default</button>`;
+    const optionBtns = options
+      .map(([val, optLabel]) => `<button type="button" class="swatch-btn ${current === val ? 'active' : ''}" data-i="${i}" data-prop="${prop}" data-val="${val}">${optLabel}</button>`)
+      .join('');
+    return `<div class="style-row"><span class="style-row-label">${label}</span><div class="swatch-group">${clearBtn}${optionBtns}</div></div>`;
+  }
+
+  function blockCardHtml(b, i) {
+    const style = b.style || {};
+    let fields;
     if (b.type === 'divider') {
-      return '<p class="muted block-hint">Just a horizontal divider — no text needed.</p>';
-    }
-    if (b.type === 'photo') {
+      fields = '<p class="muted block-hint">Just a horizontal divider — no text needed.</p>';
+    } else if (b.type === 'photo') {
       const photoOptions = photos
         .map((p) => `<option value="${p.r2_key}" ${b.imageKey === p.r2_key ? 'selected' : ''}>${p.r2_key.split('/').pop()}</option>`)
         .join('');
-      return `
-        <select class="block-image">
+      fields = `
+        <select class="block-image" data-i="${i}">
           <option value="">— Choose an uploaded photo —</option>
           ${photoOptions}
         </select>
         <p class="muted block-hint">Caption is editable directly in the preview above.</p>`;
+    } else {
+      fields = '<p class="muted block-hint">Text is editable directly in the preview above.</p>';
     }
-    return '<p class="muted block-hint">Text is editable directly in the preview above.</p>';
+
+    const styleControls = b.type === 'divider' ? '' : `
+      <div class="style-panel">
+        ${swatchRow(i, 'bg', BG_OPTIONS, style.bg, 'Background')}
+        ${swatchRow(i, 'color', COLOR_OPTIONS, style.color, 'Text')}
+        ${swatchRow(i, 'font', FONT_OPTIONS, style.font, 'Font')}
+        ${swatchRow(i, 'spacing', SPACING_OPTIONS, style.spacing, 'Spacing')}
+      </div>`;
+
+    return `
+      <div class="block-card-head">
+        <span class="drag-handle item-drag-handle" title="Drag to move">⠿⠿</span>
+        <select class="block-type" data-i="${i}">
+          ${BLOCK_TYPE_OPTIONS.map(([val, label]) => `<option value="${val}" ${b.type === val ? 'selected' : ''}>${label}</option>`).join('')}
+        </select>
+        <button type="button" class="remove-block" data-i="${i}" title="Remove section">✕</button>
+      </div>
+      ${fields}
+      ${styleControls}
+    `;
   }
 
-  function renderBlocks() {
-    const list = document.getElementById('blocks-list');
-    list.innerHTML = blocks
-      .map(
-        (b, i) => `
-      <div class="block-row" data-i="${i}">
-        <div class="block-row-head">
-          <span class="drag-handle" title="Drag to reorder">⠿⠿</span>
-          <select class="block-type">
-            ${BLOCK_TYPE_OPTIONS.map(([val, label]) => `<option value="${val}" ${b.type === val ? 'selected' : ''}>${label}</option>`).join('')}
-          </select>
-        </div>
-        ${blockFieldsHtml(b)}
-        <div class="block-row-actions">
-          <button type="button" class="move-up" ${i === 0 ? 'disabled' : ''}>↑</button>
-          <button type="button" class="move-down" ${i === blocks.length - 1 ? 'disabled' : ''}>↓</button>
-          <button type="button" class="remove-block">Remove</button>
-        </div>
-      </div>`
-      )
-      .join('');
+  // GridStack owns the DOM of #layout-grid once initialized — everything
+  // here goes through its own addWidget/removeAll methods instead of
+  // innerHTML, so its internal engine state (which cards exist, at what
+  // x/y/w/h) never drifts out of sync with what's actually on screen.
+  let gridInstance = null;
 
-    list.querySelectorAll('.block-row').forEach((row) => {
-      const i = Number(row.dataset.i);
-      row.querySelector('.block-type').addEventListener('change', (e) => {
-        blocks[i].type = e.target.value;
-        renderBlocks(); renderPreview(); scheduleAutosave();
+  function initLayoutGrid() {
+    if (gridInstance) return;
+    gridInstance = GridStack.init(
+      {
+        column: GRID_COLUMNS,
+        cellHeight: 76,
+        margin: 8,
+        float: true, // blocks stay exactly where dropped — no auto-compaction
+        handle: '.item-drag-handle',
+        sizeToContent: true, // a card's real height follows its content
+      },
+      '#layout-grid'
+    );
+    gridInstance.on('change', (event, changedItems) => {
+      changedItems.forEach((node) => {
+        const i = Number(node.el.dataset.i);
+        if (!blocks[i]) return;
+        blocks[i].layout = { row: node.y + 1, col: node.x, w: node.w };
       });
-      row.querySelector('.block-image')?.addEventListener('change', (e) => { blocks[i].imageKey = e.target.value || undefined; renderPreview(); scheduleAutosave(); });
-      row.querySelector('.remove-block').addEventListener('click', () => { blocks.splice(i, 1); renderBlocks(); renderPreview(); scheduleAutosave(); });
-      row.querySelector('.move-up')?.addEventListener('click', () => { if (i > 0) { [blocks[i - 1], blocks[i]] = [blocks[i], blocks[i - 1]]; renderBlocks(); renderPreview(); scheduleAutosave(); } });
-      row.querySelector('.move-down')?.addEventListener('click', () => { if (i < blocks.length - 1) { [blocks[i + 1], blocks[i]] = [blocks[i], blocks[i + 1]]; renderBlocks(); renderPreview(); scheduleAutosave(); } });
+      renderPreview();
+      scheduleAutosave();
+    });
+  }
+
+  // Rebuilds every card from scratch — blocks.length maxes out at 10, so
+  // there's no real cost to just clearing and re-adding rather than
+  // diffing, and it keeps "the data model is the source of truth" simple.
+  function renderLayoutGrid() {
+    gridInstance.removeAll(false);
+    blocks.forEach((b, i) => {
+      const { row, col, w } = layoutOf(b, i);
+      const el = document.createElement('div');
+      el.className = 'grid-stack-item';
+      el.dataset.i = String(i);
+      el.innerHTML = `<div class="grid-stack-item-content">${blockCardHtml(b, i)}</div>`;
+      gridInstance.addWidget(el, { x: col, y: row - 1, w, h: 1, id: String(i) });
+    });
+  }
+
+  // Delegated once onto the stable #layout-grid container — same reasoning
+  // as initInlineEditing() below: renderLayoutGrid() replaces every card's
+  // content on every structural change, so listeners have to live on the
+  // container, not the cards themselves.
+  function initLayoutGridControls() {
+    const grid = document.getElementById('layout-grid');
+    grid.addEventListener('change', (e) => {
+      const i = Number(e.target.dataset.i);
+      if (Number.isNaN(i) || !blocks[i]) return;
+      if (e.target.classList.contains('block-type')) {
+        blocks[i].type = e.target.value;
+        renderLayoutGrid();
+        renderPreview();
+        scheduleAutosave();
+      } else if (e.target.classList.contains('block-image')) {
+        blocks[i].imageKey = e.target.value || undefined;
+        renderPreview();
+        scheduleAutosave();
+      }
+    });
+    grid.addEventListener('click', (e) => {
+      const removeBtn = e.target.closest('.remove-block');
+      if (removeBtn) {
+        const i = Number(removeBtn.dataset.i);
+        blocks.splice(i, 1);
+        renderLayoutGrid();
+        renderPreview();
+        scheduleAutosave();
+        return;
+      }
+      const swatch = e.target.closest('.swatch-btn');
+      if (swatch) {
+        const i = Number(swatch.dataset.i);
+        const prop = swatch.dataset.prop;
+        const val = swatch.dataset.val;
+        if (!blocks[i]) return;
+        blocks[i].style = blocks[i].style || {};
+        if (val) blocks[i].style[prop] = val;
+        else delete blocks[i].style[prop];
+        renderLayoutGrid();
+        renderPreview();
+        scheduleAutosave();
+      }
     });
   }
 
@@ -463,33 +594,12 @@ import site from '../../site';
 
   document.getElementById('add-block-btn').addEventListener('click', () => {
     if (blocks.length >= 10) return;
-    blocks.push({ type: 'story', title: '', body: '' });
-    renderBlocks();
+    const nextRow = blocks.reduce((max, b, i) => Math.max(max, layoutOf(b, i).row), 0) + 1;
+    blocks.push({ type: 'story', title: '', body: '', layout: { row: nextRow, col: 0, w: GRID_COLUMNS } });
+    renderLayoutGrid();
     renderPreview();
     scheduleAutosave();
   });
-
-  // Sortable is attached to the container once — it reads whatever child
-  // rows exist at drag time, so it survives renderBlocks() re-rendering
-  // those rows on every edit without needing to be re-created.
-  let sortableInited = false;
-  function initSortable() {
-    if (sortableInited || typeof Sortable === 'undefined') return;
-    sortableInited = true;
-    Sortable.create(document.getElementById('blocks-list'), {
-      handle: '.drag-handle',
-      animation: 150,
-      ghostClass: 'block-row-ghost',
-      onEnd: (evt) => {
-        if (evt.oldIndex === evt.newIndex) return;
-        const [moved] = blocks.splice(evt.oldIndex, 1);
-        blocks.splice(evt.newIndex, 0, moved);
-        renderBlocks();
-        renderPreview();
-        scheduleAutosave();
-      },
-    });
-  }
 
   let autosaveTimer;
   function scheduleAutosave() {
@@ -564,7 +674,7 @@ import site from '../../site';
     hasUnpublishedChanges = false;
     draftUpdatedAt = null;
     document.querySelectorAll('.tpl-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.tpl === selectedTemplate));
-    renderBlocks();
+    renderLayoutGrid();
     renderPreview();
     updateDesignStatus();
   });
@@ -646,8 +756,13 @@ import site from '../../site';
 
     if (canUseBuilder) {
       document.getElementById('block-editor').hidden = false;
-      renderBlocks();
-      initSortable();
+      // Backfill layout on load so the grid canvas always has concrete
+      // coordinates to render from, even for blocks saved before this
+      // feature existed — matches src/lib/blockRenderer.ts's own fallback.
+      blocks.forEach((b, i) => { b.layout = layoutOf(b, i); });
+      initLayoutGrid();
+      initLayoutGridControls();
+      renderLayoutGrid();
     } else {
       document.getElementById('upsell-blocks').hidden = false;
     }
@@ -872,35 +987,51 @@ import site from '../../site';
     border-color: var(--accent);
     background: rgba(var(--accent-rgb), 0.08);
   }
-  /* :global() throughout this block — every .block-row is built at runtime
-     in renderBlocks() via innerHTML, so (same reason as .photo-thumb above)
-     Astro's scoped-style data attribute never reaches these elements and a
-     plain scoped selector would silently never match them. */
-  :global(.block-row) {
+  /* GridStack builds every .grid-stack-item at runtime via addWidget(), so
+     (same reason as .photo-thumb above) Astro's scoped-style data
+     attribute never reaches these elements — :global() throughout. */
+  .layout-hint {
+    margin: 0 0 0.75rem;
+  }
+  :global(#layout-grid.grid-stack) {
+    background: var(--bg-subtle);
+    border-radius: var(--radius);
+    padding: 0.4rem;
+  }
+  :global(.grid-stack-item-content) {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    padding: 0.75rem;
+    gap: 0.5rem;
+    padding: 0.65rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--bg-card);
-    margin-bottom: 0.6rem;
+    overflow: visible !important;
   }
-  :global(.block-row select), :global(.block-row input), :global(.block-row textarea) {
+  :global(.block-card-head) {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  :global(.block-card-head select) {
+    flex: 1;
     font: inherit;
-    padding: 0.45rem 0.6rem;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.5rem;
     border-radius: var(--radius);
     border: 1px solid var(--border);
     background: var(--bg-subtle);
     color: var(--text);
   }
-  :global(.block-row-head) {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  :global(.block-row-head select) {
-    flex: 1;
+  :global(.block-image) {
+    font: inherit;
+    font-size: 0.85rem;
+    padding: 0.35rem 0.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    color: var(--text);
+    width: 100%;
   }
   :global(.drag-handle) {
     cursor: grab;
@@ -909,25 +1040,59 @@ import site from '../../site';
     letter-spacing: -0.15em;
     user-select: none;
     touch-action: none;
-    padding: 0 0.2rem;
+    padding: 0 0.1rem;
   }
   :global(.drag-handle:active) {
     cursor: grabbing;
   }
-  :global(.block-row-ghost) {
-    opacity: 0.4;
-  }
-  :global(.block-row-actions) {
-    display: flex;
-    gap: 0.4rem;
-  }
-  :global(.block-row-actions button) {
-    font-size: 0.78rem;
+  :global(.remove-block) {
+    font-size: 0.85rem;
     border: 1px solid var(--border);
     background: var(--bg-subtle);
     border-radius: var(--radius);
     cursor: pointer;
-    padding: 0.3rem 0.55rem;
+    padding: 0.25rem 0.45rem;
+    color: var(--text-muted);
+    line-height: 1;
+  }
+  :global(.style-panel) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding-top: 0.35rem;
+    border-top: 1px solid var(--border);
+  }
+  :global(.style-row) {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  :global(.style-row-label) {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    width: 5.2rem;
+    flex-shrink: 0;
+  }
+  :global(.swatch-group) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  :global(.swatch-btn) {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    border-radius: 999px;
+    cursor: pointer;
+    color: var(--text-muted);
+  }
+  :global(.swatch-btn.active) {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.1);
+    font-weight: 600;
   }
   .photo-grid {
     display: grid;
@@ -1139,22 +1304,37 @@ import site from '../../site';
     color: var(--text-muted);
     font-style: italic;
   }
+  /* Mirrors src/pages/business/[slug].astro's own free-form-layout CSS
+     exactly (see that file for the full explanation) — a container query,
+     not a viewport media query, so narrowing the preview via the Desktop/
+     Tablet/Mobile toggle above actually triggers the same mobile collapse
+     a real phone would get, instead of never firing since that toggle
+     only shrinks a container, not the real browser viewport. */
+  .preview-body :global(.custom-blocks-container) {
+    container-type: inline-size;
+  }
   .preview-body :global(.custom-blocks) {
     margin-top: 1.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-  .preview-body :global(.custom-blocks.grid) {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: auto;
+    gap: 1.25rem 1rem;
+  }
+  @container (max-width: 640px) {
+    .preview-body :global(.custom-blocks) {
+      grid-template-columns: 1fr;
+    }
+    .preview-body :global(.custom-block) {
+      grid-column: 1 / -1 !important;
+      grid-row: auto !important;
+    }
   }
   .preview-body :global(.custom-block) {
     padding: 1rem 1.1rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--bg-card);
+    min-width: 0;
   }
   .preview-body :global(.custom-block h2) {
     margin: 0 0 0.4rem;
