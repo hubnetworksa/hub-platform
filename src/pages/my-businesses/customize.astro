@@ -67,8 +67,7 @@ import site from '../../site';
           </div>
           <section id="block-editor" hidden>
             <h2>Extra sections</h2>
-            <p class="muted layout-hint">Drag a card to move it, drag its bottom-right corner to resize it — the live preview above updates as you go.</p>
-            <div id="layout-grid" class="grid-stack"></div>
+            <p class="muted layout-hint">Each section shows a small toolbar directly in the live preview above — drag its handle to move it, drag its bottom-right corner to resize it, or use the toolbar to change its type, style, or remove it.</p>
             <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
           </section>
 
@@ -263,7 +262,11 @@ import site from '../../site';
       <main>
         <section class="container" style="padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;">
           ${breadcrumbsHtml}
-          <div id="preview-dynamic"></div>
+          <div id="preview-dynamic">
+            <div id="preview-hero-mount"></div>
+            <div id="preview-blocks-mount"></div>
+            <div id="preview-footer-mount"></div>
+          </div>
         </section>
       </main>
       <footer class="site-footer">
@@ -327,6 +330,12 @@ import site from '../../site';
     }
   }
 
+  // Split into three mounts (hero/blocks/footer) instead of one big
+  // innerHTML replacement — #preview-blocks-mount holds a GridStack
+  // instance once sizing/editing moves into the preview itself (below),
+  // and rebuilding it wholesale on every unrelated change (a photo upload,
+  // a template switch) would destroy that instance's state along with
+  // whatever the owner was in the middle of doing.
   function renderPreview() {
     const isPaidTier = tier >= 1;
     const showClickableWebsite = isPaidTier && !!business.website;
@@ -336,15 +345,17 @@ import site from '../../site';
       : photos.map((p) => `/media/${p.r2_key}`);
     const sampleNote = usingPlaceholders ? '<p class="sample-note">📷 Sample photos shown — upload your own above to replace them.</p>' : '';
 
-    const heroGallery = selectedTemplate === 'gallery'
+    // Premium (canUseBuilder) businesses no longer get an automatic photo
+    // gallery here at all — matches src/pages/business/[slug].astro's own
+    // `!isPremium` gate exactly. Once the block builder is available,
+    // photos are only ever shown via an explicit 'photo' block, so the
+    // owner fully controls where and how big they are instead of them
+    // always appearing in a fixed spot at a fixed size.
+    const heroGallery = !canUseBuilder && selectedTemplate === 'gallery'
       ? `<div class="hero-gallery">${galleryPhotos.map((src) => `<img src="${src}" alt="" />`).join('')}</div>${sampleNote}`
       : '';
-    const inlineGallery = selectedTemplate !== 'gallery'
+    const inlineGallery = !canUseBuilder && selectedTemplate !== 'gallery'
       ? `<div class="photo-gallery${galleryPhotos.length > 5 ? ' carousel' : ''}">${galleryPhotos.map((src) => `<img src="${src}" alt="" />`).join('')}</div>${sampleNote}`
-      : '';
-
-    const customBlocksHtml = canUseBuilder && blocks.length
-      ? `<div class="custom-blocks-container"><div class="custom-blocks">${blocks.map(renderOneBlockPreview).join('')}</div></div>`
       : '';
 
     const tagsHtml = `<div class="tags">
@@ -352,14 +363,17 @@ import site from '../../site';
       ${business.categories.map((c) => `<span class="badge">${escapeHtml(c.name)}</span>`).join('')}
     </div>`;
 
-    const body = document.getElementById('preview-dynamic');
-    body.innerHTML = `
+    document.getElementById('preview-hero-mount').innerHTML = `
       ${heroGallery}
       <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">${escapeHtml(business.name)}</h1>
       ${tagsHtml}
       <p style="margin-top: 1.25rem;">${escapeHtml(business.description)}</p>
       ${inlineGallery}
-      ${customBlocksHtml}
+    `;
+
+    renderPreviewBlocksGrid();
+
+    document.getElementById('preview-footer-mount').innerHTML = `
       ${business.address ? `<p class="address">${escapeHtml(business.address)}</p>` : ''}
       <div class="actions">
         ${showClickableWebsite ? `<span class="btn btn-outline">${icon('pin')} Visit website</span>` : ''}
@@ -379,10 +393,10 @@ import site from '../../site';
     `;
   }
 
-  // Text is edited inline, directly in the live preview (click any
-  // headline/body there) — each card in the layout grid only holds what
-  // can't be edited that way: the block's type, which photo a photo block
-  // uses, and its visual style.
+  // Sizing/editing all happens directly in the live preview, not a
+  // separate sidebar — every block gets a small toolbar (drag handle, type,
+  // photo picker if relevant, a Style toggle, remove) rendered right above
+  // its real content.
   function swatchRow(i, prop, options, current, label) {
     const clearBtn = `<button type="button" class="swatch-btn ${!current ? 'active' : ''}" data-i="${i}" data-prop="${prop}" data-val="">Default</button>`;
     const optionBtns = options
@@ -391,61 +405,63 @@ import site from '../../site';
     return `<div class="style-row"><span class="style-row-label">${label}</span><div class="swatch-group">${clearBtn}${optionBtns}</div></div>`;
   }
 
-  function blockCardHtml(b, i) {
+  // Which block's style panel is currently expanded, if any — reapplied
+  // each time renderPreviewBlocksGrid() rebuilds everything from scratch.
+  let expandedStyleIndex = null;
+
+  function blockToolbarHtml(b, i) {
     const style = b.style || {};
-    let fields;
-    if (b.type === 'divider') {
-      fields = '<p class="muted block-hint">Just a horizontal divider — no text needed.</p>';
-    } else if (b.type === 'photo') {
-      const photoOptions = photos
-        .map((p) => `<option value="${p.r2_key}" ${b.imageKey === p.r2_key ? 'selected' : ''}>${p.r2_key.split('/').pop()}</option>`)
-        .join('');
-      fields = `
-        <select class="block-image" data-i="${i}">
-          <option value="">— Choose an uploaded photo —</option>
-          ${photoOptions}
-        </select>
-        <p class="muted block-hint">Caption is editable directly in the preview above.</p>`;
-    } else {
-      fields = '<p class="muted block-hint">Text is editable directly in the preview above.</p>';
-    }
+    const photoPicker = b.type === 'photo'
+      ? `<select class="block-image" data-i="${i}">
+          <option value="">— Choose a photo —</option>
+          ${photos.map((p) => `<option value="${p.r2_key}" ${b.imageKey === p.r2_key ? 'selected' : ''}>${p.r2_key.split('/').pop()}</option>`).join('')}
+        </select>`
+      : '';
+    const styleToggle = b.type === 'divider'
+      ? ''
+      : `<button type="button" class="style-toggle-btn" data-i="${i}">${expandedStyleIndex === i ? 'Style ▴' : 'Style ▾'}</button>`;
+    const stylePanel = b.type !== 'divider' && expandedStyleIndex === i
+      ? `<div class="style-panel">
+          ${swatchRow(i, 'bg', BG_OPTIONS, style.bg, 'Background')}
+          ${swatchRow(i, 'color', COLOR_OPTIONS, style.color, 'Text')}
+          ${swatchRow(i, 'font', FONT_OPTIONS, style.font, 'Font')}
+          ${swatchRow(i, 'spacing', SPACING_OPTIONS, style.spacing, 'Spacing')}
+        </div>`
+      : '';
 
-    const styleControls = b.type === 'divider' ? '' : `
-      <div class="style-panel">
-        ${swatchRow(i, 'bg', BG_OPTIONS, style.bg, 'Background')}
-        ${swatchRow(i, 'color', COLOR_OPTIONS, style.color, 'Text')}
-        ${swatchRow(i, 'font', FONT_OPTIONS, style.font, 'Font')}
-        ${swatchRow(i, 'spacing', SPACING_OPTIONS, style.spacing, 'Spacing')}
-      </div>`;
-
-    return `
-      <div class="block-card-head">
-        <span class="drag-handle item-drag-handle" title="Drag to move">⠿⠿</span>
-        <select class="block-type" data-i="${i}">
-          ${BLOCK_TYPE_OPTIONS.map(([val, label]) => `<option value="${val}" ${b.type === val ? 'selected' : ''}>${label}</option>`).join('')}
-        </select>
-        <button type="button" class="remove-block" data-i="${i}" title="Remove section">✕</button>
-      </div>
-      ${fields}
-      ${styleControls}
-    `;
+    return `<div class="block-toolbar">
+      <span class="drag-handle item-drag-handle" title="Drag to move">⠿⠿</span>
+      <select class="block-type" data-i="${i}">
+        ${BLOCK_TYPE_OPTIONS.map(([val, label]) => `<option value="${val}" ${b.type === val ? 'selected' : ''}>${label}</option>`).join('')}
+      </select>
+      ${photoPicker}
+      ${styleToggle}
+      <button type="button" class="remove-block" data-i="${i}" title="Remove section">✕</button>
+    </div>
+    ${stylePanel}`;
   }
 
-  // GridStack owns the DOM of #layout-grid once initialized — everything
-  // here goes through its own addWidget/removeAll methods instead of
-  // innerHTML, so its internal engine state (which cards exist, at what
-  // x/y/w/h) never drifts out of sync with what's actually on screen.
-  let gridInstance = null;
-
-  // A small cellHeight gives fine-grained control over each card's real
-  // height (see renderLayoutGrid below) — GridStack's own "size to content"
-  // option didn't reliably take effect here, so height is computed by hand
-  // instead of trusted to the library.
+  // GridStack owns #preview-blocks-canvas's DOM once initialized —
+  // everything here goes through its own addWidget/removeAll methods
+  // instead of innerHTML, so its internal engine state (which items exist,
+  // at what x/y/w/h) never drifts out of sync with what's actually on
+  // screen. A small cellHeight gives fine-grained control over each
+  // block's real height (see renderPreviewBlocksGrid) — GridStack's own
+  // "size to content" option didn't reliably take effect here, so height
+  // is computed by hand instead of trusted to the library.
+  let previewGridInstance = null;
   const CELL_HEIGHT = 12;
 
-  function initLayoutGrid() {
-    if (gridInstance) return;
-    gridInstance = GridStack.init(
+  function initPreviewBlocksGrid() {
+    if (previewGridInstance) return;
+    const mount = document.getElementById('preview-blocks-mount');
+    // Only .grid-stack here, not .custom-blocks — GridStack computes its
+    // own layout mechanism for this element (column widths, item
+    // placement) independently of the plain-CSS-grid rules that class
+    // carries for the real, non-editable page; mixing the two risks the
+    // two positioning systems fighting each other.
+    mount.innerHTML = '<div class="custom-blocks-container"><div id="preview-blocks-canvas" class="grid-stack"></div></div>';
+    previewGridInstance = GridStack.init(
       {
         column: GRID_COLUMNS,
         cellHeight: CELL_HEIGHT,
@@ -453,70 +469,79 @@ import site from '../../site';
         float: true, // blocks stay exactly where dropped — no auto-compaction
         handle: '.item-drag-handle',
       },
-      '#layout-grid'
+      '#preview-blocks-canvas'
     );
-    gridInstance.on('change', (event, changedItems) => {
+    previewGridInstance.on('change', (event, changedItems) => {
       changedItems.forEach((node) => {
         const i = Number(node.el.dataset.i);
         if (!blocks[i]) return;
         blocks[i].layout = { row: node.y + 1, col: node.x, w: node.w };
       });
-      renderPreview();
       scheduleAutosave();
     });
   }
 
-  // Rebuilds every card from scratch — blocks.length maxes out at 10, so
+  // Rebuilds every item from scratch — blocks.length maxes out at 10, so
   // there's no real cost to just clearing and re-adding rather than
   // diffing, and it keeps "the data model is the source of truth" simple.
-  // Each card is added at a placeholder height, then immediately measured
-  // and resized to fit its real (rendered) content — without this, a card
+  // Each item is added at a placeholder height, then immediately measured
+  // and resized to fit its real (rendered) content — without this, an item
   // taller than its box just overflows past it instead of pushing anything
   // out of the way, since GridStack still thinks it's only as tall as the
-  // box, and every other card/element below ends up overlapping it.
-  function renderLayoutGrid() {
-    gridInstance.removeAll(false);
+  // box, and whatever's below ends up overlapping it.
+  function renderPreviewBlocksGrid() {
+    if (!canUseBuilder) {
+      document.getElementById('preview-blocks-mount').innerHTML = '';
+      previewGridInstance = null;
+      return;
+    }
+    initPreviewBlocksGrid();
+    previewGridInstance.removeAll(false);
     blocks.forEach((b, i) => {
       const { row, col, w } = layoutOf(b, i);
       const el = document.createElement('div');
       el.className = 'grid-stack-item';
       el.dataset.i = String(i);
-      el.innerHTML = `<div class="grid-stack-item-content">${blockCardHtml(b, i)}</div>`;
-      gridInstance.addWidget(el, { x: col, y: row - 1, w, h: 1, id: String(i) });
+      el.innerHTML = `<div class="grid-stack-item-content">${blockToolbarHtml(b, i)}${renderOneBlockPreview(b, i)}</div>`;
+      previewGridInstance.addWidget(el, { x: col, y: row - 1, w, h: 1, id: String(i) });
       const contentHeight = el.querySelector('.grid-stack-item-content').scrollHeight;
       const rows = Math.max(1, Math.ceil(contentHeight / CELL_HEIGHT));
-      gridInstance.update(el, { h: rows });
+      previewGridInstance.update(el, { h: rows });
     });
   }
 
-  // Delegated once onto the stable #layout-grid container — same reasoning
-  // as initInlineEditing() below: renderLayoutGrid() replaces every card's
-  // content on every structural change, so listeners have to live on the
-  // container, not the cards themselves.
-  function initLayoutGridControls() {
-    const grid = document.getElementById('layout-grid');
-    grid.addEventListener('change', (e) => {
+  // Delegated once onto the stable #preview-blocks-mount container —
+  // renderPreviewBlocksGrid() replaces every item's content on every
+  // structural change, so listeners have to live on the container, not the
+  // items themselves.
+  function initPreviewBlockControls() {
+    const mount = document.getElementById('preview-blocks-mount');
+    mount.addEventListener('change', (e) => {
       const i = Number(e.target.dataset.i);
       if (Number.isNaN(i) || !blocks[i]) return;
       if (e.target.classList.contains('block-type')) {
         blocks[i].type = e.target.value;
-        renderLayoutGrid();
-        renderPreview();
+        renderPreviewBlocksGrid();
         scheduleAutosave();
       } else if (e.target.classList.contains('block-image')) {
         blocks[i].imageKey = e.target.value || undefined;
-        renderPreview();
+        renderPreviewBlocksGrid();
         scheduleAutosave();
       }
     });
-    grid.addEventListener('click', (e) => {
+    mount.addEventListener('click', (e) => {
       const removeBtn = e.target.closest('.remove-block');
       if (removeBtn) {
-        const i = Number(removeBtn.dataset.i);
-        blocks.splice(i, 1);
-        renderLayoutGrid();
-        renderPreview();
+        blocks.splice(Number(removeBtn.dataset.i), 1);
+        renderPreviewBlocksGrid();
         scheduleAutosave();
+        return;
+      }
+      const styleToggle = e.target.closest('.style-toggle-btn');
+      if (styleToggle) {
+        const i = Number(styleToggle.dataset.i);
+        expandedStyleIndex = expandedStyleIndex === i ? null : i;
+        renderPreviewBlocksGrid();
         return;
       }
       const swatch = e.target.closest('.swatch-btn');
@@ -528,18 +553,18 @@ import site from '../../site';
         blocks[i].style = blocks[i].style || {};
         if (val) blocks[i].style[prop] = val;
         else delete blocks[i].style[prop];
-        renderLayoutGrid();
-        renderPreview();
+        renderPreviewBlocksGrid();
         scheduleAutosave();
       }
     });
   }
 
-  // Delegated once onto the stable #preview-dynamic container (renderPreview()
-  // replaces its children on every edit, but the container itself never gets
-  // recreated, so a single set of listeners here survives every re-render).
+  // Delegated once onto the stable #preview-blocks-mount container — its
+  // own contents get replaced on every structural edit, but the mount
+  // element itself never gets recreated, so a single set of listeners here
+  // survives every re-render.
   function initInlineEditing() {
-    const container = document.getElementById('preview-dynamic');
+    const container = document.getElementById('preview-blocks-mount');
     if (!container || container.dataset.editingInited) return;
     container.dataset.editingInited = 'true';
 
@@ -609,8 +634,7 @@ import site from '../../site';
     if (blocks.length >= 10) return;
     const nextRow = blocks.reduce((max, b, i) => Math.max(max, layoutOf(b, i).row), 0) + 1;
     blocks.push({ type: 'story', title: '', body: '', layout: { row: nextRow, col: 0, w: GRID_COLUMNS } });
-    renderLayoutGrid();
-    renderPreview();
+    renderPreviewBlocksGrid();
     scheduleAutosave();
   });
 
@@ -687,7 +711,6 @@ import site from '../../site';
     hasUnpublishedChanges = false;
     draftUpdatedAt = null;
     document.querySelectorAll('.tpl-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.tpl === selectedTemplate));
-    renderLayoutGrid();
     renderPreview();
     updateDesignStatus();
   });
@@ -773,9 +796,7 @@ import site from '../../site';
       // coordinates to render from, even for blocks saved before this
       // feature existed — matches src/lib/blockRenderer.ts's own fallback.
       blocks.forEach((b, i) => { b.layout = layoutOf(b, i); });
-      initLayoutGrid();
-      initLayoutGridControls();
-      renderLayoutGrid();
+      initPreviewBlockControls();
     } else {
       document.getElementById('upsell-blocks').hidden = false;
     }
@@ -1000,53 +1021,50 @@ import site from '../../site';
     border-color: var(--accent);
     background: rgba(var(--accent-rgb), 0.08);
   }
-  /* GridStack builds every .grid-stack-item at runtime via addWidget(), so
-     (same reason as .photo-thumb above) Astro's scoped-style data
-     attribute never reaches these elements — :global() throughout. */
   .layout-hint {
     margin: 0 0 0.75rem;
   }
-  :global(#layout-grid.grid-stack) {
-    background: var(--bg-subtle);
-    border-radius: var(--radius);
-    padding: 0.4rem;
-  }
-  :global(.grid-stack-item-content) {
+  /* Sizing/editing all happens directly inside the live preview now, not a
+     separate sidebar canvas — GridStack builds every .grid-stack-item at
+     runtime via addWidget() there, so (same reason as .photo-thumb above)
+     Astro's scoped-style data attribute never reaches these elements, and
+     the .preview-body prefix matches every other rule for content injected
+     into the preview. */
+  .preview-body :global(.grid-stack-item-content) {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.65rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
+    gap: 0.35rem;
     overflow: visible !important;
   }
-  :global(.block-card-head) {
+  .preview-body :global(.block-toolbar) {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 0.4rem;
+    padding: 0.4rem;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
   }
-  :global(.block-card-head select) {
-    flex: 1;
+  .preview-body :global(.block-toolbar select) {
     font: inherit;
-    font-size: 0.85rem;
-    padding: 0.35rem 0.5rem;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.45rem;
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    background: var(--bg-subtle);
+    background: var(--bg-card);
     color: var(--text);
   }
-  :global(.block-image) {
-    font: inherit;
-    font-size: 0.85rem;
-    padding: 0.35rem 0.5rem;
-    border-radius: var(--radius);
+  .preview-body :global(.style-toggle-btn) {
+    font-size: 0.78rem;
+    padding: 0.3rem 0.55rem;
     border: 1px solid var(--border);
-    background: var(--bg-subtle);
-    color: var(--text);
-    width: 100%;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--text-muted);
   }
-  :global(.drag-handle) {
+  .preview-body :global(.drag-handle) {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1059,61 +1077,64 @@ import site from '../../site';
     letter-spacing: -0.15em;
     user-select: none;
     touch-action: none;
-    background: var(--bg-subtle);
+    background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
   }
-  :global(.drag-handle:hover) {
+  .preview-body :global(.drag-handle:hover) {
     border-color: var(--accent);
     color: var(--accent);
   }
-  :global(.drag-handle:active) {
+  .preview-body :global(.drag-handle:active) {
     cursor: grabbing;
   }
-  :global(.remove-block) {
+  .preview-body :global(.remove-block) {
+    margin-left: auto;
     font-size: 0.85rem;
     border: 1px solid var(--border);
-    background: var(--bg-subtle);
+    background: var(--bg-card);
     border-radius: var(--radius);
     cursor: pointer;
     padding: 0.25rem 0.45rem;
     color: var(--text-muted);
     line-height: 1;
   }
-  :global(.style-panel) {
+  .preview-body :global(.style-panel) {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
-    padding-top: 0.35rem;
-    border-top: 1px solid var(--border);
+    padding: 0.5rem;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
   }
-  :global(.style-row) {
+  .preview-body :global(.style-row) {
     display: flex;
     align-items: center;
     gap: 0.4rem;
     flex-wrap: wrap;
   }
-  :global(.style-row-label) {
+  .preview-body :global(.style-row-label) {
     font-size: 0.72rem;
     color: var(--text-muted);
     width: 5.2rem;
     flex-shrink: 0;
   }
-  :global(.swatch-group) {
+  .preview-body :global(.swatch-group) {
     display: flex;
     flex-wrap: wrap;
     gap: 0.3rem;
   }
-  :global(.swatch-btn) {
+  .preview-body :global(.swatch-btn) {
     font-size: 0.72rem;
     padding: 0.2rem 0.5rem;
     border: 1px solid var(--border);
-    background: var(--bg-subtle);
+    background: var(--bg-card);
     border-radius: 999px;
     cursor: pointer;
     color: var(--text-muted);
   }
-  :global(.swatch-btn.active) {
+  .preview-body :global(.swatch-btn.active) {
     border-color: var(--accent);
     color: var(--accent);
     background: rgba(var(--accent-rgb), 0.1);
@@ -1329,30 +1350,14 @@ import site from '../../site';
     color: var(--text-muted);
     font-style: italic;
   }
-  /* Mirrors src/pages/business/[slug].astro's own free-form-layout CSS
-     exactly (see that file for the full explanation) — a container query,
-     not a viewport media query, so narrowing the preview via the Desktop/
-     Tablet/Mobile toggle above actually triggers the same mobile collapse
-     a real phone would get, instead of never firing since that toggle
-     only shrinks a container, not the real browser viewport. */
+  /* The actual grid mechanics (12-column layout, mobile collapse) live in
+     src/pages/business/[slug].astro's plain-CSS-grid rendering, which the
+     real page uses — here in the editor, GridStack owns that instead (see
+     initPreviewBlocksGrid), so only the spacing wrapper and each block's
+     own look need matching, not the grid-template-columns/@container
+     mechanics themselves. */
   .preview-body :global(.custom-blocks-container) {
-    container-type: inline-size;
-  }
-  .preview-body :global(.custom-blocks) {
     margin-top: 1.75rem;
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-auto-rows: auto;
-    gap: 1.25rem 1rem;
-  }
-  @container (max-width: 640px) {
-    .preview-body :global(.custom-blocks) {
-      grid-template-columns: 1fr;
-    }
-    .preview-body :global(.custom-block) {
-      grid-column: 1 / -1 !important;
-      grid-row: auto !important;
-    }
   }
   .preview-body :global(.custom-block) {
     padding: 1rem 1.1rem;
@@ -1360,6 +1365,7 @@ import site from '../../site';
     border-radius: var(--radius);
     background: var(--bg-card);
     min-width: 0;
+    height: 100%;
   }
   .preview-body :global(.custom-block h2) {
     margin: 0 0 0.4rem;

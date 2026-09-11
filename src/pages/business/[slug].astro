@@ -70,7 +70,7 @@ const jsonLd = {
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <section class="container" style="padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;">
-    {template === 'gallery' && photos.length > 0 && (
+    {!isPremium && template === 'gallery' && photos.length > 0 && (
       <div class="hero-gallery">
         {photos.map((photo) => (
           <img src={`/media/${photo.r2_key}`} alt={photo.caption ?? business.name} loading="lazy" width="700" height="360" />
@@ -105,7 +105,7 @@ const jsonLd = {
 
     <p style="margin-top: 1.25rem;">{business.description}</p>
 
-    {template !== 'gallery' && photos.length > 0 && (
+    {!isPremium && template !== 'gallery' && photos.length > 0 && (
       <div class:list={['photo-gallery', { carousel: photos.length > 5 }]}>
         {photos.map((photo) => (
           <img
