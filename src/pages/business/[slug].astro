@@ -308,6 +308,7 @@ const jsonLd = {
       let editing = false;
       let blocksGrid = null;
       let gridStackLoading = null;
+      let bleedResizeListenerAdded = false;
 
       function escapeHtml(s) {
         return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -372,6 +373,18 @@ const jsonLd = {
         const bleedPicker = `<select class="block-bleed" title="Layout">
           ${BLEED_OPTIONS.map(([val, label]) => `<option value="${val}" ${(b.bleed || '') === val ? 'selected' : ''}>${label}</option>`).join('')}
         </select>`;
+        // A side panel's width is a fraction of the *browser*, not of the
+        // page's 12-column grid the way colSpan works for a normal
+        // section — so it can't come from GridStack's own e/w drag handle
+        // (that always resizes relative to the grid, and this item is
+        // pinned to the grid's full width regardless — see wrap() below).
+        // colSpan is reused as that fraction (still 3-12, out of 12) but
+        // set from this dedicated picker instead.
+        const panelWidthPicker = (b.bleed === 'left' || b.bleed === 'right')
+          ? `<select class="block-panel-width" title="Panel width">
+              ${[3, 4, 6, 8, 9].map((n) => `<option value="${n}" ${(b.colSpan || 4) === n ? 'selected' : ''}>${Math.round((n / MAX_COL_SPAN) * 100)}% of the browser</option>`).join('')}
+            </select>`
+          : '';
         return `<div class="block-toolbar">
           <span class="block-drag-handle" title="Drag to reorder">⠿</span>
           <select class="block-type" title="Section type">
@@ -380,9 +393,9 @@ const jsonLd = {
           ${sidePicker}
           ${photoPicker}
           ${bleedPicker}
+          ${panelWidthPicker}
           <button type="button" class="remove-block" title="Remove section" aria-label="Remove section">✕</button>
-        </div>
-        ${b.bleed ? `<div class="bleed-note">${b.bleed === 'full' ? 'Stretches edge to edge of the browser when published.' : `Becomes a panel on the ${b.bleed} edge of the browser when published.`}</div>` : ''}`;
+        </div>`;
       }
 
       // Mirrors src/lib/blockRenderer.ts's renderOneBlock, plus the
@@ -394,11 +407,17 @@ const jsonLd = {
         const body = escapeHtml(b.body || '');
         const toolbar = blockToolbarHtml(b);
         const bleedClass = b.bleed ? ` bleed-${b.bleed}` : '';
+        // A bled section always takes its own full row in the editor grid
+        // too (gs-w locked to 12), matching how it always spans the full
+        // grid row on the real page (see blockRenderer.ts's wrapBleed) —
+        // colSpan still decides a side panel's actual width, just applied
+        // to .bleed-preview-inner in real browser pixels (see
+        // positionBleedPreview) instead of to the grid item itself.
         const wrap = (inner) => `
-          <div class="grid-stack-item${bleedClass}" data-i="${i}" gs-auto-position="true" gs-w="${b.bleed === 'full' ? MAX_COL_SPAN : (b.colSpan || MAX_COL_SPAN)}" gs-h="10" gs-min-w="${MIN_COL_SPAN}" gs-max-w="${MAX_COL_SPAN}">
-            <div class="grid-stack-item-content editable-block">
+          <div class="grid-stack-item${bleedClass}" data-i="${i}" gs-auto-position="true" gs-w="${b.bleed ? MAX_COL_SPAN : (b.colSpan || MAX_COL_SPAN)}" gs-h="10" gs-min-w="${b.bleed ? MAX_COL_SPAN : MIN_COL_SPAN}" gs-max-w="${MAX_COL_SPAN}">
+            <div class="grid-stack-item-content editable-block${b.bleed ? ' editable-block-bleed' : ''}">
               ${toolbar}
-              ${inner}
+              ${b.bleed ? `<div class="bleed-preview-inner">${inner}</div>` : inner}
             </div>
           </div>`;
 
@@ -452,6 +471,48 @@ const jsonLd = {
         }
       }
 
+      // Makes a bled section's preview actually stretch to the real
+      // browser edges while editing, instead of just describing what it
+      // will do once published — the same CSS trick used on the real
+      // page (position:relative + left:50% + translateX(-50%)) only
+      // re-centers correctly when its containing block is itself
+      // centered in the viewport, which a GridStack item nested inside
+      // the narrow editor canvas isn't. Computing the exact pixels
+      // directly from the item's real on-screen position sidesteps that
+      // rather than fighting GridStack for control of its own element.
+      function positionBleedPreview(item, b) {
+        const inner = item.querySelector('.bleed-preview-inner');
+        if (!inner || !b || !b.bleed) return;
+        const rect = item.getBoundingClientRect();
+        const vw = document.documentElement.clientWidth;
+        let width, marginLeft;
+        if (b.bleed === 'full') {
+          width = vw;
+          marginLeft = -rect.left;
+        } else {
+          width = vw * ((b.colSpan || 4) / MAX_COL_SPAN);
+          marginLeft = b.bleed === 'left' ? -rect.left : vw - width - rect.left;
+        }
+        inner.style.width = `${Math.max(0, width)}px`;
+        inner.style.marginLeft = `${marginLeft}px`;
+      }
+
+      function positionAllBleedPreviews() {
+        if (!blocksGrid) return;
+        document.querySelectorAll('#blocks-grid > .grid-stack-item').forEach((item) => {
+          positionBleedPreview(item, blocks[Number(item.dataset.i)]);
+        });
+      }
+
+      if (!bleedResizeListenerAdded) {
+        bleedResizeListenerAdded = true;
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+          window.clearTimeout(resizeTimer);
+          resizeTimer = window.setTimeout(positionAllBleedPreviews, 100);
+        });
+      }
+
       function renderBlocks() {
         if (blocksGrid) { blocksGrid.destroy(false); blocksGrid = null; }
         mount.innerHTML = `<div class="grid-stack" id="blocks-grid">${blocks.map(renderOneBlock).join('')}</div>`;
@@ -488,8 +549,17 @@ const jsonLd = {
           });
           item.querySelector('.block-bleed')?.addEventListener('change', (e) => {
             const b = blocks[Number(item.dataset.i)];
-            if (e.target.value) b.bleed = e.target.value;
-            else delete b.bleed;
+            if (e.target.value) {
+              b.bleed = e.target.value;
+              if ((b.bleed === 'left' || b.bleed === 'right') && ![3, 4, 6, 8, 9].includes(b.colSpan)) b.colSpan = 4;
+            } else {
+              delete b.bleed;
+            }
+            renderBlocks();
+            scheduleAutosave();
+          });
+          item.querySelector('.block-panel-width')?.addEventListener('change', (e) => {
+            blocks[Number(item.dataset.i)].colSpan = Number(e.target.value);
             renderBlocks();
             scheduleAutosave();
           });
@@ -511,12 +581,14 @@ const jsonLd = {
           const contentEl = item.querySelector('.grid-stack-item-content');
           const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
           const toRows = (px) => Math.ceil((px + GRID_MARGIN * 2) / GRID_CELL_HEIGHT);
-          // A "full width" section always spans the whole grid row (its
-          // real width comes from bleeding to 100vw on the real page, not
-          // from colSpan) — lock its width so dragging e/w does nothing,
-          // rather than changing a colSpan number that would have no
-          // visible effect once published.
-          const widthBounds = b.bleed === 'full' ? { minW: MAX_COL_SPAN, maxW: MAX_COL_SPAN } : { minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN };
+          // A bled section (full width or a side panel) always spans the
+          // whole grid row in the editor, matching how it always spans
+          // the full grid row on the real page too — its real width
+          // comes from the bleed itself (100vw, or colSpan applied as a
+          // fraction of the browser instead of the grid — see the Panel
+          // width picker), not from GridStack's own e/w drag, so that's
+          // locked here rather than left to silently do nothing.
+          const widthBounds = b.bleed ? { minW: MAX_COL_SPAN, maxW: MAX_COL_SPAN } : { minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN };
           if (b.heightPx) {
             blocksGrid.update(item, { h: toRows(toolbarH + b.heightPx), minH: toRows(toolbarH + MIN_BLOCK_HEIGHT), maxH: toRows(toolbarH + MAX_BLOCK_HEIGHT), ...widthBounds });
           } else {
@@ -524,13 +596,21 @@ const jsonLd = {
           }
         });
 
+        // Wait a frame so the sizing pass above has actually painted
+        // before measuring anything's real on-screen position.
+        window.requestAnimationFrame(positionAllBleedPreviews);
+
         blocksGrid.on('change', () => {
           const items = Array.from(container.querySelectorAll('.grid-stack-item'));
           items.forEach((item) => {
             const node = item.gridstackNode;
             const b = blocks[Number(item.dataset.i)];
             if (!node || !b) return;
-            b.colSpan = node.w;
+            // A bled item's node.w is pinned to the full grid width (see
+            // widthBounds above) and doesn't mean anything as a colSpan —
+            // its colSpan (a side panel's width, as a fraction of the
+            // browser) only ever comes from the Panel width picker.
+            if (!b.bleed) b.colSpan = node.w;
             const contentEl = item.querySelector('.grid-stack-item-content');
             const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
             const naturalH = contentEl.scrollHeight;
@@ -559,6 +639,7 @@ const jsonLd = {
           });
           blocks = items.map((item) => blocks[Number(item.dataset.i)]);
           items.forEach((item, newIndex) => { item.dataset.i = String(newIndex); });
+          positionAllBleedPreviews();
           scheduleAutosave();
         });
 
@@ -1040,6 +1121,25 @@ const jsonLd = {
   :global(.editable-block > .custom-block) {
     flex: 1 1 auto;
     min-height: 0;
+  }
+  /* A bled section's preview is deliberately allowed to spill outside
+     its own grid slot sideways — see positionBleedPreview, which is what
+     actually sets its width/position in real pixels. Height still comes
+     from the normal sizing pass, so only horizontal overflow is opened
+     up here. */
+  :global(.editable-block-bleed) {
+    overflow-x: visible;
+  }
+  :global(.editable-block > .bleed-preview-inner) {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  :global(.bleed-preview-inner) {
+    position: relative;
+    box-sizing: border-box;
+  }
+  :global(.bleed-preview-inner > .custom-block) {
+    height: 100%;
   }
   :global(.editable-block .custom-block-photo img),
   :global(.editable-block .custom-block-side-image img) {
