@@ -173,7 +173,7 @@ const jsonLd = {
           <div class="design-bar-row">
             <strong>Editing your page</strong>
             <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
-            <span class="design-bar-hint">Your business name, description, address, contact buttons, and hours always stay exactly where they are — only the sections you add here can be dragged to reorder, placed beside each other, resized from any edge, or edited by clicking their text. Use a section's "Position" option to move it into a sidebar running alongside your whole page instead — you'll see it appear there once you publish.</span>
+            <span class="design-bar-hint">Your business name, description, address, contact buttons, and hours always stay exactly where they are — only the sections you add here can be dragged to reorder, placed beside each other, resized from any edge, or edited by clicking their text. Drag a section straight into a sidebar to move it there — or use its "Position" option if you'd rather not drag.</span>
           </div>
           <div class="design-bar-row">
             <label>Primary <input type="color" id="color-primary" value="#2563eb" /></label>
@@ -328,7 +328,7 @@ const jsonLd = {
       let draftUpdatedAt = null;
       let photos = [];
       let editing = false;
-      let blocksGrid = null;
+      let zoneGrids = { main: null, left: null, right: null };
       let gridStackLoading = null;
 
       function escapeHtml(s) {
@@ -390,12 +390,10 @@ const jsonLd = {
             </select>`
           : '';
         const photoPicker = SIZED_TYPES.has(b.type) ? photoPickerHtml(b) : '';
-        // A sidebar runs the full height of the page, alongside the
-        // fixed content, not inside the narrow column below the
-        // description the way a main-content section does — so moving a
-        // block here or there is a real page-position change, not just a
-        // resize, and it's a plain dropdown rather than something you'd
-        // drag.
+        // Dragging a section straight into a sidebar (or back into the
+        // main column) is the primary way to move it there — see
+        // acceptWidgets/resyncZonesFromDom below. This dropdown is just a
+        // fallback for anyone who'd rather pick a position than drag.
         const zonePicker = `<select class="block-zone" title="Position">
           ${ZONE_OPTIONS.map(([val, label]) => `<option value="${val}" ${(b.zone || '') === val ? 'selected' : ''}>${label}</option>`).join('')}
         </select>`;
@@ -472,13 +470,14 @@ const jsonLd = {
         }
       }
 
-      // Main-content sections live in the GridStack canvas (drag to
-      // reorder/place side by side, drag an edge to resize) exactly as
-      // before.
-      function renderMainItem(b, i) {
+      // One item's markup is identical everywhere it can live — only
+      // whether width is resizable (only true in the main zone; a
+      // sidebar's own column width is fixed, so an item there just
+      // always fills it) differs, via gsW/gsMinW/gsMaxW.
+      function renderZoneItem(b, i, gsW, gsMinW, gsMaxW) {
         const toolbar = blockToolbarHtml(b, true);
         return `
-          <div class="grid-stack-item" data-i="${i}" gs-auto-position="true" gs-w="${b.colSpan || MAX_COL_SPAN}" gs-h="10" gs-min-w="${MIN_COL_SPAN}" gs-max-w="${MAX_COL_SPAN}">
+          <div class="grid-stack-item" data-i="${i}" gs-auto-position="true" gs-w="${gsW}" gs-h="10" gs-min-w="${gsMinW}" gs-max-w="${gsMaxW}">
             <div class="grid-stack-item-content editable-block">
               ${toolbar}
               ${renderBlockContent(b)}
@@ -486,47 +485,8 @@ const jsonLd = {
           </div>`;
       }
 
-      // A sidebar section is a real top-level element running alongside
-      // the whole page (see #sidebar-left-mount/#sidebar-right-mount),
-      // not a narrow column below the description — there's no 2D
-      // placement to speak of, so it's just a plain stacked list with
-      // Up/Down to reorder, no drag/resize.
-      function renderSidebarItem(b, i, isFirst, isLast) {
-        const toolbar = blockToolbarHtml(b, false);
-        return `
-          <div class="sidebar-block" data-i="${i}">
-            ${toolbar}
-            <div class="sidebar-block-move">
-              <button type="button" class="move-up" ${isFirst ? 'disabled' : ''} title="Move up">↑</button>
-              <button type="button" class="move-down" ${isLast ? 'disabled' : ''} title="Move down">↓</button>
-            </div>
-            ${renderBlockContent(b)}
-          </div>`;
-      }
-
-      function renderSidebar(zone, mountEl) {
-        const zoneBlocks = blocks.filter((b) => b.zone === zone);
-        const asideEl = mountEl.closest('.page-sidebar');
-        asideEl.hidden = zoneBlocks.length === 0;
-        mountEl.innerHTML = zoneBlocks
-          .map((b, i) => renderSidebarItem(b, blocks.indexOf(b), i === 0, i === zoneBlocks.length - 1))
-          .join('');
-        wireBlockControls(mountEl);
-        document.getElementById('page-sidebar-layout').classList.toggle(
-          'has-sidebars',
-          blocks.some((b) => b.zone === 'left') || blocks.some((b) => b.zone === 'right')
-        );
-      }
-
-      function renderSidebars() {
-        renderSidebar('left', document.getElementById('sidebar-left-mount'));
-        renderSidebar('right', document.getElementById('sidebar-right-mount'));
-      }
-
-      // Shared by both the GridStack canvas and the plain sidebar lists —
-      // the type/image/side/zone/remove controls work the same everywhere;
-      // only sidebar items additionally get the Up/Down buttons (see
-      // renderSidebarItem).
+      // Shared by the main canvas and both sidebars — the type/image/
+      // side/zone/remove controls work the same everywhere.
       function wireBlockControls(root) {
         root.querySelectorAll('[data-i]').forEach((item) => {
           item.querySelector('.block-type')?.addEventListener('change', (e) => {
@@ -551,30 +511,6 @@ const jsonLd = {
             renderBlocks();
             scheduleAutosave();
           });
-          item.querySelector('.move-up')?.addEventListener('click', () => {
-            const idx = Number(item.dataset.i);
-            const zone = blocks[idx].zone;
-            const zoneIndices = blocks.map((b, i) => (b.zone === zone ? i : -1)).filter((i) => i >= 0);
-            const pos = zoneIndices.indexOf(idx);
-            if (pos > 0) {
-              const swapWith = zoneIndices[pos - 1];
-              [blocks[idx], blocks[swapWith]] = [blocks[swapWith], blocks[idx]];
-              renderBlocks();
-              scheduleAutosave();
-            }
-          });
-          item.querySelector('.move-down')?.addEventListener('click', () => {
-            const idx = Number(item.dataset.i);
-            const zone = blocks[idx].zone;
-            const zoneIndices = blocks.map((b, i) => (b.zone === zone ? i : -1)).filter((i) => i >= 0);
-            const pos = zoneIndices.indexOf(idx);
-            if (pos >= 0 && pos < zoneIndices.length - 1) {
-              const swapWith = zoneIndices[pos + 1];
-              [blocks[idx], blocks[swapWith]] = [blocks[swapWith], blocks[idx]];
-              renderBlocks();
-              scheduleAutosave();
-            }
-          });
           item.querySelector('.remove-block')?.addEventListener('click', () => {
             blocks.splice(Number(item.dataset.i), 1);
             renderBlocks();
@@ -583,25 +519,41 @@ const jsonLd = {
         });
       }
 
-      function renderBlocks() {
-        renderSidebars();
-        if (blocksGrid) { blocksGrid.destroy(false); blocksGrid = null; }
-        const mainBlocks = blocks.filter((b) => !b.zone);
-        mount.innerHTML = `<div class="grid-stack" id="blocks-grid">${mainBlocks.map((b) => renderMainItem(b, blocks.indexOf(b))).join('')}</div>`;
+      // One GridStack canvas per zone — main is the page's normal
+      // 12-column grid (drag to reorder/place side by side, resize any
+      // edge); a sidebar is a single column (column: 1) running
+      // alongside the whole page, so there's no width to speak of —
+      // just drag to reorder and drag the bottom edge to resize height,
+      // the exact same mechanics, just one column instead of twelve.
+      function initZoneGrid(zone, mountEl, isMain) {
+        const zoneBlocks = blocks.filter((b) => (isMain ? !b.zone : b.zone === zone));
+        if (!isMain) mountEl.closest('.page-sidebar').hidden = zoneBlocks.length === 0;
+        mountEl.innerHTML = `<div class="grid-stack" id="${zone}-blocks-grid">${zoneBlocks
+          .map((b) => renderZoneItem(b, blocks.indexOf(b), isMain ? (b.colSpan || MAX_COL_SPAN) : 1, isMain ? MIN_COL_SPAN : 1, isMain ? MAX_COL_SPAN : 1))
+          .join('')}</div>`;
 
-        const container = document.getElementById('blocks-grid');
-        blocksGrid = GridStack.init(
+        const container = document.getElementById(`${zone}-blocks-grid`);
+        const grid = GridStack.init(
           {
-            column: 12,
+            column: isMain ? MAX_COL_SPAN : 1,
             float: false,
             cellHeight: GRID_CELL_HEIGHT,
             margin: GRID_MARGIN,
-            resizable: { handles: 'e, se, s, sw, w', autoHide: false },
+            resizable: { handles: isMain ? 'e, se, s, sw, w' : 's', autoHide: false },
             draggable: { cancel: 'button, select, input, textarea, option, [contenteditable]' },
             disableOneColumnMode: true,
+            // Lets a section be dragged straight out of this grid and
+            // into one of the other two (main/left/right), and accept
+            // one dragged in from them — GridStack's own built-in
+            // multi-grid drag support (see gridstack.js's own
+            // demo/two.html), not anything custom-built. The "Position"
+            // dropdown in each section's toolbar still works too, as a
+            // reliable fallback for anyone who'd rather not drag.
+            acceptWidgets: true,
           },
           container
         );
+        zoneGrids[zone] = grid;
 
         wireBlockControls(container);
 
@@ -616,56 +568,101 @@ const jsonLd = {
           const contentEl = item.querySelector('.grid-stack-item-content');
           const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
           const toRows = (px) => Math.ceil((px + GRID_MARGIN * 2) / GRID_CELL_HEIGHT);
+          const widthBounds = isMain ? { minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN } : { minW: 1, maxW: 1 };
           if (b.heightPx) {
-            blocksGrid.update(item, { h: toRows(toolbarH + b.heightPx), minH: toRows(toolbarH + MIN_BLOCK_HEIGHT), maxH: toRows(toolbarH + MAX_BLOCK_HEIGHT), minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN });
+            grid.update(item, { h: toRows(toolbarH + b.heightPx), minH: toRows(toolbarH + MIN_BLOCK_HEIGHT), maxH: toRows(toolbarH + MAX_BLOCK_HEIGHT), ...widthBounds });
           } else {
-            blocksGrid.update(item, { h: toRows(contentEl.scrollHeight), minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN });
+            grid.update(item, { h: toRows(contentEl.scrollHeight), ...widthBounds });
           }
         });
 
-        blocksGrid.on('change', () => {
-          const items = Array.from(container.querySelectorAll('.grid-stack-item'));
-          items.forEach((item) => {
-            const node = item.gridstackNode;
-            const b = blocks[Number(item.dataset.i)];
-            if (!node || !b) return;
-            b.colSpan = node.w;
-            const contentEl = item.querySelector('.grid-stack-item-content');
-            const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
-            const naturalH = contentEl.scrollHeight;
-            const allocatedH = contentEl.clientHeight;
-            if (allocatedH > naturalH + 2) {
-              // More room than the content needs — the user dragged this
-              // taller on purpose, so remember exactly how much.
-              b.heightPx = Math.round(Math.min(MAX_BLOCK_HEIGHT, Math.max(MIN_BLOCK_HEIGHT, allocatedH - toolbarH)));
-            } else {
-              // Still auto-sized (or a width change made the content need
-              // more room than it currently has) — clear any stored
-              // height and grow the row to fit, never shrink under it.
-              delete b.heightPx;
-              const neededRows = Math.ceil((naturalH + GRID_MARGIN * 2) / GRID_CELL_HEIGHT);
-              if (node.h < neededRows) blocksGrid.update(item, { h: neededRows });
-            }
-          });
-          // Sort top-to-bottom, then left-to-right within a row, so the
-          // stored array order matches how the real page's CSS Grid
-          // auto-flow will read it back — that's the only layout data
-          // that gets persisted (see colSpan above); explicit x/y aren't.
-          items.sort((a, b) => {
+        // 'added'/'removed' fire on the two grids involved the moment a
+        // section is dragged from one zone straight into another;
+        // 'change' fires for a plain reorder/resize within the same
+        // zone. All three route to the one shared resync below, which
+        // re-reads every zone's actual DOM order/membership from
+        // scratch rather than trying to patch just whichever grid fired —
+        // simpler and correct either way, since a cross-zone drag always
+        // changes two zones at once.
+        grid.on('added removed change', resyncZonesFromDom);
+      }
+
+      function resyncZonesFromDom() {
+        const containers = {
+          main: document.getElementById('main-blocks-grid'),
+          left: document.getElementById('left-blocks-grid'),
+          right: document.getElementById('right-blocks-grid'),
+        };
+        const ordered = [];
+        ['main', 'left', 'right'].forEach((zone) => {
+          const container = containers[zone];
+          if (!container) return;
+          const items = Array.from(container.querySelectorAll('.grid-stack-item')).sort((a, b) => {
             const na = a.gridstackNode, nb = b.gridstackNode;
             if (!na || !nb) return 0;
             return na.y - nb.y || na.x - nb.x;
           });
-          // Only reorders the main-content blocks (the ones actually in
-          // this GridStack canvas) — sidebar blocks live outside it
-          // entirely and must be carried over untouched, not dropped.
-          const sidebarBlocks = blocks.filter((b) => b.zone === 'left' || b.zone === 'right');
-          const reorderedMain = items.map((item) => blocks[Number(item.dataset.i)]);
-          blocks = [...reorderedMain, ...sidebarBlocks];
-          items.forEach((item, newIndex) => { item.dataset.i = String(newIndex); });
-          scheduleAutosave();
+          items.forEach((item) => ordered.push({ item, zone }));
         });
 
+        blocks = ordered.map(({ item, zone }) => {
+          const b = blocks[Number(item.dataset.i)];
+          const node = item.gridstackNode;
+          if (!b || !node) return b;
+          if (zone === 'main') {
+            delete b.zone;
+            b.colSpan = node.w;
+          } else {
+            b.zone = zone;
+            // A section that just crossed into a sidebar needs its width
+            // pinned back to that sidebar's single column, regardless of
+            // whatever width it had in the grid it came from.
+            if (node.w !== 1) zoneGrids[zone]?.update(item, { w: 1, minW: 1, maxW: 1 });
+          }
+          const contentEl = item.querySelector('.grid-stack-item-content');
+          const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
+          const naturalH = contentEl.scrollHeight;
+          const allocatedH = contentEl.clientHeight;
+          if (allocatedH > naturalH + 2) {
+            // More room than the content needs — the user dragged this
+            // taller on purpose, so remember exactly how much.
+            b.heightPx = Math.round(Math.min(MAX_BLOCK_HEIGHT, Math.max(MIN_BLOCK_HEIGHT, allocatedH - toolbarH)));
+          } else {
+            // Still auto-sized (or a width change made the content need
+            // more room than it currently has) — clear any stored height
+            // and grow the row to fit, never shrink under it.
+            delete b.heightPx;
+            const neededRows = Math.ceil((naturalH + GRID_MARGIN * 2) / GRID_CELL_HEIGHT);
+            if (node.h < neededRows) zoneGrids[zone]?.update(item, { h: neededRows });
+          }
+          return b;
+        }).filter(Boolean);
+        ordered.forEach(({ item }, newIndex) => { item.dataset.i = String(newIndex); });
+
+        document.getElementById('sidebar-left-mount').closest('.page-sidebar').hidden = !blocks.some((b) => b.zone === 'left');
+        document.getElementById('sidebar-right-mount').closest('.page-sidebar').hidden = !blocks.some((b) => b.zone === 'right');
+        document.getElementById('page-sidebar-layout').classList.toggle(
+          'has-sidebars',
+          blocks.some((b) => b.zone === 'left') || blocks.some((b) => b.zone === 'right')
+        );
+        scheduleAutosave();
+      }
+
+      function destroyZoneGrids() {
+        ['main', 'left', 'right'].forEach((zone) => {
+          if (zoneGrids[zone]) { zoneGrids[zone].destroy(false); zoneGrids[zone] = null; }
+        });
+      }
+
+      function renderBlocks() {
+        destroyZoneGrids();
+        initZoneGrid('main', mount, true);
+        initZoneGrid('left', document.getElementById('sidebar-left-mount'), false);
+        initZoneGrid('right', document.getElementById('sidebar-right-mount'), false);
+        document.getElementById('page-sidebar-layout').classList.toggle(
+          'has-sidebars',
+          blocks.some((b) => b.zone === 'left') || blocks.some((b) => b.zone === 'right')
+        );
       }
 
       // Attached once, on the element that contains the main GridStack
@@ -675,8 +672,8 @@ const jsonLd = {
       // renderBlocks(), so attaching this inside renderBlocks() would
       // otherwise stack up duplicate listeners on it every time. [data-i]
       // identifies a block the same way in every container (see
-      // renderMainItem/renderSidebarItem), so one delegated pair of
-      // listeners covers all of them.
+      // renderZoneItem), so one delegated pair of listeners covers all
+      // of them.
       const layoutRoot = document.getElementById('page-sidebar-layout');
       layoutRoot.addEventListener('input', (e) => {
         const fieldEl = e.target.closest('[data-field]');
@@ -760,7 +757,7 @@ const jsonLd = {
           renderBlocks();
           updateDesignStatus();
         } else {
-          if (blocksGrid) { blocksGrid.destroy(false); blocksGrid = null; }
+          destroyZoneGrids();
           designBar.hidden = true;
         }
       });
@@ -1175,36 +1172,6 @@ const jsonLd = {
   #design-status {
     font-size: 0.82rem;
     color: var(--text-muted);
-  }
-  :global(.page-sidebar) {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  :global(.sidebar-block) {
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
-    padding: 0.5rem;
-  }
-  :global(.sidebar-block-move) {
-    display: flex;
-    gap: 0.35rem;
-    margin: 0.4rem 0;
-  }
-  :global(.sidebar-block-move button) {
-    flex: 1 1 auto;
-    font-size: 0.8rem;
-    border: 1px solid var(--border);
-    background: var(--bg-subtle);
-    border-radius: var(--radius);
-    cursor: pointer;
-    padding: 0.25rem;
-    color: var(--text-muted);
-  }
-  :global(.sidebar-block-move button:disabled) {
-    opacity: 0.4;
-    cursor: default;
   }
   /* Everything below is :global() for the same reason as the
      .custom-block rules above — built at runtime, never present at
