@@ -140,7 +140,12 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   if (action === 'autosave') {
     if (tier < TIER_TEMPLATE) return json({ ok: false, error: 'Not available on your tier.' }, 403);
-    const templateId = typeof body.templateId === 'string' && ['classic', 'gallery', 'services'].includes(body.templateId) ? body.templateId : row.template_id;
+    // Sections/colors autosave from the business page itself and template
+    // autosave from customize.astro are two separate callers that never
+    // send all three fields at once — omitting one must preserve whatever
+    // is already in the draft (falling back to live only if no draft
+    // exists yet), never silently reset it to the live value.
+    const templateId = typeof body.templateId === 'string' && ['classic', 'gallery', 'services'].includes(body.templateId) ? body.templateId : (row.draft_template_id ?? row.template_id);
     // A business below Premium can still hold template_id via Featured,
     // but sections and page colors only ever come from a Premium session —
     // never trust a lapsed/lower tier's request to write them.

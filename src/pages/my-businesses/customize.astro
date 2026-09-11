@@ -1,31 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import site from '../../site';
 ---
 
-<BaseLayout title="Customise business page" description="Preview and customise your business page.">
-  <section class="container" style="padding-top: 3rem; padding-bottom: 1.5rem; max-width: 1180px;">
+<BaseLayout title="Customise business page" description="Manage your business page's photos and template.">
+  <section class="container" style="padding-top: 3rem; padding-bottom: 4rem; max-width: 680px;">
     <div id="loading">Loading…</div>
 
     <div id="content" hidden>
       <a id="back-link" href="#" class="back-link">← Back to editing</a>
       <h1>Customise <span id="business-name-hl"></span></h1>
 
-      <div class="preview-panel">
-        <div class="preview-head">
-          <span>Live preview — this is exactly what visitors will see</span>
-          <span class="preview-live-dot">● updates as you edit</span>
-        </div>
-        <div class="preview-frame">
-          <div class="preview-body" id="preview-body"></div>
-        </div>
-        <p class="preview-note">This shows your unsaved draft live. Changes autosave as you go — click <strong>Publish changes</strong> below to make them go live on the real page.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="container" style="padding-top: 1.5rem; padding-bottom: 4rem; max-width: 680px;">
-    <div id="content2" hidden>
       <div id="upsell-photos" class="upsell" hidden>
         <p><strong>Photos</strong> unlock at Verified Plus (R99/mo).</p>
         <a href="#" class="upsell-link">Upgrade to add photos →</a>
@@ -52,33 +36,21 @@ import site from '../../site';
           <button type="button" class="tpl-btn" data-tpl="gallery"><b>Gallery-Forward</b><span>Photo leads the page</span></button>
           <button type="button" class="tpl-btn" data-tpl="services"><b>Services Grid</b><span>Structured service cards</span></button>
         </div>
+        <div id="design-actions" hidden>
+          <button type="button" id="publish-btn" class="btn btn-primary btn-sm" hidden>Publish template</button>
+          <button type="button" id="revert-btn" class="btn btn-outline btn-sm" hidden>Revert to published</button>
+        </div>
+        <p id="design-status" role="status" class="muted" hidden></p>
       </section>
 
       <div id="upsell-blocks" class="upsell" hidden>
         <p><strong>Custom sections and page colors</strong> unlock at Premium (R299/mo).</p>
         <a href="#" class="upsell-link">Upgrade to Premium →</a>
       </div>
-      <section id="page-colors" hidden>
-        <h2>Page colors</h2>
-        <p class="muted">Sets your whole page's colors in one place — everything except the site header stays yours. Leave any of these on "Default" to keep the site's own color.</p>
-        <div class="color-picker-row">
-          <label>Primary <input type="color" id="color-primary" value="#2563eb" /> <button type="button" class="color-clear-btn" data-key="primary">Default</button></label>
-          <label>Secondary <input type="color" id="color-secondary" value="#0f172a" /> <button type="button" class="color-clear-btn" data-key="secondary">Default</button></label>
-          <label>Background <input type="color" id="color-background" value="#ffffff" /> <button type="button" class="color-clear-btn" data-key="background">Default</button></label>
-        </div>
-      </section>
-      <section id="block-editor" hidden>
-        <h2>Extra sections</h2>
-        <p class="muted">Your page above (name, description, photos, address, hours) always looks like every other listing — you can only add sections below it. Drag the <strong>⠿ handle</strong> to reorder a section, and drag a photo section's bottom edge to resize its photo.</p>
-        <div id="blocks-grid" class="grid-stack"></div>
-        <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
-      </section>
-
-      <div id="design-actions" hidden>
-        <button type="button" id="publish-btn" class="btn btn-primary" hidden>Publish changes</button>
-        <button type="button" id="revert-btn" class="btn btn-outline" hidden>Revert to published</button>
+      <div id="edit-on-page-callout" class="callout" hidden>
+        <p><strong>Sections and page colors are edited right on your live page.</strong> Open it, click "Edit this page", and drag sections, resize photos, or click any text to change it — no separate editor to learn.</p>
+        <a id="edit-on-page-link" href="#" class="btn btn-primary btn-sm">Edit your page →</a>
       </div>
-      <p id="design-status" role="status" class="muted" hidden></p>
     </div>
   </section>
 
@@ -91,436 +63,23 @@ import site from '../../site';
   </div>
 </BaseLayout>
 
-<link is:inline rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.5.1/gridstack.min.css" />
-<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.5.1/gridstack-all.min.js"></script>
-
-<script define:vars={{ SITE_NAME: site.siteName, CITY_LABEL: site.cityLabel, SITE_TAGLINE: site.tagline }}>
-  // NOTE: define:vars forces this whole script to stay inline, unprocessed
-  // by Astro/Vite — no TypeScript syntax (no `interface`, no type
-  // annotations, no `as X` casts), it must be plain browser JS or it never
-  // parses at all in a real browser.
+<script>
   const params = new URLSearchParams(window.location.search);
   const businessId = params.get('id');
   const loading = document.getElementById('loading');
   const content = document.getElementById('content');
 
   let selectedTemplate = 'classic';
-  let blocks = [];
-  let blocksGrid = null;
-  const GRID_CELL_HEIGHT = 20;
-  const GRID_MARGIN = 8;
-  const DEFAULT_BLOCK_HEIGHT = { banner: 220, photo: 220, 'side-image': 200 };
   let liveTemplateId = 'classic';
-  let liveBlocks = [];
-  let pageColors = {};
-  let livePageColors = {};
   let hasUnpublishedChanges = false;
   let draftUpdatedAt = null;
   let tier = 0;
   let canChooseTemplate = false;
   let canUseBuilder = false;
-  let photos = [];
-  let business = { name: '', address: '', phone: '', website: '', description: '', hours: '', categories: [], suburb: null };
-
-  // Kept in sync by hand with src/lib/blockRenderer.ts's BLOCK_TITLES/
-  // BLOCK_TYPES — this client script can't import that Node/Astro module
-  // directly, same reason the icon paths below are hand-copied too.
-  const BLOCK_TITLES = {
-    banner: 'Banner', 'side-image': 'Image + Text', story: 'Our Story', specials: 'Specials & Promotions',
-    team: 'Team', gallery: 'Gallery', photo: 'Photo', testimonial: 'Testimonial', cta: 'Call to Action', divider: 'Divider',
-  };
-  const BLOCK_TYPE_OPTIONS = [
-    ['banner', 'Banner'], ['side-image', 'Image + Text'], ['story', 'Our Story'], ['specials', 'Specials & Promotions'],
-    ['team', 'Team'], ['gallery', 'Gallery'], ['photo', 'Photo'], ['testimonial', 'Testimonial'], ['cta', 'Call to Action'], ['divider', 'Divider'],
-  ];
-
-  function hexToRgbTriple(hex) {
-    const clean = hex.replace('#', '');
-    const full = clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean;
-    const n = parseInt(full, 16);
-    return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
-  }
-
-  // Same icon paths as src/pages/business/[slug].astro's ICONS + Icon.astro's
-  // wrapper — kept in sync by hand since this preview can't import an
-  // Astro component at runtime.
-  const ICON_PATHS = {
-    check: '<circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5"/>',
-    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
-    phone: '<path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z"/>',
-    pin: '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>',
-    flag: '<path d="M5 21V4"/><path d="M5 4h13l-3 4 3 4H5"/>',
-    trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
-  };
-  function icon(name, size = 16) {
-    return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;">${ICON_PATHS[name]}</svg>`;
-  }
-
-  // Inline SVG placeholder — no network dependency, and clearly marked as a
-  // sample so nobody mistakes it for a real uploaded photo.
-  function placeholderPhoto(label) {
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="220" viewBox="0 0 320 220">
-      <rect width="320" height="220" fill="#e2e8f0"/>
-      <g fill="#94a3b8"><circle cx="160" cy="88" r="26"/><path d="M96 168c0-30 28-46 64-46s64 16 64 46z"/></g>
-      <text x="160" y="196" font-family="sans-serif" font-size="12" fill="#64748b" text-anchor="middle">${label}</text>
-    </svg>`;
-    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-  }
-  const PLACEHOLDER_COUNT = 3;
 
   function escapeHtml(s) {
-    return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   }
-
-  // Full page chrome (header/nav/footer), rendered once — it never changes
-  // while editing, so there's no reason to rebuild it on every keystroke
-  // the way the content below it does. Copied verbatim from
-  // src/layouts/BaseLayout.astro.
-  function renderChrome() {
-    const crumbs = [
-      ...(business.suburb ? [`<a href="/suburb/${business.suburb.slug}/">${escapeHtml(business.suburb.name)}</a>`] : []),
-      ...(business.categories[0] ? [`<a href="/category/${business.categories[0].slug}/">${escapeHtml(business.categories[0].name)}</a>`] : []),
-      `<span class="current">${escapeHtml(business.name)}</span>`,
-    ];
-    const breadcrumbsHtml = `<nav class="breadcrumbs" aria-label="Breadcrumb">${crumbs
-      .map((c, i) => c + (i < crumbs.length - 1 ? '<span class="sep" aria-hidden="true">›</span>' : ''))
-      .join('')}</nav>`;
-
-    document.getElementById('preview-body').innerHTML = `
-      <header class="brand-row">
-        <div class="container">
-          <a href="/" class="logo">
-            <img src="/logo-icon.png" alt="${escapeHtml(SITE_NAME)}" width="40" height="46" />
-            <span class="logo-text">
-              <span class="logo-word">${escapeHtml(CITY_LABEL)}<span>Hub</span></span>
-              <span class="logo-sub">Business Directory</span>
-            </span>
-          </a>
-          <p class="tagline">
-            <strong>Discover. Connect. Grow.</strong>
-            <span>${escapeHtml(SITE_TAGLINE)}</span>
-          </p>
-        </div>
-      </header>
-      <nav class="site-nav" aria-label="Main">
-        <div class="container">
-          <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/suburb/">Directory</a>
-            <a href="/category/">Categories</a>
-            <a href="/about/">About Us</a>
-          </div>
-        </div>
-      </nav>
-      <main>
-        <section class="container" id="preview-dynamic" style="padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;">
-          ${breadcrumbsHtml}
-          <div id="preview-content"></div>
-        </section>
-      </main>
-      <footer class="site-footer">
-        <div class="container">
-          <span>© ${new Date().getFullYear()} ${escapeHtml(SITE_NAME)}</span>
-        </div>
-      </footer>
-    `;
-  }
-
-  // Mirrors src/lib/blockRenderer.ts's renderOneBlock exactly — kept in
-  // sync by hand, same reason as BLOCK_TITLES above.
-  const SIZED_TYPES = new Set(['banner', 'photo', 'side-image']);
-  const MIN_BLOCK_HEIGHT = 100;
-  const MAX_BLOCK_HEIGHT = 480;
-  function heightStyleAttr(b, prop) {
-    if (!SIZED_TYPES.has(b.type) || !b.heightPx) return '';
-    return ` style="${prop}:${b.heightPx}px"`;
-  }
-  function renderOneBlockPreview(b) {
-    const title = escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More');
-    const body = escapeHtml(b.body || '');
-    switch (b.type) {
-      case 'banner':
-        return `<div class="custom-block custom-block-banner"${heightStyleAttr(b, 'min-height')}>
-          ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one below</div>'}
-          <div class="banner-overlay">
-            <h2>${title}</h2>
-            ${b.body ? `<p>${body}</p>` : ''}
-          </div>
-        </div>`;
-      case 'side-image': {
-        const side = b.side === 'right' ? ' side-right' : '';
-        return `<div class="custom-block custom-block-side-image${side}">
-          ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy"${heightStyleAttr(b, 'height')} />` : '<div class="photo-placeholder">No photo chosen — pick one below</div>'}
-          <div class="side-image-text">
-            <h3>${title}</h3>
-            <p>${body || '<span class="placeholder-text">(empty — add some text)</span>'}</p>
-          </div>
-        </div>`;
-      }
-      case 'photo':
-        return `<div class="custom-block custom-block-photo">
-          ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy"${heightStyleAttr(b, 'height')} />` : '<div class="photo-placeholder">No photo chosen — pick one below</div>'}
-          ${b.title ? `<p class="photo-caption">${title}</p>` : ''}
-        </div>`;
-      case 'divider':
-        return `<div class="custom-block custom-block-divider"><hr /></div>`;
-      case 'cta':
-        return `<div class="custom-block custom-block-cta">
-          <p class="cta-text">${title}</p>
-          <span class="btn btn-primary cta-btn">${body || 'Get in touch'}</span>
-        </div>`;
-      case 'testimonial':
-        return `<div class="custom-block custom-block-testimonial">
-          <p class="testimonial-quote">&ldquo;${body}&rdquo;</p>
-          <p class="testimonial-author">— ${title}</p>
-        </div>`;
-      default:
-        return `<div class="custom-block">
-          <h2>${title}</h2>
-          <p>${body.replace(/\n/g, '<br />') || '<span class="placeholder-text">(empty — add some text)</span>'}</p>
-        </div>`;
-    }
-  }
-
-  function applyPageColors() {
-    const el = document.getElementById('preview-dynamic');
-    if (!el) return;
-    const decls = [];
-    if (pageColors.primary) decls.push(`--accent:${pageColors.primary}`, `--accent-rgb:${hexToRgbTriple(pageColors.primary)}`);
-    if (pageColors.secondary) decls.push(`--navy:${pageColors.secondary}`);
-    if (pageColors.background) decls.push(`--bg:${pageColors.background}`, `--bg-card:${pageColors.background}`);
-    el.style.cssText = decls.join(';');
-  }
-
-  function renderPreview() {
-    applyPageColors();
-    const isPaidTier = tier >= 1;
-    const showClickableWebsite = isPaidTier && !!business.website;
-    const usingPlaceholders = photos.length === 0;
-    const galleryPhotos = usingPlaceholders
-      ? Array.from({ length: PLACEHOLDER_COUNT }, (_, i) => placeholderPhoto(`Sample photo ${i + 1}`))
-      : photos.map((p) => `/media/${p.r2_key}`);
-    const sampleNote = usingPlaceholders ? '<p class="sample-note">📷 Sample photos shown — upload your own above to replace them.</p>' : '';
-
-    const heroGallery = selectedTemplate === 'gallery'
-      ? `<div class="hero-gallery">${galleryPhotos.map((src) => `<img src="${src}" alt="" />`).join('')}</div>${sampleNote}`
-      : '';
-    const inlineGallery = selectedTemplate !== 'gallery'
-      ? `<div class="photo-gallery${galleryPhotos.length > 5 ? ' carousel' : ''}">${galleryPhotos.map((src) => `<img src="${src}" alt="" />`).join('')}</div>${sampleNote}`
-      : '';
-
-    const customBlocksHtml = canUseBuilder && blocks.length
-      ? `<div class="custom-blocks">${blocks.map(renderOneBlockPreview).join('')}</div>`
-      : '';
-
-    const tagsHtml = `<div class="tags">
-      ${isPaidTier ? `<span class="badge tier-badge">${icon('check', 13)} Verified</span>` : ''}
-      ${business.categories.map((c) => `<span class="badge">${escapeHtml(c.name)}</span>`).join('')}
-    </div>`;
-
-    document.getElementById('preview-content').innerHTML = `
-      ${heroGallery}
-      <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">${escapeHtml(business.name)}</h1>
-      ${tagsHtml}
-      <p style="margin-top: 1.25rem;">${escapeHtml(business.description)}</p>
-      ${inlineGallery}
-      ${customBlocksHtml}
-      ${business.address ? `<p class="address">${escapeHtml(business.address)}</p>` : ''}
-      <div class="actions">
-        ${showClickableWebsite ? `<span class="btn btn-outline">${icon('pin')} Visit website</span>` : ''}
-        ${business.phone ? `<span class="btn btn-outline">${icon('phone')} ${escapeHtml(business.phone)}</span>` : ''}
-        <span class="btn btn-outline">${icon('pin')} View on Google Maps</span>
-      </div>
-      <div class="hours-section">
-        <h2 class="hours-heading">${icon('clock', 17)} Trading Hours</h2>
-        ${business.hours
-          ? `<p class="hours-text">${escapeHtml(business.hours)}</p>`
-          : '<p class="hours-text hours-unavailable">Trading hours not available</p>'}
-      </div>
-      <div class="listing-meta-links">
-        <span>${icon('flag', 13)} Report this listing</span>
-        <span>${icon('trash', 13)} Request data removal</span>
-      </div>
-    `;
-  }
-
-  function blockFieldsHtml(b) {
-    const title = (b.title || '').replace(/"/g, '&quot;');
-    const bodyEsc = (b.body || '');
-    if (b.type === 'divider') {
-      return '<p class="muted block-hint">Just a horizontal divider — no text needed.</p>';
-    }
-    const photoOptions = photos
-      .map((p) => `<option value="${p.r2_key}" ${b.imageKey === p.r2_key ? 'selected' : ''}>${p.r2_key.split('/').pop()}</option>`)
-      .join('');
-    const photoPicker = `
-      <select class="block-image">
-        <option value="">— Choose an uploaded photo —</option>
-        ${photoOptions}
-      </select>`;
-    if (b.type === 'photo') {
-      return `${photoPicker}
-        <input class="block-title" type="text" placeholder="Caption (optional)" maxlength="60" value="${title}" />`;
-    }
-    if (b.type === 'banner') {
-      return `${photoPicker}
-        <input class="block-title" type="text" placeholder="Headline" maxlength="60" value="${title}" />
-        <input class="block-body" type="text" placeholder="Short line under the headline (optional)" maxlength="200" value="${bodyEsc.replace(/"/g, '&quot;')}" />`;
-    }
-    if (b.type === 'side-image') {
-      return `${photoPicker}
-        <select class="block-side">
-          <option value="left" ${b.side !== 'right' ? 'selected' : ''}>Photo on the left</option>
-          <option value="right" ${b.side === 'right' ? 'selected' : ''}>Photo on the right</option>
-        </select>
-        <input class="block-title" type="text" placeholder="Section title" maxlength="60" value="${title}" />
-        <textarea class="block-body" rows="2" maxlength="800" placeholder="Section text">${bodyEsc}</textarea>`;
-    }
-    if (b.type === 'cta') {
-      return `
-        <input class="block-title" type="text" placeholder="Headline, e.g. Ready to book?" maxlength="60" value="${title}" />
-        <input class="block-body" type="text" placeholder="Button text, e.g. Get in touch" maxlength="800" value="${bodyEsc.replace(/"/g, '&quot;')}" />`;
-    }
-    if (b.type === 'testimonial') {
-      return `
-        <textarea class="block-body" rows="2" maxlength="800" placeholder="Quote">${bodyEsc}</textarea>
-        <input class="block-title" type="text" placeholder="Author name" maxlength="60" value="${title}" />`;
-    }
-    return `
-      <input class="block-title" type="text" placeholder="Section title" maxlength="60" value="${title}" />
-      <textarea class="block-body" rows="2" maxlength="800" placeholder="Section text">${bodyEsc}</textarea>`;
-  }
-
-  // Only banner/photo/side-image blocks carry a real photo an owner might
-  // want taller or shorter — text-only sections (story, testimonial, etc.)
-  // always size to their own text, so they get no resize handle at all.
-  function miniPreviewImg(b) {
-    const src = b.imageKey ? `/media/${b.imageKey}` : placeholderPhoto('No photo chosen');
-    return `<img src="${src}" alt="" />`;
-  }
-
-  function renderBlocks() {
-    const container = document.getElementById('blocks-grid');
-    if (blocksGrid) {
-      blocksGrid.destroy(false);
-      blocksGrid = null;
-    }
-
-    container.innerHTML = blocks
-      .map((b, i) => {
-        const resizable = SIZED_TYPES.has(b.type);
-        return `
-      <div class="grid-stack-item" data-i="${i}" gs-auto-position="true" gs-h="10" ${resizable ? '' : 'gs-no-resize="true"'}>
-        <div class="grid-stack-item-content block-row">
-          <div class="block-row-fixed">
-            <div class="block-row-head">
-              <span class="block-drag-handle" title="Drag to reorder">⠿</span>
-              <select class="block-type">
-                ${BLOCK_TYPE_OPTIONS.map(([val, label]) => `<option value="${val}" ${b.type === val ? 'selected' : ''}>${label}</option>`).join('')}
-              </select>
-              <button type="button" class="remove-block" title="Remove section" aria-label="Remove section">✕</button>
-            </div>
-            ${blockFieldsHtml(b)}
-          </div>
-          ${resizable ? `<div class="block-size-preview">${miniPreviewImg(b)}</div>` : ''}
-        </div>
-      </div>`;
-      })
-      .join('');
-
-    blocksGrid = GridStack.init(
-      {
-        column: 1,
-        float: false,
-        cellHeight: GRID_CELL_HEIGHT,
-        margin: GRID_MARGIN,
-        handle: '.block-drag-handle',
-        resizable: { handles: 's', autoHide: false },
-        disableOneColumnMode: true,
-      },
-      container
-    );
-
-    container.querySelectorAll('.grid-stack-item').forEach((item) => {
-      item.querySelector('.block-type').addEventListener('change', (e) => {
-        const idx = Number(item.dataset.i);
-        blocks[idx].type = e.target.value;
-        renderBlocks(); renderPreview(); scheduleAutosave();
-      });
-      item.querySelector('.block-title')?.addEventListener('input', (e) => { blocks[Number(item.dataset.i)].title = e.target.value; renderPreview(); scheduleAutosave(); });
-      item.querySelector('.block-body')?.addEventListener('input', (e) => { blocks[Number(item.dataset.i)].body = e.target.value; renderPreview(); scheduleAutosave(); });
-      item.querySelector('.block-image')?.addEventListener('change', (e) => {
-        const idx = Number(item.dataset.i);
-        blocks[idx].imageKey = e.target.value || undefined;
-        const img = item.querySelector('.block-size-preview img');
-        if (img) img.src = e.target.value ? `/media/${e.target.value}` : placeholderPhoto('No photo chosen');
-        renderPreview(); scheduleAutosave();
-      });
-      item.querySelector('.block-side')?.addEventListener('change', (e) => { blocks[Number(item.dataset.i)].side = e.target.value; renderPreview(); scheduleAutosave(); });
-      item.querySelector('.remove-block').addEventListener('click', () => { blocks.splice(Number(item.dataset.i), 1); renderBlocks(); renderPreview(); scheduleAutosave(); });
-    });
-
-    // Give each row exactly the height it needs: a resizable row starts at
-    // its saved (or default) photo height, and can be dragged between a
-    // floor (fields still fit) and MAX_BLOCK_HEIGHT; a text-only row is
-    // measured and locked to its own content height so nothing clips or
-    // leaves dead space below it — the same overflow bug fixed once
-    // already for this grid's previous incarnation.
-    container.querySelectorAll('.grid-stack-item').forEach((item) => {
-      const idx = Number(item.dataset.i);
-      const b = blocks[idx];
-      const fixedH = item.querySelector('.block-row-fixed').scrollHeight;
-      if (SIZED_TYPES.has(b.type)) {
-        const photoH = b.heightPx || DEFAULT_BLOCK_HEIGHT[b.type] || 220;
-        const toRows = (px) => Math.ceil((fixedH + px + GRID_MARGIN * 3) / GRID_CELL_HEIGHT);
-        blocksGrid.update(item, { h: toRows(photoH), minH: toRows(MIN_BLOCK_HEIGHT), maxH: toRows(MAX_BLOCK_HEIGHT) });
-      } else {
-        blocksGrid.update(item, { h: Math.ceil((fixedH + GRID_MARGIN * 2) / GRID_CELL_HEIGHT) });
-      }
-    });
-
-    blocksGrid.on('change', () => {
-      const items = Array.from(container.querySelectorAll('.grid-stack-item')).sort(
-        (a, b) => (a.gridstackNode?.y ?? 0) - (b.gridstackNode?.y ?? 0)
-      );
-      items.forEach((item) => {
-        const b = blocks[Number(item.dataset.i)];
-        if (SIZED_TYPES.has(b.type)) {
-          const img = item.querySelector('.block-size-preview img');
-          if (img && img.clientHeight > 0) {
-            b.heightPx = Math.round(Math.min(MAX_BLOCK_HEIGHT, Math.max(MIN_BLOCK_HEIGHT, img.clientHeight)));
-          }
-        }
-      });
-      blocks = items.map((item) => blocks[Number(item.dataset.i)]);
-      items.forEach((item, newIndex) => { item.dataset.i = String(newIndex); });
-      renderPreview();
-      scheduleAutosave();
-    });
-  }
-
-  document.getElementById('add-block-btn').addEventListener('click', () => {
-    if (blocks.length >= 10) return;
-    blocks.push({ type: 'story', title: '', body: '' });
-    renderBlocks();
-    renderPreview();
-    scheduleAutosave();
-  });
-
-  ['primary', 'secondary', 'background'].forEach((key) => {
-    document.getElementById(`color-${key}`).addEventListener('input', (e) => {
-      pageColors[key] = e.target.value;
-      renderPreview();
-      scheduleAutosave();
-    });
-  });
-  document.querySelectorAll('.color-clear-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      delete pageColors[btn.dataset.key];
-      renderPreview();
-      scheduleAutosave();
-    });
-  });
 
   let autosaveTimer;
   function scheduleAutosave() {
@@ -536,7 +95,7 @@ import site from '../../site';
     const res = await fetch('/api/business-design', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ businessId: Number(businessId), action: 'autosave', templateId: selectedTemplate, blocks, pageColors }),
+      body: JSON.stringify({ businessId: Number(businessId), action: 'autosave', templateId: selectedTemplate }),
     });
     const result = await res.json();
     if (result.ok) {
@@ -574,8 +133,6 @@ import site from '../../site';
     const result = await res.json();
     if (result.ok) {
       liveTemplateId = selectedTemplate;
-      liveBlocks = JSON.parse(JSON.stringify(blocks));
-      livePageColors = { ...pageColors };
       hasUnpublishedChanges = false;
       updateDesignStatus();
       designStatus.textContent = 'Published! Your live page will update shortly.';
@@ -592,16 +149,9 @@ import site from '../../site';
       body: JSON.stringify({ businessId: Number(businessId), action: 'revert' }),
     });
     selectedTemplate = liveTemplateId;
-    blocks = JSON.parse(JSON.stringify(liveBlocks));
-    pageColors = { ...livePageColors };
     hasUnpublishedChanges = false;
     draftUpdatedAt = null;
     document.querySelectorAll('.tpl-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.tpl === selectedTemplate));
-    ['primary', 'secondary', 'background'].forEach((key) => {
-      document.getElementById(`color-${key}`).value = pageColors[key] || (key === 'background' ? '#ffffff' : key === 'secondary' ? '#0f172a' : '#2563eb');
-    });
-    renderBlocks();
-    renderPreview();
     updateDesignStatus();
   });
 
@@ -629,32 +179,15 @@ import site from '../../site';
     }
     loading.hidden = true;
     content.hidden = false;
-    document.getElementById('content2').hidden = false;
     document.getElementById('business-name-hl').textContent = data.business.name;
 
     tier = design.tier;
     canChooseTemplate = design.canChooseTemplate;
     canUseBuilder = design.canUseBuilder;
     selectedTemplate = design.templateId ?? 'classic';
-    blocks = Array.isArray(design.blocks) ? design.blocks : [];
     liveTemplateId = design.liveTemplateId ?? 'classic';
-    liveBlocks = Array.isArray(design.liveBlocks) ? design.liveBlocks : [];
-    pageColors = design.pageColors && typeof design.pageColors === 'object' ? { ...design.pageColors } : {};
-    livePageColors = design.livePageColors && typeof design.livePageColors === 'object' ? { ...design.livePageColors } : {};
     hasUnpublishedChanges = !!design.hasUnpublishedChanges;
     draftUpdatedAt = design.draftUpdatedAt;
-
-    business = {
-      name: data.business.name,
-      address: data.business.address ?? '',
-      phone: data.business.phone ?? '',
-      website: data.business.website ?? '',
-      description: data.business.description ?? '',
-      hours: data.business.hours ?? '',
-      categories: Array.isArray(data.business.categories) ? data.business.categories : [],
-      suburb: data.business.suburb ?? null,
-    };
-    renderChrome();
 
     if (tier >= 2) {
       document.getElementById('photos-section').hidden = false;
@@ -665,35 +198,28 @@ import site from '../../site';
 
     if (canChooseTemplate) {
       document.getElementById('template-picker').hidden = false;
+      document.getElementById('design-actions').hidden = false;
+      document.getElementById('design-status').hidden = false;
       document.querySelectorAll('.tpl-btn').forEach((btn) => {
         if (btn.dataset.tpl === selectedTemplate) btn.classList.add('active');
         btn.addEventListener('click', () => {
           selectedTemplate = btn.dataset.tpl;
           document.querySelectorAll('.tpl-btn').forEach((b) => b.classList.remove('active'));
           btn.classList.add('active');
-          renderPreview();
           scheduleAutosave();
         });
       });
+      updateDesignStatus();
     } else {
       document.getElementById('upsell-template').hidden = false;
     }
 
     if (canUseBuilder) {
-      document.getElementById('design-actions').hidden = false;
-      document.getElementById('design-status').hidden = false;
-      document.getElementById('page-colors').hidden = false;
-      ['primary', 'secondary', 'background'].forEach((key) => {
-        if (pageColors[key]) document.getElementById(`color-${key}`).value = pageColors[key];
-      });
-      document.getElementById('block-editor').hidden = false;
-      renderBlocks();
+      document.getElementById('edit-on-page-callout').hidden = false;
+      document.getElementById('edit-on-page-link').href = `/business/${data.business.slug}/`;
     } else {
       document.getElementById('upsell-blocks').hidden = false;
     }
-
-    updateDesignStatus();
-    renderPreview();
   }
 
   async function loadPhotos() {
@@ -701,7 +227,6 @@ import site from '../../site';
     const res = await fetch(`/api/business-photos?businessId=${encodeURIComponent(businessId)}`);
     const data = await res.json();
     if (!data.ok) return;
-    photos = data.photos;
     document.getElementById('photos-cap-label').textContent = `${data.photos.length} of ${data.cap} photos used`;
     grid.innerHTML = '';
     for (const photo of data.photos) {
@@ -712,17 +237,11 @@ import site from '../../site';
       div.querySelector('button').addEventListener('click', async (e) => {
         await fetch(`/api/business-photos?photoId=${e.target.getAttribute('data-id')}`, { method: 'DELETE' });
         await loadPhotos();
-        renderPreview();
-        if (canUseBuilder) renderBlocks();
       });
       grid.appendChild(div);
     }
-    renderPreview();
   }
 
-  // Clicking an uploaded photo's thumbnail opens it full-size in a modal,
-  // instead of the thumbnail growing/whatever a plain <img> would otherwise
-  // do — the customize page itself never displays the full-resolution image.
   const photoModal = document.getElementById('photo-modal');
   const photoModalImg = document.getElementById('photo-modal-img');
   function openPhotoModal(src) {
@@ -754,7 +273,6 @@ import site from '../../site';
     if (result.ok) {
       input.value = '';
       await loadPhotos();
-      if (canUseBuilder) renderBlocks();
     }
   });
 
@@ -781,37 +299,9 @@ import site from '../../site';
     color: var(--navy);
     margin: 0 0 0.5rem;
   }
-  .preview-panel {
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 16px);
-    overflow: hidden;
-    background: var(--bg-card);
-  }
-  .preview-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1rem;
-    background: var(--bg-subtle);
-    font-size: 0.85rem;
+  .muted {
     color: var(--text-muted);
-    border-bottom: 1px solid var(--border);
-  }
-  .preview-live-dot {
-    color: #1a8f5e;
-    font-size: 0.78rem;
-    font-weight: 600;
-  }
-  .preview-frame {
-    max-height: 720px;
-    overflow-y: auto;
-  }
-  .preview-note {
-    margin: 0;
-    padding: 0.6rem 1rem;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    border-top: 1px solid var(--border);
+    font-size: 0.88rem;
   }
   .upsell {
     display: flex;
@@ -827,8 +317,7 @@ import site from '../../site';
   }
   /* `.upsell` and `[hidden]` have equal specificity, and this rule is
      declared later, so without this override `display: flex` above wins
-     and the hidden attribute is silently ignored — exactly what was
-     showing every upsell notice at once regardless of tier. */
+     and the hidden attribute is silently ignored. */
   .upsell[hidden] {
     display: none;
   }
@@ -846,17 +335,28 @@ import site from '../../site';
   .upsell-link:hover {
     text-decoration: underline;
   }
-  #photos-section, #template-picker, #page-colors, #block-editor {
-    margin-bottom: 2rem;
+  .callout {
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
   }
-  .muted {
-    color: var(--text-muted);
-    font-size: 0.88rem;
+  .callout[hidden] {
+    display: none;
+  }
+  .callout p {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+  }
+  #photos-section, #template-picker {
+    margin-bottom: 2rem;
   }
   .option-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 0.6rem;
+    margin-bottom: 1rem;
   }
   .tpl-btn {
     display: flex;
@@ -878,155 +378,16 @@ import site from '../../site';
     border-color: var(--accent);
     background: rgba(var(--accent-rgb), 0.08);
   }
-  .color-picker-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-    margin-top: 0.75rem;
-  }
-  .color-picker-row label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: var(--text);
-  }
-  .color-picker-row input[type='color'] {
-    width: 2.2rem;
-    height: 2.2rem;
-    padding: 0;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: none;
-    cursor: pointer;
-  }
-  .color-clear-btn {
-    font-size: 0.75rem;
-    font-weight: 400;
-    padding: 0.25rem 0.5rem;
-    border: 1px solid var(--border);
-    background: var(--bg-subtle);
-    border-radius: var(--radius);
-    cursor: pointer;
-    color: var(--text-muted);
-  }
-  #blocks-grid.grid-stack {
-    margin-bottom: 0.75rem;
-  }
-  /* Everything below targets elements built by renderBlocks() via
-     innerHTML — Astro only stamps its data-astro-cid scoping attribute on
-     elements present in the static template at build time, so a scoped
-     (non-:global) selector here would silently match nothing at all, and
-     the whole block editor would render as unstyled, un-laid-out raw HTML.
-     Same bug class as .preview-body's rules below, just missed here once
-     already. */
-  :global(.block-row) {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.6rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
-    box-sizing: border-box;
-    overflow: hidden;
-  }
-  :global(.block-row-fixed) {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    flex: 0 0 auto;
-  }
-  :global(.block-row select), :global(.block-row input), :global(.block-row textarea) {
-    font: inherit;
-    padding: 0.45rem 0.6rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--bg-subtle);
-    color: var(--text);
-    width: 100%;
-    box-sizing: border-box;
-  }
-  :global(.block-row-head) {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-  :global(.block-row-head select) {
-    flex: 1 1 auto;
-  }
-  :global(.block-drag-handle), :global(.remove-block) {
-    flex: 0 0 auto;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.9rem;
-    height: 1.9rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-subtle);
-    color: var(--text-muted);
-    font-size: 0.95rem;
-  }
-  :global(.block-drag-handle) {
-    cursor: grab;
-    user-select: none;
-  }
-  :global(.block-drag-handle:active) {
-    cursor: grabbing;
-  }
-  :global(.remove-block) {
-    cursor: pointer;
-  }
-  :global(.block-hint) {
-    margin: 0;
-  }
-  :global(.block-size-preview) {
-    flex: 1 1 auto;
-    min-height: 40px;
-    overflow: hidden;
-    border-radius: var(--radius);
-    position: relative;
-  }
-  :global(.block-size-preview img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    pointer-events: none;
-  }
-  /* GridStack's own resize handle — hidden by default until hover
-     (.ui-resizable-handle{display:none!important} in its stylesheet) and,
-     for the plain 's' handle we use, otherwise invisible even when shown.
-     Business owners won't discover a hover-only, textureless 10px strip,
-     so autoHide is turned off in the JS init and this gives it a real,
-     always-visible grip bar to grab. */
-  :global(.grid-stack-item > .ui-resizable-s) {
-    height: 16px !important;
-    bottom: -8px !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-  }
-  :global(.grid-stack-item > .ui-resizable-s::after) {
-    content: '';
-    width: 48px;
-    height: 5px;
-    border-radius: 3px;
-    background: var(--accent);
-    opacity: 0.7;
-  }
   .photo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 0.5rem;
     margin: 0.75rem 0;
   }
-  /* .photo-thumb and its children are built via document.createElement in
-     loadPhotos(), so — same reason as the block editor's styles above —
-     these need :global() or they silently match nothing. */
+  /* .photo-thumb is built via document.createElement in loadPhotos(), so
+     it needs :global() or it silently matches nothing — Astro only
+     stamps its scoping attribute onto elements present in the static
+     template at build time. */
   :global(.photo-thumb) {
     position: relative;
   }
@@ -1055,23 +416,14 @@ import site from '../../site';
   #design-actions {
     display: flex;
     gap: 0.6rem;
+    margin-top: 0.25rem;
   }
   #design-actions[hidden] {
     display: none;
   }
-  #publish-btn {
-    border: none;
-    cursor: pointer;
-  }
-  #revert-btn {
-    cursor: pointer;
-  }
   #design-status {
     margin-top: 0.6rem;
   }
-  /* Clicking a thumbnail opens the real photo here, full-size — the
-     customize page itself never displays anything but small cropped
-     thumbnails, however large the uploaded original is. */
   .photo-modal {
     position: fixed;
     inset: 0;
@@ -1116,299 +468,5 @@ import site from '../../site';
     line-height: 1;
     cursor: pointer;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  }
-
-  /* --- live preview body — copied verbatim from src/pages/business/
-     [slug].astro's own <style> block, so this genuinely is the real page's
-     look, not an approximation of it. Every rule here needs :global()
-     since the markup is injected via innerHTML. --- */
-  .preview-body :global(.breadcrumbs) {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-    margin-bottom: 0.5rem;
-  }
-  .preview-body :global(.breadcrumbs a) {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.3rem 0.7rem;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text);
-    text-decoration: none;
-    font-size: 0.82rem;
-    font-weight: 600;
-  }
-  .preview-body :global(.breadcrumbs .current) {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    padding: 0.3rem 0.2rem;
-  }
-  .preview-body :global(.breadcrumbs .sep) {
-    color: var(--text-muted);
-    font-size: 0.8rem;
-  }
-  .preview-body :global(.tags) {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-  .preview-body :global(.badge) {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.78rem;
-    color: var(--accent);
-    background: rgba(var(--accent-rgb), 0.1);
-    padding: 0.2rem 0.6rem;
-    border-radius: 999px;
-    text-decoration: none;
-  }
-  .preview-body :global(.address) {
-    color: var(--text-muted);
-    margin: 0.5rem 0 0;
-  }
-  .preview-body :global(.tier-badge) {
-    background: rgba(26, 143, 94, 0.12);
-    color: #1a8f5e;
-  }
-  .preview-body :global(.photo-gallery) {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 0.5rem;
-    margin-top: 1.25rem;
-  }
-  .preview-body :global(.photo-gallery.carousel) {
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(160px, 220px);
-    grid-template-columns: none;
-    overflow-x: auto;
-  }
-  .preview-body :global(.photo-gallery img) {
-    width: 100%;
-    height: 130px;
-    object-fit: cover;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-  }
-  .preview-body :global(.hero-gallery) {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(180px, 1fr);
-    gap: 0.5rem;
-    overflow-x: auto;
-    margin-bottom: 0.5rem;
-  }
-  .preview-body :global(.hero-gallery img) {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-radius: var(--radius-lg, 16px);
-  }
-  .preview-body :global(.sample-note) {
-    margin: 0 0 1rem;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    font-style: italic;
-  }
-  .preview-body :global(.custom-blocks) {
-    margin-top: 1.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-  .preview-body :global(.custom-block) {
-    padding: 1rem 1.1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
-  }
-  .preview-body :global(.custom-block h2) {
-    margin: 0 0 0.4rem;
-    font-size: 1rem;
-    color: var(--navy);
-  }
-  .preview-body :global(.custom-block p) {
-    margin: 0;
-    font-size: 0.9rem;
-    white-space: pre-line;
-  }
-  .preview-body :global(.placeholder-text) {
-    color: var(--text-muted);
-    font-style: italic;
-  }
-  .preview-body :global(.custom-block-banner) {
-    position: relative;
-    padding: 0;
-    overflow: hidden;
-    min-height: 180px;
-    display: flex;
-    align-items: flex-end;
-  }
-  .preview-body :global(.custom-block-banner img) {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 0;
-  }
-  .preview-body :global(.banner-overlay) {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    padding: 1.25rem;
-    background: linear-gradient(0deg, rgba(15, 23, 42, 0.65) 0%, rgba(15, 23, 42, 0) 100%);
-    color: #fff;
-  }
-  .preview-body :global(.banner-overlay h2) {
-    margin: 0 0 0.3rem;
-    color: #fff;
-    font-size: 1.2rem;
-  }
-  .preview-body :global(.banner-overlay p) {
-    margin: 0;
-    opacity: 0.95;
-  }
-  .preview-body :global(.custom-block-side-image) {
-    display: flex;
-    gap: 1.1rem;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  .preview-body :global(.custom-block-side-image.side-right) {
-    flex-direction: row-reverse;
-  }
-  .preview-body :global(.custom-block-side-image img) {
-    flex: 1 1 200px;
-    max-width: 100%;
-    height: 170px;
-    object-fit: cover;
-    border-radius: var(--radius);
-  }
-  .preview-body :global(.side-image-text) {
-    flex: 1 1 200px;
-  }
-  .preview-body :global(.side-image-text h3) {
-    margin: 0 0 0.35rem;
-    color: var(--navy);
-  }
-  .preview-body :global(.side-image-text p) {
-    margin: 0;
-    color: var(--text-muted);
-    white-space: pre-line;
-  }
-  .preview-body :global(.custom-block-photo) {
-    padding: 0;
-    overflow: hidden;
-  }
-  .preview-body :global(.custom-block-photo img) {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-    display: block;
-  }
-  .preview-body :global(.photo-placeholder) {
-    padding: 2rem 1rem;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-  }
-  .preview-body :global(.photo-caption) {
-    margin: 0;
-    padding: 0.6rem 0.9rem;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-  }
-  .preview-body :global(.custom-block-cta) {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .preview-body :global(.cta-text) {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--navy);
-  }
-  .preview-body :global(.cta-btn) {
-    display: inline-block;
-  }
-  .preview-body :global(.custom-block-testimonial) {
-    text-align: center;
-    font-style: italic;
-  }
-  .preview-body :global(.testimonial-quote) {
-    margin: 0 0 0.5rem;
-    font-size: 1.05rem;
-    color: var(--text);
-  }
-  .preview-body :global(.testimonial-author) {
-    margin: 0;
-    font-size: 0.85rem;
-    font-weight: 600;
-    font-style: normal;
-    color: var(--text-muted);
-  }
-  .preview-body :global(.custom-block-divider) {
-    background: none;
-    border: none;
-    padding: 0.5rem 0;
-  }
-  .preview-body :global(.custom-block-divider hr) {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 0;
-  }
-  .preview-body :global(.actions) {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-top: 1.5rem;
-  }
-  .preview-body :global(.hours-section) {
-    margin-top: 1.5rem;
-    padding: 0.9rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
-  }
-  .preview-body :global(.hours-heading) {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin: 0;
-    font-size: 0.95rem;
-    color: var(--navy);
-  }
-  .preview-body :global(.hours-text) {
-    margin: 0.5rem 0 0;
-    font-size: 0.9rem;
-    color: var(--text);
-    white-space: pre-line;
-  }
-  .preview-body :global(.hours-unavailable) {
-    color: var(--text-muted);
-    font-style: italic;
-  }
-  .preview-body :global(.listing-meta-links) {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-  }
-  .preview-body :global(.listing-meta-links span) {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.78rem;
-    color: var(--text-muted);
   }
 </style>

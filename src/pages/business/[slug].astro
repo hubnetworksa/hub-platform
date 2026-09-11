@@ -37,12 +37,13 @@ const photos = photosFor(business);
 const canChooseTemplate = business.subscription_tier >= TIER_FEATURED && business.subscription_status === 'active';
 const template = canChooseTemplate ? business.template_id : 'classic';
 const isPremium = business.subscription_tier >= TIER_PREMIUM && business.subscription_status === 'active';
-// Premium businesses can append pre-built sections (banner, image+text,
-// gallery, testimonial, call to action, etc.) below the fixed page layout
-// below — the layout itself (name/description/photos/address/hours) never
-// moves or gets restyled; an owner can only add to it and set the page's
-// overall colors. Deliberately simple: no free positioning, no resizing,
-// no per-block style panel.
+// Premium businesses lose the automatic photo gallery entirely (guarded
+// out above) — their photos only appear where they place a Photo, Banner,
+// or Image+Text section. Everything else about the page (name, tags,
+// description, address, contact actions, trading hours) never moves and
+// isn't restyled; an owner can only append sections below it and set the
+// page's overall colors, edited in place on this very page — see the
+// edit-mode script below — not a separate preview.
 const customBlocks = isPremium ? customBlocksFor(business) : [];
 const customBlocksHtml = renderCustomBlocksHtml(customBlocks);
 
@@ -92,7 +93,7 @@ const jsonLd = {
 <BaseLayout title={business.name} description={business.description.slice(0, 155)} noAds={noAds}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-  <section class="container" style={`padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;${pageColorVars ? `;${pageColorVars}` : ''}`}>
+  <section id="page-content" class="container" style={`padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;${pageColorVars ? `;${pageColorVars}` : ''}`}>
     <Breadcrumbs
       items={[
         ...(suburb ? [{ label: suburb.name, href: `/suburb/${suburb.slug}/` }] : []),
@@ -100,7 +101,7 @@ const jsonLd = {
         { label: business.name },
       ]}
     />
-    {template === 'gallery' && photos.length > 0 && (
+    {!isPremium && template === 'gallery' && photos.length > 0 && (
       <div class="hero-gallery">
         {photos.map((photo) => (
           <img src={`/media/${photo.r2_key}`} alt={photo.caption ?? business.name} loading="lazy" width="700" height="360" />
@@ -128,7 +129,7 @@ const jsonLd = {
 
     <p style="margin-top: 1.25rem;">{business.description}</p>
 
-    {template !== 'gallery' && photos.length > 0 && (
+    {!isPremium && template !== 'gallery' && photos.length > 0 && (
       <div class:list={['photo-gallery', { carousel: photos.length > 5 }]}>
         {photos.map((photo) => (
           <img
@@ -142,7 +143,32 @@ const jsonLd = {
       </div>
     )}
 
-    <Fragment set:html={customBlocksHtml} />
+    <div id="custom-blocks-mount">
+      <Fragment set:html={customBlocksHtml} />
+    </div>
+    {isPremium && (
+      <>
+        <button type="button" id="edit-page-toggle" class="edit-page-toggle" hidden>
+          Edit this page
+        </button>
+        <div id="design-bar" class="design-bar" hidden>
+          <div class="design-bar-row">
+            <strong>Editing your page</strong>
+            <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
+            <span class="design-bar-hint">Drag a section to reorder it. Drag a photo section's bottom edge to resize its photo. Click any text to edit it.</span>
+          </div>
+          <div class="design-bar-row">
+            <label>Primary <input type="color" id="color-primary" value="#2563eb" /></label>
+            <label>Secondary <input type="color" id="color-secondary" value="#0f172a" /></label>
+            <label>Background <input type="color" id="color-background" value="#ffffff" /></label>
+            <button type="button" id="colors-reset-btn" class="btn btn-outline btn-sm">Reset colors</button>
+            <span id="design-status" role="status"></span>
+            <button type="button" id="publish-btn" class="btn btn-primary btn-sm" hidden>Publish changes</button>
+            <button type="button" id="revert-btn" class="btn btn-outline btn-sm" hidden>Revert to published</button>
+          </div>
+        </div>
+      </>
+    )}
 
     {center && (
       <a href={`/shopping-center/${center.slug}/`} class="located-at">
@@ -233,6 +259,407 @@ const jsonLd = {
   </section>
 </BaseLayout>
 
+{isPremium && (
+  <script define:vars={{ businessId: business.id }}>
+    // NOTE: define:vars forces this whole script to stay inline,
+    // unprocessed by Astro/Vite — plain browser JS only, no TypeScript
+    // syntax, or it throws a real SyntaxError in browsers.
+    (async function () {
+      const toggleBtn = document.getElementById('edit-page-toggle');
+      if (!toggleBtn) return;
+
+      const designBar = document.getElementById('design-bar');
+      const mount = document.getElementById('custom-blocks-mount');
+      const pageContent = document.getElementById('page-content');
+      const addBlockBtn = document.getElementById('add-block-btn');
+      const publishBtn = document.getElementById('publish-btn');
+      const revertBtn = document.getElementById('revert-btn');
+      const designStatus = document.getElementById('design-status');
+      const colorsResetBtn = document.getElementById('colors-reset-btn');
+
+      const BLOCK_TITLES = {
+        banner: 'Banner', 'side-image': 'Image + Text', story: 'Our Story', specials: 'Specials & Promotions',
+        team: 'Team', gallery: 'Gallery', photo: 'Photo', testimonial: 'Testimonial', cta: 'Call to Action', divider: 'Divider',
+      };
+      const BLOCK_TYPE_OPTIONS = [
+        ['banner', 'Banner'], ['side-image', 'Image + Text'], ['story', 'Our Story'], ['specials', 'Specials & Promotions'],
+        ['team', 'Team'], ['gallery', 'Gallery'], ['photo', 'Photo'], ['testimonial', 'Testimonial'], ['cta', 'Call to Action'], ['divider', 'Divider'],
+      ];
+      const SIZED_TYPES = new Set(['banner', 'photo', 'side-image']);
+      const MIN_BLOCK_HEIGHT = 100;
+      const MAX_BLOCK_HEIGHT = 480;
+      const DEFAULT_BLOCK_HEIGHT = { banner: 220, photo: 220, 'side-image': 200 };
+      const GRID_CELL_HEIGHT = 20;
+      const GRID_MARGIN = 8;
+
+      let blocks = [];
+      let liveBlocks = [];
+      let pageColors = {};
+      let livePageColors = {};
+      let hasUnpublishedChanges = false;
+      let draftUpdatedAt = null;
+      let photos = [];
+      let editing = false;
+      let blocksGrid = null;
+      let gridStackLoading = null;
+
+      function escapeHtml(s) {
+        return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      }
+
+      function hexToRgbTriple(hex) {
+        const clean = hex.replace('#', '');
+        const full = clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean;
+        const n = parseInt(full, 16);
+        return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
+      }
+
+      function applyPageColorsToPage() {
+        const decls = [];
+        if (pageColors.primary) decls.push(`--accent:${pageColors.primary}`, `--accent-rgb:${hexToRgbTriple(pageColors.primary)}`);
+        if (pageColors.secondary) decls.push(`--navy:${pageColors.secondary}`);
+        if (pageColors.background) decls.push(`--bg:${pageColors.background}`, `--bg-card:${pageColors.background}`);
+        pageContent.style.cssText = `padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;${decls.length ? ';' + decls.join(';') : ''}`;
+      }
+
+      function loadGridStack() {
+        if (window.GridStack) return Promise.resolve();
+        if (gridStackLoading) return gridStackLoading;
+        gridStackLoading = new Promise((resolve, reject) => {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = 'https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.5.1/gridstack.min.css';
+          document.head.appendChild(link);
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.5.1/gridstack-all.min.js';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+        return gridStackLoading;
+      }
+
+      function photoPickerHtml(b) {
+        const options = photos.map((p) => `<option value="${p.r2_key}" ${b.imageKey === p.r2_key ? 'selected' : ''}>${p.r2_key.split('/').pop()}</option>`).join('');
+        return `<select class="block-image" title="Choose photo"><option value="">— No photo —</option>${options}</select>`;
+      }
+
+      function blockToolbarHtml(b) {
+        const sidePicker = b.type === 'side-image'
+          ? `<select class="block-side" title="Photo side">
+              <option value="left" ${b.side !== 'right' ? 'selected' : ''}>Photo left</option>
+              <option value="right" ${b.side === 'right' ? 'selected' : ''}>Photo right</option>
+            </select>`
+          : '';
+        const photoPicker = SIZED_TYPES.has(b.type) ? photoPickerHtml(b) : '';
+        return `<div class="block-toolbar">
+          <span class="block-drag-handle" title="Drag to reorder">⠿</span>
+          <select class="block-type" title="Section type">
+            ${BLOCK_TYPE_OPTIONS.map(([val, label]) => `<option value="${val}" ${b.type === val ? 'selected' : ''}>${label}</option>`).join('')}
+          </select>
+          ${sidePicker}
+          ${photoPicker}
+          <button type="button" class="remove-block" title="Remove section" aria-label="Remove section">✕</button>
+        </div>`;
+      }
+
+      // Mirrors src/lib/blockRenderer.ts's renderOneBlock, plus the
+      // grid-stack-item wrapper, edit toolbar, and contenteditable fields
+      // this page's static build never needs — kept in sync by hand, same
+      // reason customize.astro's copy used to be.
+      function renderOneBlock(b, i) {
+        const title = escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More');
+        const body = escapeHtml(b.body || '');
+        const resizable = SIZED_TYPES.has(b.type);
+        const toolbar = blockToolbarHtml(b);
+        const wrap = (inner) => `
+          <div class="grid-stack-item" data-i="${i}" gs-auto-position="true" gs-h="10" ${resizable ? '' : 'gs-no-resize="true"'}>
+            <div class="grid-stack-item-content editable-block">
+              ${toolbar}
+              ${inner}
+            </div>
+          </div>`;
+
+        switch (b.type) {
+          case 'banner':
+            return wrap(`
+              <div class="custom-block custom-block-banner">
+                ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one above</div>'}
+                <div class="banner-overlay">
+                  <h2 contenteditable="true" data-field="title">${title}</h2>
+                  <p contenteditable="true" data-field="body" data-placeholder="Optional short line (click to add)">${body}</p>
+                </div>
+              </div>`);
+          case 'side-image': {
+            const side = b.side === 'right' ? ' side-right' : '';
+            return wrap(`
+              <div class="custom-block custom-block-side-image${side}">
+                ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one above</div>'}
+                <div class="side-image-text">
+                  <h3 contenteditable="true" data-field="title">${title}</h3>
+                  <p contenteditable="true" data-field="body" data-multiline="true" data-placeholder="Section text">${body}</p>
+                </div>
+              </div>`);
+          }
+          case 'photo':
+            return wrap(`
+              <div class="custom-block custom-block-photo">
+                ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one above</div>'}
+                <p class="photo-caption" contenteditable="true" data-field="title" data-placeholder="Add a caption (optional)">${b.title ? title : ''}</p>
+              </div>`);
+          case 'divider':
+            return wrap(`<div class="custom-block custom-block-divider"><hr /></div>`);
+          case 'cta':
+            return wrap(`
+              <div class="custom-block custom-block-cta">
+                <p class="cta-text" contenteditable="true" data-field="title">${title}</p>
+                <span class="btn btn-primary cta-btn" contenteditable="true" data-field="body">${body || 'Get in touch'}</span>
+              </div>`);
+          case 'testimonial':
+            return wrap(`
+              <div class="custom-block custom-block-testimonial">
+                <p class="testimonial-quote">&ldquo;<span contenteditable="true" data-field="body" data-multiline="true" data-placeholder="Quote text">${body}</span>&rdquo;</p>
+                <p class="testimonial-author">— <span contenteditable="true" data-field="title" data-placeholder="Author name">${b.title ? escapeHtml(b.title) : ''}</span></p>
+              </div>`);
+          default:
+            return wrap(`
+              <div class="custom-block">
+                <h2 contenteditable="true" data-field="title">${title}</h2>
+                <p contenteditable="true" data-field="body" data-multiline="true" data-placeholder="Section text">${body}</p>
+              </div>`);
+        }
+      }
+
+      function renderBlocks() {
+        if (blocksGrid) { blocksGrid.destroy(false); blocksGrid = null; }
+        mount.innerHTML = `<div class="grid-stack" id="blocks-grid">${blocks.map(renderOneBlock).join('')}</div>`;
+
+        const container = document.getElementById('blocks-grid');
+        blocksGrid = GridStack.init(
+          {
+            column: 1,
+            float: false,
+            cellHeight: GRID_CELL_HEIGHT,
+            margin: GRID_MARGIN,
+            resizable: { handles: 's', autoHide: false },
+            draggable: { cancel: 'button, select, input, textarea, option, [contenteditable]' },
+            disableOneColumnMode: true,
+          },
+          container
+        );
+
+        container.querySelectorAll('.grid-stack-item').forEach((item) => {
+          item.querySelector('.block-type').addEventListener('change', (e) => {
+            blocks[Number(item.dataset.i)].type = e.target.value;
+            renderBlocks();
+            scheduleAutosave();
+          });
+          item.querySelector('.block-image')?.addEventListener('change', (e) => {
+            blocks[Number(item.dataset.i)].imageKey = e.target.value || undefined;
+            renderBlocks();
+            scheduleAutosave();
+          });
+          item.querySelector('.block-side')?.addEventListener('change', (e) => {
+            blocks[Number(item.dataset.i)].side = e.target.value;
+            renderBlocks();
+            scheduleAutosave();
+          });
+          item.querySelector('.remove-block').addEventListener('click', () => {
+            blocks.splice(Number(item.dataset.i), 1);
+            renderBlocks();
+            scheduleAutosave();
+          });
+        });
+
+        // Give each row exactly the height it needs — same fix as
+        // customize.astro's now-removed block editor used: measure, then
+        // set the row count to match, so nothing clips or leaves dead
+        // space below it.
+        container.querySelectorAll('.grid-stack-item').forEach((item) => {
+          const idx = Number(item.dataset.i);
+          const b = blocks[idx];
+          const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
+          if (SIZED_TYPES.has(b.type)) {
+            const photoH = b.heightPx || DEFAULT_BLOCK_HEIGHT[b.type] || 220;
+            const toRows = (px) => Math.ceil((toolbarH + px + GRID_MARGIN * 3) / GRID_CELL_HEIGHT);
+            blocksGrid.update(item, { h: toRows(photoH), minH: toRows(MIN_BLOCK_HEIGHT), maxH: toRows(MAX_BLOCK_HEIGHT) });
+          } else {
+            const contentEl = item.querySelector('.grid-stack-item-content');
+            blocksGrid.update(item, { h: Math.ceil((contentEl.scrollHeight + GRID_MARGIN * 2) / GRID_CELL_HEIGHT) });
+          }
+        });
+
+        blocksGrid.on('change', () => {
+          const items = Array.from(container.querySelectorAll('.grid-stack-item')).sort(
+            (a, b) => (a.gridstackNode?.y ?? 0) - (b.gridstackNode?.y ?? 0)
+          );
+          items.forEach((item) => {
+            const b = blocks[Number(item.dataset.i)];
+            if (SIZED_TYPES.has(b.type)) {
+              const img = item.querySelector('img');
+              if (img && img.clientHeight > 0) {
+                b.heightPx = Math.round(Math.min(MAX_BLOCK_HEIGHT, Math.max(MIN_BLOCK_HEIGHT, img.clientHeight)));
+              }
+            }
+          });
+          blocks = items.map((item) => blocks[Number(item.dataset.i)]);
+          items.forEach((item, newIndex) => { item.dataset.i = String(newIndex); });
+          scheduleAutosave();
+        });
+
+        container.addEventListener('input', (e) => {
+          const fieldEl = e.target.closest('[data-field]');
+          if (!fieldEl) return;
+          if (fieldEl.innerText.trim() === '') fieldEl.innerHTML = '';
+          const item = fieldEl.closest('.grid-stack-item');
+          blocks[Number(item.dataset.i)][fieldEl.dataset.field] = fieldEl.innerText;
+          scheduleAutosave();
+        });
+        container.addEventListener('keydown', (e) => {
+          const fieldEl = e.target.closest('[data-field]');
+          if (fieldEl && e.key === 'Enter' && fieldEl.dataset.multiline !== 'true') {
+            e.preventDefault();
+            fieldEl.blur();
+          }
+        });
+      }
+
+      let autosaveTimer;
+      function scheduleAutosave() {
+        hasUnpublishedChanges = true;
+        updateDesignStatus();
+        window.clearTimeout(autosaveTimer);
+        autosaveTimer = window.setTimeout(doAutosave, 900);
+      }
+
+      async function doAutosave() {
+        designStatus.textContent = 'Saving…';
+        const res = await fetch('/api/business-design', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId, action: 'autosave', blocks, pageColors }),
+        });
+        const result = await res.json();
+        if (result.ok) {
+          draftUpdatedAt = result.draftUpdatedAt;
+        } else {
+          designStatus.textContent = result.error || 'Could not save your draft.';
+          return;
+        }
+        updateDesignStatus();
+      }
+
+      function updateDesignStatus() {
+        publishBtn.hidden = !hasUnpublishedChanges;
+        revertBtn.hidden = !hasUnpublishedChanges;
+        designStatus.textContent = hasUnpublishedChanges
+          ? (draftUpdatedAt ? `Draft saved ${new Date(draftUpdatedAt).toLocaleTimeString()} — not published yet.` : 'Draft saved — not published yet.')
+          : 'Everything here is published and live.';
+      }
+
+      const res = await fetch(`/api/business-design?businessId=${businessId}`);
+      if (!res.ok) return;
+      const design = await res.json();
+      if (!design.ok || !design.canUseBuilder) return;
+
+      const photosRes = await fetch(`/api/business-photos?businessId=${businessId}`);
+      if (photosRes.ok) {
+        const photoData = await photosRes.json();
+        if (photoData.ok) photos = photoData.photos;
+      }
+
+      blocks = Array.isArray(design.blocks) ? design.blocks : [];
+      liveBlocks = Array.isArray(design.liveBlocks) ? design.liveBlocks : [];
+      pageColors = design.pageColors && typeof design.pageColors === 'object' ? { ...design.pageColors } : {};
+      livePageColors = design.livePageColors && typeof design.livePageColors === 'object' ? { ...design.livePageColors } : {};
+      hasUnpublishedChanges = !!design.hasUnpublishedChanges;
+      draftUpdatedAt = design.draftUpdatedAt;
+      ['primary', 'secondary', 'background'].forEach((key) => {
+        if (pageColors[key]) document.getElementById(`color-${key}`).value = pageColors[key];
+      });
+
+      toggleBtn.addEventListener('click', async () => {
+        editing = !editing;
+        toggleBtn.textContent = editing ? 'Exit edit mode' : 'Edit this page';
+        document.body.classList.toggle('page-edit-mode', editing);
+        if (editing) {
+          await loadGridStack();
+          designBar.hidden = false;
+          applyPageColorsToPage();
+          renderBlocks();
+          updateDesignStatus();
+        } else {
+          if (blocksGrid) { blocksGrid.destroy(false); blocksGrid = null; }
+          designBar.hidden = true;
+        }
+      });
+
+      addBlockBtn.addEventListener('click', () => {
+        if (blocks.length >= 10) return;
+        blocks.push({ type: 'story', title: '', body: '' });
+        renderBlocks();
+        scheduleAutosave();
+      });
+
+      ['primary', 'secondary', 'background'].forEach((key) => {
+        document.getElementById(`color-${key}`).addEventListener('input', (e) => {
+          pageColors[key] = e.target.value;
+          applyPageColorsToPage();
+          scheduleAutosave();
+        });
+      });
+      colorsResetBtn.addEventListener('click', () => {
+        pageColors = {};
+        document.getElementById('color-primary').value = '#2563eb';
+        document.getElementById('color-secondary').value = '#0f172a';
+        document.getElementById('color-background').value = '#ffffff';
+        applyPageColorsToPage();
+        scheduleAutosave();
+      });
+
+      publishBtn.addEventListener('click', async () => {
+        designStatus.textContent = 'Publishing…';
+        const pubRes = await fetch('/api/business-design', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId, action: 'publish' }),
+        });
+        const result = await pubRes.json();
+        if (result.ok) {
+          liveBlocks = JSON.parse(JSON.stringify(blocks));
+          livePageColors = { ...pageColors };
+          hasUnpublishedChanges = false;
+          updateDesignStatus();
+          designStatus.textContent = 'Published! This page will update for visitors shortly.';
+        } else {
+          designStatus.textContent = result.error || 'Could not publish.';
+        }
+      });
+
+      revertBtn.addEventListener('click', async () => {
+        if (!window.confirm('Discard your unpublished changes and go back to what is currently live?')) return;
+        await fetch('/api/business-design', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId, action: 'revert' }),
+        });
+        blocks = JSON.parse(JSON.stringify(liveBlocks));
+        pageColors = { ...livePageColors };
+        hasUnpublishedChanges = false;
+        draftUpdatedAt = null;
+        ['primary', 'secondary', 'background'].forEach((key) => {
+          document.getElementById(`color-${key}`).value = pageColors[key] || (key === 'background' ? '#ffffff' : key === 'secondary' ? '#0f172a' : '#2563eb');
+        });
+        applyPageColorsToPage();
+        renderBlocks();
+        updateDesignStatus();
+      });
+
+      toggleBtn.hidden = false;
+    })();
+  </script>
+)}
+
 <style>
   .tags {
     display: flex;
@@ -301,34 +728,42 @@ const jsonLd = {
   }
   /* Sections an owner adds always stack in order, below the fixed page
      layout above — no free positioning, matching how simple this needs to
-     stay for owners who just want their page to look good. */
-  .custom-blocks {
+     stay for owners who just want their page to look good. Everything in
+     this block is :global() because in edit mode (see the script above)
+     these same elements get rebuilt at runtime via innerHTML — Astro only
+     stamps its data-astro-cid scoping attribute onto elements present in
+     the static template at build time, so a scoped selector here would
+     stop matching the moment a section is added, reordered, or edited. */
+  :global(#custom-blocks-mount .custom-blocks),
+  :global(#custom-blocks-mount .grid-stack) {
     margin-top: 1.75rem;
+  }
+  :global(#custom-blocks-mount .custom-blocks) {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
   }
-  .custom-block {
+  :global(.custom-block) {
     padding: 1rem 1.1rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--bg-card);
   }
-  .custom-block h2 {
+  :global(.custom-block h2) {
     margin: 0 0 0.4rem;
     font-size: 1rem;
     color: var(--navy);
   }
-  .custom-block p {
+  :global(.custom-block p) {
     margin: 0;
     font-size: 0.9rem;
     white-space: pre-line;
   }
-  .placeholder-text {
+  :global(.placeholder-text) {
     color: var(--text-muted);
     font-style: italic;
   }
-  .custom-block-banner {
+  :global(.custom-block-banner) {
     position: relative;
     padding: 0;
     overflow: hidden;
@@ -336,7 +771,7 @@ const jsonLd = {
     display: flex;
     align-items: flex-end;
   }
-  .custom-block-banner img {
+  :global(.custom-block-banner img) {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -344,7 +779,7 @@ const jsonLd = {
     object-fit: cover;
     z-index: 0;
   }
-  .custom-block-banner .banner-overlay {
+  :global(.custom-block-banner .banner-overlay) {
     position: relative;
     z-index: 1;
     width: 100%;
@@ -352,106 +787,271 @@ const jsonLd = {
     background: linear-gradient(0deg, rgba(15, 23, 42, 0.65) 0%, rgba(15, 23, 42, 0) 100%);
     color: #fff;
   }
-  .custom-block-banner .banner-overlay h2 {
+  :global(.custom-block-banner .banner-overlay h2) {
     margin: 0 0 0.35rem;
     color: #fff;
     font-size: 1.4rem;
   }
-  .custom-block-banner .banner-overlay p {
+  :global(.custom-block-banner .banner-overlay p) {
     margin: 0;
     opacity: 0.95;
   }
-  .custom-block-side-image {
+  :global(.custom-block-side-image) {
     display: flex;
     gap: 1.25rem;
     align-items: center;
     flex-wrap: wrap;
   }
-  .custom-block-side-image.side-right {
+  :global(.custom-block-side-image.side-right) {
     flex-direction: row-reverse;
   }
-  .custom-block-side-image img {
+  :global(.custom-block-side-image img) {
     flex: 1 1 220px;
     max-width: 100%;
     height: 200px;
     object-fit: cover;
     border-radius: var(--radius);
   }
-  .custom-block-side-image .side-image-text {
+  :global(.custom-block-side-image .side-image-text) {
     flex: 1 1 220px;
   }
-  .custom-block-side-image .side-image-text h3 {
+  :global(.custom-block-side-image .side-image-text h3) {
     margin: 0 0 0.4rem;
     color: var(--navy);
   }
-  .custom-block-side-image .side-image-text p {
+  :global(.custom-block-side-image .side-image-text p) {
     margin: 0;
     color: var(--text-muted);
     white-space: pre-line;
   }
-  .custom-block-photo {
+  :global(.custom-block-photo) {
     padding: 0;
     overflow: hidden;
   }
-  .custom-block-photo img {
+  :global(.custom-block-photo img) {
     width: 100%;
     height: 220px;
     object-fit: cover;
     display: block;
   }
-  .photo-placeholder {
+  :global(.photo-placeholder) {
     padding: 2rem 1rem;
     text-align: center;
     color: var(--text-muted);
     font-size: 0.85rem;
   }
-  .photo-caption {
+  :global(.photo-caption) {
     margin: 0;
     padding: 0.6rem 0.9rem;
     font-size: 0.85rem;
     color: var(--text-muted);
   }
-  .custom-block-cta {
+  :global(.custom-block-cta) {
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.75rem;
   }
-  .cta-text {
+  :global(.cta-text) {
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
     color: var(--navy);
   }
-  .cta-btn {
+  :global(.cta-btn) {
     display: inline-block;
   }
-  .custom-block-testimonial {
+  :global(.custom-block-testimonial) {
     text-align: center;
     font-style: italic;
   }
-  .testimonial-quote {
+  :global(.testimonial-quote) {
     margin: 0 0 0.5rem;
     font-size: 1.05rem;
     color: var(--text);
   }
-  .testimonial-author {
+  :global(.testimonial-author) {
     margin: 0;
     font-size: 0.85rem;
     font-weight: 600;
     font-style: normal;
     color: var(--text-muted);
   }
-  .custom-block-divider {
+  :global(.custom-block-divider) {
     background: none;
     border: none;
     padding: 0.5rem 0;
   }
-  .custom-block-divider hr {
+  :global(.custom-block-divider hr) {
     border: none;
     border-top: 1px solid var(--border);
     margin: 0;
+  }
+  /* --- Owner edit mode (business.id-scoped script above) --- */
+  .edit-page-toggle {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 100;
+    padding: 0.7rem 1.1rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--navy);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  }
+  .design-bar {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    margin-bottom: 1.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  }
+  .design-bar-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 0.4rem;
+  }
+  .design-bar-row:last-child {
+    margin-bottom: 0;
+  }
+  .design-bar-row label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .design-bar-row input[type='color'] {
+    width: 1.8rem;
+    height: 1.8rem;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: none;
+    cursor: pointer;
+  }
+  .design-bar-hint {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  #design-status {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+  /* Everything below is :global() for the same reason as the
+     .custom-block rules above — built at runtime, never present at
+     Astro's build time. */
+  :global(.editable-block) {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  :global(.editable-block > .custom-block) {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  :global(.editable-block .custom-block-photo img),
+  :global(.editable-block .custom-block-side-image img) {
+    height: 100%;
+  }
+  :global(.editable-block .custom-block-side-image) {
+    align-items: stretch;
+  }
+  :global(.block-toolbar) {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem;
+    margin-bottom: 0.5rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  :global(.block-toolbar select) {
+    font: inherit;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.4rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+  }
+  :global(.block-drag-handle) {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    cursor: grab;
+    user-select: none;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  :global(.block-drag-handle:active) {
+    cursor: grabbing;
+  }
+  :global(.remove-block) {
+    flex: 0 0 auto;
+    margin-left: auto;
+    width: 1.8rem;
+    height: 1.8rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  :global([contenteditable='true']) {
+    outline: 2px dashed transparent;
+    border-radius: 4px;
+    transition: outline-color 0.15s;
+  }
+  :global([contenteditable='true']:hover),
+  :global([contenteditable='true']:focus) {
+    outline-color: var(--accent);
+  }
+  :global([contenteditable='true']:empty::before) {
+    content: attr(data-placeholder);
+    color: var(--text-muted);
+    font-style: italic;
+    opacity: 0.8;
+  }
+  /* GridStack's own resize handle — hidden by default until hover
+     (.ui-resizable-handle{display:none!important} in its stylesheet) and,
+     for the plain 's' handle used here, otherwise invisible even when
+     shown. autoHide is off in the JS init; this gives it a real,
+     always-visible grip bar. */
+  :global(.grid-stack-item > .ui-resizable-s) {
+    height: 16px !important;
+    bottom: -8px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  :global(.grid-stack-item > .ui-resizable-s::after) {
+    content: '';
+    width: 48px;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--accent);
+    opacity: 0.7;
   }
   .located-at {
     display: inline-flex;
