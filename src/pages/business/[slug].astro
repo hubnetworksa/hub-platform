@@ -45,12 +45,14 @@ const isPremium = business.subscription_tier >= TIER_PREMIUM && business.subscri
 // page's overall colors, edited in place on this very page (see the
 // edit-mode script below) — not a separate preview.
 const customBlocks = isPremium ? customBlocksFor(business) : [];
-const mainBlocks = customBlocks.filter((b) => b.zone !== 'left' && b.zone !== 'right');
+const mainBlocks = customBlocks.filter((b) => b.zone !== 'left' && b.zone !== 'right' && b.zone !== 'bottom');
 const leftBlocks = customBlocks.filter((b) => b.zone === 'left');
 const rightBlocks = customBlocks.filter((b) => b.zone === 'right');
+const bottomBlocks = customBlocks.filter((b) => b.zone === 'bottom');
 const customBlocksHtml = renderCustomBlocksHtml(mainBlocks);
 const leftBlocksHtml = renderCustomBlocksHtml(leftBlocks);
 const rightBlocksHtml = renderCustomBlocksHtml(rightBlocks);
+const bottomBlocksHtml = renderCustomBlocksHtml(bottomBlocks);
 // Sidebars only exist in the markup at all once an owner has actually put
 // a section in one — otherwise the page is just the plain single centered
 // column it's always been, byte-for-byte.
@@ -173,7 +175,7 @@ const jsonLd = {
           <div class="design-bar-row">
             <strong>Editing your page</strong>
             <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
-            <span class="design-bar-hint">Your business name, description, address, contact buttons, and hours always stay exactly where they are — only the sections you add here can be dragged to reorder, placed beside each other, resized from any edge, or edited by clicking their text. Drag a section straight into a sidebar to move it there — or use its "Position" option if you'd rather not drag.</span>
+            <span class="design-bar-hint">Your business name, description, address, contact buttons, and hours always stay exactly where they are — only the sections you add here can be dragged to reorder, placed beside each other, resized from any edge, or edited by clicking their text. Drag a section straight into a sidebar to move it there, or use its "Position" option to send it to a sidebar or below Trading Hours.</span>
           </div>
           <div class="design-bar-row">
             <label>Primary <input type="color" id="color-primary" value="#2563eb" /></label>
@@ -238,6 +240,12 @@ const jsonLd = {
         <p class="hours-text hours-unavailable">Trading hours not available</p>
       )}
     </div>
+
+    {isPremium && (
+      <div id="bottom-blocks-mount" hidden={bottomBlocks.length === 0}>
+        <Fragment set:html={bottomBlocksHtml} />
+      </div>
+    )}
 
     {!business.owner_user_id && (
       <div class="claim-callout">
@@ -328,7 +336,7 @@ const jsonLd = {
       let draftUpdatedAt = null;
       let photos = [];
       let editing = false;
-      let zoneGrids = { main: null, left: null, right: null };
+      let zoneGrids = { main: null, left: null, right: null, bottom: null };
       let gridStackLoading = null;
 
       function escapeHtml(s) {
@@ -380,6 +388,7 @@ const jsonLd = {
         ['', 'Main content'],
         ['left', 'Left sidebar'],
         ['right', 'Right sidebar'],
+        ['bottom', 'Below hours'],
       ];
 
       function blockToolbarHtml(b, dragHandle) {
@@ -470,14 +479,13 @@ const jsonLd = {
         }
       }
 
-      // One item's markup is identical everywhere it can live — only
-      // whether width is resizable (only true in the main zone; a
-      // sidebar's own column width is fixed, so an item there just
-      // always fills it) differs, via gsW/gsMinW/gsMaxW.
-      function renderZoneItem(b, i, gsW, gsMinW, gsMaxW) {
+      // One item's markup is identical in every zone — main and both
+      // sidebars are all the same 12-column grid, so width/resize work
+      // the same everywhere.
+      function renderZoneItem(b, i) {
         const toolbar = blockToolbarHtml(b, true);
         return `
-          <div class="grid-stack-item" data-i="${i}" gs-auto-position="true" gs-w="${gsW}" gs-h="10" gs-min-w="${gsMinW}" gs-max-w="${gsMaxW}">
+          <div class="grid-stack-item" data-i="${i}" gs-auto-position="true" gs-w="${b.colSpan || MAX_COL_SPAN}" gs-h="10" gs-min-w="${MIN_COL_SPAN}" gs-max-w="${MAX_COL_SPAN}">
             <div class="grid-stack-item-content editable-block">
               ${toolbar}
               ${renderBlockContent(b)}
@@ -519,27 +527,33 @@ const jsonLd = {
         });
       }
 
-      // One GridStack canvas per zone — main is the page's normal
-      // 12-column grid (drag to reorder/place side by side, resize any
-      // edge); a sidebar is a single column (column: 1) running
-      // alongside the whole page, so there's no width to speak of —
-      // just drag to reorder and drag the bottom edge to resize height,
-      // the exact same mechanics, just one column instead of twelve.
+      // One GridStack canvas per zone — main and both sidebars all use
+      // the exact same 12-column mechanics (drag to reorder/place side
+      // by side, resize any edge). A sidebar's canvas is just narrower,
+      // so the same colSpan values pack tighter within it — two
+      // half-width (colSpan 6) sections sit side by side in a sidebar
+      // exactly the way they would in the main column, just at the
+      // sidebar's own width. disableOneColumnMode matters more here
+      // than in main: a sidebar is often narrower than GridStack's
+      // default one-column-mode breakpoint, and side-by-side placement
+      // is the whole point.
       function initZoneGrid(zone, mountEl, isMain) {
         const zoneBlocks = blocks.filter((b) => (isMain ? !b.zone : b.zone === zone));
-        if (!isMain) mountEl.closest('.page-sidebar').hidden = zoneBlocks.length === 0;
+        // A sidebar's hide target is its <aside>; the bottom zone's mount
+        // element has no such wrapper, so it hides itself directly.
+        if (!isMain) (mountEl.closest('.page-sidebar') || mountEl).hidden = zoneBlocks.length === 0;
         mountEl.innerHTML = `<div class="grid-stack" id="${zone}-blocks-grid">${zoneBlocks
-          .map((b) => renderZoneItem(b, blocks.indexOf(b), isMain ? (b.colSpan || MAX_COL_SPAN) : 1, isMain ? MIN_COL_SPAN : 1, isMain ? MAX_COL_SPAN : 1))
+          .map((b) => renderZoneItem(b, blocks.indexOf(b)))
           .join('')}</div>`;
 
         const container = document.getElementById(`${zone}-blocks-grid`);
         const grid = GridStack.init(
           {
-            column: isMain ? MAX_COL_SPAN : 1,
+            column: MAX_COL_SPAN,
             float: false,
             cellHeight: GRID_CELL_HEIGHT,
             margin: GRID_MARGIN,
-            resizable: { handles: isMain ? 'e, se, s, sw, w' : 's', autoHide: false },
+            resizable: { handles: 'e, se, s, sw, w', autoHide: false },
             draggable: { cancel: 'button, select, input, textarea, option, [contenteditable]' },
             disableOneColumnMode: true,
             // Lets a section be dragged straight out of this grid and
@@ -568,7 +582,13 @@ const jsonLd = {
           const contentEl = item.querySelector('.grid-stack-item-content');
           const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
           const toRows = (px) => Math.ceil((px + GRID_MARGIN * 2) / GRID_CELL_HEIGHT);
-          const widthBounds = isMain ? { minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN } : { minW: 1, maxW: 1 };
+          // GridStack's update() resets a node's width when minW/maxW are
+          // given without an explicit w alongside them — which then
+          // silently breaks two side-by-side sections' packing (the
+          // second one gets shoved onto its own row). Always pass the
+          // item's own current width back so this pass only ever changes
+          // height, never width.
+          const widthBounds = { w: item.gridstackNode.w, minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN };
           if (b.heightPx) {
             grid.update(item, { h: toRows(toolbarH + b.heightPx), minH: toRows(toolbarH + MIN_BLOCK_HEIGHT), maxH: toRows(toolbarH + MAX_BLOCK_HEIGHT), ...widthBounds });
           } else {
@@ -592,9 +612,10 @@ const jsonLd = {
           main: document.getElementById('main-blocks-grid'),
           left: document.getElementById('left-blocks-grid'),
           right: document.getElementById('right-blocks-grid'),
+          bottom: document.getElementById('bottom-blocks-grid'),
         };
         const ordered = [];
-        ['main', 'left', 'right'].forEach((zone) => {
+        ['main', 'left', 'right', 'bottom'].forEach((zone) => {
           const container = containers[zone];
           if (!container) return;
           const items = Array.from(container.querySelectorAll('.grid-stack-item')).sort((a, b) => {
@@ -609,16 +630,12 @@ const jsonLd = {
           const b = blocks[Number(item.dataset.i)];
           const node = item.gridstackNode;
           if (!b || !node) return b;
-          if (zone === 'main') {
-            delete b.zone;
-            b.colSpan = node.w;
-          } else {
-            b.zone = zone;
-            // A section that just crossed into a sidebar needs its width
-            // pinned back to that sidebar's single column, regardless of
-            // whatever width it had in the grid it came from.
-            if (node.w !== 1) zoneGrids[zone]?.update(item, { w: 1, minW: 1, maxW: 1 });
-          }
+          if (zone === 'main') delete b.zone; else b.zone = zone;
+          // Every zone is the same 12-column grid, so a section crossing
+          // between them keeps whatever width it already had (clamped by
+          // nodeBoundFix, same as within a single zone) rather than
+          // needing any zone-specific override.
+          b.colSpan = node.w;
           const contentEl = item.querySelector('.grid-stack-item-content');
           const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
           const naturalH = contentEl.scrollHeight;
@@ -641,6 +658,7 @@ const jsonLd = {
 
         document.getElementById('sidebar-left-mount').closest('.page-sidebar').hidden = !blocks.some((b) => b.zone === 'left');
         document.getElementById('sidebar-right-mount').closest('.page-sidebar').hidden = !blocks.some((b) => b.zone === 'right');
+        document.getElementById('bottom-blocks-mount').hidden = !blocks.some((b) => b.zone === 'bottom');
         document.getElementById('page-sidebar-layout').classList.toggle(
           'has-sidebars',
           blocks.some((b) => b.zone === 'left') || blocks.some((b) => b.zone === 'right')
@@ -649,7 +667,7 @@ const jsonLd = {
       }
 
       function destroyZoneGrids() {
-        ['main', 'left', 'right'].forEach((zone) => {
+        ['main', 'left', 'right', 'bottom'].forEach((zone) => {
           if (zoneGrids[zone]) { zoneGrids[zone].destroy(false); zoneGrids[zone] = null; }
         });
       }
@@ -659,6 +677,7 @@ const jsonLd = {
         initZoneGrid('main', mount, true);
         initZoneGrid('left', document.getElementById('sidebar-left-mount'), false);
         initZoneGrid('right', document.getElementById('sidebar-right-mount'), false);
+        initZoneGrid('bottom', document.getElementById('bottom-blocks-mount'), false);
         document.getElementById('page-sidebar-layout').classList.toggle(
           'has-sidebars',
           blocks.some((b) => b.zone === 'left') || blocks.some((b) => b.zone === 'right')
@@ -935,7 +954,9 @@ const jsonLd = {
      the static template at build time, so a scoped selector here would
      stop matching the moment a section is added, reordered, or edited. */
   :global(#custom-blocks-mount .custom-blocks),
-  :global(#custom-blocks-mount .grid-stack) {
+  :global(#custom-blocks-mount .grid-stack),
+  :global(#bottom-blocks-mount .custom-blocks),
+  :global(#bottom-blocks-mount .grid-stack) {
     margin-top: 1.75rem;
   }
   /* 12-column grid so two sections can sit side by side — a section's own
@@ -943,14 +964,23 @@ const jsonLd = {
      decides how many of the 12 columns it takes up, defaulting to all 12
      (full width) when unset. grid-auto-flow just packs sections left to
      right in their stored order, wrapping to a new row when one doesn't
-     fit — no explicit row/position bookkeeping needed. */
-  :global(#custom-blocks-mount .custom-blocks) {
+     fit — no explicit row/position bookkeeping needed. Applies in both
+     sidebars and the below-hours zone too, at whichever width that zone's
+     own column renders — same mechanics as the main column, just
+     narrower for a sidebar. */
+  :global(#custom-blocks-mount .custom-blocks),
+  :global(#sidebar-left-mount .custom-blocks),
+  :global(#sidebar-right-mount .custom-blocks),
+  :global(#bottom-blocks-mount .custom-blocks) {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
     gap: 1.25rem;
   }
   @media (max-width: 640px) {
-    :global(#custom-blocks-mount .custom-blocks) {
+    :global(#custom-blocks-mount .custom-blocks),
+    :global(#sidebar-left-mount .custom-blocks),
+    :global(#sidebar-right-mount .custom-blocks),
+    :global(#bottom-blocks-mount .custom-blocks) {
       grid-template-columns: 1fr;
     }
     :global(.custom-block) {

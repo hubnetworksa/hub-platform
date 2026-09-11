@@ -36,12 +36,13 @@ export interface CustomBlock {
    *  on narrow screens regardless of this value. Meaningless (always
    *  full width of its column) for a sidebar block — see zone. */
   colSpan?: number;
-  /** Which column of the page this section lives in — unset (or
-   *  'main') for the normal column below the description, 'left'/'right'
-   *  for a sidebar running alongside the *entire* fixed page content
-   *  (name through hours), only present at all once an owner has placed
-   *  at least one section there. */
-  zone?: 'left' | 'right';
+  /** Which part of the page this section lives in — unset (or 'main')
+   *  for the normal spot below the description, 'left'/'right' for a
+   *  sidebar running alongside the *entire* fixed page content (name
+   *  through hours), 'bottom' for below Trading Hours at the very end
+   *  of the page. Sidebars/bottom only render at all once an owner has
+   *  placed at least one section there. */
+  zone?: 'left' | 'right' | 'bottom';
 }
 
 export const MIN_BLOCK_HEIGHT = 100;
