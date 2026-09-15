@@ -117,10 +117,8 @@ live at `polokwanehub.com`). Cape Town is still on `.pages.dev` only.
       `polokwanehub` Pages project via `wrangler pages secret put`, done
       2026-09-15. `/api/auth/google/start` confirmed redirecting to Google
       with the correct client_id/redirect_uri.
-- [ ] **Verify Google sign-in works end-to-end on `polokwanehub.com`** —
-      the actual browser click-through (Google consent screen → callback →
-      session cookie set) hasn't been confirmed yet, only that the start
-      route redirects correctly.
+- [x] **Verify Google sign-in works end-to-end on `polokwanehub.com`** —
+      confirmed working, 2026-09-15.
 - [x] **Email Routing** on the new `polokwanehub.com` zone (`hubnetworksa`
       account) — destination address + routing rule (`hello@polokwanehub.com`
       → `hubnetworksa@gmail.com`) and the `_dmarc.polokwanehub.com` TXT
