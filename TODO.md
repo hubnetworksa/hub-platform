@@ -153,11 +153,12 @@ live at `polokwanehub.com`). Cape Town is still on `.pages.dev` only.
       (`city-centre-polokwane-central`) that the new businesses referenced.
       Final count 737 businesses; integrity-checked post-merge (0 orphaned
       `business_categories` rows, 0 bad `suburb_id` foreign keys). Verified
-      live on `polokwanehub.com` after a redeploy. **Follow-up needed:**
-      the 18 newly-seeded categories aren't in `categoryGroups.ts` yet, so
-      any of them that get real listings will hit the same "invisible
-      category" bug fixed for the other 10 — worth another pass once they
-      have listings worth surfacing.
+      live on `polokwanehub.com` after a redeploy. **Follow-up done**
+      2026-09-15: all 18 newly-seeded categories wired into
+      `categoryGroups.ts` (verified against all 86 live categories, no
+      gaps/duplicates). Only `panel-beaters-spray-painters` has real
+      listings so far (5) and now correctly shows under Automotive; the
+      other 17 stay noindexed/hidden until they have listings.
 - [ ] **Full flow smoke test on `polokwanehub.com`** — same end-to-end
       pass as Pretoria's 2026-09-10 test (register → submit → admin
       approve → owner confirm → published; claim → admin-approve →
