@@ -22,8 +22,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     }>();
 
   const claims = await db
-    .prepare("SELECT bc.review_token, bc.document_keys, b.name AS business_name, u.email AS claimant_email FROM business_claims bc JOIN businesses b ON b.id = bc.business_id JOIN users u ON u.id = bc.user_id WHERE bc.status = 'pending' ORDER BY bc.created_at DESC")
-    .all<{ review_token: string; document_keys: string; business_name: string; claimant_email: string }>();
+    .prepare("SELECT bc.review_token, bc.contact_name, bc.contact_phone, bc.role_note, b.name AS business_name, u.email AS claimant_email FROM business_claims bc JOIN businesses b ON b.id = bc.business_id JOIN users u ON u.id = bc.user_id WHERE bc.status = 'pending' ORDER BY bc.created_at DESC")
+    .all<{ review_token: string; contact_name: string | null; contact_phone: string | null; role_note: string | null; business_name: string; claimant_email: string }>();
 
   // Not on the public site (fetch-d1-data.mjs only pulls status='published')
   // but still visible here — e.g. test listings hidden after publishing.
@@ -50,7 +50,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       businessName: c.business_name,
       claimantEmail: c.claimant_email,
       reviewToken: c.review_token,
-      documentKeys: JSON.parse(c.document_keys) as string[],
+      contactName: c.contact_name,
+      contactPhone: c.contact_phone,
+      roleNote: c.role_note,
     })),
     hidden: hidden.results,
     reports: reports.results,

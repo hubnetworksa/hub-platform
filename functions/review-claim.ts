@@ -11,7 +11,9 @@ interface ClaimRow {
   id: number;
   business_name: string;
   claimant_email: string;
-  document_keys: string;
+  contact_name: string | null;
+  contact_phone: string | null;
+  role_note: string | null;
   status: string;
 }
 
@@ -23,7 +25,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const site = getSite(context.env.SITE);
   const token = new URL(context.request.url).searchParams.get('token') ?? '';
   const row = await context.env.DB
-    .prepare('SELECT bc.id, bc.document_keys, bc.status, b.name AS business_name, u.email AS claimant_email FROM business_claims bc JOIN businesses b ON b.id = bc.business_id JOIN users u ON u.id = bc.user_id WHERE bc.review_token = ?')
+    .prepare('SELECT bc.id, bc.contact_name, bc.contact_phone, bc.role_note, bc.status, b.name AS business_name, u.email AS claimant_email FROM business_claims bc JOIN businesses b ON b.id = bc.business_id JOIN users u ON u.id = bc.user_id WHERE bc.review_token = ?')
     .bind(token)
     .first<ClaimRow>();
 
@@ -31,16 +33,12 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     return html(site, `<h1>Nothing to review</h1><p>This claim has already been actioned, or the link is invalid.</p>`);
   }
 
-  const keys: string[] = JSON.parse(row.document_keys);
-  const documentLinks = keys
-    .map((key, i) => `<li><a href="/claim-document/${key}?token=${encodeURIComponent(token)}">Document ${i + 1}</a></li>`)
-    .join('');
-
   return html(site, `
     <h1>Claim request for "${escapeHtml(row.business_name)}"</h1>
-    <p>Requested by: <strong>${escapeHtml(row.claimant_email)}</strong></p>
-    <p><strong>Supporting documents</strong></p>
-    <ul>${documentLinks}</ul>
+    <p>Account email: <strong>${escapeHtml(row.claimant_email)}</strong></p>
+    <p>Name: <strong>${escapeHtml(row.contact_name ?? 'Not specified')}</strong></p>
+    <p>Phone: <strong>${escapeHtml(row.contact_phone ?? 'Not specified')}</strong></p>
+    <p>Role: <strong>${escapeHtml(row.role_note ?? 'Not specified')}</strong></p>
     <form method="POST" action="/api/review-claim" style="display:inline">
       <input type="hidden" name="token" value="${escapeHtml(token)}" />
       <input type="hidden" name="action" value="approve" />
