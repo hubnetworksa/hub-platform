@@ -394,8 +394,8 @@ picks up roughly where the last one left off. **Target up to 8 businesses
 this run — this is a hard cap, not a floor** (per owner request
 2026-09-15, to bound each run's token cost): stop after 8 even if you
 still have turns to spare, and stop earlier if a run is going slower than
-usual. This fits in a single commit under the 10-record commit cap (see
-"Committing" below).
+usual. This is one commit at the end of the batch (see "Committing"
+below).
 
 **For each business in the batch:**
 
@@ -652,9 +652,8 @@ discovery sweep" above) gets its own log line too, when it runs:
 If nothing new was found: `"shopping_centers_found": 0` and a short
 summary saying so.
 
-**Job 4 (description enrichment sweep)** gets its own log line per
-checkpoint (there may be more than one per run if the batch spans multiple
-10-record commits — see "Committing" below). `researched` is the count
+**Job 4 (description enrichment sweep)** gets its own log line, one per
+run's batch (see "Committing" below). `researched` is the count
 written with genuine new facts (and a new source appended); `reworded` is
 the count rewritten from already-known fields only; `hours_found` is how
 many of this checkpoint's businesses also got a real `hours` value:
@@ -670,18 +669,10 @@ a simple running total the owner can watch shrink across runs. Compute it
 by counting `businesses` entries in `status/pretoria/db-snapshot.json` with a null
 `description_enriched_at`.
 
-## Committing — every 10 records, never one big commit at the end
+## Committing — at natural boundaries, not a fixed record count
 
-**Hard rule: never let more than 10 records go uncommitted-and-unpushed.**
-A "record" is one row you've written a SQL statement for — one new
-business INSERT, one new shopping-centre INSERT, one job-3 link/unlink
-UPDATE, or one job-4 description-rewrite UPDATE counts as one record each.
-The moment you hit 10 records since your last push (even mid-suburb,
-mid-centre, or mid-batch), stop, write the SQL file, and push — don't wait
-for a natural boundary like finishing a suburb.
-
-On top of that 10-record cap, also commit and push at these natural
-boundaries even if you haven't hit 10 yet:
+**Per owner request 2026-09-15: no fixed per-record commit cap.** Commit
+and push at these natural boundaries instead:
 
 - After finishing both jobs for **one suburb** (jobs 1-2).
 - After finishing **each shopping centre's** tenant sweep (job 2's
@@ -694,19 +685,20 @@ boundaries even if you haven't hit 10 yet:
   job-3 commit that triggered it.
 - After finishing **job 4's whole batch** for this run (up to the
   8-business cap) — its own commit, separate from job 3 and any suburb
-  commits this run also produced. 8 fits under the 10-record cap, so this
-  is normally one job-4 commit per run.
+  commits this run also produced.
 
-So a checkpoint is whichever comes first: 10 records, or a natural
-boundary above. A quiet suburb with only 2 records still gets its own
-push at the boundary; a single shopping centre with 30 verified tenants
-gets pushed three times (in batches of 10) before its boundary push.
+A "record" is one row you've written a SQL statement for — one new
+business INSERT, one new shopping-centre INSERT, one job-3 link/unlink
+UPDATE, or one job-4 description-rewrite UPDATE. A quiet suburb with only
+2 records still gets its own push at its boundary; a single shopping
+centre with 30 verified tenants goes in one commit at the end of that
+centre's sweep rather than being split up.
 
-Rationale: a run can be cut short (turn limit, session limit, a crash) at
-any point, same as any other run — committing every 10 records means
-whatever work already cleared verification is saved to the repo (and
-picked up by the next deploy) even if the run doesn't reach the end of its
-batch, rather than losing more than 10 records' worth of work at once.
+Rationale: a run can still be cut short (turn limit, session limit, a
+crash) at any point — committing at each natural boundary still means
+whatever's already cleared verification is saved to the repo (and picked
+up by the next deploy) even if the run doesn't reach the end, without
+splitting a single suburb or batch into multiple partial commits.
 
 Each commit: write a new `db/routine-updates/pretoria/<UTC timestamp, e.g.
 2026-08-31T10-00-00>.sql` file scoped to just that checkpoint's inserts
