@@ -51,6 +51,7 @@ export interface Site {
   tagline: string;
   footerTagline: string;
   googleSiteVerification: string | null;
+  bingSiteVerification: string | null;
   /** Impact.com affiliate-network site verification — homepage only, per
    *  their own instructions, not site-wide. */
   impactSiteVerification: string | null;

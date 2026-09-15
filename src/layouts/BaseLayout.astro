@@ -76,6 +76,9 @@ const themeCss = `:root {
     {site.googleSiteVerification && (
       <meta name="google-site-verification" content={site.googleSiteVerification} />
     )}
+    {site.bingSiteVerification && (
+      <meta name="msvalidate.01" content={site.bingSiteVerification} />
+    )}
     {impactVerification && site.impactSiteVerification && (
       <meta name="impact-site-verification" content={site.impactSiteVerification} />
     )}

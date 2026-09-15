@@ -7,6 +7,12 @@ import { CATEGORY_GROUPS } from '../../lib/categoryGroups';
 import site from '../../site';
 
 const categoryBySlug = new Map(categories.map((c) => [c.slug, c]));
+
+// Sorted alphabetically for display here, rather than CATEGORY_GROUPS' own
+// curated order (still used as-is on the homepage) — this page's job is
+// being a complete, scannable index, so alphabetical is easier to scan/find
+// a specific section in than a curated order is.
+const sortedGroups = [...CATEGORY_GROUPS].sort((a, b) => a.name.localeCompare(b.name));
 ---
 
 <BaseLayout
@@ -15,16 +21,8 @@ const categoryBySlug = new Map(categories.map((c) => [c.slug, c]));
 >
   <PageBanner title="Categories" description={`Browse ${site.cityLabel} businesses by section.`} />
 
-  <section class="container" style="padding-top: 1.5rem;">
-    <nav class="jump-nav" aria-label="Jump to section">
-      {CATEGORY_GROUPS.map((group) => (
-        <a href={`#${group.slug}`}><Icon path={group.iconPath} size={16} /> {group.name}</a>
-      ))}
-    </nav>
-  </section>
-
-  <section class="container" style="padding-bottom: 3rem;">
-    {CATEGORY_GROUPS.map((group) => {
+  <section class="container" style="padding-top: 1.5rem; padding-bottom: 3rem;">
+    {sortedGroups.map((group) => {
       const groupCategories = group.categorySlugs
         .map((slug) => categoryBySlug.get(slug))
         .filter((c): c is NonNullable<typeof c> => Boolean(c))
@@ -57,27 +55,6 @@ const categoryBySlug = new Map(categories.map((c) => [c.slug, c]));
 </BaseLayout>
 
 <style>
-  .jump-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 1.25rem;
-  }
-  .jump-nav a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.4rem 0.8rem;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    text-decoration: none;
-    color: var(--text);
-    font-size: 0.85rem;
-    background: var(--bg-card);
-  }
-  .jump-nav a:hover {
-    border-color: var(--accent);
-  }
   .group-section {
     margin-top: 2.25rem;
     scroll-margin-top: 1rem;

@@ -24,7 +24,7 @@ for (const business of businesses) {
   if (!byCategory.has(key)) byCategory.set(key, { name, slug: key, businesses: [] });
   byCategory.get(key)!.businesses.push(business);
 }
-const categoryGroups = [...byCategory.entries()].sort((a, b) => b[1].businesses.length - a[1].businesses.length);
+const categoryGroups = [...byCategory.entries()].sort((a, b) => a[1].name.localeCompare(b[1].name));
 
 const description = suburb.bio
   ? suburb.bio.replace(/\s+/g, ' ').trim().slice(0, 155)
