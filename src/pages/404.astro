@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../site';
+
+// Astro's special 404.astro convention builds dist/404.html; Cloudflare
+// Pages automatically serves that file (with a real 404 status) for any
+// request that doesn't match a real route. Before this existed, every
+// unmatched URL fell through to index.html with a 200 -- a soft-404 that's
+// bad for crawlers (looks like duplicate/thin content at every wrong URL).
+---
+
+<BaseLayout
+  title="Page not found"
+  description={`This page doesn't exist on ${site.siteName}.`}
+  noindex={true}
+>
+  <section class="container" style="padding-top: 4rem; padding-bottom: 4rem; max-width: 560px; text-align: center;">
+    <h1>Page not found</h1>
+    <p style="color: var(--text-muted); line-height: 1.6;">
+      The page you're looking for doesn't exist, or may have moved.
+    </p>
+    <div style="display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap;">
+      <a href="/" class="btn btn-primary">Go to homepage</a>
+      <a href="/suburb/" class="btn btn-outline">Browse suburbs</a>
+      <a href="/category/" class="btn btn-outline">Browse categories</a>
+    </div>
+  </section>
+</BaseLayout>

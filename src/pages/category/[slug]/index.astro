@@ -23,11 +23,13 @@ for (const business of businesses) {
 }
 const suburbGroups = [...bySuburb.entries()].sort((a, b) => b[1].businesses.length - a[1].businesses.length);
 const group = groupForCategory(category.slug);
+const isEmpty = businesses.length === 0;
 ---
 
 <BaseLayout
   title={category.name}
   description={`${businesses.length} ${category.name} listed across ${site.cityLabel}, by suburb.`}
+  noindex={isEmpty}
 >
   <PageBanner title={category.name} description={`${businesses.length} listed, by suburb.`} iconPath={group?.iconPath}>
     <Breadcrumbs
@@ -41,8 +43,16 @@ const group = groupForCategory(category.slug);
   </PageBanner>
 
   <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
-    {businesses.length === 0 ? (
-      <p style="color: var(--text-muted);">None listed yet.</p>
+    {isEmpty ? (
+      <div class="empty-category">
+        <p>No {category.name.toLowerCase()} listed yet — this page will fill in as new businesses are added.</p>
+        <p>
+          {group && (
+            <>Browse <a href={`/section/${group.slug}/`}>{group.name}</a> for related categories, or{' '}</>
+          )}
+          <a href="/list-your-business/">list your business</a> if you run one in this category.
+        </p>
+      </div>
     ) : (
       suburbGroups.map(([slug, suburbGroup]) => (
         <div style="margin-top: 1.75rem;">
@@ -81,5 +91,13 @@ const group = groupForCategory(category.slug);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 0.75rem;
+  }
+  .empty-category p {
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .empty-category a {
+    color: var(--navy);
+    font-weight: 600;
   }
 </style>

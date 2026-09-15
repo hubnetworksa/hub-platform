@@ -38,6 +38,9 @@ export interface Site {
    *  functions/_middleware.ts so a not-yet-cut-over site doesn't redirect
    *  visitors to a domain that isn't live here. */
   domainLive: boolean;
+  /** Cloudflare zone ID for `domain`, used by the deploy workflow's cache
+   *  purge step — `null` for a site whose domain isn't live yet. */
+  cloudflareZoneId: string | null;
   pagesProjectName: string;
   pagesDevHost: string;
   dbName: string;
@@ -48,6 +51,9 @@ export interface Site {
   tagline: string;
   footerTagline: string;
   googleSiteVerification: string | null;
+  /** Impact.com affiliate-network site verification — homepage only, per
+   *  their own instructions, not site-wide. */
+  impactSiteVerification: string | null;
   googleAnalyticsId: string | null;
   adsensePublisherId: string | null;
   features: SiteFeatures;

@@ -37,19 +37,26 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     slug: 'automotive',
     name: 'Automotive',
     iconPath: '<path d="M4 16V11l2-5h12l2 5v5"/><path d="M4 16h16"/><circle cx="7.5" cy="16.5" r="1.5"/><circle cx="16.5" cy="16.5" r="1.5"/>',
-    categorySlugs: ['car-dealerships', 'automotive-repairs', 'motor-spares', 'tow-trucks-roadside', 'driving-schools', 'fuel-stations'],
+    categorySlugs: ['car-dealerships', 'automotive-repairs', 'motor-spares', 'tow-trucks-roadside', 'driving-schools', 'fuel-stations', 'logistics-courier-transport'],
   },
   {
     slug: 'professional-financial',
     name: 'Professional & Financial Services',
     iconPath: '<rect x="3" y="7" width="18" height="12" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/>',
-    categorySlugs: ['accountants', 'attorneys-legal', 'estate-agents', 'insurance', 'computer-it-services', 'software-development', 'printing-services', 'photographers'],
+    categorySlugs: [
+      'accountants', 'attorneys-legal', 'estate-agents', 'insurance', 'computer-it-services', 'software-development',
+      'printing-services', 'photographers', 'business-consulting', 'commercial-property-office-space',
+      'engineering-surveying', 'financial-investment-services', 'marketing-advertising', 'recruitment-hr-services',
+    ],
   },
   {
     slug: 'home-trade',
     name: 'Home & Trade Services',
     iconPath: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.8 2.8-2-2 2.8-2.8Z"/>',
-    categorySlugs: ['building-construction', 'electricians', 'plumbers', 'locksmiths', 'cleaning-services', 'pest-control', 'nurseries-garden-centres'],
+    categorySlugs: [
+      'building-construction', 'electricians', 'plumbers', 'locksmiths', 'cleaning-services', 'pest-control',
+      'nurseries-garden-centres', 'industrial-suppliers-manufacturing', 'solar-renewable-energy',
+    ],
   },
   {
     slug: 'hospitality-travel',
@@ -61,7 +68,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     slug: 'events-leisure',
     name: 'Events, Weddings & Leisure',
     iconPath: '<path d="M12 3v4M12 17v4M4.2 4.2l2.8 2.8M17 17l2.8 2.8M3 12h4M17 12h4M4.2 19.8 7 17M17 7l2.8-2.8"/>',
-    categorySlugs: ['events-function-venues', 'wedding-services', 'fitness-gyms', 'florists'],
+    categorySlugs: ['events-function-venues', 'wedding-services', 'fitness-gyms', 'florists', 'museums-heritage-sites'],
   },
   {
     slug: 'community-essential',
