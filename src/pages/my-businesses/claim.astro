@@ -39,25 +39,25 @@ const ICONS = {
       </div>
 
       <form id="claim-form" hidden>
-        <div class="step">
+        <div class="step contact-fields">
           <span class="step-label">2. Tell us who you are</span>
-          <div class="field">
-            <label for="contact-name">Your full name</label>
+          <label>
+            Your full name
             <input type="text" id="contact-name" name="contactName" autocomplete="name" required />
-          </div>
-          <div class="field">
-            <label for="contact-phone">Phone number</label>
+          </label>
+          <label>
+            Phone number
             <input type="tel" id="contact-phone" name="contactPhone" autocomplete="tel" required />
-          </div>
-          <div class="field">
-            <label for="role-note">Your role at this business</label>
+          </label>
+          <label>
+            Your role at this business
             <select id="role-note" name="roleNote">
               <option value="Owner">Owner</option>
               <option value="Manager">Manager</option>
               <option value="Employee">Employee</option>
               <option value="Other">Other</option>
             </select>
-          </div>
+          </label>
         </div>
 
         <button type="submit" class="btn btn-primary">Submit claim</button>
@@ -382,34 +382,30 @@ const ICONS = {
     color: var(--text);
   }
 
-  .field {
+  .contact-fields label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 600;
     margin-bottom: 0.9rem;
   }
-  .field label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 0.35rem;
+  .contact-fields label:last-child {
+    margin-bottom: 0;
   }
-  .field input,
-  .field select {
-    width: 100%;
+  .contact-fields input,
+  .contact-fields select {
     font: inherit;
-    font-size: 0.95rem;
-    padding: 0.65rem 0.85rem;
-    border: 1.5px solid var(--border);
+    padding: 0.65rem 0.8rem;
     border-radius: var(--radius);
-    background: var(--bg-subtle);
-    color: var(--text);
-    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-  }
-  .field input:focus,
-  .field select:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.12);
+    border: 1px solid var(--border);
     background: var(--bg-card);
+    color: var(--text);
+  }
+  .contact-fields input:focus,
+  .contact-fields select:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
   }
 
   form button[type="submit"] {
