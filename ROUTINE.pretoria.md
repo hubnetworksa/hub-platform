@@ -390,11 +390,12 @@ array, filter for `description_enriched_at` being `null` — that's the
 entire backlog, no separate rotation list to maintain (unlike job 3's
 `shopping_center_slugs`). Work through them in the order they appear in
 the array (alphabetical by name) so progress is predictable and every run
-picks up roughly where the last one left off. **Target up to 20 businesses
-this run** — more if you have turns to spare and quality doesn't suffer,
-fewer if a run is going slower than usual; the 10-record commit cap (see
-"Committing" below) still applies regardless, so a 20-business batch will
-usually span two commits.
+picks up roughly where the last one left off. **Target up to 8 businesses
+this run — this is a hard cap, not a floor** (per owner request
+2026-09-15, to bound each run's token cost): stop after 8 even if you
+still have turns to spare, and stop earlier if a run is going slower than
+usual. This fits in a single commit under the 10-record commit cap (see
+"Committing" below).
 
 **For each business in the batch:**
 
@@ -683,9 +684,9 @@ boundaries even if you haven't hit 10 yet:
   fires (once per full lap) — its own commit, separate from the regular
   job-3 commit that triggered it.
 - After finishing **job 4's whole batch** for this run (up to the
-  ~20-business target) — its own commit(s), separate from job 3 and any
-  suburb commits this run also produced. Since 20 exceeds the 10-record
-  cap, this normally means two job-4 commits per run rather than one.
+  8-business cap) — its own commit, separate from job 3 and any suburb
+  commits this run also produced. 8 fits under the 10-record cap, so this
+  is normally one job-4 commit per run.
 
 So a checkpoint is whichever comes first: 10 records, or a natural
 boundary above. A quiet suburb with only 2 records still gets its own
