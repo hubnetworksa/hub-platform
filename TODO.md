@@ -32,11 +32,6 @@ Polokwane and Cape Town are still on `.pages.dev` only.
       live — direct `wrangler pages deploy` was used once to force that,
       then the commit was pushed to `main` so the GitHub Actions pipeline
       stays the source of truth going forward).
-- [ ] **Email Routing** on the new `pretoriahub.com` zone (`hubnetworksa`
-      account) — forward `hello@pretoriahub.com` to a real inbox. Not
-      confirmed set up yet on the new zone (the old zone under the
-      personal account had it; that config did not carry over with the
-      account move).
 - [ ] **Search Console** — verify `pretoriahub.com` under `hubnetworksa`'s
       Search Console (meta-tag code already wired into
       `sites/pretoria.json`) and submit `/sitemap-index.xml`. The domain's
@@ -179,13 +174,10 @@ live at `polokwanehub.com`). Cape Town is still on `.pages.dev` only.
 - [x] Set `GITHUB_DISPATCH_TOKEN` secret on all 3 Cloudflare Pages projects
       (polokwanehub, pretoriahub, thecapetownhub) — done and verified via a
       real workflow_dispatch test run on 2026-09-09.
-- [ ] Verify Polokwane's domain in Resend + set `RESEND_API_KEY` on its
-      Pages project (only Pretoria's hub-platform project has this so far;
-      Polokwane/Cape Town fall back to the mailto: draft instead of a real
-      email).
-- [ ] Same Resend setup for Cape Town, once it has a registered domain.
-- [ ] Add a custom 404 page (currently missing — unmatched URLs return 200
-      with homepage content instead of a real 404).
+- [ ] Resend setup for Cape Town, once it has a registered domain (Pretoria
+      and Polokwane both have `RESEND_API_KEY` set now).
+- [x] Custom 404 page — `src/pages/404.astro`, added 2026-09-15 (ported
+      from the old Polokwane repo, site-aware, applies to all 3 sites).
 - [ ] **AdSense decision reversed (2026-09-10): each site will use its
       own separate publisher ID/account, not the shared
       `ca-pub-7060187043058790` all 3 currently use.** The consolidated ID
@@ -197,16 +189,15 @@ live at `polokwanehub.com`). Cape Town is still on `.pages.dev` only.
       once the actual IDs are in hand — not done yet, IDs not ready).
       The `hubnetworksa` account's duplicate-account flag did clear
       2026-09-10, which unblocks getting those per-site approvals moving.
-- [ ] Search Console verification for Polokwane and Cape Town (each needs
-      its own unique HTML-tag code from Search Console, under the
-      hubnetworksa Google account — only Pretoria has one so far).
+- [ ] Search Console verification for Cape Town, once it has a registered
+      domain (Pretoria has its meta-tag code wired; Polokwane auto-verified
+      via a carried-over DNS TXT record — see the per-site sections above).
 - [x] GA4 for Polokwane (`G-QQL9HCKZNR`) and Cape Town (`G-JWEXFEXXW4`) —
       done 2026-09-09, each under its own separate Analytics account
       (fine for GA4, unlike AdSense).
-- [ ] Re-enable the `.pages.dev → custom domain` redirect in
-      `functions/_middleware.ts` per site once each domain is actually cut
-      over (currently disabled).
-- [ ] Polokwane and Cape Town domain cutovers (deferred).
+- [ ] Cape Town domain cutover (the whole checklist above, deferred until
+      it has a real domain ready to move) — Pretoria and Polokwane are both
+      done.
 - [ ] Remove the TEMP separate monitor-copy email (to
       ethanmglindeque@gmail.com, sent alongside the real owner/admin
       emails) once the owner-confirmation flow is fully trusted — marked
@@ -269,33 +260,18 @@ live at `polokwanehub.com`). Cape Town is still on `.pages.dev` only.
 
 ## Port accounts/claims/admin-dashboard to hub-platform (Polokwane / Pretoria / Cape Town)
 
-None of the above (accounts, claims, My Businesses, Admin Dashboard,
-reports/activity log) exists yet in hub-platform — it was all built
-directly on the old Pretoria site. Porting it over means re-doing the same
-work adapted to hub-platform's per-site config pattern (`getSite(context.env.SITE)`
-/ `sites/<slug>.json`) instead of the old repo's hardcoded `'PretoriaHub'`/
-`'pretoriahub.com'` strings — same adaptation pattern already used when the
-owner-confirmation feature was ported earlier.
+**Done for Pretoria and Polokwane.** This whole system (accounts, claims,
+My Businesses, Admin Dashboard, reports/activity log) is built into
+hub-platform's shared codebase (`getSite(context.env.SITE)` / per-site
+`sites/<slug>.json`, not hardcoded strings) and confirmed working end-to-end
+on both live domains this session — register/login, Google OAuth, the
+simplified claim flow (`functions/api/claim-business.ts`, contact-info based
+rather than the old repo's document-upload version — see the 2026-09-15
+commit simplifying this), `/admin/claims/`, My Businesses + edit page, the
+"Claim it" button, and rebuild-trigger wiring
+(`GITHUB_DISPATCH_TOKEN`, done 2026-09-09). Only remaining piece:
 
-- [ ] `users`/`sessions`/`business_claims`/`reports`/`activity_log` tables —
-      one migration per site (`db/migrations/<site>/00XX_accounts.sql` etc.),
-      same schema as the old repo's `0020`–`0022` migrations.
-- [ ] `functions/_lib/auth.ts` port (site-agnostic as-is, no changes needed).
-- [ ] Register/login pages + Google OAuth start/callback — **decided:
-      a separate Google OAuth Client per domain** (not one Client with
-      multiple redirect URIs), so each site needs its own Client created
-      in Google Cloud Console (same steps used for the old Pretoria site)
-      with that site's own `GOOGLE_OAUTH_CLIENT_ID`/`_SECRET` Pages
-      secrets — do this per site once each real domain is live, since the
-      callback redirect URI has to match the live domain.
-- [ ] Claim flow (search/upload/review/document-download) — adapt emails to
-      use `site.contactEmail`/`sendEmail` per site instead of hardcoded
-      `hello@pretoriahub.com`.
-- [ ] My Businesses + edit page.
-- [ ] Admin Dashboard (hub + 6 sub-pages) — the "admin" gate
-      (`isAdminEmail`) needs a decision: one shared admin across all 3
-      sites, or per-site.
-- [ ] "Claim it" button on business pages.
-- [ ] Rebuild-trigger wiring already exists per-site in hub-platform
-      (`GITHUB_DISPATCH_TOKEN`, done 2026-09-09) — the admin dashboard's
-      manual "Rebuild now" button just needs the same endpoint ported.
+- [ ] Same setup for Cape Town once it has a real domain — its own Google
+      OAuth Client (redirect URI has to match the live domain, so this
+      can't be done until then), and confirming the claim/accounts flow
+      works on that domain the same way it now does for the other two.
