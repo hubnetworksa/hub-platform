@@ -399,18 +399,27 @@ usual. This fits in a single commit under the 10-record commit cap (see
 
 **For each business in the batch:**
 
-1. **Research it.** Search `"<name>" <suburb> Pretoria` (or `Centurion`,
-   matching its actual region) and, if the business has a `website` or a
-   real URL in `source_urls`, try fetching that directly — a business's
-   own site is the best source for "what do they actually do." Look for:
-   what they specialise in, notable products/services, how long they've
-   operated, anything that distinguishes them from a same-category
-   business down the road, **and its trading/opening hours** (a "Hours",
-   "Contact Us", or "Opening Times" page/section, or a Google Business
-   Profile snippet that states them). Same chain-branch caution as
-   everywhere else in this file — confirm anything you use, hours
-   included, is about *this specific location*, not a different branch of
-   the same chain (chains often keep different hours per branch).
+1. **Research it — bounded effort, per owner request 2026-09-15 (to keep
+   this routine's token cost down):** exactly **one** WebSearch call —
+   `"<name>" <suburb> Pretoria` (or `Centurion`, matching its actual
+   region) — plus, if the business already has a `website` or a real URL
+   in `source_urls`, **one** WebFetch of that specific known URL (that's
+   using an address you already have, not additional searching, and a
+   business's own site is the best source for "what do they actually
+   do"). That's the whole research budget for this business — don't run a
+   second search with different phrasing, don't follow links out to other
+   pages, don't dig deeper if the first pass doesn't clearly answer it.
+   From whatever that single pass turns up, look for: what they
+   specialise in, notable products/services, how long they've operated,
+   anything that distinguishes them from a same-category business down
+   the road, **and its trading/opening hours** (a "Hours", "Contact Us",
+   or "Opening Times" page/section, or a Google Business Profile snippet
+   that states them). Same chain-branch caution as everywhere else in
+   this file — confirm anything you use, hours included, is about *this
+   specific location*, not a different branch of the same chain (chains
+   often keep different hours per branch). If the one search (and fetch,
+   if applicable) doesn't clearly turn up new, verifiable facts, don't
+   keep digging — move straight to the "Reworded" outcome below.
 2. **Write the new description** — one to two natural sentences, specific
    to this business, not a template. Two outcomes, both acceptable and
    both count as "enriched":
