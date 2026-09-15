@@ -138,13 +138,31 @@ live at `polokwanehub.com`). Cape Town is still on `.pages.dev` only.
       all (`sites/polokwane.json`'s `googleSiteVerification` stays `null`,
       unused, since DNS-TXT verification doesn't go through that field).
       Sitemap submission (`sitemap-index.xml`) still to be done.
-- [ ] **Old Polokwane site/database, if any** — unconfirmed whether a
-      separate legacy Polokwane site/D1 exists analogous to the old
-      Pretoria repo (`GRimkiller360/pretoriahub`) that would need a
-      data backup + merge pass like `db/backups/old-pretoriahub-2026-09-10.sql`
-      before treating `polokwanehub-db` as the single source of truth. If
-      Polokwane's data has always lived only in this repo's D1, this item
-      is moot — needs confirming either way.
+- [x] **Old Polokwane site/database merged** (2026-09-15) — confirmed: a
+      separate legacy repo (`GuyWheel/Polokwanehub`, checked out locally at
+      `c:\Users\EthanLindeque\Documents\Hub\Polokwanehub`) had its own D1
+      (`polokwanehub-db`, id `d85f741d-...`, a different database than
+      hub-platform's despite the same name). Backed up to
+      `db/backups/old-polokwanehub-2026-09-15.sql` (720 businesses, 86
+      categories, 31 suburbs, 29 shopping centres — no accounts/claims
+      tables, that system was never built there). Merged into the live
+      `polokwanehub-db` by exact slug diff (not name-fuzzy-matching):
+      505 businesses already matched by slug, 214 were genuinely new, 1
+      was excluded (marked `closed_at` by the old site's own
+      closed-business routine, a column hub-platform's schema doesn't
+      have), and 18 businesses currently live don't exist in the old DB at
+      all (added independently after the cutover point, left untouched).
+      Also seeded 1 missing suburb (`futura`), 18 missing categories (from
+      the old repo's "Add 18 new business categories" commit that never
+      made it to hub-platform), and 1 missing shopping centre
+      (`city-centre-polokwane-central`) that the new businesses referenced.
+      Final count 737 businesses; integrity-checked post-merge (0 orphaned
+      `business_categories` rows, 0 bad `suburb_id` foreign keys). Verified
+      live on `polokwanehub.com` after a redeploy. **Follow-up needed:**
+      the 18 newly-seeded categories aren't in `categoryGroups.ts` yet, so
+      any of them that get real listings will hit the same "invisible
+      category" bug fixed for the other 10 — worth another pass once they
+      have listings worth surfacing.
 - [ ] **Full flow smoke test on `polokwanehub.com`** — same end-to-end
       pass as Pretoria's 2026-09-10 test (register → submit → admin
       approve → owner confirm → published; claim → admin-approve →
