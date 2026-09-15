@@ -1,6 +1,6 @@
 # Outstanding work
 
-Last updated: 2026-09-10
+Last updated: 2026-09-15
 
 ## Domain cutover checklist (per site)
 
@@ -88,8 +88,65 @@ Polokwane and Cape Town are still on `.pages.dev` only.
       shared `pub-7060187043058790` line correctly post-cutover
       (2026-09-10) — though see below, this ID is being replaced with a
       Pretoria-specific one, not kept long-term.
-- [ ] Polokwane and Cape Town domain cutovers — repeat this whole
-      checklist for each once their real domains are ready to move.
+- [ ] Cape Town domain cutover — repeat this whole checklist once its real
+      domain is ready to move.
+
+**Polokwane: cut over 2026-09-15.** `polokwanehub.com` moved from its
+previous Cloudflare account to `hubnetworksa` (Registrar account move,
+accepted same day), the zone is Active there, and the domain now resolves
+straight to hub-platform (`/`, `/api/me`, and `/register/` all confirmed
+live at `polokwanehub.com`). Cape Town is still on `.pages.dev` only.
+
+- [x] Cloudflare Registrar account move for `polokwanehub.com` (previous
+      account → `hubnetworksa`) — submitted and accepted 2026-09-15. The
+      old zone's DNS records (A/AAAA, MX for Cloudflare Email Routing,
+      SPF/DKIM TXT, `_acme-challenge` TXT, and an existing
+      `google-site-verification` TXT) were auto-imported by Cloudflare's
+      "Add a site" scan when the domain was added to `hubnetworksa`, and
+      kept as Proxied (A/AAAA) or DNS only (MX/TXT, not proxyable).
+- [x] Attach `polokwanehub.com` (and `www.polokwanehub.com`) as a custom
+      domain on the `polokwanehub` Pages project (`hubnetworksa` account) —
+      done 2026-09-15, via a manually-added CNAME (Cloudflare's
+      auto-DNS-write didn't fire) rather than Pretoria's automatic path.
+- [x] Re-enable the `.pages.dev` → custom-domain redirect in
+      `functions/_middleware.ts` for Polokwane — done 2026-09-15,
+      `domainLive: true` set in `sites/polokwane.json`.
+- [ ] **Google OAuth Client for `polokwanehub.com`** — needs its own
+      `GOOGLE_OAUTH_CLIENT_ID`/`GOOGLE_OAUTH_CLIENT_SECRET` set on the
+      `polokwanehub` Pages project (same per-domain-Client decision as
+      Pretoria — the callback redirect URI has to match the live domain).
+- [ ] **Verify Google sign-in works end-to-end on `polokwanehub.com`**
+      once the OAuth Client above is set up.
+- [ ] **Email Routing** on the new `polokwanehub.com` zone (`hubnetworksa`
+      account) — forward `hello@polokwanehub.com` to a real inbox. The
+      imported MX records point at Cloudflare's routing servers, but that
+      doesn't by itself mean a destination address is configured in this
+      account — needs checking/(re)setting up, same DMARC-record caveat
+      Pretoria hit (`developers.cloudflare.com/email-routing/postmaster/`).
+- [ ] **Search Console** — the imported `google-site-verification` TXT
+      record belongs to whoever verified it under the *old* account/Google
+      login, not necessarily `hubnetworksa`'s own Search Console. Per the
+      existing open item below, Polokwane still needs its own HTML-tag
+      verification code under the `hubnetworksa` Google account
+      (`sites/polokwane.json`'s `googleSiteVerification` is still `null`) —
+      don't assume the old TXT record covers this.
+- [ ] **Old Polokwane site/database, if any** — unconfirmed whether a
+      separate legacy Polokwane site/D1 exists analogous to the old
+      Pretoria repo (`GRimkiller360/pretoriahub`) that would need a
+      data backup + merge pass like `db/backups/old-pretoriahub-2026-09-10.sql`
+      before treating `polokwanehub-db` as the single source of truth. If
+      Polokwane's data has always lived only in this repo's D1, this item
+      is moot — needs confirming either way.
+- [ ] **Full flow smoke test on `polokwanehub.com`** — same end-to-end
+      pass as Pretoria's 2026-09-10 test (register → submit → admin
+      approve → owner confirm → published; claim → admin-approve →
+      ownership transfer; every emailed link resolves) — not yet run for
+      Polokwane's real domain.
+- [ ] AdSense — Polokwane already has its own publisher ID
+      (`ca-pub-7239595592067933` in `sites/polokwane.json`, distinct from
+      Pretoria's), unlike Pretoria's shared-ID transition — just needs
+      confirming `https://polokwanehub.com/ads.txt` serves it correctly
+      post-cutover.
 
 ## hub-platform (Polokwane / Pretoria / Cape Town)
 
