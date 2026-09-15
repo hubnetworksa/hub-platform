@@ -159,11 +159,17 @@ live at `polokwanehub.com`). Cape Town is still on `.pages.dev` only.
       gaps/duplicates). Only `panel-beaters-spray-painters` has real
       listings so far (5) and now correctly shows under Automotive; the
       other 17 stay noindexed/hidden until they have listings.
-- [ ] **Full flow smoke test on `polokwanehub.com`** — same end-to-end
-      pass as Pretoria's 2026-09-10 test (register → submit → admin
-      approve → owner confirm → published; claim → admin-approve →
-      ownership transfer; every emailed link resolves) — not yet run for
-      Polokwane's real domain.
+- [x] **Full flow smoke test on `polokwanehub.com`** — confirmed 2026-09-15
+      end-to-end against production, same pass as Pretoria's 2026-09-10
+      test: register → submit (logged in, with owner email) → admin
+      approve → owner confirm → published, with correct auto-link to the
+      submitter's account. Second business submitted anonymously with no
+      email → published immediately (no owner-confirm needed) with
+      `owner_user_id` correctly null. Claimed by a second test user via
+      the new simplified contact-info claim form → admin-approved the
+      claim via `/api/review-claim` → ownership correctly transferred
+      (`owner_user_id` set to the claimant's account). All test
+      businesses/users/sessions/claims rows deleted afterward.
 - [x] AdSense — Polokwane already has its own publisher ID
       (`ca-pub-7239595592067933` in `sites/polokwane.json`, distinct from
       Pretoria's), unlike Pretoria's shared-ID transition —
