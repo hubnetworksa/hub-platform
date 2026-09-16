@@ -10,11 +10,12 @@
 -- two different addresses (119 Suid St vs Landros Mare Street) for it,
 -- with no third source to break the tie -- too unreliable to trust.
 --
--- Bakone Malapa sits ~9km outside town on the R37 toward Chuenespoort,
--- outside every currently seeded suburb -- added as its own new suburb
--- (0035_seed_chuenespoort_suburb.sql) rather than skipped, given how
--- well-corroborated and well-known it is (5+ independent tourism sites
--- agree on its location).
+-- Bakone Malapa sits ~10km outside town on the Chuenespoort Road (R37) --
+-- not itself in the Chuenespoort settlement further down that road, just
+-- on the way there -- outside every currently seeded suburb, so added as
+-- its own new "Chuenespoort Road" suburb (0035_seed_chuenespoort_suburb.sql)
+-- rather than skipped, given how well-corroborated and well-known it is
+-- (5+ independent tourism sites agree on its location).
 
 INSERT OR IGNORE INTO businesses
   (slug, name, suburb_id, address, phone, website, email, description, lat, lng, source_urls, status, origin)
@@ -57,8 +58,8 @@ INSERT OR IGNORE INTO businesses
 VALUES (
   'bakone-malapa-open-air-museum-chuenespoort', 'Bakone Malapa Northern Sotho Open-Air Museum',
   (SELECT id FROM suburbs WHERE slug = 'chuenespoort'),
-  'R37 Chuenespoort Road, approximately 9km from Polokwane', '015 290 2540', NULL, NULL,
-  'A living open-air museum reconstructing a traditional Northern Sotho village, about 9km from Polokwane on the R37 toward Chuenespoort.',
+  'R37 Chuenespoort Road, approximately 10km from Polokwane', '015 290 2540', NULL, NULL,
+  'A living open-air museum reconstructing a traditional Northern Sotho village, about 10km from Polokwane on the Chuenespoort Road (R37).',
   NULL, NULL,
   '["https://www.sa-venues.com/attractionslm/bakone-malapa.php", "https://triptap.com/places/za/limpopo/polokwane/bakone-malapa-open-air-museum-t06117db"]',
   'published', 'agent_research'
