@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import PageBanner from '../../components/PageBanner.astro';
+import SearchBox from '../../components/SearchBox.astro';
 import { categories, businessesInCategory } from '../../lib/data';
 import { CATEGORY_GROUPS } from '../../lib/categoryGroups';
 import site from '../../site';
@@ -19,7 +20,9 @@ const sortedGroups = [...CATEGORY_GROUPS].sort((a, b) => a.name.localeCompare(b.
   title="Categories"
   description={`Every business category ${site.siteName} covers, organised by section — from food and shopping to trade services and professionals.`}
 >
-  <PageBanner title="Categories" description={`Browse ${site.cityLabel} businesses by section.`} />
+  <PageBanner title="Categories" description={`Browse ${site.cityLabel} businesses by section.`}>
+    <SearchBox slot="search" />
+  </PageBanner>
 
   <section class="container" style="padding-top: 1.5rem; padding-bottom: 3rem;">
     {sortedGroups.map((group) => {

@@ -9,9 +9,14 @@ interface Props {
 }
 const { title, description, iconPath } = Astro.props;
 const bannerStyle = `background-image: linear-gradient(to right, rgba(9, 26, 15, 0.6) 0%, rgba(9, 26, 15, 0.35) 45%, rgba(9, 26, 15, 0.05) 75%), url('${site.bannerImage}')`;
+// Opt-in: only the couple of pages that pass a `search` slot (Categories,
+// Suburbs) get the taller banner and the search-dropdown-friendly overflow
+// change below — every other page using this component keeps its current
+// fixed height and clipping untouched.
+const hasSearch = Astro.slots.has('search');
 ---
 
-<section class="page-banner" style={bannerStyle}>
+<section class={hasSearch ? 'page-banner page-banner-with-search' : 'page-banner'} style={bannerStyle}>
   <div class="container page-banner-content">
     <slot name="breadcrumbs" />
     <h1>
@@ -19,6 +24,11 @@ const bannerStyle = `background-image: linear-gradient(to right, rgba(9, 26, 15,
       {title}
     </h1>
     {description && <p>{description}</p>}
+    {hasSearch && (
+      <div class="banner-search">
+        <slot name="search" />
+      </div>
+    )}
   </div>
   <span class="watermark" aria-hidden="true">© {site.siteName}</span>
 </section>
@@ -49,10 +59,27 @@ const bannerStyle = `background-image: linear-gradient(to right, rgba(9, 26, 15,
     background-repeat: no-repeat, no-repeat;
     border-bottom: 1px solid var(--border);
   }
+  /* Same reasoning as .hero-banner in src/pages/index.astro: no
+     overflow:hidden here, or it clips the search-results dropdown at this
+     section's bottom edge instead of letting it float over the content
+     below. Taller than the plain banner so the search card has room
+     without cramping the title/description above it. */
+  .page-banner-with-search {
+    overflow: visible;
+    height: auto;
+  }
   .page-banner-content {
     position: relative;
     padding-top: 1.75rem;
     padding-bottom: 2rem;
+  }
+  .banner-search {
+    max-width: 480px;
+    margin-top: 1.1rem;
+    background: var(--bg-card);
+    padding: 0.75rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lift);
   }
   .page-banner-content h1 {
     display: flex;
@@ -85,6 +112,13 @@ const bannerStyle = `background-image: linear-gradient(to right, rgba(9, 26, 15,
   @media (max-width: 640px) {
     .page-banner {
       height: 220px;
+    }
+    /* Overrides the fixed mobile height above for the same reason as the
+       desktop .page-banner-with-search rule — same class-selector
+       specificity, so without this the media query's later position in
+       the stylesheet would win and clip the search card on small screens. */
+    .page-banner-with-search {
+      height: auto;
     }
   }
 </style>
