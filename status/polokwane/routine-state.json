@@ -1,10 +1,10 @@
 {
-  "suburb_index": 1,
+  "suburb_index": 2,
   "suburbs_per_run": 3,
   "shopping_center_index": 13,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
-  "shopping_center_recheck_countdown": 9,
+  "shopping_center_slugs_pending": ["bendor-shopping-centre-bendor"],
+  "shopping_center_recheck_countdown": 8,
   "new_mall_discovery_countdown": 154,
   "closed_check_last_slug": "african-roots-guest-house-hospark",
   "closed_check_batch_size": 5,
@@ -37,7 +37,8 @@
     "tropicana-centre-ladanna",
     "phasha-shopping-centre-lebowakgomo",
     "china-city-ladanna",
-    "city-centre-polokwane-central"
+    "city-centre-polokwane-central",
+    "bendor-shopping-centre-bendor"
   ],
   "suburb_slugs": [
     "polokwane-central",
