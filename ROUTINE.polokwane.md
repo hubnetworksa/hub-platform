@@ -241,6 +241,22 @@ Only use `category_slug` and `suburb_slug` values that already appear in
 `status/polokwane/db-snapshot.json`'s `categories`/`suburbs` arrays. Never invent a
 new category or suburb slug.
 
+**Banks & ATMs (owner note, 2026-09-16):** there is a dedicated `banks-atms`
+category, but as of this note every known bank branch was filed under the
+broader `financial-investment-services` instead (a one-off human
+recategorization of those existing rows is being handled outside this
+routine — don't touch it yourself; existing rows still aren't yours to
+UPDATE per "Your five jobs" above). Going forward, when job 1/2 suburb
+research turns up a **new** bank branch or a standalone ATM (an ATM kiosk
+not physically inside a bank branch you're already publishing/have
+published), file it under `category_slug: "banks-atms"`, not
+`financial-investment-services`. Standalone ATMs are a category of
+business this routine hasn't actively searched for yet — worth a
+deliberate search per suburb (e.g. `"<suburb>" Polokwane ATM -bank` or
+checking petrol stations/malls for a freestanding ATM operator like
+Allpay/Spar/garage-forecourt ATMs) rather than only surfacing banks
+incidentally.
+
 ## Shopping centres
 
 `status/polokwane/db-snapshot.json`'s `shopping_centers` array lists every known
