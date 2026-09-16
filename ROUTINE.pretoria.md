@@ -390,13 +390,13 @@ array, filter for `description_enriched_at` being `null` — that's the
 entire backlog, no separate rotation list to maintain (unlike job 3's
 `shopping_center_slugs`). Work through them in the order they appear in
 the array (alphabetical by name) so progress is predictable and every run
-picks up roughly where the last one left off. **Target up to 100
-businesses this run — this is a hard cap, not a floor** (per owner
-request 2026-09-15, raised from an earlier 8-business cap): stop after
-100 even if you still have turns to spare, and stop earlier if a run is
-going slower than usual or you're running low on turns — a partial batch
-committed is better than an incomplete one lost. This is one commit at
-the end of the batch (see "Committing" below).
+picks up roughly where the last one left off. **Do 100 businesses this
+run — this is the actual target, not just a ceiling** (per owner request
+2026-09-16, firmed up from an earlier "up to 100" wording that was being
+read as permission to stop short): do all 100 unless the remaining
+backlog itself has fewer than 100 businesses left, in which case do the
+whole remaining backlog. This is one commit at the end of the batch (see
+"Committing" below).
 
 **For each business in the batch:**
 
@@ -684,9 +684,9 @@ and push at these natural boundaries instead:
 - After finishing the **new-mall discovery sweep**, on the runs where it
   fires (once per full lap) — its own commit, separate from the regular
   job-3 commit that triggered it.
-- After finishing **job 4's whole batch** for this run (up to the
-  100-business cap) — its own commit, separate from job 3 and any suburb
-  commits this run also produced.
+- After finishing **job 4's whole batch** for this run (100 businesses)
+  — its own commit, separate from job 3 and any suburb commits this run
+  also produced.
 
 A "record" is one row you've written a SQL statement for — one new
 business INSERT, one new shopping-centre INSERT, one job-3 link/unlink
