@@ -50,6 +50,10 @@ const ICONS = {
             <input type="tel" id="contact-phone" name="contactPhone" autocomplete="tel" required />
           </label>
           <label>
+            Email address
+            <input type="email" id="contact-email" name="contactEmail" autocomplete="email" required />
+          </label>
+          <label>
             Your role at this business
             <select id="role-note" name="roleNote">
               <option value="Owner">Owner</option>
@@ -188,12 +192,13 @@ const ICONS = {
     status.textContent = 'Submitting…';
     const contactName = (document.getElementById('contact-name') as HTMLInputElement).value.trim();
     const contactPhone = (document.getElementById('contact-phone') as HTMLInputElement).value.trim();
+    const contactEmail = (document.getElementById('contact-email') as HTMLInputElement).value.trim();
     const roleNote = (document.getElementById('role-note') as HTMLSelectElement).value;
     try {
       const res = await fetch('/api/claim-business', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ businessId: selectedId, contactName, contactPhone, roleNote }),
+        body: JSON.stringify({ businessId: selectedId, contactName, contactPhone, contactEmail, roleNote }),
       });
       if (res.status === 401) {
         window.location.href = '/login/';

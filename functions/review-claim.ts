@@ -13,6 +13,7 @@ interface ClaimRow {
   claimant_email: string;
   contact_name: string | null;
   contact_phone: string | null;
+  contact_email: string | null;
   role_note: string | null;
   status: string;
 }
@@ -25,7 +26,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const site = getSite(context.env.SITE);
   const token = new URL(context.request.url).searchParams.get('token') ?? '';
   const row = await context.env.DB
-    .prepare('SELECT bc.id, bc.contact_name, bc.contact_phone, bc.role_note, bc.status, b.name AS business_name, u.email AS claimant_email FROM business_claims bc JOIN businesses b ON b.id = bc.business_id JOIN users u ON u.id = bc.user_id WHERE bc.review_token = ?')
+    .prepare('SELECT bc.id, bc.contact_name, bc.contact_phone, bc.contact_email, bc.role_note, bc.status, b.name AS business_name, u.email AS claimant_email FROM business_claims bc JOIN businesses b ON b.id = bc.business_id JOIN users u ON u.id = bc.user_id WHERE bc.review_token = ?')
     .bind(token)
     .first<ClaimRow>();
 
@@ -38,6 +39,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     <p>Account email: <strong>${escapeHtml(row.claimant_email)}</strong></p>
     <p>Name: <strong>${escapeHtml(row.contact_name ?? 'Not specified')}</strong></p>
     <p>Phone: <strong>${escapeHtml(row.contact_phone ?? 'Not specified')}</strong></p>
+    <p>Email: <strong>${escapeHtml(row.contact_email ?? 'Not specified')}</strong></p>
     <p>Role: <strong>${escapeHtml(row.role_note ?? 'Not specified')}</strong></p>
     <form method="POST" action="/api/review-claim" style="display:inline">
       <input type="hidden" name="token" value="${escapeHtml(token)}" />

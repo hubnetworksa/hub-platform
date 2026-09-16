@@ -20,13 +20,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(params) });
   }
 
-  function renderClaim(c: { businessName: string; claimantEmail: string; reviewToken: string; contactName: string | null; contactPhone: string | null; roleNote: string | null }): string {
+  function renderClaim(c: { businessName: string; claimantEmail: string; reviewToken: string; contactName: string | null; contactPhone: string | null; contactEmail: string | null; roleNote: string | null }): string {
     return `
       <li class="admin-row">
         <div class="admin-row-main">
           <strong>${c.businessName}</strong>
           <span class="row-detail">Account: ${c.claimantEmail}</span>
-          <span class="row-detail">${c.contactName ?? 'Not specified'} · ${c.contactPhone ?? 'Not specified'} · ${c.roleNote ?? 'Not specified'}</span>
+          <span class="row-detail">${c.contactName ?? 'Not specified'} · ${c.contactPhone ?? 'Not specified'} · ${c.contactEmail ?? 'Not specified'} · ${c.roleNote ?? 'Not specified'}</span>
         </div>
         <div class="row-actions">
           <button class="btn-sm btn-approve" data-action="approve" data-token="${c.reviewToken}">Approve</button>

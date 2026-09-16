@@ -15,7 +15,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const user = await getSessionUser(context.request, db);
   if (!user) return json({ ok: false, error: 'Please log in first.' }, 401);
 
-  let body: { businessId?: number; contactName?: string; contactPhone?: string; roleNote?: string };
+  let body: { businessId?: number; contactName?: string; contactPhone?: string; contactEmail?: string; roleNote?: string };
   try {
     body = await context.request.json();
   } catch {
@@ -27,9 +27,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const contactName = String(body.contactName ?? '').trim();
   const contactPhone = String(body.contactPhone ?? '').trim();
+  const contactEmail = String(body.contactEmail ?? '').trim();
   const roleNote = String(body.roleNote ?? '').trim();
   if (!contactName) return json({ ok: false, error: 'Please enter your name.' }, 400);
   if (!contactPhone) return json({ ok: false, error: 'Please enter a phone number.' }, 400);
+  if (!contactEmail || !contactEmail.includes('@')) return json({ ok: false, error: 'Please enter a valid email address.' }, 400);
 
   const business = await db.prepare('SELECT id, name, owner_user_id FROM businesses WHERE id = ?').bind(businessId).first<{ id: number; name: string; owner_user_id: number | null }>();
   if (!business) return json({ ok: false, error: 'Business not found.' }, 404);
@@ -40,8 +42,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const reviewToken = crypto.randomUUID();
   await db
-    .prepare('INSERT INTO business_claims (business_id, user_id, document_keys, contact_name, contact_phone, role_note, review_token) VALUES (?, ?, ?, ?, ?, ?, ?)')
-    .bind(businessId, user.id, '[]', contactName, contactPhone, roleNote || null, reviewToken)
+    .prepare('INSERT INTO business_claims (business_id, user_id, document_keys, contact_name, contact_phone, contact_email, role_note, review_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(businessId, user.id, '[]', contactName, contactPhone, contactEmail, roleNote || null, reviewToken)
     .run();
 
   const reviewUrl = `https://${site.domain}/review-claim?token=${reviewToken}`;
@@ -50,7 +52,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     from: `${site.siteName} <${site.contactEmail}>`,
     to: site.contactEmail,
     subject: `Business claim to review: ${business.name}`,
-    text: `${user.email} wants to claim "${business.name}".\n\nName: ${contactName}\nPhone: ${contactPhone}\nRole: ${roleNote || 'Not specified'}\n\nReview and approve/reject here: ${reviewUrl}`,
+    text: `${user.email} wants to claim "${business.name}".\n\nName: ${contactName}\nPhone: ${contactPhone}\nEmail: ${contactEmail}\nRole: ${roleNote || 'Not specified'}\n\nReview and approve/reject here: ${reviewUrl}`,
   });
 
   return json({ ok: true });
