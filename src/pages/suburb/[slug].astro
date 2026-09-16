@@ -56,7 +56,9 @@ const jsonLd = {
       slot="breadcrumbs"
       items={[
         { label: 'Suburbs', href: '/suburb/' },
-        ...(groupForSuburb(suburb.slug) ? [{ label: groupForSuburb(suburb.slug)!.name, href: '/suburb/' }] : []),
+        ...(groupForSuburb(suburb.slug)
+          ? [{ label: groupForSuburb(suburb.slug)!.name, href: `/suburb/#${groupForSuburb(suburb.slug)!.slug}` }]
+          : []),
       ]}
     />
   </PageBanner>

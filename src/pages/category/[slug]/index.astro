@@ -26,6 +26,15 @@ for (const business of businesses) {
 const suburbGroups = [...bySuburb.entries()].sort((a, b) => b[1].businesses.length - a[1].businesses.length);
 const group = groupForCategory(category.slug);
 const isEmpty = businesses.length === 0;
+
+// Sibling categories in the same group — only ones with real listings, so
+// this never sends someone to a thin/noindexed page (principle 2 of the
+// SEO plan: never manufacture links to near-empty pages).
+const relatedCategories = (group?.categorySlugs ?? [])
+  .filter((slug) => slug !== category.slug)
+  .map((slug) => categories.find((c) => c.slug === slug))
+  .filter((c): c is NonNullable<typeof c> => Boolean(c) && businessesInCategory(c.id).length > 0)
+  .sort((a, b) => a.name.localeCompare(b.name));
 const synonyms = [...synonymsFor(category.slug), ...locationSynonymsFor(category.name, site.cityLabel)];
 const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0, 4).join(', ')}.` : '';
 
@@ -81,6 +90,17 @@ const jsonLd = isEmpty
         </div>
       ))
     )}
+
+    {!isEmpty && relatedCategories.length > 0 && group && (
+      <div class="related-categories">
+        <h2>More in {group.name}</h2>
+        <div class="related-chip-row">
+          {relatedCategories.map((c) => (
+            <a class="related-chip" href={`/category/${c.slug}/`}>{c.name}</a>
+          ))}
+        </div>
+      </div>
+    )}
   </section>
 </BaseLayout>
 
@@ -114,5 +134,34 @@ const jsonLd = isEmpty
   .empty-category a {
     color: var(--navy);
     font-weight: 600;
+  }
+  .related-categories {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .related-categories h2 {
+    font-size: 1rem;
+    margin: 0 0 0.75rem;
+    color: var(--navy);
+  }
+  .related-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .related-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 0.9rem;
+    background: var(--bg-card);
+  }
+  .related-chip:hover {
+    border-color: var(--accent);
   }
 </style>

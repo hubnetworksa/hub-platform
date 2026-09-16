@@ -41,7 +41,7 @@ const jsonLd = collectionPageJsonLd({
         .sort(byName);
       if (inArea.length === 0) return null;
       return (
-        <div style="margin-top: 2rem;">
+        <div class="area-section" id={area.slug}>
           <h2 style="font-size: 1.1rem;">{area.name}</h2>
           <div class="suburb-grid">
             {inArea.map((suburb) => (
@@ -58,6 +58,10 @@ const jsonLd = collectionPageJsonLd({
 </BaseLayout>
 
 <style>
+  .area-section {
+    margin-top: 2rem;
+    scroll-margin-top: 1rem;
+  }
   .suburb-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
