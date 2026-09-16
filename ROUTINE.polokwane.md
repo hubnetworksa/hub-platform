@@ -25,7 +25,7 @@ Instead:
   then regenerates the snapshot. Your job ends at "commit and push the SQL
   file" — you never touch the database directly.
 
-## Your four jobs, every run
+## Your five jobs, every run
 
 **This routine mostly fetches new companies — it does not freely enrich or
 edit existing listings** (per owner decision 2026-09-01; there used to be
@@ -51,15 +51,42 @@ removed job.
    business during the **description enrichment sweep** (job 4) — see
    "Description enrichment sweep" below. Guarded by `description_enriched_at
    IS NULL` so it only ever happens once per business.
+5. Setting `closed_at` on an existing business during the **closed-business
+   check** (job 5) — see "Closed-business check" below. Guarded by
+   `closed_at IS NULL` (nothing in `status/polokwane/db-snapshot.json` ever carries a
+   set `closed_at` in the first place — see that section for why) so it
+   only ever happens once per business, and it's the only one of these five
+   exceptions that removes a business from the live site rather than adding
+   to it.
 
-See "Shopping centre official-site sweep", "New-mall discovery sweep", and
-"Description enrichment sweep" below for the details of each. Nothing else
-about an existing row may ever change — not the name, phone, address, or
-category, and not `description`/`hours`/`source_urls` outside of job 4's
-own rule.
+See "Shopping centre official-site sweep", "New-mall discovery sweep",
+"Description enrichment sweep" and "Closed-business check" below for the
+details of each. Nothing else about an existing row may ever change — not
+the name, phone, address, or category, and not
+`description`/`hours`/`source_urls` outside of job 4's own rule.
 
 1. **Discover new businesses** in each of this run's suburbs (see "Which
-   suburbs" below) that aren't in `status/polokwane/db-snapshot.json` yet.
+   suburbs" below) that aren't in `status/polokwane/db-snapshot.json` yet. **Before
+   publishing anything as new, check the whole `businesses` array for the
+   same business already existing under a different suburb — not just the
+   suburb you searched under.** An owner-reported sweep on 2026-09-15 found
+   21 duplicate businesses, almost all the same pattern: a business on
+   Witklip/Pietersburg Street got published once tagged Annadale and once
+   tagged Ladanna, because those two suburbs are adjacent and the street
+   sits on the boundary (see each suburb's own `bio` — Annadale's names
+   Ladanna as the neighbouring commercial strip its residents walk to, and
+   Ladanna's names Annadale as the neighbouring residential area — they
+   describe each other, which is exactly why a business there can get
+   discovered twice under two different suburb assumptions on different
+   runs). Same phone number or near-identical address for a business
+   already in the snapshot — regardless of which suburb it's tagged
+   under — means it's very likely the same business, not a new one; don't
+   publish it again just because this run's search happened to surface it
+   under a different suburb name. Boundary streets between adjacent
+   suburbs (Witklip/Pietersburg between Annadale and Ladanna is the
+   confirmed one; treat any other suburb pair whose bios reference each
+   other the same way with the same caution) are the highest-risk case,
+   but this check applies everywhere, not just there.
 2. **Discover shopping centres/malls** in those same suburbs (see
    "Shopping centres" below) and, for any you find (new or already known),
    discover their tenant businesses — tenants not yet in the dataset are
@@ -85,14 +112,24 @@ own rule.
    trading hours when you find them (per owner request 2026-09-02) — the
    business page displays them right under the phone number and Google
    Maps button.
+5. **Closed-business check** (see "Closed-business check" below) — the
+   **lowest priority of the five**, only using turns left over after jobs
+   1-2's suburb allocation is done. Works through a small batch of already-
+   published businesses checking each one's Google Maps status, setting
+   `closed_at` on any confirmed permanently closed — see that section for
+   why this only ever hides a listing rather than deleting it.
 
-Do jobs 1 and 2 for each suburb before moving to the next; jobs 3 and 4 are
-independent of the suburb loop — each is done once per run (job 3 for one
-shopping centre, job 4 for a batch of businesses), using their own state
-(see below). **Order this run's work as: job 4 first, then job 3, then
-jobs 1-2 with whatever turns remain** — job 4 is the current priority (see
-above), job 3 is the next most valuable dedicated rotation, and jobs 1-2
-are the steady-state background work that can absorb whatever's left.
+Do jobs 1 and 2 for each suburb before moving to the next; jobs 3, 4 and 5
+are independent of the suburb loop, using their own state (see below). Job
+4 processes a batch of businesses once per run (when it has a backlog);
+job 3 usually just decrements a countdown now (see "Shopping centre
+official-site sweep (job 3)" below for why) and only actually sweeps a
+centre some runs. **Order this run's work as: job 4 first, then job 3,
+then jobs 1-2, then job 5 with whatever turns remain** — job 4 is the
+current priority (see above), job 3 is the next most valuable dedicated
+rotation, jobs 1-2 are the steady-state background work that comes next,
+and job 5 is pure hygiene with no urgency, so it only runs at all if
+there's turn budget left over once jobs 1-2 are done for this run.
 Treat each suburb (jobs 1-2) as fully independent — finish one (businesses,
 shopping centres, and logging, per "Logging your run" below), **commit and
 push it** (see
@@ -102,10 +139,10 @@ commit at the end of the run. If you run low on turns partway through,
 whatever you've already committed is safe — you just won't reach the
 remaining suburbs in `suburbs_per_run` this run, which is fine; make sure
 `suburb_index` only reflects the suburbs you actually finished and
-committed (see below). Given the job 4 > job 3 > jobs 1-2 priority order
-above, running short on turns should mean jobs 1-2 are the ones that get
-skipped this run (fine — they're steady-state background work with no
-urgency), not job 3 or job 4.
+committed (see below). Given the job 4 > job 3 > jobs 1-2 > job 5 priority
+order above, running short on turns should mean job 5 gets skipped
+entirely and jobs 1-2 are the next to get trimmed this run (fine — both
+are lower urgency than job 3 or job 4), not job 3 or job 4.
 
 ## Which suburbs this run covers
 
@@ -266,22 +303,60 @@ guarantees every centre eventually gets this authoritative, no-other-way
 reconciliation, regardless of whether it happens to come up in suburb
 research.
 
-Read `status/polokwane/routine-state.json`'s `shopping_center_index`,
-`shopping_centers_per_run` (normally `1`), and `shopping_center_slugs`
-(every shopping centre known at the time this rotation list was last
-extended — see below for keeping it current). This run's target is
-`shopping_center_slugs[shopping_center_index]` (wrapping modulo the list's
-length if you reach the end).
+**Efficiency note (added 2026-09-14, after ~205 job-3 sweeps logged):**
+every one of the 29 known shopping centres had, by that point, most
+recently come back either `official_site_found: false` or a real site
+blocked/unfetchable — 0 were currently reconcilable. A centre that has no
+official site, or whose site is on the sandbox's blocked-domain list, is
+extremely unlikely to change status between one hourly run and the next,
+so re-sweeping the same 29 already-checked centres every ~29 hours was
+producing almost nothing — job 3 was structurally guaranteed one slot
+every run but had nothing left to productively check with it. The
+two-tier system below fixes that: brand-new, never-swept centres still
+get checked immediately (every run, no delay), but already-swept centres
+— whatever their last outcome — only get re-verified on a slow throttle,
+freeing job 3's slot most hours to fall straight through to jobs 1-2
+(read "Order this run's work as..." above — that's still job 4 > job 3 >
+jobs 1-2, this just means job 3 usually finishes in one line now).
 
-For that one shopping centre:
+Read `status/polokwane/routine-state.json`'s `shopping_center_slugs_pending`,
+`shopping_center_slugs` (every shopping centre ever known — append-only,
+see "Keeping `shopping_center_slugs` current" below),
+`shopping_center_index` and `shopping_center_recheck_countdown`.
+
+1. **If `shopping_center_slugs_pending` is non-empty**, this run's target
+   is `shopping_center_slugs_pending[0]` — a centre that has never had a
+   job-3 sweep at all (brand new, from job 2 or the new-mall-discovery
+   sweep). Always clear the pending queue before touching the recheck
+   cadence below — a centre nobody has ever looked at takes priority over
+   re-verifying one that's already been checked. Once this run's sweep
+   (steps 1-4 below) is done and logged, remove that slug from the front
+   of `shopping_center_slugs_pending` regardless of outcome — a centre
+   never gets swept via this path twice; from then on it's part of the
+   ordinary recheck rotation below like everything else.
+2. **Otherwise**, decrement `shopping_center_recheck_countdown` by 1.
+   - If it's still above `0` after decrementing: job 3 has nothing to do
+     this run beyond saving that decremented number — log nothing extra,
+     commit the state change with whatever else this run produces, and
+     move straight to jobs 1-2.
+   - If it hits `0`: this run's target is
+     `shopping_center_slugs[shopping_center_index]` (wrapping modulo the
+     list's length) — do one full sweep (steps 1-4 below) on it, then
+     reset `shopping_center_recheck_countdown` to `24` (roughly once a
+     day, across 3 suburbs/run and this job firing every run) and advance
+     `shopping_center_index` (wrapping). This is the only case that
+     actually runs the sweep steps below.
+
+For that one shopping centre (whichever rule above selected it):
 
 1. **Find its own official website.** Search `"<centre name>" official
    website` or `"<centre name>" store directory <suburb>`. If you can't
    find a real, distinct website for this centre (a listing on a
    directory/aggregator site like Tiendeo, Yellow Pages, Facebook-only
    presence, or nothing at all doesn't count) after a reasonable search,
-   **stop here** — advance `shopping_center_index` anyway (see below), log
-   it with `official_site_found: false` and zero counts, and move on. Not
+   **stop here** — log it with `official_site_found: false` and zero
+   counts (see "Logging and committing" below for what state to save) and
+   move on. Not
    every `shopping_centers` row is a real multi-tenant mall — some are
    single-shop or brand-name entries that were miscategorised on import
    (e.g. a fuel station chain name) and will never have a "mall website";
@@ -306,7 +381,7 @@ For that one shopping centre:
      row by its unique `slug`, resolving the centre's own id with a
      subquery when you need one, e.g. `(SELECT id FROM shopping_centers
      WHERE slug = '<centre-slug>')`) — one of this routine's narrow UPDATE
-     exceptions (see "Your four jobs" above). Do **not** touch any other
+     exceptions (see "Your five jobs" above). Do **not** touch any other
      column on that row (name, phone, address, description, category) even
      if the official site suggests a different value for it — correcting
      an existing field is a human/interactive-session judgment call, out
@@ -335,30 +410,36 @@ For that one shopping centre:
    suburb research, don't chase it here.
 
 **Keeping `shopping_center_slugs` current:** whenever job 2 adds a brand
-new shopping centre this run, also append its slug to
-`shopping_center_slugs` in the same commit (anywhere in the array — order
-doesn't matter beyond being deterministic) so job 3's rotation eventually
-reaches it too. Never remove or reorder existing entries.
+new shopping centre this run, append its slug to *both*
+`shopping_center_slugs` (the permanent record — anywhere in the array,
+order doesn't matter beyond being deterministic; never remove or reorder
+existing entries) *and* `shopping_center_slugs_pending` (so it gets its
+first sweep on the very next run rather than waiting for the recheck
+countdown).
 
-**Advancing the index:** same wrapping rule as `suburb_index` — as soon as
-this run's one centre is done (whether or not anything was found/changed),
-advance `shopping_center_index` past it (wrapping modulo the length of
-`shopping_center_slugs`) and commit that change together with this job's
-SQL (if any) and log line.
+**Logging and committing:** whichever path above actually ran a sweep
+(pending-queue or countdown-triggered), log and commit it exactly as
+before (see "Logging your run" and "Committing" below) — `official_site_found: false` is still a fine, expected outcome, not an
+error. A quiet run where the countdown just ticked down with no sweep at
+all still needs `shopping_center_recheck_countdown`'s new value committed
+in `status/polokwane/routine-state.json` (bundle it with whatever suburb/job-4
+commit this run already produces — it doesn't need a commit of its own).
 
-## New-mall discovery sweep (once per full lap of job 3)
+## New-mall discovery sweep (roughly once a week)
 
 Job 2 only finds new shopping centres opportunistically — a mall in
 whatever suburb this run's suburb rotation happens to touch. This step
 catches malls that job 2 never happens to surface, by actively hunting for
-them, but it's a bigger, unscoped task, so it only runs **once per full
-lap** of job 3's rotation, not every run.
+them, but it's a bigger, unscoped task, so it only runs on its own weekly
+throttle (see "Trigger" below), not every run.
 
-**Trigger:** before advancing `shopping_center_index` after this run's
-sweep (see "Advancing the index" above), check whether this run's centre
-was the *last* entry in `shopping_center_slugs` (i.e. advancing would wrap
-back to `0`). If so, a full lap just completed — do this discovery sweep
-now, as an extra step in the same run, before you commit.
+**Trigger:** independent of job 3's own pending/recheck logic above —
+decrement `status/polokwane/routine-state.json`'s `new_mall_discovery_countdown` by
+1 every run. When it hits `0`, do this discovery sweep now as an extra
+step in the same run, before you commit, then reset it to `168` (roughly
+once a week, at one run per hour). This runs on its own schedule so a
+long recheck countdown (job 3 above) never delays hunting for genuinely
+new malls.
 
 1. Actively search for shopping centres/malls in Polokwane and the greater
    Capricorn District that **aren't** in `status/polokwane/db-snapshot.json`'s
@@ -376,15 +457,18 @@ now, as an extra step in the same run, before you commit.
    now may have tenants that were already published as standalone
    businesses by earlier runs' general suburb research — link those
    existing rows rather than inserting duplicates.
-3. Append every newly-added centre's slug to `shopping_center_slugs` (see
-   "Keeping `shopping_center_slugs` current" above) so it joins the normal
-   rotation going forward.
+3. Append every newly-added centre's slug to `shopping_center_slugs` (its
+   permanent record) so it joins the normal recheck rotation going
+   forward — **not** to `shopping_center_slugs_pending`, since step 2
+   above already gave it its first sweep in this same run; adding it to
+   the pending queue too would just repeat that sweep next run for
+   nothing.
 4. Log this as its own checkpoint (see "Logging your run" below) separate
-   from the regular job-3 sweep line, then advance `shopping_center_index`
-   to `0` and commit everything from this step together.
+   from the regular job-3 sweep line, then commit everything from this
+   step together (including the reset `new_mall_discovery_countdown`).
 
 If the search turns up nothing new, that's a fine, expected outcome — log
-it with zero counts and still advance the index to `0`.
+it with zero counts and still commit the reset countdown.
 
 ## Description enrichment sweep (job 4) — current top priority
 
@@ -502,6 +586,87 @@ to advance for this job (it's driven entirely by `description_enriched_at
 IS NULL`, which naturally shrinks as runs complete), so a job-4 checkpoint
 just needs its SQL file, its log line(s), and nothing else state-related.
 
+## Closed-business check (job 5) — lowest priority, only with leftover turns
+
+Owner request (2026-09-15): businesses do shut down, and a listing with a
+dead phone number or a "Permanently closed" Google Maps tag is exactly the
+kind of thing that makes a directory look unmaintained. This job works
+through the published dataset in a slow, perpetual loop — unlike job 4's
+backlog, it never "finishes"; once it reaches the end it wraps around and
+starts again, since a business that was open last month could have closed
+since. It only runs at all if jobs 1-2 finished this run with turns to
+spare (see priority order above) — treat it as pure background hygiene,
+never worth cutting a suburb short for.
+
+**Never deletes a row.** A false match here (wrong branch of a chain, a
+same-named business in a different suburb, a Google Maps listing that's
+just temporarily/seasonally closed rather than permanently) would
+otherwise be a silent, irreversible loss of verified data with no human
+in the loop to catch it — a meaningfully bigger risk than this routine's
+other UPDATE exceptions, which only ever add a link or replace a
+description. Instead it sets `closed_at`, a nullable timestamp column;
+`scripts/fetch-d1-data.mjs` excludes any row with `closed_at IS NOT NULL`
+from what gets built into the live site, so a confirmed-closed business
+disappears everywhere (listings, search, sitemap) immediately on the next
+deploy, and its own `/business/<slug>/` page correctly 404s from then on
+— but the row itself, and everything you'd researched about it, is still
+sitting in D1 for a human to restore in one UPDATE if this job ever gets
+a match wrong.
+
+**Finding this run's batch:** read `status/polokwane/routine-state.json`'s
+`closed_check_last_slug` and `closed_check_batch_size` (normally `5`).
+`status/polokwane/db-snapshot.json`'s `businesses` array is alphabetical by name and
+never contains an already-closed business (they're excluded from the
+build the same way, so they never make it into the snapshot either) — find
+`closed_check_last_slug` in that array (empty string / not found means
+start from the beginning) and take the next `closed_check_batch_size`
+entries after it, wrapping to the start of the array if you run off the
+end. This "resume after last slug" approach (rather than a raw numeric
+index) is deliberate: the array's length and order shift every run as
+other jobs add new businesses or this job removes closed ones, so a plain
+index would drift out of sync with what it's actually pointing at.
+
+**For each business in the batch:**
+
+1. Search `"<name>" "<suburb>" Polokwane` (or `"<name>" <address>`) and
+   look for an explicit "Permanently closed" status — either fetch the
+   business's Google Maps listing directly if you can, or (per "A known
+   environment limitation" above) accept a WebSearch snippet only if it
+   *literally* shows the "Permanently closed" tag for a listing that
+   clearly matches this exact business at this exact address, not just a
+   same-named business somewhere else. Same chain-branch caution as
+   everywhere else in this file — a phone number or Maps pin for "the
+   other branch" doesn't count.
+2. **If confirmed permanently closed:**
+   ```sql
+   UPDATE businesses SET closed_at = datetime('now')
+   WHERE slug = 'example-slug-suburbslug' AND closed_at IS NULL;
+   ```
+   Guarded so it only ever happens once, same pattern as job 4.
+3. **If still open, or you can't confirm closure with confidence:** do
+   nothing to the row — no SQL, no field changes. It's fine to re-check it
+   again on some future lap of this rotation; a false "still open" costs
+   nothing, unlike a false "closed".
+
+**Advancing the cursor:** after this run's batch (whatever the mix of
+confirmed-closed and still-open outcomes), set `closed_check_last_slug` to
+the slug of the *last* business you checked this batch (even the ones that
+turned out still-open) so the next run picks up right after it. If the
+batch wrapped around the end of the array, the new value is simply the
+last slug you reached after wrapping.
+
+**Logging:** one log line per batch, whether or not anything closed:
+
+```json
+{"date": "2026-09-15T10:00:00Z", "action_taken": "closed_business_check", "checked": 5, "closed": 1, "short_summary": "Checked 5 businesses starting after 'zanna-motors-annadale' -- confirmed 'example-old-shop-ladanna' permanently closed on Google Maps, the other 4 still open. closed_check_last_slug now 'example-old-shop-ladanna'."}
+```
+
+**Committing:** bundle this job's SQL (if any business closed) and log
+line with whatever other commit this run already makes (a suburb
+checkpoint, job 3's sweep, etc.) rather than giving it a commit of its
+own — it's cheap enough per run that a dedicated push isn't warranted,
+unlike job 4's larger batches.
+
 ## Writing the SQL file
 
 Each checkpoint (see "Committing" below) gets its own new file:
@@ -597,13 +762,18 @@ SET shopping_center_id = (SELECT id FROM shopping_centers WHERE slug = 'example-
 WHERE slug = 'example-business-suburbslug';
 ```
 
-These are the only `UPDATE`s this routine ever writes — both only during a
-job 3 official-site sweep (or its new-mall discovery step), both touching
-only the `shopping_center_id` column, on the terms described in "Shopping
-centre official-site sweep" and "New-mall discovery sweep" above. Every
-other SQL statement this routine writes is an `INSERT` for a brand-new
-business or shopping centre (per "Your four jobs, every run" above) —
-nothing else about an existing row is ever touched.
+These are the only `UPDATE`s that touch `shopping_center_id` — both only
+during a job 3 official-site sweep (or its new-mall discovery step), on
+the terms described in "Shopping centre official-site sweep" and
+"New-mall discovery sweep" above. The routine writes two other kinds of
+`UPDATE`, each scoped to its own job and its own narrow set of columns:
+job 4's description/`description_enriched_at`/`hours`/`source_urls`
+rewrite (see "Description enrichment sweep") and job 5's `closed_at` flag
+(see "Closed-business check"). Every other SQL statement this routine
+writes is an `INSERT` for a brand-new business or shopping centre (per
+"Your five jobs, every run" above) — nothing else about an existing row is
+ever touched, and no `UPDATE` this routine writes ever spans more than
+one of these five narrow exceptions at a time.
 
 ## Logging your run
 
@@ -636,7 +806,7 @@ If no official website was found: `"official_site_found": false,
 short summary saying so (e.g. "no official website found, likely a
 miscategorised entry").
 
-**The new-mall discovery sweep** (once per full lap — see "New-mall
+**The new-mall discovery sweep** (its own weekly throttle — see "New-mall
 discovery sweep" above) gets its own log line too, when it runs:
 
 ```json
@@ -664,6 +834,10 @@ a simple running total the owner can watch shrink across runs. Compute it
 by counting `businesses` entries in `status/polokwane/db-snapshot.json` with a null
 `description_enriched_at`.
 
+**Job 5 (closed-business check)** gets its own log line whenever it runs
+(which isn't every run — see "Closed-business check" above for the
+priority rule) — see that section for the exact format and an example.
+
 ## Committing — every 10 records, never one big commit at the end
 
 **Hard rule: never let more than 10 records go uncommitted-and-unpushed.**
@@ -680,16 +854,25 @@ boundaries even if you haven't hit 10 yet:
 - After finishing both jobs for **one suburb** (jobs 1-2).
 - After finishing **each shopping centre's** tenant sweep (job 2's
   opportunistic version).
-- After finishing **job 3's one centre** for this run — its own commit,
-  separate from any suburb commits this run also produced, with the
-  `shopping_center_index` advance included.
+- After finishing **job 3's sweep** for this run, on the runs where one
+  actually happens (a pending-queue centre, or the recheck countdown
+  hitting `0`) — its own commit, separate from any suburb commits this run
+  also produced, with whichever of `shopping_center_slugs_pending` /
+  `shopping_center_index` / `shopping_center_recheck_countdown` changed
+  included. On a quiet run where job 3 only decremented the countdown,
+  that single-number change just rides along in whatever other commit
+  this run already makes — it doesn't need a commit of its own.
 - After finishing the **new-mall discovery sweep**, on the runs where it
-  fires (once per full lap) — its own commit, separate from the regular
-  job-3 commit that triggered it.
+  fires (its own weekly throttle) — its own commit, separate from any
+  job-3 commit this run also produced, with the reset
+  `new_mall_discovery_countdown` included.
 - After finishing **job 4's whole batch** for this run (up to the
   ~20-business target) — its own commit(s), separate from job 3 and any
   suburb commits this run also produced. Since 20 exceeds the 10-record
   cap, this normally means two job-4 commits per run rather than one.
+- **Job 5 doesn't get its own commit** — bundle its small batch (if it ran
+  at all this run) into whatever other commit this run already makes, per
+  "Closed-business check" above.
 
 So a checkpoint is whichever comes first: 10 records, or a natural
 boundary above. A quiet suburb with only 2 records still gets its own
@@ -707,10 +890,12 @@ Each commit: write a new `db/routine-updates/polokwane/<UTC timestamp, e.g.
 (one file per commit — don't reuse or append to a file from an earlier
 commit this run), append the corresponding `status/polokwane/agent-log.jsonl`
 line(s) for what that checkpoint covered, and update `suburb_index` in
-`status/polokwane/routine-state.json` if that checkpoint completed a suburb, or
-`shopping_center_index` (and `shopping_center_slugs`, if you added any new
-centres) if that checkpoint completed a job-3 sweep or the new-mall
-discovery step. Stage exactly those files — the new SQL file, `status/polokwane/agent-log.jsonl`,
+`status/polokwane/routine-state.json` if that checkpoint completed a suburb;
+`shopping_center_slugs_pending` and/or `shopping_center_index` /
+`shopping_center_recheck_countdown` if it completed (or merely
+decremented toward) a job-3 sweep; `shopping_center_slugs` and
+`new_mall_discovery_countdown` if it completed the new-mall discovery
+step; or `closed_check_last_slug` if job 5 ran this checkpoint. Stage exactly those files — the new SQL file, `status/polokwane/agent-log.jsonl`,
 `status/polokwane/routine-state.json` — with a one-line commit message describing
 that checkpoint, and push to `main`. Do not touch any other files.
 
