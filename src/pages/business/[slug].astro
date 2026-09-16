@@ -21,6 +21,11 @@ const isOsmSourced = sourceUrls.some((u) => u.includes('openstreetmap.org'));
 const SOURCE_LABELS: Record<string, string> = {
   'owner-submitted': 'Submitted by the business owner.',
   'scraped:google-places-no-website': 'Compiled from a publicly available Google Maps listing.',
+  // Distinct from 'owner-submitted' — that's this business's own owner
+  // using the self-listing form; this is the site owner relaying a phone
+  // number/address they had directly (e.g. from a Facebook page not
+  // readable by automated fetch), not a form submission.
+  'owner-provided-contact-details': 'Contact details confirmed directly with the site owner.',
 };
 // The actual URL (often the business's own website) stays internal for
 // provenance/compliance, but isn't given away as a free clickable link —
