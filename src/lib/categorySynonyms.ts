@@ -18,7 +18,10 @@ export const CATEGORY_SYNONYMS: Record<string, string[]> = {
     'backpackers', 'boutique hotel', 'overnight accommodation', 'places to stay', 'accommodation near me',
   ],
   accountants: ['accounting', 'accounting firm', 'auditor'],
-  'agricultural-farming-supplies': ['farm supplies', 'farming equipment', 'agri supplies', 'feed store', 'animal feed'],
+  'agricultural-farming-supplies': [
+    'farm supplies', 'farming equipment', 'agri supplies', 'feed store', 'animal feed', 'farmers co-op',
+    'irrigation supplies', 'livestock supplies',
+  ],
   'appliance-repairs': [
     'fridge repair', 'washing machine repair', 'stove repair', 'appliance technician', 'oven repair',
     'dishwasher repair', 'tumble dryer repair', 'microwave repair',
@@ -33,10 +36,13 @@ export const CATEGORY_SYNONYMS: Record<string, string[]> = {
     'confectionery', 'fresh bread',
   ],
   'banks-atms': ['bank', 'atm', 'cash machine', 'bank branch'],
-  barbershops: ['barber', 'mens haircut', "men's hair salon", 'haircuts', 'fade'],
-  'beauty-hair-salons': ['hair salon', 'hairdresser', 'nail salon', 'beauty parlour', 'hair stylist', 'nails'],
+  barbershops: ['barber', 'barbers', 'barbershop', 'mens haircut', "men's hair salon", 'haircuts', 'fade', 'kids haircuts'],
+  'beauty-hair-salons': [
+    'hair salon', 'hair salons', 'hairdresser', 'nail salon', 'beauty parlour', 'hair stylist', 'nails', 'nail bar',
+    'braiding salon', 'lash technician',
+  ],
   'bookkeeping-services': ['bookkeeper', 'accounts', 'payroll services', 'bookkeeping'],
-  'books-stationery': ['bookstore', 'stationery shop', 'office supplies', 'school stationery'],
+  'books-stationery': ['bookstore', 'book shop', 'stationery shop', 'stationers', 'office supplies', 'school stationery', 'printer supplies'],
   'borehole-water-services': [
     'borehole drilling', 'water tank installation', 'well drilling', 'jojo tank', 'borehole pump',
     'borehole services', 'water storage tanks', 'borehole testing',
@@ -45,7 +51,10 @@ export const CATEGORY_SYNONYMS: Record<string, string[]> = {
     'builder', 'builders', 'building contractor', 'construction company', 'renovations', 'home builder',
     'handyman', 'handyman services', 'home renovations', 'general contractor',
   ],
-  'building-materials-timber-merchants': ['hardware wholesaler', 'timber yard', 'building supplies', 'cement supplier', 'sand and stone'],
+  'building-materials-timber-merchants': [
+    'hardware wholesaler', 'timber yard', 'timber merchant', 'building supplies', 'cement supplier',
+    'sand and stone', 'brick supplier', 'roof trusses',
+  ],
   'business-consulting': ['management consultant', 'business advisor', 'strategy consultant'],
   butcheries: [
     'butchery', 'butcheries', 'butcher', 'butchers', 'meat shop', 'meat market', 'biltong', 'biltong shop',
@@ -65,12 +74,15 @@ export const CATEGORY_SYNONYMS: Record<string, string[]> = {
     'cleaners', 'domestic cleaning', 'office cleaning', 'house cleaning', 'cleaning company', 'cleaning services',
     'carpet cleaning', 'deep cleaning', 'move-in cleaning',
   ],
-  'clinics-healthcare': ['clinic', 'medical centre', 'health centre', 'day clinic'],
+  'clinics-healthcare': ['clinic', 'clinics', 'medical centre', 'health centre', 'day clinic', 'healthcare centre', 'walk-in clinic'],
   'commercial-property-office-space': ['office space to let', 'commercial property', 'office rental', 'warehouse to rent', 'shop to let'],
   'computer-it-services': ['computer repair', 'it support', 'laptop repair', 'tech support', 'network support'],
   'convenience-stores': ['spaza shop', 'spaza', 'corner shop', 'tuck shop', 'cafe', 'café', 'convenience shop'],
-  dentists: ['dentist', 'dental practice', 'teeth', 'dental clinic'],
-  'doctors-gps': ['doctor', 'gp', 'general practitioner', 'medical doctor', 'family doctor'],
+  dentists: ['dentist', 'dentists', 'dental practice', 'teeth', 'dental clinic', 'tooth extraction', 'braces', 'dental surgery'],
+  'doctors-gps': [
+    'doctor', 'doctors', 'gp', 'gps', 'general practitioner', 'medical doctor', 'family doctor', "doctor's rooms",
+    'medical practice',
+  ],
   'driving-schools': [
     'driving lessons', 'driving school', "learner's licence", 'learners licence', 'k53', 'drivers licence',
     'code 8 licence', 'code 10 licence',
@@ -79,11 +91,17 @@ export const CATEGORY_SYNONYMS: Record<string, string[]> = {
     'electrician', 'electricians', 'electrical contractor', 'wiring', 'electrical repairs', 'coc certificate',
     'certificate of compliance', 'electrical fault finding',
   ],
-  'electronics-appliances': ['electronics shop', 'appliance store', 'tv shop', 'electronics store'],
+  'electronics-appliances': [
+    'electronics shop', 'appliance store', 'appliance shop', 'tv shop', 'electronics store', 'fridge shop',
+    'electronics repairs',
+  ],
   'engineering-surveying': ['engineer', 'land surveyor', 'civil engineer', 'structural engineer'],
   'estate-agents': ['real estate agent', 'property agent', 'realtor', 'houses for sale', 'property for sale'],
   'events-function-venues': ['function venue', 'wedding venue', 'conference venue', 'event hall', 'venue hire'],
-  'fashion-clothing': ['clothing store', 'fashion shop', 'boutique', 'clothes shop'],
+  'fashion-clothing': [
+    'clothing store', 'clothing shop', 'fashion shop', 'fashion store', 'boutique', 'clothes shop', 'menswear',
+    'womenswear', 'clothing boutique',
+  ],
   'fencing-security-installations': [
     'fence installer', 'security gates', 'electric fencing', 'palisade fencing', 'razor wire',
     'fencing contractor', 'automated gates', 'burglar bars',
@@ -93,17 +111,19 @@ export const CATEGORY_SYNONYMS: Record<string, string[]> = {
   florists: ['florist', 'flower shop', 'flower delivery', 'flowers'],
   'fuel-stations': ['petrol station', 'petrol stations', 'garage', 'filling station', 'gas station', 'diesel'],
   'funeral-services': ['funeral parlour', 'undertaker', 'funeral home', 'mortuary'],
-  'furniture-homeware': ['furniture store', 'homeware shop', 'home decor', 'furniture shop'],
-  'general-retail': ['general dealer', 'variety store'],
+  'furniture-homeware': [
+    'furniture store', 'furniture shops', 'homeware shop', 'homeware store', 'home decor', 'furniture shop', 'décor shop',
+  ],
+  'general-retail': ['general dealer', 'general store', 'variety store', 'discount store'],
   'government-municipal-services': ['municipality', 'home affairs', 'licensing department', 'government office', 'municipal offices'],
-  'hardware-stores': ['hardware shop', 'diy store', 'tool shop'],
+  'hardware-stores': ['hardware shop', 'hardware store', 'diy store', 'tool shop', 'tools shop', 'builders warehouse', 'paint shop'],
   hotels: ['hotel', 'guest lodge'],
   'industrial-suppliers-manufacturing': [
     'factory', 'manufacturer', 'manufacturers', 'industrial supplier', 'wholesaler', 'industrial equipment',
     'factory supplies',
   ],
   insurance: ['insurance broker', 'car insurance', 'life insurance', 'short-term insurance'],
-  jewellers: ['jewellery shop', 'jeweller', 'jewelry store', 'jewellery repairs'],
+  jewellers: ['jewellery shop', 'jeweller', 'jewellers', 'jewelry store', 'jewellery repairs', 'engagement rings', 'watch repairs'],
   'liquor-stores': [
     'bottle store', 'bottle stores', 'off-licence', 'liquor shop', 'bottle shop', 'liquor store', 'wine shop',
     'alcohol shop',
@@ -117,7 +137,10 @@ export const CATEGORY_SYNONYMS: Record<string, string[]> = {
     'transport company', 'furniture removals',
   ],
   'marketing-advertising': ['marketing agency', 'advertising agency', 'digital marketing', 'social media marketing'],
-  'mobile-phones': ['cell phone shop', 'phone repairs', 'smartphone store', 'cellphone repairs'],
+  'mobile-phones': [
+    'cell phone shop', 'cellphone shop', 'phone repairs', 'smartphone store', 'cellphone repairs',
+    'phone accessories', 'screen replacement',
+  ],
   'motor-spares': [
     'car parts', 'auto spares', 'motor spares', 'spare parts shop', 'second hand parts', 'scrap yard', 'scrapyard',
     'used car parts',
@@ -127,7 +150,7 @@ export const CATEGORY_SYNONYMS: Record<string, string[]> = {
     'plant nursery', 'nurseries', 'garden centre', 'landscaping supplies', 'plants', 'garden services',
     'landscaping', 'indigenous plants',
   ],
-  opticians: ['optometrist', 'eye test', 'spectacles', 'glasses shop', 'eye care'],
+  opticians: ['optometrist', 'opticians', 'eye test', 'spectacles', 'glasses shop', 'eye care', 'contact lenses', 'sunglasses shop'],
   'painters-decorators': [
     'painter', 'painters', 'house painter', 'decorator', 'painting contractor', 'interior painting',
     'exterior painting', 'wallpaper installer',
@@ -141,10 +164,10 @@ export const CATEGORY_SYNONYMS: Record<string, string[]> = {
     'exterminator', 'fumigation', 'pest removal', 'termite treatment', 'pest control', 'cockroach control',
     'rodent control', 'bed bug treatment',
   ],
-  'pet-stores': ['pet shop', 'pet supplies', 'pet food'],
-  pharmacies: ['pharmacy', 'chemist', 'drugstore'],
+  'pet-stores': ['pet shop', 'pet shops', 'pet supplies', 'pet food', 'pet grooming', 'aquarium supplies'],
+  pharmacies: ['pharmacy', 'pharmacies', 'chemist', 'chemists', 'drugstore', 'dispensary'],
   photographers: ['photographer', 'photo studio', 'wedding photographer', 'portrait photography'],
-  physiotherapists: ['physio', 'physiotherapy', 'sports injury'],
+  physiotherapists: ['physio', 'physiotherapists', 'physiotherapy', 'sports injury', 'rehabilitation therapy', 'back pain treatment'],
   plumbers: [
     'plumber', 'plumbers', 'plumbing services', 'burst pipe', 'geyser repair', 'blocked drain',
     'geyser installation', 'leak detection',
@@ -165,13 +188,13 @@ export const CATEGORY_SYNONYMS: Record<string, string[]> = {
   ],
   'schools-education': ['school', 'tutoring', 'education centre', 'preschool', 'crèche', 'creche'],
   'security-services': ['security company', 'armed response', 'guarding services', 'cctv installation'],
-  'shoe-stores': ['shoe shop', 'footwear store', 'shoes'],
+  'shoe-stores': ['shoe shop', 'shoe store', 'footwear store', 'footwear shop', 'shoes', 'sneakers'],
   'software-development': ['app developer', 'web developer', 'software company', 'app development'],
   'solar-renewable-energy': [
     'solar installer', 'solar installers', 'solar panels', 'inverter installation', 'load shedding solutions',
     'inverter', 'backup power', 'generator installation', 'battery backup',
   ],
-  'spas-wellness': ['spa', 'massage', 'wellness centre', 'day spa'],
+  'spas-wellness': ['spa', 'spas', 'massage', 'massage therapist', 'wellness centre', 'day spa', 'facial treatments'],
   'supermarkets-groceries': [
     'supermarket', 'supermarkets', 'grocery store', 'groceries', 'grocery shop', 'food market', 'superette',
   ],
@@ -180,13 +203,13 @@ export const CATEGORY_SYNONYMS: Record<string, string[]> = {
     'tow truck', 'tow trucks', 'roadside assistance', 'vehicle recovery', 'car towing', 'breakdown recovery',
     'jump start service',
   ],
-  'toy-stores': ['toy shop', 'toys'],
-  'traditional-healers': ['sangoma', 'inyanga', 'traditional medicine'],
+  'toy-stores': ['toy shop', 'toy store', 'toys', 'toys and games', 'kids toys'],
+  'traditional-healers': ['sangoma', 'inyanga', 'traditional medicine', 'diviner', 'herbalist'],
   'travel-agents': ['travel agency', 'flight bookings', 'holiday packages'],
   'tyre-fitment-centres': [
     'tyre shop', 'tyre shops', 'wheel alignment', 'tyre fitment', 'puncture repair', 'wheel balancing', 'new tyres',
   ],
-  'vets-animal-care': ['vet', 'veterinarian', 'animal hospital', 'animal clinic'],
+  'vets-animal-care': ['vet', 'vets', 'veterinarian', 'veterinary clinic', 'animal hospital', 'animal clinic', 'pet vaccinations'],
   'wedding-services': ['wedding planner', 'bridal services', 'wedding coordinator'],
 };
 
