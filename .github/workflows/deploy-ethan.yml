@@ -1,0 +1,73 @@
+name: Deploy Ethan branch preview
+
+# Pushing to `Ethan` rebuilds all three sites as Cloudflare Pages *preview*
+# deployments (wrangler's --branch=ethan gives each its own
+# ethan.<project>.pages.dev URL) — same pattern as deploy-dev.yml, just
+# scoped to this one feature branch instead of `dev`. No landing page here
+# (see deploy-dev.yml's deploy-landing job) — just the three site URLs.
+on:
+  push:
+    branches: [Ethan]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-ethan
+  cancel-in-progress: true
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - site: polokwane
+            pages_project: polokwanehub
+          - site: pretoria
+            pages_project: pretoriahub
+          - site: capetown
+            pages_project: thecapetownhub
+    env:
+      SITE: ${{ matrix.site }}
+      # Same shared credential pair as deploy.yml — see its comment.
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      # Same as deploy-dev.yml — a preview branch, not real production, so
+      # test listings are fine to show here. See INCLUDE_TEST_DATA's own
+      # comment in scripts/fetch-d1-data.mjs.
+      INCLUDE_TEST_DATA: 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Read-only: pulls this site's current *published* data for preview.
+      # No migrations, no routine-SQL apply, no snapshot commits here — this
+      # branch is for reviewing code/content changes, not for mutating D1.
+      - name: Fetch D1 data
+        run: npm run fetch-data
+
+      - name: Select site assets
+        run: npm run select-assets
+
+      - name: Build with Astro
+        run: npx astro build
+
+      # See the matching comment in deploy.yml — `wrangler pages deploy` only
+      # reads a literal ./wrangler.jsonc, no --config flag, so the per-site
+      # config has to be copied into place under that name right before this.
+      - name: Deploy preview to Cloudflare Pages
+        run: |
+          cp wrangler.${{ matrix.site }}.jsonc wrangler.jsonc
+          npx wrangler pages deploy dist --project-name=${{ matrix.pages_project }} --branch=ethan --commit-dirty=true
