@@ -80,7 +80,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       description: row.description,
       ownerUserId: row.submitted_by_user_id,
     });
-    await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+    await triggerRebuild(context.env);
     await logActivity(db, 'submission_approved', row.name, 'No email on file — published immediately.');
 
     return html(site, `<h1>Published!</h1><p>No contact email was given on this submission, so it published immediately: <a href="https://${site.domain}/business/${slug}/">view listing</a></p>`);

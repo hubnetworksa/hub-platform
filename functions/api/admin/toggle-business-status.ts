@@ -37,7 +37,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .run();
   await logActivity(db, makePublic ? 'business_published' : 'business_hidden', business?.name ?? null, `By admin (${user.email}).`);
 
-  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+  await triggerRebuild(context.env);
 
   return json({ ok: true });
 };

@@ -32,7 +32,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   await db.prepare('DELETE FROM business_categories WHERE business_id = ?').bind(businessId).run();
   await db.prepare('DELETE FROM businesses WHERE id = ?').bind(businessId).run();
 
-  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+  await triggerRebuild(context.env);
 
   return json({ ok: true });
 };

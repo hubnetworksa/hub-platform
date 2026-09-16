@@ -85,7 +85,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     description: row.description,
     ownerUserId: row.submitted_by_user_id,
   });
-  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+  await triggerRebuild(context.env);
   const listingUrl = `https://${site.domain}/business/${slug}/`;
   await logActivity(db, 'owner_confirmed', row.name, `Published: ${listingUrl}`);
   await notifyAdmin(context.env, site, {

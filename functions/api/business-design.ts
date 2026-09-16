@@ -177,7 +177,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       .prepare(`UPDATE businesses SET template_id = ?, custom_blocks = ?, page_colors = ?, updated_at = datetime('now') WHERE id = ?`)
       .bind(templateId, blocks, pageColors, businessId)
       .run();
-    await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+    await triggerRebuild(context.env);
     await logActivity(db, 'design_published', row.name, 'Owner published page design changes.');
     return json({ ok: true });
   }
