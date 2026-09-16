@@ -4,15 +4,31 @@ import PageBanner from '../../components/PageBanner.astro';
 import SearchBox from '../../components/SearchBox.astro';
 import { suburbs, suburbBySlug, businessesInSuburb, type Suburb } from '../../lib/data';
 import { AREA_GROUPS } from '../../site-content';
+import { collectionPageJsonLd } from '../../lib/seo';
 import site from '../../site';
 
 const byName = (a: Suburb, b: Suburb) => a.name.localeCompare(b.name);
+
+const jsonLd = collectionPageJsonLd({
+  name: 'Suburbs',
+  description: `Every area ${site.siteName} covers, with the number of businesses listed so far.`,
+  url: `https://${site.domain}/suburb/`,
+  items: AREA_GROUPS.flatMap((area) =>
+    area.suburbSlugs
+      .map((slug) => suburbBySlug(slug))
+      .filter((s): s is Suburb => Boolean(s))
+      .sort(byName)
+      .map((s) => ({ name: s.name, url: `https://${site.domain}/suburb/${s.slug}/` }))
+  ),
+});
 ---
 
 <BaseLayout
   title="Suburbs"
   description={`Browse ${site.cityLabel} area by area, suburb by suburb — local businesses across ${suburbs.length} areas.`}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
   <PageBanner title="Suburbs" description={`Every area ${site.siteName} covers, with the number of businesses listed so far.`}>
     <SearchBox slot="search" />
   </PageBanner>

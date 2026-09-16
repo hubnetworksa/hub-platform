@@ -5,6 +5,7 @@ import PageBanner from '../../components/PageBanner.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { categories, businessesInCategory, type Business } from '../../lib/data';
 import { CATEGORY_GROUPS } from '../../lib/categoryGroups';
+import { collectionPageJsonLd } from '../../lib/seo';
 import site from '../../site';
 
 export function getStaticPaths() {
@@ -24,12 +25,21 @@ for (const slug of group.categorySlugs) {
 }
 byCategory.sort((a, b) => a.name.localeCompare(b.name));
 const total = byCategory.reduce((sum, c) => sum + c.businesses.length, 0);
+
+const jsonLd = collectionPageJsonLd({
+  name: group.name,
+  description: `${total} ${group.name} businesses across ${site.cityLabel}.`,
+  url: `https://${site.domain}/section/${group.slug}/`,
+  items: byCategory.flatMap((c) => c.businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` }))),
+});
 ---
 
 <BaseLayout
   title={group.name}
   description={`${total} ${group.name} businesses across ${site.cityLabel}.`}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
   <PageBanner title={group.name} description={`${total} businesses listed in this section.`} iconPath={group.iconPath}>
     <Breadcrumbs slot="breadcrumbs" items={[{ label: 'Categories', href: '/category/' }, { label: group.name }]} />
   </PageBanner>

@@ -32,6 +32,11 @@ export interface Site {
   slug: string;
   siteName: string;
   cityLabel: string;
+  /** Full province name (e.g. "Limpopo") — used for structured-data
+   *  addressRegion so Pretoria/Cape Town business pages don't inherit
+   *  Polokwane's province. Never abbreviate; schema.org addressRegion
+   *  conventionally wants the full name, not a postal code. */
+  province: string;
   domain: string;
   /** Whether `domain`'s DNS/nameservers actually point at this Cloudflare
    *  Pages project yet — gates the .pages.dev -> domain redirect in

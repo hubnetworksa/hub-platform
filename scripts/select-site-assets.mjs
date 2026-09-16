@@ -8,6 +8,7 @@
 import { readFile, writeFile, copyFile, readdir, mkdir, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { NOINDEX_PATH_PREFIXES } from './noindex-paths.mjs';
 
 const SITE = process.env.SITE;
 if (!SITE) {
@@ -41,9 +42,10 @@ await writeFile(
     : ''
 );
 
+const disallowLines = NOINDEX_PATH_PREFIXES.map((p) => `Disallow: ${p}\n`).join('');
 await writeFile(
   path.join(publicDir, 'robots.txt'),
-  `User-agent: *\nAllow: /\n\nSitemap: https://${site.domain}/sitemap-index.xml\n`
+  `User-agent: *\nAllow: /\n${disallowLines}\nSitemap: https://${site.domain}/sitemap-index.xml\n`
 );
 
 process.stderr.write(`[${SITE}] Copied ${files.length} asset(s) into public/, generated ads.txt + robots.txt.\n`);

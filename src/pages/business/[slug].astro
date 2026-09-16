@@ -5,6 +5,7 @@ import ListReturn from '../../components/ListReturn.astro';
 import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
 import { synonymsFor, locationSynonymsFor } from '../../lib/categorySynonyms';
+import { schemaTypeFor } from '../../lib/categorySchemaTypes';
 import Icon from '../../components/Icon.astro';
 import site from '../../site';
 
@@ -59,12 +60,19 @@ const keywords = [
   ...new Set(cats.flatMap((c) => [...synonymsFor(c.slug), ...locationSynonymsFor(c.name, site.cityLabel)])),
 ];
 
+// cats[0] is already treated as "the" category elsewhere on this page
+// (the breadcrumb) and in search-index.json.ts — same convention here:
+// note categoriesFor() doesn't actually sort by the business_categories
+// table's own is_primary flag, it's just insertion order, but in
+// practice the routine always writes the primary category first.
+const schemaType = cats[0] ? schemaTypeFor(cats[0].slug) : 'LocalBusiness';
+
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
+  '@type': schemaType,
   name: business.name,
   description: business.description,
-  ...(business.address ? { address: { '@type': 'PostalAddress', streetAddress: business.address, addressLocality: suburb?.name, addressRegion: 'Limpopo', addressCountry: 'ZA' } } : {}),
+  ...(business.address ? { address: { '@type': 'PostalAddress', streetAddress: business.address, addressLocality: suburb?.name, addressRegion: site.province, addressCountry: 'ZA' } } : {}),
   ...(business.phone ? { telephone: business.phone } : {}),
   ...(business.lat && business.lng ? { geo: { '@type': 'GeoCoordinates', latitude: business.lat, longitude: business.lng } } : {}),
   ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
