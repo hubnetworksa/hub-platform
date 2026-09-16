@@ -45,9 +45,6 @@ const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0
   </PageBanner>
 
   <section class="container" style="padding-top: 1.25rem; padding-bottom: 3rem;">
-    {synonyms.length > 0 && (
-      <p class="also-searched">Also searched as: {synonyms.join(', ')}.</p>
-    )}
     <a href={`/suburb/${suburb.slug}/`} class="btn btn-outline btn-sm">See all businesses in {suburb.name} →</a>
     <div class="business-grid">
       {businesses.map((business) => <BusinessCard business={business} showSuburb={false} />)}
@@ -56,11 +53,6 @@ const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0
 </BaseLayout>
 
 <style>
-  .also-searched {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    margin: 0 0 0.75rem;
-  }
   .business-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
