@@ -5,7 +5,7 @@ import PageBanner from '../../../components/PageBanner.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import { categories, businessesInCategory, suburbFor, type Business } from '../../../lib/data';
 import { groupForCategory } from '../../../lib/categoryGroups';
-import { synonymsFor } from '../../../lib/categorySynonyms';
+import { synonymsFor, locationSynonymsFor } from '../../../lib/categorySynonyms';
 import site from '../../../site';
 
 export function getStaticPaths() {
@@ -25,7 +25,7 @@ for (const business of businesses) {
 const suburbGroups = [...bySuburb.entries()].sort((a, b) => b[1].businesses.length - a[1].businesses.length);
 const group = groupForCategory(category.slug);
 const isEmpty = businesses.length === 0;
-const synonyms = synonymsFor(category.slug);
+const synonyms = [...synonymsFor(category.slug), ...locationSynonymsFor(category.name, site.cityLabel)];
 const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0, 4).join(', ')}.` : '';
 ---
 
