@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { NOINDEX_PATH_PREFIXES } from './scripts/noindex-paths.mjs';
 
 const slug = process.env.SITE;
 if (!slug) {
@@ -44,6 +45,7 @@ export default defineConfig({
     sitemap({
       filter: (page) => {
         const path = new URL(page).pathname;
+        if (NOINDEX_PATH_PREFIXES.some((prefix) => path.startsWith(prefix))) return false;
         const match = path.match(/^\/category\/([^/]+)\/?$/);
         if (match && EMPTY_CATEGORIES.has(match[1])) return false;
         return true;

@@ -6,6 +6,7 @@ import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import { categories, businessesInCategory, suburbFor, type Business } from '../../../lib/data';
 import { groupForCategory } from '../../../lib/categoryGroups';
 import { synonymsFor, locationSynonymsFor } from '../../../lib/categorySynonyms';
+import { collectionPageJsonLd } from '../../../lib/seo';
 import site from '../../../site';
 
 export function getStaticPaths() {
@@ -27,6 +28,15 @@ const group = groupForCategory(category.slug);
 const isEmpty = businesses.length === 0;
 const synonyms = [...synonymsFor(category.slug), ...locationSynonymsFor(category.name, site.cityLabel)];
 const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0, 4).join(', ')}.` : '';
+
+const jsonLd = isEmpty
+  ? null
+  : collectionPageJsonLd({
+      name: category.name,
+      description: `${businesses.length} ${category.name} listed across ${site.cityLabel}, by suburb.`,
+      url: `https://${site.domain}/category/${category.slug}/`,
+      items: businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` })),
+    });
 ---
 
 <BaseLayout
@@ -34,6 +44,8 @@ const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0
   description={`${businesses.length} ${category.name} listed across ${site.cityLabel}, by suburb.${synonymLine}`}
   noindex={isEmpty}
 >
+  {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
   <PageBanner title={category.name} description={`${businesses.length} listed, by suburb.`} iconPath={group?.iconPath}>
     <Breadcrumbs
       slot="breadcrumbs"

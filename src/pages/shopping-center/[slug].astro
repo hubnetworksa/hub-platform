@@ -4,6 +4,7 @@ import BusinessCard from '../../components/BusinessCard.astro';
 import PageBanner from '../../components/PageBanner.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { shoppingCenters, suburbs, businessesInShoppingCenter } from '../../lib/data';
+import { collectionPageJsonLd } from '../../lib/seo';
 import site from '../../site';
 
 export function getStaticPaths() {
@@ -15,12 +16,35 @@ export function getStaticPaths() {
 const { center } = Astro.props;
 const businesses = businessesInShoppingCenter(center.id);
 const suburb = center.suburb_id != null ? suburbs.find((s) => s.id === center.suburb_id) : undefined;
+
+const centerUrl = `https://${site.domain}/shopping-center/${center.slug}/`;
+
+const centerJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ShoppingCenter',
+  name: center.name,
+  url: centerUrl,
+  ...(center.description ? { description: center.description } : {}),
+  ...(center.address
+    ? { address: { '@type': 'PostalAddress', streetAddress: center.address, addressLocality: suburb?.name ?? site.cityLabel, addressRegion: site.province, addressCountry: 'ZA' } }
+    : {}),
+  ...(center.lat && center.lng ? { geo: { '@type': 'GeoCoordinates', latitude: center.lat, longitude: center.lng } } : {}),
+};
+
+const tenantsJsonLd = collectionPageJsonLd({
+  name: `Businesses at ${center.name}`,
+  url: centerUrl,
+  items: businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` })),
+});
 ---
 
 <BaseLayout
   title={center.name}
   description={center.description ?? `${businesses.length} businesses at ${center.name}, ${site.cityLabel}.`}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(centerJsonLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(tenantsJsonLd)} />
+
   <PageBanner title={center.name} description={`${businesses.length} businesses listed here.`}>
     <Breadcrumbs
       slot="breadcrumbs"

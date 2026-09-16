@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageBanner from '../../components/PageBanner.astro';
 import { shoppingCenters, suburbs, businessesInShoppingCenter, type ShoppingCenter } from '../../lib/data';
+import { collectionPageJsonLd } from '../../lib/seo';
 import site from '../../site';
 
 // Grouped by suburb rather than sorted alphabetically/by count: people
@@ -26,12 +27,23 @@ const suburbGroups = [...bySuburb.values()]
   .sort((a, b) => a.name.localeCompare(b.name));
 
 const totalCenters = suburbGroups.reduce((sum, g) => sum + g.centers.length, 0);
+
+const jsonLd = collectionPageJsonLd({
+  name: 'Shopping Centres & Malls',
+  description: `${totalCenters} shopping centres and malls across ${site.cityLabel}, by suburb.`,
+  url: `https://${site.domain}/shopping-center/`,
+  items: suburbGroups.flatMap((group) =>
+    group.centers.map(({ center }) => ({ name: center.name, url: `https://${site.domain}/shopping-center/${center.slug}/` }))
+  ),
+});
 ---
 
 <BaseLayout
   title="Shopping Centres & Malls"
   description={`Browse ${site.cityLabel} shopping centres and malls by suburb — find every mall in a specific area, or a business by the specific centre it's located at.`}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
   <PageBanner
     title="Shopping Centres & Malls"
     description={`${totalCenters} shopping centres and malls across ${site.cityLabel}, by suburb.`}
