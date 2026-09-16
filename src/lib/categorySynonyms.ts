@@ -12,7 +12,11 @@
 // from real query data yet.
 
 export const CATEGORY_SYNONYMS: Record<string, string[]> = {
-  accommodation: ['guesthouse', 'guest house', 'bnb', 'b&b', 'self-catering', 'lodge'],
+  accommodation: [
+    'guesthouse', 'guest house', 'guesthouses', 'guest houses', 'bnb', 'b&b', "b&b's",
+    'bed and breakfast', 'self-catering', 'self-catering accommodation', 'lodge', 'lodges',
+    'backpackers', 'boutique hotel', 'overnight accommodation', 'places to stay', 'accommodation near me',
+  ],
   accountants: ['accounting', 'accounting firm', 'auditor'],
   'agricultural-farming-supplies': ['farm supplies', 'farming equipment', 'agri supplies', 'feed store', 'animal feed'],
   'appliance-repairs': ['fridge repair', 'washing machine repair', 'stove repair', 'appliance technician', 'oven repair'],
@@ -103,4 +107,15 @@ export const CATEGORY_SYNONYMS: Record<string, string[]> = {
 
 export function synonymsFor(categorySlug: string): string[] {
   return CATEGORY_SYNONYMS[categorySlug] ?? [];
+}
+
+// City-qualified search terms (e.g. "polokwane accommodation", "plumbers
+// in pretoria") — kept separate from CATEGORY_SYNONYMS above because that
+// list is shared across all three sites and a hardcoded city name would
+// be wrong on the other two. Takes the category's own display name and
+// the live site's cityLabel, so it's correct wherever it's called from.
+export function locationSynonymsFor(categoryName: string, cityLabel: string): string[] {
+  const cat = categoryName.toLowerCase();
+  const city = cityLabel.toLowerCase();
+  return [`${city} ${cat}`, `${cat} in ${city}`];
 }
