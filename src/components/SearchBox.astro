@@ -32,7 +32,7 @@ const exampleSuburb = [...suburbs].sort((a, b) => businessesInSuburb(b.id).lengt
 </div>
 
 <script>
-  type Row = { n: string; s: string; sb: string; c: string; g: string };
+  type Row = { n: string; s: string; sb: string; c: string; g: string; k: string };
 
   const root = document.getElementById('hub-search')!;
   const input = root.querySelector('input') as HTMLInputElement;
@@ -50,19 +50,26 @@ const exampleSuburb = [...suburbs].sort((a, b) => businessesInSuburb(b.id).lengt
 
   // Every word in the query must match somewhere; matches in the name
   // count for more than matches in category/suburb, and rows matching
-  // more words rank above rows matching fewer.
+  // more words rank above rows matching fewer. `k` (keywords) holds
+  // informal/trade-jargon synonyms for the row's category — e.g. someone
+  // typing "junk removal" matches a Rubbish & Rubble Removal business even
+  // though that phrase appears in neither its name nor its formal category
+  // label. Weighted below a literal category match so an exact category
+  // name still wins ties.
   function search(data: Row[], words: string[]): Row[] {
     const scored: { row: Row; score: number }[] = [];
     for (const row of data) {
       const name = row.n.toLowerCase();
       const cat = row.c.toLowerCase();
       const sub = row.sb.toLowerCase();
+      const keywords = row.k.toLowerCase();
       let score = 0;
       let allMatched = true;
       for (const word of words) {
         if (name.includes(word)) score += 3;
         else if (cat.includes(word)) score += 2;
         else if (sub.includes(word)) score += 2;
+        else if (keywords.includes(word)) score += 1;
         else allMatched = false;
       }
       if (allMatched) scored.push({ row, score });
