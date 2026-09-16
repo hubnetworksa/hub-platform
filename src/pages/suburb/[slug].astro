@@ -6,6 +6,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { suburbs, businessesInSuburb, categoriesFor, type Business } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
 import { groupForSuburb, regionLabel } from '../../site-content';
+import { synonymsFor, suburbSynonymsFor } from '../../lib/categorySynonyms';
 import Icon from '../../components/Icon.astro';
 import site from '../../site';
 
@@ -26,6 +27,14 @@ for (const business of businesses) {
 }
 const categoryGroups = [...byCategory.entries()].sort((a, b) => a[1].name.localeCompare(b[1].name));
 
+const keywords = [
+  ...new Set(
+    categoryGroups
+      .filter(([slug]) => slug !== 'uncategorised')
+      .flatMap(([slug, group]) => [...synonymsFor(slug), ...suburbSynonymsFor(group.name, suburb.name)])
+  ),
+];
+
 const description = suburb.bio
   ? suburb.bio.replace(/\s+/g, ' ').trim().slice(0, 155)
   : `${businesses.length} businesses in ${suburb.name}, part of the Greater ${site.cityLabel} area — browse by category.`;
@@ -35,6 +44,7 @@ const jsonLd = {
   '@type': 'Place',
   name: suburb.name,
   ...(suburb.lat && suburb.lng ? { geo: { '@type': 'GeoCoordinates', latitude: suburb.lat, longitude: suburb.lng } } : {}),
+  ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
 };
 ---
 

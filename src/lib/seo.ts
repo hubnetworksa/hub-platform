@@ -13,11 +13,13 @@ export function collectionPageJsonLd({
   description,
   url,
   items,
+  keywords,
 }: {
   name: string;
   description?: string;
   url: string;
   items: CollectionItemLink[];
+  keywords?: string[];
 }) {
   return {
     '@context': 'https://schema.org',
@@ -25,6 +27,7 @@ export function collectionPageJsonLd({
     name,
     ...(description ? { description } : {}),
     url,
+    ...(keywords && keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
     mainEntity: {
       '@type': 'ItemList',
       itemListElement: items.map((item, index) => ({
