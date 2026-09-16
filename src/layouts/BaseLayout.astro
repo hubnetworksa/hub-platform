@@ -25,9 +25,18 @@ interface Props {
    *  second, separate <link> so every other page keeps requesting just the
    *  one stable Nunito URL. */
   extraFonts?: string;
+  /** A Premium business's own --accent/--navy/--bg overrides (see
+   *  pageColorVars in src/pages/business/[slug].astro), applied on <body>
+   *  itself rather than some inner wrapper — custom properties only
+   *  cascade to descendants, and body's own `background: var(--bg)` rule
+   *  (global.css) is otherwise unreachable from any div inside it, leaving
+   *  the page's actual backdrop (outside the centered content column, on
+   *  any screen wider than it) stuck on the site's default color instead
+   *  of the business's chosen one. */
+  bodyStyle?: string;
 }
 
-const { title, description, canonical, titleOverride, noindex, noAds, extraFonts } = Astro.props;
+const { title, description, canonical, titleOverride, noindex, noAds, extraFonts, bodyStyle } = Astro.props;
 const fullTitle = titleOverride ?? `${title} | ${site.siteName}`;
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
 const canonicalUrl = canonical ?? (siteUrl + Astro.url.pathname);
@@ -145,7 +154,7 @@ const themeCss = `:root {
 
     <style set:html={themeCss}></style>
   </head>
-  <body>
+  <body style={bodyStyle || null}>
     <a href="#main-content" class="skip-link">Skip to content</a>
 
     <header class="brand-row">

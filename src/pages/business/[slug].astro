@@ -101,7 +101,7 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={business.name} description={business.description.slice(0, 155)} noAds={noAds}>
+<BaseLayout title={business.name} description={business.description.slice(0, 155)} noAds={noAds} bodyStyle={pageColorVars || undefined}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <div id="page-content" style={pageColorVars || null}>
@@ -355,11 +355,18 @@ const jsonLd = {
         if (pageColors.primary) decls.push(`--accent:${pageColors.primary}`, `--accent-rgb:${hexToRgbTriple(pageColors.primary)}`);
         if (pageColors.secondary) decls.push(`--navy:${pageColors.secondary}`);
         if (pageColors.background) decls.push(`--bg:${pageColors.background}`, `--bg-card:${pageColors.background}`);
-        // #page-content is a plain wrapper div around all three of this
-        // page's <section>s (narrow reading column, wide sections area,
-        // narrow reading column again) — it carries no layout of its own,
-        // only these custom properties, which every section inherits.
-        pageContent.style.cssText = decls.join(';');
+        // Applied on <body>, not #page-content — custom properties only
+        // cascade to descendants, and body's own `background: var(--bg)`
+        // rule (global.css) is otherwise unreachable from anything inside
+        // it, leaving the page's actual backdrop (outside the centered
+        // content column, on wider screens) stuck on the site default
+        // while only cards/sections inside picked up the new color.
+        // #page-content still gets the same string too, purely so a
+        // server-rendered reload (bodyStyle in BaseLayout) and this live
+        // edit produce identical DOM state.
+        const css = decls.join(';');
+        document.body.style.cssText = css;
+        pageContent.style.cssText = css;
       }
 
       function loadGridStack() {
