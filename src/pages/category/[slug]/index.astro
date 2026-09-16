@@ -5,6 +5,7 @@ import PageBanner from '../../../components/PageBanner.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import { categories, businessesInCategory, suburbFor, type Business } from '../../../lib/data';
 import { groupForCategory } from '../../../lib/categoryGroups';
+import { synonymsFor } from '../../../lib/categorySynonyms';
 import site from '../../../site';
 
 export function getStaticPaths() {
@@ -24,11 +25,13 @@ for (const business of businesses) {
 const suburbGroups = [...bySuburb.entries()].sort((a, b) => b[1].businesses.length - a[1].businesses.length);
 const group = groupForCategory(category.slug);
 const isEmpty = businesses.length === 0;
+const synonyms = synonymsFor(category.slug);
+const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0, 4).join(', ')}.` : '';
 ---
 
 <BaseLayout
   title={category.name}
-  description={`${businesses.length} ${category.name} listed across ${site.cityLabel}, by suburb.`}
+  description={`${businesses.length} ${category.name} listed across ${site.cityLabel}, by suburb.${synonymLine}`}
   noindex={isEmpty}
 >
   <PageBanner title={category.name} description={`${businesses.length} listed, by suburb.`} iconPath={group?.iconPath}>
@@ -43,6 +46,9 @@ const isEmpty = businesses.length === 0;
   </PageBanner>
 
   <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+    {synonyms.length > 0 && (
+      <p class="also-searched">Also searched as: {synonyms.join(', ')}.</p>
+    )}
     {isEmpty ? (
       <div class="empty-category">
         <p>No {category.name.toLowerCase()} listed yet — this page will fill in as new businesses are added.</p>
@@ -70,6 +76,11 @@ const isEmpty = businesses.length === 0;
 </BaseLayout>
 
 <style>
+  .also-searched {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 0 0 1.25rem;
+  }
   .cat-head {
     display: flex;
     align-items: center;

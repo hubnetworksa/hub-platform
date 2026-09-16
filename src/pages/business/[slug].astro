@@ -4,6 +4,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
 import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
+import { synonymsFor } from '../../lib/categorySynonyms';
 import Icon from '../../components/Icon.astro';
 
 export function getStaticPaths() {
@@ -42,6 +43,14 @@ const ICONS = {
   badge: '<path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4Z"/><path d="m9.5 12 1.8 1.8L15 10"/>',
 };
 
+// Union of every listed category's informal/trade-jargon synonyms (e.g.
+// "junk removal" for Rubbish & Rubble Removal) — see categorySynonyms.ts.
+// Schema.org's `keywords` is free-text and doesn't drive Google ranking
+// directly, but costs nothing to include and helps other consumers of
+// this structured data (AI answer engines, other search tools) match the
+// business against terms that never appear in its own name/description.
+const keywords = [...new Set(cats.flatMap((c) => synonymsFor(c.slug)))];
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
@@ -50,6 +59,7 @@ const jsonLd = {
   ...(business.address ? { address: { '@type': 'PostalAddress', streetAddress: business.address, addressLocality: suburb?.name, addressRegion: 'Limpopo', addressCountry: 'ZA' } } : {}),
   ...(business.phone ? { telephone: business.phone } : {}),
   ...(business.lat && business.lng ? { geo: { '@type': 'GeoCoordinates', latitude: business.lat, longitude: business.lng } } : {}),
+  ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
 };
 ---
 

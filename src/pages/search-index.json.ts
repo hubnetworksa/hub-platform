@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { businesses, suburbFor, categoriesFor } from '../lib/data';
 import { groupForCategory } from '../lib/categoryGroups';
+import { synonymsFor } from '../lib/categorySynonyms';
 
 export const GET: APIRoute = () => {
   const index = businesses.map((b) => {
@@ -11,6 +12,12 @@ export const GET: APIRoute = () => {
       sb: suburbFor(b)?.name ?? '',
       c: cat?.name ?? '',
       g: cat ? groupForCategory(cat.slug)?.iconPath ?? '' : '',
+      // Informal/trade-jargon search terms for this business's category
+      // (e.g. "junk removal" for Rubbish & Rubble Removal) — lets someone
+      // typing what they actually call the service still find it, even
+      // though that word appears nowhere in the business's own name or
+      // formal category label. See src/lib/categorySynonyms.ts.
+      k: cat ? synonymsFor(cat.slug).join(' ') : '',
     };
   });
   return new Response(JSON.stringify(index), {
