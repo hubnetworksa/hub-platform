@@ -1,16 +1,16 @@
 name: Deploy hosted dev preview
 
-# Pushing to `dev` rebuilds all three sites as Cloudflare Pages *preview*
+# Pushing to `Guy` rebuilds all three sites as Cloudflare Pages *preview*
 # deployments (wrangler's --branch=dev gives each its own
 # dev.<project>.pages.dev URL) plus the small landing page that links them
 # together — see dev-landing/. Cloudflare Access sits in front of all four
 # hostnames (configured once in the Cloudflare dashboard, not here — see
 # SETUP.md "Hosted dev environment"), so this is the "hosted dev with a
-# login page" environment: merge dev -> main once you're happy with it here,
+# login page" environment: merge Guy -> main once you're happy with it here,
 # which runs deploy.yml against the real production domains.
 on:
   push:
-    branches: [dev]
+    branches: [Guy]
   workflow_dispatch:
 
 permissions:
