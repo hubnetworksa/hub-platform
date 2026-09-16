@@ -5,7 +5,7 @@ import PageBanner from '../../../components/PageBanner.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import { categories, suburbs, businessesInSuburbAndCategory } from '../../../lib/data';
 import { groupForCategory } from '../../../lib/categoryGroups';
-import { synonymsFor, locationSynonymsFor } from '../../../lib/categorySynonyms';
+import { synonymsFor, locationSynonymsFor, suburbSynonymsFor } from '../../../lib/categorySynonyms';
 import { collectionPageJsonLd } from '../../../lib/seo';
 import site from '../../../site';
 
@@ -26,7 +26,11 @@ export function getStaticPaths() {
 
 const { category, suburb, businesses } = Astro.props;
 const group = groupForCategory(category.slug);
-const synonyms = [...synonymsFor(category.slug), ...locationSynonymsFor(category.name, site.cityLabel)];
+const synonyms = [
+  ...synonymsFor(category.slug),
+  ...locationSynonymsFor(category.name, site.cityLabel),
+  ...suburbSynonymsFor(category.name, suburb.name),
+];
 const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0, 4).join(', ')}.` : '';
 
 const jsonLd = collectionPageJsonLd({
@@ -34,6 +38,7 @@ const jsonLd = collectionPageJsonLd({
   description: `${businesses.length} ${category.name} in ${suburb.name} — part of the Greater ${site.cityLabel} area.`,
   url: `https://${site.domain}/category/${category.slug}/${suburb.slug}/`,
   items: businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` })),
+  keywords: synonyms,
 });
 ---
 
