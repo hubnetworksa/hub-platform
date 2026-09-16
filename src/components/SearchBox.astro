@@ -48,6 +48,21 @@ const exampleSuburb = [...suburbs].sort((a, b) => businessesInSuburb(b.id).lengt
     return loading;
   }
 
+  // A plain `field.includes(word)` breaks on a simple plural: "butcher" is
+  // a substring of "butcheries" so it matches, but "butchers" isn't (the s
+  // lands after "butcher" instead of at the very end), so the plural form
+  // of the exact same query gave zero results. Rather than hand-maintain
+  // every singular/plural variant in categorySynonyms.ts, strip a single
+  // trailing "s" from the query word before falling back — only ever makes
+  // the word shorter, so it can only add matches, never cause a false one;
+  // the length guard keeps it from mangling short words like "gas" or "bus"
+  // into meaningless 2-letter fragments.
+  function includesWord(field: string, word: string): boolean {
+    if (field.includes(word)) return true;
+    if (word.length > 4 && word.endsWith('s') && field.includes(word.slice(0, -1))) return true;
+    return false;
+  }
+
   // Every word in the query must match somewhere; matches in the name
   // count for more than matches in category/suburb, and rows matching
   // more words rank above rows matching fewer. `k` (keywords) holds
@@ -66,10 +81,10 @@ const exampleSuburb = [...suburbs].sort((a, b) => businessesInSuburb(b.id).lengt
       let score = 0;
       let allMatched = true;
       for (const word of words) {
-        if (name.includes(word)) score += 3;
-        else if (cat.includes(word)) score += 2;
-        else if (sub.includes(word)) score += 2;
-        else if (keywords.includes(word)) score += 1;
+        if (includesWord(name, word)) score += 3;
+        else if (includesWord(cat, word)) score += 2;
+        else if (includesWord(sub, word)) score += 2;
+        else if (includesWord(keywords, word)) score += 1;
         else allMatched = false;
       }
       if (allMatched) scored.push({ row, score });
