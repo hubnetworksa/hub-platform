@@ -67,11 +67,19 @@ const keywords = [
 // practice the routine always writes the primary category first.
 const schemaType = cats[0] ? schemaTypeFor(cats[0].slug) : 'LocalBusiness';
 
+// Same formula BaseLayout falls back to internally when no `canonical` prop
+// is given — computed here instead and passed down explicitly so the
+// LocalBusiness `url` below and the page's own <link rel="canonical"> can
+// never drift apart into two different values for the same page.
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
+const canonicalUrl = siteUrl + Astro.url.pathname;
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': schemaType,
   name: business.name,
   description: business.description,
+  url: canonicalUrl,
   ...(business.address ? { address: { '@type': 'PostalAddress', streetAddress: business.address, addressLocality: suburb?.name, addressRegion: site.province, addressCountry: 'ZA' } } : {}),
   ...(business.phone ? { telephone: business.phone } : {}),
   ...(business.lat && business.lng ? { geo: { '@type': 'GeoCoordinates', latitude: business.lat, longitude: business.lng } } : {}),
@@ -79,7 +87,7 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={business.name} description={business.description.slice(0, 155)}>
+<BaseLayout title={business.name} description={business.description.slice(0, 155)} canonical={canonicalUrl}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <section class="container" style="padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;">
