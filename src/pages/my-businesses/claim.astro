@@ -6,18 +6,16 @@ import site from '../../site';
 const ICONS = {
   search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
   building: '<path d="M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6"/>',
-  upload: '<path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 20h14"/>',
-  file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/>',
   x: '<path d="M18 6 6 18M6 6l12 12"/>',
   check: '<circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5"/>',
 };
 ---
 
-<BaseLayout title="Claim a business" description={`Claim an existing business listing on ${site.siteName}.`}>
+<BaseLayout title="Claim a business" description={`Claim an existing business listing on ${site.siteName}.`} noindex={true}>
   <section class="claim-wrap">
     <div class="claim-card">
       <h1>Claim a business</h1>
-      <p class="subtitle">Find your business, then upload a document proving you own it — a business registration certificate, ID, or letterhead all work. An admin reviews every claim before access is granted.</p>
+      <p class="subtitle">Find your business and tell us who you are. We'll review your request and get back to you — no documents needed.</p>
 
       <div id="search-section" class="step">
         <span class="step-label">1. Find your business</span>
@@ -41,15 +39,29 @@ const ICONS = {
       </div>
 
       <form id="claim-form" hidden>
-        <div class="step">
-          <span class="step-label">2. Upload proof of ownership</span>
-          <label for="documents-input" class="dropzone">
-            <Icon path={ICONS.upload} size={22} />
-            <span class="dropzone-text">Click to choose files, or drag them here</span>
-            <span class="dropzone-hint">PDF or image, up to 5 files, 10MB each</span>
+        <div class="step contact-fields">
+          <span class="step-label">2. Tell us who you are</span>
+          <label>
+            Your full name
+            <input type="text" id="contact-name" name="contactName" autocomplete="name" required />
           </label>
-          <input type="file" id="documents-input" name="documents" multiple accept=".pdf,image/*" required hidden />
-          <ul id="file-list" class="file-list"></ul>
+          <label>
+            Phone number
+            <input type="tel" id="contact-phone" name="contactPhone" autocomplete="tel" required />
+          </label>
+          <label>
+            Email address
+            <input type="email" id="contact-email" name="contactEmail" autocomplete="email" required />
+          </label>
+          <label>
+            Your role at this business
+            <select id="role-note" name="roleNote">
+              <option value="Owner">Owner</option>
+              <option value="Manager">Manager</option>
+              <option value="Employee">Employee</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
         </div>
 
         <button type="submit" class="btn btn-primary">Submit claim</button>
@@ -67,9 +79,6 @@ const ICONS = {
   const claimForm = document.getElementById('claim-form') as HTMLFormElement;
   const selectedName = document.getElementById('selected-name')!;
   const changeBtn = document.getElementById('change-selection')!;
-  const filesInput = document.getElementById('documents-input') as HTMLInputElement;
-  const fileList = document.getElementById('file-list')!;
-  const dropzone = document.querySelector('.dropzone') as HTMLLabelElement;
   const spinner = document.getElementById('search-spinner')!;
   const status = document.getElementById('form-status')!;
   let selectedId: number | null = null;
@@ -177,34 +186,20 @@ const ICONS = {
     if (!(e.target as HTMLElement).closest('.combobox')) closeResults();
   });
 
-  function renderFileList() {
-    const files = [...(filesInput.files ?? [])];
-    fileList.innerHTML = files.map((f) => `<li><span>${f.name}</span></li>`).join('');
-  }
-  filesInput.addEventListener('change', renderFileList);
-
-  dropzone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropzone.classList.add('drag-over');
-  });
-  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
-  dropzone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dropzone.classList.remove('drag-over');
-    if (e.dataTransfer?.files.length) {
-      filesInput.files = e.dataTransfer.files;
-      renderFileList();
-    }
-  });
-
   claimForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!selectedId) return;
     status.textContent = 'Submitting…';
-    const formData = new FormData(claimForm);
-    formData.set('businessId', String(selectedId));
+    const contactName = (document.getElementById('contact-name') as HTMLInputElement).value.trim();
+    const contactPhone = (document.getElementById('contact-phone') as HTMLInputElement).value.trim();
+    const contactEmail = (document.getElementById('contact-email') as HTMLInputElement).value.trim();
+    const roleNote = (document.getElementById('role-note') as HTMLSelectElement).value;
     try {
-      const res = await fetch('/api/claim-business', { method: 'POST', body: formData });
+      const res = await fetch('/api/claim-business', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ businessId: selectedId, contactName, contactPhone, contactEmail, roleNote }),
+      });
       if (res.status === 401) {
         window.location.href = '/login/';
         return;
@@ -392,46 +387,30 @@ const ICONS = {
     color: var(--text);
   }
 
-  .dropzone {
+  .contact-fields label {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 0.4rem;
-    text-align: center;
-    padding: 1.75rem 1rem;
-    border: 1.5px dashed var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-subtle);
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .dropzone:hover, .dropzone.drag-over {
-    border-color: var(--accent);
-    background: rgba(var(--accent-rgb), 0.06);
-  }
-  .dropzone-text {
+    gap: 0.35rem;
+    font-size: 0.9rem;
     font-weight: 600;
+    margin-bottom: 0.9rem;
+  }
+  .contact-fields label:last-child {
+    margin-bottom: 0;
+  }
+  .contact-fields input,
+  .contact-fields select {
+    font: inherit;
+    padding: 0.65rem 0.8rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
     color: var(--text);
-    font-size: 0.92rem;
   }
-  .dropzone-hint {
-    font-size: 0.8rem;
-  }
-  .file-list {
-    list-style: none;
-    margin: 0.6rem 0 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-  :global(.file-list li) {
-    font-size: 0.85rem;
-    color: var(--text);
-    background: var(--bg-subtle);
-    border-radius: calc(var(--radius) - 4px);
-    padding: 0.4rem 0.6rem;
+  .contact-fields input:focus,
+  .contact-fields select:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
   }
 
   form button[type="submit"] {

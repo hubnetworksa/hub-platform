@@ -1,8 +1,13 @@
 {
-  "suburb_index": 24,
+  "suburb_index": 5,
   "suburbs_per_run": 3,
-  "shopping_center_index": 26,
+  "shopping_center_index": 14,
   "shopping_centers_per_run": 1,
+  "shopping_center_slugs_pending": [],
+  "shopping_center_recheck_countdown": 14,
+  "new_mall_discovery_countdown": 135,
+  "closed_check_last_slug": "clicks-polokwane-shoprite-checkers-polokwane-central",
+  "closed_check_batch_size": 5,
   "shopping_center_slugs": [
     "the-greenery-polokwane-central",
     "madiba-park-shopping-centre-seshego",
@@ -30,7 +35,12 @@
     "pmt-square-nirvana",
     "the-farmyard-trading-post-bendor",
     "tropicana-centre-ladanna",
-    "phasha-shopping-centre-lebowakgomo"
+    "phasha-shopping-centre-lebowakgomo",
+    "china-city-ladanna",
+    "city-centre-polokwane-central",
+    "bendor-shopping-centre-bendor",
+    "mohlakaneng-shopping-centre-seshego",
+    "standard-bank-square-polokwane-central"
   ],
   "suburb_slugs": [
     "polokwane-central",
@@ -62,6 +72,7 @@
     "seshego-zone-1",
     "seshego-zone-4",
     "mankweng",
-    "lebowakgomo"
+    "lebowakgomo",
+    "futura"
   ]
 }

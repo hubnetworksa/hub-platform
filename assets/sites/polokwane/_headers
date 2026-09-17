@@ -1,0 +1,36 @@
+# Cloudflare Pages headers file.
+#
+# Without this, Astro's static HTML output has no per-page Cache-Control of
+# its own, so pages are left to whatever caches sit between the visitor and
+# this deployment (browser, any zone-level Cloudflare cache rule on the
+# custom domain, corporate/ISP proxies) — none of which know a new
+# deployment exists until their own TTL expires. In practice this showed up
+# as some pages (e.g. /about/, /category/) serving a stale snapshot while
+# others served current data, even though every page comes from the same
+# build.
+#
+# Rules are declared general-first, specific-last: when more than one rule
+# matches the same path, Cloudflare Pages applies the last matching rule in
+# the file, so the more specific /_astro/* block deliberately comes after
+# the catch-all.
+#
+# 1. Every HTML page (the catch-all) must always revalidate with the origin
+#    instead of being served from any cache's stale copy. This is the
+#    actual fix: even if a Cloudflare Cache Rule or Page Rule on the zone
+#    is set to "Cache Everything" with a long edge TTL, `must-revalidate`
+#    plus `max-age=0` tells any spec-compliant cache (including
+#    Cloudflare's own edge) to check back with the deployment on every
+#    request rather than serving what it already has.
+# 2. Hashed build assets (/_astro/*) are content-addressed — a content
+#    change always produces a new filename — so these are safe to cache
+#    forever, overriding the catch-all above.
+#
+# See .github/workflows/deploy.yml's "Purge Cloudflare cache" step for the
+# other half of this fix — an explicit zone-wide purge on every deploy, so
+# nothing has to wait even for a max-age=0 revalidation round trip.
+
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable

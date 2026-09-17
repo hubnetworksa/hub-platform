@@ -49,6 +49,7 @@ const jsonLd = [
 <BaseLayout
   title={`${site.cityLabel} Business Directory`}
   description={`Find businesses across ${site.cityLabel} and surrounding areas — browse by suburb or category to discover what's nearby.`}
+  impactVerification
 >
   {jsonLd.map((d) => <script type="application/ld+json" set:html={JSON.stringify(d)} />)}
 

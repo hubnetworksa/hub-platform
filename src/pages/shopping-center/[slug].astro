@@ -3,7 +3,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import BusinessCard from '../../components/BusinessCard.astro';
 import PageBanner from '../../components/PageBanner.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { shoppingCenters, businessesInShoppingCenter } from '../../lib/data';
+import { shoppingCenters, suburbs, businessesInShoppingCenter, categoriesFor } from '../../lib/data';
+import { collectionPageJsonLd } from '../../lib/seo';
+import { synonymsFor } from '../../lib/categorySynonyms';
 import site from '../../site';
 
 export function getStaticPaths() {
@@ -14,14 +16,52 @@ export function getStaticPaths() {
 
 const { center } = Astro.props;
 const businesses = businessesInShoppingCenter(center.id);
+const suburb = center.suburb_id != null ? suburbs.find((s) => s.id === center.suburb_id) : undefined;
+
+const centerUrl = `https://${site.domain}/shopping-center/${center.slug}/`;
+
+// Union of every tenant's category synonyms (e.g. a mall with a pharmacy
+// and a hair salon picks up "chemist"/"hairdresser" too) — same reasoning
+// as business/[slug].astro's own keywords field: costs nothing, widens
+// what this page can match beyond its own literal name/description.
+const keywords = [...new Set(businesses.flatMap((b) => categoriesFor(b).flatMap((c) => synonymsFor(c.slug))))];
+
+const centerJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ShoppingCenter',
+  name: center.name,
+  url: centerUrl,
+  ...(center.description ? { description: center.description } : {}),
+  ...(center.address
+    ? { address: { '@type': 'PostalAddress', streetAddress: center.address, addressLocality: suburb?.name ?? site.cityLabel, addressRegion: site.province, addressCountry: 'ZA' } }
+    : {}),
+  ...(center.lat && center.lng ? { geo: { '@type': 'GeoCoordinates', latitude: center.lat, longitude: center.lng } } : {}),
+  ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
+};
+
+const tenantsJsonLd = collectionPageJsonLd({
+  name: `Businesses at ${center.name}`,
+  url: centerUrl,
+  items: businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` })),
+});
 ---
 
 <BaseLayout
   title={center.name}
   description={center.description ?? `${businesses.length} businesses at ${center.name}, ${site.cityLabel}.`}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(centerJsonLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(tenantsJsonLd)} />
+
   <PageBanner title={center.name} description={`${businesses.length} businesses listed here.`}>
-    <Breadcrumbs slot="breadcrumbs" items={[{ label: 'Shopping Centres', href: '/shopping-center/' }, { label: center.name }]} />
+    <Breadcrumbs
+      slot="breadcrumbs"
+      items={[
+        { label: 'Shopping Centres', href: '/shopping-center/' },
+        ...(suburb ? [{ label: suburb.name, href: `/suburb/${suburb.slug}/` }] : []),
+        { label: center.name },
+      ]}
+    />
   </PageBanner>
 
   <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">

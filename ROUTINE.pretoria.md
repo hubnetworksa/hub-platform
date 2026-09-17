@@ -390,26 +390,37 @@ array, filter for `description_enriched_at` being `null` — that's the
 entire backlog, no separate rotation list to maintain (unlike job 3's
 `shopping_center_slugs`). Work through them in the order they appear in
 the array (alphabetical by name) so progress is predictable and every run
-picks up roughly where the last one left off. **Target up to 20 businesses
-this run** — more if you have turns to spare and quality doesn't suffer,
-fewer if a run is going slower than usual; the 10-record commit cap (see
-"Committing" below) still applies regardless, so a 20-business batch will
-usually span two commits.
+picks up roughly where the last one left off. **Do 100 businesses this
+run — this is the actual target, not just a ceiling** (per owner request
+2026-09-16, firmed up from an earlier "up to 100" wording that was being
+read as permission to stop short): do all 100 unless the remaining
+backlog itself has fewer than 100 businesses left, in which case do the
+whole remaining backlog. This is one commit at the end of the batch (see
+"Committing" below).
 
 **For each business in the batch:**
 
-1. **Research it.** Search `"<name>" <suburb> Pretoria` (or `Centurion`,
-   matching its actual region) and, if the business has a `website` or a
-   real URL in `source_urls`, try fetching that directly — a business's
-   own site is the best source for "what do they actually do." Look for:
-   what they specialise in, notable products/services, how long they've
-   operated, anything that distinguishes them from a same-category
-   business down the road, **and its trading/opening hours** (a "Hours",
-   "Contact Us", or "Opening Times" page/section, or a Google Business
-   Profile snippet that states them). Same chain-branch caution as
-   everywhere else in this file — confirm anything you use, hours
-   included, is about *this specific location*, not a different branch of
-   the same chain (chains often keep different hours per branch).
+1. **Research it — bounded effort, per owner request 2026-09-15 (to keep
+   this routine's token cost down):** exactly **one** WebSearch call —
+   `"<name>" <suburb> Pretoria` (or `Centurion`, matching its actual
+   region) — plus, if the business already has a `website` or a real URL
+   in `source_urls`, **one** WebFetch of that specific known URL (that's
+   using an address you already have, not additional searching, and a
+   business's own site is the best source for "what do they actually
+   do"). That's the whole research budget for this business — don't run a
+   second search with different phrasing, don't follow links out to other
+   pages, don't dig deeper if the first pass doesn't clearly answer it.
+   From whatever that single pass turns up, look for: what they
+   specialise in, notable products/services, how long they've operated,
+   anything that distinguishes them from a same-category business down
+   the road, **and its trading/opening hours** (a "Hours", "Contact Us",
+   or "Opening Times" page/section, or a Google Business Profile snippet
+   that states them). Same chain-branch caution as everywhere else in
+   this file — confirm anything you use, hours included, is about *this
+   specific location*, not a different branch of the same chain (chains
+   often keep different hours per branch). If the one search (and fetch,
+   if applicable) doesn't clearly turn up new, verifiable facts, don't
+   keep digging — move straight to the "Reworded" outcome below.
 2. **Write the new description** — one to two natural sentences, specific
    to this business, not a template. Two outcomes, both acceptable and
    both count as "enriched":
@@ -642,9 +653,8 @@ discovery sweep" above) gets its own log line too, when it runs:
 If nothing new was found: `"shopping_centers_found": 0` and a short
 summary saying so.
 
-**Job 4 (description enrichment sweep)** gets its own log line per
-checkpoint (there may be more than one per run if the batch spans multiple
-10-record commits — see "Committing" below). `researched` is the count
+**Job 4 (description enrichment sweep)** gets its own log line, one per
+run's batch (see "Committing" below). `researched` is the count
 written with genuine new facts (and a new source appended); `reworded` is
 the count rewritten from already-known fields only; `hours_found` is how
 many of this checkpoint's businesses also got a real `hours` value:
@@ -660,18 +670,10 @@ a simple running total the owner can watch shrink across runs. Compute it
 by counting `businesses` entries in `status/pretoria/db-snapshot.json` with a null
 `description_enriched_at`.
 
-## Committing — every 10 records, never one big commit at the end
+## Committing — at natural boundaries, not a fixed record count
 
-**Hard rule: never let more than 10 records go uncommitted-and-unpushed.**
-A "record" is one row you've written a SQL statement for — one new
-business INSERT, one new shopping-centre INSERT, one job-3 link/unlink
-UPDATE, or one job-4 description-rewrite UPDATE counts as one record each.
-The moment you hit 10 records since your last push (even mid-suburb,
-mid-centre, or mid-batch), stop, write the SQL file, and push — don't wait
-for a natural boundary like finishing a suburb.
-
-On top of that 10-record cap, also commit and push at these natural
-boundaries even if you haven't hit 10 yet:
+**Per owner request 2026-09-15: no fixed per-record commit cap.** Commit
+and push at these natural boundaries instead:
 
 - After finishing both jobs for **one suburb** (jobs 1-2).
 - After finishing **each shopping centre's** tenant sweep (job 2's
@@ -682,21 +684,22 @@ boundaries even if you haven't hit 10 yet:
 - After finishing the **new-mall discovery sweep**, on the runs where it
   fires (once per full lap) — its own commit, separate from the regular
   job-3 commit that triggered it.
-- After finishing **job 4's whole batch** for this run (up to the
-  ~20-business target) — its own commit(s), separate from job 3 and any
-  suburb commits this run also produced. Since 20 exceeds the 10-record
-  cap, this normally means two job-4 commits per run rather than one.
+- After finishing **job 4's whole batch** for this run (100 businesses)
+  — its own commit, separate from job 3 and any suburb commits this run
+  also produced.
 
-So a checkpoint is whichever comes first: 10 records, or a natural
-boundary above. A quiet suburb with only 2 records still gets its own
-push at the boundary; a single shopping centre with 30 verified tenants
-gets pushed three times (in batches of 10) before its boundary push.
+A "record" is one row you've written a SQL statement for — one new
+business INSERT, one new shopping-centre INSERT, one job-3 link/unlink
+UPDATE, or one job-4 description-rewrite UPDATE. A quiet suburb with only
+2 records still gets its own push at its boundary; a single shopping
+centre with 30 verified tenants goes in one commit at the end of that
+centre's sweep rather than being split up.
 
-Rationale: a run can be cut short (turn limit, session limit, a crash) at
-any point, same as any other run — committing every 10 records means
-whatever work already cleared verification is saved to the repo (and
-picked up by the next deploy) even if the run doesn't reach the end of its
-batch, rather than losing more than 10 records' worth of work at once.
+Rationale: a run can still be cut short (turn limit, session limit, a
+crash) at any point — committing at each natural boundary still means
+whatever's already cleared verification is saved to the repo (and picked
+up by the next deploy) even if the run doesn't reach the end, without
+splitting a single suburb or batch into multiple partial commits.
 
 Each commit: write a new `db/routine-updates/pretoria/<UTC timestamp, e.g.
 2026-08-31T10-00-00>.sql` file scoped to just that checkpoint's inserts

@@ -25,31 +25,52 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     slug: 'shopping-retail',
     name: 'Shopping & Retail',
     iconPath: '<path d="M6 8h12l-1 12H7L6 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
-    categorySlugs: ['fashion-clothing', 'shoe-stores', 'jewellers', 'electronics-appliances', 'books-stationery', 'mobile-phones', 'toy-stores', 'furniture-homeware', 'hardware-stores', 'general-retail'],
+    categorySlugs: [
+      'fashion-clothing', 'shoe-stores', 'jewellers', 'electronics-appliances', 'books-stationery', 'mobile-phones',
+      'toy-stores', 'furniture-homeware', 'hardware-stores', 'general-retail', 'agricultural-farming-supplies',
+      'building-materials-timber-merchants',
+    ],
   },
   {
     slug: 'health-beauty',
     name: 'Health & Beauty',
     iconPath: '<path d="M12 21s-7-4.5-9.5-9C.7 8.4 2 5 5.5 5c2 0 3.3 1.2 4 2.2.7-1 2-2.2 4-2.2 3.5 0 4.8 3.4 3 7-2.5 4.5-9.5 9-9.5 9Z"/>',
-    categorySlugs: ['pharmacies', 'dentists', 'doctors-gps', 'clinics-healthcare', 'physiotherapists', 'opticians', 'beauty-hair-salons', 'spas-wellness', 'vets-animal-care', 'pet-stores'],
+    categorySlugs: [
+      'pharmacies', 'dentists', 'doctors-gps', 'clinics-healthcare', 'physiotherapists', 'opticians',
+      'beauty-hair-salons', 'spas-wellness', 'vets-animal-care', 'pet-stores', 'barbershops', 'traditional-healers',
+    ],
   },
   {
     slug: 'automotive',
     name: 'Automotive',
     iconPath: '<path d="M4 16V11l2-5h12l2 5v5"/><path d="M4 16h16"/><circle cx="7.5" cy="16.5" r="1.5"/><circle cx="16.5" cy="16.5" r="1.5"/>',
-    categorySlugs: ['car-dealerships', 'automotive-repairs', 'motor-spares', 'tow-trucks-roadside', 'driving-schools', 'fuel-stations'],
+    categorySlugs: [
+      'car-dealerships', 'automotive-repairs', 'motor-spares', 'tow-trucks-roadside', 'driving-schools',
+      'fuel-stations', 'logistics-courier-transport', 'panel-beaters-spray-painters', 'tyre-fitment-centres',
+      'car-wash-detailing',
+    ],
   },
   {
     slug: 'professional-financial',
     name: 'Professional & Financial Services',
     iconPath: '<rect x="3" y="7" width="18" height="12" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/>',
-    categorySlugs: ['accountants', 'attorneys-legal', 'estate-agents', 'insurance', 'computer-it-services', 'software-development', 'printing-services', 'photographers'],
+    categorySlugs: [
+      'accountants', 'attorneys-legal', 'estate-agents', 'insurance', 'computer-it-services', 'software-development',
+      'printing-services', 'photographers', 'business-consulting', 'commercial-property-office-space',
+      'engineering-surveying', 'financial-investment-services', 'marketing-advertising', 'recruitment-hr-services',
+      'bookkeeping-services', 'tax-practitioners',
+    ],
   },
   {
     slug: 'home-trade',
     name: 'Home & Trade Services',
     iconPath: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.8 2.8-2-2 2.8-2.8Z"/>',
-    categorySlugs: ['building-construction', 'electricians', 'plumbers', 'locksmiths', 'cleaning-services', 'pest-control', 'nurseries-garden-centres'],
+    categorySlugs: [
+      'building-construction', 'electricians', 'plumbers', 'locksmiths', 'cleaning-services', 'pest-control',
+      'nurseries-garden-centres', 'industrial-suppliers-manufacturing', 'solar-renewable-energy',
+      'painters-decorators', 'borehole-water-services', 'roofing-contractors', 'appliance-repairs',
+      'fencing-security-installations', 'rubbish-rubble-removal',
+    ],
   },
   {
     slug: 'hospitality-travel',
@@ -61,13 +82,13 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     slug: 'events-leisure',
     name: 'Events, Weddings & Leisure',
     iconPath: '<path d="M12 3v4M12 17v4M4.2 4.2l2.8 2.8M17 17l2.8 2.8M3 12h4M17 12h4M4.2 19.8 7 17M17 7l2.8-2.8"/>',
-    categorySlugs: ['events-function-venues', 'wedding-services', 'fitness-gyms', 'florists'],
+    categorySlugs: ['events-function-venues', 'wedding-services', 'fitness-gyms', 'florists', 'museums-heritage-sites', 'party-event-hire'],
   },
   {
     slug: 'community-essential',
     name: 'Community & Essential Services',
     iconPath: '<path d="M4 21h16M5 21V10M9 21V10M15 21V10M19 21V10M3 10l9-6 9 6"/>',
-    categorySlugs: ['schools-education', 'security-services', 'funeral-services'],
+    categorySlugs: ['schools-education', 'security-services', 'funeral-services', 'government-municipal-services', 'banks-atms', 'churches-religious-organisations'],
   },
 ];
 
