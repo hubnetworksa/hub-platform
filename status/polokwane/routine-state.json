@@ -1,9 +1,9 @@
 {
-  "suburb_index": 0,
+  "suburb_index": 1,
   "suburbs_per_run": 3,
   "shopping_center_index": 14,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
+  "shopping_center_slugs_pending": ["standard-bank-square-polokwane-central"],
   "shopping_center_recheck_countdown": 14,
   "new_mall_discovery_countdown": 136,
   "closed_check_last_slug": "christ-baptist-church-flora-park",
@@ -39,7 +39,8 @@
     "china-city-ladanna",
     "city-centre-polokwane-central",
     "bendor-shopping-centre-bendor",
-    "mohlakaneng-shopping-centre-seshego"
+    "mohlakaneng-shopping-centre-seshego",
+    "standard-bank-square-polokwane-central"
   ],
   "suburb_slugs": [
     "polokwane-central",
