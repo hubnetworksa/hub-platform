@@ -33,8 +33,10 @@ const synonyms = [
 ];
 const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0, 4).join(', ')}.` : '';
 
+const h1Title = `${category.name} in ${suburb.name}, ${site.cityLabel}`;
+
 const jsonLd = collectionPageJsonLd({
-  name: `${category.name} in ${suburb.name}`,
+  name: h1Title,
   description: `${businesses.length} ${category.name} in ${suburb.name} — part of the Greater ${site.cityLabel} area.`,
   url: `https://${site.domain}/category/${category.slug}/${suburb.slug}/`,
   items: businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` })),
@@ -48,7 +50,7 @@ const jsonLd = collectionPageJsonLd({
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-  <PageBanner title={`${category.name} in ${suburb.name}`} description={`${businesses.length} listed.`} iconPath={group?.iconPath}>
+  <PageBanner title={h1Title} description={`${businesses.length} listed.`} iconPath={group?.iconPath}>
     <Breadcrumbs
       slot="breadcrumbs"
       items={[
