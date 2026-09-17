@@ -32,12 +32,20 @@ export interface Site {
   slug: string;
   siteName: string;
   cityLabel: string;
+  /** Full province name (e.g. "Limpopo") — used for structured-data
+   *  addressRegion so Pretoria/Cape Town business pages don't inherit
+   *  Polokwane's province. Never abbreviate; schema.org addressRegion
+   *  conventionally wants the full name, not a postal code. */
+  province: string;
   domain: string;
   /** Whether `domain`'s DNS/nameservers actually point at this Cloudflare
    *  Pages project yet — gates the .pages.dev -> domain redirect in
    *  functions/_middleware.ts so a not-yet-cut-over site doesn't redirect
    *  visitors to a domain that isn't live here. */
   domainLive: boolean;
+  /** Cloudflare zone ID for `domain`, used by the deploy workflow's cache
+   *  purge step — `null` for a site whose domain isn't live yet. */
+  cloudflareZoneId: string | null;
   pagesProjectName: string;
   pagesDevHost: string;
   dbName: string;
@@ -48,6 +56,10 @@ export interface Site {
   tagline: string;
   footerTagline: string;
   googleSiteVerification: string | null;
+  bingSiteVerification: string | null;
+  /** Impact.com affiliate-network site verification — homepage only, per
+   *  their own instructions, not site-wide. */
+  impactSiteVerification: string | null;
   googleAnalyticsId: string | null;
   adsensePublisherId: string | null;
   features: SiteFeatures;

@@ -1,6 +1,6 @@
 # Outstanding work
 
-Last updated: 2026-09-10
+Last updated: 2026-09-15
 
 ## Domain cutover checklist (per site)
 
@@ -32,11 +32,6 @@ Polokwane and Cape Town are still on `.pages.dev` only.
       live — direct `wrangler pages deploy` was used once to force that,
       then the commit was pushed to `main` so the GitHub Actions pipeline
       stays the source of truth going forward).
-- [ ] **Email Routing** on the new `pretoriahub.com` zone (`hubnetworksa`
-      account) — forward `hello@pretoriahub.com` to a real inbox. Not
-      confirmed set up yet on the new zone (the old zone under the
-      personal account had it; that config did not carry over with the
-      account move).
 - [ ] **Search Console** — verify `pretoriahub.com` under `hubnetworksa`'s
       Search Console (meta-tag code already wired into
       `sites/pretoria.json`) and submit `/sitemap-index.xml`. The domain's
@@ -88,21 +83,108 @@ Polokwane and Cape Town are still on `.pages.dev` only.
       shared `pub-7060187043058790` line correctly post-cutover
       (2026-09-10) — though see below, this ID is being replaced with a
       Pretoria-specific one, not kept long-term.
-- [ ] Polokwane and Cape Town domain cutovers — repeat this whole
-      checklist for each once their real domains are ready to move.
+- [ ] Cape Town domain cutover — repeat this whole checklist once its real
+      domain is ready to move.
+
+**Polokwane: cut over 2026-09-15.** `polokwanehub.com` moved from its
+previous Cloudflare account to `hubnetworksa` (Registrar account move,
+accepted same day), the zone is Active there, and the domain now resolves
+straight to hub-platform (`/`, `/api/me`, and `/register/` all confirmed
+live at `polokwanehub.com`). Cape Town is still on `.pages.dev` only.
+
+- [x] Cloudflare Registrar account move for `polokwanehub.com` (previous
+      account → `hubnetworksa`) — submitted and accepted 2026-09-15. The
+      old zone's DNS records (A/AAAA, MX for Cloudflare Email Routing,
+      SPF/DKIM TXT, `_acme-challenge` TXT, and an existing
+      `google-site-verification` TXT) were auto-imported by Cloudflare's
+      "Add a site" scan when the domain was added to `hubnetworksa`, and
+      kept as Proxied (A/AAAA) or DNS only (MX/TXT, not proxyable).
+- [x] Attach `polokwanehub.com` (and `www.polokwanehub.com`) as a custom
+      domain on the `polokwanehub` Pages project (`hubnetworksa` account) —
+      done 2026-09-15, via a manually-added CNAME (Cloudflare's
+      auto-DNS-write didn't fire) rather than Pretoria's automatic path.
+- [x] Re-enable the `.pages.dev` → custom-domain redirect in
+      `functions/_middleware.ts` for Polokwane — done 2026-09-15,
+      `domainLive: true` set in `sites/polokwane.json`.
+- [x] **Google OAuth Client for `polokwanehub.com`** — created in Google
+      Cloud Console (redirect URI `https://polokwanehub.com/api/auth/google/callback`),
+      `GOOGLE_OAUTH_CLIENT_ID`/`GOOGLE_OAUTH_CLIENT_SECRET` set on the
+      `polokwanehub` Pages project via `wrangler pages secret put`, done
+      2026-09-15. `/api/auth/google/start` confirmed redirecting to Google
+      with the correct client_id/redirect_uri.
+- [x] **Verify Google sign-in works end-to-end on `polokwanehub.com`** —
+      confirmed working, 2026-09-15.
+- [x] **Email Routing** on the new `polokwanehub.com` zone (`hubnetworksa`
+      account) — destination address + routing rule (`hello@polokwanehub.com`
+      → `hubnetworksa@gmail.com`) and the `_dmarc.polokwanehub.com` TXT
+      record added, done 2026-09-15.
+- [x] **Resend** — domain verified in Resend (including a manually-merged
+      SPF record and a `resend._domainkey` DKIM TXT record), `RESEND_API_KEY`
+      set on the `polokwanehub` Pages project, done 2026-09-15.
+- [x] **Outbound + inbound email pipeline confirmed end-to-end** — a
+      throwaway account was registered via `/api/register` on the live
+      site (triggers a real "New account created" email through Resend to
+      `hello@polokwanehub.com`), confirmed arriving at `hubnetworksa@gmail.com`,
+      then the test user/session rows were deleted from `polokwanehub-db`.
+- [x] **Search Console** — `polokwanehub.com` added as a property under
+      the `hubnetworksa` Google account and **auto-verified** via the
+      pre-existing `google-site-verification` TXT record that carried over
+      in the domain move — no separate HTML-tag verification needed after
+      all (`sites/polokwane.json`'s `googleSiteVerification` stays `null`,
+      unused, since DNS-TXT verification doesn't go through that field).
+      Sitemap submission (`sitemap-index.xml`) still to be done.
+- [x] **Old Polokwane site/database merged** (2026-09-15) — confirmed: a
+      separate legacy repo (`GuyWheel/Polokwanehub`, checked out locally at
+      `c:\Users\EthanLindeque\Documents\Hub\Polokwanehub`) had its own D1
+      (`polokwanehub-db`, id `d85f741d-...`, a different database than
+      hub-platform's despite the same name). Backed up to
+      `db/backups/old-polokwanehub-2026-09-15.sql` (720 businesses, 86
+      categories, 31 suburbs, 29 shopping centres — no accounts/claims
+      tables, that system was never built there). Merged into the live
+      `polokwanehub-db` by exact slug diff (not name-fuzzy-matching):
+      505 businesses already matched by slug, 214 were genuinely new, 1
+      was excluded (marked `closed_at` by the old site's own
+      closed-business routine, a column hub-platform's schema doesn't
+      have), and 18 businesses currently live don't exist in the old DB at
+      all (added independently after the cutover point, left untouched).
+      Also seeded 1 missing suburb (`futura`), 18 missing categories (from
+      the old repo's "Add 18 new business categories" commit that never
+      made it to hub-platform), and 1 missing shopping centre
+      (`city-centre-polokwane-central`) that the new businesses referenced.
+      Final count 737 businesses; integrity-checked post-merge (0 orphaned
+      `business_categories` rows, 0 bad `suburb_id` foreign keys). Verified
+      live on `polokwanehub.com` after a redeploy. **Follow-up done**
+      2026-09-15: all 18 newly-seeded categories wired into
+      `categoryGroups.ts` (verified against all 86 live categories, no
+      gaps/duplicates). Only `panel-beaters-spray-painters` has real
+      listings so far (5) and now correctly shows under Automotive; the
+      other 17 stay noindexed/hidden until they have listings.
+- [x] **Full flow smoke test on `polokwanehub.com`** — confirmed 2026-09-15
+      end-to-end against production, same pass as Pretoria's 2026-09-10
+      test: register → submit (logged in, with owner email) → admin
+      approve → owner confirm → published, with correct auto-link to the
+      submitter's account. Second business submitted anonymously with no
+      email → published immediately (no owner-confirm needed) with
+      `owner_user_id` correctly null. Claimed by a second test user via
+      the new simplified contact-info claim form → admin-approved the
+      claim via `/api/review-claim` → ownership correctly transferred
+      (`owner_user_id` set to the claimant's account). All test
+      businesses/users/sessions/claims rows deleted afterward.
+- [x] AdSense — Polokwane already has its own publisher ID
+      (`ca-pub-7239595592067933` in `sites/polokwane.json`, distinct from
+      Pretoria's), unlike Pretoria's shared-ID transition —
+      `https://polokwanehub.com/ads.txt` confirmed serving
+      `pub-7239595592067933` correctly post-cutover, 2026-09-15.
 
 ## hub-platform (Polokwane / Pretoria / Cape Town)
 
 - [x] Set `GITHUB_DISPATCH_TOKEN` secret on all 3 Cloudflare Pages projects
       (polokwanehub, pretoriahub, thecapetownhub) — done and verified via a
       real workflow_dispatch test run on 2026-09-09.
-- [ ] Verify Polokwane's domain in Resend + set `RESEND_API_KEY` on its
-      Pages project (only Pretoria's hub-platform project has this so far;
-      Polokwane/Cape Town fall back to the mailto: draft instead of a real
-      email).
-- [ ] Same Resend setup for Cape Town, once it has a registered domain.
-- [ ] Add a custom 404 page (currently missing — unmatched URLs return 200
-      with homepage content instead of a real 404).
+- [ ] Resend setup for Cape Town, once it has a registered domain (Pretoria
+      and Polokwane both have `RESEND_API_KEY` set now).
+- [x] Custom 404 page — `src/pages/404.astro`, added 2026-09-15 (ported
+      from the old Polokwane repo, site-aware, applies to all 3 sites).
 - [ ] **AdSense decision reversed (2026-09-10): each site will use its
       own separate publisher ID/account, not the shared
       `ca-pub-7060187043058790` all 3 currently use.** The consolidated ID
@@ -114,16 +196,15 @@ Polokwane and Cape Town are still on `.pages.dev` only.
       once the actual IDs are in hand — not done yet, IDs not ready).
       The `hubnetworksa` account's duplicate-account flag did clear
       2026-09-10, which unblocks getting those per-site approvals moving.
-- [ ] Search Console verification for Polokwane and Cape Town (each needs
-      its own unique HTML-tag code from Search Console, under the
-      hubnetworksa Google account — only Pretoria has one so far).
+- [ ] Search Console verification for Cape Town, once it has a registered
+      domain (Pretoria has its meta-tag code wired; Polokwane auto-verified
+      via a carried-over DNS TXT record — see the per-site sections above).
 - [x] GA4 for Polokwane (`G-QQL9HCKZNR`) and Cape Town (`G-JWEXFEXXW4`) —
       done 2026-09-09, each under its own separate Analytics account
       (fine for GA4, unlike AdSense).
-- [ ] Re-enable the `.pages.dev → custom domain` redirect in
-      `functions/_middleware.ts` per site once each domain is actually cut
-      over (currently disabled).
-- [ ] Polokwane and Cape Town domain cutovers (deferred).
+- [ ] Cape Town domain cutover (the whole checklist above, deferred until
+      it has a real domain ready to move) — Pretoria and Polokwane are both
+      done.
 - [ ] Remove the TEMP separate monitor-copy email (to
       ethanmglindeque@gmail.com, sent alongside the real owner/admin
       emails) once the owner-confirmation flow is fully trusted — marked
@@ -186,33 +267,18 @@ Polokwane and Cape Town are still on `.pages.dev` only.
 
 ## Port accounts/claims/admin-dashboard to hub-platform (Polokwane / Pretoria / Cape Town)
 
-None of the above (accounts, claims, My Businesses, Admin Dashboard,
-reports/activity log) exists yet in hub-platform — it was all built
-directly on the old Pretoria site. Porting it over means re-doing the same
-work adapted to hub-platform's per-site config pattern (`getSite(context.env.SITE)`
-/ `sites/<slug>.json`) instead of the old repo's hardcoded `'PretoriaHub'`/
-`'pretoriahub.com'` strings — same adaptation pattern already used when the
-owner-confirmation feature was ported earlier.
+**Done for Pretoria and Polokwane.** This whole system (accounts, claims,
+My Businesses, Admin Dashboard, reports/activity log) is built into
+hub-platform's shared codebase (`getSite(context.env.SITE)` / per-site
+`sites/<slug>.json`, not hardcoded strings) and confirmed working end-to-end
+on both live domains this session — register/login, Google OAuth, the
+simplified claim flow (`functions/api/claim-business.ts`, contact-info based
+rather than the old repo's document-upload version — see the 2026-09-15
+commit simplifying this), `/admin/claims/`, My Businesses + edit page, the
+"Claim it" button, and rebuild-trigger wiring
+(`GITHUB_DISPATCH_TOKEN`, done 2026-09-09). Only remaining piece:
 
-- [ ] `users`/`sessions`/`business_claims`/`reports`/`activity_log` tables —
-      one migration per site (`db/migrations/<site>/00XX_accounts.sql` etc.),
-      same schema as the old repo's `0020`–`0022` migrations.
-- [ ] `functions/_lib/auth.ts` port (site-agnostic as-is, no changes needed).
-- [ ] Register/login pages + Google OAuth start/callback — **decided:
-      a separate Google OAuth Client per domain** (not one Client with
-      multiple redirect URIs), so each site needs its own Client created
-      in Google Cloud Console (same steps used for the old Pretoria site)
-      with that site's own `GOOGLE_OAUTH_CLIENT_ID`/`_SECRET` Pages
-      secrets — do this per site once each real domain is live, since the
-      callback redirect URI has to match the live domain.
-- [ ] Claim flow (search/upload/review/document-download) — adapt emails to
-      use `site.contactEmail`/`sendEmail` per site instead of hardcoded
-      `hello@pretoriahub.com`.
-- [ ] My Businesses + edit page.
-- [ ] Admin Dashboard (hub + 6 sub-pages) — the "admin" gate
-      (`isAdminEmail`) needs a decision: one shared admin across all 3
-      sites, or per-site.
-- [ ] "Claim it" button on business pages.
-- [ ] Rebuild-trigger wiring already exists per-site in hub-platform
-      (`GITHUB_DISPATCH_TOKEN`, done 2026-09-09) — the admin dashboard's
-      manual "Rebuild now" button just needs the same endpoint ported.
+- [ ] Same setup for Cape Town once it has a real domain — its own Google
+      OAuth Client (redirect URI has to match the live domain, so this
+      can't be done until then), and confirming the claim/accounts flow
+      works on that domain the same way it now does for the other two.

@@ -1,41 +1,86 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageBanner from '../../components/PageBanner.astro';
-import { shoppingCenters, businessesInShoppingCenter } from '../../lib/data';
+import { shoppingCenters, suburbs, businessesInShoppingCenter, type ShoppingCenter } from '../../lib/data';
+import { collectionPageJsonLd } from '../../lib/seo';
 import site from '../../site';
 
-const withBusinesses = shoppingCenters
-  .map((c) => ({ center: c, count: businessesInShoppingCenter(c.id).length }))
-  .filter((c) => c.count > 0)
-  .sort((a, b) => b.count - a.count);
+// Grouped by suburb rather than sorted alphabetically/by count: people
+// search this page the way they search anything else on the site —
+// "malls in <suburb>", "shopping centres in <suburb>" — by area first, not
+// by mall name. Grouping this way also gives each suburb its own heading
+// text for that kind of location-based search.
+const suburbById = new Map(suburbs.map((s) => [s.id, s]));
+
+const bySuburb = new Map<string, { name: string; slug: string; centers: { center: ShoppingCenter; count: number }[] }>();
+for (const center of shoppingCenters) {
+  const count = businessesInShoppingCenter(center.id).length;
+  if (count === 0) continue;
+  const suburb = center.suburb_id != null ? suburbById.get(center.suburb_id) : undefined;
+  const key = suburb?.slug ?? 'other';
+  if (!bySuburb.has(key)) bySuburb.set(key, { name: suburb?.name ?? 'Other areas', slug: key, centers: [] });
+  bySuburb.get(key)!.centers.push({ center, count });
+}
+
+const suburbGroups = [...bySuburb.values()]
+  .map((group) => ({ ...group, centers: group.centers.sort((a, b) => a.center.name.localeCompare(b.center.name)) }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+const totalCenters = suburbGroups.reduce((sum, g) => sum + g.centers.length, 0);
+
+const jsonLd = collectionPageJsonLd({
+  name: 'Shopping Centres & Malls',
+  description: `${totalCenters} shopping centres and malls across ${site.cityLabel}, by suburb.`,
+  url: `https://${site.domain}/shopping-center/`,
+  items: suburbGroups.flatMap((group) =>
+    group.centers.map(({ center }) => ({ name: center.name, url: `https://${site.domain}/shopping-center/${center.slug}/` }))
+  ),
+});
 ---
 
 <BaseLayout
   title="Shopping Centres & Malls"
-  description={`Browse ${site.cityLabel} businesses grouped by the specific shopping centre or mall they're located at.`}
+  description={`Browse ${site.cityLabel} shopping centres and malls by suburb — find every mall in a specific area, or a business by the specific centre it's located at.`}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
   <PageBanner
     title="Shopping Centres & Malls"
-    description="Businesses grouped by the specific centre they're located at — useful when a chain has several branches nearby."
+    description={`${totalCenters} shopping centres and malls across ${site.cityLabel}, by suburb.`}
   />
 
   <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
-    {withBusinesses.length === 0 ? (
+    {suburbGroups.length === 0 ? (
       <p style="color: var(--text-muted);">None linked yet.</p>
     ) : (
-      <div class="grid">
-        {withBusinesses.map(({ center, count }) => (
-          <a class="tile" href={`/shopping-center/${center.slug}/`}>
-            <strong>{center.name}</strong>
-            <span>{count} businesses</span>
-          </a>
-        ))}
-      </div>
+      suburbGroups.map((group) => (
+        <div class="suburb-group">
+          <h2>{group.name}</h2>
+          <div class="grid">
+            {group.centers.map(({ center, count }) => (
+              <a class="tile" href={`/shopping-center/${center.slug}/`}>
+                <strong>{center.name}</strong>
+                <span>{count} businesses</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))
     )}
   </section>
 </BaseLayout>
 
 <style>
+  .suburb-group {
+    margin-top: 1.75rem;
+  }
+  .suburb-group:first-child {
+    margin-top: 0;
+  }
+  .suburb-group h2 {
+    font-size: 1.05rem;
+    margin: 0 0 0.75rem;
+  }
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

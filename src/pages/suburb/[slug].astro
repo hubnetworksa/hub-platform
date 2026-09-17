@@ -7,6 +7,7 @@ import PromoBanner from '../../components/PromoBanner.astro';
 import { suburbs, businessesInSuburb, categoriesFor, topSpotInSuburb, featuredInSuburb, type Business } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
 import { groupForSuburb, regionLabel } from '../../site-content';
+import { synonymsFor, suburbSynonymsFor } from '../../lib/categorySynonyms';
 import Icon from '../../components/Icon.astro';
 import site from '../../site';
 
@@ -25,9 +26,17 @@ for (const business of businesses) {
   if (!byCategory.has(key)) byCategory.set(key, { name, slug: key, businesses: [] });
   byCategory.get(key)!.businesses.push(business);
 }
-const categoryGroups = [...byCategory.entries()].sort((a, b) => b[1].businesses.length - a[1].businesses.length);
+const categoryGroups = [...byCategory.entries()].sort((a, b) => a[1].name.localeCompare(b[1].name));
 const topSpot = topSpotInSuburb(suburb.id);
 const featured = featuredInSuburb(suburb.id);
+
+const keywords = [
+  ...new Set(
+    categoryGroups
+      .filter(([slug]) => slug !== 'uncategorised')
+      .flatMap(([slug, group]) => [...synonymsFor(slug), ...suburbSynonymsFor(group.name, suburb.name)])
+  ),
+];
 
 const description = suburb.bio
   ? suburb.bio.replace(/\s+/g, ' ').trim().slice(0, 155)
@@ -38,6 +47,7 @@ const jsonLd = {
   '@type': 'Place',
   name: suburb.name,
   ...(suburb.lat && suburb.lng ? { geo: { '@type': 'GeoCoordinates', latitude: suburb.lat, longitude: suburb.lng } } : {}),
+  ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
 };
 ---
 
@@ -49,7 +59,9 @@ const jsonLd = {
       slot="breadcrumbs"
       items={[
         { label: 'Suburbs', href: '/suburb/' },
-        ...(groupForSuburb(suburb.slug) ? [{ label: groupForSuburb(suburb.slug)!.name, href: '/suburb/' }] : []),
+        ...(groupForSuburb(suburb.slug)
+          ? [{ label: groupForSuburb(suburb.slug)!.name, href: `/suburb/#${groupForSuburb(suburb.slug)!.slug}` }]
+          : []),
       ]}
     />
   </PageBanner>

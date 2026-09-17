@@ -32,7 +32,7 @@ const exampleSuburb = [...suburbs].sort((a, b) => businessesInSuburb(b.id).lengt
 </div>
 
 <script>
-  type Row = { n: string; s: string; sb: string; c: string; g: string; t: number };
+  type Row = { n: string; s: string; sb: string; c: string; g: string; k: string; t: number };
 
   const root = document.getElementById('hub-search')!;
   const input = root.querySelector('input') as HTMLInputElement;
@@ -48,21 +48,43 @@ const exampleSuburb = [...suburbs].sort((a, b) => businessesInSuburb(b.id).lengt
     return loading;
   }
 
+  // A plain `field.includes(word)` breaks on a simple plural: "butcher" is
+  // a substring of "butcheries" so it matches, but "butchers" isn't (the s
+  // lands after "butcher" instead of at the very end), so the plural form
+  // of the exact same query gave zero results. Rather than hand-maintain
+  // every singular/plural variant in categorySynonyms.ts, strip a single
+  // trailing "s" from the query word before falling back — only ever makes
+  // the word shorter, so it can only add matches, never cause a false one;
+  // the length guard keeps it from mangling short words like "gas" or "bus"
+  // into meaningless 2-letter fragments.
+  function includesWord(field: string, word: string): boolean {
+    if (field.includes(word)) return true;
+    if (word.length > 4 && word.endsWith('s') && field.includes(word.slice(0, -1))) return true;
+    return false;
+  }
+
   // Every word in the query must match somewhere; matches in the name
   // count for more than matches in category/suburb, and rows matching
-  // more words rank above rows matching fewer.
+  // more words rank above rows matching fewer. `k` (keywords) holds
+  // informal/trade-jargon synonyms for the row's category — e.g. someone
+  // typing "junk removal" matches a Rubbish & Rubble Removal business even
+  // though that phrase appears in neither its name nor its formal category
+  // label. Weighted below a literal category match so an exact category
+  // name still wins ties.
   function search(data: Row[], words: string[]): Row[] {
     const scored: { row: Row; score: number }[] = [];
     for (const row of data) {
       const name = row.n.toLowerCase();
       const cat = row.c.toLowerCase();
       const sub = row.sb.toLowerCase();
+      const keywords = row.k.toLowerCase();
       let score = 0;
       let allMatched = true;
       for (const word of words) {
-        if (name.includes(word)) score += 3;
-        else if (cat.includes(word)) score += 2;
-        else if (sub.includes(word)) score += 2;
+        if (includesWord(name, word)) score += 3;
+        else if (includesWord(cat, word)) score += 2;
+        else if (includesWord(sub, word)) score += 2;
+        else if (includesWord(keywords, word)) score += 1;
         else allMatched = false;
       }
       // Boost only applies once a row has already matched every query

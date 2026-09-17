@@ -4,15 +4,31 @@ import PageBanner from '../../components/PageBanner.astro';
 import SearchBox from '../../components/SearchBox.astro';
 import { suburbs, suburbBySlug, businessesInSuburb, type Suburb } from '../../lib/data';
 import { AREA_GROUPS } from '../../site-content';
+import { collectionPageJsonLd } from '../../lib/seo';
 import site from '../../site';
 
 const byName = (a: Suburb, b: Suburb) => a.name.localeCompare(b.name);
+
+const jsonLd = collectionPageJsonLd({
+  name: 'Suburbs',
+  description: `Every area ${site.siteName} covers, with the number of businesses listed so far.`,
+  url: `https://${site.domain}/suburb/`,
+  items: AREA_GROUPS.flatMap((area) =>
+    area.suburbSlugs
+      .map((slug) => suburbBySlug(slug))
+      .filter((s): s is Suburb => Boolean(s))
+      .sort(byName)
+      .map((s) => ({ name: s.name, url: `https://${site.domain}/suburb/${s.slug}/` }))
+  ),
+});
 ---
 
 <BaseLayout
   title="Suburbs"
   description={`Browse ${site.cityLabel} area by area, suburb by suburb — local businesses across ${suburbs.length} areas.`}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
   <PageBanner title="Suburbs" description={`Every area ${site.siteName} covers, with the number of businesses listed so far.`}>
     <SearchBox slot="search" />
   </PageBanner>
@@ -25,7 +41,7 @@ const byName = (a: Suburb, b: Suburb) => a.name.localeCompare(b.name);
         .sort(byName);
       if (inArea.length === 0) return null;
       return (
-        <div style="margin-top: 2rem;">
+        <div class="area-section" id={area.slug}>
           <h2 style="font-size: 1.1rem;">{area.name}</h2>
           <div class="suburb-grid">
             {inArea.map((suburb) => (
@@ -42,6 +58,10 @@ const byName = (a: Suburb, b: Suburb) => a.name.localeCompare(b.name);
 </BaseLayout>
 
 <style>
+  .area-section {
+    margin-top: 2rem;
+    scroll-margin-top: 1rem;
+  }
   .suburb-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));

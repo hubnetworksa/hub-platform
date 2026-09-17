@@ -6,6 +6,8 @@ import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import PromoBanner from '../../../components/PromoBanner.astro';
 import { categories, businessesInCategory, suburbFor, topSpotInCategory, featuredInCategory, type Business } from '../../../lib/data';
 import { groupForCategory } from '../../../lib/categoryGroups';
+import { synonymsFor, locationSynonymsFor } from '../../../lib/categorySynonyms';
+import { collectionPageJsonLd } from '../../../lib/seo';
 import site from '../../../site';
 
 export function getStaticPaths() {
@@ -26,12 +28,36 @@ const suburbGroups = [...bySuburb.entries()].sort((a, b) => b[1].businesses.leng
 const group = groupForCategory(category.slug);
 const topSpot = topSpotInCategory(category.id);
 const featured = featuredInCategory(category.id);
+const isEmpty = businesses.length === 0;
+
+// Sibling categories in the same group — only ones with real listings, so
+// this never sends someone to a thin/noindexed page (principle 2 of the
+// SEO plan: never manufacture links to near-empty pages).
+const relatedCategories = (group?.categorySlugs ?? [])
+  .filter((slug) => slug !== category.slug)
+  .map((slug) => categories.find((c) => c.slug === slug))
+  .filter((c): c is NonNullable<typeof c> => Boolean(c) && businessesInCategory(c.id).length > 0)
+  .sort((a, b) => a.name.localeCompare(b.name));
+const synonyms = [...synonymsFor(category.slug), ...locationSynonymsFor(category.name, site.cityLabel)];
+const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0, 4).join(', ')}.` : '';
+
+const jsonLd = isEmpty
+  ? null
+  : collectionPageJsonLd({
+      name: category.name,
+      description: `${businesses.length} ${category.name} listed across ${site.cityLabel}, by suburb.`,
+      url: `https://${site.domain}/category/${category.slug}/`,
+      items: businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` })),
+    });
 ---
 
 <BaseLayout
   title={category.name}
-  description={`${businesses.length} ${category.name} listed across ${site.cityLabel}, by suburb.`}
+  description={`${businesses.length} ${category.name} listed across ${site.cityLabel}, by suburb.${synonymLine}`}
+  noindex={isEmpty}
 >
+  {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
   <PageBanner title={category.name} description={`${businesses.length} listed, by suburb.`} iconPath={group?.iconPath}>
     <Breadcrumbs
       slot="breadcrumbs"
@@ -46,8 +72,16 @@ const featured = featuredInCategory(category.id);
   <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
     <PromoBanner businesses={topSpot} kind="top-spot" />
     <PromoBanner businesses={featured} kind="featured" />
-    {businesses.length === 0 ? (
-      <p style="color: var(--text-muted);">None listed yet.</p>
+    {isEmpty ? (
+      <div class="empty-category">
+        <p>No {category.name.toLowerCase()} listed yet — this page will fill in as new businesses are added.</p>
+        <p>
+          {group && (
+            <>Browse <a href={`/section/${group.slug}/`}>{group.name}</a> for related categories, or{' '}</>
+          )}
+          <a href="/list-your-business/">list your business</a> if you run one in this category.
+        </p>
+      </div>
     ) : (
       suburbGroups.map(([slug, suburbGroup]) => (
         <div style="margin-top: 1.75rem;">
@@ -60,6 +94,17 @@ const featured = featuredInCategory(category.id);
           </div>
         </div>
       ))
+    )}
+
+    {!isEmpty && relatedCategories.length > 0 && group && (
+      <div class="related-categories">
+        <h2>More in {group.name}</h2>
+        <div class="related-chip-row">
+          {relatedCategories.map((c) => (
+            <a class="related-chip" href={`/category/${c.slug}/`}>{c.name}</a>
+          ))}
+        </div>
+      </div>
     )}
   </section>
 </BaseLayout>
@@ -86,5 +131,42 @@ const featured = featuredInCategory(category.id);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 0.75rem;
+  }
+  .empty-category p {
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .empty-category a {
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .related-categories {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .related-categories h2 {
+    font-size: 1rem;
+    margin: 0 0 0.75rem;
+    color: var(--navy);
+  }
+  .related-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .related-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 0.9rem;
+    background: var(--bg-card);
+  }
+  .related-chip:hover {
+    border-color: var(--accent);
   }
 </style>

@@ -23,15 +23,19 @@ const primaryGroup = primary ? groupForCategory(primary.slug) : undefined;
 const center = shoppingCenterFor(business);
 ---
 
-<a
-  class="business-card"
-  href={`/business/${business.slug}/`}
-  data-list-kind={listContext?.kind}
-  data-list-slug={listContext?.slug}
-  data-list-name={listContext?.name}
->
+<div class="business-card">
   <div class="business-card-top">
-    <h3>{business.name}</h3>
+    <h3>
+      <a
+        class="card-title-link"
+        href={`/business/${business.slug}/`}
+        data-list-kind={listContext?.kind}
+        data-list-slug={listContext?.slug}
+        data-list-name={listContext?.name}
+      >
+        {business.name}
+      </a>
+    </h3>
     {primary && (
       <span class="badge">
         {primaryGroup && <Icon path={primaryGroup.iconPath} size={13} />}
@@ -42,19 +46,21 @@ const center = shoppingCenterFor(business);
   <p class="business-card-meta">
     {showSuburb && suburb && <span>{suburb.name}</span>}
     {center ? (
-      <span class="at-center">{showSuburb && suburb ? ' · ' : ''}at {center.name}</span>
+      <span class="at-center">
+        {showSuburb && suburb ? ' · ' : ''}at <a href={`/shopping-center/${center.slug}/`} class="center-link">{center.name}</a>
+      </span>
     ) : (
       business.address && <span>{showSuburb && suburb ? ' · ' : ''}{business.address}</span>
     )}
   </p>
-</a>
+</div>
 
 <script>
   // Astro dedupes this to a single copy per page no matter how many
   // BusinessCards render, so one delegated listener covers every card.
   // Only cards given a listContext prop carry data-list-kind at all.
   document.addEventListener('click', (e) => {
-    const card = (e.target as HTMLElement).closest('a.business-card[data-list-kind]') as HTMLElement | null;
+    const card = (e.target as HTMLElement).closest('a.card-title-link[data-list-kind]') as HTMLElement | null;
     if (!card) return;
     const kind = card.dataset.listKind;
     const slug = card.dataset.listSlug;
@@ -70,18 +76,31 @@ const center = shoppingCenterFor(business);
 
 <style>
   .business-card {
+    position: relative;
     display: block;
     padding: 1rem 1.1rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--bg-card);
-    text-decoration: none;
-    color: inherit;
     transition: box-shadow 0.15s, border-color 0.15s;
   }
-  .business-card:hover {
+  /* The card as a whole stays clickable (stretched-link pattern): the title
+     link's ::after covers the full card, so clicking anywhere still opens
+     the business page, but the shopping-centre link below — given its own
+     stacking context and a higher z-index — remains independently
+     clickable instead of being swallowed by that overlay. */
+  .business-card:has(.card-title-link:hover) {
     box-shadow: var(--shadow);
     border-color: var(--accent);
+  }
+  .card-title-link {
+    color: inherit;
+    text-decoration: none;
+  }
+  .card-title-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
   }
   .business-card-top {
     display: flex;
@@ -116,5 +135,13 @@ const center = shoppingCenterFor(business);
   .at-center {
     color: var(--accent);
     font-weight: 600;
+  }
+  .center-link {
+    position: relative;
+    z-index: 1;
+    color: inherit;
+  }
+  .center-link:hover {
+    text-decoration: underline;
   }
 </style>

@@ -5,6 +5,8 @@ import PageBanner from '../../../components/PageBanner.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import { categories, suburbs, businessesInSuburbAndCategory } from '../../../lib/data';
 import { groupForCategory } from '../../../lib/categoryGroups';
+import { synonymsFor, locationSynonymsFor, suburbSynonymsFor } from '../../../lib/categorySynonyms';
+import { collectionPageJsonLd } from '../../../lib/seo';
 import site from '../../../site';
 
 export function getStaticPaths() {
@@ -24,12 +26,28 @@ export function getStaticPaths() {
 
 const { category, suburb, businesses } = Astro.props;
 const group = groupForCategory(category.slug);
+const synonyms = [
+  ...synonymsFor(category.slug),
+  ...locationSynonymsFor(category.name, site.cityLabel),
+  ...suburbSynonymsFor(category.name, suburb.name),
+];
+const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0, 4).join(', ')}.` : '';
+
+const jsonLd = collectionPageJsonLd({
+  name: `${category.name} in ${suburb.name}`,
+  description: `${businesses.length} ${category.name} in ${suburb.name} — part of the Greater ${site.cityLabel} area.`,
+  url: `https://${site.domain}/category/${category.slug}/${suburb.slug}/`,
+  items: businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` })),
+  keywords: synonyms,
+});
 ---
 
 <BaseLayout
   title={`${category.name} in ${suburb.name}`}
-  description={`${businesses.length} ${category.name} in ${suburb.name} — part of the Greater ${site.cityLabel} area.`}
+  description={`${businesses.length} ${category.name} in ${suburb.name} — part of the Greater ${site.cityLabel} area.${synonymLine}`}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
   <PageBanner title={`${category.name} in ${suburb.name}`} description={`${businesses.length} listed.`} iconPath={group?.iconPath}>
     <Breadcrumbs
       slot="breadcrumbs"

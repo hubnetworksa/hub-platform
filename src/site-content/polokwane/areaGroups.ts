@@ -29,7 +29,7 @@ export const AREA_GROUPS: AreaGroup[] = [
   {
     slug: 'polokwane-west',
     name: 'Polokwane West & Industrial',
-    suburbSlugs: ['welgelegen', 'westenburg', 'nirvana', 'ladanna', 'capricorn'],
+    suburbSlugs: ['welgelegen', 'westenburg', 'nirvana', 'ladanna', 'capricorn', 'futura'],
   },
   { slug: 'seshego', name: 'Seshego', suburbSlugs: ['seshego', 'seshego-zone-1', 'seshego-zone-4'] },
   { slug: 'mankweng', name: 'Mankweng', suburbSlugs: ['mankweng'] },
