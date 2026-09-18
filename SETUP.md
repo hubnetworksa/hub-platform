@@ -112,6 +112,20 @@ and `status/<slug>/routine-state.json` each run — make sure whichever agent
 you configure is told which site it owns and only touches that site's
 paths.
 
+### 4b. The events routine — a second, separate weekly agent per site
+
+Deliberately **not the same agent/schedule** as the hourly business
+routine above — a different cadence (weekly, not hourly) and a different
+runbook (`ROUTINE.events.<slug>.md`), so it needs its own scheduled cloud
+agent pointed at this repo too, one per site, same "repo read/write only,
+no Cloudflare credentials" setup as above. It researches real upcoming
+events (markets, gigs, sport, theatre) and proposes them the same way —
+SQL under `db/routine-updates/<site>/`, the same GitHub Action applies it
+— reading `status/<slug>/db-snapshot.json`'s `events` array for what's
+already listed (no separate state file needed, unlike the business
+routine's `routine-state.json`, since this job re-searches broadly every
+run rather than working through a rotation).
+
 ## 5. Email
 
 No SMTP, no Pages secret, no credentials at all — every site uses the same
