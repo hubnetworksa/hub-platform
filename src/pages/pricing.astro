@@ -1,0 +1,178 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SponsorSlot from '../components/SponsorSlot.astro';
+import { priceRand } from '../lib/data';
+import site from '../site';
+
+const PLANS = [
+  {
+    tier: 0,
+    name: 'Basic',
+    price: 'Free',
+    blurb: 'Get listed — the essentials, always free.',
+    features: ['Listed in search & your suburb', 'Business contact details', 'Trading hours'],
+  },
+  {
+    tier: 1,
+    name: 'Verified',
+    price: `${priceRand('price_verified_cents')}/mo`,
+    blurb: 'Stand out with a verified badge.',
+    features: ['Everything in Basic', 'Verified badge', 'Priority placement in results'],
+  },
+  {
+    tier: 2,
+    name: 'Featured',
+    price: `${priceRand('price_featured_cents')}/mo`,
+    blurb: 'Get found first, with photos.',
+    features: ['Everything in Verified', 'Featured on the homepage & your suburb', 'Photo gallery', 'Top of search results'],
+    highlight: true,
+  },
+];
+
+const SPOTS = [
+  { productType: 'category_sponsor' as const, name: 'Category sponsor', price: priceRand('price_sponsor_category_cents'), blurb: 'One advertiser per category, sitewide.' },
+  { productType: 'suburb_sponsor' as const, name: 'Suburb sponsor', price: priceRand('price_sponsor_suburb_cents'), blurb: 'One advertiser per suburb page.' },
+  { productType: 'homepage_banner' as const, name: 'Homepage banner', price: priceRand('price_sponsor_banner_cents'), blurb: 'The single sponsor slot on the homepage.' },
+  { productType: 'centre_sponsor' as const, name: 'Centre sponsorship', price: priceRand('price_sponsor_centre_cents'), blurb: 'Sponsor an entire shopping centre page.' },
+];
+---
+
+<BaseLayout
+  title="Plans & pricing"
+  description={`See ${site.siteName}'s plans for business listings, plus exclusive sponsorship spots across the site.`}
+>
+  <section class="pricing-hero">
+    <div class="container">
+      <span class="section-header-eyebrow">Plans &amp; pricing</span>
+      <h1>Get found by more of {site.cityLabel}</h1>
+      <p>Free to list. Paid plans help the right people find you first.</p>
+    </div>
+  </section>
+
+  <section class="container" style="padding-top: 2.5rem; padding-bottom: 1rem;">
+    <div class="plan-grid">
+      {PLANS.map((plan) => (
+        <div class:list={['card', { 'card-featured card-top-bar': plan.highlight }]}>
+          <span class="plan-name">{plan.name}</span>
+          <span class="plan-price-big">{plan.price}</span>
+          <p class="text-muted">{plan.blurb}</p>
+          <ul class="plan-features">
+            {plan.features.map((f) => <li>{f}</li>)}
+          </ul>
+          <a href={plan.tier === 0 ? '/list-your-business/' : '/my-businesses/'} class:list={['btn', plan.highlight ? 'btn-primary' : 'btn-outline']}>
+            {plan.tier === 0 ? 'List your business' : 'Upgrade my listing'}
+          </a>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+    <div class="section-header">
+      <div>
+        <span class="section-header-eyebrow">Exclusive spots</span>
+        <h2>Sold one at a time</h2>
+      </div>
+    </div>
+    <p class="text-muted" style="max-width: 60ch;">A handful of high-visibility spots across the site — only one advertiser holds each at a time.</p>
+    <div class="spots-grid">
+      {SPOTS.map((spot) => (
+        <div class="card spot-card">
+          <strong>{spot.name}</strong>
+          <span class="plan-price">{spot.price}/mo</span>
+          <p class="text-muted">{spot.blurb}</p>
+          {spot.productType === 'homepage_banner' ? (
+            <SponsorSlot productType={spot.productType} label={spot.name.toLowerCase()} />
+          ) : (
+            <p class="text-muted" style="font-size: 0.8rem;">Purchased per suburb/category/centre from that page.</p>
+          )}
+        </div>
+      ))}
+    </div>
+    <p class="text-muted" style="font-size: 0.8rem; margin-top: 1rem;">Prices shown are placeholders and subject to change.</p>
+  </section>
+
+  <section class="owner-cta">
+    <div class="container">
+      <h2>Questions about a plan?</h2>
+      <p>Get in touch and we'll help you pick the right one.</p>
+      <a href={`mailto:${site.contactEmail}`} class="btn btn-primary">Contact us</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .pricing-hero {
+    background: var(--navy);
+    color: #fff;
+    padding: 3rem 0 2.5rem;
+    text-align: center;
+  }
+  .pricing-hero h1 {
+    color: #fff;
+    margin: 0.4rem 0 0.5rem;
+  }
+  .pricing-hero p {
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0;
+  }
+  .plan-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.25rem;
+  }
+  .plan-grid .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .plan-name {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--navy);
+  }
+  .plan-price-big {
+    font-family: var(--font-sans);
+    font-weight: 800;
+    font-size: 1.6rem;
+  }
+  .plan-features {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.88rem;
+  }
+  .plan-features li {
+    padding-left: 1.1rem;
+    position: relative;
+  }
+  .plan-features li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .plan-grid .btn {
+    margin-top: auto;
+    justify-content: center;
+  }
+  .spots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+  .spot-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .plan-price {
+    color: var(--accent);
+    font-weight: 700;
+  }
+</style>

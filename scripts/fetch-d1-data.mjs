@@ -66,6 +66,10 @@ async function main() {
   // shopping-centre) — a build-time snapshot, same pattern as everything
   // else here: changes only take effect on the next admin-triggered
   // rebuild, not live. See functions/_lib/pricing.ts for product types.
+  // Admin-editable prices (see functions/_lib/pricing.ts) — the public
+  // Pricing page and the plan picker on list-your-business.astro both
+  // read from this snapshot rather than hardcoding a price.
+  const siteSettings = query('SELECT key, value FROM site_settings;');
   const sponsorships = query(
     `SELECT s.id, s.product_type, s.product_target, s.business_id, b.name AS business_name, b.slug AS business_slug, s.current_period_end
      FROM subscriptions s JOIN businesses b ON b.id = s.business_id
@@ -79,6 +83,7 @@ async function main() {
   await writeFile(`${OUT_DIR}/shopping-centers.json`, JSON.stringify(shoppingCenters, null, 2));
   await writeFile(`${OUT_DIR}/business-photos.json`, JSON.stringify(businessPhotos, null, 2));
   await writeFile(`${OUT_DIR}/sponsorships.json`, JSON.stringify(sponsorships, null, 2));
+  await writeFile(`${OUT_DIR}/site-settings.json`, JSON.stringify(siteSettings, null, 2));
 
   process.stderr.write(
     `[${SITE}] Fetched ${suburbs.length} suburbs, ${categories.length} categories, ` +

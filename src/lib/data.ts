@@ -5,6 +5,8 @@ import businessCategoriesRaw from '../data/business-categories.json';
 import shoppingCentersRaw from '../data/shopping-centers.json';
 import businessPhotosRaw from '../data/business-photos.json';
 import sponsorshipsRaw from '../data/sponsorships.json';
+import siteSettingsRaw from '../data/site-settings.json';
+import { centsToRand } from '../../functions/_lib/pricing';
 
 export interface Suburb {
   id: number;
@@ -181,6 +183,14 @@ for (const s of sponsorships) {
  *  homepage_banner slot. */
 export function sponsorFor(productType: Sponsorship['product_type'], target?: string): Sponsorship | undefined {
   return sponsorshipByKey.get(`${productType}:${target ?? ''}`);
+}
+
+const siteSettings = new Map((siteSettingsRaw as { key: string; value: string }[]).map((r) => [r.key, r.value]));
+
+/** Formatted Rand price for a site_settings key (e.g. "price_featured_cents"), or a dash if not yet configured. */
+export function priceRand(key: string): string {
+  const cents = Number(siteSettings.get(key));
+  return Number.isFinite(cents) && cents > 0 ? `R${centsToRand(cents)}` : '—';
 }
 
 export function parseSourceUrls(business: Business): string[] {

@@ -1,0 +1,112 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import StatTile from '../components/StatTile.astro';
+import site, { SITES } from '../site';
+import { businesses, suburbs, categories } from '../lib/data';
+
+const network = Object.values(SITES);
+
+const TRUST = [
+  { title: 'Human review', body: 'Every listing is checked by a person before it goes live — no unverified auto-imports.' },
+  { title: 'Sourced, not invented', body: 'Every fact traces back to a real source, kept on file for every listing.' },
+  { title: 'Ads are labelled', body: 'Sponsored placements are always marked as such — never mixed in as if they were organic results.' },
+];
+---
+
+<BaseLayout
+  title="Advertise"
+  description={`Advertise across ${site.siteName} and its sister directory sites — reach residents actively searching for local businesses.`}
+>
+  <section class="advertise-hero">
+    <div class="container">
+      <span class="section-header-eyebrow">Advertise with us</span>
+      <h1>Reach residents actually searching for a local business</h1>
+      <p>One booking, real local reach — see <a href="/pricing/">plans &amp; pricing</a> for exclusive spots and featured listings.</p>
+    </div>
+  </section>
+
+  <section class="stats-band">
+    <div class="container stat-strip stat-strip-on-navy">
+      <StatTile value={businesses.length.toLocaleString()} label="Listings" />
+      <StatTile value={suburbs.length.toLocaleString()} label="Suburbs" />
+      <StatTile value={categories.length.toLocaleString()} label="Categories" />
+      <StatTile value={`${network.length} cities`} label="One booking" />
+    </div>
+  </section>
+
+  <section class="container" style="padding-top: 2.5rem; padding-bottom: 1rem;">
+    <div class="section-header">
+      <div><h2>Three hubs, one network</h2></div>
+    </div>
+    <div class="network-grid">
+      {network.map((s) => (
+        <a href={`https://${s.domain}/advertise/`} target="_blank" rel="noopener" class="card network-card">
+          <strong>{s.siteName}</strong>
+          <span class="text-muted">{s.cityLabel}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+    <div class="section-header">
+      <div><h2>How the sites are kept honest</h2></div>
+    </div>
+    <div class="trust-grid">
+      {TRUST.map((t) => (
+        <div class="card">
+          <strong>{t.title}</strong>
+          <p class="text-muted">{t.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="owner-cta">
+    <div class="container">
+      <h2>Ready to advertise?</h2>
+      <p>Get in touch and we'll help you find the right spot.</p>
+      <a href={`mailto:${site.contactEmail}`} class="btn btn-primary">Contact us</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .advertise-hero {
+    background: var(--navy);
+    color: #fff;
+    padding: 3rem 0 2.5rem;
+  }
+  .advertise-hero h1 {
+    color: #fff;
+    margin: 0.4rem 0 0.75rem;
+    max-width: 26ch;
+  }
+  .advertise-hero p {
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0;
+  }
+  .advertise-hero a {
+    color: #fff;
+    text-decoration: underline;
+  }
+  .network-grid, .trust-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+  .network-card {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .network-card:hover {
+    border-color: var(--accent);
+  }
+  .trust-grid .card p {
+    margin: 0.3rem 0 0;
+  }
+</style>

@@ -3,7 +3,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import BusinessCard from '../../components/BusinessCard.astro';
 import PageBanner from '../../components/PageBanner.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { shoppingCenters, suburbs, businessesInShoppingCenter, categoriesFor } from '../../lib/data';
+import StatTile from '../../components/StatTile.astro';
+import SponsorSlot from '../../components/SponsorSlot.astro';
+import { shoppingCenters, suburbs, businessesInShoppingCenter, categoriesFor, FEATURED_TIER } from '../../lib/data';
 import { collectionPageJsonLd } from '../../lib/seo';
 import { synonymsFor } from '../../lib/categorySynonyms';
 import site from '../../site';
@@ -44,6 +46,10 @@ const tenantsJsonLd = collectionPageJsonLd({
   url: centerUrl,
   items: businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` })),
 });
+
+const featuredStores = businesses.filter((b) => b.subscription_tier >= FEATURED_TIER);
+// Sort Featured stores first so the pinned/highlighted cards lead the grid.
+const sortedBusinesses = [...businesses].sort((a, b) => b.subscription_tier - a.subscription_tier);
 ---
 
 <BaseLayout
@@ -64,16 +70,33 @@ const tenantsJsonLd = collectionPageJsonLd({
     />
   </PageBanner>
 
+  <section class="stats-band">
+    <div class="container stat-strip stat-strip-on-navy">
+      <StatTile value={String(businesses.length)} label="Stores listed" />
+      <StatTile value={center.type === 'mall' ? 'Mall' : 'Fuel station'} label="Centre type" />
+      <StatTile value={suburb?.name ?? '—'} label="Suburb" />
+      <StatTile value={String(featuredStores.length)} label="Featured stores" />
+    </div>
+  </section>
+
   <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
     {center.description && <p class="center-desc">{center.description}</p>}
     {center.address && <p style="color: var(--text-muted); margin-top: 0;">{center.address}</p>}
     <div class="business-grid">
-      {businesses.map((business) => (
+      {sortedBusinesses.map((business) => (
         <BusinessCard
           business={business}
           listContext={{ kind: 'shopping-center', slug: center.slug, name: center.name }}
         />
       ))}
+    </div>
+
+    <div class="centre-management">
+      <div>
+        <h2>Sponsor this centre</h2>
+        <p class="text-muted">Put your business in front of everyone browsing {center.name} — one sponsor at a time.</p>
+      </div>
+      <SponsorSlot productType="centre_sponsor" target={center.slug} label="centre sponsor" />
     </div>
   </section>
 </BaseLayout>
@@ -90,5 +113,26 @@ const tenantsJsonLd = collectionPageJsonLd({
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 0.75rem;
     margin-top: 1rem;
+  }
+  .centre-management {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .centre-management h2 {
+    margin: 0 0 0.35rem;
+    font-size: 1.1rem;
+  }
+  .centre-management p {
+    margin: 0;
+    max-width: 46ch;
+  }
+  .centre-management :global(.sponsor-slot) {
+    min-width: 260px;
   }
 </style>
