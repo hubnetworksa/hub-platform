@@ -1,6 +1,6 @@
 # Outstanding work
 
-Last updated: 2026-09-15
+Last updated: 2026-09-18
 
 ## Domain cutover checklist (per site)
 
@@ -9,7 +9,6 @@ personal Cloudflare account to `hubnetworksa` (Registrar account move,
 accepted same day), the zone is Active there, and the domain now resolves
 straight to hub-platform (`/api/me` and `/register/` both confirmed live
 at `pretoriahub.com` — those routes never existed on the old repo).
-Polokwane and Cape Town are still on `.pages.dev` only.
 
 - [x] Cloudflare Registrar account move for `pretoriahub.com` (personal →
       `hubnetworksa`) — submitted and accepted 2026-09-10.
@@ -83,8 +82,7 @@ Polokwane and Cape Town are still on `.pages.dev` only.
       shared `pub-7060187043058790` line correctly post-cutover
       (2026-09-10) — though see below, this ID is being replaced with a
       Pretoria-specific one, not kept long-term.
-- [ ] Cape Town domain cutover — repeat this whole checklist once its real
-      domain is ready to move.
+- [x] Cape Town domain cutover — done 2026-09-18, see its own section below.
 
 **Polokwane: cut over 2026-09-15.** `polokwanehub.com` moved from its
 previous Cloudflare account to `hubnetworksa` (Registrar account move,
@@ -176,13 +174,65 @@ live at `polokwanehub.com`). Cape Town is still on `.pages.dev` only.
       `https://polokwanehub.com/ads.txt` confirmed serving
       `pub-7239595592067933` correctly post-cutover, 2026-09-15.
 
+**Cape Town: cut over 2026-09-18.** `thecapetownhub.com`'s zone was already
+on the `hubnetworksa` account when this cutover began; the domain now
+resolves straight to hub-platform.
+
+- [x] Attach `thecapetownhub.com` (and `www.thecapetownhub.com`) as a
+      custom domain on the `thecapetownhub` Pages project — done
+      2026-09-18. Cloudflare didn't auto-write the DNS record even though
+      the zone and the Pages project share an account (same as Polokwane's
+      experience) — CNAME `@`/`www` → `thecapetownhub.pages.dev` added
+      manually.
+- [x] Re-enable the `.pages.dev` → custom-domain redirect in
+      `functions/_middleware.ts` — `domainLive: true` and `cloudflareZoneId`
+      set in `sites/capetown.json`, 2026-09-18.
+- [x] **Found and fixed a real bug during cutover**: `src/site-content/
+      capetown/areaGroups.ts` was still an empty stub even though 168
+      suburbs were already seeded (`db/migrations/capetown/0030_seed_suburbs.sql`)
+      — the `/suburb/` page showed the correct "168 areas" count in its
+      description but rendered zero tiles. Filled in, grouped into the same
+      8 regions the migration already tags each suburb with; verified 1:1
+      against the migration (168/168, no typos, no duplicates).
+- [x] **Email Routing**: `hello@thecapetownhub.com` → `hubnetworksa@gmail.com`,
+      Active.
+- [x] **Resend** — domain verified (DKIM record present), `RESEND_API_KEY`
+      set on the `thecapetownhub` Pages project, then a direct
+      `wrangler pages deploy` forced so the secret took effect immediately
+      rather than waiting for the next `main` push.
+- [x] **DMARC** (`_dmarc.thecapetownhub.com` = `v=DMARC1; p=none;
+      rua=mailto:hubnetworksa@gmail.com`) and **SPF** (merged to
+      `v=spf1 include:_spf.mx.cloudflare.net include:amazonses.com ~all`,
+      covering both Cloudflare's forwarding and Resend's sending) added.
+- [x] **Outbound + inbound email pipeline confirmed end-to-end** — a
+      throwaway account registered via `/api/register` on the live site,
+      confirmed arriving at `hubnetworksa@gmail.com`, test user/session rows
+      deleted from `thecapetownhub-db` afterward.
+- [ ] **Google OAuth Client for `thecapetownhub.com`** — not yet created
+      (redirect URI would be `https://thecapetownhub.com/api/auth/google/callback`).
+- [ ] Verify Google sign-in works end-to-end on `thecapetownhub.com` —
+      blocked on the above.
+- [ ] Search Console — not yet set up; `sites/capetown.json`'s
+      `googleSiteVerification` is still `null`.
+- [ ] **AdSense ID needs fixing** — `sites/capetown.json`'s
+      `adsensePublisherId` (`ca-pub-7239595592067933`) is currently a
+      straight copy of Polokwane's, which conflicts with the "each site
+      gets its own ID" decision below. Needs Cape Town's own approved
+      publisher ID once it exists, not a shared one.
+- [ ] Full submit → admin-approve → owner-confirm → publish → claim →
+      admin-approve-claim smoke test on `thecapetownhub.com` — only the
+      account-registration email leg has been tested so far, not the rest
+      of the flow.
+- Old-site merge: N/A — unlike Pretoria/Polokwane, Cape Town has no prior
+  standalone site/database; it was built fresh directly in hub-platform.
+
 ## hub-platform (Polokwane / Pretoria / Cape Town)
 
 - [x] Set `GITHUB_DISPATCH_TOKEN` secret on all 3 Cloudflare Pages projects
       (polokwanehub, pretoriahub, thecapetownhub) — done and verified via a
       real workflow_dispatch test run on 2026-09-09.
-- [ ] Resend setup for Cape Town, once it has a registered domain (Pretoria
-      and Polokwane both have `RESEND_API_KEY` set now).
+- [x] Resend setup for Cape Town — done 2026-09-18 (see its cutover section
+      above). All 3 sites now have `RESEND_API_KEY` set.
 - [x] Custom 404 page — `src/pages/404.astro`, added 2026-09-15 (ported
       from the old Polokwane repo, site-aware, applies to all 3 sites).
 - [ ] **AdSense decision reversed (2026-09-10): each site will use its
@@ -196,15 +246,15 @@ live at `polokwanehub.com`). Cape Town is still on `.pages.dev` only.
       once the actual IDs are in hand — not done yet, IDs not ready).
       The `hubnetworksa` account's duplicate-account flag did clear
       2026-09-10, which unblocks getting those per-site approvals moving.
-- [ ] Search Console verification for Cape Town, once it has a registered
-      domain (Pretoria has its meta-tag code wired; Polokwane auto-verified
-      via a carried-over DNS TXT record — see the per-site sections above).
+- [ ] Search Console verification for Cape Town — domain is live now
+      (2026-09-18 cutover), not yet done (Pretoria has its meta-tag code
+      wired; Polokwane auto-verified via a carried-over DNS TXT record —
+      see the per-site sections above).
 - [x] GA4 for Polokwane (`G-QQL9HCKZNR`) and Cape Town (`G-JWEXFEXXW4`) —
       done 2026-09-09, each under its own separate Analytics account
       (fine for GA4, unlike AdSense).
-- [ ] Cape Town domain cutover (the whole checklist above, deferred until
-      it has a real domain ready to move) — Pretoria and Polokwane are both
-      done.
+- [x] Cape Town domain cutover — done 2026-09-18. All 3 sites now on their
+      real domains.
 - [ ] Remove the TEMP separate monitor-copy email (to
       ethanmglindeque@gmail.com, sent alongside the real owner/admin
       emails) once the owner-confirmation flow is fully trusted — marked
@@ -278,7 +328,8 @@ commit simplifying this), `/admin/claims/`, My Businesses + edit page, the
 "Claim it" button, and rebuild-trigger wiring
 (`GITHUB_DISPATCH_TOKEN`, done 2026-09-09). Only remaining piece:
 
-- [ ] Same setup for Cape Town once it has a real domain — its own Google
-      OAuth Client (redirect URI has to match the live domain, so this
-      can't be done until then), and confirming the claim/accounts flow
-      works on that domain the same way it now does for the other two.
+- [ ] Same setup for Cape Town — domain is live now (2026-09-18 cutover),
+      so this can proceed: its own Google OAuth Client (redirect URI
+      `https://thecapetownhub.com/api/auth/google/callback`), and the
+      full submit/claim/admin-approve flow smoke test on that domain, same
+      as the other two.
