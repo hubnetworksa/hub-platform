@@ -107,6 +107,20 @@ const SPOTS = [
       </div>
     </section>
 
+    <section id="events" style="max-width:1200px;margin:0 auto;padding:clamp(32px,4vw,52px) 20px 0">
+      <div style="border-bottom:2px solid var(--navy);padding-bottom:12px">
+        <h2 style="margin:0;font-size:clamp(20px,2.8vw,28px);letter-spacing:-.025em;color:var(--navy)">Feature an event</h2>
+      </div>
+      <div style="border:2px solid var(--accent);border-radius:14px;background:#fff;padding:22px;margin-top:18px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px">
+        <div>
+          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)">Featured event</div>
+          <div style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.025em;margin-top:8px">{priceRand('price_event_feature_cents')} <span style="font-size:14px;font-weight:700;color:var(--muted)">/ event</span></div>
+          <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);max-width:52ch">List your event free — feature it to sit at the top of the Events page and in the homepage rotation. A once-off fee per event, not a subscription.</p>
+        </div>
+        <a href={`mailto:${site.contactEmail}?subject=${encodeURIComponent('Feature an event on ' + site.siteName)}`} style="padding:14px 22px;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;text-decoration:none;white-space:nowrap">Feature my event</a>
+      </div>
+    </section>
+
     <section style="margin-top:clamp(36px,5vw,60px);background:var(--accent)">
       <div style="max-width:1200px;margin:0 auto;padding:clamp(32px,4.5vw,56px) 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px">
         <h2 style="margin:0;color:var(--contrast);font-size:clamp(24px,3.6vw,38px);letter-spacing:-.03em;line-height:1.08;max-width:24ch">Start free today. Upgrade when the calls start coming.</h2>

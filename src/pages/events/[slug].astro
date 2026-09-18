@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { events, eventDetail, eventDateLong } from '../../lib/data';
+import site from '../../site';
+
+export function getStaticPaths() {
+  return events.map((e) => ({ params: { slug: e.slug }, props: { event: e } }));
+}
+
+const { event: e } = Astro.props;
+const detail = eventDetail(e);
+const dateLong = eventDateLong(e);
+---
+
+<BaseLayout title={e.title} description={e.description || `${e.title} — ${dateLong} at ${e.venue ?? 'TBC'}, ${site.cityLabel}.`}>
+  <main>
+    <section style="max-width:1200px;margin:0 auto;padding:18px 20px 0">
+      <a href="/events/" style="display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">← All events</a>
+    </section>
+
+    <section style="max-width:1200px;margin:0 auto;padding:16px 20px 0">
+      <div id="event-shell" style="display:grid;grid-template-columns:1fr;gap:22px">
+        <div>
+          <div style="position:relative;border:2px solid var(--navy);border-radius:16px;overflow:hidden;height:clamp(220px,32vw,360px);background:var(--bg-subtle)">
+            {e.image_url ? (
+              <img src={e.image_url} alt="" style="width:100%;height:100%;object-fit:cover;display:block" />
+            ) : (
+              <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;font-weight:700">Event poster</div>
+            )}
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:16px">
+            {!!e.featured && (
+              <span style="padding:4px 10px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Featured event</span>
+            )}
+            <span style="padding:4px 10px;border-radius:999px;background:var(--bg-subtle);color:var(--accent-hover);font-size:11.5px;font-weight:800">{e.type}</span>
+            <span style="font-size:13px;font-weight:800;color:var(--navy)">{dateLong}</span>
+            {e.event_time && <span style="font-size:13px;font-weight:700;color:var(--muted)">{e.event_time}</span>}
+          </div>
+          <h1 style="margin:12px 0 10px;font-size:clamp(26px,4.2vw,42px);letter-spacing:-.03em;line-height:1.05;color:var(--navy)">{e.title}</h1>
+          {e.description && <p style="margin:0 0 20px;font-size:16.5px;line-height:1.6;color:var(--text);max-width:62ch">{e.description}</p>}
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:2px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+            <div style="background:#fff;padding:14px 16px">
+              <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Venue</div>
+              <div style="font-size:14px;font-weight:600;margin-top:5px;line-height:1.45">{detail.address}</div>
+            </div>
+            <div style="background:#fff;padding:14px 16px">
+              <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Doors &amp; times</div>
+              <div style="font-size:14px;font-weight:600;margin-top:5px;line-height:1.45">{detail.doors}</div>
+            </div>
+            <div style="background:#fff;padding:14px 16px">
+              <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Age guidance</div>
+              <div style="font-size:14px;font-weight:600;margin-top:5px;line-height:1.45">{detail.ages}</div>
+            </div>
+            <div style="background:#fff;padding:14px 16px">
+              <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Parking</div>
+              <div style="font-size:14px;font-weight:600;margin-top:5px;line-height:1.45">{detail.parking}</div>
+            </div>
+          </div>
+
+          {detail.hasLineup && (
+            <>
+              <div style="border-bottom:2px solid var(--navy);padding-bottom:12px;margin-top:28px">
+                <h2 style="margin:0;font-size:clamp(19px,2.6vw,25px);letter-spacing:-.025em;color:var(--navy)">Who's on</h2>
+              </div>
+              <div style="border:2px solid var(--border);border-radius:14px;overflow:hidden;margin-top:16px;background:#fff">
+                {detail.lineup.map((p) => (
+                  <div style="display:flex;align-items:center;gap:14px;padding:15px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap">
+                    <div style="min-width:0;flex:1">
+                      <div style="font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.015em">{p.name}</div>
+                      <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:2px">{p.role}</div>
+                    </div>
+                    <span style="padding:6px 11px;border-radius:999px;background:var(--bg-subtle);color:var(--accent-hover);font-size:12.5px;font-weight:800;white-space:nowrap">{p.time}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          <div style="border-bottom:2px solid var(--navy);padding-bottom:12px;margin-top:28px">
+            <h2 style="margin:0;font-size:clamp(19px,2.6vw,25px);letter-spacing:-.025em;color:var(--navy)">Organiser</h2>
+          </div>
+          <div style="border:2px solid var(--border);border-radius:14px;padding:18px;margin-top:16px;background:#fff">
+            <div style="font-size:17px;font-weight:800;color:var(--navy);letter-spacing:-.015em">{detail.organiser}</div>
+            {detail.organiserNote && <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin-top:4px">{detail.organiserNote}</div>}
+            {detail.hasTraders && (
+              <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:14px;line-height:1.55;color:var(--text)">{detail.traders}</div>
+            )}
+          </div>
+          {e.image_credit && <p style="margin:14px 0 0;font-size:11.5px;font-weight:600;color:var(--muted)">{e.image_credit}</p>}
+        </div>
+
+        <aside style="display:flex;flex-direction:column;gap:14px">
+          <div style="border:2px solid var(--navy);border-radius:16px;overflow:hidden">
+            <div style="background:var(--navy);padding:16px 18px">
+              <div style="font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--grad-from)">Tickets</div>
+              <div style="font-size:21px;font-weight:800;color:#fff;margin-top:6px;letter-spacing:-.02em">{e.price}</div>
+              {e.host && <div style="font-size:12.5px;font-weight:700;color:rgba(255,255,255,.72);margin-top:4px">{e.host}</div>}
+            </div>
+            <div style="background:#fff;padding:14px;display:flex;flex-direction:column;gap:10px">
+              {detail.tiers.map((t) => (
+                <div style="border:2px solid var(--border);border-radius:11px;padding:13px 15px;display:flex;flex-direction:column;gap:7px">
+                  <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px">
+                    <span style="font-size:14.5px;font-weight:800;color:var(--navy)">{t.name}</span>
+                    <span style="font-size:17px;font-weight:800;color:var(--navy);letter-spacing:-.02em;white-space:nowrap">{t.price}</span>
+                  </div>
+                  {t.note && <span style="font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.4">{t.note}</span>}
+                  <a href={t.url} target="_blank" rel="noopener noreferrer" style="margin-top:2px;padding:10px 13px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;text-align:center;text-decoration:none">Buy this ticket</a>
+                </div>
+              ))}
+              <p style="margin:0;font-size:11.5px;font-weight:600;color:var(--muted);line-height:1.45">Tickets are sold by the organiser's own seller. {site.siteName} does not handle payments or refunds.</p>
+            </div>
+          </div>
+          <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
+            <h3 style="margin:0 0 8px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Is this your event?</h3>
+            <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Claim it to edit the lineup, prices and seller link. Feature it to sit at the top of the Events page.</p>
+            <a href="/pricing/#events" style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--navy);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-align:center;text-decoration:none">Feature this event</a>
+          </div>
+          <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);min-height:250px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:18px">
+            <span style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
+            <span style="font-size:13.5px;font-weight:700;color:var(--muted)">300×250 — event sponsors</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  @media (min-width: 950px) {
+    #event-shell {
+      grid-template-columns: 1fr 320px;
+    }
+  }
+</style>

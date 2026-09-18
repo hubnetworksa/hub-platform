@@ -1,0 +1,161 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { eventsSorted, eventTypeCounts, eventDateParts, EVENT_TYPES } from '../../lib/data';
+import site from '../../site';
+
+const sorted = eventsSorted();
+const counts = eventTypeCounts();
+const filters = ['All', ...EVENT_TYPES];
+
+const cards = sorted.map((e) => {
+  const { month, day } = eventDateParts(e);
+  return { event: e, month, day };
+});
+---
+
+<BaseLayout
+  title="Events"
+  description={`Markets, gigs, sport and family events in ${site.cityLabel} — with ticket prices up front and a direct link to the seller.`}
+>
+  <main>
+    <section style="position:relative;background:var(--navy);overflow:hidden">
+      <img src={site.bannerImage} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%" />
+      <div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(var(--navy-rgb),.94) 0%,rgba(var(--navy-rgb),.78) 48%,rgba(var(--navy-rgb),.26) 100%)"></div>
+      <div style="position:relative;max-width:1200px;margin:0 auto;padding:clamp(30px,5vw,58px) 20px clamp(24px,3.5vw,38px)">
+        <span style="display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1.5px solid rgba(255,255,255,.34);border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff"><span>What's on in</span>{site.cityLabel}</span>
+        <h1 style="margin:16px 0 12px;color:#fff;font-size:clamp(30px,5.4vw,52px);line-height:1.03;letter-spacing:-.03em;max-width:18ch">Events, markets and gigs — with ticket prices up front.</h1>
+        <p style="margin:0;color:rgba(255,255,255,.86);font-size:clamp(15px,1.7vw,17.5px);max-width:52ch;line-height:1.5">Every listing shows what a ticket actually costs and links straight to the seller. Organisers list free; featured events sit at the top.</p>
+      </div>
+    </section>
+
+    <section style="max-width:1200px;margin:0 auto;padding:22px 20px 0">
+      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;border-bottom:2px solid var(--navy)">
+        {filters.map((f) => (
+          <button type="button" data-event-filter={f} style={`padding:9px 15px;border-radius:999px;cursor:pointer;white-space:nowrap;font-size:13px;font-weight:800;border:2px solid ${f === 'All' ? 'var(--navy)' : 'var(--border)'};background:${f === 'All' ? 'var(--navy)' : '#fff'};color:${f === 'All' ? '#fff' : 'var(--navy)'}`}>{f}</button>
+        ))}
+      </div>
+    </section>
+
+    <section style="max-width:1200px;margin:0 auto;padding:22px 20px 0">
+      <div id="events-shell" style="display:grid;grid-template-columns:1fr;gap:22px">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          {cards.map(({ event: e, month, day }) => (
+            <article
+              data-event-card
+              data-event-type={e.type}
+              style={`display:grid;grid-template-columns:1fr;border:2px solid ${e.featured ? 'var(--accent)' : 'var(--border)'};border-radius:14px;background:#fff;overflow:hidden;align-items:stretch`}
+            >
+              <a href={`/events/${e.slug}/`} style="position:relative;height:100%;min-height:190px;background:var(--bg-subtle);display:block;text-decoration:none">
+                {e.image_url ? (
+                  <img src={e.image_url} alt="" style="width:100%;height:100%;min-height:190px;object-fit:cover;display:block" />
+                ) : (
+                  <div style="width:100%;height:100%;min-height:190px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12.5px;font-weight:700;text-align:center;padding:16px">Event poster</div>
+                )}
+                <div style={`position:absolute;top:12px;left:12px;z-index:2;display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 12px;border-radius:10px;background:${e.featured ? 'var(--accent)' : 'var(--navy)'};color:${e.featured ? 'var(--contrast)' : '#fff'};box-shadow:0 6px 16px rgba(0,0,0,.28)`}>
+                  <span style="font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.8">{month}</span>
+                  <span style="font-size:27px;font-weight:800;letter-spacing:-.03em;line-height:1">{day}</span>
+                  <span style="font-size:10.5px;font-weight:700;opacity:.8">{eventDateParts(e).weekday}</span>
+                </div>
+              </a>
+              <div style="padding:18px;display:flex;flex-direction:column;gap:9px;min-width:0">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                  {!!e.featured && (
+                    <span style="padding:4px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Featured event</span>
+                  )}
+                  <span style="padding:4px 9px;border-radius:999px;background:var(--bg-subtle);color:var(--accent-hover);font-size:11px;font-weight:800">{e.type}</span>
+                  {e.event_time && <span style="font-size:12px;font-weight:700;color:var(--muted)">{e.event_time}</span>}
+                </div>
+                <h2 style="margin:0;font-size:20px;line-height:1.2;letter-spacing:-.02em;color:var(--navy)"><a href={`/events/${e.slug}/`} style="color:inherit;text-decoration:none">{e.title}</a></h2>
+                {(e.venue || e.suburb) && <p style="margin:0;font-size:13.5px;font-weight:700;color:var(--muted)">{[e.venue, e.suburb].filter(Boolean).join(' · ')}</p>}
+                {e.description && <p style="margin:0;font-size:14px;line-height:1.55;color:var(--text)">{e.description}</p>}
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:4px">
+                  <div style="display:flex;flex-direction:column">
+                    <span style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Tickets</span>
+                    <span style="font-size:19px;font-weight:800;color:var(--navy);letter-spacing:-.02em">{e.price}</span>
+                  </div>
+                  <a href={e.ticket_url} target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:8px;padding:12px 17px;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none">
+                    Buy tickets
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"></path></svg>
+                  </a>
+                  {e.host && <span style="font-size:12px;font-weight:700;color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{e.host}</span>}
+                  <a href={`/events/${e.slug}/`} style="margin-left:auto;font-size:13px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">Full details →</a>
+                </div>
+              </div>
+            </article>
+          ))}
+          <div id="events-empty" hidden style="border:2px dashed var(--border);border-radius:14px;padding:34px;text-align:center;background:var(--bg-subtle)">
+            <div style="font-size:16px;font-weight:800;color:var(--navy)">Nothing listed in that category yet</div>
+            <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin-top:5px">Running one? List it free.</div>
+          </div>
+          {sorted.length === 0 && (
+            <div style="border:2px dashed var(--border);border-radius:14px;padding:34px;text-align:center;background:var(--bg-subtle)">
+              <div style="font-size:16px;font-weight:800;color:var(--navy)">Nothing listed yet</div>
+              <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin-top:5px">Running one? List it free.</div>
+            </div>
+          )}
+        </div>
+
+        <aside style="display:flex;flex-direction:column;gap:14px">
+          <div style="border:2px solid var(--navy);border-radius:14px;overflow:hidden">
+            <div style="background:var(--navy);padding:16px 18px">
+              <div style="font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--grad-from)">For organisers</div>
+              <div style="font-size:19px;font-weight:800;color:#fff;margin-top:6px;letter-spacing:-.02em">List your event free</div>
+            </div>
+            <div style="padding:16px;background:#fff">
+              <p style="margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--text)">Add your dates, ticket prices and seller link. Feature it to sit at the top of this page and on the homepage.</p>
+              <a href={`mailto:${site.contactEmail}?subject=${encodeURIComponent('List an event on ' + site.siteName)}`} style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;margin-bottom:8px;text-align:center;text-decoration:none">Add an event</a>
+              <a href="/pricing/#events" style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-align:center;text-decoration:none">Feature it — R450/event</a>
+            </div>
+          </div>
+          <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
+            <h3 style="margin:0 0 10px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">This month</h3>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              {counts.map((c) => (
+                <div style="display:flex;justify-content:space-between;gap:10px;font-size:13.5px;font-weight:700;color:var(--text)">
+                  <span>{c.label}</span><span style="color:var(--muted)">{c.count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);min-height:250px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:18px">
+            <span style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
+            <span style="font-size:13.5px;font-weight:700;color:var(--muted)">300×250 — event sponsors</span>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  @media (min-width: 950px) {
+    #events-shell {
+      grid-template-columns: 1fr 320px;
+    }
+  }
+</style>
+
+<script>
+  const filterButtons = document.querySelectorAll<HTMLButtonElement>('button[data-event-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('article[data-event-card]');
+  const empty = document.getElementById('events-empty')!;
+
+  filterButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.eventFilter!;
+      filterButtons.forEach((b) => {
+        const active = b === btn;
+        b.style.borderColor = active ? 'var(--navy)' : 'var(--border)';
+        b.style.background = active ? 'var(--navy)' : '#fff';
+        b.style.color = active ? '#fff' : 'var(--navy)';
+      });
+      let visible = 0;
+      cards.forEach((card) => {
+        const show = filter === 'All' || card.dataset.eventType === filter;
+        card.hidden = !show;
+        if (show) visible++;
+      });
+      empty.hidden = visible > 0;
+    });
+  });
+</script>

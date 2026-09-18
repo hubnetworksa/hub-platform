@@ -6,6 +6,7 @@ import shoppingCentersRaw from '../data/shopping-centers.json';
 import businessPhotosRaw from '../data/business-photos.json';
 import sponsorshipsRaw from '../data/sponsorships.json';
 import siteSettingsRaw from '../data/site-settings.json';
+import eventsRaw from '../data/events.json';
 import { centsToRand } from '../../functions/_lib/pricing';
 
 export interface Suburb {
@@ -196,6 +197,115 @@ export function priceRand(key: string): string {
 export function parseSourceUrls(business: Business): string[] {
   try {
     return JSON.parse(business.source_urls);
+  } catch {
+    return [];
+  }
+}
+
+// --- Events (ported from the mockup's Events screen) ---
+
+export const EVENT_TYPES = ['Music', 'Market', 'Sport', 'Theatre', 'Food & Drink', 'Family', 'Other'] as const;
+
+export interface Event {
+  id: number;
+  slug: string;
+  title: string;
+  type: string;
+  event_date: string;
+  event_time: string | null;
+  venue: string | null;
+  suburb: string | null;
+  address: string | null;
+  price: string;
+  ticket_url: string;
+  host: string | null;
+  image_url: string | null;
+  image_credit: string | null;
+  organiser: string | null;
+  organiser_note: string | null;
+  doors: string | null;
+  ages: string | null;
+  parking: string | null;
+  traders: string | null;
+  lineup_json: string | null;
+  tiers_json: string | null;
+  description: string;
+  featured: number;
+}
+
+export interface EventTier {
+  name: string;
+  price: string;
+  note?: string;
+  url: string;
+}
+
+export interface EventLineupItem {
+  name: string;
+  role: string;
+  time: string;
+}
+
+export const events = eventsRaw as Event[];
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+export const eventBySlug = (slug: string) => events.find((e) => e.slug === slug);
+
+/** Featured first, then soonest first — same ordering as the mockup's public listing. */
+export function eventsSorted(): Event[] {
+  return [...events].sort((a, b) => {
+    if (!!a.featured !== !!b.featured) return a.featured ? -1 : 1;
+    return a.event_date < b.event_date ? -1 : 1;
+  });
+}
+
+/** How many events of each type — feeds the "This month" sidebar box. */
+export function eventTypeCounts(): { label: string; count: number }[] {
+  const counts = new Map<string, number>();
+  for (const e of events) counts.set(e.type, (counts.get(e.type) ?? 0) + 1);
+  return [...counts.entries()].map(([label, count]) => ({ label, count }));
+}
+
+export function eventDateParts(event: Event): { month: string; day: string; weekday: string } {
+  const [y, m, d] = event.event_date.split('-').map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d, 12));
+  return { month: MONTHS[m - 1], day: String(d), weekday: WEEKDAYS[date.getUTCDay()] };
+}
+
+export function eventDateLong(event: Event): string {
+  const { month, day, weekday } = eventDateParts(event);
+  const [y] = event.event_date.split('-');
+  return `${weekday} ${Number(day)} ${month} ${y}`;
+}
+
+/** Same fallbacks as the mockup's detailVals() — optional enrichment fields
+ *  (organiser/address/doors/ages/parking/lineup/tiers) fall back to
+ *  whatever's already on the core event row rather than showing blank. */
+export function eventDetail(event: Event) {
+  const lineup: EventLineupItem[] = parseJsonArray(event.lineup_json);
+  const tiers: EventTier[] = parseJsonArray(event.tiers_json);
+  return {
+    organiser: event.organiser || event.host || 'Organiser to be confirmed',
+    organiserNote: event.organiser_note || '',
+    address: event.address || [event.venue, event.suburb].filter(Boolean).join(', '),
+    doors: event.doors || event.event_time || '',
+    ages: event.ages || 'All ages',
+    parking: event.parking || 'Parking at the venue',
+    traders: event.traders || '',
+    hasTraders: !!event.traders,
+    lineup,
+    hasLineup: lineup.length > 0,
+    tiers: tiers.length > 0 ? tiers : [{ name: 'General entry', price: event.price, note: 'Single ticket type', url: event.ticket_url }],
+  };
+}
+
+function parseJsonArray<T>(raw: string | null): T[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }

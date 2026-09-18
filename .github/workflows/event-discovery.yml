@@ -1,0 +1,30 @@
+name: Weekly event discovery
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - site: polokwane
+          - site: pretoria
+          - site: capetown
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Call discover-events
+        run: |
+          HOST=$(node -e "
+            const s = require('./sites/${{ matrix.site }}.json');
+            console.log(s.domainLive ? s.domain : s.pagesDevHost);
+          ")
+          curl -sS -f -X POST "https://$HOST/api/admin/discover-events" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

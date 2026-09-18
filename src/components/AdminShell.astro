@@ -11,7 +11,7 @@ import Icon from './Icon.astro';
 import site from '../site';
 
 interface Props {
-  active: 'dashboard' | 'listings' | 'submissions' | 'claims' | 'reports' | 'users' | 'activity' | 'plans' | 'ads';
+  active: 'dashboard' | 'listings' | 'submissions' | 'claims' | 'reports' | 'users' | 'activity' | 'events' | 'plans' | 'ads';
   title: string;
   subtitle: string;
 }
@@ -25,6 +25,7 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
   { key: 'reports', href: '/admin/reports/', label: 'Reports' },
   { key: 'users', href: '/admin/users/', label: 'Users' },
   { key: 'activity', href: '/admin/activity/', label: 'Activity' },
+  { key: 'events', href: '/admin/events/', label: 'Events' },
   { key: 'plans', href: '/admin/plans-pricing/', label: 'Plans & pricing' },
   { key: 'ads', href: '/admin/ads-sponsors/', label: 'Ads & sponsors' },
 ];

@@ -75,6 +75,14 @@ async function main() {
      FROM subscriptions s JOIN businesses b ON b.id = s.business_id
      WHERE s.product_type != 'tier' AND s.status = 'active';`
   );
+  // Events (mockup's new "Events" screen) — admin-added plus whatever the
+  // weekly discovery agent has auto-published since the last rebuild.
+  const events = query(
+    `SELECT id, slug, title, type, event_date, event_time, venue, suburb, address, price, ticket_url, host,
+            image_url, image_credit, organiser, organiser_note, doors, ages, parking, traders, lineup_json, tiers_json,
+            description, featured
+     FROM events ORDER BY event_date ASC;`
+  );
 
   await writeFile(`${OUT_DIR}/suburbs.json`, JSON.stringify(suburbs, null, 2));
   await writeFile(`${OUT_DIR}/categories.json`, JSON.stringify(categories, null, 2));
@@ -84,11 +92,12 @@ async function main() {
   await writeFile(`${OUT_DIR}/business-photos.json`, JSON.stringify(businessPhotos, null, 2));
   await writeFile(`${OUT_DIR}/sponsorships.json`, JSON.stringify(sponsorships, null, 2));
   await writeFile(`${OUT_DIR}/site-settings.json`, JSON.stringify(siteSettings, null, 2));
+  await writeFile(`${OUT_DIR}/events.json`, JSON.stringify(events, null, 2));
 
   process.stderr.write(
     `[${SITE}] Fetched ${suburbs.length} suburbs, ${categories.length} categories, ` +
     `${businesses.length} businesses, ${businessCategories.length} business-category links, ` +
-    `${shoppingCenters.length} shopping centres ` +
+    `${shoppingCenters.length} shopping centres, ${events.length} events ` +
     `(${REMOTE ? 'remote' : 'local'}).\n`
   );
 }

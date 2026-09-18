@@ -1,0 +1,289 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminShell from '../../components/AdminShell.astro';
+---
+
+<BaseLayout title="Events" description="Add, edit, feature or remove events." noindex={true}>
+  <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
+
+  <div id="content" hidden>
+    <AdminShell active="events" title="Events" subtitle="Dates, ticket prices and seller links.">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="background:#fff;border:2px solid var(--border);border-radius:12px;padding:14px 18px;flex:1;min-width:150px">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Events listed</div>
+          <div id="stat-total" style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px">—</div>
+        </div>
+        <div style="background:#fff;border:2px solid var(--accent);border-radius:12px;padding:14px 18px;flex:1;min-width:150px">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)">Featured (paid)</div>
+          <div id="stat-featured" style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px">—</div>
+        </div>
+        <button id="new-event-btn" type="button" style="padding:13px 18px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;cursor:pointer">+ New event</button>
+        <a href="/events/" style="padding:13px 18px;border:2px solid var(--navy);border-radius:11px;background:#fff;color:var(--navy);font-size:13.5px;font-weight:800;text-decoration:none">View public page</a>
+      </div>
+
+      <div id="event-form-panel" hidden style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:20px">
+        <h2 id="event-form-title" style="margin:0 0 14px;font-size:16px;letter-spacing:-.02em;color:var(--navy)">New event</h2>
+        <form id="event-form" style="display:flex;flex-direction:column;gap:14px">
+          <input type="hidden" name="id" />
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+            Event title
+            <input type="text" name="title" required style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" />
+          </label>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+              Type
+              <select name="type" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)">
+                <option value="Music">Music</option>
+                <option value="Market">Market</option>
+                <option value="Sport">Sport</option>
+                <option value="Theatre">Theatre</option>
+                <option value="Food & Drink">Food &amp; Drink</option>
+                <option value="Family">Family</option>
+                <option value="Other">Other</option>
+              </select>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+              Date
+              <input type="date" name="eventDate" required style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" />
+            </label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+              Time
+              <input type="text" name="eventTime" placeholder="19:30" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" />
+            </label>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+              Venue
+              <input type="text" name="venue" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" />
+            </label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+              Suburb
+              <input type="text" name="suburb" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" />
+            </label>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+              Ticket price <span style="font-weight:600;color:var(--muted);font-size:12px">shown exactly as typed</span>
+              <input type="text" name="price" placeholder="R180 – R650 / Free entry" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" />
+            </label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+              Seller label
+              <input type="text" name="host" placeholder="Sold via Quicket" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" />
+            </label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+            Photo or poster URL
+            <input type="url" name="imageUrl" placeholder="https://…/poster.jpg" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" />
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+            Ticket URL
+            <input type="url" name="ticketUrl" placeholder="https://www.quicket.co.za/…" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" />
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+            Description
+            <textarea name="description" rows="3" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;resize:vertical;background:#fff;color:var(--text)"></textarea>
+          </label>
+          <div style="display:flex;gap:9px;flex-wrap:wrap;padding-top:4px">
+            <button type="submit" style="padding:13px 20px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;cursor:pointer">Save event</button>
+            <button id="event-form-cancel" type="button" style="padding:13px 20px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font-size:14px;font-weight:800;cursor:pointer">Cancel</button>
+          </div>
+          <p id="event-form-status" role="status" style="margin:0;font-size:0.85rem;color:var(--muted);"></p>
+        </form>
+      </div>
+
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.4fr) minmax(0,1fr) auto;gap:12px;padding:12px 18px;border-bottom:2px solid var(--navy);font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">
+          <span>Event</span><span>Date &amp; venue</span><span>Tickets</span><span>Actions</span>
+        </div>
+        <div id="events-list"></div>
+        <p id="events-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No events yet.</p>
+      </div>
+    </AdminShell>
+  </div>
+</BaseLayout>
+
+<script>
+  interface EventRow {
+    id: number;
+    title: string;
+    type: string;
+    event_date: string;
+    event_time: string | null;
+    venue: string | null;
+    suburb: string | null;
+    price: string;
+    ticket_url: string;
+    host: string | null;
+    image_url: string | null;
+    description: string;
+    featured: number;
+    source: string;
+  }
+
+  async function postJson(url: string, body: unknown) {
+    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    return res.json();
+  }
+
+  const form = document.getElementById('event-form') as HTMLFormElement;
+  const panel = document.getElementById('event-form-panel')!;
+  const formTitle = document.getElementById('event-form-title')!;
+  const formStatus = document.getElementById('event-form-status')!;
+
+  function openForm(row?: EventRow) {
+    form.reset();
+    (form.elements.namedItem('id') as HTMLInputElement).value = row ? String(row.id) : '';
+    if (row) {
+      formTitle.textContent = 'Edit event';
+      (form.elements.namedItem('title') as HTMLInputElement).value = row.title;
+      (form.elements.namedItem('type') as HTMLSelectElement).value = row.type;
+      (form.elements.namedItem('eventDate') as HTMLInputElement).value = row.event_date;
+      (form.elements.namedItem('eventTime') as HTMLInputElement).value = row.event_time ?? '';
+      (form.elements.namedItem('venue') as HTMLInputElement).value = row.venue ?? '';
+      (form.elements.namedItem('suburb') as HTMLInputElement).value = row.suburb ?? '';
+      (form.elements.namedItem('price') as HTMLInputElement).value = row.price;
+      (form.elements.namedItem('host') as HTMLInputElement).value = row.host ?? '';
+      (form.elements.namedItem('imageUrl') as HTMLInputElement).value = row.image_url ?? '';
+      (form.elements.namedItem('ticketUrl') as HTMLInputElement).value = row.ticket_url;
+      (form.elements.namedItem('description') as HTMLTextAreaElement).value = row.description;
+    } else {
+      formTitle.textContent = 'New event';
+    }
+    formStatus.textContent = '';
+    panel.hidden = false;
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function closeForm() {
+    panel.hidden = true;
+    form.reset();
+  }
+
+  document.getElementById('new-event-btn')!.addEventListener('click', () => openForm());
+  document.getElementById('event-form-cancel')!.addEventListener('click', closeForm);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    formStatus.textContent = 'Saving…';
+    const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+    const id = Number(data.id) || null;
+    const result = await postJson('/api/admin/events', {
+      action: id ? 'update' : 'create',
+      id,
+      title: data.title,
+      type: data.type,
+      eventDate: data.eventDate,
+      eventTime: data.eventTime,
+      venue: data.venue,
+      suburb: data.suburb,
+      price: data.price,
+      host: data.host,
+      imageUrl: data.imageUrl,
+      ticketUrl: data.ticketUrl,
+      description: data.description,
+    });
+    if (result.ok) {
+      closeForm();
+      loadEvents();
+    } else {
+      formStatus.textContent = result.error || 'Something went wrong.';
+    }
+  });
+
+  function eventRow(e: EventRow): string {
+    const featStyle = e.featured
+      ? 'display:inline-block;padding:4px 10px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase'
+      : 'display:inline-block;padding:4px 10px;border-radius:999px;background:var(--bg-subtle);color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase';
+    const featLabel = e.featured ? 'Featured' : 'Standard';
+    const sourceNote = e.source === 'agent' ? ' · found by weekly agent' : '';
+    return `
+      <div style="display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.4fr) minmax(0,1fr) auto;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);align-items:center">
+        <div style="min-width:0;display:flex;gap:11px;align-items:center">
+          <div style="flex-shrink:0;width:54px;height:54px;border-radius:9px;overflow:hidden;background:var(--bg-subtle)">
+            ${e.image_url ? `<img src="${e.image_url}" alt="" style="width:100%;height:100%;object-fit:cover" />` : ''}
+          </div>
+          <div style="min-width:0">
+            <div style="font-size:14.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em">${e.title}</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap">
+              <span style="${featStyle}">${featLabel}</span>
+              <span style="font-size:12px;font-weight:700;color:var(--muted)">${e.type}${sourceNote}</span>
+            </div>
+          </div>
+        </div>
+        <div style="min-width:0;font-size:13px;font-weight:700;color:var(--text)">${e.event_date}<br /><span style="font-weight:600;color:var(--muted)">${e.venue ?? ''}</span></div>
+        <div style="min-width:0">
+          <div style="font-size:13px;font-weight:800;color:var(--navy)">${e.price}</div>
+          <div style="font-size:11.5px;font-weight:600;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.host ?? ''}</div>
+        </div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">
+          <button data-feature="${e.id}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);cursor:pointer">Feature</button>
+          <button data-edit="${e.id}" style="padding:8px 11px;border:0;border-radius:8px;background:var(--navy);color:#fff;font-size:12px;font-weight:800;cursor:pointer">Edit</button>
+          <button data-remove="${e.id}" data-event-title="${e.title}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--danger);font-size:12px;font-weight:800;cursor:pointer">Remove</button>
+        </div>
+      </div>`;
+  }
+
+  let currentRows: EventRow[] = [];
+
+  async function loadEvents() {
+    const res = await fetch('/api/admin/events');
+    const data = await res.json();
+    currentRows = data.events ?? [];
+    document.getElementById('stat-total')!.textContent = String(currentRows.length);
+    document.getElementById('stat-featured')!.textContent = String(currentRows.filter((e) => e.featured).length);
+
+    const list = document.getElementById('events-list')!;
+    const empty = document.getElementById('events-empty')!;
+    if (currentRows.length === 0) {
+      empty.hidden = false;
+      list.innerHTML = '';
+    } else {
+      empty.hidden = true;
+      list.innerHTML = currentRows.map(eventRow).join('');
+    }
+  }
+
+  document.getElementById('events-list')!.addEventListener('click', async (e) => {
+    const featureBtn = (e.target as HTMLElement).closest('button[data-feature]') as HTMLButtonElement | null;
+    if (featureBtn) {
+      featureBtn.disabled = true;
+      await postJson('/api/admin/events', { action: 'toggle-feature', id: Number(featureBtn.dataset.feature) });
+      loadEvents();
+      return;
+    }
+
+    const editBtn = (e.target as HTMLElement).closest('button[data-edit]') as HTMLButtonElement | null;
+    if (editBtn) {
+      const row = currentRows.find((r) => r.id === Number(editBtn.dataset.edit));
+      if (row) openForm(row);
+      return;
+    }
+
+    const removeBtn = (e.target as HTMLElement).closest('button[data-remove]') as HTMLButtonElement | null;
+    if (removeBtn) {
+      if (!window.confirm(`Remove "${removeBtn.dataset.eventTitle}"? This can't be undone.`)) return;
+      removeBtn.disabled = true;
+      await postJson('/api/admin/events', { action: 'delete', id: Number(removeBtn.dataset.remove) });
+      loadEvents();
+      return;
+    }
+  });
+
+  async function init() {
+    const me = await fetch('/api/me');
+    if (me.status === 401) {
+      window.location.href = '/login/?next=/admin/events/';
+      return;
+    }
+    const meData = await me.json();
+    if (!meData.isAdmin) {
+      window.location.href = '/my-businesses/';
+      return;
+    }
+    document.getElementById('loading')!.hidden = true;
+    document.getElementById('content')!.hidden = false;
+    await loadEvents();
+  }
+
+  init();
+</script>
