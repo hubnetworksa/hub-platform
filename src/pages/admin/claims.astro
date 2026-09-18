@@ -1,18 +1,22 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminShell from '../../components/AdminShell.astro';
 ---
 
 <BaseLayout title="Pending Claims" description="Review business ownership claims." noindex={true}>
-  <section class="admin-wrap">
-    <div id="loading" class="loading">Loading…</div>
+  <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
-    <div id="content" class="admin" hidden>
-      <a href="/admin/" class="back-link">← Admin Dashboard</a>
-      <h1>Pending business claims</h1>
-      <ul id="claims-list" class="item-list"></ul>
-      <p id="claims-empty" class="empty-state" hidden>No claims waiting for review.</p>
-    </div>
-  </section>
+  <div id="content" hidden>
+    <AdminShell active="claims" title="Claims" subtitle="Business ownership claims awaiting review.">
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div id="claims-list"></div>
+        <div id="claims-empty" hidden style="padding:40px 18px;text-align:center;">
+          <div style="font-size:16px;font-weight:800;color:var(--navy)">Nothing waiting</div>
+          <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin-top:5px">No claims waiting for review.</div>
+        </div>
+      </div>
+    </AdminShell>
+  </div>
 </BaseLayout>
 
 <script>
@@ -22,17 +26,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   function renderClaim(c: { businessName: string; claimantEmail: string; reviewToken: string; contactName: string | null; contactPhone: string | null; contactEmail: string | null; roleNote: string | null }): string {
     return `
-      <li class="admin-row">
-        <div class="admin-row-main">
-          <strong>${c.businessName}</strong>
-          <span class="row-detail">Account: ${c.claimantEmail}</span>
-          <span class="row-detail">${c.contactName ?? 'Not specified'} · ${c.contactPhone ?? 'Not specified'} · ${c.contactEmail ?? 'Not specified'} · ${c.roleNote ?? 'Not specified'}</span>
+      <div style="padding:18px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;">
+        <div style="min-width:0;">
+          <span style="font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.015em">${c.businessName}</span>
+          <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:4px;">Account: ${c.claimantEmail}</div>
+          <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);max-width:64ch;">${c.contactName ?? 'Not specified'} · ${c.contactPhone ?? 'Not specified'} · ${c.contactEmail ?? 'Not specified'} · ${c.roleNote ?? 'Not specified'}</p>
         </div>
-        <div class="row-actions">
-          <button class="btn-sm btn-approve" data-action="approve" data-token="${c.reviewToken}">Approve</button>
-          <button class="btn-sm btn-reject" data-action="reject" data-token="${c.reviewToken}">Reject</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+          <button data-action="approve" data-token="${c.reviewToken}" style="padding:10px 14px;border:0;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;cursor:pointer;">Approve</button>
+          <button data-action="reject" data-token="${c.reviewToken}" style="padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--danger);font-size:13px;font-weight:800;cursor:pointer;">Reject</button>
         </div>
-      </li>`;
+      </div>`;
   }
 
   async function init() {
@@ -70,93 +74,3 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   init();
 </script>
-
-<style>
-  .admin-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 3rem 1rem;
-  }
-  .loading {
-    color: var(--text-muted);
-  }
-  .admin {
-    width: 100%;
-    max-width: 760px;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .back-link {
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 0.88rem;
-    text-decoration: none;
-  }
-  .back-link:hover {
-    text-decoration: underline;
-  }
-  h1 {
-    margin: 0;
-    font-size: 1.4rem;
-    color: var(--navy);
-  }
-  .item-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-  :global(.admin-row) {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.85rem 1rem;
-    border-radius: var(--radius);
-    background: var(--bg-subtle);
-    border: 1px solid var(--border);
-  }
-  :global(.admin-row-main) {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    font-size: 0.9rem;
-    min-width: 0;
-  }
-  :global(.row-detail) {
-    color: var(--text-muted);
-    font-size: 0.82rem;
-    overflow-wrap: break-word;
-  }
-  :global(.row-actions) {
-    display: flex;
-    gap: 0.4rem;
-    flex-shrink: 0;
-  }
-  :global(.btn-sm) {
-    border-radius: var(--radius);
-    padding: 0.35rem 0.7rem;
-    font-weight: 700;
-    font-size: 0.78rem;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  :global(.btn-approve) {
-    border: none;
-    background: var(--accent);
-    color: #fff;
-  }
-  :global(.btn-reject) {
-    border: 1px solid var(--danger, #c23838);
-    background: #fff;
-    color: var(--danger, #c23838);
-  }
-  .empty-state {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin: 0;
-  }
-</style>

@@ -1,48 +1,48 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminShell from '../../components/AdminShell.astro';
 ---
 
 <BaseLayout title="Ads & Sponsors" description="Manage exclusive sponsorship slots." noindex={true}>
-  <section class="admin-wrap">
-    <div id="loading" class="loading">Loading…</div>
+  <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
-    <div id="content" class="admin" hidden>
-      <a href="/admin/" class="back-link">← Admin Dashboard</a>
-      <h1>Ads &amp; sponsors</h1>
-      <p class="panel-hint">Exclusive spots — one advertiser holds each at a time. Comping one here doesn't touch PayFast; it's a manual/off-platform sale.</p>
-
-      <div class="panel">
-        <h2>Currently sold</h2>
-        <ul id="sold-list" class="item-list"></ul>
-        <p id="sold-empty" class="empty-state" hidden>No sponsorship slots sold yet.</p>
+  <div id="content" hidden>
+    <AdminShell active="ads" title="Ads & sponsors" subtitle="Exclusive spots — one advertiser holds each at a time.">
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy);">
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Sold slots</h2>
+          <p style="margin:4px 0 0;font-size:12.5px;color:var(--muted);font-weight:600">Comping one here doesn't touch PayFast — it's a manual/off-platform sale.</p>
+        </div>
+        <div id="sold-list"></div>
+        <p id="sold-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No sponsorship slots sold yet.</p>
       </div>
 
-      <div class="panel">
-        <h2>Comp a slot</h2>
-        <form id="comp-form">
-          <label>
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:18px">
+        <h2 style="margin:0 0 12px;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Comp a slot</h2>
+        <form id="comp-form" style="display:flex;flex-direction:column;gap:14px;max-width:380px;">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
             Business ID
-            <input type="number" name="businessId" required />
+            <input type="number" name="businessId" required style="padding:12px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)" />
           </label>
-          <label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
             Product
-            <select name="productType" required>
+            <select name="productType" required style="padding:12px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)">
               <option value="category_sponsor">Category sponsor</option>
               <option value="suburb_sponsor">Suburb sponsor</option>
               <option value="homepage_banner">Homepage banner</option>
               <option value="centre_sponsor">Centre sponsorship</option>
             </select>
           </label>
-          <label>
-            Target slug <span>(category/suburb/centre slug — leave blank for homepage banner)</span>
-            <input type="text" name="productTarget" />
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+            Target slug <span style="font-weight:600;color:var(--muted);font-size:11.5px">category/suburb/centre slug — blank for homepage banner</span>
+            <input type="text" name="productTarget" style="padding:12px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)" />
           </label>
-          <button type="submit" class="btn btn-primary btn-sm">Assign</button>
-          <p id="comp-status" role="status"></p>
+          <button type="submit" style="align-self:flex-start;padding:12px 17px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;cursor:pointer;">Assign</button>
+          <p id="comp-status" role="status" style="margin:0;font-size:0.85rem;color:var(--muted);"></p>
         </form>
       </div>
-    </div>
-  </section>
+    </AdminShell>
+  </div>
 </BaseLayout>
 
 <script>
@@ -71,15 +71,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     list.innerHTML = data.sponsorships
       .map(
         (s: { id: number; product_type: string; product_target: string | null; business_name: string }) =>
-          `<li class="admin-row">
-            <div class="admin-row-main">
-              <strong>${PRODUCT_LABELS[s.product_type] ?? s.product_type}${s.product_target ? ` — ${s.product_target}` : ''}</strong>
-              <span class="row-detail">sold to ${s.business_name}</span>
+          `<div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <div style="min-width:0;flex:1">
+              <div style="font-size:14.5px;font-weight:800;color:var(--navy);">${PRODUCT_LABELS[s.product_type] ?? s.product_type}${s.product_target ? ` — ${s.product_target}` : ''}</div>
+              <div style="font-size:12.5px;font-weight:600;color:var(--muted);">sold to ${s.business_name}</div>
             </div>
-            <div class="row-actions">
-              <button class="btn-sm btn-reject" data-clear="${s.id}">Clear</button>
-            </div>
-          </li>`
+            <button data-clear="${s.id}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--danger);cursor:pointer;">Clear</button>
+          </div>`
       )
       .join('');
   }
@@ -125,128 +123,3 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   init();
 </script>
-
-<style>
-  .admin-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 3rem 1rem;
-  }
-  .loading {
-    color: var(--text-muted);
-  }
-  .admin {
-    width: 100%;
-    max-width: 760px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-  .back-link {
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 0.88rem;
-    text-decoration: none;
-  }
-  h1 {
-    margin: 0;
-    font-size: 1.4rem;
-    color: var(--navy);
-  }
-  .panel-hint {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    margin: 0;
-  }
-  .panel {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 16px);
-    padding: 1.5rem;
-  }
-  .panel h2 {
-    margin: 0 0 0.9rem;
-    font-size: 1rem;
-    color: var(--navy);
-  }
-  .item-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-  :global(.admin-row) {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.85rem 1rem;
-    border-radius: var(--radius);
-    background: var(--bg-subtle);
-    border: 1px solid var(--border);
-  }
-  :global(.admin-row-main) {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    font-size: 0.9rem;
-  }
-  :global(.row-detail) {
-    color: var(--text-muted);
-    font-size: 0.82rem;
-  }
-  :global(.btn-sm) {
-    border-radius: var(--radius);
-    padding: 0.35rem 0.7rem;
-    font-weight: 700;
-    font-size: 0.78rem;
-    cursor: pointer;
-    border: none;
-  }
-  :global(.btn-reject) {
-    border: 1px solid var(--danger, #c23838);
-    background: #fff;
-    color: var(--danger, #c23838);
-  }
-  .empty-state {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin: 0;
-  }
-  #comp-form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.9rem;
-    max-width: 360px;
-  }
-  #comp-form label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-  #comp-form label span {
-    font-weight: 400;
-    color: var(--text-muted);
-    font-size: 0.78rem;
-  }
-  #comp-form input, #comp-form select {
-    font: inherit;
-    padding: 0.55rem 0.7rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--bg-subtle);
-    color: var(--text);
-  }
-  #comp-form button {
-    align-self: flex-start;
-  }
-  #comp-status {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin: 0;
-  }
-</style>

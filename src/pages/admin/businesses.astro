@@ -1,30 +1,36 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminShell from '../../components/AdminShell.astro';
 ---
 
 <BaseLayout title="Manage Businesses" description="Publish, hide, edit, delete, or reassign any business." noindex={true}>
-  <section class="admin-wrap">
-    <div id="loading" class="loading">Loading…</div>
+  <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
-    <div id="content" class="admin" hidden>
-      <a href="/admin/" class="back-link">← Admin Dashboard</a>
-      <h1>Businesses</h1>
-
-      <div class="panel">
-        <h2>Hidden businesses</h2>
-        <p class="panel-hint">Not on the public site — used for test listings.</p>
-        <ul id="hidden-list" class="item-list"></ul>
-        <p id="hidden-empty" class="empty-state" hidden>Nothing hidden right now.</p>
+  <div id="content" hidden>
+    <AdminShell active="listings" title="Listings" subtitle="Publish, hide, edit, delete, or reassign any business.">
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Hidden businesses</h2>
+          <p style="margin:4px 0 0;font-size:12.5px;color:var(--muted);font-weight:600">Not on the public site — used for test listings.</p>
+        </div>
+        <div id="hidden-list"></div>
+        <p id="hidden-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">Nothing hidden right now.</p>
       </div>
 
-      <div class="panel">
-        <h2>Find any business</h2>
-        <p class="panel-hint">Publish, hide, edit, delete, or reassign the owner.</p>
-        <input type="text" id="manage-search-input" autocomplete="off" placeholder="Search by name…" />
-        <ul id="manage-search-results" class="item-list"></ul>
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Find any business</h2>
+          <p style="margin:4px 0 0;font-size:12.5px;color:var(--muted);font-weight:600">Publish, hide, edit, delete, or reassign the owner.</p>
+        </div>
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border)">
+          <div style="display:flex;align-items:center;gap:9px;padding:0 13px;background:var(--bg-subtle);border:2px solid var(--border);border-radius:11px">
+            <input type="text" id="manage-search-input" autocomplete="off" placeholder="Filter by name…" style="flex:1;min-width:0;border:0;padding:12px 0;font-size:14px;outline:none;background:transparent;color:var(--text)" />
+          </div>
+        </div>
+        <div id="manage-search-results"></div>
       </div>
-    </div>
-  </section>
+    </AdminShell>
+  </div>
 </BaseLayout>
 
 <script>
@@ -39,19 +45,19 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const tier = b.subscription_tier ?? 0;
     const planOptions = [0, 1, 2].map((t) => `<option value="${t}" ${t === tier ? 'selected' : ''}>${TIER_NAMES[t]}</option>`).join('');
     return `
-      <li class="admin-row">
-        <div class="admin-row-main">
-          <strong>${b.name}</strong>
-          <span class="row-detail">status: ${b.status}</span>
+      <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div style="min-width:0;flex:1">
+          <div style="font-size:14.5px;font-weight:800;color:var(--navy)">${b.name}</div>
+          <div style="font-size:12.5px;font-weight:600;color:var(--muted)">status: ${b.status}</div>
         </div>
-        <div class="row-actions">
-          <select class="plan-select" data-plan-business-id="${b.id}">${planOptions}</select>
-          <button class="btn-sm btn-approve" data-toggle="${isPublished ? 'hide' : 'publish'}" data-business-id="${b.id}">${isPublished ? 'Hide' : 'Publish'}</button>
-          <a href="/my-businesses/edit/?id=${b.id}" class="btn-sm btn-outline">Edit</a>
-          <button class="btn-sm btn-outline" data-reassign="${b.id}" data-business-name="${b.name}">Reassign</button>
-          <button class="btn-sm btn-reject" data-delete="${b.id}" data-business-name="${b.name}">Delete</button>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;">
+          <select class="plan-select" data-plan-business-id="${b.id}" style="padding:8px 10px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:700;color:var(--navy);">${planOptions}</select>
+          <button data-toggle="${isPublished ? 'hide' : 'publish'}" data-business-id="${b.id}" style="padding:8px 11px;border:0;border-radius:8px;background:var(--accent);color:var(--contrast);font-size:12px;font-weight:800;cursor:pointer;">${isPublished ? 'Hide' : 'Publish'}</button>
+          <a href="/my-businesses/edit/?id=${b.id}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);text-decoration:none;">Edit</a>
+          <button data-reassign="${b.id}" data-business-name="${b.name}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);cursor:pointer;">Reassign</button>
+          <button data-delete="${b.id}" data-business-name="${b.name}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--danger);cursor:pointer;">Remove</button>
         </div>
-      </li>`;
+      </div>`;
   }
 
   async function loadHidden() {
@@ -80,7 +86,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     searchDebounce = window.setTimeout(async () => {
       const res = await fetch(`/api/admin/search-businesses?q=${encodeURIComponent(q)}`);
       const data = await res.json();
-      results.innerHTML = data.results.map(renderToggleRow).join('') || '<li class="empty-state">No matches.</li>';
+      results.innerHTML = data.results.map(renderToggleRow).join('') || '<p style="padding:20px 18px;color:var(--muted);margin:0;">No matches.</p>';
     }, 300);
   });
 
@@ -144,138 +150,3 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   init();
 </script>
-
-<style>
-  .admin-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 3rem 1rem;
-  }
-  .loading {
-    color: var(--text-muted);
-  }
-  .admin {
-    width: 100%;
-    max-width: 760px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-  .back-link {
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 0.88rem;
-    text-decoration: none;
-  }
-  .back-link:hover {
-    text-decoration: underline;
-  }
-  h1 {
-    margin: 0;
-    font-size: 1.4rem;
-    color: var(--navy);
-  }
-  .panel {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 16px);
-    padding: 1.5rem;
-  }
-  .panel h2 {
-    margin: 0 0 0.4rem;
-    font-size: 1rem;
-    color: var(--navy);
-  }
-  .panel-hint {
-    margin: 0 0 0.9rem;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-  }
-  #manage-search-input {
-    width: 100%;
-    box-sizing: border-box;
-    font: inherit;
-    padding: 0.55rem 0.75rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--bg-subtle);
-    color: var(--text);
-    margin-bottom: 0.6rem;
-  }
-  .item-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-  :global(.admin-row) {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.85rem 1rem;
-    border-radius: var(--radius);
-    background: var(--bg-subtle);
-    border: 1px solid var(--border);
-  }
-  :global(.admin-row-main) {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    font-size: 0.9rem;
-    min-width: 0;
-  }
-  :global(.row-detail) {
-    color: var(--text-muted);
-    font-size: 0.82rem;
-  }
-  :global(.row-actions) {
-    display: flex;
-    gap: 0.4rem;
-    flex-shrink: 0;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-  :global(.btn-sm) {
-    border-radius: var(--radius);
-    padding: 0.35rem 0.7rem;
-    font-weight: 700;
-    font-size: 0.78rem;
-    cursor: pointer;
-    text-decoration: none;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-  }
-  :global(.btn-approve) {
-    border: none;
-    background: var(--accent);
-    color: #fff;
-  }
-  :global(.btn-reject) {
-    border: 1px solid var(--danger, #c23838);
-    background: #fff;
-    color: var(--danger, #c23838);
-  }
-  :global(.btn-outline) {
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text);
-  }
-  :global(.plan-select) {
-    font: inherit;
-    font-size: 0.78rem;
-    padding: 0.3rem 0.5rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text);
-  }
-  .empty-state {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin: 0;
-  }
-</style>

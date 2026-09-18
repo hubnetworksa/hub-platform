@@ -1,35 +1,39 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminShell from '../../components/AdminShell.astro';
 ---
 
 <BaseLayout title="Plans & Pricing" description="Edit plan and sponsorship pricing." noindex={true}>
-  <section class="admin-wrap">
-    <div id="loading" class="loading">Loading…</div>
+  <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
-    <div id="content" class="admin" hidden>
-      <a href="/admin/" class="back-link">← Admin Dashboard</a>
-      <h1>Plans &amp; pricing</h1>
+  <div id="content" hidden>
+    <AdminShell active="plans" title="Plans & pricing" subtitle="Prices drive the public Pricing page and every checkout.">
+      <div id="price-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px"></div>
 
-      <div class="panel">
-        <h2>Subscribers</h2>
-        <ul id="subs-list" class="item-list"></ul>
-        <p id="subs-empty" class="empty-state" hidden>No active subscribers yet.</p>
-        <p id="mrr" class="mrr"></p>
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:18px">
+        <h2 style="margin:0 0 6px;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Live everywhere</h2>
+        <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text)">Prices set here drive the public Pricing page, the plan picker inside the signup flow, and every upgrade prompt — on the next rebuild for static pages, immediately for new checkouts.</p>
+        <a href="/pricing/" style="display:inline-block;margin-top:13px;padding:11px 15px;border:2px solid var(--navy);border-radius:9px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;text-decoration:none;">View public pricing page</a>
       </div>
 
-      <div class="panel">
-        <h2>Prices</h2>
-        <p class="panel-hint">Rand amounts, billed monthly. Changes apply to new checkouts immediately, and to the public Pricing page on the next rebuild.</p>
-        <div id="price-form" class="price-form"></div>
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Subscribers</h2>
+          <span id="mrr" style="font-size:13px;font-weight:800;color:var(--navy);"></span>
+        </div>
+        <div id="subs-list"></div>
+        <p id="subs-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No active subscribers yet.</p>
       </div>
-    </div>
-  </section>
+    </AdminShell>
+  </div>
 </BaseLayout>
 
 <script>
-  const LABELS: Record<string, string> = {
-    price_verified_cents: 'Verified tier',
-    price_featured_cents: 'Featured tier',
+  const TIER_KEYS = [
+    { key: 'price_verified_cents', label: 'Verified plan', accent: false },
+    { key: 'price_featured_cents', label: 'Featured plan', accent: true },
+  ];
+  const SPONSOR_KEYS: Record<string, string> = {
     price_sponsor_category_cents: 'Category sponsor',
     price_sponsor_suburb_cents: 'Suburb sponsor',
     price_sponsor_banner_cents: 'Homepage banner',
@@ -52,7 +56,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       list.innerHTML = data.subscriptions
         .map(
           (s: { name: string; tierName: string; subscription_status: string; priceRand: string }) =>
-            `<li class="admin-row"><div class="admin-row-main"><strong>${s.name}</strong><span class="row-detail">${s.tierName} — ${s.subscription_status} — R${s.priceRand}/mo</span></div></li>`
+            `<div style="padding:14px 18px;border-bottom:1px solid var(--border);">
+              <div style="font-size:14.5px;font-weight:800;color:var(--navy);">${s.name}</div>
+              <div style="font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;">${s.tierName} — ${s.subscription_status} — R${s.priceRand}/mo</div>
+            </div>`
         )
         .join('');
     }
@@ -62,35 +69,48 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   async function loadPrices() {
     const res = await fetch('/api/admin/site-settings');
     const data = await res.json();
-    const form = document.getElementById('price-form')!;
-    form.innerHTML = data.settings
-      .map((s: { key: string; value: string }) => {
-        const rand = (Number(s.value) / 100).toFixed(2);
-        return `
-          <div class="price-row">
-            <label for="price-${s.key}">${LABELS[s.key] ?? s.key}</label>
-            <div class="price-input-group">
-              <span>R</span>
-              <input id="price-${s.key}" type="number" min="0" step="0.01" value="${rand}" data-key="${s.key}" />
-              <button type="button" class="btn-sm btn-outline" data-save="${s.key}">Save</button>
-            </div>
-          </div>`;
-      })
-      .join('');
+    const settingsByKey = new Map(data.settings.map((s: { key: string; value: string }) => [s.key, s.value]));
+
+    document.getElementById('price-cards')!.innerHTML = TIER_KEYS.map(({ key, label, accent }) => {
+      const rand = (Number(settingsByKey.get(key) ?? 0) / 100).toFixed(2);
+      return `
+        <div style="background:#fff;border:2px solid ${accent ? 'var(--accent)' : 'var(--border)'};border-radius:14px;padding:20px">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:${accent ? 'var(--accent)' : 'var(--muted)'}">${label}</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-top:10px">
+            <span style="font-size:22px;font-weight:800;color:var(--navy)">R</span>
+            <input type="number" min="0" step="0.01" value="${rand}" data-key="${key}" class="price-input" style="width:120px;padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:22px;font-weight:800;color:var(--navy);outline:none;background:#fff" />
+            <span style="font-size:13px;font-weight:700;color:var(--muted)">/ month</span>
+          </div>
+          <button type="button" data-save="${key}" style="margin-top:12px;padding:9px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:12.5px;font-weight:800;cursor:pointer;">Save</button>
+        </div>`;
+    }).join('') + Object.entries(SPONSOR_KEYS).map(([key, label]) => {
+      const rand = (Number(settingsByKey.get(key) ?? 0) / 100).toFixed(2);
+      return `
+        <div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:20px">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">${label}</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-top:10px">
+            <span style="font-size:22px;font-weight:800;color:var(--navy)">R</span>
+            <input type="number" min="0" step="0.01" value="${rand}" data-key="${key}" class="price-input" style="width:120px;padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:22px;font-weight:800;color:var(--navy);outline:none;background:#fff" />
+            <span style="font-size:13px;font-weight:700;color:var(--muted)">/ month</span>
+          </div>
+          <button type="button" data-save="${key}" style="margin-top:12px;padding:9px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:12.5px;font-weight:800;cursor:pointer;">Save</button>
+        </div>`;
+    }).join('');
   }
 
-  document.getElementById('price-form')!.addEventListener('click', async (e) => {
+  document.getElementById('price-cards')!.addEventListener('click', async (e) => {
     const btn = (e.target as HTMLElement).closest('button[data-save]') as HTMLButtonElement | null;
     if (!btn) return;
     const key = btn.dataset.save!;
-    const input = document.getElementById(`price-${key}`) as HTMLInputElement;
+    const input = document.querySelector(`input[data-key="${key}"]`) as HTMLInputElement;
     const cents = Math.round(Number(input.value) * 100);
     btn.disabled = true;
+    const original = btn.textContent;
     btn.textContent = 'Saving…';
     const result = await postJson('/api/admin/site-settings', { key, cents });
     btn.textContent = result.ok ? 'Saved' : result.error || 'Error';
     btn.disabled = false;
-    setTimeout(() => (btn.textContent = 'Save'), 1500);
+    setTimeout(() => (btn.textContent = original), 1500);
   });
 
   async function init() {
@@ -111,123 +131,3 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   init();
 </script>
-
-<style>
-  .admin-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 3rem 1rem;
-  }
-  .loading {
-    color: var(--text-muted);
-  }
-  .admin {
-    width: 100%;
-    max-width: 760px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-  .back-link {
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 0.88rem;
-    text-decoration: none;
-  }
-  h1 {
-    margin: 0;
-    font-size: 1.4rem;
-    color: var(--navy);
-  }
-  .panel {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 16px);
-    padding: 1.5rem;
-  }
-  .panel h2 {
-    margin: 0 0 0.4rem;
-    font-size: 1rem;
-    color: var(--navy);
-  }
-  .panel-hint {
-    margin: 0 0 0.9rem;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-  }
-  .item-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-  :global(.admin-row) {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.85rem 1rem;
-    border-radius: var(--radius);
-    background: var(--bg-subtle);
-    border: 1px solid var(--border);
-  }
-  :global(.admin-row-main) {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    font-size: 0.9rem;
-  }
-  :global(.row-detail) {
-    color: var(--text-muted);
-    font-size: 0.82rem;
-  }
-  .empty-state {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin: 0;
-  }
-  .mrr {
-    margin: 0.75rem 0 0;
-    font-weight: 700;
-    color: var(--navy);
-  }
-  .price-form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-  }
-  .price-row label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 0.3rem;
-  }
-  .price-input-group {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-  }
-  .price-input-group input {
-    font: inherit;
-    padding: 0.5rem 0.6rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--bg-subtle);
-    color: var(--text);
-    width: 120px;
-  }
-  :global(.btn-sm) {
-    border-radius: var(--radius);
-    padding: 0.35rem 0.7rem;
-    font-weight: 700;
-    font-size: 0.78rem;
-    cursor: pointer;
-  }
-  :global(.btn-outline) {
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text);
-  }
-</style>

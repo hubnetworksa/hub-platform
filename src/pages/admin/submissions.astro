@@ -1,24 +1,26 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminShell from '../../components/AdminShell.astro';
 ---
 
 <BaseLayout title="Pending Submissions" description="Review new business submissions." noindex={true}>
-  <section class="admin-wrap">
-    <div id="loading" class="loading">Loading…</div>
+  <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
-    <div id="content" class="admin" hidden>
-      <a href="/admin/" class="back-link">← Admin Dashboard</a>
-      <div class="panel-title-row">
-        <h1>Pending submissions</h1>
-        <div class="bulk-actions">
-          <button id="bulk-approve" class="btn-sm btn-approve" disabled>Approve selected</button>
-          <button id="bulk-reject" class="btn-sm btn-reject" disabled>Reject selected</button>
+  <div id="content" hidden>
+    <AdminShell active="submissions" title="Submissions" subtitle="New business listings awaiting review.">
+      <div style="display:flex;gap:9px;">
+        <button id="bulk-approve" disabled style="padding:10px 14px;border:0;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;cursor:pointer;">Approve selected</button>
+        <button id="bulk-reject" disabled style="padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--danger);font-size:13px;font-weight:800;cursor:pointer;">Reject selected</button>
+      </div>
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div id="submissions-list"></div>
+        <div id="submissions-empty" hidden style="padding:40px 18px;text-align:center;">
+          <div style="font-size:16px;font-weight:800;color:var(--navy)">Nothing waiting</div>
+          <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin-top:5px">Every submission has been reviewed.</div>
         </div>
       </div>
-      <ul id="submissions-list" class="item-list"></ul>
-      <p id="submissions-empty" class="empty-state" hidden>Nothing waiting for approval.</p>
-    </div>
-  </section>
+    </AdminShell>
+  </div>
 </BaseLayout>
 
 <script>
@@ -34,21 +36,26 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const canAct = s.status === 'Pending your approval';
     const details = [s.category_slug, s.suburb_slug, s.address, s.phone, s.email, s.website].filter(Boolean).join(' · ');
     return `
-      <li class="admin-row">
-        ${canAct ? `<input type="checkbox" class="submission-check" data-token="${s.token}" />` : ''}
-        <div class="admin-row-main">
-          <strong>${s.name}</strong>
-          <span class="row-detail">${details}</span>
-          <span class="row-detail">${s.description}</span>
+      <div style="padding:18px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;">
+        <div style="min-width:0;display:flex;align-items:flex-start;gap:10px;">
+          ${canAct ? `<input type="checkbox" class="submission-check" data-token="${s.token}" style="margin-top:4px;flex-shrink:0;accent-color:var(--accent);" />` : ''}
+          <div style="min-width:0;">
+            <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
+              <span style="font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.015em">${s.name}</span>
+              ${!canAct ? `<span style="padding:3px 9px;border-radius:999px;background:rgba(var(--accent-rgb),.12);color:var(--accent-hover);font-size:11px;font-weight:800;">${s.status}</span>` : ''}
+            </div>
+            <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:4px;overflow-wrap:break-word;">${details}</div>
+            <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);max-width:64ch;overflow-wrap:break-word;">${s.description}</p>
+          </div>
         </div>
         ${canAct
-          ? `<div class="row-actions">
-              <button class="btn-sm btn-approve" data-action="approve" data-token="${s.token}">Approve</button>
-              <button class="btn-sm btn-reject" data-action="reject" data-token="${s.token}">Reject</button>
+          ? `<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
+              <button data-action="approve" data-token="${s.token}" style="padding:10px 14px;border:0;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;cursor:pointer;">Approve</button>
+              <button data-action="reject" data-token="${s.token}" style="padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--danger);font-size:13px;font-weight:800;cursor:pointer;">Reject</button>
             </div>`
-          : `<span class="status-badge status-pending">${s.status}</span>`
+          : ''
         }
-      </li>`;
+      </div>`;
   }
 
   function updateBulkButtons() {
@@ -108,126 +115,3 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   init();
 </script>
-
-<style>
-  .admin-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 3rem 1rem;
-  }
-  .loading {
-    color: var(--text-muted);
-  }
-  .admin {
-    width: 100%;
-    max-width: 760px;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .back-link {
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 0.88rem;
-    text-decoration: none;
-  }
-  .back-link:hover {
-    text-decoration: underline;
-  }
-  .panel-title-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .panel-title-row h1 {
-    margin: 0;
-    font-size: 1.4rem;
-    color: var(--navy);
-  }
-  .bulk-actions {
-    display: flex;
-    gap: 0.4rem;
-  }
-  .item-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-  :global(.admin-row) {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.85rem 1rem;
-    border-radius: var(--radius);
-    background: var(--bg-subtle);
-    border: 1px solid var(--border);
-  }
-  :global(.admin-row-main) {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    font-size: 0.9rem;
-    min-width: 0;
-  }
-  :global(.row-detail) {
-    color: var(--text-muted);
-    font-size: 0.82rem;
-    overflow-wrap: break-word;
-  }
-  :global(.row-actions) {
-    display: flex;
-    gap: 0.4rem;
-    flex-shrink: 0;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-  :global(.btn-sm) {
-    border-radius: var(--radius);
-    padding: 0.35rem 0.7rem;
-    font-weight: 700;
-    font-size: 0.78rem;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  :global(.btn-approve) {
-    border: none;
-    background: var(--accent);
-    color: #fff;
-  }
-  :global(.btn-reject) {
-    border: 1px solid var(--danger, #c23838);
-    background: #fff;
-    color: var(--danger, #c23838);
-  }
-  :global(.btn-sm:disabled) {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  :global(.status-badge) {
-    font-size: 0.76rem;
-    font-weight: 700;
-    padding: 0.25rem 0.6rem;
-    border-radius: 999px;
-    white-space: nowrap;
-    height: fit-content;
-  }
-  :global(.status-pending) {
-    color: #9c5f00;
-    background: rgba(156, 95, 0, 0.12);
-  }
-  :global(.submission-check) {
-    margin-top: 0.2rem;
-    flex-shrink: 0;
-  }
-  .empty-state {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin: 0;
-  }
-</style>

@@ -1,0 +1,106 @@
+---
+// Matches the mockup's Admin console chrome exactly: fixed navy sidebar +
+// topbar. The mockup's console is a single-page app with client-side tab
+// state; this site's admin section is (and stays) separate real pages —
+// each a bookmarkable/shareable URL, which a fake single-page tab switcher
+// would have made worse, not better. The sidebar items also cover more
+// ground than the mockup's 6 tabs, since the real data model splits
+// "Approvals" into three distinct workflows (submissions/claims/reports)
+// that the mockup's demo data collapses into one.
+import Icon from './Icon.astro';
+import site from '../site';
+
+interface Props {
+  active: 'dashboard' | 'listings' | 'submissions' | 'claims' | 'reports' | 'users' | 'activity' | 'plans' | 'ads';
+  title: string;
+  subtitle: string;
+}
+const { active, title, subtitle } = Astro.props;
+
+const NAV: { key: Props['active']; href: string; label: string }[] = [
+  { key: 'dashboard', href: '/admin/', label: 'Dashboard' },
+  { key: 'listings', href: '/admin/businesses/', label: 'Listings' },
+  { key: 'submissions', href: '/admin/submissions/', label: 'Submissions' },
+  { key: 'claims', href: '/admin/claims/', label: 'Claims' },
+  { key: 'reports', href: '/admin/reports/', label: 'Reports' },
+  { key: 'users', href: '/admin/users/', label: 'Users' },
+  { key: 'activity', href: '/admin/activity/', label: 'Activity' },
+  { key: 'plans', href: '/admin/plans-pricing/', label: 'Plans & pricing' },
+  { key: 'ads', href: '/admin/ads-sponsors/', label: 'Ads & sponsors' },
+];
+---
+
+<div id="admin-shell" style="min-height:100vh;display:grid;grid-template-columns:1fr;background:var(--bg-subtle)">
+  <aside id="admin-sidebar" style="background:var(--navy);display:flex;flex-direction:column;gap:2px;padding:18px 14px">
+    <div style="display:flex;align-items:center;gap:10px;padding:4px 8px 18px">
+      <img src="/logo-icon.png" alt="" style="height:30px;width:auto" />
+      <span style="display:flex;flex-direction:column;line-height:1.1;min-width:0">
+        <span style="font-size:15px;font-weight:800;color:#fff;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{site.cityLabel}Hub</span>
+        <span style="font-size:9px;font-weight:800;letter-spacing:.16em;color:var(--grad-from);margin-top:3px">ADMIN</span>
+      </span>
+    </div>
+    {NAV.map((n) => (
+      <a
+        href={n.href}
+        style={`display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border-radius:9px;font-size:13.5px;font-weight:700;text-decoration:none;${n.key === active ? 'background:rgba(255,255,255,.14);color:#fff' : 'color:rgba(255,255,255,.7)'}`}
+      >
+        <span>{n.label}</span>
+      </a>
+    ))}
+    <div style="margin-top:auto;padding-top:18px;display:flex;flex-direction:column;gap:8px">
+      <div style="padding:12px;border-radius:10px;background:rgba(255,255,255,.08);font-size:12px;font-weight:700;color:rgba(255,255,255,.72);line-height:1.45">
+        Signed in as<br /><span id="admin-shell-email" style="color:#fff">…</span>
+      </div>
+      <button id="admin-shell-logout" type="button" style="padding:11px 13px;border:1.5px solid rgba(255,255,255,.28);border-radius:10px;background:transparent;color:#fff;font-size:13px;font-weight:800;cursor:pointer;text-align:left">Sign out</button>
+    </div>
+  </aside>
+
+  <div style="min-width:0;display:flex;flex-direction:column">
+    <div style="background:#fff;border-bottom:2px solid var(--border);padding:16px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <div style="min-width:0">
+        <h1 style="margin:0;font-size:21px;letter-spacing:-.025em;color:var(--navy)">{title}</h1>
+        <p style="margin:3px 0 0;font-size:13px;font-weight:600;color:var(--muted)">{subtitle}</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;margin-left:auto;flex-wrap:wrap">
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:var(--bg-subtle);font-size:12px;font-weight:800;color:var(--accent-hover)">Managing {site.cityLabel}</span>
+        <a href="/" style="padding:11px 14px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">View site</a>
+      </div>
+    </div>
+
+    <div style="padding:22px;display:flex;flex-direction:column;gap:18px">
+      <slot />
+    </div>
+  </div>
+</div>
+
+<style>
+  #admin-sidebar a:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+  @media (min-width: 860px) {
+    #admin-shell {
+      grid-template-columns: 236px 1fr;
+    }
+    #admin-sidebar {
+      min-height: 100vh;
+    }
+  }
+</style>
+
+<script>
+  // Every admin page already fetches /api/me itself to gate access — this
+  // just also fills in the shell's "signed in as" footer + wires sign-out,
+  // so it doesn't have to be duplicated in every page's own script.
+  fetch('/api/me')
+    .then((r) => (r.ok ? r.json() : null))
+    .then((data) => {
+      const el = document.getElementById('admin-shell-email');
+      if (el && data?.email) el.textContent = data.email;
+    })
+    .catch(() => {});
+
+  document.getElementById('admin-shell-logout')?.addEventListener('click', async () => {
+    await fetch('/api/logout', { method: 'POST' });
+    window.location.href = '/';
+  });
+</script>
