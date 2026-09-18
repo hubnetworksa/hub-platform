@@ -18,7 +18,7 @@ const cards = sorted.map((e) => {
   description={`Markets, gigs, sport and family events in ${site.cityLabel} — with ticket prices up front and a direct link to the seller.`}
 >
   <main>
-    <section style="position:relative;background:var(--navy);overflow:hidden">
+    <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">
       <img src={site.sectionBannerImage} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%" />
       <div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(var(--navy-rgb),.94) 0%,rgba(var(--navy-rgb),.78) 48%,rgba(var(--navy-rgb),.26) 100%)"></div>
       <div style="position:relative;max-width:1200px;margin:0 auto;padding:clamp(30px,5vw,58px) 20px clamp(24px,3.5vw,38px)">

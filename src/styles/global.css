@@ -147,6 +147,20 @@ main {
   }
 }
 
+/* Below 950px, the header's right-hand action row is just
+   [hamburger] + [Add your business] — on a narrow phone those two don't
+   both fit at full size (the row has no wrap, so it overflowed off the
+   right edge of the viewport, causing horizontal scroll on every page).
+   Collapse the button to icon-only once space is genuinely tight. */
+@media (max-width: 420px) {
+  #header-add-business span {
+    display: none;
+  }
+  #header-add-business {
+    padding: 11px 12px;
+  }
+}
+
 /* ══════════════════════════════════════════════════════════════════════
    Buttons — the one truly reused primitive across every page.
    ══════════════════════════════════════════════════════════════════════ */
