@@ -24,6 +24,9 @@ interface PendingRow {
   website: string | null;
   description: string;
   submitted_by_user_id: number | null;
+  chosen_tier: number;
+  m_payment_id: string | null;
+  payment_status: string | null;
 }
 
 // The business owner's confirm/dispute step, reached from the email sent
@@ -39,7 +42,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const row = await db
     .prepare(
-      `SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id
+      `SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description,
+              submitted_by_user_id, chosen_tier, m_payment_id, payment_status
        FROM pending_submissions WHERE owner_confirm_token = ?`
     )
     .bind(token)
@@ -53,7 +57,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   await db.prepare('DELETE FROM pending_submissions WHERE id = ?').bind(row.id).run();
 
   if (action !== 'confirm') {
-    await logActivity(db, 'owner_disputed', row.name, reason ? `Reason given: ${reason}` : 'No reason given.');
+    const refundNote = row.payment_status === 'paid' ? ` PAID (tier ${row.chosen_tier}, m_payment_id ${row.m_payment_id}) — needs a manual PayFast refund.` : '';
+    await logActivity(db, 'owner_disputed', row.name, `${reason ? `Reason given: ${reason}` : 'No reason given.'}${refundNote}`);
     await notifyAdmin(context.env, site, {
       outcome: 'disputed',
       businessName: row.name,
@@ -84,6 +89,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     email: row.email,
     description: row.description,
     ownerUserId: row.submitted_by_user_id,
+    chosenTier: row.chosen_tier,
+    paidMPaymentId: row.payment_status === 'paid' ? row.m_payment_id : null,
   });
   await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
   const listingUrl = `https://${site.domain}/business/${slug}/`;

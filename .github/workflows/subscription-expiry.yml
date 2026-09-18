@@ -1,0 +1,29 @@
+name: Subscription & sponsorship expiry sweep
+
+on:
+  schedule:
+    - cron: "15 7 * * *"
+  workflow_dispatch:
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - site: polokwane
+          - site: pretoria
+          - site: capetown
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Call process-expired-subscriptions
+        run: |
+          HOST=$(node -e "
+            const s = require('./sites/${{ matrix.site }}.json');
+            console.log(s.domainLive ? s.domain : s.pagesDevHost);
+          ")
+          curl -sS -f -X POST "https://$HOST/api/admin/process-expired-subscriptions" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

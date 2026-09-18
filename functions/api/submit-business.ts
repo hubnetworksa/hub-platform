@@ -1,8 +1,10 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSite } from '../_lib/site';
 import { getSessionUser } from '../_lib/auth';
+import { signFields, payfastConfigured, type PayfastEnv } from '../_lib/payfast';
+import { TIER_NAMES, tierPriceCents, centsToRand } from '../_lib/pricing';
 
-interface Env {
+interface Env extends PayfastEnv {
   DB: D1Database;
   SITE: string;
 }
@@ -83,21 +85,76 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // up under their "My Businesses" once approved+confirmed.
   const sessionUser = await getSessionUser(context.request, db);
 
+  // Plan chosen at signup (0=Basic/Free, 1=Verified, 2=Featured) — see the
+  // Premium Listings v2 plan. Purely additive: an invalid/missing value or
+  // a payfast misconfiguration just falls back to a free (tier 0)
+  // submission rather than blocking the listing itself.
+  const chosenTier = [0, 1, 2].includes(Number(body.chosenTier)) ? Number(body.chosenTier) : 0;
+
   const token = crypto.randomUUID();
-  await db
+  const insert = await db
     .prepare(
       `INSERT INTO pending_submissions
-        (token, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        (token, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id, chosen_tier)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
-    .bind(token, name, categorySlug, suburbSlug, address, phone, email, website, description, sessionUser?.id ?? null)
+    .bind(token, name, categorySlug, suburbSlug, address, phone, email, website, description, sessionUser?.id ?? null, chosenTier)
     .run();
+  const submissionId = insert.meta.last_row_id;
 
   const reviewUrl = `https://${site.domain}/verify-listing?token=${token}`;
 
-  // The row is safely saved regardless — the client builds and opens the
-  // mailto: notification from this response, we don't send anything here.
-  return json({ ok: true, reviewUrl });
+  // No paid tier chosen — nothing more to do. The client builds and opens
+  // the mailto: notification from this response, we don't send anything
+  // server-side here.
+  if (chosenTier === 0 || !payfastConfigured(context.env)) {
+    return json({ ok: true, reviewUrl });
+  }
+
+  // Paid tier: build the PayFast checkout right here rather than a second
+  // round trip to subscribe/start.ts — there's no `businesses` row (and so
+  // no owning session) for that endpoint to authorize against yet. The
+  // submission itself is the only thing identifying this payment; the
+  // tier is actually applied once the listing is approved+confirmed (see
+  // business-submission.ts's insertApprovedBusiness) via the
+  // "submission:<id>" branch of subscribe/notify.ts.
+  const priceCents = await tierPriceCents(db, chosenTier);
+  if (!priceCents) return json({ ok: true, reviewUrl });
+
+  const amount = centsToRand(priceCents);
+  const mPaymentId = crypto.randomUUID();
+  await db
+    .prepare(`UPDATE pending_submissions SET m_payment_id = ?, payment_status = 'pending' WHERE id = ?`)
+    .bind(mPaymentId, submissionId)
+    .run();
+
+  const origin = new URL(context.request.url).origin;
+  const contactEmail = email ?? site.contactEmail;
+  const fields: Record<string, string> = {
+    merchant_id: context.env.PAYFAST_MERCHANT_ID!,
+    merchant_key: context.env.PAYFAST_MERCHANT_KEY!,
+    return_url: `https://${site.domain}/list-your-business/?submitted=1`,
+    cancel_url: `https://${site.domain}/list-your-business/?submitted=1&payment_cancelled=1`,
+    notify_url: `${origin}/api/subscribe/notify`,
+    name_first: name,
+    email_address: contactEmail,
+    m_payment_id: mPaymentId,
+    amount,
+    item_name: `${site.siteName} — ${TIER_NAMES[chosenTier]} listing`,
+    item_description: `Monthly subscription for "${name}" on ${site.siteName} (applies once your listing is approved)`,
+    custom_str1: `submission:${submissionId}`,
+    custom_str2: 'tier',
+    custom_int1: String(chosenTier),
+    subscription_type: '1',
+    recurring_amount: amount,
+    frequency: '3',
+    cycles: '0',
+  };
+  const signature = await signFields(fields, context.env.PAYFAST_PASSPHRASE!);
+  const params = new URLSearchParams({ ...fields, signature });
+  const redirectUrl = `https://${context.env.PAYFAST_HOST}/eng/process?${params.toString()}`;
+
+  return json({ ok: true, reviewUrl, redirectUrl });
 };
 
 function json(data: unknown, status = 200): Response {

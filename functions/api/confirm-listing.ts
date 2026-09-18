@@ -24,6 +24,9 @@ interface PendingRow {
   website: string | null;
   description: string;
   submitted_by_user_id: number | null;
+  chosen_tier: number;
+  m_payment_id: string | null;
+  payment_status: string | null;
 }
 
 // This is the ADMIN's approve/reject step (reached from the emailed review
@@ -40,7 +43,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const db = context.env.DB;
 
   const row = await db
-    .prepare('SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id FROM pending_submissions WHERE token = ?')
+    .prepare(
+      `SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description,
+              submitted_by_user_id, chosen_tier, m_payment_id, payment_status
+       FROM pending_submissions WHERE token = ?`
+    )
     .bind(token)
     .first<PendingRow>();
 
@@ -50,7 +57,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   if (action !== 'approve') {
     await db.prepare('DELETE FROM pending_submissions WHERE id = ?').bind(row.id).run();
-    await logActivity(db, 'submission_rejected', row.name, 'Rejected by admin.');
+    const refundNote = row.payment_status === 'paid' ? ` PAID (tier ${row.chosen_tier}, m_payment_id ${row.m_payment_id}) — needs a manual PayFast refund.` : '';
+    await logActivity(db, 'submission_rejected', row.name, `Rejected by admin.${refundNote}`);
     return html(site, `<h1>Rejected</h1><p>"${escapeHtml(row.name)}" was not published.</p>`);
   }
 
@@ -79,6 +87,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       email: row.email,
       description: row.description,
       ownerUserId: row.submitted_by_user_id,
+      chosenTier: row.chosen_tier,
+      paidMPaymentId: row.payment_status === 'paid' ? row.m_payment_id : null,
     });
     await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
     await logActivity(db, 'submission_approved', row.name, 'No email on file — published immediately.');
