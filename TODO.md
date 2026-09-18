@@ -217,8 +217,15 @@ resolves straight to hub-platform.
       confirmed 2026-09-18 (`/api/auth/google/start` redirects with the
       correct client_id/redirect_uri, and a real sign-in completed to
       `/my-businesses/`).
-- [ ] Search Console — not yet set up; `sites/capetown.json`'s
-      `googleSiteVerification` is still `null`.
+- [x] **Search Console** — added as a **Domain property** (`thecapetownhub.com`,
+      covers all subdomains/protocols), verified via a DNS TXT record at the
+      apex (`google-site-verification=azvy1BJdL6Yon3lgMOsjs4XzlNxCBwsvhyPx_kG1mho`),
+      `sitemap-index.xml` submitted 2026-09-18. First fetch attempt showed
+      "Couldn't fetch" (site/sitemap both verified fine directly — almost
+      certainly caught mid-DNS-propagation), resubmitted after DNS settled.
+      (`sites/capetown.json`'s `googleSiteVerification` field stays `null` and
+      unused — same as Polokwane — since domain-property verification goes
+      through DNS, not the meta-tag method that field feeds.)
 - [ ] **AdSense ID needs fixing** — `sites/capetown.json`'s
       `adsensePublisherId` (`ca-pub-7239595592067933`) is currently a
       straight copy of Polokwane's, which conflicts with the "each site
