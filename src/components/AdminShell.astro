@@ -31,6 +31,7 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
 ---
 
 <div id="admin-shell" style="min-height:100vh;display:grid;grid-template-columns:1fr;background:var(--bg-subtle)">
+  <div id="admin-sidebar-backdrop" hidden style="position:fixed;inset:0;background:rgba(16,26,51,.5);z-index:39"></div>
   <aside id="admin-sidebar" style="background:var(--navy);display:flex;flex-direction:column;gap:2px;padding:18px 14px">
     <div style="display:flex;align-items:center;gap:10px;padding:4px 8px 18px">
       <img src="/logo-icon.png" alt="" style="height:30px;width:auto" />
@@ -38,6 +39,9 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
         <span style="font-size:15px;font-weight:800;color:#fff;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{site.cityLabel}Hub</span>
         <span style="font-size:9px;font-weight:800;letter-spacing:.16em;color:var(--grad-from);margin-top:3px">ADMIN</span>
       </span>
+      <button id="admin-sidebar-close" type="button" aria-label="Close menu" style="margin-left:auto;align-items:center;justify-content:center;width:32px;height:32px;border:0;border-radius:8px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer">
+        <Icon path='<path d="M18 6 6 18M6 6l12 12"/>' size={16} />
+      </button>
     </div>
     {NAV.map((n) => (
       <a
@@ -57,6 +61,9 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
 
   <div style="min-width:0;display:flex;flex-direction:column">
     <div style="background:#fff;border-bottom:2px solid var(--border);padding:16px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <button id="admin-sidebar-open" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="admin-sidebar" style="align-items:center;justify-content:center;width:40px;height:40px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);cursor:pointer;flex-shrink:0">
+        <Icon path='<path d="M4 7h16M4 12h16M4 17h16"/>' size={19} />
+      </button>
       <div style="min-width:0">
         <h1 style="margin:0;font-size:21px;letter-spacing:-.025em;color:var(--navy)">{title}</h1>
         <p style="margin:3px 0 0;font-size:13px;font-weight:600;color:var(--muted)">{subtitle}</p>
@@ -77,12 +84,45 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
   #admin-sidebar a:hover {
     background: rgba(255, 255, 255, 0.08);
   }
+  /* Below 860px the sidebar becomes an off-canvas panel opened by the
+     topbar's hamburger button, instead of stacking inline above the
+     content (which used to push the dashboard tables far down the page
+     on mobile). */
+  #admin-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: 260px;
+    max-width: 82vw;
+    z-index: 40;
+    overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+  }
+  #admin-sidebar.open {
+    transform: translateX(0);
+  }
+  #admin-sidebar-open {
+    display: inline-flex;
+  }
+  #admin-sidebar-close {
+    display: inline-flex;
+  }
   @media (min-width: 860px) {
     #admin-shell {
       grid-template-columns: 236px 1fr;
     }
     #admin-sidebar {
+      position: static;
+      transform: none;
       min-height: 100vh;
+      max-width: none;
+    }
+    #admin-sidebar-backdrop {
+      display: none;
+    }
+    #admin-sidebar-open,
+    #admin-sidebar-close {
+      display: none;
     }
   }
 </style>
@@ -102,5 +142,33 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
   document.getElementById('admin-shell-logout')?.addEventListener('click', async () => {
     await fetch('/api/logout', { method: 'POST' });
     window.location.href = '/';
+  });
+
+  // Hamburger toggle for the off-canvas sidebar (<860px — see the
+  // @media rule above that hides it and pins the sidebar static past that).
+  const sidebar = document.getElementById('admin-sidebar');
+  const backdrop = document.getElementById('admin-sidebar-backdrop');
+  const openBtn = document.getElementById('admin-sidebar-open');
+  const closeBtn = document.getElementById('admin-sidebar-close');
+
+  function openSidebar() {
+    sidebar?.classList.add('open');
+    if (backdrop) backdrop.hidden = false;
+    openBtn?.setAttribute('aria-expanded', 'true');
+  }
+  function closeSidebar() {
+    sidebar?.classList.remove('open');
+    if (backdrop) backdrop.hidden = true;
+    openBtn?.setAttribute('aria-expanded', 'false');
+  }
+
+  openBtn?.addEventListener('click', openSidebar);
+  closeBtn?.addEventListener('click', closeSidebar);
+  backdrop?.addEventListener('click', closeSidebar);
+  // If the viewport grows past the breakpoint (sidebar becomes a static
+  // column via CSS), drop the open state so it isn't left open-but-static
+  // underneath, then stuck mid-transition if the window shrinks back.
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 860) closeSidebar();
   });
 </script>
