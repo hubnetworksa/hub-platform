@@ -16,6 +16,7 @@ export const CATEGORY_SCHEMA_TYPES: Record<string, string> = {
   accommodation: 'LodgingBusiness',
   accountants: 'AccountingService',
   'agricultural-farming-supplies': 'Store',
+  'agriculture-forestry': 'LocalBusiness',
   'appliance-repairs': 'HomeAndConstructionBusiness',
   'attorneys-legal': 'Attorney',
   'automotive-repairs': 'AutoRepair',
