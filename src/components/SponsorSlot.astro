@@ -1,0 +1,44 @@
+---
+import { sponsorFor, type Sponsorship } from '../lib/data';
+
+interface Props {
+  productType: Sponsorship['product_type'];
+  target?: string;
+  /** e.g. "suburb sponsor", "category sponsor" — used in the open-slot copy. */
+  label: string;
+}
+const { productType, target, label } = Astro.props;
+const sponsor = sponsorFor(productType, target);
+---
+
+<div class="card sponsor-slot">
+  <span class="tag tag-outline">Sponsored</span>
+  {sponsor ? (
+    <>
+      <strong><a href={`/business/${sponsor.business_slug}/`}>{sponsor.business_name}</a></strong>
+      <p class="text-muted">This spot is currently sponsored.</p>
+    </>
+  ) : (
+    <>
+      <strong>This {label} spot is open</strong>
+      <p class="text-muted">One advertiser at a time — get seen here.</p>
+      <a href="/pricing/" class="btn btn-outline btn-sm">See pricing →</a>
+    </>
+  )}
+</div>
+
+<style>
+  .sponsor-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+  .sponsor-slot p {
+    margin: 0;
+    font-size: 0.85rem;
+  }
+  .sponsor-slot a {
+    color: var(--accent);
+  }
+</style>

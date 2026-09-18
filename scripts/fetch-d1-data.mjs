@@ -62,6 +62,15 @@ async function main() {
   // file too, harmless since the page gates on current tier, not on
   // whether a photos array is present.
   const businessPhotos = query('SELECT id, business_id, r2_key, sort_order, caption FROM business_photos ORDER BY business_id, sort_order;');
+  // Active exclusive sponsorship slots (category/suburb/homepage banner/
+  // shopping-centre) — a build-time snapshot, same pattern as everything
+  // else here: changes only take effect on the next admin-triggered
+  // rebuild, not live. See functions/_lib/pricing.ts for product types.
+  const sponsorships = query(
+    `SELECT s.id, s.product_type, s.product_target, s.business_id, b.name AS business_name, b.slug AS business_slug, s.current_period_end
+     FROM subscriptions s JOIN businesses b ON b.id = s.business_id
+     WHERE s.product_type != 'tier' AND s.status = 'active';`
+  );
 
   await writeFile(`${OUT_DIR}/suburbs.json`, JSON.stringify(suburbs, null, 2));
   await writeFile(`${OUT_DIR}/categories.json`, JSON.stringify(categories, null, 2));
@@ -69,6 +78,7 @@ async function main() {
   await writeFile(`${OUT_DIR}/business-categories.json`, JSON.stringify(businessCategories, null, 2));
   await writeFile(`${OUT_DIR}/shopping-centers.json`, JSON.stringify(shoppingCenters, null, 2));
   await writeFile(`${OUT_DIR}/business-photos.json`, JSON.stringify(businessPhotos, null, 2));
+  await writeFile(`${OUT_DIR}/sponsorships.json`, JSON.stringify(sponsorships, null, 2));
 
   process.stderr.write(
     `[${SITE}] Fetched ${suburbs.length} suburbs, ${categories.length} categories, ` +

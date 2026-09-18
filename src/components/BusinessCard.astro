@@ -1,7 +1,8 @@
 ---
-import { suburbFor, categoriesFor, shoppingCenterFor, type Business } from '../lib/data';
+import { suburbFor, categoriesFor, shoppingCenterFor, FEATURED_TIER, type Business } from '../lib/data';
 import { groupForCategory } from '../lib/categoryGroups';
 import Icon from './Icon.astro';
+import PlanBadge from './PlanBadge.astro';
 
 interface Props {
   business: Business;
@@ -23,7 +24,7 @@ const primaryGroup = primary ? groupForCategory(primary.slug) : undefined;
 const center = shoppingCenterFor(business);
 ---
 
-<div class="business-card">
+<div class:list={['business-card', { 'business-card-featured': business.subscription_tier >= FEATURED_TIER }]}>
   <div class="business-card-top">
     <h3>
       <a
@@ -36,12 +37,15 @@ const center = shoppingCenterFor(business);
         {business.name}
       </a>
     </h3>
-    {primary && (
-      <span class="badge">
-        {primaryGroup && <Icon path={primaryGroup.iconPath} size={13} />}
-        {primary.name}
-      </span>
-    )}
+    <span class="business-card-badges">
+      <PlanBadge tier={business.subscription_tier} />
+      {primary && (
+        <span class="badge">
+          {primaryGroup && <Icon path={primaryGroup.iconPath} size={13} />}
+          {primary.name}
+        </span>
+      )}
+    </span>
   </div>
   <p class="business-card-meta">
     {showSuburb && suburb && <span>{suburb.name}</span>}
@@ -92,6 +96,16 @@ const center = shoppingCenterFor(business);
   .business-card:has(.card-title-link:hover) {
     box-shadow: var(--shadow);
     border-color: var(--accent);
+  }
+  .business-card-featured {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+  .business-card-badges {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
   }
   .card-title-link {
     color: inherit;

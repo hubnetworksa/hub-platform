@@ -4,6 +4,7 @@ import businessesRaw from '../data/businesses.json';
 import businessCategoriesRaw from '../data/business-categories.json';
 import shoppingCentersRaw from '../data/shopping-centers.json';
 import businessPhotosRaw from '../data/business-photos.json';
+import sponsorshipsRaw from '../data/sponsorships.json';
 
 export interface Suburb {
   id: number;
@@ -75,6 +76,19 @@ export interface BusinessPhoto {
   caption: string | null;
 }
 
+/** An active, currently-sold exclusive sponsorship slot — see
+ *  functions/_lib/pricing.ts's SponsorProductType. Build-time snapshot,
+ *  same rebuild-to-refresh pattern as every other static data file here. */
+export interface Sponsorship {
+  id: number;
+  product_type: 'category_sponsor' | 'suburb_sponsor' | 'homepage_banner' | 'centre_sponsor';
+  product_target: string | null;
+  business_id: number;
+  business_name: string;
+  business_slug: string;
+  current_period_end: string | null;
+}
+
 interface BusinessCategoryLink {
   business_id: number;
   category_id: number;
@@ -86,6 +100,7 @@ export const categories = categoriesRaw as Category[];
 export const businesses = businessesRaw as Business[];
 export const shoppingCenters = shoppingCentersRaw as ShoppingCenter[];
 export const businessPhotos = businessPhotosRaw as BusinessPhoto[];
+export const sponsorships = sponsorshipsRaw as Sponsorship[];
 const businessCategories = businessCategoriesRaw as BusinessCategoryLink[];
 
 const suburbById = new Map(suburbs.map((s) => [s.id, s]));
@@ -153,6 +168,19 @@ export function businessesInSuburbAndCategory(suburbId: number, categoryId: numb
 // than assume a non-empty array means "show the gallery".
 export function photosFor(business: Business): BusinessPhoto[] {
   return photosByBusinessId.get(business.id) ?? [];
+}
+
+const sponsorshipByKey = new Map<string, Sponsorship>();
+for (const s of sponsorships) {
+  sponsorshipByKey.set(`${s.product_type}:${s.product_target ?? ''}`, s);
+}
+
+/** The current sponsor of a slot, or `undefined` if it's open (never
+ *  sold, or sold-but-expired as of the last rebuild). `target` is a
+ *  category/suburb/shopping-centre slug, or omit it for the single
+ *  homepage_banner slot. */
+export function sponsorFor(productType: Sponsorship['product_type'], target?: string): Sponsorship | undefined {
+  return sponsorshipByKey.get(`${productType}:${target ?? ''}`);
 }
 
 export function parseSourceUrls(business: Business): string[] {

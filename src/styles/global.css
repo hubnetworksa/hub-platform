@@ -556,3 +556,28 @@ main {
   background: var(--navy);
   padding: 2rem 0;
 }
+
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 0.9rem;
+  background: var(--bg-card);
+}
+.chip:hover {
+  border-color: var(--accent);
+}
+.chip-count {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
