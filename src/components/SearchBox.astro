@@ -1,259 +1,55 @@
 ---
-// Vanilla JS, no framework — index is only fetched on first interaction.
-// Matching splits the query into words and requires every word to match
-// somewhere (name/category/suburb) rather than the whole phrase needing to
-// appear as one literal substring — that's what let "plumber seshego" fail
-// on Polokwane before, since no single field contains that exact phrase.
-//
-// The placeholder's example suburb used to be hardcoded as "Seshego" (a
-// real Polokwane suburb, from that same bug-fix testing) — but this
-// component is shared across all 3 sites, so it was showing "Seshego" as
-// an example on PretoriaHub too, where it isn't even a real place. Picked
-// dynamically per site instead: whichever suburb actually has the most
-// listings, so the example is always a real, populated area for whichever
-// site renders this.
+// Matches the mockup's hero search card exactly: a white rounded card with
+// a keyword row on top and a suburb-select + Search button row below.
+// Submitting navigates to /search/ (the mockup's "Results" screen) with
+// ?q=&suburb= — that page does the actual client-side fuzzy search against
+// /search-index.json (same index/matching logic this component used to run
+// inline in a dropdown; centralized there now instead of duplicated).
 import { suburbs, businessesInSuburb } from '../lib/data';
 
-const exampleSuburb = [...suburbs].sort((a, b) => businessesInSuburb(b.id).length - businessesInSuburb(a.id).length)[0]?.slug ?? '';
+const sortedSuburbs = [...suburbs].sort((a, b) => businessesInSuburb(b.id).length - businessesInSuburb(a.id).length);
 ---
 
-<div class="search-box" id="hub-search">
-  <svg class="search-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <circle cx="10.5" cy="10.5" r="6.5"></circle>
-    <path d="m20 20-4.5-4.5"></path>
-  </svg>
-  <input
-    type="search"
-    placeholder={`Search businesses, e.g. "plumber ${exampleSuburb}"`}
-    aria-label="Search businesses"
-    autocomplete="off"
-  />
-  <div class="results" hidden></div>
-</div>
+<form id="hero-search" action="/search/" style="background:#fff;border-radius:16px;padding:10px;box-shadow:0 22px 50px rgba(0,0,0,.34);max-width:760px;display:grid;grid-template-columns:1fr;gap:8px">
+  <div style="display:flex;align-items:center;gap:10px;padding:0 12px;border-radius:10px;background:var(--bg-subtle)">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.9" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m20 20-4.5-4.5"></path></svg>
+    <input
+      type="search"
+      name="q"
+      placeholder={`Plumber, dentist, panel beater…`}
+      aria-label="Search businesses"
+      autocomplete="off"
+      style="flex:1;min-width:0;border:0;background:transparent;padding:15px 0;font-size:15.5px;color:var(--text);outline:none"
+    />
+  </div>
+  <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+    <div style="display:flex;align-items:center;gap:10px;padding:0 12px;border-radius:10px;background:var(--bg-subtle)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.9" stroke-linecap="round"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+      <select name="suburb" style="flex:1;min-width:0;border:0;background:transparent;padding:14px 0;font-size:14.5px;font-weight:600;color:var(--text);outline:none">
+        <option value="">All suburbs</option>
+        {sortedSuburbs.slice(0, 40).map((s) => <option value={s.slug}>{s.name}</option>)}
+      </select>
+    </div>
+    <button type="submit" style="padding:14px 26px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;cursor:pointer">Search</button>
+  </div>
+</form>
 
 <script>
-  type Row = { n: string; s: string; sb: string; c: string; g: string; k: string };
-
-  const root = document.getElementById('hub-search')!;
-  const input = root.querySelector('input') as HTMLInputElement;
-  const results = root.querySelector('.results') as HTMLDivElement;
-
-  let index: Row[] | null = null;
-  let loading: Promise<Row[]> | null = null;
-
-  function loadIndex() {
-    if (!loading) {
-      loading = fetch('/search-index.json').then((r) => r.json()).then((data) => (index = data));
-    }
-    return loading;
-  }
-
-  // A plain `field.includes(word)` breaks on a simple plural: "butcher" is
-  // a substring of "butcheries" so it matches, but "butchers" isn't (the s
-  // lands after "butcher" instead of at the very end), so the plural form
-  // of the exact same query gave zero results. Rather than hand-maintain
-  // every singular/plural variant in categorySynonyms.ts, strip a single
-  // trailing "s" from the query word before falling back — only ever makes
-  // the word shorter, so it can only add matches, never cause a false one;
-  // the length guard keeps it from mangling short words like "gas" or "bus"
-  // into meaningless 2-letter fragments.
-  function includesWord(field: string, word: string): boolean {
-    if (field.includes(word)) return true;
-    if (word.length > 4 && word.endsWith('s') && field.includes(word.slice(0, -1))) return true;
-    return false;
-  }
-
-  // Every word in the query must match somewhere; matches in the name
-  // count for more than matches in category/suburb, and rows matching
-  // more words rank above rows matching fewer. `k` (keywords) holds
-  // informal/trade-jargon synonyms for the row's category — e.g. someone
-  // typing "junk removal" matches a Rubbish & Rubble Removal business even
-  // though that phrase appears in neither its name nor its formal category
-  // label. Weighted below a literal category match so an exact category
-  // name still wins ties.
-  function search(data: Row[], words: string[]): Row[] {
-    const scored: { row: Row; score: number }[] = [];
-    for (const row of data) {
-      const name = row.n.toLowerCase();
-      const cat = row.c.toLowerCase();
-      const sub = row.sb.toLowerCase();
-      const keywords = row.k.toLowerCase();
-      let score = 0;
-      let allMatched = true;
-      for (const word of words) {
-        if (includesWord(name, word)) score += 3;
-        else if (includesWord(cat, word)) score += 2;
-        else if (includesWord(sub, word)) score += 2;
-        else if (includesWord(keywords, word)) score += 1;
-        else allMatched = false;
-      }
-      if (allMatched) scored.push({ row, score });
-    }
-    scored.sort((a, b) => b.score - a.score || a.row.n.localeCompare(b.row.n));
-    return scored.map((s) => s.row);
-  }
-
-  function render(rows: Row[], query: string) {
-    if (rows.length === 0) {
-      results.innerHTML = `<p class="empty">No matches for "${escapeHtml(query)}" — try just one word, e.g. a category or suburb.</p>`;
-    } else {
-      results.innerHTML = rows
-        .slice(0, 8)
-        .map(
-          (r) => `<a href="/business/${r.s}/">
-            ${r.g ? `<svg class="result-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${r.g}</svg>` : '<span class="result-icon" style="width:18px;height:18px"></span>'}
-            <span class="result-text">
-              <strong>${escapeHtml(r.n)}</strong>
-              <span class="result-meta">${escapeHtml(r.c)}${r.c && r.sb ? ' · ' : ''}${escapeHtml(r.sb)}</span>
-            </span>
-          </a>`
-        )
-        .join('');
-    }
-    results.hidden = false;
-  }
-
-  function escapeHtml(s: string) {
-    return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
-  }
-
-  let debounceTimer: ReturnType<typeof setTimeout>;
-  input.addEventListener('input', () => {
-    clearTimeout(debounceTimer);
-    const query = input.value.trim();
-    if (query.length < 2) {
-      results.hidden = true;
+  // Bare-bones progressive enhancement: the form works with no JS at all
+  // (plain GET to /search/?q=&suburb=), this just skips the extra
+  // round-trip when JS is available.
+  const form = document.getElementById('hero-search') as HTMLFormElement;
+  form?.addEventListener('submit', (e) => {
+    const q = (form.elements.namedItem('q') as HTMLInputElement).value.trim();
+    const suburb = (form.elements.namedItem('suburb') as HTMLSelectElement).value;
+    if (!q && !suburb) {
+      e.preventDefault();
       return;
     }
-    debounceTimer = setTimeout(async () => {
-      const data = index ?? (await loadIndex());
-      const words = query.toLowerCase().split(/\s+/).filter(Boolean);
-      render(search(data, words), query);
-    }, 120);
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (suburb) params.set('suburb', suburb);
+    window.location.href = `/search/?${params.toString()}`;
   });
-
-  document.addEventListener('click', (e) => {
-    if (!root.contains(e.target as Node)) results.hidden = true;
-  });
-
-  // Remember the query when a result is opened, so the destination page
-  // can offer a "back to search results" link (see ListReturn.astro, which
-  // also handles the same key being written by BusinessCard for suburb/
-  // shopping-centre listing pages — whichever was written most recently
-  // wins).
-  results.addEventListener('click', (e) => {
-    const link = (e.target as HTMLElement).closest('a');
-    if (!link) return;
-    const q = input.value.trim();
-    if (q) {
-      try {
-        sessionStorage.setItem('phub:lastList', JSON.stringify({ kind: 'search', q, t: Date.now() }));
-      } catch {
-        /* sessionStorage unavailable — the back link just won't show */
-      }
-    }
-  });
-
-  // Coming back from a result via that link (/?q=...) — re-run the search
-  // and show the dropdown so the user lands back on their results.
-  const initialQuery = new URLSearchParams(location.search).get('q');
-  if (initialQuery) {
-    input.value = initialQuery;
-    loadIndex().then((data) => {
-      const words = initialQuery.toLowerCase().split(/\s+/).filter(Boolean);
-      render(search(data, words), initialQuery);
-      input.focus();
-    });
-  }
 </script>
-
-<style>
-  .search-box {
-    position: relative;
-    max-width: 480px;
-  }
-  .search-icon {
-    position: absolute;
-    left: 0.85rem;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 19px;
-    height: 19px;
-    color: var(--text-muted);
-    pointer-events: none;
-  }
-  .search-box input {
-    width: 100%;
-    padding: 0.8rem 1rem 0.8rem 2.6rem;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text);
-    font-size: 1rem;
-    box-shadow: var(--shadow);
-  }
-  .search-box input:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
-  }
-  .results {
-    position: absolute;
-    top: calc(100% + 0.5rem);
-    left: 0;
-    right: 0;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lift);
-    z-index: 20;
-    max-height: 360px;
-    overflow-y: auto;
-    padding: 0.4rem;
-  }
-  /* Everything under .results is injected via innerHTML from the script,
-     so Astro's scoped-style attribute never reaches any of it — every rule
-     targeting it has to be :global(), or it silently doesn't apply at all
-     (that's what let the result SVGs render at browser-default size). */
-  .results :global(a) {
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-    padding: 0.6rem 0.7rem;
-    border-radius: var(--radius);
-    text-decoration: none;
-    color: inherit;
-  }
-  .results :global(a:hover) {
-    background: var(--bg-subtle);
-  }
-  .results :global(.result-icon) {
-    width: 18px !important;
-    height: 18px !important;
-    flex-shrink: 0;
-    color: var(--accent);
-  }
-  .results :global(.result-text) {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-  .results :global(.result-text strong) {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: var(--navy);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .results :global(.result-meta) {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-  }
-  .results :global(.empty) {
-    padding: 0.75rem 0.7rem;
-    color: var(--text-muted);
-    font-size: 0.88rem;
-    margin: 0;
-  }
-</style>

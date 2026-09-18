@@ -7,10 +7,12 @@ import site from '../site';
 export const GET: APIRoute = () => {
   const index = businesses.map((b) => {
     const cat = categoriesFor(b)[0];
+    const suburb = suburbFor(b);
     return {
       n: b.name,
       s: b.slug,
-      sb: suburbFor(b)?.name ?? '',
+      sb: suburb?.name ?? '',
+      sbs: suburb?.slug ?? '',
       c: cat?.name ?? '',
       g: cat ? groupForCategory(cat.slug)?.iconPath ?? '' : '',
       // Informal/trade-jargon search terms for this business's category
@@ -20,6 +22,8 @@ export const GET: APIRoute = () => {
       // find it, even though that word appears nowhere in the business's
       // own name or formal category label. See src/lib/categorySynonyms.ts.
       k: cat ? [...synonymsFor(cat.slug), ...locationSynonymsFor(cat.name, site.cityLabel)].join(' ') : '',
+      t: b.subscription_tier,
+      h: Boolean(b.hours),
     };
   });
   return new Response(JSON.stringify(index), {

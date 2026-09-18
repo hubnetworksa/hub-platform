@@ -1,18 +1,16 @@
 ---
-import { TIER_NAMES } from '../../functions/_lib/pricing';
-
+// Matches the mockup's "Featured"/"Verified" pill styling exactly.
+// Basic (tier 0) renders nothing — there's no badge for the free plan
+// anywhere in the design.
 interface Props {
   tier: number;
-  /** Basic (tier 0) renders nothing by default — there's no badge for the
-   *  free plan anywhere in the design; pass true only where the UI
-   *  explicitly needs to label a listing as Basic (e.g. an admin table). */
-  showBasic?: boolean;
 }
-const { tier, showBasic = false } = Astro.props;
-
-const variant = tier >= 2 ? 'tag-solid' : tier === 1 ? 'tag-tint' : 'tag-outline';
+const { tier } = Astro.props;
 ---
 
-{(tier > 0 || showBasic) && (
-  <span class:list={['tag', variant]}>{TIER_NAMES[tier] ?? 'Basic'}</span>
+{tier >= 2 && (
+  <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Featured</span>
+)}
+{tier === 1 && (
+  <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:rgba(var(--accent-rgb),.12);color:var(--accent-hover);font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Verified</span>
 )}

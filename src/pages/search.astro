@@ -1,0 +1,182 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import site from '../site';
+---
+
+<BaseLayout title="Search results" description={`Search ${site.siteName}'s directory.`} noindex={true}>
+  <main style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
+    <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--muted);flex-wrap:wrap">
+      <a href="/" style="color:var(--muted)">Home</a><span>/</span><span style="color:var(--navy)">Search</span>
+    </div>
+    <form id="search-form" style="margin-top:14px;display:flex;align-items:center;gap:10px;padding:0 14px;border:2px solid var(--navy);border-radius:12px;background:#fff;max-width:620px">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m20 20-4.5-4.5"></path></svg>
+      <input id="search-input" type="search" name="q" style="flex:1;min-width:0;border:0;background:transparent;padding:14px 0;font-size:15px;font-weight:600;color:var(--text);outline:none" />
+    </form>
+    <h1 id="results-heading" style="margin:22px 0 4px;font-size:clamp(24px,3.4vw,32px);letter-spacing:-.025em;color:var(--navy)">Search</h1>
+    <p style="margin:0 0 18px;font-size:14px;color:var(--muted);font-weight:600">Featured listings appear first and are marked as such.</p>
+
+    <div style="display:grid;grid-template-columns:1fr;gap:22px" id="results-shell">
+      <div style="display:flex;flex-direction:column;gap:12px" id="results-list"></div>
+
+      <aside style="display:flex;flex-direction:column;gap:14px">
+        <div id="sponsor-slot" style="border:2px solid var(--navy);border-radius:14px;overflow:hidden"></div>
+        <div style="border:2px solid var(--border);border-radius:14px;padding:16px;background:var(--bg-subtle)">
+          <div style="font-size:13px;font-weight:800;color:var(--navy);margin-bottom:8px">Refine</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <label style="display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;color:var(--text)"><input id="filter-verified" type="checkbox" style="accent-color:var(--accent);width:16px;height:16px" />Verified only</label>
+            <label style="display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;color:var(--text)"><input id="filter-hours" type="checkbox" style="accent-color:var(--accent);width:16px;height:16px" />Has trading hours</label>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  @media (min-width: 950px) {
+    #results-shell {
+      grid-template-columns: 1fr 320px;
+    }
+  }
+</style>
+
+<script>
+  interface Row { n: string; s: string; sb: string; sbs: string; c: string; g: string; k: string; t: number; h: boolean }
+
+  const initialQ = new URLSearchParams(location.search).get('q') ?? '';
+
+  const input = document.getElementById('search-input') as HTMLInputElement;
+  const form = document.getElementById('search-form') as HTMLFormElement;
+  const heading = document.getElementById('results-heading')!;
+  const list = document.getElementById('results-list')!;
+  const sponsorSlot = document.getElementById('sponsor-slot')!;
+  const filterVerified = document.getElementById('filter-verified') as HTMLInputElement;
+  const filterHours = document.getElementById('filter-hours') as HTMLInputElement;
+
+  input.value = initialQ;
+
+  function includesWord(field: string, word: string): boolean {
+    if (field.includes(word)) return true;
+    if (word.length > 4 && word.endsWith('s') && field.includes(word.slice(0, -1))) return true;
+    return false;
+  }
+
+  function search(data: Row[], words: string[], suburbSlug: string): Row[] {
+    const scored: { row: Row; score: number }[] = [];
+    for (const row of data) {
+      if (suburbSlug && row.sbs !== suburbSlug) continue;
+      if (words.length === 0) {
+        scored.push({ row, score: 0 });
+        continue;
+      }
+      const name = row.n.toLowerCase();
+      const cat = row.c.toLowerCase();
+      const sub = row.sb.toLowerCase();
+      const keywords = row.k.toLowerCase();
+      let score = 0;
+      let allMatched = true;
+      for (const word of words) {
+        if (includesWord(name, word)) score += 3;
+        else if (includesWord(cat, word)) score += 2;
+        else if (includesWord(sub, word)) score += 2;
+        else if (includesWord(keywords, word)) score += 1;
+        else allMatched = false;
+      }
+      if (allMatched) scored.push({ row, score });
+    }
+    // Featured (t>=2) first, then by match score, then alphabetically.
+    scored.sort((a, b) => (b.row.t >= 2 ? 1 : 0) - (a.row.t >= 2 ? 1 : 0) || b.score - a.score || a.row.n.localeCompare(b.row.n));
+    return scored.map((s) => s.row);
+  }
+
+  function escapeHtml(s: string) {
+    return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+  }
+
+  function planBadge(tier: number): string {
+    if (tier >= 2) return `<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Featured</span>`;
+    if (tier === 1) return `<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:rgba(var(--accent-rgb),.12);color:var(--accent-hover);font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Verified</span>`;
+    return '';
+  }
+
+  function renderRow(r: Row, pinned: boolean): string {
+    const meta = [r.c, r.sb].filter(Boolean).join(' · ');
+    if (pinned) {
+      return `
+        <article style="border:2px solid var(--accent);border-radius:14px;background:#fff;padding:18px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+            ${planBadge(r.t)}
+            <span style="font-size:11px;font-weight:700;color:var(--muted)">Sponsored placement</span>
+          </div>
+          <h2 style="margin:12px 0 6px;font-size:21px;letter-spacing:-.02em;color:var(--navy)"><a href="/business/${r.s}/" style="color:var(--navy)">${escapeHtml(r.n)}</a></h2>
+          <p style="margin:0;font-size:13.5px;font-weight:700;color:var(--muted)">${escapeHtml(meta)}</p>
+        </article>`;
+    }
+    return `
+      <article style="border:2px solid var(--border);border-radius:14px;background:#fff;padding:16px 18px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <h2 style="margin:0;font-size:18px;letter-spacing:-.015em;color:var(--navy)"><a href="/business/${r.s}/" style="color:var(--navy)">${escapeHtml(r.n)}</a></h2>
+          ${r.c ? `<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:var(--bg-subtle);color:var(--accent-hover);font-size:11px;font-weight:800;white-space:nowrap">${escapeHtml(r.c)}</span>` : ''}
+        </div>
+        <p style="margin:8px 0 0;font-size:13.5px;font-weight:600;color:var(--muted)">${escapeHtml(meta)}${planBadge(r.t) ? ' &nbsp;' + planBadge(r.t) : ''}</p>
+      </article>`;
+  }
+
+  function renderSponsorSlot(category: string) {
+    sponsorSlot.innerHTML = `
+      <div style="background:var(--navy);padding:14px 16px">
+        <div style="font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--grad-from)">Sponsored category spot</div>
+        <div style="font-size:17px;font-weight:800;color:#fff;margin-top:6px;letter-spacing:-.02em">One advertiser per category</div>
+      </div>
+      <div style="padding:16px;background:#fff">
+        <p style="margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--text)">${category ? `Own the top of every &ldquo;${escapeHtml(category)}&rdquo; page.` : 'Own the top of a category page across the whole site.'}</p>
+        <a href="/pricing/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none;text-align:center">Enquire about this spot</a>
+      </div>`;
+  }
+
+  let allRows: Row[] | null = null;
+  async function loadIndex(): Promise<Row[]> {
+    if (allRows) return allRows;
+    const res = await fetch('/search-index.json');
+    allRows = await res.json();
+    return allRows!;
+  }
+
+  async function runSearch() {
+    const q = input.value.trim();
+    const suburbSlug = new URLSearchParams(location.search).get('suburb') ?? '';
+    const words = q.toLowerCase().split(/\s+/).filter(Boolean);
+    const data = await loadIndex();
+    let results = search(data, words, suburbSlug);
+    if (filterVerified.checked) results = results.filter((r) => r.t >= 1);
+    if (filterHours.checked) results = results.filter((r) => r.h);
+
+    heading.textContent = q ? `${results.length} results for "${q}"` : `${results.length} businesses${suburbSlug ? '' : ' listed'}`;
+
+    if (results.length === 0) {
+      list.innerHTML = `<p style="color:var(--muted);font-size:14px;">No matches — try one word, e.g. a category or suburb.</p>`;
+      renderSponsorSlot('');
+      return;
+    }
+    const featured = results.find((r) => r.t >= 2);
+    const rest = results.filter((r) => r !== featured).slice(0, 40);
+    list.innerHTML = (featured ? renderRow(featured, true) : '') + rest.map((r) => renderRow(r, false)).join('');
+
+    const topCategory = results.find((r) => r.c)?.c ?? '';
+    renderSponsorSlot(topCategory);
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams(location.search);
+    if (input.value.trim()) params.set('q', input.value.trim());
+    else params.delete('q');
+    history.replaceState(null, '', `?${params.toString()}`);
+    runSearch();
+  });
+  filterVerified.addEventListener('change', runSearch);
+  filterHours.addEventListener('change', runSearch);
+
+  runSearch();
+</script>

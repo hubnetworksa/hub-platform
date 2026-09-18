@@ -69,6 +69,15 @@ const themeCss = `:root {
   --brand-row-fg: ${theme.brandRowFg};
   --brand-row-accent: ${theme.brandRowAccent};
   --brand-row-muted: ${theme.brandRowMuted};
+
+  /* Aliases matching the mockup's own variable names verbatim (--contrast,
+     --muted, --grad-from) — kept as aliases of the vars above rather than
+     translating every occurrence by hand across every page's markup, so
+     the mockup's literal inline styles can be copied in directly without
+     transcription drift. */
+  --contrast: ${theme.accentContrast};
+  --muted: ${theme.textMuted};
+  --grad-from: ${theme.gradientFrom};
 }`;
 ---
 
@@ -153,91 +162,90 @@ const themeCss = `:root {
   <body>
     <a href="#main-content" class="skip-link">Skip to content</a>
 
-    <div class="trust-bar">
-      <div class="container">
-        <span class="trust-bar-message"><Icon path={ICONS.shield} size={13} /> Every listing reviewed before it goes live</span>
-        <span class="trust-bar-links">
-          <a href="/advertise/">Advertise</a>
-          <a href="/login/">Business log in</a>
+    <div style="position:sticky;top:0;z-index:80;background:var(--navy);color:#fff">
+      <div style="max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:34px;font-size:11.5px;font-weight:600;letter-spacing:.02em">
+        <span style="display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.72)">
+          <Icon path={ICONS.shield} size={13} />
+          Every listing reviewed before it goes live
+        </span>
+        <span style="display:flex;align-items:center;gap:18px;color:rgba(255,255,255,.72)">
+          <a href="/advertise/" style="color:rgba(255,255,255,.78)">Advertise</a>
+          <a href="/login/" style="color:rgba(255,255,255,.78)">Business log in</a>
         </span>
       </div>
     </div>
 
-    <header class="brand-row">
-      <div class="container">
-        <a href="/" class="logo">
-          <img src="/logo-icon.png" alt={site.siteName} width="40" height="46" />
-          <span class="logo-text">
-            <span class="logo-word">{site.cityLabel}<span>Hub</span></span>
-            <span class="logo-sub">Business Directory</span>
+    <header style="position:sticky;top:34px;z-index:70;background:#fff;border-bottom:2px solid var(--navy)">
+      <div style="max-width:1200px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:18px">
+        <a href="/" style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+          <img src="/logo-icon.png" alt={site.siteName} style="height:38px;width:auto;display:block" />
+          <span style="display:flex;flex-direction:column;line-height:1.05">
+            <span style="font-weight:800;font-size:19px;letter-spacing:-.02em;color:var(--navy)">{site.cityLabel}<span style="color:var(--accent)">Hub</span></span>
+            <span style="font-size:9px;font-weight:800;letter-spacing:.18em;color:var(--muted);margin-top:3px">BUSINESS DIRECTORY</span>
           </span>
         </a>
-        <p class="tagline">
-          <strong>Discover. Connect. Grow.</strong>
-          <span>{site.tagline}</span>
-        </p>
-      </div>
-    </header>
-
-    <nav class="site-nav" aria-label="Main">
-      <div class="container">
-        <div class="nav-links" id="nav-links">
-          <a href="/"><Icon path={ICONS.home} size={16} /> Home</a>
-          <a href="/suburb/"><Icon path={ICONS.pin} size={16} /> Directory</a>
-          <a href="/category/"><Icon path={ICONS.grid} size={16} /> Categories</a>
-          <a href="/shopping-center/"><Icon path={ICONS.building} size={16} /> Shopping Centres</a>
-          {site.features.tourism && (
-            <a href="/tourism/"><Icon path={ICONS.compass} size={16} /> Tourism</a>
-          )}
-          <a href="/pricing/"><Icon path={ICONS.tag} size={16} /> Pricing</a>
-          <a href="/about/"><Icon path={ICONS.info} size={16} /> About Us</a>
-          <a href="/my-businesses/">My Businesses</a>
-          <a href="/admin/" id="admin-nav-link" class="admin-nav-link" hidden><Icon path={ICONS.shield} size={16} /> Admin Dashboard</a>
-        </div>
-        <div class="site-nav-actions">
-          <a href="/list-your-business/" class="btn btn-primary">
-            <Icon path={ICONS.plus} size={15} /> Add Your Business
-          </a>
-          <button type="button" id="nav-toggle" class="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Toggle menu">
+        <nav id="desk-nav" style="display:none;gap:2px;margin-left:8px" aria-label="Main">
+          <a href="/suburb/" class="nav-desk-link">Directory</a>
+          <a href="/category/" class="nav-desk-link">Categories</a>
+          <a href="/shopping-center/" class="nav-desk-link">Shopping centres</a>
+          {site.features.tourism && <a href="/tourism/" class="nav-desk-link">Tourism</a>}
+          <a href="/about/" class="nav-desk-link">About</a>
+        </nav>
+        <div style="display:flex;align-items:center;gap:10px;margin-left:auto">
+          <a href="/pricing/" id="pricing-link" style="display:none;padding:10px 14px;font-size:13px;font-weight:800;color:var(--navy);border:2px solid var(--border);border-radius:10px">Pricing</a>
+          <a href="/admin/" id="admin-nav-link" hidden style="display:none;padding:10px 14px;font-size:13px;font-weight:800;color:var(--navy);border:2px solid var(--border);border-radius:10px">Admin</a>
+          <button type="button" id="nav-toggle" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle menu" style="display:none;align-items:center;justify-content:center;width:42px;height:42px;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;color:var(--navy);flex-shrink:0">
             <Icon path={ICONS.menu} size={20} />
           </button>
+          <a href="/list-your-business/" style="display:inline-flex;align-items:center;gap:7px;padding:11px 16px;font-size:13.5px;font-weight:800;background:var(--accent);color:var(--contrast);border-radius:10px;box-shadow:0 6px 18px rgba(var(--accent-rgb),.28);white-space:nowrap">
+            <Icon path={ICONS.plus} size={15} />
+            Add your business
+          </a>
         </div>
       </div>
-    </nav>
+      <div id="mobile-menu" hidden style="border-top:2px solid var(--border);background:#fff;padding:10px 20px 16px;display:flex;flex-direction:column;gap:2px">
+        <a href="/suburb/" class="nav-mob-link">Directory</a>
+        <a href="/category/" class="nav-mob-link">Categories</a>
+        <a href="/shopping-center/" class="nav-mob-link">Shopping centres</a>
+        <a href="/pricing/" class="nav-mob-link">Plans &amp; pricing</a>
+        <a href="/about/" class="nav-mob-link">About</a>
+        <a href="/login/" style="padding:13px 6px;font-size:15.5px;font-weight:800;color:var(--muted)">Business log in</a>
+      </div>
+    </header>
 
     <main id="main-content">
       <slot />
     </main>
 
-    <footer class="site-footer">
-      <div class="container footer-grid">
-        <div class="footer-col footer-brand">
-          <span class="footer-logo">{site.cityLabel}<span>Hub</span></span>
-          <p>{site.footerTagline}</p>
+    <footer style="background:var(--navy);color:rgba(255,255,255,.7);margin-top:0">
+      <div style="max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,44px) 20px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:24px">
+          <div>
+            <div style="font-weight:800;font-size:18px;letter-spacing:-.02em;color:#fff">{site.cityLabel}<span style="color:var(--grad-from)">Hub</span></div>
+            <p style="margin:8px 0 0;font-size:13.5px;line-height:1.55;max-width:32ch">{site.footerTagline}</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:13.5px;font-weight:600">
+            <span style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45)">Browse</span>
+            <a href="/suburb/" style="color:rgba(255,255,255,.75)">Suburbs</a>
+            <a href="/category/" style="color:rgba(255,255,255,.75)">Categories</a>
+            <a href="/shopping-center/" style="color:rgba(255,255,255,.75)">Shopping centres</a>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:13.5px;font-weight:600">
+            <span style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45)">For owners</span>
+            <a href="/list-your-business/" style="color:rgba(255,255,255,.75)">Add your business</a>
+            <a href="/pricing/" style="color:rgba(255,255,255,.75)">Plans &amp; pricing</a>
+            <a href="/my-businesses/" style="color:rgba(255,255,255,.75)">My businesses</a>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:13.5px;font-weight:600">
+            <span style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45)">Company</span>
+            <a href="/about/" style="color:rgba(255,255,255,.75)">About</a>
+            <a href="/partners/" style="color:rgba(255,255,255,.75)">Partners</a>
+            <a href="/privacy/" style="color:rgba(255,255,255,.75)">Privacy</a>
+            <a href="/terms/" style="color:rgba(255,255,255,.75)">Terms</a>
+          </div>
         </div>
-        <div class="footer-col">
-          <h6>Browse</h6>
-          <a href="/suburb/">Suburbs</a>
-          <a href="/category/">Categories</a>
-          <a href="/shopping-center/">Shopping Centres</a>
-        </div>
-        <div class="footer-col">
-          <h6>For owners</h6>
-          <a href="/list-your-business/">Add your business</a>
-          <a href="/pricing/">Plans &amp; pricing</a>
-          <a href="/my-businesses/">My businesses</a>
-        </div>
-        <div class="footer-col">
-          <h6>Company</h6>
-          <a href="/about/">About</a>
-          <a href="/contact/">Contact</a>
-          <a href="/partners/">Partners</a>
-          <a href="/privacy/">Privacy</a>
-          <a href="/terms/">Terms</a>
-        </div>
-      </div>
-      <div class="container footer-bottom">
-        <span>© {new Date().getFullYear()} {site.siteName} — {site.footerTagline}</span>
+        <div style="height:1px;background:rgba(255,255,255,.16);margin:24px 0 16px"></div>
+        <div style="font-size:12.5px;font-weight:600;color:rgba(255,255,255,.55)">© {new Date().getFullYear()} {site.siteName} — {site.footerTagline}</div>
       </div>
     </footer>
 
@@ -266,20 +274,21 @@ const themeCss = `:root {
     </script>
 
     <script>
-      // Below 950px nav-links becomes a collapsible dropdown (see the
-      // [data-open] rule in global.css) instead of the desktop inline row —
-      // no framework, just a class toggle. Auto-closes on resize back to
-      // desktop width so it can't be left open-but-hidden by the media query.
+      // Hamburger toggle for the mobile dropdown menu (<950px — see the
+      // @media rule in global.css that shows #nav-toggle at that width).
       const toggle = document.getElementById('nav-toggle');
-      const links = document.getElementById('nav-links');
+      const menu = document.getElementById('mobile-menu');
       toggle?.addEventListener('click', () => {
-        const open = links?.getAttribute('data-open') === 'true';
-        links?.setAttribute('data-open', String(!open));
+        const open = !menu?.hidden;
+        if (menu) menu.hidden = open;
         toggle.setAttribute('aria-expanded', String(!open));
       });
+      // If the mobile menu was left open and the viewport grows past the
+      // breakpoint (desktop nav becomes visible via CSS), close it so it
+      // isn't left open-but-hidden underneath.
       window.addEventListener('resize', () => {
-        if (window.innerWidth > 950) {
-          links?.setAttribute('data-open', 'false');
+        if (window.innerWidth > 950 && menu) {
+          menu.hidden = true;
           toggle?.setAttribute('aria-expanded', 'false');
         }
       });

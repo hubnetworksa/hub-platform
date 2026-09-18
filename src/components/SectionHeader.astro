@@ -1,4 +1,7 @@
 ---
+// Matches the mockup's recurring section-header pattern: uppercase accent
+// eyebrow + navy H2, bottom-aligned with an optional right-hand link,
+// sitting on a 2px navy rule.
 interface Props {
   eyebrow?: string;
   title: string;
@@ -8,12 +11,12 @@ interface Props {
 const { eyebrow, title, seeAllHref, seeAllLabel = 'See all' } = Astro.props;
 ---
 
-<div class="section-header">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;flex-wrap:wrap">
   <div>
-    {eyebrow && <span class="section-header-eyebrow">{eyebrow}</span>}
-    <h2>{title}</h2>
+    {eyebrow && <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">{eyebrow}</span>}
+    <h2 style="margin:8px 0 0;font-size:clamp(22px,3vw,30px);letter-spacing:-.025em;color:var(--navy)">{title}</h2>
   </div>
   {seeAllHref && (
-    <a href={seeAllHref} class="section-header-link">{seeAllLabel} →</a>
+    <a href={seeAllHref} style="font-size:13.5px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">{seeAllLabel} →</a>
   )}
 </div>
