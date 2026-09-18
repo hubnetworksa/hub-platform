@@ -30,14 +30,19 @@ export interface ApprovedListing {
   ownerUserId?: number | null;
 }
 
-// If a business with this exact name already exists (e.g. auto-added
-// earlier by the research routine), the owner's submitted details replace
-// it in place rather than creating a duplicate listing — same business,
-// more authoritative data, existing slug/URL kept intact.
+// If a business with this exact name already exists IN THE SAME SUBURB
+// (e.g. auto-added earlier by the research routine), the owner's submitted
+// details replace it in place rather than creating a duplicate listing —
+// same business, more authoritative data, existing slug/URL kept intact.
+// Matching on name alone (no suburb check) previously meant any two
+// unrelated businesses sharing a common name anywhere in the city — e.g.
+// two different shops both called "House" — would collide, silently
+// overwriting one with the other's submitted details instead of both
+// existing as distinct listings.
 export async function insertApprovedBusiness(db: D1Database, listing: ApprovedListing): Promise<void> {
   const existing = await db
-    .prepare('SELECT id, owner_user_id FROM businesses WHERE lower(name) = lower(?)')
-    .bind(listing.name)
+    .prepare('SELECT id, owner_user_id FROM businesses WHERE lower(name) = lower(?) AND suburb_id = ?')
+    .bind(listing.name, listing.suburbId)
     .first<{ id: number; owner_user_id: number | null }>();
 
   if (existing) {
