@@ -1,0 +1,19 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  seeAllHref?: string;
+  seeAllLabel?: string;
+}
+const { eyebrow, title, seeAllHref, seeAllLabel = 'See all' } = Astro.props;
+---
+
+<div class="section-header">
+  <div>
+    {eyebrow && <span class="section-header-eyebrow">{eyebrow}</span>}
+    <h2>{title}</h2>
+  </div>
+  {seeAllHref && (
+    <a href={seeAllHref} class="section-header-link">{seeAllLabel} →</a>
+  )}
+</div>

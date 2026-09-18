@@ -2,7 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SearchBox from '../components/SearchBox.astro';
 import Icon from '../components/Icon.astro';
-import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory } from '../lib/data';
+import StatTile from '../components/StatTile.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import PlanBadge from '../components/PlanBadge.astro';
+import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory, suburbFor, FEATURED_TIER } from '../lib/data';
 import { CATEGORY_GROUPS } from '../lib/categoryGroups';
 import site from '../site';
 
@@ -12,6 +15,12 @@ const groupCount = (group: (typeof CATEGORY_GROUPS)[number]) =>
     .reduce((sum, c) => sum + businessesInCategory(c.id).length, 0);
 
 const topSuburbs = [...suburbs].sort((a, b) => businessesInSuburb(b.id).length - businessesInSuburb(a.id).length).slice(0, 8);
+
+// Only ever shown once a business is actually Featured — until then this
+// section just doesn't render, rather than showing an empty state. See
+// business/[slug].astro and the Premium Listings v2 plan for how a
+// business gets here.
+const featuredBusinesses = businesses.filter((b) => b.subscription_tier >= FEATURED_TIER).slice(0, 3);
 
 const FEATURES = [
   { label: 'Find Businesses', path: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.5-4.5"/>' },
@@ -75,6 +84,33 @@ const jsonLd = [
     <span class="watermark" aria-hidden="true">© {site.siteName}</span>
   </section>
 
+  <section class="stats-band">
+    <div class="container stat-strip stat-strip-on-navy">
+      <StatTile value={businesses.length.toLocaleString()} label="Live listings" />
+      <StatTile value={suburbs.length.toLocaleString()} label="Suburbs" />
+      <StatTile value={categories.length.toLocaleString()} label="Categories" />
+      <StatTile value="100%" label="Human-reviewed" />
+    </div>
+  </section>
+
+  {featuredBusinesses.length > 0 && (
+    <section class="container" style="padding-top: 2.5rem;">
+      <SectionHeader eyebrow="Featured this month" title="Businesses paying to be found first" seeAllHref="/pricing/" seeAllLabel="Get this spot" />
+      <div class="featured-grid">
+        {featuredBusinesses.map((b) => {
+          const suburb = suburbFor(b);
+          return (
+            <a class="card card-featured card-top-bar" href={`/business/${b.slug}/`}>
+              <PlanBadge tier={b.subscription_tier} />
+              <strong>{b.name}</strong>
+              {suburb && <span class="text-muted">{suburb.name}</span>}
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  )}
+
   <section class="container" style="padding-top: 2.5rem; padding-bottom: 2.5rem;">
     <div class="section-head">
       <h2>What are you looking for?</h2>
@@ -91,6 +127,13 @@ const jsonLd = [
     </div>
   </section>
 
+  <section class="container" style="padding-bottom: 1rem;">
+    <div class="ad-slot">
+      <span class="ad-slot-eyebrow">Advertisement</span>
+      <span class="ad-slot-spec">970×90 / 320×100</span>
+    </div>
+  </section>
+
   <section class="container" style="padding-bottom: 3rem;">
     <div class="section-head">
       <h2>Browse by suburb</h2>
@@ -100,6 +143,22 @@ const jsonLd = [
       {topSuburbs.map((s) => (
         <a class="chip" href={`/suburb/${s.slug}/`}>{s.name} <span class="chip-count">{businessesInSuburb(s.id).length}</span></a>
       ))}
+    </div>
+  </section>
+
+  <section class="owner-cta">
+    <div class="container">
+      <h2>For business owners</h2>
+      <p>Get found by residents searching for what you do — free to list, with paid plans to stand out.</p>
+      <div class="stat-strip stat-strip-on-navy owner-cta-stats">
+        <StatTile value={businesses.length.toLocaleString()} label="Businesses listed" />
+        <StatTile value="Free" label="To get started" />
+        <StatTile value="R149+" label="To stand out" />
+      </div>
+      <div class="owner-cta-actions">
+        <a href="/list-your-business/" class="btn btn-primary">List your business — it's free</a>
+        <a href="/pricing/" class="btn btn-outline">See plans &amp; pricing</a>
+      </div>
     </div>
   </section>
 </BaseLayout>
@@ -290,5 +349,58 @@ const jsonLd = [
   .chip-count {
     color: var(--text-muted);
     font-size: 0.78rem;
+  }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .featured-grid .card {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .featured-grid strong {
+    font-size: 1.05rem;
+  }
+
+  .owner-cta {
+    background: var(--navy);
+    color: #fff;
+    padding: 3rem 0;
+    margin-top: 2rem;
+    text-align: center;
+  }
+  .owner-cta h2 {
+    margin: 0 0 0.5rem;
+  }
+  .owner-cta p {
+    color: rgba(255, 255, 255, 0.75);
+    max-width: 48ch;
+    margin: 0 auto 2rem;
+  }
+  .owner-cta-stats {
+    max-width: 560px;
+    margin: 0 auto 2rem;
+    justify-items: center;
+    text-align: center;
+  }
+  .owner-cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .owner-cta-actions .btn-outline {
+    background: transparent;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  .owner-cta-actions .btn-outline:hover {
+    background: rgba(255, 255, 255, 0.1);
   }
 </style>

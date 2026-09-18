@@ -1,0 +1,18 @@
+---
+import { TIER_NAMES } from '../../functions/_lib/pricing';
+
+interface Props {
+  tier: number;
+  /** Basic (tier 0) renders nothing by default — there's no badge for the
+   *  free plan anywhere in the design; pass true only where the UI
+   *  explicitly needs to label a listing as Basic (e.g. an admin table). */
+  showBasic?: boolean;
+}
+const { tier, showBasic = false } = Astro.props;
+
+const variant = tier >= 2 ? 'tag-solid' : tier === 1 ? 'tag-tint' : 'tag-outline';
+---
+
+{(tier > 0 || showBasic) && (
+  <span class:list={['tag', variant]}>{TIER_NAMES[tier] ?? 'Basic'}</span>
+)}
