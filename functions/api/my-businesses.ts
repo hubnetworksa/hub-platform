@@ -12,9 +12,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const db = context.env.DB;
 
   const owned = await db
-    .prepare('SELECT id, slug, name FROM businesses WHERE owner_user_id = ? ORDER BY name')
+    .prepare('SELECT id, slug, name, subscription_tier, subscription_status, subscription_expires_at FROM businesses WHERE owner_user_id = ? ORDER BY name')
     .bind(user.id)
-    .all<{ id: number; slug: string; name: string }>();
+    .all<{ id: number; slug: string; name: string; subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null }>();
 
   const claims = await db
     .prepare('SELECT bc.id, bc.status, b.name AS business_name FROM business_claims bc JOIN businesses b ON b.id = bc.business_id WHERE bc.user_id = ? ORDER BY bc.created_at DESC')

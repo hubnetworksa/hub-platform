@@ -70,8 +70,16 @@ const ICONS = {
 
   const EDIT_ICON_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`;
 
+  const TIER_NAMES: Record<number, string> = { 0: 'Basic', 1: 'Verified', 2: 'Featured' };
+
   function statusBadge(text: string, tone: 'pending' | 'good' | 'bad'): string {
     return `<span class="status-badge status-${tone}">${text}</span>`;
+  }
+
+  function planBadge(tier: number): string {
+    if (tier <= 0) return '';
+    const tone = tier >= 2 ? 'good' : 'pending';
+    return statusBadge(TIER_NAMES[tier] ?? 'Basic', tone);
   }
 
   function pendingTone(status: string): 'pending' | 'good' | 'bad' {
@@ -101,7 +109,10 @@ const ICONS = {
       document.getElementById('owned-empty')!.hidden = false;
     } else {
       ownedList.innerHTML = data.owned
-        .map((b: { id: number; name: string }) => `<li><span>${b.name}</span><a href="/my-businesses/edit/?id=${b.id}" class="btn-outline">${EDIT_ICON_SVG} Edit</a></li>`)
+        .map(
+          (b: { id: number; name: string; subscription_tier: number }) =>
+            `<li><span>${b.name} ${planBadge(b.subscription_tier)}</span><a href="/my-businesses/edit/?id=${b.id}" class="btn-outline">${EDIT_ICON_SVG} Manage</a></li>`
+        )
         .join('');
     }
 

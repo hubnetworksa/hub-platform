@@ -31,6 +31,24 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <button type="submit" class="btn btn-primary">Save changes</button>
       <p id="form-status" role="status"></p>
     </form>
+
+    <div id="plan-panel" class="card plan-panel" hidden>
+      <strong>Plan</strong>
+      <p id="plan-current" class="text-muted"></p>
+      <div id="plan-buttons" class="plan-buttons"></div>
+      <p id="plan-status" role="status" class="text-muted"></p>
+    </div>
+
+    <div id="photos-panel" class="card photos-panel" hidden>
+      <strong>Photos</strong>
+      <p class="text-muted">A Featured-plan perk — up to 12 photos shown on your business page.</p>
+      <div id="photos-grid" class="photos-grid"></div>
+      <form id="photo-upload-form">
+        <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required />
+        <button type="submit" class="btn btn-outline btn-sm">Upload photo</button>
+      </form>
+      <p id="photo-status" role="status" class="text-muted"></p>
+    </div>
   </section>
 </BaseLayout>
 
@@ -40,6 +58,109 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   const loading = document.getElementById('loading')!;
   const form = document.getElementById('edit-form') as HTMLFormElement;
   const status = document.getElementById('form-status')!;
+
+  const TIER_NAMES: Record<number, string> = { 0: 'Basic', 1: 'Verified', 2: 'Featured' };
+  const FEATURED_TIER = 2;
+
+  function renderPlanPanel(business: { subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null }) {
+    const panel = document.getElementById('plan-panel')!;
+    const current = document.getElementById('plan-current')!;
+    const buttons = document.getElementById('plan-buttons')!;
+    const planStatus = document.getElementById('plan-status')!;
+    panel.hidden = false;
+
+    const tierName = TIER_NAMES[business.subscription_tier] ?? 'Basic';
+    const expiry = business.subscription_expires_at ? new Date(business.subscription_expires_at).toLocaleDateString() : null;
+    current.textContent =
+      business.subscription_tier > 0
+        ? `Current plan: ${tierName}${expiry ? ` — renews/expires ${expiry}` : ''}${business.subscription_status === 'cancelled' ? ' (cancelled, active until then)' : ''}`
+        : 'Current plan: Basic (free)';
+
+    buttons.innerHTML = '';
+    for (const tier of [1, 2]) {
+      if (tier === business.subscription_tier && business.subscription_status === 'active') continue;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn-outline btn-sm';
+      btn.textContent = `Upgrade to ${TIER_NAMES[tier]}`;
+      btn.addEventListener('click', async () => {
+        planStatus.textContent = 'Starting checkout…';
+        const res = await fetch('/api/subscribe/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId: Number(businessId), tier }),
+        });
+        const result = await res.json();
+        if (result.ok) window.location.href = result.redirectUrl;
+        else planStatus.textContent = result.error || 'Could not start checkout.';
+      });
+      buttons.appendChild(btn);
+    }
+    if (business.subscription_tier > 0 && business.subscription_status === 'active') {
+      const cancelBtn = document.createElement('button');
+      cancelBtn.type = 'button';
+      cancelBtn.className = 'btn btn-outline btn-sm';
+      cancelBtn.textContent = 'Cancel plan';
+      cancelBtn.addEventListener('click', async () => {
+        if (!confirm('Cancel your subscription? You keep your current plan until the paid period ends.')) return;
+        planStatus.textContent = 'Cancelling…';
+        const res = await fetch('/api/subscribe/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId: Number(businessId) }),
+        });
+        const result = await res.json();
+        planStatus.textContent = result.ok ? 'Cancelled — active until your current period ends.' : result.error || 'Could not cancel.';
+      });
+      buttons.appendChild(cancelBtn);
+    }
+  }
+
+  function renderPhotosPanel(business: { subscription_tier: number }, photos: { id: number; r2_key: string; caption: string | null }[]) {
+    const panel = document.getElementById('photos-panel')!;
+    if (business.subscription_tier < FEATURED_TIER) return; // stays hidden — upgrade to Featured to unlock
+    panel.hidden = false;
+
+    const grid = document.getElementById('photos-grid')!;
+    const photoStatus = document.getElementById('photo-status')!;
+    function renderGrid(list: { id: number; r2_key: string; caption: string | null }[]) {
+      grid.innerHTML = list
+        .map((p) => `<div class="photo-thumb"><img src="/media/${p.r2_key}" alt="${p.caption ?? ''}" /><button type="button" data-photo-id="${p.id}" class="photo-delete">×</button></div>`)
+        .join('');
+    }
+    renderGrid(photos);
+
+    grid.addEventListener('click', async (e) => {
+      const btn = (e.target as HTMLElement).closest('button[data-photo-id]') as HTMLButtonElement | null;
+      if (!btn) return;
+      const photoId = Number(btn.dataset.photoId);
+      const res = await fetch(`/api/business-photos?photoId=${photoId}`, { method: 'DELETE' });
+      const result = await res.json();
+      if (result.ok) btn.closest('.photo-thumb')?.remove();
+      else photoStatus.textContent = result.error || 'Could not delete photo.';
+    });
+
+    const uploadForm = document.getElementById('photo-upload-form') as HTMLFormElement;
+    uploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fileInput = uploadForm.elements.namedItem('photo') as HTMLInputElement;
+      if (!fileInput.files?.[0]) return;
+      photoStatus.textContent = 'Uploading…';
+      const fd = new FormData();
+      fd.append('businessId', String(businessId));
+      fd.append('photo', fileInput.files[0]);
+      const res = await fetch('/api/business-photos', { method: 'POST', body: fd });
+      const result = await res.json();
+      if (result.ok) {
+        photoStatus.textContent = '';
+        uploadForm.reset();
+        const refreshed = await fetch(`/api/business-photos?businessId=${businessId}`).then((r) => r.json());
+        if (refreshed.ok) renderGrid(refreshed.photos);
+      } else {
+        photoStatus.textContent = result.error || 'Could not upload photo.';
+      }
+    });
+  }
 
   async function init() {
     if (!businessId) {
@@ -64,6 +185,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     (form.elements.namedItem('website') as HTMLInputElement).value = data.business.website ?? '';
     (form.elements.namedItem('description') as HTMLTextAreaElement).value = data.business.description ?? '';
     (form.elements.namedItem('hours') as HTMLTextAreaElement).value = data.business.hours ?? '';
+
+    renderPlanPanel(data.business);
+    renderPhotosPanel(data.business, data.photos ?? []);
   }
 
   form.addEventListener('submit', async (e) => {
@@ -113,5 +237,50 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     font-size: 0.9rem;
     color: var(--text-muted);
     margin: 0;
+  }
+  .plan-panel, .photos-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+  .plan-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .photos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.5rem;
+  }
+  .photos-grid :global(.photo-thumb) {
+    position: relative;
+  }
+  .photos-grid :global(img) {
+    width: 100%;
+    height: 90px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .photos-grid :global(.photo-delete) {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    cursor: pointer;
+    line-height: 1;
+  }
+  #photo-upload-form {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
   }
 </style>
