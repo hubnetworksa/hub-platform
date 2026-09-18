@@ -72,8 +72,18 @@ export interface SessionUser {
 // Google account (hubnetworksa@gmail.com), rather than a per-site admin.
 const ADMIN_EMAIL = 'hubnetworksa@gmail.com';
 
+// A second, clearly-labeled demo admin account (admin@admin.com / "admin")
+// for trying out the admin console without the real credentials — added
+// per explicit request while testing the Premium Listings redesign.
+// Deliberately weak on purpose (a fixed, guessable password on a real,
+// shared production database) — remove this before any public/real launch,
+// since anyone who finds/guesses it gets full admin access (delete any
+// business, view user emails, change subscription plans and prices).
+const DEMO_ADMIN_EMAIL = 'admin@admin.com';
+
 export function isAdminEmail(email: string): boolean {
-  return email.toLowerCase() === ADMIN_EMAIL;
+  const lower = email.toLowerCase();
+  return lower === ADMIN_EMAIL || lower === DEMO_ADMIN_EMAIL;
 }
 
 // Reads the session cookie, validates it against D1, and returns the user —
