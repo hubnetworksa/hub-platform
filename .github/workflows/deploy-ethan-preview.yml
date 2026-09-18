@@ -1,0 +1,67 @@
+name: Deploy Ethan preview
+
+# A standing preview build of the Ethan dev branch, separate from
+# deploy.yml's production deploy (which only triggers on `main` and
+# always tags its deploy `--branch=main`, so it can never produce a
+# preview URL). This workflow deploys the SAME three Cloudflare Pages
+# projects but tagged with the real branch name, so Cloudflare serves it
+# at its own preview alias instead of overwriting production.
+#
+# Not run from deploy.yml on purpose: the routine-SQL-apply/clear and
+# DB-snapshot-refresh steps there are specific to the main-branch
+# automated research routine and would be wrong to run from a dev branch
+# (they commit bot housekeeping back to whichever branch triggered them).
+#
+# Note: there is only one D1 database per site — this preview reads/writes
+# the exact same production database main's deploy uses. It is a preview
+# of the FRONTEND only, not an isolated staging environment.
+
+on:
+  push:
+    branches: [Ethan]
+  workflow_dispatch:
+
+concurrency:
+  group: pages-ethan-preview
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - site: polokwane
+            pages_project: polokwanehub
+          - site: pretoria
+            pages_project: pretoriahub
+          - site: capetown
+            pages_project: thecapetownhub
+    env:
+      SITE: ${{ matrix.site }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build with Astro
+        run: npm run build
+
+      # Same reason as deploy.yml: wrangler pages deploy only reads a
+      # literal ./wrangler.jsonc, so the per-site config has to be copied
+      # into place under that exact name right before deploying.
+      - name: Deploy preview to Cloudflare Pages
+        run: |
+          cp wrangler.${{ matrix.site }}.jsonc wrangler.jsonc
+          npx wrangler pages deploy dist --project-name=${{ matrix.pages_project }} --branch=${{ github.ref_name }} --commit-dirty=true
