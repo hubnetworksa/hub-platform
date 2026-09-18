@@ -22,6 +22,10 @@ export const CATEGORY_SYNONYMS: Record<string, string[]> = {
     'farm supplies', 'farming equipment', 'agri supplies', 'feed store', 'animal feed', 'farmers co-op',
     'irrigation supplies', 'livestock supplies',
   ],
+  'agriculture-forestry': [
+    'farm', 'farms', 'farming', 'forestry', 'forestry services', 'tree felling', 'logging', 'land clearing',
+    'game farm', 'agricultural contractor',
+  ],
   'appliance-repairs': [
     'fridge repair', 'washing machine repair', 'stove repair', 'appliance technician', 'oven repair',
     'dishwasher repair', 'tumble dryer repair', 'microwave repair',

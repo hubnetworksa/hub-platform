@@ -69,7 +69,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
       'building-construction', 'electricians', 'plumbers', 'locksmiths', 'cleaning-services', 'pest-control',
       'nurseries-garden-centres', 'industrial-suppliers-manufacturing', 'solar-renewable-energy',
       'painters-decorators', 'borehole-water-services', 'roofing-contractors', 'appliance-repairs',
-      'fencing-security-installations', 'rubbish-rubble-removal',
+      'fencing-security-installations', 'rubbish-rubble-removal', 'agriculture-forestry',
     ],
   },
   {
