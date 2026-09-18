@@ -17,9 +17,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (q.length < 2) return json({ ok: true, results: [] });
 
   const results = await context.env.DB
-    .prepare('SELECT id, name, status FROM businesses WHERE name LIKE ? ORDER BY name LIMIT 20')
+    .prepare('SELECT id, name, status, subscription_tier FROM businesses WHERE name LIKE ? ORDER BY name LIMIT 20')
     .bind(`%${q}%`)
-    .all<{ id: number; name: string; status: string }>();
+    .all<{ id: number; name: string; status: string; subscription_tier: number }>();
 
   return json({ ok: true, results: results.results });
 };

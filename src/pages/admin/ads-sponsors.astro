@@ -1,0 +1,252 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Ads & Sponsors" description="Manage exclusive sponsorship slots." noindex={true}>
+  <section class="admin-wrap">
+    <div id="loading" class="loading">Loading…</div>
+
+    <div id="content" class="admin" hidden>
+      <a href="/admin/" class="back-link">← Admin Dashboard</a>
+      <h1>Ads &amp; sponsors</h1>
+      <p class="panel-hint">Exclusive spots — one advertiser holds each at a time. Comping one here doesn't touch PayFast; it's a manual/off-platform sale.</p>
+
+      <div class="panel">
+        <h2>Currently sold</h2>
+        <ul id="sold-list" class="item-list"></ul>
+        <p id="sold-empty" class="empty-state" hidden>No sponsorship slots sold yet.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Comp a slot</h2>
+        <form id="comp-form">
+          <label>
+            Business ID
+            <input type="number" name="businessId" required />
+          </label>
+          <label>
+            Product
+            <select name="productType" required>
+              <option value="category_sponsor">Category sponsor</option>
+              <option value="suburb_sponsor">Suburb sponsor</option>
+              <option value="homepage_banner">Homepage banner</option>
+              <option value="centre_sponsor">Centre sponsorship</option>
+            </select>
+          </label>
+          <label>
+            Target slug <span>(category/suburb/centre slug — leave blank for homepage banner)</span>
+            <input type="text" name="productTarget" />
+          </label>
+          <button type="submit" class="btn btn-primary btn-sm">Assign</button>
+          <p id="comp-status" role="status"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const PRODUCT_LABELS: Record<string, string> = {
+    category_sponsor: 'Category sponsor',
+    suburb_sponsor: 'Suburb sponsor',
+    homepage_banner: 'Homepage banner',
+    centre_sponsor: 'Centre sponsorship',
+  };
+
+  async function postJson(url: string, body: unknown) {
+    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    return res.json();
+  }
+
+  async function loadSold() {
+    const res = await fetch('/api/admin/sponsorships');
+    const data = await res.json();
+    const list = document.getElementById('sold-list')!;
+    const empty = document.getElementById('sold-empty')!;
+    if (!data.sponsorships || data.sponsorships.length === 0) {
+      empty.hidden = false;
+      list.innerHTML = '';
+      return;
+    }
+    list.innerHTML = data.sponsorships
+      .map(
+        (s: { id: number; product_type: string; product_target: string | null; business_name: string }) =>
+          `<li class="admin-row">
+            <div class="admin-row-main">
+              <strong>${PRODUCT_LABELS[s.product_type] ?? s.product_type}${s.product_target ? ` — ${s.product_target}` : ''}</strong>
+              <span class="row-detail">sold to ${s.business_name}</span>
+            </div>
+            <div class="row-actions">
+              <button class="btn-sm btn-reject" data-clear="${s.id}">Clear</button>
+            </div>
+          </li>`
+      )
+      .join('');
+  }
+
+  document.getElementById('sold-list')!.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-clear]') as HTMLButtonElement | null;
+    if (!btn) return;
+    if (!confirm('Clear this sponsorship slot? It becomes available for anyone to buy.')) return;
+    btn.disabled = true;
+    await postJson('/api/admin/sponsorships', { action: 'clear', id: Number(btn.dataset.clear) });
+    loadSold();
+  });
+
+  const compForm = document.getElementById('comp-form') as HTMLFormElement;
+  compForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const status = document.getElementById('comp-status')!;
+    status.textContent = 'Saving…';
+    const data = Object.fromEntries(new FormData(compForm).entries());
+    const result = await postJson('/api/admin/sponsorships', { action: 'set', businessId: Number(data.businessId), productType: data.productType, productTarget: data.productTarget });
+    status.textContent = result.ok ? 'Assigned.' : result.error || 'Something went wrong.';
+    if (result.ok) {
+      compForm.reset();
+      loadSold();
+    }
+  });
+
+  async function init() {
+    const me = await fetch('/api/me');
+    if (me.status === 401) {
+      window.location.href = '/login/?next=/admin/ads-sponsors/';
+      return;
+    }
+    const meData = await me.json();
+    if (!meData.isAdmin) {
+      window.location.href = '/my-businesses/';
+      return;
+    }
+    document.getElementById('loading')!.hidden = true;
+    document.getElementById('content')!.hidden = false;
+    await loadSold();
+  }
+
+  init();
+</script>
+
+<style>
+  .admin-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+  .loading {
+    color: var(--text-muted);
+  }
+  .admin {
+    width: 100%;
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .back-link {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+  }
+  h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--navy);
+  }
+  .panel-hint {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 1.5rem;
+  }
+  .panel h2 {
+    margin: 0 0 0.9rem;
+    font-size: 1rem;
+    color: var(--navy);
+  }
+  .item-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  :global(.admin-row) {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+  }
+  :global(.admin-row-main) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.9rem;
+  }
+  :global(.row-detail) {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+  :global(.btn-sm) {
+    border-radius: var(--radius);
+    padding: 0.35rem 0.7rem;
+    font-weight: 700;
+    font-size: 0.78rem;
+    cursor: pointer;
+    border: none;
+  }
+  :global(.btn-reject) {
+    border: 1px solid var(--danger, #c23838);
+    background: #fff;
+    color: var(--danger, #c23838);
+  }
+  .empty-state {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  #comp-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    max-width: 360px;
+  }
+  #comp-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  #comp-form label span {
+    font-weight: 400;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+  }
+  #comp-form input, #comp-form select {
+    font: inherit;
+    padding: 0.55rem 0.7rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    color: var(--text);
+  }
+  #comp-form button {
+    align-self: flex-start;
+  }
+  #comp-status {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+</style>

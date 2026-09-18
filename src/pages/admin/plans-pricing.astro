@@ -1,0 +1,233 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Plans & Pricing" description="Edit plan and sponsorship pricing." noindex={true}>
+  <section class="admin-wrap">
+    <div id="loading" class="loading">Loading…</div>
+
+    <div id="content" class="admin" hidden>
+      <a href="/admin/" class="back-link">← Admin Dashboard</a>
+      <h1>Plans &amp; pricing</h1>
+
+      <div class="panel">
+        <h2>Subscribers</h2>
+        <ul id="subs-list" class="item-list"></ul>
+        <p id="subs-empty" class="empty-state" hidden>No active subscribers yet.</p>
+        <p id="mrr" class="mrr"></p>
+      </div>
+
+      <div class="panel">
+        <h2>Prices</h2>
+        <p class="panel-hint">Rand amounts, billed monthly. Changes apply to new checkouts immediately, and to the public Pricing page on the next rebuild.</p>
+        <div id="price-form" class="price-form"></div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const LABELS: Record<string, string> = {
+    price_verified_cents: 'Verified tier',
+    price_featured_cents: 'Featured tier',
+    price_sponsor_category_cents: 'Category sponsor',
+    price_sponsor_suburb_cents: 'Suburb sponsor',
+    price_sponsor_banner_cents: 'Homepage banner',
+    price_sponsor_centre_cents: 'Centre sponsorship',
+  };
+
+  async function postJson(url: string, body: unknown) {
+    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    return res.json();
+  }
+
+  async function loadSubscribers() {
+    const res = await fetch('/api/admin/subscriptions');
+    const data = await res.json();
+    const list = document.getElementById('subs-list')!;
+    const empty = document.getElementById('subs-empty')!;
+    if (!data.subscriptions || data.subscriptions.length === 0) {
+      empty.hidden = false;
+    } else {
+      list.innerHTML = data.subscriptions
+        .map(
+          (s: { name: string; tierName: string; subscription_status: string; priceRand: string }) =>
+            `<li class="admin-row"><div class="admin-row-main"><strong>${s.name}</strong><span class="row-detail">${s.tierName} — ${s.subscription_status} — R${s.priceRand}/mo</span></div></li>`
+        )
+        .join('');
+    }
+    document.getElementById('mrr')!.textContent = `Tier MRR: R${data.monthlyRevenueRand}`;
+  }
+
+  async function loadPrices() {
+    const res = await fetch('/api/admin/site-settings');
+    const data = await res.json();
+    const form = document.getElementById('price-form')!;
+    form.innerHTML = data.settings
+      .map((s: { key: string; value: string }) => {
+        const rand = (Number(s.value) / 100).toFixed(2);
+        return `
+          <div class="price-row">
+            <label for="price-${s.key}">${LABELS[s.key] ?? s.key}</label>
+            <div class="price-input-group">
+              <span>R</span>
+              <input id="price-${s.key}" type="number" min="0" step="0.01" value="${rand}" data-key="${s.key}" />
+              <button type="button" class="btn-sm btn-outline" data-save="${s.key}">Save</button>
+            </div>
+          </div>`;
+      })
+      .join('');
+  }
+
+  document.getElementById('price-form')!.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-save]') as HTMLButtonElement | null;
+    if (!btn) return;
+    const key = btn.dataset.save!;
+    const input = document.getElementById(`price-${key}`) as HTMLInputElement;
+    const cents = Math.round(Number(input.value) * 100);
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    const result = await postJson('/api/admin/site-settings', { key, cents });
+    btn.textContent = result.ok ? 'Saved' : result.error || 'Error';
+    btn.disabled = false;
+    setTimeout(() => (btn.textContent = 'Save'), 1500);
+  });
+
+  async function init() {
+    const me = await fetch('/api/me');
+    if (me.status === 401) {
+      window.location.href = '/login/?next=/admin/plans-pricing/';
+      return;
+    }
+    const meData = await me.json();
+    if (!meData.isAdmin) {
+      window.location.href = '/my-businesses/';
+      return;
+    }
+    document.getElementById('loading')!.hidden = true;
+    document.getElementById('content')!.hidden = false;
+    await Promise.all([loadSubscribers(), loadPrices()]);
+  }
+
+  init();
+</script>
+
+<style>
+  .admin-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 3rem 1rem;
+  }
+  .loading {
+    color: var(--text-muted);
+  }
+  .admin {
+    width: 100%;
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .back-link {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+  }
+  h1 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--navy);
+  }
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 1.5rem;
+  }
+  .panel h2 {
+    margin: 0 0 0.4rem;
+    font-size: 1rem;
+    color: var(--navy);
+  }
+  .panel-hint {
+    margin: 0 0 0.9rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  .item-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  :global(.admin-row) {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+  }
+  :global(.admin-row-main) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.9rem;
+  }
+  :global(.row-detail) {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+  .empty-state {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  .mrr {
+    margin: 0.75rem 0 0;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .price-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .price-row label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  .price-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .price-input-group input {
+    font: inherit;
+    padding: 0.5rem 0.6rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    color: var(--text);
+    width: 120px;
+  }
+  :global(.btn-sm) {
+    border-radius: var(--radius);
+    padding: 0.35rem 0.7rem;
+    font-weight: 700;
+    font-size: 0.78rem;
+    cursor: pointer;
+  }
+  :global(.btn-outline) {
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+  }
+</style>

@@ -1,5 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
+import { tierPriceCents, sponsorPriceCents, centsToRand } from '../../_lib/pricing';
 
 interface Env {
   DB: D1Database;
@@ -28,8 +29,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   // Not on the public site (fetch-d1-data.mjs only pulls status='published')
   // but still visible here — e.g. test listings hidden after publishing.
   const hidden = await db
-    .prepare("SELECT id, slug, name, status FROM businesses WHERE status != 'published' ORDER BY name")
-    .all<{ id: number; slug: string; name: string; status: string }>();
+    .prepare("SELECT id, slug, name, status, subscription_tier FROM businesses WHERE status != 'published' ORDER BY name")
+    .all<{ id: number; slug: string; name: string; status: string; subscription_tier: number }>();
 
   const reports = await db
     .prepare("SELECT id, kind, business_slug, business_name, reason, relationship, requester_email, created_at FROM reports WHERE status = 'open' ORDER BY created_at DESC")
@@ -39,6 +40,23 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     db.prepare("SELECT COUNT(*) AS n FROM businesses WHERE status = 'published'").first<{ n: number }>(),
     db.prepare('SELECT COUNT(*) AS n FROM users').first<{ n: number }>(),
   ]);
+
+  // Revenue by product — tier subscriptions + sponsorship slots, all
+  // currently active. Read from `subscriptions` directly (not the
+  // businesses.subscription_tier cache) so it also counts sponsorship
+  // rows, which don't touch that column at all.
+  const activeSubs = await db
+    .prepare("SELECT tier, product_type FROM subscriptions WHERE status = 'active'")
+    .all<{ tier: number; product_type: string }>();
+  let tierRevenueCents = 0;
+  let sponsorshipRevenueCents = 0;
+  for (const row of activeSubs.results) {
+    if (row.product_type === 'tier') {
+      tierRevenueCents += (await tierPriceCents(db, row.tier)) ?? 0;
+    } else {
+      sponsorshipRevenueCents += (await sponsorPriceCents(db, row.product_type as Parameters<typeof sponsorPriceCents>[1])) ?? 0;
+    }
+  }
 
   return json({
     ok: true,
@@ -63,6 +81,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       pendingSubmissions: submissions.results.length,
       pendingClaims: claims.results.length,
       openReports: reports.results.length,
+    },
+    revenue: {
+      tierRand: centsToRand(tierRevenueCents),
+      sponsorshipRand: centsToRand(sponsorshipRevenueCents),
+      totalRand: centsToRand(tierRevenueCents + sponsorshipRevenueCents),
     },
     health: {
       resendConfigured: Boolean(context.env.RESEND_API_KEY),

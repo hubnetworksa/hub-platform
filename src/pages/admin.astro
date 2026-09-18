@@ -20,6 +20,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
       <div id="stats-strip" class="stats-strip"></div>
 
+      <div class="panel revenue-panel">
+        <h2>Revenue by product</h2>
+        <div id="revenue-row" class="revenue-row"></div>
+      </div>
+
       <div class="nav-grid">
         <a href="/admin/submissions/" class="nav-card">
           <strong id="count-submissions">–</strong>
@@ -44,6 +49,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <a href="/admin/activity/" class="nav-card">
           <strong>→</strong>
           <span>Recent activity</span>
+        </a>
+        <a href="/admin/plans-pricing/" class="nav-card">
+          <strong>→</strong>
+          <span>Plans &amp; pricing</span>
+        </a>
+        <a href="/admin/ads-sponsors/" class="nav-card">
+          <strong>→</strong>
+          <span>Ads &amp; sponsors</span>
         </a>
       </div>
     </div>
@@ -79,6 +92,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <div class="stat"><strong>${data.stats.pendingSubmissions}</strong><span>Pending submissions</span></div>
       <div class="stat"><strong>${data.stats.pendingClaims}</strong><span>Pending claims</span></div>
       <div class="stat"><strong>${data.stats.openReports}</strong><span>Open reports</span></div>
+    `;
+
+    document.getElementById('revenue-row')!.innerHTML = `
+      <div class="stat"><strong>R${data.revenue.tierRand}</strong><span>Tier subscriptions</span></div>
+      <div class="stat"><strong>R${data.revenue.sponsorshipRand}</strong><span>Sponsorship slots</span></div>
+      <div class="stat"><strong>R${data.revenue.totalRand}</strong><span>Total MRR</span></div>
     `;
 
     document.getElementById('health-row')!.innerHTML = `
@@ -219,5 +238,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--navy);
+  }
+  .revenue-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 1.4rem;
+  }
+  .revenue-panel h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+    color: var(--navy);
+  }
+  :global(.revenue-row) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 0.75rem;
   }
 </style>
