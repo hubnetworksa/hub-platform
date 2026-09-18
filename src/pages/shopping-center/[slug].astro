@@ -2,9 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BusinessCard from '../../components/BusinessCard.astro';
 import StatTile from '../../components/StatTile.astro';
-import SponsorSlot from '../../components/SponsorSlot.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { shoppingCenters, suburbs, businessesInShoppingCenter, categoriesFor, FEATURED_TIER } from '../../lib/data';
+import { shoppingCenters, suburbs, businessesInShoppingCenter, categoriesFor, FEATURED_TIER, sponsorFor, priceRand } from '../../lib/data';
 import { collectionPageJsonLd } from '../../lib/seo';
 import { synonymsFor } from '../../lib/categorySynonyms';
 import site from '../../site';
@@ -46,6 +45,7 @@ const featuredStores = businesses.filter((b) => b.subscription_tier >= FEATURED_
 const pinned = featuredStores[0];
 const rest = businesses.filter((b) => b !== pinned);
 const heroSrc = site.bannerImage;
+const centreSponsor = sponsorFor('centre_sponsor', center.slug);
 ---
 
 <BaseLayout
@@ -97,13 +97,18 @@ const heroSrc = site.bannerImage;
           <p style="margin:0;color:rgba(255,255,255,.8);font-size:14.5px;line-height:1.55">Sponsor your whole centre page — your branding at the top, every store listed underneath.</p>
         </div>
         <div style="background:#fff;padding:24px;display:flex;flex-direction:column;gap:12px;justify-content:center">
-          <SponsorSlot
-            productType="centre_sponsor"
-            target={center.slug}
-            title="Sponsor this centre"
-            openBody={`Put your business in front of everyone browsing ${center.name} — one sponsor at a time.`}
-            ctaLabel="Enquire"
-          />
+          {centreSponsor ? (
+            <>
+              <span style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)">Currently sponsored by</span>
+              <a href={`/business/${centreSponsor.business_slug}/`} style="font-size:20px;font-weight:800;color:var(--navy);text-decoration:none">{centreSponsor.business_name}</a>
+            </>
+          ) : (
+            <>
+              <span style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)">Centre sponsorship from</span>
+              <span style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.02em">{priceRand('price_sponsor_centre_cents')} <span style="font-size:14px;font-weight:700;color:var(--muted)">/ month</span></span>
+              <a href="/pricing/" style="align-self:flex-start;padding:11px 18px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none">Enquire</a>
+            </>
+          )}
         </div>
       </div>
     </section>

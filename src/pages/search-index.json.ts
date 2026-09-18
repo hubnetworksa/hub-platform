@@ -24,6 +24,13 @@ export const GET: APIRoute = () => {
       k: cat ? [...synonymsFor(cat.slug), ...locationSynonymsFor(cat.name, site.cityLabel)].join(' ') : '',
       t: b.subscription_tier,
       h: Boolean(b.hours),
+      // Only the pinned (top Featured) result renders these — see
+      // renderRow(r, pinned=true) in search.astro — so they're worth the
+      // extra bytes despite not being used by every row.
+      p: b.phone ?? '',
+      w: b.website ?? '',
+      a: b.address ?? '',
+      d: b.description ?? '',
     };
   });
   return new Response(JSON.stringify(index), {

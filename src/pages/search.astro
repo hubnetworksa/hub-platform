@@ -39,10 +39,19 @@ import site from '../site';
       grid-template-columns: 1fr 320px;
     }
   }
+  .search-result-row:hover {
+    border-color: var(--navy);
+  }
 </style>
 
 <script>
-  interface Row { n: string; s: string; sb: string; sbs: string; c: string; g: string; k: string; t: number; h: boolean }
+  // define:vars would force this script to skip TS compilation (it's
+  // treated as inline HTML), which this whole file relies on — so the
+  // city label comes in via a data attribute on <body> instead (set in
+  // BaseLayout.astro) rather than an Astro define:vars binding here.
+  const cityLabel = document.body.dataset.cityLabel ?? '';
+
+  interface Row { n: string; s: string; sb: string; sbs: string; c: string; g: string; k: string; t: number; h: boolean; p: string; w: string; a: string; d: string }
 
   const initialQ = new URLSearchParams(location.search).get('q') ?? '';
 
@@ -101,8 +110,13 @@ import site from '../site';
   }
 
   function renderRow(r: Row, pinned: boolean): string {
-    const meta = [r.c, r.sb].filter(Boolean).join(' · ');
     if (pinned) {
+      const meta = [r.c, r.sb, r.a].filter(Boolean).join(' · ');
+      const actions = [
+        r.p ? `<a href="tel:${escapeHtml(r.p)}" style="padding:9px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:12.5px;font-weight:800;text-decoration:none">${escapeHtml(r.p)}</a>` : '',
+        r.w ? `<a href="${escapeHtml(r.w)}" target="_blank" rel="noopener noreferrer" style="padding:9px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:12.5px;font-weight:800;text-decoration:none">Website</a>` : '',
+        `<a href="/business/${r.s}/#enquiry-form" style="padding:9px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:12.5px;font-weight:800;text-decoration:none">Send enquiry</a>`,
+      ].join('');
       return `
         <article style="border:2px solid var(--accent);border-radius:14px;background:#fff;padding:18px">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
@@ -111,10 +125,13 @@ import site from '../site';
           </div>
           <h2 style="margin:12px 0 6px;font-size:21px;letter-spacing:-.02em;color:var(--navy)"><a href="/business/${r.s}/" style="color:var(--navy)">${escapeHtml(r.n)}</a></h2>
           <p style="margin:0;font-size:13.5px;font-weight:700;color:var(--muted)">${escapeHtml(meta)}</p>
+          ${r.d ? `<p style="margin:10px 0 0;font-size:14px;line-height:1.55;color:var(--text)">${escapeHtml(r.d)}</p>` : ''}
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">${actions}</div>
         </article>`;
     }
+    const meta = [r.c, r.sb].filter(Boolean).join(' · ');
     return `
-      <article style="border:2px solid var(--border);border-radius:14px;background:#fff;padding:16px 18px">
+      <article class="search-result-row" style="border:2px solid var(--border);border-radius:14px;background:#fff;padding:16px 18px">
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
           <h2 style="margin:0;font-size:18px;letter-spacing:-.015em;color:var(--navy)"><a href="/business/${r.s}/" style="color:var(--navy)">${escapeHtml(r.n)}</a></h2>
           ${r.c ? `<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:var(--bg-subtle);color:var(--accent-hover);font-size:11px;font-weight:800;white-space:nowrap">${escapeHtml(r.c)}</span>` : ''}
@@ -130,7 +147,7 @@ import site from '../site';
         <div style="font-size:17px;font-weight:800;color:#fff;margin-top:6px;letter-spacing:-.02em">One advertiser per category</div>
       </div>
       <div style="padding:16px;background:#fff">
-        <p style="margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--text)">${category ? `Own the top of every &ldquo;${escapeHtml(category)}&rdquo; page.` : 'Own the top of a category page across the whole site.'}</p>
+        <p style="margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--text)">${category ? `Own the top of every &ldquo;${escapeHtml(category)}&rdquo; page in ${escapeHtml(cityLabel)} — including this one.` : 'Own the top of a category page across the whole site.'}</p>
         <a href="/pricing/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none;text-align:center">Enquire about this spot</a>
       </div>`;
   }
@@ -161,7 +178,14 @@ import site from '../site';
     }
     const featured = results.find((r) => r.t >= 2);
     const rest = results.filter((r) => r !== featured).slice(0, 40);
-    list.innerHTML = (featured ? renderRow(featured, true) : '') + rest.map((r) => renderRow(r, false)).join('');
+    const adSlot = `
+      <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);padding:18px;text-align:center">
+        <span style="display:block;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
+        <span style="display:block;margin-top:4px;font-size:13.5px;font-weight:700;color:var(--muted)">In-feed unit after the fifth result</span>
+      </div>`;
+    const rows = rest.map((r) => renderRow(r, false));
+    if (rows.length > 5) rows.splice(5, 0, adSlot);
+    list.innerHTML = (featured ? renderRow(featured, true) : '') + rows.join('');
 
     const topCategory = results.find((r) => r.c)?.c ?? '';
     renderSponsorSlot(topCategory);

@@ -4,7 +4,7 @@ import SearchBox from '../components/SearchBox.astro';
 import Icon from '../components/Icon.astro';
 import StatTile from '../components/StatTile.astro';
 import PlanBadge from '../components/PlanBadge.astro';
-import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory, suburbFor, FEATURED_TIER } from '../lib/data';
+import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory, suburbFor, categoriesFor, FEATURED_TIER } from '../lib/data';
 import { CATEGORY_GROUPS } from '../lib/categoryGroups';
 import site from '../site';
 
@@ -104,18 +104,20 @@ const jsonLd = [
           {featuredBusinesses.map((b) => {
             const suburb = suburbFor(b);
             return (
-              <article style="border:2px solid var(--border);border-radius:14px;background:#fff;overflow:hidden;display:flex;flex-direction:column">
+              <article class="home-featured-card" style="border:2px solid var(--border);border-radius:14px;background:#fff;overflow:hidden;display:flex;flex-direction:column">
                 <div style="height:6px;background:var(--accent)"></div>
                 <div style="padding:18px 18px 20px;display:flex;flex-direction:column;gap:10px;flex:1">
                   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                    <PlanBadge tier={b.subscription_tier} />
+                    <PlanBadge tier={b.subscription_tier} variant="light" />
                     <span style="display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:800;color:var(--accent-hover)">
                       <Icon path="<circle cx='12' cy='12' r='9'/><path d='m8.5 12.5 2.5 2.5 5-5'/>" size={13} />
                       Verified
                     </span>
                   </div>
                   <h3 style="margin:0;font-size:19px;line-height:1.2;letter-spacing:-.02em;color:var(--navy)">{b.name}</h3>
-                  {suburb && <p style="margin:0;font-size:13.5px;color:var(--muted);font-weight:600">{suburb.name}</p>}
+                  {(categoriesFor(b)[0] || suburb) && (
+                    <p style="margin:0;font-size:13.5px;color:var(--muted);font-weight:600">{[categoriesFor(b)[0]?.name, suburb?.name].filter(Boolean).join(' · ')}</p>
+                  )}
                   <p style="margin:0;font-size:14px;line-height:1.55;color:var(--text)">{b.description}</p>
                   <div style="display:flex;gap:8px;margin-top:auto;padding-top:6px">
                     <a href={`/business/${b.slug}/`} style="flex:1;padding:10px 12px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:800;text-decoration:none;text-align:center">View profile</a>
@@ -139,7 +141,7 @@ const jsonLd = [
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:20px">
         {CATEGORY_GROUPS.map((group) => (
-          <a href={`/section/${group.slug}/`} style="display:flex;flex-direction:column;gap:6px;padding:18px;border:2px solid var(--border);border-radius:14px;background:#fff;min-height:118px;text-decoration:none">
+          <a href={`/section/${group.slug}/`} class="home-category-tile" style="display:flex;flex-direction:column;gap:6px;padding:18px;border:2px solid var(--border);border-radius:14px;background:#fff;min-height:118px;text-decoration:none">
             <span style="color:var(--accent)"><Icon path={group.iconPath} size={26} /></span>
             <span style="margin-top:auto;font-size:15.5px;font-weight:800;letter-spacing:-.01em;color:var(--navy);line-height:1.2">{group.name}</span>
             <span style="font-size:12.5px;font-weight:700;color:var(--muted)">{groupCount(group)} businesses</span>
@@ -162,7 +164,7 @@ const jsonLd = [
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:18px">
         {topSuburbs.map((s) => (
-          <a href={`/suburb/${s.slug}/`} style="display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:2px solid var(--border);border-radius:999px;font-size:13.5px;font-weight:700;color:var(--navy);background:#fff;text-decoration:none">
+          <a href={`/suburb/${s.slug}/`} class="home-suburb-chip" style="display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:2px solid var(--border);border-radius:999px;font-size:13.5px;font-weight:700;color:var(--navy);background:#fff;text-decoration:none">
             {s.name}<span style="font-size:11.5px;font-weight:800;color:var(--muted)">{businessesInSuburb(s.id).length}</span>
           </a>
         ))}
@@ -182,8 +184,8 @@ const jsonLd = [
         </div>
         <div style="display:grid;gap:2px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:14px;overflow:hidden">
           <div style="background:var(--navy);padding:18px 20px">
-            <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-.02em">Free to list</div>
-            <div style="font-size:13px;color:rgba(255,255,255,.7);font-weight:600;margin-top:4px">every business starts on the free Basic plan</div>
+            <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-.02em">Top 3 of Google</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.7);font-weight:600;margin-top:4px">for hundreds of local trade searches</div>
           </div>
           <div style="background:var(--navy);padding:18px 20px">
             <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-.02em">48 hours</div>
@@ -198,3 +200,16 @@ const jsonLd = [
     </section>
   </main>
 </BaseLayout>
+
+<style>
+  .home-featured-card:hover {
+    border-color: var(--accent);
+  }
+  .home-category-tile:hover {
+    border-color: var(--accent);
+    background: var(--bg-subtle);
+  }
+  .home-suburb-chip:hover {
+    border-color: var(--accent);
+  }
+</style>

@@ -69,6 +69,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
     <Breadcrumbs
       variant="plain"
       items={[
+        { label: 'Home', href: '/' },
         ...(suburb ? [{ label: suburb.name, href: `/suburb/${suburb.slug}/` }] : []),
         ...(cats[0] ? [{ label: cats[0].name, href: `/category/${cats[0].slug}/` }] : []),
         { label: business.name },
@@ -80,11 +81,11 @@ const mapsUrl = (business.address || (business.lat && business.lng))
         <div style="border:2px solid var(--navy);border-radius:16px;overflow:hidden;background:#fff">
           {isFeatured && (
             <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;background:var(--navy);flex-wrap:wrap">
-              <PlanBadge tier={business.subscription_tier} />
+              <PlanBadge tier={business.subscription_tier} label="Featured listing" />
               {hasVerifiedUrlSource && (
                 <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;color:var(--grad-from)">
                   <Icon path="<path d='M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4Z'/><path d='m9.5 12 1.8 1.8L15 10'/>" size={14} />
-                  Verified
+                  Owner verified
                 </span>
               )}
             </div>
@@ -148,7 +149,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
         {photos.length > 0 && (
           <>
             <div style="margin-top:22px;border-bottom:2px solid var(--navy);padding-bottom:10px">
-              <h2 style="margin:0;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)">Photos</h2>
+              <h2 style="margin:0;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)">Photos — a Featured-plan unlock</h2>
             </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px">
               {photos.map((p) => (
@@ -165,7 +166,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
             </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:14px">
               {similar.map((b) => (
-                <a href={`/business/${b.slug}/`} style="border:2px solid var(--border);border-radius:14px;padding:16px;background:#fff;display:flex;flex-direction:column;gap:5px;text-decoration:none">
+                <a href={`/business/${b.slug}/`} class="similar-business-card" style="border:2px solid var(--border);border-radius:14px;padding:16px;background:#fff;display:flex;flex-direction:column;gap:5px;text-decoration:none">
                   <span style="font-size:15.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em">{b.name}</span>
                   <span style="font-size:12.5px;font-weight:600;color:var(--muted)">{cats[0]?.name}{suburbFor(b) ? ` · ${suburbFor(b)!.name}` : ''}</span>
                 </a>
@@ -209,13 +210,13 @@ const mapsUrl = (business.address || (business.lat && business.lng))
             <input type="text" name="contact" placeholder="Phone or email" required style="padding:12px 13px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)" />
             <textarea name="message" rows="3" placeholder="What do you need a quote on?" required style="padding:12px 13px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text);resize:vertical"></textarea>
             <button type="submit" style="padding:13px 16px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;cursor:pointer">Send enquiry</button>
-            <p id="enquiry-status" style="margin:0;font-size:11.5px;color:var(--muted);font-weight:600"></p>
+            <p id="enquiry-status" style="margin:0;font-size:11.5px;color:var(--muted);font-weight:600">Enquiries go straight to the owner. Featured plans include unlimited enquiries.</p>
           </form>
         </div>
         {!business.owner_user_id && (
           <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
             <h3 style="margin:0 0 8px;font-size:16px;letter-spacing:-.015em;color:var(--navy)">Is this your business?</h3>
-            <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Claim it free to edit details and trading hours, and unlock Verified/Featured plans.</p>
+            <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Claim it free to edit details and trading hours. Upgrade to Featured to add photos and a gallery.</p>
             <a href={`/my-businesses/claim/?businessId=${business.id}&name=${encodeURIComponent(business.name)}`} style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--navy);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-decoration:none;text-align:center">Claim this listing</a>
           </div>
         )}
@@ -233,6 +234,9 @@ const mapsUrl = (business.address || (business.lat && business.lng))
     #profile-shell {
       grid-template-columns: 1fr 320px;
     }
+  }
+  .similar-business-card:hover {
+    border-color: var(--navy);
   }
 </style>
 
