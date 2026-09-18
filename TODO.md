@@ -226,11 +226,13 @@ resolves straight to hub-platform.
       (`sites/capetown.json`'s `googleSiteVerification` field stays `null` and
       unused — same as Polokwane — since domain-property verification goes
       through DNS, not the meta-tag method that field feeds.)
-- [ ] **AdSense ID needs fixing** — `sites/capetown.json`'s
-      `adsensePublisherId` (`ca-pub-7239595592067933`) is currently a
-      straight copy of Polokwane's, which conflicts with the "each site
-      gets its own ID" decision below. Needs Cape Town's own approved
-      publisher ID once it exists, not a shared one.
+- [x] **AdSense** — `sites/capetown.json`'s `adsensePublisherId`
+      (`ca-pub-7239595592067933`) initially looked like a stray copy of
+      Polokwane's ID, but the user confirmed it's the real one AdSense
+      issued for `thecapetownhub.com` (pasted the live script tag to
+      verify) — happens to be the same ID as Polokwane's. `ads.txt`
+      confirmed serving `pub-7239595592067933` correctly on production,
+      2026-09-18.
 - [x] **Full flow smoke test on `thecapetownhub.com`** — confirmed
       2026-09-18, same pass as Pretoria/Polokwane's: register → submit
       (logged in, with owner email) → admin approve → owner confirm →
