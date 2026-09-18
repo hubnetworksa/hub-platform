@@ -53,6 +53,15 @@ export interface Site {
   r2MediaPrefix: string;
   contactEmail: string;
   bannerImage: string;
+  /** Used by every non-homepage hero banner (suburb/category/events/
+   *  shopping-centre — anywhere index.astro isn't) — kept separate from
+   *  `bannerImage` since a photo chosen to work well behind the homepage's
+   *  taller hero doesn't necessarily crop well in these shorter, more
+   *  letterboxed sections. Cape Town's is a wide panoramic shot chosen
+   *  specifically to survive an aggressive object-fit:cover crop; Pretoria/
+   *  Polokwane currently just reuse their existing bannerImage until they
+   *  get an equivalent. */
+  sectionBannerImage: string;
   tagline: string;
   footerTagline: string;
   googleSiteVerification: string | null;

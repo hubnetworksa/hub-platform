@@ -44,7 +44,7 @@ const tenantsJsonLd = collectionPageJsonLd({
 const featuredStores = businesses.filter((b) => b.subscription_tier >= FEATURED_TIER);
 const pinned = featuredStores[0];
 const rest = businesses.filter((b) => b !== pinned);
-const heroSrc = site.bannerImage;
+const heroSrc = site.sectionBannerImage;
 const centreSponsor = sponsorFor('centre_sponsor', center.slug);
 ---
 

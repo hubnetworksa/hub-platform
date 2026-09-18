@@ -39,7 +39,7 @@ const description = suburb.bio
   ? suburb.bio.replace(/\s+/g, ' ').trim().slice(0, 155)
   : `${businesses.length} businesses in ${suburb.name}, part of the Greater ${site.cityLabel} area — browse by category.`;
 
-const heroSrc = suburb.image_key ? `/media/${suburb.image_key}` : site.bannerImage;
+const heroSrc = suburb.image_key ? `/media/${suburb.image_key}` : site.sectionBannerImage;
 
 const jsonLd = {
   '@context': 'https://schema.org',
