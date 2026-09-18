@@ -39,6 +39,12 @@ import site from '../site';
       grid-template-columns: 1fr 320px;
     }
   }
+</style>
+
+<style is:global>
+  /* Result rows are injected via innerHTML from the script below, so they
+     never get Astro's scoped-style data attribute — a scoped <style>
+     block wouldn't reach them, hence is:global. */
   .search-result-row:hover {
     border-color: var(--navy);
   }

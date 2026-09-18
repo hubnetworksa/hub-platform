@@ -50,6 +50,7 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
         style={`display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border-radius:9px;font-size:13.5px;font-weight:700;text-decoration:none;${n.key === active ? 'background:rgba(255,255,255,.14);color:#fff' : 'color:rgba(255,255,255,.7)'}`}
       >
         <span>{n.label}</span>
+        <span data-nav-badge={n.key} hidden style="padding:2px 8px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:11px;font-weight:800"></span>
       </a>
     ))}
     <div style="margin-top:auto;padding-top:18px;display:flex;flex-direction:column;gap:8px">
@@ -158,6 +159,30 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
     await fetch('/api/logout', { method: 'POST' });
     window.location.href = '/';
   });
+
+  // Nav badges — pending-count pills next to Submissions/Claims/Reports,
+  // matching the mockup's sidebar badges. Every admin page already loads
+  // this shell, so one fetch here covers all of them rather than each
+  // page computing its own counts redundantly.
+  fetch('/api/admin/overview')
+    .then((r) => (r.ok ? r.json() : null))
+    .then((data) => {
+      if (!data?.ok) return;
+      const counts: Record<string, number> = {
+        submissions: data.stats.pendingSubmissions,
+        claims: data.stats.pendingClaims,
+        reports: data.stats.openReports,
+      };
+      for (const [key, count] of Object.entries(counts)) {
+        if (!count) continue;
+        const badge = document.querySelector(`[data-nav-badge="${key}"]`) as HTMLElement | null;
+        if (badge) {
+          badge.textContent = String(count);
+          badge.hidden = false;
+        }
+      }
+    })
+    .catch(() => {});
 
   // Hamburger toggle for the off-canvas sidebar (<860px — see the
   // @media rule above that hides it and pins the sidebar static past that).

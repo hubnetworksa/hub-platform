@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdminShell from '../../components/AdminShell.astro';
+import Icon from '../../components/Icon.astro';
 ---
 
 <BaseLayout title="Manage Businesses" description="Publish, hide, edit, delete, or reassign any business." noindex={true}>
@@ -13,6 +14,9 @@ import AdminShell from '../../components/AdminShell.astro';
           <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Hidden businesses</h2>
           <p style="margin:4px 0 0;font-size:12.5px;color:var(--muted);font-weight:600">Not on the public site — used for test listings.</p>
         </div>
+        <div id="hidden-header" hidden style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) auto;gap:12px;padding:10px 18px;border-bottom:2px solid var(--navy);font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">
+          <span>Business</span><span>Category</span><span>Plan</span><span>Actions</span>
+        </div>
         <div id="hidden-list"></div>
         <p id="hidden-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">Nothing hidden right now.</p>
       </div>
@@ -22,10 +26,19 @@ import AdminShell from '../../components/AdminShell.astro';
           <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Find any business</h2>
           <p style="margin:4px 0 0;font-size:12.5px;color:var(--muted);font-weight:600">Publish, hide, edit, delete, or reassign the owner.</p>
         </div>
-        <div style="padding:14px 18px;border-bottom:1px solid var(--border)">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:12px">
           <div style="display:flex;align-items:center;gap:9px;padding:0 13px;background:var(--bg-subtle);border:2px solid var(--border);border-radius:11px">
+            <Icon path='<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.5-4.5"/>' size={17} />
             <input type="text" id="manage-search-input" autocomplete="off" placeholder="Filter by name…" style="flex:1;min-width:0;border:0;padding:12px 0;font-size:14px;outline:none;background:transparent;color:var(--text)" />
           </div>
+          <div id="plan-filters" style="display:flex;gap:8px;flex-wrap:wrap">
+            {['All', 'Featured', 'Verified', 'Basic'].map((f) => (
+              <button type="button" data-plan-filter={f} style={`padding:8px 14px;border-radius:999px;cursor:pointer;font-size:12.5px;font-weight:800;border:2px solid ${f === 'All' ? 'var(--navy)' : 'var(--border)'};background:${f === 'All' ? 'var(--navy)' : '#fff'};color:${f === 'All' ? '#fff' : 'var(--navy)'}`}>{f}</button>
+            ))}
+          </div>
+        </div>
+        <div id="manage-results-header" hidden style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) auto;gap:12px;padding:10px 18px;border-bottom:2px solid var(--navy);font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">
+          <span>Business</span><span>Category</span><span>Plan</span><span>Actions</span>
         </div>
         <div id="manage-search-results"></div>
       </div>
@@ -40,18 +53,34 @@ import AdminShell from '../../components/AdminShell.astro';
 
   const TIER_NAMES: Record<number, string> = { 0: 'Basic', 1: 'Verified', 2: 'Featured' };
 
-  function renderToggleRow(b: { id: number; name: string; status: string; subscription_tier?: number }): string {
+  interface Row {
+    id: number;
+    name: string;
+    status: string;
+    subscription_tier?: number;
+    phone?: string | null;
+    suburb_name?: string | null;
+    category_name?: string | null;
+  }
+
+  let planFilter = 'All';
+  let lastHidden: Row[] = [];
+  let lastSearch: Row[] = [];
+
+  function renderToggleRow(b: Row): string {
     const isPublished = b.status === 'published';
     const tier = b.subscription_tier ?? 0;
     const planOptions = [0, 1, 2].map((t) => `<option value="${t}" ${t === tier ? 'selected' : ''}>${TIER_NAMES[t]}</option>`).join('');
+    const sub = [b.suburb_name, b.phone].filter(Boolean).join(' · ');
     return `
-      <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-        <div style="min-width:0;flex:1">
+      <div class="admin-business-row" style="padding:14px 18px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) auto;gap:12px;align-items:center;">
+        <div style="min-width:0;">
           <div style="font-size:14.5px;font-weight:800;color:var(--navy)">${b.name}</div>
-          <div style="font-size:12.5px;font-weight:600;color:var(--muted)">status: ${b.status}</div>
+          <div style="font-size:12.5px;font-weight:600;color:var(--muted)">${sub || `status: ${b.status}`}</div>
         </div>
+        <div style="font-size:13px;font-weight:700;color:var(--text);min-width:0;">${b.category_name ?? ''}</div>
+        <select class="plan-select" data-plan-business-id="${b.id}" style="padding:8px 10px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:700;color:var(--navy);width:fit-content">${planOptions}</select>
         <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;">
-          <select class="plan-select" data-plan-business-id="${b.id}" style="padding:8px 10px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:700;color:var(--navy);">${planOptions}</select>
           <button data-toggle="${isPublished ? 'hide' : 'publish'}" data-business-id="${b.id}" style="padding:8px 11px;border:0;border-radius:8px;background:var(--accent);color:var(--contrast);font-size:12px;font-weight:800;cursor:pointer;">${isPublished ? 'Hide' : 'Publish'}</button>
           <a href="/my-businesses/edit/?id=${b.id}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);text-decoration:none;">Edit</a>
           <button data-reassign="${b.id}" data-business-name="${b.name}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);cursor:pointer;">Reassign</button>
@@ -60,18 +89,35 @@ import AdminShell from '../../components/AdminShell.astro';
       </div>`;
   }
 
+  function applyPlanFilter(rows: Row[]): Row[] {
+    if (planFilter === 'All') return rows;
+    const tier = { Basic: 0, Verified: 1, Featured: 2 }[planFilter];
+    return rows.filter((r) => (r.subscription_tier ?? 0) === tier);
+  }
+
+  function renderHidden() {
+    const list = document.getElementById('hidden-list')!;
+    const empty = document.getElementById('hidden-empty')!;
+    const header = document.getElementById('hidden-header')!;
+    const rows = applyPlanFilter(lastHidden);
+    empty.hidden = rows.length > 0;
+    header.hidden = rows.length === 0;
+    list.innerHTML = rows.map(renderToggleRow).join('');
+  }
+
   async function loadHidden() {
     const res = await fetch('/api/admin/overview');
     const data = await res.json();
-    const list = document.getElementById('hidden-list')!;
-    const empty = document.getElementById('hidden-empty')!;
-    empty.hidden = true;
-    if (data.hidden.length === 0) {
-      empty.hidden = false;
-      list.innerHTML = '';
-    } else {
-      list.innerHTML = data.hidden.map(renderToggleRow).join('');
-    }
+    lastHidden = data.hidden;
+    renderHidden();
+  }
+
+  function renderSearchResults() {
+    const results = document.getElementById('manage-search-results')!;
+    const header = document.getElementById('manage-results-header')!;
+    const rows = applyPlanFilter(lastSearch);
+    header.hidden = rows.length === 0;
+    results.innerHTML = rows.length > 0 ? rows.map(renderToggleRow).join('') : lastSearch.length > 0 ? '<p style="padding:20px 18px;color:var(--muted);margin:0;">No matches for this plan filter.</p>' : '';
   }
 
   let searchDebounce: number;
@@ -79,15 +125,34 @@ import AdminShell from '../../components/AdminShell.astro';
     clearTimeout(searchDebounce);
     const q = (e.target as HTMLInputElement).value.trim();
     const results = document.getElementById('manage-search-results')!;
+    const header = document.getElementById('manage-results-header')!;
     if (q.length < 2) {
       results.innerHTML = '';
+      header.hidden = true;
+      lastSearch = [];
       return;
     }
     searchDebounce = window.setTimeout(async () => {
       const res = await fetch(`/api/admin/search-businesses?q=${encodeURIComponent(q)}`);
       const data = await res.json();
-      results.innerHTML = data.results.map(renderToggleRow).join('') || '<p style="padding:20px 18px;color:var(--muted);margin:0;">No matches.</p>';
+      lastSearch = data.results;
+      renderSearchResults();
+      if (lastSearch.length === 0) results.innerHTML = '<p style="padding:20px 18px;color:var(--muted);margin:0;">No matches.</p>';
     }, 300);
+  });
+
+  document.getElementById('plan-filters')!.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-plan-filter]') as HTMLButtonElement | null;
+    if (!btn) return;
+    planFilter = btn.dataset.planFilter!;
+    document.querySelectorAll<HTMLButtonElement>('button[data-plan-filter]').forEach((b) => {
+      const active = b === btn;
+      b.style.borderColor = active ? 'var(--navy)' : 'var(--border)';
+      b.style.background = active ? 'var(--navy)' : '#fff';
+      b.style.color = active ? '#fff' : 'var(--navy)';
+    });
+    renderHidden();
+    renderSearchResults();
   });
 
   async function init() {
@@ -150,3 +215,12 @@ import AdminShell from '../../components/AdminShell.astro';
 
   init();
 </script>
+
+<style is:global>
+  /* Rows are injected via innerHTML from the script above, so they never
+     get Astro's scoped-style data attribute — a plain scoped <style>
+     block here wouldn't reach them, hence is:global. */
+  .admin-business-row:hover {
+    background: var(--bg-subtle);
+  }
+</style>

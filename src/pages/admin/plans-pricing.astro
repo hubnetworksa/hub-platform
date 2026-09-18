@@ -45,6 +45,8 @@ import AdminShell from '../../components/AdminShell.astro';
     return res.json();
   }
 
+  let tierCounts: Record<string, number> = {};
+
   async function loadSubscribers() {
     const res = await fetch('/api/admin/subscriptions');
     const data = await res.json();
@@ -64,6 +66,11 @@ import AdminShell from '../../components/AdminShell.astro';
         .join('');
     }
     document.getElementById('mrr')!.textContent = `Tier MRR: R${data.monthlyRevenueRand}`;
+    tierCounts = {};
+    for (const s of data.subscriptions ?? []) {
+      if (s.subscription_status !== 'active') continue;
+      tierCounts[s.tierName] = (tierCounts[s.tierName] ?? 0) + 1;
+    }
   }
 
   async function loadPrices() {
@@ -73,6 +80,8 @@ import AdminShell from '../../components/AdminShell.astro';
 
     document.getElementById('price-cards')!.innerHTML = TIER_KEYS.map(({ key, label, accent }) => {
       const rand = (Number(settingsByKey.get(key) ?? 0) / 100).toFixed(2);
+      const tierName = label.replace(' plan', '');
+      const count = tierCounts[tierName] ?? 0;
       return `
         <div style="background:#fff;border:2px solid ${accent ? 'var(--accent)' : 'var(--border)'};border-radius:14px;padding:20px">
           <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:${accent ? 'var(--accent)' : 'var(--muted)'}">${label}</div>
@@ -81,6 +90,7 @@ import AdminShell from '../../components/AdminShell.astro';
             <input type="number" min="0" step="0.01" value="${rand}" data-key="${key}" class="price-input" style="width:120px;padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:22px;font-weight:800;color:var(--navy);outline:none;background:#fff" />
             <span style="font-size:13px;font-weight:700;color:var(--muted)">/ month</span>
           </div>
+          <p style="margin:12px 0 0;font-size:13px;line-height:1.5;color:var(--muted);font-weight:600">${count} business${count === 1 ? '' : 'es'} on this plan.</p>
           <button type="button" data-save="${key}" style="margin-top:12px;padding:9px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:12.5px;font-weight:800;cursor:pointer;">Save</button>
         </div>`;
     }).join('') + Object.entries(SPONSOR_KEYS).map(([key, label]) => {
@@ -126,7 +136,10 @@ import AdminShell from '../../components/AdminShell.astro';
     }
     document.getElementById('loading')!.hidden = true;
     document.getElementById('content')!.hidden = false;
-    await Promise.all([loadSubscribers(), loadPrices()]);
+    // Sequential, not Promise.all — loadPrices() reads tierCounts, which
+    // loadSubscribers() computes as a side effect.
+    await loadSubscribers();
+    await loadPrices();
   }
 
   init();

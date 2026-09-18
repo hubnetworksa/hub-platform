@@ -29,8 +29,13 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   // Not on the public site (fetch-d1-data.mjs only pulls status='published')
   // but still visible here — e.g. test listings hidden after publishing.
   const hidden = await db
-    .prepare("SELECT id, slug, name, status, subscription_tier FROM businesses WHERE status != 'published' ORDER BY name")
-    .all<{ id: number; slug: string; name: string; status: string; subscription_tier: number }>();
+    .prepare(
+      `SELECT b.id, b.slug, b.name, b.status, b.subscription_tier, b.phone, s.name AS suburb_name,
+              (SELECT c.name FROM business_categories bc JOIN categories c ON c.id = bc.category_id WHERE bc.business_id = b.id AND bc.is_primary = 1 LIMIT 1) AS category_name
+       FROM businesses b LEFT JOIN suburbs s ON s.id = b.suburb_id
+       WHERE b.status != 'published' ORDER BY b.name`
+    )
+    .all<{ id: number; slug: string; name: string; status: string; subscription_tier: number; phone: string | null; suburb_name: string | null; category_name: string | null }>();
 
   const reports = await db
     .prepare("SELECT id, kind, business_slug, business_name, reason, relationship, requester_email, created_at FROM reports WHERE status = 'open' ORDER BY created_at DESC")

@@ -17,9 +17,14 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (q.length < 2) return json({ ok: true, results: [] });
 
   const results = await context.env.DB
-    .prepare('SELECT id, name, status, subscription_tier FROM businesses WHERE name LIKE ? ORDER BY name LIMIT 20')
+    .prepare(
+      `SELECT b.id, b.name, b.status, b.subscription_tier, b.phone, s.name AS suburb_name,
+              (SELECT c.name FROM business_categories bc JOIN categories c ON c.id = bc.category_id WHERE bc.business_id = b.id AND bc.is_primary = 1 LIMIT 1) AS category_name
+       FROM businesses b LEFT JOIN suburbs s ON s.id = b.suburb_id
+       WHERE b.name LIKE ? ORDER BY b.name LIMIT 20`
+    )
     .bind(`%${q}%`)
-    .all<{ id: number; name: string; status: string; subscription_tier: number }>();
+    .all<{ id: number; name: string; status: string; subscription_tier: number; phone: string | null; suburb_name: string | null; category_name: string | null }>();
 
   return json({ ok: true, results: results.results });
 };
