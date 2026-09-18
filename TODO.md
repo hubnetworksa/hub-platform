@@ -267,10 +267,6 @@ resolves straight to hub-platform.
       once the actual IDs are in hand — not done yet, IDs not ready).
       The `hubnetworksa` account's duplicate-account flag did clear
       2026-09-10, which unblocks getting those per-site approvals moving.
-- [ ] Search Console verification for Cape Town — domain is live now
-      (2026-09-18 cutover), not yet done (Pretoria has its meta-tag code
-      wired; Polokwane auto-verified via a carried-over DNS TXT record —
-      see the per-site sections above).
 - [x] GA4 for Polokwane (`G-QQL9HCKZNR`) and Cape Town (`G-JWEXFEXXW4`) —
       done 2026-09-09, each under its own separate Analytics account
       (fine for GA4, unlike AdSense).
@@ -347,10 +343,5 @@ simplified claim flow (`functions/api/claim-business.ts`, contact-info based
 rather than the old repo's document-upload version — see the 2026-09-15
 commit simplifying this), `/admin/claims/`, My Businesses + edit page, the
 "Claim it" button, and rebuild-trigger wiring
-(`GITHUB_DISPATCH_TOKEN`, done 2026-09-09). Only remaining piece:
-
-- [ ] Same setup for Cape Town — domain is live now (2026-09-18 cutover),
-      so this can proceed: its own Google OAuth Client (redirect URI
-      `https://thecapetownhub.com/api/auth/google/callback`), and the
-      full submit/claim/admin-approve flow smoke test on that domain, same
-      as the other two.
+(`GITHUB_DISPATCH_TOKEN`, done 2026-09-09). **Done for Cape Town too now**
+(2026-09-18) — see its cutover section above. All 3 sites fully ported.
