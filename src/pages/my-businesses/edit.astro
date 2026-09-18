@@ -3,53 +3,53 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="Edit business" description="Edit your business listing details." noindex={true}>
-  <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 560px;">
-    <div id="loading">Loading…</div>
+  <main style="max-width:560px;margin:0 auto;padding:clamp(24px,4vw,44px) 20px 60px">
+    <div id="loading" style="color:var(--muted);">Loading…</div>
 
-    <form id="edit-form" hidden>
-      <h1 id="business-name"></h1>
-      <label>
+    <form id="edit-form" hidden style="display:flex;flex-direction:column;gap:16px;">
+      <h1 id="business-name" style="margin:0;font-size:clamp(24px,3.4vw,32px);letter-spacing:-.03em;color:var(--navy)"></h1>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
         Address
-        <input type="text" name="address" maxlength="200" />
+        <input type="text" name="address" maxlength="200" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);" />
       </label>
-      <label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
         Phone
-        <input type="tel" name="phone" maxlength="30" />
+        <input type="tel" name="phone" maxlength="30" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);" />
       </label>
-      <label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
         Website
-        <input type="url" name="website" maxlength="200" />
+        <input type="url" name="website" maxlength="200" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);" />
       </label>
-      <label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
         Description
-        <textarea name="description" maxlength="600" rows="4"></textarea>
+        <textarea name="description" maxlength="600" rows="4" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);resize:vertical;"></textarea>
       </label>
-      <label>
+      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
         Hours
-        <textarea name="hours" maxlength="400" rows="3" placeholder="e.g. Mon-Fri 8am-5pm"></textarea>
+        <textarea name="hours" maxlength="400" rows="3" placeholder="e.g. Mon-Fri 8am-5pm" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);resize:vertical;"></textarea>
       </label>
-      <button type="submit" class="btn btn-primary">Save changes</button>
-      <p id="form-status" role="status"></p>
+      <button type="submit" style="align-self:flex-start;padding:14px 22px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;cursor:pointer;">Save changes</button>
+      <p id="form-status" role="status" style="margin:0;font-size:0.9rem;color:var(--muted);"></p>
     </form>
 
-    <div id="plan-panel" class="card plan-panel" hidden>
-      <strong>Plan</strong>
-      <p id="plan-current" class="text-muted"></p>
-      <div id="plan-buttons" class="plan-buttons"></div>
-      <p id="plan-status" role="status" class="text-muted"></p>
+    <div id="plan-panel" hidden style="border:2px solid var(--navy);border-radius:14px;padding:20px;background:#fff;margin-top:20px;display:flex;flex-direction:column;gap:10px;">
+      <strong style="font-size:15px;color:var(--navy);">Plan</strong>
+      <p id="plan-current" style="margin:0;font-size:13.5px;color:var(--muted);"></p>
+      <div id="plan-buttons" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+      <p id="plan-status" role="status" style="margin:0;font-size:13px;color:var(--muted);"></p>
     </div>
 
-    <div id="photos-panel" class="card photos-panel" hidden>
-      <strong>Photos</strong>
-      <p class="text-muted">A Featured-plan perk — up to 12 photos shown on your business page.</p>
-      <div id="photos-grid" class="photos-grid"></div>
-      <form id="photo-upload-form">
-        <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required />
-        <button type="submit" class="btn btn-outline btn-sm">Upload photo</button>
+    <div id="photos-panel" hidden style="border:2px solid var(--border);border-radius:14px;padding:20px;background:#fff;margin-top:20px;display:flex;flex-direction:column;gap:10px;">
+      <strong style="font-size:15px;color:var(--navy);">Photos</strong>
+      <p style="margin:0;font-size:13.5px;color:var(--muted);">A Featured-plan perk — up to 12 photos shown on your business page.</p>
+      <div id="photos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;"></div>
+      <form id="photo-upload-form" style="display:flex;align-items:center;gap:10px;margin-top:6px;">
+        <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required style="font-size:13px;" />
+        <button type="submit" style="padding:9px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:12.5px;font-weight:800;cursor:pointer;">Upload photo</button>
       </form>
-      <p id="photo-status" role="status" class="text-muted"></p>
+      <p id="photo-status" role="status" style="margin:0;font-size:13px;color:var(--muted);"></p>
     </div>
-  </section>
+  </main>
 </BaseLayout>
 
 <script>
@@ -61,6 +61,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   const TIER_NAMES: Record<number, string> = { 0: 'Basic', 1: 'Verified', 2: 'Featured' };
   const FEATURED_TIER = 2;
+
+  function planButton(label: string): HTMLButtonElement {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = label;
+    btn.style.cssText = 'padding:9px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:12.5px;font-weight:800;cursor:pointer;';
+    return btn;
+  }
 
   function renderPlanPanel(business: { subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null }) {
     const panel = document.getElementById('plan-panel')!;
@@ -79,10 +87,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     buttons.innerHTML = '';
     for (const tier of [1, 2]) {
       if (tier === business.subscription_tier && business.subscription_status === 'active') continue;
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'btn btn-outline btn-sm';
-      btn.textContent = `Upgrade to ${TIER_NAMES[tier]}`;
+      const btn = planButton(`Upgrade to ${TIER_NAMES[tier]}`);
       btn.addEventListener('click', async () => {
         planStatus.textContent = 'Starting checkout…';
         const res = await fetch('/api/subscribe/start', {
@@ -97,10 +102,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       buttons.appendChild(btn);
     }
     if (business.subscription_tier > 0 && business.subscription_status === 'active') {
-      const cancelBtn = document.createElement('button');
-      cancelBtn.type = 'button';
-      cancelBtn.className = 'btn btn-outline btn-sm';
-      cancelBtn.textContent = 'Cancel plan';
+      const cancelBtn = planButton('Cancel plan');
+      cancelBtn.style.color = 'var(--danger)';
       cancelBtn.addEventListener('click', async () => {
         if (!confirm('Cancel your subscription? You keep your current plan until the paid period ends.')) return;
         planStatus.textContent = 'Cancelling…';
@@ -125,7 +128,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const photoStatus = document.getElementById('photo-status')!;
     function renderGrid(list: { id: number; r2_key: string; caption: string | null }[]) {
       grid.innerHTML = list
-        .map((p) => `<div class="photo-thumb"><img src="/media/${p.r2_key}" alt="${p.caption ?? ''}" /><button type="button" data-photo-id="${p.id}" class="photo-delete">×</button></div>`)
+        .map(
+          (p) =>
+            `<div style="position:relative;">
+              <img src="/media/${p.r2_key}" alt="${p.caption ?? ''}" style="width:100%;height:90px;object-fit:cover;border-radius:10px;border:1px solid var(--border);" />
+              <button type="button" data-photo-id="${p.id}" style="position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;cursor:pointer;line-height:1;">×</button>
+            </div>`
+        )
         .join('');
     }
     renderGrid(photos);
@@ -136,7 +145,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       const photoId = Number(btn.dataset.photoId);
       const res = await fetch(`/api/business-photos?photoId=${photoId}`, { method: 'DELETE' });
       const result = await res.json();
-      if (result.ok) btn.closest('.photo-thumb')?.remove();
+      if (result.ok) btn.parentElement?.remove();
       else photoStatus.textContent = result.error || 'Could not delete photo.';
     });
 
@@ -205,82 +214,3 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
   init();
 </script>
-
-<style>
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-  label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-  input, textarea {
-    font: inherit;
-    padding: 0.6rem 0.75rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text);
-  }
-  button {
-    align-self: flex-start;
-    border: none;
-    cursor: pointer;
-  }
-  #form-status {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin: 0;
-  }
-  .plan-panel, .photos-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-top: 1.5rem;
-  }
-  .plan-buttons {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-  .photos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 0.5rem;
-  }
-  .photos-grid :global(.photo-thumb) {
-    position: relative;
-  }
-  .photos-grid :global(img) {
-    width: 100%;
-    height: 90px;
-    object-fit: cover;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-  }
-  .photos-grid :global(.photo-delete) {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    cursor: pointer;
-    line-height: 1;
-  }
-  #photo-upload-form {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    margin-top: 0.5rem;
-  }
-</style>

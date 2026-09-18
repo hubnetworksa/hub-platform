@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
-import PageBanner from '../../components/PageBanner.astro';
 import SearchBox from '../../components/SearchBox.astro';
 import { categories, businessesInCategory } from '../../lib/data';
 import { CATEGORY_GROUPS } from '../../lib/categoryGroups';
@@ -35,104 +34,46 @@ const jsonLd = collectionPageJsonLd({
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-  <PageBanner title="Categories" description={`Browse ${site.cityLabel} businesses by section.`}>
-    <SearchBox slot="search" />
-  </PageBanner>
+  <main>
+    <section style="position:relative;background:var(--navy);overflow:hidden">
+      <img src={site.bannerImage} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%" />
+      <div style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(var(--navy-rgb),.94) 0%,rgba(var(--navy-rgb),.82) 42%,rgba(var(--navy-rgb),.34) 78%,rgba(var(--navy-rgb),.12) 100%)"></div>
+      <div style="position:relative;max-width:1200px;margin:0 auto;padding:clamp(30px,5vw,54px) 20px clamp(26px,4vw,38px)">
+        <h1 style="margin:0 0 10px;color:#fff;font-size:clamp(28px,4.6vw,44px);letter-spacing:-.03em;line-height:1.05">Categories</h1>
+        <p style="margin:0 0 22px;color:rgba(255,255,255,.86);font-size:15.5px;max-width:58ch;line-height:1.55">Browse {site.cityLabel} businesses by section.</p>
+        <SearchBox />
+      </div>
+    </section>
 
-  <section class="container" style="padding-top: 1.5rem; padding-bottom: 3rem;">
-    {sortedGroups.map((group) => {
-      const groupCategories = group.categorySlugs
-        .map((slug) => categoryBySlug.get(slug))
-        .filter((c): c is NonNullable<typeof c> => Boolean(c))
-        .sort((a, b) => a.name.localeCompare(b.name));
-      const groupTotal = groupCategories.reduce((sum, c) => sum + businessesInCategory(c.id).length, 0);
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,44px) 20px 60px">
+      {sortedGroups.map((group, i) => {
+        const groupCategories = group.categorySlugs
+          .map((slug) => categoryBySlug.get(slug))
+          .filter((c): c is NonNullable<typeof c> => Boolean(c))
+          .sort((a, b) => a.name.localeCompare(b.name));
+        const groupTotal = groupCategories.reduce((sum, c) => sum + businessesInCategory(c.id).length, 0);
 
-      return (
-        <div class="group-section" id={group.slug}>
-          <div class="group-section-head">
-            <h2>
-              <Icon path={group.iconPath} size={22} />
-              {group.name}
-              <span class="group-count">({groupTotal})</span>
-            </h2>
-            <a href={`/section/${group.slug}/`} class="btn btn-outline btn-sm">View all →</a>
+        return (
+          <div id={group.slug} style={`scroll-margin-top:16px;${i > 0 ? 'margin-top:36px;' : ''}`}>
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:9px;">
+                <span style="color:var(--accent)"><Icon path={group.iconPath} size={22} /></span>
+                <h2 style="margin:0;font-size:clamp(20px,2.8vw,26px);letter-spacing:-.02em;color:var(--navy)">{group.name} <span style="font-weight:600;color:var(--muted);font-size:15px">({groupTotal})</span></h2>
+              </div>
+              <a href={`/section/${group.slug}/`} style="font-size:13.5px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">View all →</a>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:16px">
+              {groupCategories.map((category) => (
+                <a href={`/category/${category.slug}/`} style="display:flex;align-items:center;gap:10px;padding:14px 16px;border:2px solid var(--border);border-radius:12px;background:#fff;text-decoration:none">
+                  <span style="color:var(--accent)"><Icon path={group.iconPath} size={18} /></span>
+                  <strong style="flex:1;font-size:14.5px;color:var(--navy);font-weight:700;">{category.name}</strong>
+                  <span style="color:var(--muted);font-size:12.5px;font-weight:700;">{businessesInCategory(category.id).length}</span>
+                </a>
+              ))}
+            </div>
           </div>
-          <div class="category-grid">
-            {groupCategories.map((category) => (
-              <a class="category-tile" href={`/category/${category.slug}/`}>
-                <span class="icon"><Icon path={group.iconPath} size={18} /></span>
-                <strong>{category.name}</strong>
-                <span class="count">{businessesInCategory(category.id).length}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-      );
-    })}
-  </section>
+        );
+      })}
+    </section>
+  </main>
 </BaseLayout>
-
-<style>
-  .group-section {
-    margin-top: 2.25rem;
-    scroll-margin-top: 1rem;
-  }
-  .group-section:first-child {
-    margin-top: 0;
-  }
-  .group-section-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-  }
-  .group-section h2 {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 1.15rem;
-    margin: 0;
-    color: var(--navy);
-  }
-  .group-section h2 :global(svg) {
-    color: var(--accent);
-  }
-  .group-count {
-    color: var(--text-muted);
-    font-weight: 400;
-    font-size: 0.85rem;
-  }
-  .category-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 0.6rem;
-  }
-  .category-tile {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    text-decoration: none;
-    color: inherit;
-    background: var(--bg-card);
-    transition: border-color 0.15s, transform 0.15s;
-  }
-  .category-tile:hover {
-    border-color: var(--accent);
-    transform: translateY(-1px);
-  }
-  .category-tile .icon {
-    color: var(--accent);
-  }
-  .category-tile strong {
-    flex: 1;
-  }
-  .category-tile .count {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-  }
-</style>

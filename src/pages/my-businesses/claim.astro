@@ -7,68 +7,66 @@ const ICONS = {
   search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
   building: '<path d="M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6"/>',
   x: '<path d="M18 6 6 18M6 6l12 12"/>',
-  check: '<circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5"/>',
 };
 ---
 
 <BaseLayout title="Claim a business" description={`Claim an existing business listing on ${site.siteName}.`} noindex={true}>
-  <section class="claim-wrap">
-    <div class="claim-card">
-      <h1>Claim a business</h1>
-      <p class="subtitle">Find your business and tell us who you are. We'll review your request and get back to you — no documents needed.</p>
+  <main style="max-width:520px;margin:0 auto;padding:clamp(28px,5vw,52px) 20px 60px">
+    <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Claim a business</span>
+    <h1 style="margin:12px 0 10px;font-size:clamp(24px,3.4vw,32px);letter-spacing:-.03em;color:var(--navy)">Find and claim your listing</h1>
+    <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:var(--text);">Find your business and tell us who you are. We'll review your request and get back to you — no documents needed.</p>
 
-      <div id="search-section" class="step">
-        <span class="step-label">1. Find your business</span>
-        <div class="combobox">
-          <Icon path={ICONS.search} size={17} />
-          <input type="text" id="search-input" autocomplete="off" placeholder="Start typing a business name…" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="search-results" />
-          <span id="search-spinner" class="spinner" hidden></span>
-          <ul id="search-results" class="results-dropdown" role="listbox" hidden></ul>
-        </div>
+    <div id="search-section">
+      <span style="display:block;font-size:12.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">1. Find your business</span>
+      <div id="combobox" style="position:relative;display:flex;align-items:center;gap:10px;padding:0 14px;border:2px solid var(--border);border-radius:11px;background:#fff;">
+        <Icon path={ICONS.search} size={17} />
+        <input type="text" id="search-input" autocomplete="off" placeholder="Start typing a business name…" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="search-results" style="flex:1;border:0;background:none;font-size:15px;padding:14px 0;outline:none;color:var(--text);" />
+        <span id="search-spinner" class="spinner" hidden></span>
+        <ul id="search-results" role="listbox" hidden style="list-style:none;position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:20;margin:0;padding:6px;border:2px solid var(--border);border-radius:11px;background:#fff;box-shadow:0 12px 28px rgba(16,26,51,.14);max-height:280px;overflow-y:auto;"></ul>
       </div>
-
-      <div id="selected-section" class="step" hidden>
-        <span class="step-label">Claiming</span>
-        <div class="selected-chip">
-          <Icon path={ICONS.building} size={16} />
-          <span id="selected-name"></span>
-          <button type="button" id="change-selection" class="chip-clear" aria-label="Change business">
-            <Icon path={ICONS.x} size={14} />
-          </button>
-        </div>
-      </div>
-
-      <form id="claim-form" hidden>
-        <div class="step contact-fields">
-          <span class="step-label">2. Tell us who you are</span>
-          <label>
-            Your full name
-            <input type="text" id="contact-name" name="contactName" autocomplete="name" required />
-          </label>
-          <label>
-            Phone number
-            <input type="tel" id="contact-phone" name="contactPhone" autocomplete="tel" required />
-          </label>
-          <label>
-            Email address
-            <input type="email" id="contact-email" name="contactEmail" autocomplete="email" required />
-          </label>
-          <label>
-            Your role at this business
-            <select id="role-note" name="roleNote">
-              <option value="Owner">Owner</option>
-              <option value="Manager">Manager</option>
-              <option value="Employee">Employee</option>
-              <option value="Other">Other</option>
-            </select>
-          </label>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Submit claim</button>
-        <p id="form-status" role="status"></p>
-      </form>
     </div>
-  </section>
+
+    <div id="selected-section" hidden style="margin-top:24px;">
+      <span style="display:block;font-size:12.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">Claiming</span>
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:11px;background:var(--bg-subtle);border:2px solid var(--border);color:var(--navy);font-weight:700;font-size:14.5px;">
+        <Icon path={ICONS.building} size={16} />
+        <span id="selected-name" style="flex:1;"></span>
+        <button type="button" id="change-selection" aria-label="Change business" style="display:flex;align-items:center;justify-content:center;border:0;background:none;color:var(--muted);cursor:pointer;padding:4px;">
+          <Icon path={ICONS.x} size={14} />
+        </button>
+      </div>
+    </div>
+
+    <form id="claim-form" hidden style="margin-top:24px;">
+      <span style="display:block;font-size:12.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">2. Tell us who you are</span>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
+          Your full name
+          <input type="text" id="contact-name" name="contactName" autocomplete="name" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);" />
+        </label>
+        <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
+          Phone number
+          <input type="tel" id="contact-phone" name="contactPhone" autocomplete="tel" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);" />
+        </label>
+        <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
+          Email address
+          <input type="email" id="contact-email" name="contactEmail" autocomplete="email" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);" />
+        </label>
+        <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
+          Your role at this business
+          <select id="role-note" name="roleNote" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);">
+            <option value="Owner">Owner</option>
+            <option value="Manager">Manager</option>
+            <option value="Employee">Employee</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+      </div>
+
+      <button type="submit" style="width:100%;margin-top:18px;padding:15px 24px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer;">Submit claim</button>
+      <p id="form-status" role="status" style="margin:0.75rem 0 0;font-size:0.88rem;color:var(--muted);min-height:1.2em;"></p>
+    </form>
+  </main>
 </BaseLayout>
 
 <script>
@@ -150,10 +148,10 @@ const ICONS = {
         ? data.results
             .map(
               (b: { id: number; name: string }, i: number) =>
-                `<li role="option"><button type="button" data-id="${b.id}" data-name="${b.name}" data-index="${i}">${BUILDING_SVG}<span>${b.name}</span></button></li>`
+                `<li role="option" style="margin-top:${i > 0 ? '2px' : '0'};"><button type="button" data-id="${b.id}" data-name="${b.name}" data-index="${i}" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:8px;border:0;background:none;color:var(--text);cursor:pointer;font-size:14px;">${BUILDING_SVG}<span>${b.name}</span></button></li>`
             )
             .join('')
-        : '<li class="no-results">No matches found.</li>';
+        : '<li style="padding:12px;color:var(--muted);font-size:14px;text-align:center;">No matches found.</li>';
       activeIndex = -1;
     }, 250);
   });
@@ -183,7 +181,7 @@ const ICONS = {
   });
 
   document.addEventListener('click', (e) => {
-    if (!(e.target as HTMLElement).closest('.combobox')) closeResults();
+    if (!(e.target as HTMLElement).closest('#combobox')) closeResults();
   });
 
   claimForm.addEventListener('submit', async (e) => {
@@ -214,74 +212,6 @@ const ICONS = {
 </script>
 
 <style>
-  .claim-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 3rem 1rem;
-  }
-  .claim-card {
-    width: 100%;
-    max-width: 520px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 16px);
-    box-shadow: var(--shadow-lift, 0 8px 30px rgba(0, 0, 0, 0.08));
-    padding: 2.25rem 2rem;
-  }
-  .claim-card h1 {
-    margin: 0 0 0.5rem;
-    font-size: 1.5rem;
-    color: var(--navy);
-  }
-  .subtitle {
-    margin: 0 0 1.75rem;
-    color: var(--text-muted);
-    font-size: 0.92rem;
-    line-height: 1.5;
-  }
-  .step {
-    margin-bottom: 1.5rem;
-  }
-  .step-label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--accent);
-    margin-bottom: 0.6rem;
-  }
-
-  .combobox {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0 0.85rem;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-subtle);
-    color: var(--text-muted);
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  .combobox input {
-    flex: 1;
-    border: none;
-    background: none;
-    font: inherit;
-    font-size: 0.95rem;
-    padding: 0.7rem 0;
-    color: var(--text);
-  }
-  .combobox input:focus {
-    outline: none;
-  }
-  .combobox:focus-within {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.12);
-    background: var(--bg-card);
-  }
-
   .spinner {
     width: 15px;
     height: 15px;
@@ -294,136 +224,11 @@ const ICONS = {
   @keyframes spin {
     to { transform: rotate(360deg); }
   }
-
-  .results-dropdown {
-    list-style: none;
-    position: absolute;
-    top: calc(100% + 0.4rem);
-    left: 0;
-    right: 0;
-    z-index: 20;
-    margin: 0;
-    padding: 0.4rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
-    box-shadow: 0 12px 28px rgba(16, 26, 51, 0.14);
-    max-height: 280px;
-    overflow-y: auto;
-    animation: dropdown-in 0.12s ease-out;
+  #combobox:focus-within {
+    border-color: var(--accent);
   }
-  @keyframes dropdown-in {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  /* :global() — these rows are rendered via client-side innerHTML, so
-     they never get Astro's build-time scoping attribute; plain scoped
-     selectors here would silently match nothing. */
-  :global(.results-dropdown li + li) {
-    margin-top: 0.15rem;
-  }
-  :global(.results-dropdown button) {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    width: 100%;
-    text-align: left;
-    padding: 0.6rem 0.7rem;
-    border-radius: calc(var(--radius) - 4px);
-    border: none;
-    background: none;
-    color: var(--text);
-    cursor: pointer;
-    font: inherit;
-    font-size: 0.92rem;
-  }
-  :global(.results-dropdown button svg) {
-    flex-shrink: 0;
-    color: var(--text-muted);
-  }
-  :global(.results-dropdown button:hover),
-  :global(.results-dropdown button.active) {
-    background: rgba(var(--accent-rgb), 0.09);
-  }
-  :global(.results-dropdown button.active svg),
-  :global(.results-dropdown button:hover svg) {
-    color: var(--accent);
-  }
-  :global(.no-results) {
-    padding: 0.7rem;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    text-align: center;
-  }
-
-  .selected-chip {
-    display: flex;
-    align-items: center;
-    gap: 0.55rem;
-    padding: 0.7rem 0.9rem;
-    border-radius: var(--radius);
-    background: var(--bg-subtle);
-    border: 1px solid var(--border);
-    color: var(--navy);
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-  .selected-chip span:not(.chip-clear) {
-    flex: 1;
-  }
-  .chip-clear {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    padding: 0.2rem;
-    border-radius: 50%;
-  }
-  .chip-clear:hover {
-    background: rgba(0, 0, 0, 0.06);
-    color: var(--text);
-  }
-
-  .contact-fields label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 0.9rem;
-  }
-  .contact-fields label:last-child {
-    margin-bottom: 0;
-  }
-  .contact-fields input,
-  .contact-fields select {
-    font: inherit;
-    padding: 0.65rem 0.8rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text);
-  }
-  .contact-fields input:focus,
-  .contact-fields select:focus {
-    outline: 2px solid var(--accent);
-    outline-offset: 1px;
-  }
-
-  form button[type="submit"] {
-    width: 100%;
-    border: none;
-    cursor: pointer;
-    padding: 0.75rem 1rem;
-    font-weight: 700;
-  }
-  #form-status {
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    margin: 0.75rem 0 0;
-    min-height: 1.2em;
+  #search-results button:hover,
+  #search-results button.active {
+    background: rgba(var(--accent-rgb), 0.09) !important;
   }
 </style>

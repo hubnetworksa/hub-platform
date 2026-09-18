@@ -8,72 +8,72 @@ const ICONS = {
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
   badge: '<path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4Z"/><path d="m9.5 12 1.8 1.8L15 10"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
-  edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
 };
 ---
 
 <BaseLayout title="My Businesses" description={`Manage the businesses linked to your ${site.siteName} account.`} noindex={true}>
-  <section class="dash-wrap">
-    <div id="loading" class="loading">Loading…</div>
+  <main style="max-width:720px;margin:0 auto;padding:clamp(24px,4vw,44px) 20px 60px">
+    <div id="loading" style="color:var(--muted);padding:2rem 0;">Loading…</div>
 
-    <div id="content" class="dash" hidden>
-      <div class="dash-header">
+    <div id="content" hidden style="display:flex;flex-direction:column;gap:18px;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;">
         <div>
-          <h1>My Businesses</h1>
-          <p id="account-email" class="account-email"></p>
+          <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">My businesses</span>
+          <h1 style="margin:8px 0 0;font-size:clamp(24px,3.4vw,32px);letter-spacing:-.025em;color:var(--navy)">Your account</h1>
+          <p id="account-email" style="margin:4px 0 0;color:var(--muted);font-size:13.5px;font-weight:600;"></p>
         </div>
-        <button id="logout-btn" class="btn-outline">Log out</button>
+        <button id="logout-btn" type="button" style="padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;cursor:pointer;">Log out</button>
       </div>
 
-      <div class="panel">
-        <div class="panel-header">
-          <Icon path={ICONS.building} size={17} />
-          <h2>Businesses you own</h2>
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px;">
+          <span style="color:var(--accent)"><Icon path={ICONS.building} size={17} /></span>
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Businesses you own</h2>
         </div>
-        <ul id="owned-list" class="item-list"></ul>
-        <p id="owned-empty" class="empty-state" hidden>You don't own any businesses yet.</p>
+        <div id="owned-list"></div>
+        <p id="owned-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">You don't own any businesses yet.</p>
       </div>
 
-      <div class="panel">
-        <div class="panel-header">
-          <Icon path={ICONS.clock} size={17} />
-          <h2>Pending submissions</h2>
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px;">
+          <span style="color:var(--accent)"><Icon path={ICONS.clock} size={17} /></span>
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Pending submissions</h2>
         </div>
-        <ul id="pending-list" class="item-list"></ul>
-        <p id="pending-empty" class="empty-state" hidden>No pending submissions.</p>
+        <div id="pending-list"></div>
+        <p id="pending-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No pending submissions.</p>
       </div>
 
-      <div class="panel">
-        <div class="panel-header">
-          <Icon path={ICONS.badge} size={17} />
-          <h2>Your claims</h2>
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px;">
+          <span style="color:var(--accent)"><Icon path={ICONS.badge} size={17} /></span>
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Your claims</h2>
         </div>
-        <ul id="claims-list" class="item-list"></ul>
-        <p id="claims-empty" class="empty-state" hidden>You haven't claimed any businesses.</p>
+        <div id="claims-list"></div>
+        <p id="claims-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">You haven't claimed any businesses.</p>
       </div>
 
-      <div class="cta-row">
-        <a href="/list-your-business/" class="btn btn-primary claim-cta">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="/list-your-business/" style="flex:1 1 200px;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 16px;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;text-decoration:none;">
           <Icon path={ICONS.plus} size={16} /> Add your business
         </a>
-        <a href="/my-businesses/claim/" class="btn btn-outline claim-cta">
+        <a href="/my-businesses/claim/" style="flex:1 1 200px;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 16px;border-radius:11px;border:2px solid var(--navy);color:var(--navy);font-size:14px;font-weight:800;text-decoration:none;">
           <Icon path={ICONS.badge} size={16} /> Claim a business
         </a>
       </div>
     </div>
-  </section>
+  </main>
 </BaseLayout>
 
 <script>
   const loading = document.getElementById('loading')!;
   const content = document.getElementById('content')!;
 
-  const EDIT_ICON_SVG = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`;
-
   const TIER_NAMES: Record<number, string> = { 0: 'Basic', 1: 'Verified', 2: 'Featured' };
 
   function statusBadge(text: string, tone: 'pending' | 'good' | 'bad'): string {
-    return `<span class="status-badge status-${tone}">${text}</span>`;
+    const colors = { pending: ['#9c5f00', 'rgba(156,95,0,.12)'], good: ['#1a8f5e', 'rgba(26,143,94,.12)'], bad: ['var(--danger)', 'rgba(194,56,56,.1)'] };
+    const [color, bg] = colors[tone];
+    return `<span style="font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;white-space:nowrap;color:${color};background:${bg};">${text}</span>`;
   }
 
   function planBadge(tier: number): string {
@@ -91,6 +91,13 @@ const ICONS = {
     if (status === 'approved') return 'good';
     if (status === 'rejected') return 'bad';
     return 'pending';
+  }
+
+  function row(name: string, right: string): string {
+    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);">
+      <span style="font-size:14.5px;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:8px;">${name}</span>
+      ${right}
+    </div>`;
   }
 
   async function init() {
@@ -111,7 +118,7 @@ const ICONS = {
       ownedList.innerHTML = data.owned
         .map(
           (b: { id: number; name: string; subscription_tier: number }) =>
-            `<li><span>${b.name} ${planBadge(b.subscription_tier)}</span><a href="/my-businesses/edit/?id=${b.id}" class="btn-outline">${EDIT_ICON_SVG} Manage</a></li>`
+            row(`${b.name} ${planBadge(b.subscription_tier)}`, `<a href="/my-businesses/edit/?id=${b.id}" style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--navy);font-size:12px;font-weight:800;text-decoration:none;white-space:nowrap;">Manage</a>`)
         )
         .join('');
     }
@@ -120,18 +127,14 @@ const ICONS = {
     if (data.pending.length === 0) {
       document.getElementById('pending-empty')!.hidden = false;
     } else {
-      pendingList.innerHTML = data.pending
-        .map((p: { name: string; status: string }) => `<li><span>${p.name}</span>${statusBadge(p.status, pendingTone(p.status))}</li>`)
-        .join('');
+      pendingList.innerHTML = data.pending.map((p: { name: string; status: string }) => row(p.name, statusBadge(p.status, pendingTone(p.status)))).join('');
     }
 
     const claimsList = document.getElementById('claims-list')!;
     if (data.claims.length === 0) {
       document.getElementById('claims-empty')!.hidden = false;
     } else {
-      claimsList.innerHTML = data.claims
-        .map((c: { business_name: string; status: string }) => `<li><span>${c.business_name}</span>${statusBadge(c.status, claimTone(c.status))}</li>`)
-        .join('');
+      claimsList.innerHTML = data.claims.map((c: { business_name: string; status: string }) => row(c.business_name, statusBadge(c.status, claimTone(c.status)))).join('');
     }
   }
 
@@ -142,141 +145,3 @@ const ICONS = {
 
   init();
 </script>
-
-<style>
-  .dash-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 3rem 1rem;
-  }
-  .loading {
-    color: var(--text-muted);
-    padding: 2rem 0;
-  }
-  .dash {
-    width: 100%;
-    max-width: 640px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-  .dash-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-  .dash-header h1 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: var(--navy);
-  }
-  .account-email {
-    margin: 0.2rem 0 0;
-    color: var(--text-muted);
-    font-size: 0.88rem;
-  }
-  /* :global() on anything rendered via client-side innerHTML (the Edit
-     button, list rows, status badges below) — Astro only stamps its
-     scoping attribute onto elements present in this file's markup at
-     build time, so JS-injected HTML never matches plain scoped selectors
-     and would otherwise get none of these styles at all. */
-  :global(.btn-outline) {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex-shrink: 0;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius);
-    font-weight: 600;
-    font-size: 0.88rem;
-    text-decoration: none;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  :global(.btn-outline:hover) {
-    background: var(--bg-subtle);
-  }
-
-  .panel {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 16px);
-    padding: 1.5rem;
-  }
-  .panel-header {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--accent);
-    margin-bottom: 0.9rem;
-  }
-  .panel-header h2 {
-    margin: 0;
-    font-size: 1rem;
-    color: var(--navy);
-  }
-
-  .item-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  :global(.item-list li) {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.65rem 0.85rem;
-    border-radius: var(--radius);
-    background: var(--bg-subtle);
-    font-size: 0.92rem;
-  }
-  :global(.status-badge) {
-    font-size: 0.76rem;
-    font-weight: 700;
-    padding: 0.25rem 0.6rem;
-    border-radius: 999px;
-    white-space: nowrap;
-  }
-  :global(.status-pending) {
-    color: #9c5f00;
-    background: rgba(156, 95, 0, 0.12);
-  }
-  :global(.status-good) {
-    color: #1a8f5e;
-    background: rgba(26, 143, 94, 0.12);
-  }
-  :global(.status-bad) {
-    color: var(--danger, #c23838);
-    background: rgba(194, 56, 56, 0.1);
-  }
-
-  .empty-state {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin: 0;
-  }
-
-  .cta-row {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-  }
-  .claim-cta {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    flex: 1 1 200px;
-    text-decoration: none;
-    font-weight: 700;
-    padding: 0.85rem 1rem;
-  }
-</style>
