@@ -61,12 +61,14 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
 
   <div style="min-width:0;display:flex;flex-direction:column">
     <div style="background:#fff;border-bottom:2px solid var(--border);padding:16px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-      <button id="admin-sidebar-open" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="admin-sidebar" style="align-items:center;justify-content:center;width:40px;height:40px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);cursor:pointer;flex-shrink:0">
-        <Icon path='<path d="M4 7h16M4 12h16M4 17h16"/>' size={19} />
-      </button>
-      <div style="min-width:0">
-        <h1 style="margin:0;font-size:21px;letter-spacing:-.025em;color:var(--navy)">{title}</h1>
-        <p style="margin:3px 0 0;font-size:13px;font-weight:600;color:var(--muted)">{subtitle}</p>
+      <div style="display:flex;align-items:center;gap:14px;flex:1;min-width:0">
+        <button id="admin-sidebar-open" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="admin-sidebar" style="align-items:center;justify-content:center;width:40px;height:40px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);cursor:pointer;flex-shrink:0">
+          <Icon path='<path d="M4 7h16M4 12h16M4 17h16"/>' size={19} />
+        </button>
+        <div style="min-width:0">
+          <h1 style="margin:0;font-size:21px;letter-spacing:-.025em;color:var(--navy)">{title}</h1>
+          <p style="margin:3px 0 0;font-size:13px;font-weight:600;color:var(--muted)">{subtitle}</p>
+        </div>
       </div>
       <div style="display:flex;align-items:center;gap:9px;margin-left:auto;flex-wrap:wrap">
         <span style="display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:var(--bg-subtle);font-size:12px;font-weight:800;color:var(--accent-hover)">Managing {site.cityLabel}</span>
