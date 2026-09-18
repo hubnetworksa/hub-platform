@@ -208,10 +208,15 @@ resolves straight to hub-platform.
       throwaway account registered via `/api/register` on the live site,
       confirmed arriving at `hubnetworksa@gmail.com`, test user/session rows
       deleted from `thecapetownhub-db` afterward.
-- [ ] **Google OAuth Client for `thecapetownhub.com`** — not yet created
-      (redirect URI would be `https://thecapetownhub.com/api/auth/google/callback`).
-- [ ] Verify Google sign-in works end-to-end on `thecapetownhub.com` —
-      blocked on the above.
+- [x] **Google OAuth Client for `thecapetownhub.com`** — created (redirect
+      URI `https://thecapetownhub.com/api/auth/google/callback`),
+      `GOOGLE_OAUTH_CLIENT_ID`/`GOOGLE_OAUTH_CLIENT_SECRET` set on the
+      `thecapetownhub` Pages project, forced a fresh deploy, done
+      2026-09-18.
+- [x] Verify Google sign-in works end-to-end on `thecapetownhub.com` —
+      confirmed 2026-09-18 (`/api/auth/google/start` redirects with the
+      correct client_id/redirect_uri, and a real sign-in completed to
+      `/my-businesses/`).
 - [ ] Search Console — not yet set up; `sites/capetown.json`'s
       `googleSiteVerification` is still `null`.
 - [ ] **AdSense ID needs fixing** — `sites/capetown.json`'s
