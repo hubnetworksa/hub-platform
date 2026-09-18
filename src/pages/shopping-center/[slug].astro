@@ -1,10 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BusinessCard from '../../components/BusinessCard.astro';
-import PageBanner from '../../components/PageBanner.astro';
-import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import StatTile from '../../components/StatTile.astro';
 import SponsorSlot from '../../components/SponsorSlot.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { shoppingCenters, suburbs, businessesInShoppingCenter, categoriesFor, FEATURED_TIER } from '../../lib/data';
 import { collectionPageJsonLd } from '../../lib/seo';
 import { synonymsFor } from '../../lib/categorySynonyms';
@@ -22,10 +21,6 @@ const suburb = center.suburb_id != null ? suburbs.find((s) => s.id === center.su
 
 const centerUrl = `https://${site.domain}/shopping-center/${center.slug}/`;
 
-// Union of every tenant's category synonyms (e.g. a mall with a pharmacy
-// and a hair salon picks up "chemist"/"hairdresser" too) — same reasoning
-// as business/[slug].astro's own keywords field: costs nothing, widens
-// what this page can match beyond its own literal name/description.
 const keywords = [...new Set(businesses.flatMap((b) => categoriesFor(b).flatMap((c) => synonymsFor(c.slug))))];
 
 const centerJsonLd = {
@@ -48,8 +43,9 @@ const tenantsJsonLd = collectionPageJsonLd({
 });
 
 const featuredStores = businesses.filter((b) => b.subscription_tier >= FEATURED_TIER);
-// Sort Featured stores first so the pinned/highlighted cards lead the grid.
-const sortedBusinesses = [...businesses].sort((a, b) => b.subscription_tier - a.subscription_tier);
+const pinned = featuredStores[0];
+const rest = businesses.filter((b) => b !== pinned);
+const heroSrc = site.bannerImage;
 ---
 
 <BaseLayout
@@ -59,80 +55,57 @@ const sortedBusinesses = [...businesses].sort((a, b) => b.subscription_tier - a.
   <script type="application/ld+json" set:html={JSON.stringify(centerJsonLd)} />
   <script type="application/ld+json" set:html={JSON.stringify(tenantsJsonLd)} />
 
-  <PageBanner title={center.name} description={`${businesses.length} businesses listed here.`}>
-    <Breadcrumbs
-      slot="breadcrumbs"
-      items={[
-        { label: 'Shopping Centres', href: '/shopping-center/' },
-        ...(suburb ? [{ label: suburb.name, href: `/suburb/${suburb.slug}/` }] : []),
-        { label: center.name },
-      ]}
-    />
-  </PageBanner>
-
-  <section class="stats-band">
-    <div class="container stat-strip stat-strip-on-navy">
-      <StatTile value={String(businesses.length)} label="Stores listed" />
-      <StatTile value={center.type === 'mall' ? 'Mall' : 'Fuel station'} label="Centre type" />
-      <StatTile value={suburb?.name ?? '—'} label="Suburb" />
-      <StatTile value={String(featuredStores.length)} label="Featured stores" />
-    </div>
-  </section>
-
-  <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
-    {center.description && <p class="center-desc">{center.description}</p>}
-    {center.address && <p style="color: var(--text-muted); margin-top: 0;">{center.address}</p>}
-    <div class="business-grid">
-      {sortedBusinesses.map((business) => (
-        <BusinessCard
-          business={business}
-          listContext={{ kind: 'shopping-center', slug: center.slug, name: center.name }}
+  <main>
+    <section style="position:relative;background:var(--navy);overflow:hidden">
+      <img src={heroSrc} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 55%" />
+      <div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(var(--navy-rgb),.93) 0%,rgba(var(--navy-rgb),.72) 52%,rgba(var(--navy-rgb),.2) 100%)"></div>
+      <div style="position:relative;max-width:1200px;margin:0 auto;padding:26px 20px 32px">
+        <Breadcrumbs
+          variant="plain"
+          onDark
+          items={[{ label: 'Home', href: '/' }, { label: 'Shopping centres', href: '/shopping-center/' }, { label: center.name }]}
         />
-      ))}
-    </div>
-
-    <div class="centre-management">
-      <div>
-        <h2>Sponsor this centre</h2>
-        <p class="text-muted">Put your business in front of everyone browsing {center.name} — one sponsor at a time.</p>
+        <h1 style="margin:14px 0 10px;color:#fff;font-size:clamp(28px,4.6vw,46px);letter-spacing:-.03em;line-height:1.04;max-width:22ch">{center.name}</h1>
+        <p style="margin:0;color:rgba(255,255,255,.86);font-size:15.5px;max-width:56ch;line-height:1.55">{center.address ?? center.description}</p>
       </div>
-      <SponsorSlot productType="centre_sponsor" target={center.slug} label="centre sponsor" />
-    </div>
-  </section>
-</BaseLayout>
+    </section>
 
-<style>
-  .center-desc {
-    max-width: 68ch;
-    margin: 0 0 0.4rem;
-    line-height: 1.65;
-    color: var(--text);
-  }
-  .business-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 0.75rem;
-    margin-top: 1rem;
-  }
-  .centre-management {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    margin-top: 2.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-  }
-  .centre-management h2 {
-    margin: 0 0 0.35rem;
-    font-size: 1.1rem;
-  }
-  .centre-management p {
-    margin: 0;
-    max-width: 46ch;
-  }
-  .centre-management :global(.sponsor-slot) {
-    min-width: 260px;
-  }
-</style>
+    <section style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+        <div style="background:#fff;padding:16px"><StatTile variant="light" value={String(businesses.length)} label="Stores listed" /></div>
+        <div style="background:#fff;padding:16px"><StatTile variant="light" value={center.type === 'mall' ? 'Mall' : 'Fuel station'} label="Centre type" /></div>
+        <div style="background:#fff;padding:16px"><StatTile variant="light" value={suburb?.name ?? '—'} label="Suburb" /></div>
+        <div style="background:#fff;padding:16px"><StatTile variant="light" value={String(featuredStores.length)} label="Featured stores" color="var(--accent)" /></div>
+      </div>
+
+      {center.description && <p style="max-width:68ch;margin:24px 0 0;line-height:1.65;color:var(--text)">{center.description}</p>}
+
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;margin-top:30px;flex-wrap:wrap">
+        <h2 style="margin:0;font-size:clamp(20px,2.8vw,26px);letter-spacing:-.02em;color:var(--navy)">Stores in this centre</h2>
+        <span style="font-size:12.5px;font-weight:700;color:var(--muted)">Featured stores shown first</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:18px">
+        {pinned && <BusinessCard business={pinned} listContext={{ kind: 'shopping-center', slug: center.slug, name: center.name }} />}
+        {rest.map((business) => (
+          <BusinessCard business={business} listContext={{ kind: 'shopping-center', slug: center.slug, name: center.name }} />
+        ))}
+      </div>
+
+      <div style="margin-top:28px;border:2px solid var(--navy);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+        <div style="background:var(--navy);padding:24px">
+          <h3 style="margin:0 0 8px;color:#fff;font-size:22px;letter-spacing:-.02em">Centre management</h3>
+          <p style="margin:0;color:rgba(255,255,255,.8);font-size:14.5px;line-height:1.55">Sponsor your whole centre page — your branding at the top, every store listed underneath.</p>
+        </div>
+        <div style="background:#fff;padding:24px;display:flex;flex-direction:column;gap:12px;justify-content:center">
+          <SponsorSlot
+            productType="centre_sponsor"
+            target={center.slug}
+            title="Sponsor this centre"
+            openBody={`Put your business in front of everyone browsing ${center.name} — one sponsor at a time.`}
+            ctaLabel="Enquire"
+          />
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

@@ -5,8 +5,16 @@ interface Crumb {
 }
 interface Props {
   items: Crumb[];
+  /** 'pill' (default) — the original rounded-chip style. 'plain' — the
+   *  mockup's slash-separated breadcrumb, used on the hero/navy-background
+   *  screens (suburb, business, shopping-centre, search). Both emit the
+   *  same BreadcrumbList JSON-LD either way. */
+  variant?: 'pill' | 'plain';
+  /** 'plain' only: true when sitting on a navy/dark background (hero
+   *  sections) — swaps to the mockup's translucent-white link colors. */
+  onDark?: boolean;
 }
-const { items } = Astro.props;
+const { items, variant = 'pill', onDark = false } = Astro.props;
 
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
 const jsonLd = {
@@ -21,17 +29,32 @@ const jsonLd = {
     ...(item.href ? { item: siteUrl + item.href } : {}),
   })),
 };
+
+const plainLinkColor = onDark ? 'rgba(255,255,255,.7)' : 'var(--muted)';
+const plainCurrentColor = onDark ? '#fff' : 'var(--navy)';
 ---
 
 <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-<nav class="breadcrumbs" aria-label="Breadcrumb">
-  {items.map((item, i) => (
-    <>
-      {item.href ? <a href={item.href}>{item.label}</a> : <span class="current">{item.label}</span>}
-      {i < items.length - 1 && <span class="sep" aria-hidden="true">›</span>}
-    </>
-  ))}
-</nav>
+
+{variant === 'plain' ? (
+  <div style={`display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:${plainLinkColor};flex-wrap:wrap`}>
+    {items.map((item, i) => (
+      <>
+        {item.href ? <a href={item.href} style={`color:${plainLinkColor}`}>{item.label}</a> : <span style={`color:${plainCurrentColor}`}>{item.label}</span>}
+        {i < items.length - 1 && <span>/</span>}
+      </>
+    ))}
+  </div>
+) : (
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    {items.map((item, i) => (
+      <>
+        {item.href ? <a href={item.href}>{item.label}</a> : <span class="current">{item.label}</span>}
+        {i < items.length - 1 && <span class="sep" aria-hidden="true">›</span>}
+      </>
+    ))}
+  </nav>
+)}
 
 <style>
   .breadcrumbs {

@@ -2,12 +2,11 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER } from '../../lib/data';
-import { groupForCategory } from '../../lib/categoryGroups';
+import PlanBadge from '../../components/PlanBadge.astro';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory } from '../../lib/data';
 import { synonymsFor, locationSynonymsFor } from '../../lib/categorySynonyms';
 import { schemaTypeFor } from '../../lib/categorySchemaTypes';
 import Icon from '../../components/Icon.astro';
-import PlanBadge from '../../components/PlanBadge.astro';
 import site from '../../site';
 
 export function getStaticPaths() {
@@ -19,63 +18,30 @@ const suburb = suburbFor(business);
 const cats = categoriesFor(business);
 const sourceUrls = parseSourceUrls(business);
 const isOsmSourced = sourceUrls.some((u) => u.includes('openstreetmap.org'));
-// Non-URL provenance markers (see db/seed-data, functions/api/submit-business.ts)
-// get a human-readable label instead of showing the raw internal string.
 const SOURCE_LABELS: Record<string, string> = {
   'owner-submitted': 'Submitted by the business owner.',
   'scraped:google-places-no-website': 'Compiled from a publicly available Google Maps listing.',
-  // Distinct from 'owner-submitted' — that's this business's own owner
-  // using the self-listing form; this is the site owner relaying a phone
-  // number/address they had directly (e.g. from a Facebook page not
-  // readable by automated fetch), not a form submission.
   'owner-provided-contact-details': 'Contact details confirmed directly with the site owner.',
 };
-// The actual URL (often the business's own website) stays internal for
-// provenance/compliance, but isn't given away as a free clickable link —
-// that's reserved for the future premium-listing feature. Shown as a
-// plain "Verified" label instead.
 const hasVerifiedUrlSource = sourceUrls.some((u) => /^https?:\/\//.test(u));
 const labelSources = sourceUrls.filter((u) => !/^https?:\/\//.test(u)).map((u) => SOURCE_LABELS[u] ?? u);
-// Only rendered when a real link exists — see shoppingCenterFor.
 const center = shoppingCenterFor(business);
+const isFeatured = business.subscription_tier >= FEATURED_TIER;
 // Featured-tier perk — see functions/api/business-photos.ts. Photos stay
 // in R2/business_photos through a downgrade (never deleted), but the
 // gallery only renders while the business is CURRENTLY Featured.
-const photos = business.subscription_tier >= FEATURED_TIER ? photosFor(business) : [];
+const photos = isFeatured ? photosFor(business) : [];
 
-const ICONS = {
-  phone: '<path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z"/>',
-  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
-  pin: '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>',
-  flag: '<path d="M5 21V4"/><path d="M5 4h13l-3 4 3 4H5"/>',
-  building: '<path d="M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6"/>',
-  trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
-  check: '<circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5"/>',
-  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
-  badge: '<path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4Z"/><path d="m9.5 12 1.8 1.8L15 10"/>',
-};
+const similar = cats[0]
+  ? businessesInCategory(cats[0].id).filter((b) => b.id !== business.id).slice(0, 4)
+  : [];
 
-// Union of every listed category's informal/trade-jargon synonyms (e.g.
-// "junk removal" for Rubbish & Rubble Removal) — see categorySynonyms.ts.
-// Schema.org's `keywords` is free-text and doesn't drive Google ranking
-// directly, but costs nothing to include and helps other consumers of
-// this structured data (AI answer engines, other search tools) match the
-// business against terms that never appear in its own name/description.
 const keywords = [
   ...new Set(cats.flatMap((c) => [...synonymsFor(c.slug), ...locationSynonymsFor(c.name, site.cityLabel)])),
 ];
 
-// cats[0] is already treated as "the" category elsewhere on this page
-// (the breadcrumb) and in search-index.json.ts — same convention here:
-// note categoriesFor() doesn't actually sort by the business_categories
-// table's own is_primary flag, it's just insertion order, but in
-// practice the routine always writes the primary category first.
 const schemaType = cats[0] ? schemaTypeFor(cats[0].slug) : 'LocalBusiness';
 
-// Same formula BaseLayout falls back to internally when no `canonical` prop
-// is given — computed here instead and passed down explicitly so the
-// LocalBusiness `url` below and the page's own <link rel="canonical"> can
-// never drift apart into two different values for the same page.
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
 const canonicalUrl = siteUrl + Astro.url.pathname;
 
@@ -90,273 +56,200 @@ const jsonLd = {
   ...(business.lat && business.lng ? { geo: { '@type': 'GeoCoordinates', latitude: business.lat, longitude: business.lng } } : {}),
   ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
 };
+
+const mapsUrl = (business.address || (business.lat && business.lng))
+  ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${business.name}${suburb ? `, ${suburb.name}` : ''}`)}`
+  : null;
 ---
 
 <BaseLayout title={business.name} description={business.description.slice(0, 155)} canonical={canonicalUrl}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-  <section class="container" style="padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;">
+  <main style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
     <Breadcrumbs
+      variant="plain"
       items={[
         ...(suburb ? [{ label: suburb.name, href: `/suburb/${suburb.slug}/` }] : []),
         ...(cats[0] ? [{ label: cats[0].name, href: `/category/${cats[0].slug}/` }] : []),
         { label: business.name },
       ]}
     />
-    <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">{business.name}</h1>
 
-    <div class="tags">
-      <PlanBadge tier={business.subscription_tier} />
-      {cats.map((c) => {
-        const g = groupForCategory(c.slug);
-        return (
-          <a class="badge" href={`/category/${c.slug}/`}>
-            {g && <Icon path={g.iconPath} size={13} />}
-            {c.name}
-          </a>
-        );
-      })}
-    </div>
+    <div id="profile-shell" style="display:grid;grid-template-columns:1fr;gap:24px;margin-top:16px">
+      <div>
+        <div style="border:2px solid var(--navy);border-radius:16px;overflow:hidden;background:#fff">
+          {isFeatured && (
+            <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;background:var(--navy);flex-wrap:wrap">
+              <PlanBadge tier={business.subscription_tier} />
+              {hasVerifiedUrlSource && (
+                <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;color:var(--grad-from)">
+                  <Icon path="<path d='M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4Z'/><path d='m9.5 12 1.8 1.8L15 10'/>" size={14} />
+                  Verified
+                </span>
+              )}
+            </div>
+          )}
+          <div style="padding:clamp(18px,3vw,28px)">
+            <h1 style="margin:0 0 10px;font-size:clamp(26px,4vw,40px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);overflow-wrap:break-word">{business.name}</h1>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+              {!isFeatured && <PlanBadge tier={business.subscription_tier} />}
+              {cats.map((c) => (
+                <a href={`/category/${c.slug}/`} style="padding:6px 11px;border-radius:999px;background:var(--bg-subtle);color:var(--accent-hover);font-size:12.5px;font-weight:800;text-decoration:none">{c.name}</a>
+              ))}
+              {suburb && <span style="padding:6px 11px;border-radius:999px;border:1.5px solid var(--border);color:var(--muted);font-size:12.5px;font-weight:700">{suburb.name}</span>}
+            </div>
+            <p style="margin:0 0 20px;font-size:16px;line-height:1.62;max-width:62ch">{business.description}</p>
+            {center && (
+              <p style="margin:0 0 16px;">
+                <a href={`/shopping-center/${center.slug}/`} style="display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-weight:700;font-size:14px;text-decoration:none">
+                  <Icon path="<path d='M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6'/>" size={15} />
+                  Located at {center.name}
+                </a>
+              </p>
+            )}
 
-    <p style="margin-top: 1.25rem;">{business.description}</p>
-    {center && (
-      <a href={`/shopping-center/${center.slug}/`} class="located-at">
-        <Icon path={ICONS.building} size={15} /> Located at {center.name}
-      </a>
-    )}
-    {business.address && <p class="address">{business.address}{suburb && `, ${suburb.name}`}</p>}
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px">
+              {business.phone && (
+                <a href={`tel:${business.phone}`} style="display:flex;align-items:center;gap:9px;padding:14px 16px;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;text-decoration:none">
+                  <Icon path="<path d='M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z'/>" size={17} />
+                  {business.phone}
+                </a>
+              )}
+              {business.website && (
+                <a href={business.website} target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:9px;padding:14px 16px;border-radius:11px;border:2px solid var(--navy);color:var(--navy);font-size:14.5px;font-weight:800;text-decoration:none">
+                  <Icon path="<circle cx='12' cy='12' r='9'/><path d='M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18'/>" size={17} />
+                  Website
+                </a>
+              )}
+              {mapsUrl && (
+                <a href={mapsUrl} target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:9px;padding:14px 16px;border-radius:11px;border:2px solid var(--border);color:var(--navy);font-size:14.5px;font-weight:800;text-decoration:none">
+                  <Icon path="<path d='M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z'/><circle cx='12' cy='10' r='2.5'/>" size={17} />
+                  Directions
+                </a>
+              )}
+            </div>
 
-    <div class="actions">
-      {business.phone && (
-        <a href={`tel:${business.phone}`} class="btn btn-outline">
-          <Icon path={ICONS.phone} size={16} /> {business.phone}
-        </a>
-      )}
-      {business.email && (
-        <a href={`mailto:${business.email}`} class="btn btn-outline">
-          <Icon path={ICONS.mail} size={16} /> Email
-        </a>
-      )}
-      {(business.address || (business.lat && business.lng)) && (
-        <a
-          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-            `${business.name}${suburb ? `, ${suburb.name}` : ''}`
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn btn-outline"
-        >
-          <Icon path={ICONS.pin} size={16} /> View on Google Maps
-        </a>
-      )}
-    </div>
-
-    <ListReturn />
-
-    <div class="hours-section">
-      <h2 class="hours-heading">
-        <Icon path={ICONS.clock} size={17} /> Trading Hours
-      </h2>
-      {business.hours ? (
-        <p class="hours-text">{business.hours}</p>
-      ) : (
-        <p class="hours-text hours-unavailable">Trading hours not available</p>
-      )}
-    </div>
-
-    {photos.length > 0 && (
-      <div class="photos-section">
-        <h2 class="hours-heading">Photos</h2>
-        <div class="photos-grid">
-          {photos.map((p) => (
-            <img src={`/media/${p.r2_key}`} alt={p.caption ?? business.name} loading="lazy" />
-          ))}
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:2px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+              {business.address && (
+                <div style="background:#fff;padding:14px 16px">
+                  <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Address</div>
+                  <div style="font-size:14px;font-weight:600;margin-top:5px;line-height:1.45">{business.address}{suburb && `, ${suburb.name}`}</div>
+                </div>
+              )}
+              <div style="background:#fff;padding:14px 16px">
+                <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Trading hours</div>
+                <div style="font-size:14px;font-weight:600;margin-top:5px;line-height:1.45;white-space:pre-line">{business.hours ?? 'Not available'}</div>
+              </div>
+            </div>
+            <ListReturn />
+          </div>
         </div>
-      </div>
-    )}
 
-    {!business.owner_user_id && (
-      <div class="claim-callout">
-        <p>
-          <Icon path={ICONS.badge} size={16} /> Is this your business?
-        </p>
-        <a href={`/my-businesses/claim/?businessId=${business.id}&name=${encodeURIComponent(business.name)}`} class="btn btn-outline">
-          Claim it
-        </a>
-      </div>
-    )}
+        {photos.length > 0 && (
+          <>
+            <div style="margin-top:22px;border-bottom:2px solid var(--navy);padding-bottom:10px">
+              <h2 style="margin:0;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)">Photos</h2>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px">
+              {photos.map((p) => (
+                <img src={`/media/${p.r2_key}`} alt={p.caption ?? business.name} loading="lazy" style="aspect-ratio:4/3;object-fit:cover;border-radius:12px;border:1px solid var(--border)" />
+              ))}
+            </div>
+          </>
+        )}
 
-    {sourceUrls.length > 0 && (
-      <p class="source-note">
-        {isOsmSourced ? (
-          <>Sourced from OpenStreetMap ({sourceUrls.map((u, i) => <>{i > 0 && ', '}<a href={u} target="_blank" rel="noopener noreferrer">record</a></>)}), ODbL-licensed.</>
-        ) : (
-          <span class="source-line">
-            {hasVerifiedUrlSource && (
-              <span class="verified-badge">
-                <Icon path={ICONS.check} size={13} /> Verified
+        {similar.length > 0 && (
+          <>
+            <div style="margin-top:26px;border-bottom:2px solid var(--navy);padding-bottom:10px">
+              <h2 style="margin:0;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Similar suppliers nearby</h2>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:14px">
+              {similar.map((b) => (
+                <a href={`/business/${b.slug}/`} style="border:2px solid var(--border);border-radius:14px;padding:16px;background:#fff;display:flex;flex-direction:column;gap:5px;text-decoration:none">
+                  <span style="font-size:15.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em">{b.name}</span>
+                  <span style="font-size:12.5px;font-weight:600;color:var(--muted)">{cats[0]?.name}{suburbFor(b) ? ` · ${suburbFor(b)!.name}` : ''}</span>
+                </a>
+              ))}
+            </div>
+          </>
+        )}
+
+        {sourceUrls.length > 0 && (
+          <p style="margin-top:1.5rem;font-size:0.78rem;color:var(--muted);overflow-wrap:break-word;">
+            {isOsmSourced ? (
+              <>Sourced from OpenStreetMap ({sourceUrls.map((u, i) => <>{i > 0 && ', '}<a href={u} target="_blank" rel="noopener noreferrer">record</a></>)}), ODbL-licensed.</>
+            ) : (
+              <span style="display:inline-flex;align-items:center;flex-wrap:wrap;gap:0.5rem;">
+                {hasVerifiedUrlSource && (
+                  <span style="display:inline-flex;align-items:center;gap:5px;font-weight:800;font-size:11.5px;color:#1a8f5e;background:rgba(26,143,94,.12);padding:4px 10px;border-radius:999px;">
+                    <Icon path="<circle cx='12' cy='12' r='9'/><path d='m8.5 12.5 2.5 2.5 5-5'/>" size={13} /> Verified
+                  </span>
+                )}
+                {labelSources.length > 0 && <span>{labelSources.join(' ')}</span>}
               </span>
             )}
-            {labelSources.length > 0 && <span>{labelSources.join(' ')}</span>}
-          </span>
+          </p>
         )}
-      </p>
-    )}
 
-    <div class="listing-meta-links">
-      <a href={`/report-listing/?slug=${business.slug}&name=${encodeURIComponent(business.name)}`}>
-        <Icon path={ICONS.flag} size={13} /> Report this listing
-      </a>
-      <a href={`/request-removal/?slug=${business.slug}&name=${encodeURIComponent(business.name)}`}>
-        <Icon path={ICONS.trash} size={13} /> Request data removal
-      </a>
+        <div style="display:flex;flex-wrap:wrap;gap:1.25rem;margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border);">
+          <a href={`/report-listing/?slug=${business.slug}&name=${encodeURIComponent(business.name)}`} style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.78rem;color:var(--muted);text-decoration:none;">
+            <Icon path="<path d='M5 21V4'/><path d='M5 4h13l-3 4 3 4H5'/>" size={13} /> Report this listing
+          </a>
+          <a href={`/request-removal/?slug=${business.slug}&name=${encodeURIComponent(business.name)}`} style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.78rem;color:var(--muted);text-decoration:none;">
+            <Icon path="<path d='M3 6h18'/><path d='M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/><path d='M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6'/>" size={13} /> Request data removal
+          </a>
+        </div>
+      </div>
+
+      <aside style="display:flex;flex-direction:column;gap:14px">
+        <div style="border:2px solid var(--navy);border-radius:16px;overflow:hidden;background:#fff">
+          <div style="background:var(--navy);padding:14px 18px;font-size:15px;font-weight:800;color:#fff;letter-spacing:-.01em">Send an enquiry</div>
+          <form id="enquiry-form" style="padding:16px;display:flex;flex-direction:column;gap:10px">
+            <input type="text" name="name" placeholder="Your name" required style="padding:12px 13px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)" />
+            <input type="text" name="contact" placeholder="Phone or email" required style="padding:12px 13px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)" />
+            <textarea name="message" rows="3" placeholder="What do you need a quote on?" required style="padding:12px 13px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text);resize:vertical"></textarea>
+            <button type="submit" style="padding:13px 16px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;cursor:pointer">Send enquiry</button>
+            <p id="enquiry-status" style="margin:0;font-size:11.5px;color:var(--muted);font-weight:600"></p>
+          </form>
+        </div>
+        {!business.owner_user_id && (
+          <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
+            <h3 style="margin:0 0 8px;font-size:16px;letter-spacing:-.015em;color:var(--navy)">Is this your business?</h3>
+            <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Claim it free to edit details and trading hours, and unlock Verified/Featured plans.</p>
+            <a href={`/my-businesses/claim/?businessId=${business.id}&name=${encodeURIComponent(business.name)}`} style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--navy);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-decoration:none;text-align:center">Claim this listing</a>
+          </div>
+        )}
+        <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);min-height:250px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:18px">
+          <span style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
+          <span style="font-size:13.5px;font-weight:700;color:var(--muted)">300×250 sidebar unit</span>
+        </div>
+      </aside>
     </div>
-  </section>
+  </main>
 </BaseLayout>
 
 <style>
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.78rem;
-    color: var(--accent);
-    background: rgba(var(--accent-rgb), 0.1);
-    padding: 0.2rem 0.6rem;
-    border-radius: 999px;
-    text-decoration: none;
-  }
-  .address {
-    color: var(--text-muted);
-    margin: 0.5rem 0 0;
-  }
-  .located-at {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-top: 0.6rem;
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 0.92rem;
-    text-decoration: none;
-  }
-  .located-at:hover {
-    text-decoration: underline;
-  }
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-top: 1.5rem;
-  }
-  .hours-section {
-    margin-top: 1.5rem;
-    padding: 0.9rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
-  }
-  .hours-heading {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin: 0;
-    font-size: 0.95rem;
-    color: var(--navy);
-  }
-  .hours-text {
-    margin: 0.5rem 0 0;
-    font-size: 0.9rem;
-    color: var(--text);
-    white-space: pre-line;
-  }
-  .hours-unavailable {
-    color: var(--text-muted);
-    font-style: italic;
-  }
-  .photos-section {
-    margin-top: 1.5rem;
-  }
-  .photos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 0.6rem;
-    margin-top: 0.75rem;
-  }
-  .photos-grid img {
-    width: 100%;
-    height: 110px;
-    object-fit: cover;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-  }
-  .claim-callout {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 1.5rem;
-    padding: 0.9rem 1rem;
-    border: 1px dashed var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-subtle);
-  }
-  .claim-callout p {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin: 0;
-    font-weight: 600;
-    color: var(--navy);
-    font-size: 0.92rem;
-  }
-  .source-note {
-    margin-top: 1.5rem;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    overflow-wrap: break-word;
-  }
-  .source-line {
-    display: inline-flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  .verified-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-weight: 700;
-    font-size: 0.76rem;
-    letter-spacing: 0.01em;
-    color: #1a8f5e;
-    background: rgba(26, 143, 94, 0.12);
-    padding: 0.25rem 0.65rem;
-    border-radius: 999px;
-  }
-  .listing-meta-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-  }
-  .listing-meta-links a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    text-decoration: none;
-  }
-  .listing-meta-links a:hover {
-    color: var(--text);
-    text-decoration: underline;
+  @media (min-width: 950px) {
+    #profile-shell {
+      grid-template-columns: 1fr 320px;
+    }
   }
 </style>
+
+<script define:vars={{ contactEmail: business.email ?? site.contactEmail, businessName: business.name, siteName: site.siteName }}>
+  // No enquiry-storage backend exists yet — same mailto: pattern as
+  // list-your-business.astro/submit-business.ts: opens the visitor's own
+  // mail client addressed to the business (or the site, if no email is on
+  // file), pre-filled with their message. Real email transport, just not
+  // server-sent.
+  const form = document.getElementById('enquiry-form');
+  const status = document.getElementById('enquiry-status');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    const body = `From: ${data.name}\nContact: ${data.contact}\n\n${data.message}`;
+    const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent(`Enquiry via ${siteName}: ${businessName}`)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
+    status.textContent = "Opening your email app — please hit send.";
+  });
+</script>

@@ -1,16 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BusinessCard from '../../components/BusinessCard.astro';
-import PageBanner from '../../components/PageBanner.astro';
-import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import SectionHeader from '../../components/SectionHeader.astro';
+import PlanBadge from '../../components/PlanBadge.astro';
 import SponsorSlot from '../../components/SponsorSlot.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { suburbs, businessesInSuburb, categoriesFor, FEATURED_TIER, type Business } from '../../lib/data';
-import { groupForCategory } from '../../lib/categoryGroups';
-import { groupForSuburb, regionLabel } from '../../site-content';
+import { groupForSuburb } from '../../site-content';
 import { synonymsFor, suburbSynonymsFor } from '../../lib/categorySynonyms';
 import { collectionPageJsonLd } from '../../lib/seo';
-import Icon from '../../components/Icon.astro';
 import site from '../../site';
 
 export function getStaticPaths() {
@@ -18,35 +15,31 @@ export function getStaticPaths() {
 }
 
 const { suburb } = Astro.props;
-const businesses = businessesInSuburb(suburb.id);
+const businesses = [...businessesInSuburb(suburb.id)].sort((a, b) => a.name.localeCompare(b.name));
 const featuredHere = businesses.filter((b) => b.subscription_tier >= FEATURED_TIER).slice(0, 3);
 
 const myGroup = groupForSuburb(suburb.slug);
 const nearbySuburbs = myGroup
-  ? suburbs.filter((s) => s.slug !== suburb.slug && groupForSuburb(s.slug)?.slug === myGroup.slug).slice(0, 8)
+  ? suburbs.filter((s) => s.slug !== suburb.slug && groupForSuburb(s.slug)?.slug === myGroup.slug).slice(0, 6)
   : [];
 
-const byCategory = new Map<string, { name: string; slug: string; businesses: Business[] }>();
-for (const business of businesses) {
-  const primary = categoriesFor(business)[0];
-  const key = primary?.slug ?? 'uncategorised';
-  const name = primary?.name ?? 'Other';
-  if (!byCategory.has(key)) byCategory.set(key, { name, slug: key, businesses: [] });
-  byCategory.get(key)!.businesses.push(business);
+// Category pill row — every distinct category actually present here,
+// each linking to that category × suburb intersection page.
+const categoriesHere = new Map<string, string>();
+for (const b of businesses) {
+  const primary = categoriesFor(b)[0];
+  if (primary) categoriesHere.set(primary.slug, primary.name);
 }
-const categoryGroups = [...byCategory.entries()].sort((a, b) => a[1].name.localeCompare(b[1].name));
 
 const keywords = [
-  ...new Set(
-    categoryGroups
-      .filter(([slug]) => slug !== 'uncategorised')
-      .flatMap(([slug, group]) => [...synonymsFor(slug), ...suburbSynonymsFor(group.name, suburb.name)])
-  ),
+  ...new Set([...categoriesHere.keys()].flatMap((slug) => [...synonymsFor(slug), ...suburbSynonymsFor(categoriesHere.get(slug)!, suburb.name)])),
 ];
 
 const description = suburb.bio
   ? suburb.bio.replace(/\s+/g, ' ').trim().slice(0, 155)
   : `${businesses.length} businesses in ${suburb.name}, part of the Greater ${site.cityLabel} area — browse by category.`;
+
+const heroSrc = suburb.image_key ? `/media/${suburb.image_key}` : site.bannerImage;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -56,10 +49,6 @@ const jsonLd = {
   ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
 };
 
-// Place (above) describes the suburb itself; this describes the businesses
-// actually listed on this page — same collectionPageJsonLd() every other
-// collection-type page (category, section, shopping-center) already uses.
-// Both are emitted together, neither replaces the other.
 const collectionJsonLd = businesses.length === 0
   ? null
   : collectionPageJsonLd({
@@ -74,156 +63,93 @@ const collectionJsonLd = businesses.length === 0
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   {collectionJsonLd && <script type="application/ld+json" set:html={JSON.stringify(collectionJsonLd)} />}
 
-  <PageBanner title={suburb.name} description={`${businesses.length} businesses listed.`}>
-    <Breadcrumbs
-      slot="breadcrumbs"
-      items={[
-        { label: 'Suburbs', href: '/suburb/' },
-        ...(groupForSuburb(suburb.slug)
-          ? [{ label: groupForSuburb(suburb.slug)!.name, href: `/suburb/#${groupForSuburb(suburb.slug)!.slug}` }]
-          : []),
-      ]}
-    />
-  </PageBanner>
-
-  <section class="container" style="padding-top: 1.5rem;">
-    <div class:list={['suburb-intro', { 'has-photo': suburb.image_key }]}>
-      {suburb.image_key && (
-        <img
-          class="suburb-photo"
-          src={`/media/${suburb.image_key}`}
-          alt={`${suburb.name}, ${regionLabel(suburb.region)}`}
-          width="480"
-          height="320"
-          loading="lazy"
+  <main>
+    <section style="position:relative;background:var(--navy);overflow:hidden">
+      <img src={heroSrc} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 45%" />
+      <div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(var(--navy-rgb),.93) 0%,rgba(var(--navy-rgb),.74) 50%,rgba(var(--navy-rgb),.24) 100%)"></div>
+      <div style="position:relative;max-width:1200px;margin:0 auto;padding:26px 20px 30px">
+        <Breadcrumbs
+          variant="plain"
+          onDark
+          items={[{ label: 'Home', href: '/' }, { label: 'Suburbs', href: '/suburb/' }, { label: suburb.name }]}
         />
-      )}
-      {suburb.bio ? (
-        <div class="suburb-bio" style="max-width: 68ch;">
-          {suburb.bio.split(/\n{2,}/).map((para) => <p style="color: var(--text);">{para}</p>)}
-        </div>
-      ) : (
-        <p style="max-width: 68ch; color: var(--text-muted); font-style: italic;">
-          A full area guide for {suburb.name} is on the way — in the meantime, here's every business we have listed here.
-        </p>
-      )}
-    </div>
-  </section>
+        <h1 style="margin:14px 0 10px;color:#fff;font-size:clamp(28px,4.6vw,46px);letter-spacing:-.03em;line-height:1.04">Businesses in {suburb.name}</h1>
+        <p style="margin:0;color:rgba(255,255,255,.86);font-size:15.5px;max-width:58ch;line-height:1.55">{description}</p>
+      </div>
+    </section>
 
-  <section class="container" style="padding-bottom: 3rem;">
-    <div class="two-col-shell">
-      <div>
-        {featuredHere.length > 0 && (
-          <div style="margin-bottom: 2rem;">
-            <SectionHeader eyebrow="Featured" title={`Featured in ${suburb.name}`} />
-            <div class="business-grid">
-              {featuredHere.map((business) => (
-                <BusinessCard business={business} showSuburb={false} listContext={{ kind: 'suburb', slug: suburb.slug, name: suburb.name }} />
+    <section style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
+      {categoriesHere.size > 0 && (
+        <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;border-bottom:2px solid var(--navy)">
+          <span style="padding:9px 14px;border-radius:999px;background:var(--navy);color:#fff;font-size:13px;font-weight:800;white-space:nowrap">All {businesses.length}</span>
+          {[...categoriesHere.entries()].map(([slug, name]) => (
+            <a href={`/category/${slug}/${suburb.slug}/`} style="padding:9px 14px;border-radius:999px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:700;white-space:nowrap;text-decoration:none">{name}</a>
+          ))}
+        </div>
+      )}
+
+      <div id="suburb-shell" style="display:grid;grid-template-columns:1fr;gap:22px;margin-top:22px">
+        <div>
+          {featuredHere.length > 0 && (
+            <>
+              <h2 style="margin:0 0 12px;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)">Featured in this suburb</h2>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+                {featuredHere.map((b) => (
+                  <article style="border:2px solid var(--accent);border-radius:14px;background:#fff;padding:16px;display:flex;flex-direction:column;gap:8px">
+                    <PlanBadge tier={b.subscription_tier} />
+                    <h3 style="margin:0;font-size:17px;letter-spacing:-.015em;color:var(--navy)">{b.name}</h3>
+                    <p style="margin:0;font-size:13px;font-weight:600;color:var(--muted)">{categoriesFor(b)[0]?.name}</p>
+                    <a href={`/business/${b.slug}/`} style="align-self:flex-start;margin-top:4px;font-size:13px;font-weight:800;color:var(--accent);text-decoration:none">View profile →</a>
+                  </article>
+                ))}
+              </div>
+            </>
+          )}
+
+          <h2 style="margin:26px 0 12px;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">All listings, A–Z</h2>
+          {businesses.length === 0 ? (
+            <p style="color:var(--muted);">No businesses listed in {suburb.name} yet.</p>
+          ) : (
+            <div style="border:2px solid var(--border);border-radius:14px;overflow:hidden;background:#fff">
+              {businesses.map((b) => (
+                <BusinessCard business={b} showSuburb={false} listContext={{ kind: 'suburb', slug: suburb.slug, name: suburb.name }} variant="row" />
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        {businesses.length === 0 ? (
-          <p style="color: var(--text-muted);">No businesses listed in {suburb.name} yet.</p>
-        ) : (
-          categoryGroups.map(([slug, group]) => (
-            <div style="margin-top: 1.75rem;">
-              <div class="cat-head">
-                <h2>
-                  {groupForCategory(slug) && <Icon path={groupForCategory(slug)!.iconPath} size={18} />}
-                  {group.name} <span class="cat-count">({group.businesses.length})</span>
-                </h2>
-                <a href={`/category/${slug}/${suburb.slug}/`} class="btn btn-outline btn-sm">View all →</a>
-              </div>
-              <div class="business-grid">
-                {group.businesses.map((business) => (
-                  <BusinessCard
-                    business={business}
-                    showSuburb={false}
-                    listContext={{ kind: 'suburb', slug: suburb.slug, name: suburb.name }}
-                  />
+        <aside style="display:flex;flex-direction:column;gap:14px">
+          <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);min-height:250px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:18px">
+            <span style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
+            <span style="font-size:13.5px;font-weight:700;color:var(--muted)">300×250 sidebar unit</span>
+          </div>
+          <SponsorSlot
+            productType="suburb_sponsor"
+            target={suburb.slug}
+            title={`Own ${suburb.name}`}
+            openBody="Featured slots on this page are limited to three businesses."
+            ctaLabel="Feature my business"
+          />
+          {nearbySuburbs.length > 0 && (
+            <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
+              <h3 style="margin:0 0 8px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Nearby suburbs</h3>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                {nearbySuburbs.map((s) => (
+                  <a href={`/suburb/${s.slug}/`} style="padding:7px 11px;border-radius:999px;background:#fff;border:1.5px solid var(--border);font-size:12.5px;font-weight:700;color:var(--navy);text-decoration:none">{s.name}</a>
                 ))}
               </div>
             </div>
-          ))
-        )}
+          )}
+        </aside>
       </div>
-
-      <aside class="suburb-sidebar">
-        <div class="ad-slot">
-          <span class="ad-slot-eyebrow">Advertisement</span>
-          <span class="ad-slot-spec">300×250</span>
-        </div>
-        <SponsorSlot productType="suburb_sponsor" target={suburb.slug} label="suburb sponsor" />
-        {nearbySuburbs.length > 0 && (
-          <div class="card">
-            <strong>Nearby suburbs</strong>
-            <div class="chip-row">
-              {nearbySuburbs.map((s) => (
-                <a class="chip" href={`/suburb/${s.slug}/`}>{s.name}</a>
-              ))}
-            </div>
-          </div>
-        )}
-      </aside>
-    </div>
-  </section>
+    </section>
+  </main>
 </BaseLayout>
 
 <style>
-  .suburb-intro.has-photo {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 1.25rem;
-  }
-  .suburb-photo {
-    width: 240px;
-    max-width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .cat-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-  }
-  .cat-head h2 {
-    display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    font-size: 1.05rem;
-    margin: 0;
-    color: var(--navy);
-  }
-  .cat-head h2 :global(svg) {
-    color: var(--accent);
-  }
-  .cat-count {
-    color: var(--text-muted);
-    font-weight: 400;
-    font-size: 0.85rem;
-  }
-  .business-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 0.75rem;
-  }
-  .suburb-sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  .suburb-sidebar .card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
+  @media (min-width: 950px) {
+    #suburb-shell {
+      grid-template-columns: 1fr 320px;
+    }
   }
 </style>

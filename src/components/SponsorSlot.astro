@@ -1,44 +1,32 @@
 ---
+// Matches the mockup's single navy-bordered sponsorship-slot box exactly
+// (e.g. Suburb's "Own {suburb}" box, Pricing's homepage-banner tile) —
+// one box that either shows who currently holds it, or the buy CTA.
 import { sponsorFor, type Sponsorship } from '../lib/data';
 
 interface Props {
   productType: Sponsorship['product_type'];
   target?: string;
-  /** e.g. "suburb sponsor", "category sponsor" — used in the open-slot copy. */
-  label: string;
+  title: string;
+  /** Shown only in the open (unsold) state. */
+  openBody: string;
+  ctaLabel?: string;
 }
-const { productType, target, label } = Astro.props;
+const { productType, target, title, openBody, ctaLabel = 'Enquire' } = Astro.props;
 const sponsor = sponsorFor(productType, target);
 ---
 
-<div class="card sponsor-slot">
-  <span class="tag tag-outline">Sponsored</span>
+<div style="border:2px solid var(--navy);border-radius:14px;padding:18px;background:#fff">
+  <h3 style="margin:0 0 8px;font-size:17px;letter-spacing:-.02em;color:var(--navy)">{title}</h3>
   {sponsor ? (
     <>
-      <strong><a href={`/business/${sponsor.business_slug}/`}>{sponsor.business_name}</a></strong>
-      <p class="text-muted">This spot is currently sponsored.</p>
+      <p style="margin:0 0 6px;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)">Currently sponsored by</p>
+      <a href={`/business/${sponsor.business_slug}/`} style="display:block;font-size:15px;font-weight:800;color:var(--navy);text-decoration:none">{sponsor.business_name}</a>
     </>
   ) : (
     <>
-      <strong>This {label} spot is open</strong>
-      <p class="text-muted">One advertiser at a time — get seen here.</p>
-      <a href="/pricing/" class="btn btn-outline btn-sm">See pricing →</a>
+      <p style="margin:0 0 14px;font-size:14px;line-height:1.55;color:var(--text)">{openBody}</p>
+      <a href="/pricing/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none;text-align:center">{ctaLabel}</a>
     </>
   )}
 </div>
-
-<style>
-  .sponsor-slot {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.4rem;
-  }
-  .sponsor-slot p {
-    margin: 0;
-    font-size: 0.85rem;
-  }
-  .sponsor-slot a {
-    color: var(--accent);
-  }
-</style>

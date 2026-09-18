@@ -1,15 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { categories, suburbs, priceRand } from '../lib/data';
+import { categories, suburbs, businesses, priceRand } from '../lib/data';
 import site from '../site';
 
 const sortedCategories = [...categories].sort((a, b) => a.name.localeCompare(b.name));
 const sortedSuburbs = [...suburbs].sort((a, b) => a.name.localeCompare(b.name));
 
 const PLANS = [
-  { tier: 0, name: 'Basic', price: 'Free', blurb: 'Listed in search & your suburb' },
-  { tier: 1, name: 'Verified', price: `${priceRand('price_verified_cents')}/mo`, blurb: 'Verified badge, priority in results' },
-  { tier: 2, name: 'Featured', price: `${priceRand('price_featured_cents')}/mo`, blurb: 'Featured placement, photo gallery' },
+  { tier: 0, name: 'Basic', price: 'Free', note: 'Listed in search & your suburb' },
+  { tier: 1, name: 'Verified', price: `${priceRand('price_verified_cents')}/mo`, note: 'Verified badge, priority in results' },
+  { tier: 2, name: 'Featured', price: `${priceRand('price_featured_cents')}/mo`, note: 'Featured placement, photo gallery' },
 ];
 ---
 
@@ -17,76 +17,125 @@ const PLANS = [
   title="List your business"
   description={`List your business on ${site.siteName} for free.`}
 >
-  <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 560px;">
-    <h1>List your business</h1>
-    <p style="color: var(--text-muted);">Free — we check each submission before it goes live, usually within a day.</p>
-    <p id="auth-check">Checking your account…</p>
+  <main style="max-width:1200px;margin:0 auto;padding:clamp(24px,4vw,44px) 20px 60px">
+    <div id="list-shell" style="display:grid;grid-template-columns:1fr;gap:26px">
+      <div>
+        <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">List your business</span>
+        <h1 style="margin:12px 0 10px;font-size:clamp(28px,4.4vw,44px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);max-width:20ch">List your business on {site.siteName}</h1>
+        <p style="margin:0 0 22px;font-size:16px;line-height:1.6;color:var(--text);max-width:52ch">Free to be listed. We check every submission by hand — usually live within 48 hours.</p>
 
-    <form id="listing-form" hidden>
-      <label>
-        Business name *
-        <input type="text" name="name" required maxlength="120" />
-      </label>
-      <label>
-        Category *
-        <select name="category" required>
-          <option value="" disabled selected>Choose a category</option>
-          {sortedCategories.map((c) => <option value={c.slug}>{c.name}</option>)}
-        </select>
-      </label>
-      <label>
-        Suburb *
-        <select name="suburb" required>
-          <option value="" disabled selected>Choose a suburb</option>
-          {sortedSuburbs.map((s) => <option value={s.slug}>{s.name}</option>)}
-        </select>
-      </label>
-      <label>
-        Description <span>(optional — a sentence or two about what you do)</span>
-        <textarea name="description" maxlength="600" rows="3"></textarea>
-      </label>
-      <label>
-        Address <span>(optional)</span>
-        <input type="text" name="address" maxlength="200" />
-      </label>
-      <label>
-        Phone <span>(optional)</span>
-        <input type="tel" name="phone" maxlength="30" />
-      </label>
-      <label>
-        Email <span>(optional, not shown publicly)</span>
-        <input type="email" name="email" maxlength="120" />
-      </label>
-      <label>
-        Website <span>(optional, stored but not shown publicly)</span>
-        <input type="url" name="website" maxlength="200" />
-      </label>
+        <p id="auth-check" style="color:var(--muted);">Checking your account…</p>
 
-      <fieldset class="plan-picker">
-        <legend>Choose a plan <span>(you can also upgrade later)</span></legend>
-        {PLANS.map((p, i) => (
-          <label class="plan-option">
-            <input type="radio" name="chosenTier" value={p.tier} checked={i === 0} />
-            <span class="plan-option-body">
-              <strong>{p.name}</strong>
-              <span class="plan-price">{p.price}</span>
-              <span class="plan-blurb">{p.blurb}</span>
-            </span>
+        <form id="listing-form" hidden style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);letter-spacing:.01em">
+            Business name
+            <input type="text" name="name" required maxlength="120" placeholder="e.g. De Souza Hardware &amp; Brick Depot" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
           </label>
-        ))}
-      </fieldset>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+              Category
+              <select name="category" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;color:var(--text);outline:none;background:#fff">
+                <option value="" disabled selected>Choose a category</option>
+                {sortedCategories.map((c) => <option value={c.slug}>{c.name}</option>)}
+              </select>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+              Suburb
+              <select name="suburb" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;color:var(--text);outline:none;background:#fff">
+                <option value="" disabled selected>Choose a suburb</option>
+                {sortedSuburbs.map((s) => <option value={s.slug}>{s.name}</option>)}
+              </select>
+            </label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+            What do you do? <span style="font-weight:600;color:var(--muted);font-size:12px">optional</span>
+            <textarea name="description" maxlength="600" rows="4" placeholder="A sentence or two customers would search for." style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff;resize:vertical"></textarea>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+            Address <span style="font-weight:600;color:var(--muted);font-size:12px">optional</span>
+            <input type="text" name="address" maxlength="200" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
+          </label>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+              Phone <span style="font-weight:600;color:var(--muted);font-size:12px">optional</span>
+              <input type="tel" name="phone" maxlength="30" placeholder="012 527 0542" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
+            </label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+              Email <span style="font-weight:600;color:var(--muted);font-size:12px">not shown publicly</span>
+              <input type="email" name="email" maxlength="120" placeholder="you@business.co.za" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
+            </label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+            Website <span style="font-weight:600;color:var(--muted);font-size:12px">optional, stored but not shown publicly</span>
+            <input type="url" name="website" maxlength="200" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
+          </label>
 
-      {/* honeypot — hidden from real users via CSS, bots tend to fill every field */}
-      <label class="hp-field" aria-hidden="true">
-        Leave this empty
-        <input type="text" name="company_url" tabindex="-1" autocomplete="off" />
-      </label>
+          <div style="border:2px solid var(--navy);border-radius:14px;overflow:hidden;margin-top:4px">
+            <div style="background:var(--navy);padding:12px 16px;font-size:13px;font-weight:800;color:#fff;letter-spacing:.01em">Choose how you appear</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:2px;background:var(--border)">
+              {PLANS.map((p, i) => (
+                <label class="plan-option" style="background:#fff;padding:16px;display:flex;flex-direction:column;gap:4px;cursor:pointer">
+                  <input type="radio" name="chosenTier" value={p.tier} checked={i === 0} style="position:absolute;opacity:0;width:0;height:0;" />
+                  <span style="font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--navy)">{p.name}</span>
+                  <span style="font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--navy)">{p.price}</span>
+                  <span style="font-size:12.5px;font-weight:600;line-height:1.4;color:var(--muted)">{p.note}</span>
+                </label>
+              ))}
+            </div>
+          </div>
 
-      <button type="submit" class="btn btn-primary">List my business</button>
-      <p id="form-status" role="status"></p>
-    </form>
-  </section>
+          {/* honeypot — hidden from real users via CSS, bots tend to fill every field */}
+          <label style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+            Leave this empty
+            <input type="text" name="company_url" tabindex="-1" autocomplete="off" />
+          </label>
+
+          <button type="submit" style="align-self:flex-start;padding:15px 24px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer">Continue to contact details</button>
+          <p id="form-status" role="status" style="font-size:0.9rem;color:var(--muted);margin:0;"></p>
+        </form>
+      </div>
+
+      <aside style="display:flex;flex-direction:column;gap:14px">
+        <div style="border:2px solid var(--border);border-radius:14px;padding:20px;background:var(--bg-subtle)">
+          <h2 style="margin:0 0 12px;font-size:16px;letter-spacing:-.015em;color:var(--navy)">Why owners list here</h2>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div>
+              <div style="font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-.02em">{businesses.length.toLocaleString()}</div>
+              <div style="font-size:12.5px;font-weight:700;color:var(--muted)">businesses already listed in {site.cityLabel}</div>
+            </div>
+            <div>
+              <div style="font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-.02em">Free</div>
+              <div style="font-size:12.5px;font-weight:700;color:var(--muted)">to get listed, always</div>
+            </div>
+            <div>
+              <div style="font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-.02em">48 hrs</div>
+              <div style="font-size:12.5px;font-weight:700;color:var(--muted)">average time from submission to live</div>
+            </div>
+          </div>
+        </div>
+        <div style="border:2px solid var(--border);border-radius:14px;padding:20px;background:#fff">
+          <h2 style="margin:0 0 10px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">What happens next</h2>
+          <ol style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;font-size:13.5px;line-height:1.5;color:var(--text)">
+            <li>We check the details against public records.</li>
+            <li>You get an email confirming it's live.</li>
+            <li>You can edit or upgrade any time from My Businesses.</li>
+          </ol>
+        </div>
+      </aside>
+    </div>
+  </main>
 </BaseLayout>
+
+<style>
+  @media (min-width: 950px) {
+    #list-shell {
+      grid-template-columns: 1fr 320px;
+    }
+  }
+  .plan-option:has(input:checked) {
+    box-shadow: inset 0 0 0 2px var(--accent);
+  }
+</style>
 
 <script define:vars={{ contactEmail: site.contactEmail, siteName: site.siteName }}>
   // NOTE: define:vars forces this script to stay inline and unprocessed by
@@ -162,108 +211,3 @@ const PLANS = [
     }
   });
 </script>
-
-<style>
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-  label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-  label span {
-    font-weight: 400;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-  }
-  input, select, textarea {
-    font: inherit;
-    padding: 0.6rem 0.75rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text);
-  }
-  input:focus, select:focus, textarea:focus {
-    outline: 2px solid var(--accent);
-    outline-offset: 1px;
-  }
-  .plan-picker {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    border: 0;
-    padding: 0;
-    margin: 0;
-  }
-  .plan-picker legend {
-    font-size: 0.9rem;
-    font-weight: 600;
-    padding: 0;
-  }
-  .plan-picker legend span {
-    font-weight: 400;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-  }
-  .plan-option {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    cursor: pointer;
-    font-weight: 400;
-  }
-  .plan-option:has(input:checked) {
-    border-color: var(--accent);
-    background: rgba(var(--accent-rgb), 0.05);
-  }
-  .plan-option input {
-    accent-color: var(--accent);
-  }
-  .plan-option-body {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 0.1rem 0.6rem;
-  }
-  .plan-option-body strong {
-    min-width: 5.5rem;
-  }
-  .plan-price {
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 0.85rem;
-  }
-  .plan-blurb {
-    flex-basis: 100%;
-    font-weight: 400;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-  }
-  .hp-field {
-    position: absolute;
-    left: -9999px;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-  }
-  button {
-    align-self: flex-start;
-    border: none;
-    cursor: pointer;
-  }
-  #form-status {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin: 0;
-  }
-</style>

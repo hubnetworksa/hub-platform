@@ -1,12 +1,12 @@
 ---
+// Two variants matching the mockup: 'card' (grid card — Centre/Results
+// screens) and 'row' (A-Z list row — Suburb screen).
 import { suburbFor, categoriesFor, shoppingCenterFor, FEATURED_TIER, type Business } from '../lib/data';
-import { groupForCategory } from '../lib/categoryGroups';
-import Icon from './Icon.astro';
-import PlanBadge from './PlanBadge.astro';
 
 interface Props {
   business: Business;
   showSuburb?: boolean;
+  variant?: 'card' | 'row';
   // When set, clicking this card remembers "you came from this list" (see
   // ListReturn.astro), so the business page can offer a "Back to <name>"
   // link to whichever suburb/shopping-centre listing page the card lives
@@ -14,57 +14,54 @@ interface Props {
   listContext?: { kind: 'suburb' | 'shopping-center'; slug: string; name: string };
 }
 
-const { business, showSuburb = true, listContext } = Astro.props;
+const { business, showSuburb = true, variant = 'card', listContext } = Astro.props;
 const suburb = suburbFor(business);
 const cats = categoriesFor(business);
 const primary = cats[0];
-const primaryGroup = primary ? groupForCategory(primary.slug) : undefined;
-// Only ever shown when a real link exists — a business with no shopping
-// centre nearby just shows suburb/address as before, nothing invented.
 const center = shoppingCenterFor(business);
+const isFeatured = business.subscription_tier >= FEATURED_TIER;
+const meta = [showSuburb && suburb ? suburb.name : null, center ? `at ${center.name}` : business.address].filter(Boolean).join(' · ');
 ---
 
-<div class:list={['business-card', { 'business-card-featured': business.subscription_tier >= FEATURED_TIER }]}>
-  <div class="business-card-top">
-    <h3>
-      <a
-        class="card-title-link"
-        href={`/business/${business.slug}/`}
-        data-list-kind={listContext?.kind}
-        data-list-slug={listContext?.slug}
-        data-list-name={listContext?.name}
-      >
-        {business.name}
-      </a>
-    </h3>
-    <span class="business-card-badges">
-      <PlanBadge tier={business.subscription_tier} />
-      {primary && (
-        <span class="badge">
-          {primaryGroup && <Icon path={primaryGroup.iconPath} size={13} />}
-          {primary.name}
-        </span>
-      )}
+{variant === 'row' ? (
+  <a
+    href={`/business/${business.slug}/`}
+    class="business-row"
+    data-list-kind={listContext?.kind}
+    data-list-slug={listContext?.slug}
+    data-list-name={listContext?.name}
+    style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 18px;border-bottom:1px solid var(--border);color:var(--navy);text-decoration:none"
+  >
+    <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+      <span style="font-size:15.5px;font-weight:800;letter-spacing:-.01em">{business.name}</span>
+      {meta && <span style="font-size:12.5px;font-weight:600;color:var(--muted)">{meta}</span>}
     </span>
-  </div>
-  <p class="business-card-meta">
-    {showSuburb && suburb && <span>{suburb.name}</span>}
-    {center ? (
-      <span class="at-center">
-        {showSuburb && suburb ? ' · ' : ''}at <a href={`/shopping-center/${center.slug}/`} class="center-link">{center.name}</a>
-      </span>
-    ) : (
-      business.address && <span>{showSuburb && suburb ? ' · ' : ''}{business.address}</span>
-    )}
-  </p>
-</div>
+    {primary && <span style="font-size:11.5px;font-weight:800;color:var(--accent-hover);white-space:nowrap;flex-shrink:0">{primary.name}</span>}
+  </a>
+) : (
+  <article style={`border:2px solid ${isFeatured ? 'var(--accent)' : 'var(--border)'};border-radius:14px;padding:16px;background:#fff;display:flex;flex-direction:column;gap:6px`}>
+    {isFeatured && <span style="align-self:flex-start;padding:4px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Featured</span>}
+    <h3 style="margin:0;font-size:16.5px;letter-spacing:-.015em;color:var(--navy)">{business.name}</h3>
+    {(primary || meta) && <p style="margin:0;font-size:13px;font-weight:600;color:var(--muted)">{[primary?.name, meta].filter(Boolean).join(' · ')}</p>}
+    <a
+      href={`/business/${business.slug}/`}
+      class="business-card-link"
+      data-list-kind={listContext?.kind}
+      data-list-slug={listContext?.slug}
+      data-list-name={listContext?.name}
+      style="align-self:flex-start;margin-top:2px;font-size:13px;font-weight:800;color:var(--accent);text-decoration:none"
+    >
+      View profile →
+    </a>
+  </article>
+)}
 
 <script>
   // Astro dedupes this to a single copy per page no matter how many
   // BusinessCards render, so one delegated listener covers every card.
   // Only cards given a listContext prop carry data-list-kind at all.
   document.addEventListener('click', (e) => {
-    const card = (e.target as HTMLElement).closest('a.card-title-link[data-list-kind]') as HTMLElement | null;
+    const card = (e.target as HTMLElement).closest('a[data-list-kind]') as HTMLElement | null;
     if (!card) return;
     const kind = card.dataset.listKind;
     const slug = card.dataset.listSlug;
@@ -79,83 +76,7 @@ const center = shoppingCenterFor(business);
 </script>
 
 <style>
-  .business-card {
-    position: relative;
-    display: block;
-    padding: 1rem 1.1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
-    transition: box-shadow 0.15s, border-color 0.15s;
-  }
-  /* The card as a whole stays clickable (stretched-link pattern): the title
-     link's ::after covers the full card, so clicking anywhere still opens
-     the business page, but the shopping-centre link below — given its own
-     stacking context and a higher z-index — remains independently
-     clickable instead of being swallowed by that overlay. */
-  .business-card:has(.card-title-link:hover) {
-    box-shadow: var(--shadow);
-    border-color: var(--accent);
-  }
-  .business-card-featured {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent);
-  }
-  .business-card-badges {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    flex-shrink: 0;
-  }
-  .card-title-link {
-    color: inherit;
-    text-decoration: none;
-  }
-  .card-title-link::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-  }
-  .business-card-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.4rem 0.75rem;
-  }
-  .business-card h3 {
-    margin: 0;
-    font-size: 1.02rem;
-    min-width: 0;
-    overflow-wrap: break-word;
-  }
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.75rem;
-    color: var(--accent);
-    background: rgba(var(--accent-rgb), 0.1);
-    padding: 0.15rem 0.5rem;
-    border-radius: 999px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .business-card-meta {
-    margin: 0.35rem 0 0;
-    color: var(--text-muted);
-    font-size: 0.88rem;
-  }
-  .at-center {
-    color: var(--accent);
-    font-weight: 600;
-  }
-  .center-link {
-    position: relative;
-    z-index: 1;
-    color: inherit;
-  }
-  .center-link:hover {
-    text-decoration: underline;
+  .business-row:hover {
+    background: var(--bg-subtle);
   }
 </style>
