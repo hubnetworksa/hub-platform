@@ -231,10 +231,17 @@ resolves straight to hub-platform.
       straight copy of Polokwane's, which conflicts with the "each site
       gets its own ID" decision below. Needs Cape Town's own approved
       publisher ID once it exists, not a shared one.
-- [ ] Full submit → admin-approve → owner-confirm → publish → claim →
-      admin-approve-claim smoke test on `thecapetownhub.com` — only the
-      account-registration email leg has been tested so far, not the rest
-      of the flow.
+- [x] **Full flow smoke test on `thecapetownhub.com`** — confirmed
+      2026-09-18, same pass as Pretoria/Polokwane's: register → submit
+      (logged in, with owner email) → admin approve → owner confirm →
+      published, with correct auto-link to the submitter's account
+      (`owner_user_id` matched the registering user). Second business
+      submitted anonymously with no email → published immediately with
+      `owner_user_id` correctly `null`. Claimed by a second test user via
+      the contact-info claim form → admin-approved via `/api/review-claim`
+      → ownership correctly transferred. All test businesses/categories-
+      links/users/sessions/claims/activity-log rows deleted afterward
+      (verified 0 remaining).
 - Old-site merge: N/A — unlike Pretoria/Polokwane, Cape Town has no prior
   standalone site/database; it was built fresh directly in hub-platform.
 
