@@ -126,7 +126,7 @@ that slug is somehow already taken by an unrelated event, append `-2`.
 ## Logging and committing
 
 Whether or not anything cleared the bar this run, append one line to
-`status/pretoria/agent-log.jsonl`:
+`status/pretoria/events-agent-log.jsonl`:
 
 ```json
 {"date": "2026-10-01T09:00:00Z", "action_taken": "event_discovery", "found": 6, "published": 3, "rejected_unverified": 3, "short_summary": "Found 6 candidate events via web search; 3 cleared the 3-source non-resale verification bar and were published (Example Market, Example Gig, Example Fun Run), 3 discarded for lacking independent corroboration."}
