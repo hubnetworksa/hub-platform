@@ -16,7 +16,7 @@ import { cityLabel, siteName } from '../lib/site-overrides';
 
 interface Props {
   active:
-    | 'dashboard' | 'listings' | 'submissions' | 'claims' | 'reports' | 'events' | 'enquiries' | 'inventory'
+    | 'dashboard' | 'listings' | 'submissions' | 'claims' | 'reports' | 'events' | 'news' | 'enquiries' | 'inventory'
     | 'invoices' | 'analytics' | 'users' | 'activity' | 'plans' | 'ads' | 'settings';
   title: string;
   subtitle: string;
@@ -34,6 +34,7 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
   { key: 'claims', href: '/admin/claims/', label: 'Claims' },
   { key: 'reports', href: '/admin/reports/', label: 'Reports' },
   { key: 'events', href: '/admin/events/', label: 'Events' },
+  { key: 'news', href: '/admin/news/', label: 'News' },
   { key: 'enquiries', href: '/admin/enquiries/', label: 'Enquiries' },
   { key: 'inventory', href: '/admin/inventory/', label: 'Sponsored inventory' },
   { key: 'invoices', href: '/admin/invoices/', label: 'Invoices' },

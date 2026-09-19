@@ -19,6 +19,8 @@ const businesses = JSON.parse(readFileSync('src/data/businesses.json', 'utf8'));
 const businessCategories = JSON.parse(readFileSync('src/data/business-categories.json', 'utf8'));
 const shoppingCenters = JSON.parse(readFileSync('src/data/shopping-centers.json', 'utf8'));
 const events = JSON.parse(readFileSync('src/data/events.json', 'utf8'));
+const news = JSON.parse(readFileSync('src/data/news.json', 'utf8'));
+const fuel = JSON.parse(readFileSync('src/data/fuel-prices.json', 'utf8'));
 
 const suburbById = new Map(suburbs.map((s) => [s.id, s]));
 const categoryById = new Map(categories.map((c) => [c.id, c]));
@@ -59,6 +61,10 @@ const snapshot = {
   // state file of its own, unlike the hourly business routine's
   // routine-state.json (no suburb rotation/index to track here).
   events: events.map((e) => ({ slug: e.slug, title: e.title, event_date: e.event_date, type: e.type })),
+  // Read by the daily news routine (ROUTINE.news.<slug>.md) so it doesn't re-publish a story.
+  // Read by the news routine's monthly fuel-price update (previous prices -> change_cents).
+  fuel_prices: fuel.map((f) => ({ period: f.period, region: f.region, grade: f.grade, price_cents: f.price_cents })),
+  news: news.map((n) => ({ slug: n.slug, title: n.title, published_date: n.published_date, source_url: n.source_url })),
 };
 
 // Compact (no pretty-print indentation) since the hourly research routine

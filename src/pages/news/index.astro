@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { newsSorted, newsDateShort } from '../../lib/data';
+import site from '../../site';
+
+const articles = newsSorted();
+const categories = ['All', ...new Set(articles.map((a) => a.category))];
+const siteUrl = `https://${site.domain}`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `${site.cityLabel} local news`,
+  url: `${siteUrl}/news/`,
+  hasPart: articles.slice(0, 20).map((a) => ({ '@type': 'NewsArticle', headline: a.title, url: `${siteUrl}/news/${a.slug}/`, datePublished: a.published_date })),
+};
+---
+
+<BaseLayout
+  title="Local news"
+  description={`${site.cityLabel} local news — traffic, utilities, business, sport and tourism, summarised from official and independent sources with the links to the originals.`}
+>
+  <main>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">
+      <img src={site.sectionBannerImage} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%" />
+      <div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(var(--navy-rgb),.94) 0%,rgba(var(--navy-rgb),.78) 48%,rgba(var(--navy-rgb),.26) 100%)"></div>
+      <div style="position:relative;max-width:1200px;margin:0 auto;padding:clamp(30px,5vw,58px) 20px clamp(24px,3.5vw,38px)">
+        <span style="display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1.5px solid rgba(255,255,255,.34);border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff">{`${site.cityLabel} today`}</span>
+        <h1 style="margin:16px 0 12px;color:#fff;font-size:clamp(30px,5.4vw,52px);line-height:1.03;letter-spacing:-.03em;max-width:18ch">Local news that affects your day.</h1>
+        <p style="margin:0;color:rgba(255,255,255,.86);font-size:clamp(15px,1.7vw,17.5px);max-width:54ch;line-height:1.5">Short reports on traffic, utilities, business, sport and tourism — checked against more than one source, with a link to every original.</p>
+      </div>
+    </section>
+
+    {articles.length > 0 ? (
+      <>
+        <section style="max-width:1200px;margin:0 auto;padding:22px 20px 0">
+          <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;border-bottom:2px solid var(--navy)">
+            {categories.map((c) => (
+              <button type="button" data-news-filter={c} style={`padding:7px 12px;border-radius:999px;cursor:pointer;white-space:nowrap;font-size:12.5px;font-weight:800;border:2px solid ${c === 'All' ? 'var(--navy)' : 'var(--border)'};background:${c === 'All' ? 'var(--navy)' : '#fff'};color:${c === 'All' ? '#fff' : 'var(--navy)'}`}>{c}</button>
+            ))}
+          </div>
+        </section>
+
+        <section style="max-width:1200px;margin:0 auto;padding:20px 20px 0">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            {articles.map((a) => (
+              <a href={`/news/${a.slug}/`} data-news-card data-news-cat={a.category} class={`news-card${a.image_url ? ' has-img' : ''}`} style="display:grid;grid-template-columns:1fr;gap:0;border:2px solid var(--border);border-radius:14px;background:#fff;overflow:hidden;color:var(--navy);text-decoration:none">
+                {a.image_url && (
+                  <span style="display:block;background:var(--bg-subtle);min-height:170px">
+                    <img src={a.image_url} alt="" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block" />
+                  </span>
+                )}
+                <span style="display:flex;flex-direction:column;gap:7px;padding:16px 18px">
+                  <span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <span style="padding:3px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:9.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase">{a.category}</span>
+                    <span style="font-size:12px;font-weight:800;color:var(--muted)">{newsDateShort(a)}</span>
+                  </span>
+                  <span style="font-size:19px;font-weight:800;line-height:1.22;letter-spacing:-.02em">{a.title}</span>
+                  <span style="font-size:14.5px;line-height:1.5;color:var(--text)">{a.summary}</span>
+                  <span style="font-size:11.5px;font-weight:800;color:var(--muted)">Source: {a.source_name}</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </section>
+      </>
+    ) : (
+      <section style="max-width:1200px;margin:0 auto;padding:36px 20px 0">
+        <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);padding:28px;text-align:center">
+          <h2 style="margin:0 0 6px;font-size:20px;color:var(--navy)">No news published yet</h2>
+          <p style="margin:0;font-size:14.5px;color:var(--muted)">Stories appear here once they have been checked against more than one source.</p>
+        </div>
+      </section>
+    )}
+
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(30px,4vw,44px) 20px 0">
+      <div style="border:2px solid var(--border);border-radius:14px;background:#fff;padding:18px 20px">
+        <h2 style="margin:0 0 6px;font-size:16px;letter-spacing:-.015em;color:var(--navy)">How we write the news</h2>
+        <p style="margin:0;font-size:14px;line-height:1.6;color:var(--text);max-width:80ch">Every story is written by us in our own words, only from facts that at least two independent sources agree on, and it links to the original reports so you can read them in full. Spotted a mistake? <a href="/contact/" style="color:var(--accent-hover);font-weight:800;text-decoration:underline">Tell us</a> and we will correct or remove it.</p>
+      </div>
+    </section>
+    <div style="height:clamp(36px,5vw,60px)"></div>
+  </main>
+</BaseLayout>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-news-filter]');
+  buttons.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const f = btn.dataset.newsFilter;
+      buttons.forEach((b) => {
+        const on = b === btn;
+        b.style.background = on ? 'var(--navy)' : '#fff';
+        b.style.color = on ? '#fff' : 'var(--navy)';
+        b.style.borderColor = on ? 'var(--navy)' : 'var(--border)';
+      });
+      document.querySelectorAll<HTMLElement>('[data-news-card]').forEach((card) => {
+        card.hidden = !(f === 'All' || card.dataset.newsCat === f);
+      });
+    }),
+  );
+</script>
+
+<style>
+  [data-news-card][hidden] {
+    display: none !important;
+  }
+  .news-card:hover {
+    border-color: var(--accent);
+  }
+  @media (min-width: 760px) {
+    .news-card.has-img {
+      grid-template-columns: 262px minmax(0, 1fr) !important;
+    }
+  }
+</style>

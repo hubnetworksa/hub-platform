@@ -7,6 +7,8 @@ import businessPhotosRaw from '../data/business-photos.json';
 import sponsorshipsRaw from '../data/sponsorships.json';
 import siteSettingsRaw from '../data/site-settings.json';
 import eventsRaw from '../data/events.json';
+import newsRaw from '../data/news.json';
+import fuelRaw from '../data/fuel-prices.json';
 import { centsToRand } from '../../functions/_lib/pricing';
 
 export interface Suburb {
@@ -309,4 +311,97 @@ function parseJsonArray<T>(raw: string | null): T[] {
   } catch {
     return [];
   }
+}
+
+// --- Local news (written by the daily news agent; see ROUTINE.news.<city>.md) ---
+
+export const NEWS_CATEGORIES = ['Traffic', 'Utilities', 'Business', 'Sport', 'Tourism', 'Community'] as const;
+
+export interface NewsArticle {
+  id: number;
+  slug: string;
+  title: string;
+  category: string;
+  published_date: string;
+  source_name: string;
+  source_url: string;
+  summary: string;
+  body: string;
+  image_url: string | null;
+  image_credit: string | null;
+  verification_json: string;
+}
+
+export const news = newsRaw as NewsArticle[];
+
+export const newsBySlug = (slug: string) => news.find((n) => n.slug === slug);
+
+/** Newest first. */
+export function newsSorted(): NewsArticle[] {
+  return [...news].sort((a, b) => (a.published_date === b.published_date ? b.id - a.id : a.published_date < b.published_date ? 1 : -1));
+}
+
+export function newsDateLong(article: NewsArticle): string {
+  const [y, m, d] = article.published_date.split('-').map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d, 12));
+  return `${WEEKDAYS[date.getUTCDay()]} ${d} ${MONTHS[m - 1]} ${y}`;
+}
+
+export function newsDateShort(article: NewsArticle): string {
+  const [, m, d] = article.published_date.split('-').map(Number);
+  return `${d} ${MONTHS[m - 1]}`;
+}
+
+/** Every source the agent read for this article — [{name?, url}] parsed from verification_json (plain URL strings). */
+export function newsSources(article: NewsArticle): { url: string; host: string }[] {
+  let list: unknown = [];
+  try {
+    list = JSON.parse(article.verification_json);
+  } catch {
+    list = [];
+  }
+  const urls = Array.isArray(list) ? list.filter((u): u is string => typeof u === 'string') : [];
+  return urls.map((url) => {
+    let host = url;
+    try {
+      host = new URL(url).hostname.replace(/^www\./, '');
+    } catch {
+      /* keep raw */
+    }
+    return { url, host };
+  });
+}
+
+export function newsParagraphs(article: NewsArticle): string[] {
+  return article.body.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+}
+
+// --- Fuel prices (monthly, regulated; inserted by the news routine) ---
+
+export interface FuelPrice {
+  period: string;
+  region: string;
+  grade: string;
+  price_cents: number;
+  change_cents: number;
+  source_url: string;
+}
+
+/** Cape Town buys at the coastal price; Pretoria and Polokwane at the inland (Gauteng/Limpopo) price. */
+const FUEL_REGION: Record<string, string> = { capetown: 'coastal', pretoria: 'inland', polokwane: 'inland' };
+
+/** The most recent month's prices for this site's region, in a fixed grade order — null if none loaded yet. */
+export function latestFuel(siteSlug: string): { period: string; region: string; rows: FuelPrice[] } | null {
+  const region = FUEL_REGION[siteSlug];
+  const all = (fuelRaw as FuelPrice[]).filter((f) => f.region === region);
+  if (all.length === 0) return null;
+  const period = all.map((f) => f.period).sort().reverse()[0];
+  const order = ['Petrol 95', 'Petrol 93', 'Diesel 50ppm', 'Diesel 500ppm'];
+  const rows = all.filter((f) => f.period === period).sort((a, b) => order.indexOf(a.grade) - order.indexOf(b.grade));
+  return { period, region, rows };
+}
+
+export function fuelPeriodLabel(period: string): string {
+  const [y, m] = period.split('-').map(Number);
+  return `${MONTHS[m - 1]} ${y}`;
 }

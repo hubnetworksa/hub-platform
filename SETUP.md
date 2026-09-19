@@ -126,6 +126,21 @@ already listed (no separate state file needed, unlike the business
 routine's `routine-state.json`, since this job re-searches broadly every
 run rather than working through a rotation).
 
+### 4c. The news routine — a third scheduled agent per site
+
+Runs **daily** from its own runbook (`ROUTINE.news.<slug>.md`) — again its own
+scheduled cloud agent per site, repo read/write only, no Cloudflare
+credentials. It finds the day's useful local news (traffic, utilities, business,
+sport, tourism), writes each story **in its own words** (never copied text),
+verifies every fact against at least two independent sources, runs
+`node scripts/check-news.mjs <file> --city <slug> --online` (which fails on
+copied text, invented numbers, stale stories or fewer than two sources), then
+proposes the articles as SQL under `db/routine-updates/<slug>/`. Reads
+`status/<slug>/db-snapshot.json`'s `news` array to avoid repeats and logs to
+`status/<slug>/news-agent-log.jsonl`. Articles appear on `/news/`, in the
+homepage "today" panel and at `/news/<slug>/` after the next deploy; the admin
+"News" tab can remove one.
+
 ## 5. Email
 
 No SMTP, no Pages secret, no credentials at all — every site uses the same

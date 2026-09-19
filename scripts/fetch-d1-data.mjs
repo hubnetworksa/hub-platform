@@ -84,6 +84,26 @@ async function main() {
      FROM events ORDER BY event_date ASC;`
   );
 
+  // Local news (daily news agent + admin). Tolerant of a database that
+  // hasn't had the news migration applied yet — the site just has no news.
+  let news = [];
+  try {
+    news = query(
+      `SELECT id, slug, title, category, published_date, source_name, source_url, summary, body, image_url, image_credit, verification_json
+       FROM news ORDER BY published_date DESC, id DESC;`
+    );
+  } catch {
+    process.stderr.write(`[${SITE}] news table not available yet — building without news.
+`);
+  }
+
+  let fuelPrices = [];
+  try {
+    fuelPrices = query('SELECT period, region, grade, price_cents, change_cents, source_url FROM fuel_prices ORDER BY period DESC, grade;');
+  } catch {
+    process.stderr.write(`[${SITE}] fuel_prices table not available yet — building without fuel prices.\n`);
+  }
+
   await writeFile(`${OUT_DIR}/suburbs.json`, JSON.stringify(suburbs, null, 2));
   await writeFile(`${OUT_DIR}/categories.json`, JSON.stringify(categories, null, 2));
   await writeFile(`${OUT_DIR}/businesses.json`, JSON.stringify(businesses, null, 2));
@@ -93,11 +113,13 @@ async function main() {
   await writeFile(`${OUT_DIR}/sponsorships.json`, JSON.stringify(sponsorships, null, 2));
   await writeFile(`${OUT_DIR}/site-settings.json`, JSON.stringify(siteSettings, null, 2));
   await writeFile(`${OUT_DIR}/events.json`, JSON.stringify(events, null, 2));
+  await writeFile(`${OUT_DIR}/news.json`, JSON.stringify(news, null, 2));
+  await writeFile(`${OUT_DIR}/fuel-prices.json`, JSON.stringify(fuelPrices, null, 2));
 
   process.stderr.write(
     `[${SITE}] Fetched ${suburbs.length} suburbs, ${categories.length} categories, ` +
     `${businesses.length} businesses, ${businessCategories.length} business-category links, ` +
-    `${shoppingCenters.length} shopping centres, ${events.length} events ` +
+    `${shoppingCenters.length} shopping centres, ${events.length} events, ${news.length} news articles ` +
     `(${REMOTE ? 'remote' : 'local'}).\n`
   );
 }

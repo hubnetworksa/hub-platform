@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { news, newsSorted, newsDateLong, newsSources, newsParagraphs } from '../../lib/data';
+import site from '../../site';
+
+export function getStaticPaths() {
+  return news.map((n) => ({ params: { slug: n.slug }, props: { article: n } }));
+}
+
+const { article: a } = Astro.props;
+const paragraphs = newsParagraphs(a);
+const sources = newsSources(a);
+const more = newsSorted().filter((n) => n.slug !== a.slug).slice(0, 3);
+const siteUrl = `https://${site.domain}`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'NewsArticle',
+  headline: a.title,
+  description: a.summary,
+  datePublished: a.published_date,
+  mainEntityOfPage: `${siteUrl}/news/${a.slug}/`,
+  articleSection: a.category,
+  ...(a.image_url ? { image: [a.image_url] } : {}),
+  author: { '@type': 'Organization', name: site.siteName },
+  publisher: { '@type': 'Organization', name: site.siteName, url: siteUrl },
+  isBasedOn: [a.source_url, ...sources.map((s) => s.url)],
+};
+---
+
+<BaseLayout title={a.title} description={a.summary}>
+  <main>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <section style="max-width:1200px;margin:0 auto;padding:18px 20px 0">
+      <Breadcrumbs variant="plain" items={[{ label: 'Home', href: '/' }, { label: 'Local news', href: '/news/' }, { label: a.category }]} />
+    </section>
+
+    <section style="max-width:1200px;margin:0 auto;padding:16px 20px 0">
+      <div id="news-shell" style="display:grid;gap:26px">
+        <article style="min-width:0">
+          <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+            <span style="padding:4px 10px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase">{a.category}</span>
+            <span style="font-size:13px;font-weight:800;color:var(--navy)">{newsDateLong(a)}</span>
+          </div>
+          <h1 style="margin:12px 0 12px;font-size:clamp(26px,4.2vw,40px);letter-spacing:-.03em;line-height:1.08;color:var(--navy);max-width:24ch">{a.title}</h1>
+          <p style="margin:0 0 20px;font-size:18px;line-height:1.55;font-weight:600;color:var(--navy);max-width:62ch">{a.summary}</p>
+
+          {a.image_url && (
+            <figure style="margin:0 0 22px">
+              <div style="border:2px solid var(--navy);border-radius:16px;overflow:hidden;height:clamp(200px,30vw,340px);background:var(--bg-subtle)">
+                <img src={a.image_url} alt="" style="width:100%;height:100%;object-fit:cover;display:block" />
+              </div>
+              {a.image_credit && <figcaption style="margin-top:6px;font-size:11.5px;font-weight:600;color:var(--muted)">{a.image_credit}</figcaption>}
+            </figure>
+          )}
+
+          <div style="max-width:66ch">
+            {paragraphs.map((p) => (
+              <p style="margin:0 0 16px;font-size:16.5px;line-height:1.7;color:var(--text)">{p}</p>
+            ))}
+          </div>
+
+          <div style="margin-top:26px;border:2px solid var(--border);border-radius:14px;background:#fff;padding:18px 20px;max-width:66ch">
+            <h2 style="margin:0 0 8px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Sources</h2>
+            <p style="margin:0 0 10px;font-size:13.5px;line-height:1.55;color:var(--muted)">Written by {site.siteName} in our own words from the reports below. Read the originals for the full story.</p>
+            <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.45">
+              <li><a href={a.source_url} target="_blank" rel="noopener noreferrer" style="color:var(--accent-hover);font-weight:800;text-decoration:underline">{a.source_name}</a> <span style="color:var(--muted)">(main source)</span></li>
+              {sources.filter((s) => s.url !== a.source_url).map((s) => (
+                <li><a href={s.url} target="_blank" rel="noopener noreferrer" style="color:var(--accent-hover);font-weight:700;text-decoration:underline">{s.host}</a></li>
+              ))}
+            </ul>
+          </div>
+          <p style="margin:14px 0 0;font-size:13px;color:var(--muted)">Spotted a mistake? <a href="/contact/" style="color:var(--accent-hover);font-weight:800;text-decoration:underline">Tell us</a> and we will fix or remove it.</p>
+        </article>
+
+        <aside style="display:flex;flex-direction:column;gap:14px;min-width:0">
+          <div style="border:2px solid var(--border);border-radius:14px;background:#fff;overflow:hidden">
+            <div style="padding:14px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:800;color:var(--navy)">More local news</div>
+            {more.length === 0 && <div style="padding:14px 16px;font-size:13.5px;color:var(--muted)">No other stories yet.</div>}
+            {more.map((n) => (
+              <a href={`/news/${n.slug}/`} class="news-more" style="display:flex;flex-direction:column;gap:2px;padding:11px 16px;border-top:1px solid var(--border);color:var(--navy);text-decoration:none">
+                <span style="font-size:13.5px;font-weight:700;line-height:1.32">{n.title}</span>
+                <span style="font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">{n.category} · {newsDateLong(n)}</span>
+              </a>
+            ))}
+            <a href="/news/" style="display:block;padding:12px 16px;border-top:1px solid var(--border);font-size:13px;font-weight:800;color:var(--accent);text-decoration:none">All local news →</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+    <div style="height:clamp(36px,5vw,60px)"></div>
+  </main>
+</BaseLayout>
+
+<style>
+  #news-shell {
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 950px) {
+    #news-shell {
+      grid-template-columns: minmax(0, 1fr) 320px;
+    }
+  }
+  .news-more:hover {
+    background: var(--bg-subtle);
+  }
+</style>
