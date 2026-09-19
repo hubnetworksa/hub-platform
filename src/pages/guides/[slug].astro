@@ -25,12 +25,15 @@ const byline = `Updated ${guide.updatedLabel} · ${guide.readTime} read · by th
 // businesses in it yet — the section then shows an honest empty state).
 const category = categoryBySlug(guide.categorySlug);
 const categoryName = category?.name ?? '';
-const sponsor = category ? sponsorFor('category_sponsor', category.slug) : undefined;
+// The guide itself is sponsored (one business per guide) — a separate
+// product from sponsoring the category, so a category sponsor doesn't
+// automatically get the guide slot too.
+const guideSponsor = sponsorFor('guide_sponsor', guide.slug);
 const inCategory = category ? businessesInCategory(category.id) : [];
 const listed = [...inCategory]
   .sort((a, b) => {
-    const sa = sponsor && a.slug === sponsor.business_slug ? 1 : 0;
-    const sb = sponsor && b.slug === sponsor.business_slug ? 1 : 0;
+    const sa = guideSponsor && a.slug === guideSponsor.business_slug ? 1 : 0;
+    const sb = guideSponsor && b.slug === guideSponsor.business_slug ? 1 : 0;
     return sb - sa || b.subscription_tier - a.subscription_tier || a.name.localeCompare(b.name);
   })
   .slice(0, 3)
@@ -38,10 +41,10 @@ const listed = [...inCategory]
     slug: b.slug,
     name: b.name,
     suburb: suburbFor(b)?.name,
-    featured: b.subscription_tier >= FEATURED_TIER || sponsor?.business_slug === b.slug,
+    featured: b.subscription_tier >= FEATURED_TIER || guideSponsor?.business_slug === b.slug,
   }));
 
-const sponsorPrice = priceRand('price_sponsor_category_cents');
+const sponsorPrice = priceRand('price_sponsor_guide_cents');
 const otherGuides = GUIDES.filter((g) => g.slug !== guide.slug).map((g) => ({
   href: `/guides/${g.slug}/`,
   title: g.title(site.cityLabel),
@@ -134,26 +137,24 @@ const articleJsonLd = {
             </div>
           </div>
 
-          {category && (
-            <div style="border:2px solid var(--navy);border-radius:14px;overflow:hidden">
-              <div style="background:var(--navy);padding:14px 16px">
-                <div style="font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--grad-from)">{sponsor ? 'Sponsored' : 'Sponsorship'}</div>
-                <div style="font-size:16px;font-weight:800;color:#fff;margin-top:5px;letter-spacing:-.02em">One business owns the {categoryName} category</div>
-              </div>
-              <div style="padding:16px;background:#fff">
-                {sponsor ? (
-                  <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text)">
-                    <a href={`/business/${sponsor.business_slug}/`} style="font-weight:800;color:var(--navy);text-decoration:none">{sponsor.business_name}</a> is the current {categoryName.toLowerCase()} category sponsor.
-                  </p>
-                ) : (
-                  <>
-                    <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Category sponsorship puts your card above every {categoryName.toLowerCase()} listing, city-wide.</p>
-                    <a href="/pricing/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-align:center;text-decoration:none">{sponsorPrice === '—' ? 'Enquire' : `Enquire — ${sponsorPrice}/mo`}</a>
-                  </>
-                )}
-              </div>
+          <div style="border:2px solid var(--navy);border-radius:14px;overflow:hidden">
+            <div style="background:var(--navy);padding:14px 16px">
+              <div style="font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--grad-from)">{guideSponsor ? 'Sponsored' : 'Sponsorship'}</div>
+              <div style="font-size:16px;font-weight:800;color:#fff;margin-top:5px;letter-spacing:-.02em">One business sponsors this guide</div>
             </div>
-          )}
+            <div style="padding:16px;background:#fff">
+              {guideSponsor ? (
+                <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text)">
+                  <a href={`/business/${guideSponsor.business_slug}/`} style="font-weight:800;color:var(--navy);text-decoration:none">{guideSponsor.business_name}</a> sponsors this guide.
+                </p>
+              ) : (
+                <>
+                  <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Guide sponsorship puts your card at the top of this guide's aside, read by people about to hire {category ? categoryName.toLowerCase() : 'a tradesperson'}.</p>
+                  <a href="/pricing/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-align:center;text-decoration:none">{sponsorPrice === '—' ? 'Enquire' : `Enquire — ${sponsorPrice}/mo`}</a>
+                </>
+              )}
+            </div>
+          </div>
 
           {otherGuides.length > 0 && (
             <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:#fff">

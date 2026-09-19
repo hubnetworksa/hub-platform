@@ -1,11 +1,12 @@
 ---
 import { adsEnabled } from '../../lib/site-overrides';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import BusinessCard from '../../components/BusinessCard.astro';
 import SponsorSlot from '../../components/SponsorSlot.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { suburbs, businessesInSuburb, categoriesFor, FEATURED_TIER, type Business } from '../../lib/data';
+import Icon from '../../components/Icon.astro';
+import { suburbs, businessesInSuburb, businessesInSuburbAndCategory, categoriesFor, categoryBySlug, FEATURED_TIER, type Business } from '../../lib/data';
 import { groupForSuburb } from '../../site-content';
+import { CATEGORY_GROUPS } from '../../lib/categoryGroups';
 import { synonymsFor, suburbSynonymsFor } from '../../lib/categorySynonyms';
 import { collectionPageJsonLd } from '../../lib/seo';
 import site from '../../site';
@@ -30,6 +31,19 @@ for (const b of businesses) {
   const primary = categoriesFor(b)[0];
   if (primary) categoriesHere.set(primary.slug, primary.name);
 }
+
+// Businesses grouped by section, same card layout as /category/ — replaces
+// a flat A-Z list with the categories-style browse, scoped to this suburb.
+const groups = CATEGORY_GROUPS.map((group) => {
+  const subs = group.categorySlugs
+    .filter((slug) => categoriesHere.has(slug))
+    .map((slug) => {
+      const category = categoryBySlug(slug)!;
+      return { slug, name: category.name, count: businessesInSuburbAndCategory(suburb.id, category.id).length };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+  return { slug: group.slug, name: group.name, iconPath: group.iconPath, subs, total: subs.reduce((sum, s) => sum + s.count, 0) };
+}).filter((g) => g.subs.length > 0);
 
 const keywords = [
   ...new Set([...categoriesHere.keys()].flatMap((slug) => [...synonymsFor(slug), ...suburbSynonymsFor(categoriesHere.get(slug)!, suburb.name)])),
@@ -106,13 +120,31 @@ const collectionJsonLd = businesses.length === 0
             </>
           )}
 
-          <h2 style="margin:26px 0 12px;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">All listings, A–Z</h2>
+          <h2 style="margin:26px 0 12px;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Browse by category</h2>
           {businesses.length === 0 ? (
             <p style="color:var(--muted);">No businesses listed in {suburb.name} yet.</p>
           ) : (
-            <div style="border:2px solid var(--border);border-radius:14px;overflow:hidden;background:#fff">
-              {businesses.map((b) => (
-                <BusinessCard business={b} showSuburb={false} listContext={{ kind: 'suburb', slug: suburb.slug, name: suburb.name }} variant="row" />
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
+              {groups.map((g) => (
+                <section style="border:2px solid var(--border);border-radius:16px;background:#fff;overflow:hidden;display:flex;flex-direction:column">
+                  <div style="padding:16px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:flex-start;gap:12px">
+                    <span style="flex-shrink:0;width:38px;height:38px;border-radius:10px;background:var(--bg-subtle);display:flex;align-items:center;justify-content:center;color:var(--accent)">
+                      <Icon path={g.iconPath} size={20} />
+                    </span>
+                    <span style="display:flex;flex-direction:column;min-width:0">
+                      <span style="font-size:16.5px;font-weight:800;letter-spacing:-.02em;color:var(--navy);line-height:1.2">{g.name}</span>
+                      <span style="font-size:12px;font-weight:700;color:var(--muted);margin-top:3px">{g.subs.length} categories · {g.total.toLocaleString('en-US')} businesses</span>
+                    </span>
+                  </div>
+                  <div style="display:flex;flex-direction:column">
+                    {g.subs.map((s) => (
+                      <a href={`/category/${s.slug}/${suburb.slug}/`} class="suburb-cat-sub" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 18px;border-bottom:1px solid var(--border);color:var(--navy);text-decoration:none">
+                        <span style="font-size:14px;font-weight:700;min-width:0">{s.name}</span>
+                        <span style="font-size:12px;font-weight:800;color:var(--muted);white-space:nowrap">{s.count}</span>
+                      </a>
+                    ))}
+                  </div>
+                </section>
               ))}
             </div>
           )}
@@ -153,5 +185,8 @@ const collectionJsonLd = businesses.length === 0
     #suburb-shell {
       grid-template-columns: minmax(0, 1fr) 320px;
     }
+  }
+  .suburb-cat-sub:hover {
+    background: var(--bg-subtle);
   }
 </style>

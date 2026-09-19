@@ -106,6 +106,19 @@ for (const c of centres) {
 // Homepage banner.
 add('homepage_banner', null, featured[0] ?? ranked[0]);
 
+// Guide sponsor: the one published guide (src/lib/guides.ts is a TS module,
+// not JSON, so its slug is pulled out with a regex rather than imported).
+try {
+  const guidesSrc = readFileSync('src/lib/guides.ts', 'utf8');
+  const guideSlug = guidesSrc.match(/slug:\s*'([^']+)'/)?.[1];
+  if (guideSlug) {
+    const b = ranked.find((x) => x.id !== (sponsorships.find((s) => s.product_type === 'homepage_banner')?.business_id ?? -1));
+    if (b) add('guide_sponsor', guideSlug, b);
+  }
+} catch {
+  // No guides file yet — nothing to sponsor.
+}
+
 // Featured events.
 events.slice(0, 2).forEach((e) => {
   e.featured = 1;
@@ -115,7 +128,8 @@ write('businesses', businesses);
 write('sponsorships', sponsorships);
 write('events', events);
 
+const guideCount = sponsorships.filter((s) => s.product_type === 'guide_sponsor').length;
 console.log(
   `[demo-premium] PREVIEW ONLY: ${featured.length} Featured, ${verified.length} Verified, ${sponsorships.length} sponsor slots ` +
-    `(${topCategories.length} category, ${topSuburbs.length} suburb, ${centresDone} centre, 1 homepage banner), ${Math.min(2, events.length)} Featured events.`,
+    `(${topCategories.length} category, ${topSuburbs.length} suburb, ${centresDone} centre, ${guideCount} guide, 1 homepage banner), ${Math.min(2, events.length)} Featured events.`,
 );

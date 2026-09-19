@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SponsorSlot from '../components/SponsorSlot.astro';
 import { priceRand, categories, suburbs } from '../lib/data';
+import { GUIDES } from '../lib/guides';
 import site from '../site';
 
 const SPOTS = [
@@ -9,6 +10,9 @@ const SPOTS = [
   { productType: 'suburb_sponsor' as const, name: 'Suburb sponsor', price: priceRand('price_sponsor_suburb_cents'), blurb: `Own the top slot on one of ${suburbs.length} suburb pages.` },
   { productType: 'homepage_banner' as const, name: 'Homepage banner', price: priceRand('price_sponsor_banner_cents'), blurb: 'A single full-width placement under the hero. One advertiser at a time.' },
   { productType: 'centre_sponsor' as const, name: 'Centre sponsorship', price: priceRand('price_sponsor_centre_cents'), blurb: 'Brand a whole shopping-centre page and its store list.' },
+  ...(GUIDES.length > 0
+    ? [{ productType: 'guide_sponsor' as const, name: 'Guide sponsorship', price: priceRand('price_sponsor_guide_cents'), blurb: `One business per buyer's guide — currently ${GUIDES.length} guide${GUIDES.length === 1 ? '' : 's'} live.` }]
+    : []),
 ];
 ---
 

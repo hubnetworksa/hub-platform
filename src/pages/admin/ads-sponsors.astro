@@ -3,6 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdminShell from '../../components/AdminShell.astro';
 import { categories, suburbs, shoppingCenters, businessesInCategory, businessesInSuburb } from '../../lib/data';
 import { adsEnabled } from '../../lib/site-overrides';
+import { GUIDES } from '../../lib/guides';
+import site from '../../site';
 
 // Build-time lookups so the client can name slots and pick a few open ones to
 // show as chips. `count` = listings in that category/suburb (bigger = more
@@ -11,6 +13,7 @@ const slotData = {
   categories: categories.map((c) => ({ slug: c.slug, name: c.name, count: businessesInCategory(c.id).length })),
   suburbs: suburbs.map((s) => ({ slug: s.slug, name: s.name, count: businessesInSuburb(s.id).length })),
   centres: shoppingCenters.map((c) => ({ slug: c.slug, name: c.name })),
+  guides: GUIDES.map((g) => ({ slug: g.slug, name: g.title(site.cityLabel) })),
   adsEnabledAtBuild: adsEnabled,
 };
 const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
@@ -60,6 +63,7 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
               <option value="suburb_sponsor">Suburb sponsor</option>
               <option value="homepage_banner">Homepage banner</option>
               <option value="centre_sponsor">Centre sponsorship</option>
+              <option value="guide_sponsor">Guide sponsorship</option>
             </select>
           </label>
           <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
@@ -82,6 +86,7 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
     categories: { slug: string; name: string; count: number }[];
     suburbs: { slug: string; name: string; count: number }[];
     centres: { slug: string; name: string }[];
+    guides: { slug: string; name: string }[];
     adsEnabledAtBuild: boolean;
   }
   interface Sold {
@@ -94,6 +99,7 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
     suburb_sponsor: 'Suburb sponsor',
     homepage_banner: 'Homepage banner',
     centre_sponsor: 'Centre sponsorship',
+    guide_sponsor: 'Guide sponsorship',
   };
 
   const settings = new Map<string, string>();
@@ -105,6 +111,7 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
     if (productType === 'category_sponsor') return slots.categories.find((c) => c.slug === target)?.name ?? target ?? '';
     if (productType === 'suburb_sponsor') return slots.suburbs.find((s) => s.slug === target)?.name ?? target ?? '';
     if (productType === 'centre_sponsor') return slots.centres.find((c) => c.slug === target)?.name ?? target ?? '';
+    if (productType === 'guide_sponsor') return slots.guides.find((g) => g.slug === target)?.name ?? target ?? '';
     return target ?? '';
   }
 

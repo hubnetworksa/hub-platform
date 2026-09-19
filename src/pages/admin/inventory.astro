@@ -2,14 +2,18 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdminShell from '../../components/AdminShell.astro';
 import { categories, suburbs, shoppingCenters, businessesInCategory, businessesInSuburb, businessesInShoppingCenter } from '../../lib/data';
+import { GUIDES } from '../../lib/guides';
+import site from '../../site';
 
-// Every sellable exclusive slot on this hub: one per category, per suburb and
-// per shopping centre, plus the single homepage banner. `count` = listings
-// there (bigger = more valuable), used to list the best open slots first.
+// Every sellable exclusive slot on this hub: one per category, per suburb,
+// per shopping centre and per published guide, plus the single homepage
+// banner. `count` = listings there (bigger = more valuable), used to list
+// the best open slots first.
 const slotData = {
   categories: categories.map((c) => ({ slug: c.slug, name: c.name, count: businessesInCategory(c.id).length })),
   suburbs: suburbs.map((s) => ({ slug: s.slug, name: s.name, count: businessesInSuburb(s.id).length })),
   centres: shoppingCenters.map((c) => ({ slug: c.slug, name: c.name, count: businessesInShoppingCenter(c.id).length })),
+  guides: GUIDES.map((g) => ({ slug: g.slug, name: g.title(site.cityLabel), count: 0 })),
 };
 const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
 
@@ -55,7 +59,7 @@ const tile = 'background:#fff;border:2px solid var(--border);border-radius:12px;
   import { esc, randFromCents, statusPillStyle, requireAdmin, showContent, postJson, fmtDate } from '../../lib/admin-html';
 
   interface Named { slug: string; name: string; count: number }
-  const slots: { categories: Named[]; suburbs: Named[]; centres: Named[] } = JSON.parse(document.getElementById('slot-data')!.textContent || '{}');
+  const slots: { categories: Named[]; suburbs: Named[]; centres: Named[]; guides: Named[] } = JSON.parse(document.getElementById('slot-data')!.textContent || '{}');
 
   interface Sold { id: number; product_type: string; product_target: string | null; business_name: string; current_period_end: string | null; comped: number }
   interface Slot {
@@ -67,6 +71,7 @@ const tile = 'background:#fff;border:2px solid var(--border);border-radius:12px;
     category_sponsor: { kind: 'Category sponsor', rateKey: 'price_sponsor_category_cents' },
     suburb_sponsor: { kind: 'Suburb sponsor', rateKey: 'price_sponsor_suburb_cents' },
     centre_sponsor: { kind: 'Centre sponsor', rateKey: 'price_sponsor_centre_cents' },
+    guide_sponsor: { kind: 'Guide sponsor', rateKey: 'price_sponsor_guide_cents' },
     homepage_banner: { kind: 'Display', rateKey: 'price_sponsor_banner_cents' },
   };
 
@@ -86,6 +91,7 @@ const tile = 'background:#fff;border:2px solid var(--border);border-radius:12px;
       ...slots.categories.map((c) => make('category_sponsor', c.slug, c.name, c.count)),
       ...slots.suburbs.map((s) => make('suburb_sponsor', s.slug, s.name, s.count)),
       ...slots.centres.map((c) => make('centre_sponsor', c.slug, c.name, c.count)),
+      ...slots.guides.map((g) => make('guide_sponsor', g.slug, g.name, g.count)),
     ];
     // Sold first, then open ones with the most listings first.
     list.sort((a, b) => Number(!!b.sold) - Number(!!a.sold) || b.count - a.count || a.name.localeCompare(b.name));

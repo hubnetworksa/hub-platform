@@ -80,6 +80,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   let categorySuburbCents = 0;
   let bannerCents = 0;
   let centreCents = 0;
+  let guideCents = 0;
   for (const row of activeSubs.results) {
     if (row.product_type === 'tier') {
       const each = (await tierPriceCents(db, row.tier)) ?? 0;
@@ -90,10 +91,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       if (row.product_type === 'category_sponsor' || row.product_type === 'suburb_sponsor') categorySuburbCents += each * row.n;
       else if (row.product_type === 'homepage_banner') bannerCents += each * row.n;
       else if (row.product_type === 'centre_sponsor') centreCents += each * row.n;
+      else if (row.product_type === 'guide_sponsor') guideCents += each * row.n;
     }
   }
   const tierRevenueCents = featuredCents + verifiedCents;
-  const sponsorshipRevenueCents = categorySuburbCents + bannerCents + centreCents;
+  const sponsorshipRevenueCents = categorySuburbCents + bannerCents + centreCents + guideCents;
 
   return json({
     ok: true,
@@ -134,6 +136,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         { key: 'category_suburb', label: 'Category & suburb sponsors', cents: categorySuburbCents },
         { key: 'display', label: 'Display ads', cents: bannerCents },
         { key: 'centre', label: 'Shopping centre sponsors', cents: centreCents },
+        { key: 'guide', label: 'Guide sponsors', cents: guideCents },
       ],
     },
     health: {

@@ -14,6 +14,7 @@ const PRICE_KEYS = [
   'price_sponsor_suburb_cents',
   'price_sponsor_banner_cents',
   'price_sponsor_centre_cents',
+  'price_sponsor_guide_cents',
   'price_event_feature_cents',
   // Rate-card entries for the two display-ad placements that don't have a
   // sponsorship product of their own (the homepage in-content and suburb
