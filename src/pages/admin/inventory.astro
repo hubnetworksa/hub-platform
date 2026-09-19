@@ -1,0 +1,190 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminShell from '../../components/AdminShell.astro';
+import { categories, suburbs, shoppingCenters, businessesInCategory, businessesInSuburb, businessesInShoppingCenter } from '../../lib/data';
+
+// Every sellable exclusive slot on this hub: one per category, per suburb and
+// per shopping centre, plus the single homepage banner. `count` = listings
+// there (bigger = more valuable), used to list the best open slots first.
+const slotData = {
+  categories: categories.map((c) => ({ slug: c.slug, name: c.name, count: businessesInCategory(c.id).length })),
+  suburbs: suburbs.map((s) => ({ slug: s.slug, name: s.name, count: businessesInSuburb(s.id).length })),
+  centres: shoppingCenters.map((c) => ({ slug: c.slug, name: c.name, count: businessesInShoppingCenter(c.id).length })),
+};
+const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
+
+const tile = 'background:#fff;border:2px solid var(--border);border-radius:12px;padding:14px 18px;flex:1;min-width:140px';
+---
+
+<BaseLayout title="Sponsored inventory" description="Category, suburb, centre and homepage sponsorship slots — sold and open." noindex={true}>
+  <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
+
+  <div id="content" hidden>
+    <AdminShell active="inventory" title="Sponsored inventory" subtitle="Category, suburb and centre slots — sold and open">
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div style={tile}>
+          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Sold slots</div>
+          <div id="inv-sold" style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px">—</div>
+        </div>
+        <div style={tile}>
+          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Open slots</div>
+          <div id="inv-open" style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px">—</div>
+        </div>
+        <div style="background:#fff;border:2px solid var(--accent);border-radius:12px;padding:14px 18px;flex:1;min-width:150px">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)">Booked value / mo</div>
+          <div id="inv-value" style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px">—</div>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div class="admin-cols" style="gap:12px;padding:12px 18px;border-bottom:2px solid var(--navy);font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">
+          <span>Slot</span><span class="admin-hide">Booked by</span><span class="admin-hide">Rate</span><span>Actions</span>
+        </div>
+        <div id="inv-rows"></div>
+        <div style="padding:13px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <span id="inv-count" style="font-size:12.5px;font-weight:700;color:var(--muted)"></span>
+          <button id="inv-more" type="button" hidden style="padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;cursor:pointer">Show more</button>
+        </div>
+      </div>
+    </AdminShell>
+  </div>
+  <script type="application/json" id="slot-data" set:html={slotJson} />
+</BaseLayout>
+
+<script>
+  import { esc, randFromCents, statusPillStyle, requireAdmin, showContent, postJson, fmtDate } from '../../lib/admin-html';
+
+  interface Named { slug: string; name: string; count: number }
+  const slots: { categories: Named[]; suburbs: Named[]; centres: Named[] } = JSON.parse(document.getElementById('slot-data')!.textContent || '{}');
+
+  interface Sold { id: number; product_type: string; product_target: string | null; business_name: string; current_period_end: string | null; comped: number }
+  interface Slot {
+    key: string; productType: string; target: string | null; name: string; kind: string;
+    rateCents: number; sold: Sold | null; count: number;
+  }
+
+  const KINDS: Record<string, { kind: string; rateKey: string }> = {
+    category_sponsor: { kind: 'Category sponsor', rateKey: 'price_sponsor_category_cents' },
+    suburb_sponsor: { kind: 'Suburb sponsor', rateKey: 'price_sponsor_suburb_cents' },
+    centre_sponsor: { kind: 'Centre sponsor', rateKey: 'price_sponsor_centre_cents' },
+    homepage_banner: { kind: 'Display', rateKey: 'price_sponsor_banner_cents' },
+  };
+
+  const PAGE = 30;
+  let shown = PAGE;
+  let all: Slot[] = [];
+
+  function build(settings: Map<string, string>, sold: Sold[]) {
+    const soldByKey = new Map(sold.map((s) => [`${s.product_type}:${s.product_target ?? ''}`, s]));
+    const rate = (productType: string) => Number(settings.get(KINDS[productType].rateKey)) || 0;
+    const make = (productType: string, target: string | null, name: string, count: number): Slot => ({
+      key: `${productType}:${target ?? ''}`, productType, target, name, kind: KINDS[productType].kind, rateCents: rate(productType),
+      sold: soldByKey.get(`${productType}:${target ?? ''}`) ?? null, count,
+    });
+    const list: Slot[] = [
+      make('homepage_banner', null, 'Homepage banner', Number.MAX_SAFE_INTEGER),
+      ...slots.categories.map((c) => make('category_sponsor', c.slug, c.name, c.count)),
+      ...slots.suburbs.map((s) => make('suburb_sponsor', s.slug, s.name, s.count)),
+      ...slots.centres.map((c) => make('centre_sponsor', c.slug, c.name, c.count)),
+    ];
+    // Sold first, then open ones with the most listings first.
+    list.sort((a, b) => Number(!!b.sold) - Number(!!a.sold) || b.count - a.count || a.name.localeCompare(b.name));
+    all = list;
+  }
+
+  function render() {
+    const soldSlots = all.filter((s) => s.sold);
+    document.getElementById('inv-sold')!.textContent = String(soldSlots.length);
+    document.getElementById('inv-open')!.textContent = (all.length - soldSlots.length).toLocaleString('en-US');
+    document.getElementById('inv-value')!.textContent = randFromCents(soldSlots.filter((s) => !s.sold!.comped).reduce((sum, s) => sum + s.rateCents, 0));
+
+    document.getElementById('inv-rows')!.innerHTML = all
+      .slice(0, shown)
+      .map((s) => {
+        const isSold = !!s.sold;
+        const buyer = isSold ? s.sold!.business_name : 'Open — available now';
+        const until = isSold ? (s.sold!.comped ? 'Complimentary — no end date' : s.sold!.current_period_end ? `Booked to ${fmtDate(s.sold!.current_period_end)}` : 'Booked') : 'No booking';
+        const rate = s.rateCents > 0 ? `${randFromCents(s.rateCents)}<span style="font-size:11.5px;font-weight:700;color:var(--muted)">/mo</span>` : '<span style="font-size:12px;font-weight:700;color:var(--muted)">Rate not set</span>';
+        return `<div class="admin-cols admin-row" style="gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);align-items:center">
+          <div style="min-width:0">
+            <div style="font-size:14.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em">${esc(s.name)}</div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap">
+              <span style="${statusPillStyle(isSold ? 'Sold' : 'Open')}">${isSold ? 'Sold' : 'Open'}</span>
+              <span style="font-size:12px;font-weight:700;color:var(--muted)">${esc(s.kind)}</span>
+            </div>
+          </div>
+          <div class="admin-hide" style="min-width:0;font-size:13px;font-weight:700;color:var(--text)">${esc(buyer)}<br /><span style="font-weight:600;color:var(--muted);font-size:12px">${esc(until)}</span></div>
+          <div class="admin-hide" style="font-size:14px;font-weight:800;color:var(--navy)">${rate}</div>
+          <div style="display:flex;gap:7px;justify-content:flex-end">
+            <button data-slot="${esc(s.key)}" data-act="${isSold ? 'release' : 'book'}" class="admin-btn-plan" style="padding:8px 13px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--navy);font-size:12px;font-weight:800;cursor:pointer">${isSold ? 'Release' : 'Book'}</button>
+          </div>
+        </div>`;
+      })
+      .join('');
+    document.getElementById('inv-count')!.textContent = `${Math.min(shown, all.length).toLocaleString('en-US')} of ${all.length.toLocaleString('en-US')} slots`;
+    (document.getElementById('inv-more') as HTMLButtonElement).hidden = shown >= all.length;
+  }
+
+  let settingsCache = new Map<string, string>();
+
+  async function load() {
+    const [settingsRes, soldRes] = await Promise.all([fetch('/api/admin/site-settings'), fetch('/api/admin/sponsorships')]);
+    settingsCache = new Map(((await settingsRes.json()).settings ?? []).map((r: { key: string; value: string }) => [r.key, r.value]));
+    build(settingsCache, (await soldRes.json()).sponsorships ?? []);
+    render();
+  }
+
+  // Resolve "a business" typed into a prompt — a numeric id, or a name that
+  // matches one listing (or one picked from a short numbered list).
+  async function pickBusiness(slotName: string): Promise<number | null> {
+    const input = window.prompt(`Book "${slotName}" for which business? Enter its ID or (part of) its name:`);
+    if (!input || !input.trim()) return null;
+    const text = input.trim();
+    if (/^\d+$/.test(text)) return Number(text);
+    const res = await fetch(`/api/admin/listings?q=${encodeURIComponent(text)}&limit=9`);
+    const data = await res.json();
+    const found: { id: number; name: string; suburb_name: string | null }[] = data.results ?? [];
+    if (found.length === 0) {
+      window.alert(`No listing matches "${text}".`);
+      return null;
+    }
+    const exact = found.filter((f) => f.name.toLowerCase() === text.toLowerCase());
+    if (exact.length === 1) return exact[0].id;
+    if (found.length === 1) return found[0].id;
+    const choice = window.prompt(`Which one? Enter its number:\n${found.map((f, i) => `${i + 1}. ${f.name}${f.suburb_name ? ` (${f.suburb_name})` : ''}`).join('\n')}`);
+    const n = Number(choice);
+    return Number.isInteger(n) && n >= 1 && n <= found.length ? found[n - 1].id : null;
+  }
+
+  document.getElementById('inv-rows')!.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-slot]') as HTMLButtonElement | null;
+    if (!btn) return;
+    const slot = all.find((s) => s.key === btn.dataset.slot);
+    if (!slot) return;
+    if (btn.dataset.act === 'release') {
+      if (!window.confirm(`Release "${slot.name}"? It becomes available for anyone to buy.`)) return;
+      btn.disabled = true;
+      await postJson('/api/admin/sponsorships', { action: 'clear', id: slot.sold!.id });
+    } else {
+      const businessId = await pickBusiness(slot.name);
+      if (!businessId) return;
+      btn.disabled = true;
+      const result = await postJson('/api/admin/sponsorships', { action: 'set', businessId, productType: slot.productType, productTarget: slot.target ?? '' });
+      if (!result.ok) window.alert(String(result.error || 'Could not book that slot.'));
+    }
+    load();
+  });
+
+  document.getElementById('inv-more')!.addEventListener('click', () => {
+    shown += PAGE;
+    render();
+  });
+
+  async function init() {
+    if (!(await requireAdmin('/admin/inventory/'))) return;
+    showContent();
+    await load();
+  }
+
+  init();
+</script>

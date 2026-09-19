@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminShell from '../../components/AdminShell.astro';
+import site from '../../site';
+
+const tiles = [
+  { label: 'Profile views', note: 'last 30 days', accent: false },
+  { label: 'Phone clicks', note: 'tap-to-call on mobile', accent: false },
+  { label: 'Enquiries sent', note: 'paid plans only', accent: true },
+];
+---
+
+<BaseLayout title="Analytics" description="Views, calls and enquiries per listing." noindex={true}>
+  <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
+
+  <div id="content" hidden>
+    <AdminShell active="analytics" title="Analytics" subtitle="Views, calls and enquiries per listing">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px">
+        {tiles.map((t) => (
+          <div style={`background:#fff;border:2px solid ${t.accent ? 'var(--accent)' : 'var(--border)'};border-radius:14px;padding:18px`}>
+            <div style={`font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:${t.accent ? 'var(--accent)' : 'var(--muted)'}`}>{t.label}</div>
+            <div style="font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:8px;line-height:1">—</div>
+            <div style="font-size:12.5px;font-weight:700;color:var(--accent-hover);margin-top:5px">{t.note}</div>
+          </div>
+        ))}
+      </div>
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Per listing, last 30 days</h2>
+        </div>
+        <div style="padding:40px 18px;text-align:center">
+          <div style="font-size:16px;font-weight:800;color:var(--navy)">Per-listing tracking isn't switched on yet</div>
+          <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin:5px auto 0;max-width:56ch;line-height:1.5">
+            Profile views, phone clicks and enquiries aren't recorded per listing, so there are no honest numbers to show here.
+            {site.googleAnalyticsId ? ' Site-wide traffic for this hub is measured in Google Analytics.' : ''}
+          </div>
+          {site.googleAnalyticsId && (
+            <a href="https://analytics.google.com/" target="_blank" rel="noopener" style="display:inline-block;margin-top:14px;padding:11px 15px;border:2px solid var(--navy);border-radius:9px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">Open Google Analytics</a>
+          )}
+        </div>
+      </div>
+    </AdminShell>
+  </div>
+</BaseLayout>
+
+<script>
+  import { requireAdmin, showContent } from '../../lib/admin-html';
+
+  async function init() {
+    if (!(await requireAdmin('/admin/analytics/'))) return;
+    showContent();
+  }
+  init();
+</script>

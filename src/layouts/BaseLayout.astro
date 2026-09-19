@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Icon from '../components/Icon.astro';
 import site from '../site';
+import { siteName, cityLabel, footerTagline, adsEnabled } from '../lib/site-overrides';
 
 interface Props {
   title: string;
@@ -159,7 +160,7 @@ const themeCss = `:root {
 
     <style set:html={themeCss}></style>
   </head>
-  <body data-city-label={site.cityLabel}>
+  <body data-city-label={cityLabel} data-ads={adsEnabled ? '1' : '0'}>
     <a href="#main-content" class="skip-link">Skip to content</a>
 
     <div style="position:sticky;top:0;z-index:80;background:var(--navy);color:#fff">
@@ -169,8 +170,12 @@ const themeCss = `:root {
           Every listing reviewed before it goes live
         </span>
         <span style="display:flex;align-items:center;gap:18px;color:rgba(255,255,255,.72)">
+          <span id="wx-chip" hidden data-city={site.slug}>
+            <svg id="wx-chip-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></svg>
+            <span id="wx-chip-label"></span>
+          </span>
           <a href="/advertise/" style="color:rgba(255,255,255,.78)">Advertise</a>
-          <a href="/login/" style="color:rgba(255,255,255,.78)">Business log in</a>
+          <a href="/my-businesses/" style="color:rgba(255,255,255,.78)">Business log in</a>
         </span>
       </div>
     </div>
@@ -180,7 +185,7 @@ const themeCss = `:root {
         <a href="/" style="display:flex;align-items:center;gap:10px;flex-shrink:0">
           <img src="/logo-icon.png" alt={site.siteName} style="height:38px;width:auto;display:block" />
           <span style="display:flex;flex-direction:column;line-height:1.05">
-            <span style="font-weight:800;font-size:19px;letter-spacing:-.02em;color:var(--navy)">{site.cityLabel}<span style="color:var(--accent)">Hub</span></span>
+            <span style="font-weight:800;font-size:19px;letter-spacing:-.02em;color:var(--navy)">{cityLabel}<span style="color:var(--accent)">Hub</span></span>
             <span style="font-size:9px;font-weight:800;letter-spacing:.18em;color:var(--muted);margin-top:3px">BUSINESS DIRECTORY</span>
           </span>
         </a>
@@ -189,6 +194,7 @@ const themeCss = `:root {
           <a href="/category/" class="nav-desk-link">Categories</a>
           <a href="/events/" class="nav-desk-link">Events</a>
           <a href="/shopping-center/" class="nav-desk-link">Shopping centres</a>
+          <a href="/guides/" class="nav-desk-link">Guides</a>
           {site.features.tourism && <a href="/tourism/" class="nav-desk-link">Tourism</a>}
           <a href="/about/" class="nav-desk-link">About</a>
         </nav>
@@ -211,7 +217,8 @@ const themeCss = `:root {
         <a href="/shopping-center/" class="nav-mob-link">Shopping centres</a>
         <a href="/pricing/" class="nav-mob-link">Plans &amp; pricing</a>
         <a href="/about/" class="nav-mob-link">About</a>
-        <a href="/login/" style="padding:13px 6px;font-size:15.5px;font-weight:800;color:var(--muted)">Business log in</a>
+        <a href="/guides/" class="nav-mob-link">Guides</a>
+        <a href="/my-businesses/" style="padding:13px 6px;font-size:15.5px;font-weight:800;color:var(--muted)">Business log in</a>
       </div>
     </header>
 
@@ -223,8 +230,8 @@ const themeCss = `:root {
       <div style="max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,44px) 20px">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:24px">
           <div>
-            <div style="font-weight:800;font-size:18px;letter-spacing:-.02em;color:#fff">{site.cityLabel}<span style="color:var(--grad-from)">Hub</span></div>
-            <p style="margin:8px 0 0;font-size:13.5px;line-height:1.55;max-width:32ch">{site.footerTagline}</p>
+            <div style="font-weight:800;font-size:18px;letter-spacing:-.02em;color:#fff">{cityLabel}<span style="color:var(--grad-from)">Hub</span></div>
+            <p style="margin:8px 0 0;font-size:13.5px;line-height:1.55;max-width:32ch">{footerTagline}</p>
           </div>
           <div style="display:flex;flex-direction:column;gap:8px;font-size:13.5px;font-weight:600">
             <span style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45)">Browse</span>
@@ -232,6 +239,7 @@ const themeCss = `:root {
             <a href="/category/" style="color:rgba(255,255,255,.75)">Categories</a>
             <a href="/events/" style="color:rgba(255,255,255,.75)">Events</a>
             <a href="/shopping-center/" style="color:rgba(255,255,255,.75)">Shopping centres</a>
+            <a href="/guides/" style="color:rgba(255,255,255,.75)">Guides</a>
           </div>
           <div style="display:flex;flex-direction:column;gap:8px;font-size:13.5px;font-weight:600">
             <span style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45)">For owners</span>
@@ -243,16 +251,37 @@ const themeCss = `:root {
             <span style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45)">Company</span>
             <a href="/about/" style="color:rgba(255,255,255,.75)">About</a>
             <a href="/partners/" style="color:rgba(255,255,255,.75)">Partners</a>
-            <a href="/privacy/" style="color:rgba(255,255,255,.75)">Privacy</a>
+            <a href="/contact/" style="color:rgba(255,255,255,.75)">Contact</a>
+            <a href="/privacy/" style="color:rgba(255,255,255,.75)">Privacy &amp; POPIA</a>
             <a href="/terms/" style="color:rgba(255,255,255,.75)">Terms</a>
           </div>
         </div>
         <div style="height:1px;background:rgba(255,255,255,.16);margin:24px 0 16px"></div>
-        <div style="font-size:12.5px;font-weight:600;color:rgba(255,255,255,.55)">© {new Date().getFullYear()} {site.siteName} — {site.footerTagline}</div>
+        <div style="font-size:12.5px;font-weight:600;color:rgba(255,255,255,.55)">© {new Date().getFullYear()} {siteName} — {footerTagline}</div>
       </div>
     </footer>
 
     <script>
+      const WX_COORDS: Record<string, [number, number]> = { capetown: [-33.9249, 18.4241], pretoria: [-25.7479, 28.2293], polokwane: [-23.9045, 29.4689] };
+      const WX_ICONS: Record<string, string> = {
+        sun: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>',
+        cloud: '<path d="M7 18h10a3.6 3.6 0 0 0 .3-7.2A5.4 5.4 0 0 0 6.9 11 3.5 3.5 0 0 0 7 18Z"/>',
+        rain: '<path d="M7 15h10a3.4 3.4 0 0 0 .3-6.8A5.2 5.2 0 0 0 6.9 8.3 3.4 3.4 0 0 0 7 15Z"/><path d="M9 18.5 8 21M13 18.5 12 21M17 18.5 16 21"/>',
+      };
+      const wxChip = document.getElementById('wx-chip');
+      const wxCoords = wxChip ? WX_COORDS[wxChip.dataset.city ?? ''] : undefined;
+      if (wxChip && wxCoords) {
+        fetch(`/api/weather?lat=${wxCoords[0]}&lon=${wxCoords[1]}`)
+          .then((r) => (r.ok ? r.json() : Promise.reject()))
+          .then((w) => {
+            if (!w.ok) return;
+            document.getElementById('wx-chip-icon')!.innerHTML = WX_ICONS[w.now.icon] ?? WX_ICONS.cloud;
+            document.getElementById('wx-chip-label')!.textContent = `${w.now.temp}°C · ${w.now.cond}`;
+            wxChip.hidden = false;
+          })
+          .catch(() => {});
+      }
+
       // Deters casual copying only — not a real barrier (dev tools/view-source
       // bypass this trivially) — real protection is the copyright notice in
       // Terms plus hotlink protection on the actual image files.

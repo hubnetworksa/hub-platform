@@ -24,6 +24,10 @@ export const GET: APIRoute = () => {
       k: cat ? [...synonymsFor(cat.slug), ...locationSynonymsFor(cat.name, site.cityLabel)].join(' ') : '',
       t: b.subscription_tier,
       h: Boolean(b.hours),
+      // Raw trading-hours text, for the client-side "Open now" filter and
+      // badge (src/lib/openNow.ts parses it; unparseable text just means
+      // "unknown"). Empty for the vast majority of listings.
+      hr: b.hours ?? '',
       // Only the pinned (top Featured) result renders these — see
       // renderRow(r, pinned=true) in search.astro — so they're worth the
       // extra bytes despite not being used by every row.

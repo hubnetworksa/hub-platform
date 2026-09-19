@@ -1,36 +1,96 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Icon from '../components/Icon.astro';
+import { categories, suburbs, businessesInCategory, businessesInSuburb } from '../lib/data';
+import { groupForSuburb } from '../site-content';
+import { synonymsFor } from '../lib/categorySynonyms';
 import site from '../site';
+
+// Real, build-time data for the "Nothing matched" screen's suggestions —
+// categories (with their trade-jargon synonyms) and suburbs (with their area
+// group, for "nearby suburbs"), each with how many listings they hold. The
+// client matches the visitor's query against these (typo-tolerant) so every
+// suggestion links somewhere that genuinely has businesses.
+const searchMeta = {
+  cats: categories
+    .map((c) => ({ n: c.name, s: c.slug, c: businessesInCategory(c.id).length, k: synonymsFor(c.slug).join(' ') }))
+    .filter((c) => c.c > 0),
+  subs: suburbs
+    .map((s) => ({ n: s.name, s: s.slug, c: businessesInSuburb(s.id).length, g: groupForSuburb(s.slug)?.slug ?? '' }))
+    .filter((s) => s.c > 0),
+};
+const searchMetaJson = JSON.stringify(searchMeta).replace(/</g, '\\u003c');
+
+const stepStyle = 'flex-shrink:0;width:28px;height:28px;border-radius:8px;background:var(--bg-subtle);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px';
 ---
 
 <BaseLayout title="Search results" description={`Search ${site.siteName}'s directory.`} noindex={true}>
   <main style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
-    <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--muted);flex-wrap:wrap">
+    <div id="crumbs" style="display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--muted);flex-wrap:wrap">
       <a href="/" style="color:var(--muted)">Home</a><span>/</span><span style="color:var(--navy)">Search</span>
     </div>
     <form id="search-form" style="margin-top:14px;display:flex;align-items:center;gap:10px;padding:0 14px;border:2px solid var(--navy);border-radius:12px;background:#fff;max-width:620px">
       <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m20 20-4.5-4.5"></path></svg>
-      <input id="search-input" type="search" name="q" style="flex:1;min-width:0;border:0;background:transparent;padding:14px 0;font-size:15px;font-weight:600;color:var(--text);outline:none" />
+      <input id="search-input" type="search" name="q" aria-label="Search businesses" style="flex:1;min-width:0;border:0;background:transparent;padding:14px 0;font-size:15px;font-weight:600;color:var(--text);outline:none" />
     </form>
-    <h1 id="results-heading" style="margin:22px 0 4px;font-size:clamp(24px,3.4vw,32px);letter-spacing:-.025em;color:var(--navy)">Search</h1>
-    <p style="margin:0 0 18px;font-size:14px;color:var(--muted);font-weight:600">Featured listings appear first and are marked as such.</p>
 
-    <div style="display:grid;grid-template-columns:1fr;gap:22px" id="results-shell">
-      <div style="display:flex;flex-direction:column;gap:12px" id="results-list"></div>
+    <div id="results-view">
+      <h1 id="results-heading" style="margin:22px 0 4px;font-size:clamp(24px,3.4vw,32px);letter-spacing:-.025em;color:var(--navy)">Search</h1>
+      <p style="margin:0 0 14px;font-size:14px;color:var(--muted);font-weight:600">Featured listings appear first and are marked as such.</p>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px">
+        <button id="open-now-btn" type="button" class="filter-pill" aria-pressed="false" style="display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:800">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg>
+          <span id="open-now-label">Open now</span>
+        </button>
+        <button id="verified-btn" type="button" class="filter-pill" aria-pressed="false" style="padding:9px 14px;border-radius:999px;cursor:pointer;font-size:13px;font-weight:800">Verified only</button>
+        <span id="open-note" style="font-size:12.5px;font-weight:700;color:var(--muted)">Filter to businesses trading right now.</span>
+      </div>
 
-      <aside style="display:flex;flex-direction:column;gap:14px">
-        <div id="sponsor-slot" style="border:2px solid var(--navy);border-radius:14px;overflow:hidden"></div>
-        <div style="border:2px solid var(--border);border-radius:14px;padding:16px;background:var(--bg-subtle)">
-          <div style="font-size:13px;font-weight:800;color:var(--navy);margin-bottom:8px">Refine</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <label style="display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;color:var(--text)"><input id="filter-verified" type="checkbox" style="accent-color:var(--accent);width:16px;height:16px" />Verified only</label>
-            <label style="display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;color:var(--text)"><input id="filter-hours" type="checkbox" style="accent-color:var(--accent);width:16px;height:16px" />Has trading hours</label>
+      <div style="display:grid;grid-template-columns:1fr;gap:22px" id="results-shell">
+        <div style="display:flex;flex-direction:column;gap:12px" id="results-list"></div>
+
+        <aside style="display:flex;flex-direction:column;gap:14px">
+          <div id="sponsor-slot" style="border:2px solid var(--navy);border-radius:14px;overflow:hidden"></div>
+          <div style="border:2px solid var(--border);border-radius:14px;padding:16px;background:var(--bg-subtle)">
+            <div style="font-size:13px;font-weight:800;color:var(--navy);margin-bottom:8px">Refine</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <label style="display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;color:var(--text)"><input id="filter-verified" type="checkbox" style="accent-color:var(--accent);width:16px;height:16px" />Verified only</label>
+              <label style="display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;color:var(--text)"><input id="filter-hours" type="checkbox" style="accent-color:var(--accent);width:16px;height:16px" />Has trading hours</label>
+              <label style="display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;color:var(--text)"><input id="filter-open" type="checkbox" style="accent-color:var(--accent);width:16px;height:16px" />Open now</label>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div id="empty-view" hidden>
+      <div style="border:2px solid var(--border);border-radius:16px;padding:clamp(24px,4vw,44px);margin-top:22px;background:#fff;max-width:760px">
+        <h1 id="empty-title" style="margin:0 0 10px;font-size:clamp(23px,3.4vw,32px);letter-spacing:-.03em;color:var(--navy)">Nothing matched</h1>
+        <p style="margin:0 0 22px;font-size:16px;line-height:1.6;color:var(--text);max-width:52ch">That doesn't mean the business doesn't exist — it might not be listed yet.</p>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style={stepStyle}>1</span>
+            <div><div style="font-size:15px;font-weight:800;color:var(--navy)">Try a broader term</div><div style="font-size:14px;color:var(--muted);font-weight:600;margin-top:2px">Drop the suburb, or search the category on its own.</div></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style={stepStyle}>2</span>
+            <div><div id="empty-step2-title" style="font-size:15px;font-weight:800;color:var(--navy)">Browse nearby suburbs</div><div id="empty-step2-body" style="font-size:14px;color:var(--muted);font-weight:600;margin-top:2px">Every suburb we cover is listed in the directory.</div></div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span style={stepStyle}>3</span>
+            <div><div style="font-size:15px;font-weight:800;color:var(--navy)">Know the business? Add it</div><div style="font-size:14px;color:var(--muted);font-weight:600;margin-top:2px">Listing is free and live within 48 hours.</div></div>
           </div>
         </div>
-      </aside>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:24px">
+          <a href="/list-your-business/" style="padding:13px 20px;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;text-decoration:none">Add a business</a>
+          <a href="/suburb/" style="padding:13px 20px;border-radius:11px;border:2px solid var(--border);background:#fff;color:var(--navy);font-size:14px;font-weight:800;text-decoration:none">Browse suburbs</a>
+        </div>
+      </div>
+      <h2 id="empty-suggest-title" style="margin:30px 0 12px;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">You might have meant</h2>
+      <div id="empty-suggestions" style="display:flex;flex-wrap:wrap;gap:8px"></div>
     </div>
   </main>
+
+  <script type="application/json" id="search-meta" set:html={searchMetaJson} />
 </BaseLayout>
 
 <style>
@@ -38,6 +98,22 @@ import site from '../site';
     #results-shell {
       grid-template-columns: minmax(0, 1fr) 320px;
     }
+  }
+  /* Inline display:flex on the crumb row beats the [hidden] attribute. */
+  #crumbs[hidden] {
+    display: none !important;
+  }
+  /* The mockup's two toggle pills: white/bordered when off, accent-filled when on. */
+  .filter-pill {
+    font-family: inherit;
+    border: 2px solid var(--border);
+    background: #fff;
+    color: var(--navy);
+  }
+  .filter-pill[aria-pressed='true'] {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--contrast);
   }
 </style>
 
@@ -48,26 +124,44 @@ import site from '../site';
   .search-result-row:hover {
     border-color: var(--navy);
   }
+  .suggest-chip:hover {
+    border-color: var(--navy) !important;
+  }
 </style>
 
 <script>
+  import { openStatus } from '../lib/openNow';
+
   // define:vars would force this script to skip TS compilation (it's
   // treated as inline HTML), which this whole file relies on — so the
   // city label comes in via a data attribute on <body> instead (set in
   // BaseLayout.astro) rather than an Astro define:vars binding here.
   const cityLabel = document.body.dataset.cityLabel ?? '';
 
-  interface Row { n: string; s: string; sb: string; sbs: string; c: string; g: string; k: string; t: number; h: boolean; p: string; w: string; a: string; d: string }
+  interface Row { n: string; s: string; sb: string; sbs: string; c: string; g: string; k: string; t: number; h: boolean; hr: string; p: string; w: string; a: string; d: string }
+  interface Meta {
+    cats: { n: string; s: string; c: number; k: string }[];
+    subs: { n: string; s: string; c: number; g: string }[];
+  }
 
+  const searchMeta: Meta = JSON.parse(document.getElementById('search-meta')?.textContent || '{"cats":[],"subs":[]}');
   const initialQ = new URLSearchParams(location.search).get('q') ?? '';
 
   const input = document.getElementById('search-input') as HTMLInputElement;
   const form = document.getElementById('search-form') as HTMLFormElement;
+  const crumbs = document.getElementById('crumbs')!;
+  const resultsView = document.getElementById('results-view')!;
+  const emptyView = document.getElementById('empty-view')!;
   const heading = document.getElementById('results-heading')!;
   const list = document.getElementById('results-list')!;
   const sponsorSlot = document.getElementById('sponsor-slot')!;
   const filterVerified = document.getElementById('filter-verified') as HTMLInputElement;
   const filterHours = document.getElementById('filter-hours') as HTMLInputElement;
+  const filterOpen = document.getElementById('filter-open') as HTMLInputElement;
+  const openBtn = document.getElementById('open-now-btn') as HTMLButtonElement;
+  const openLabel = document.getElementById('open-now-label')!;
+  const verifiedBtn = document.getElementById('verified-btn') as HTMLButtonElement;
+  const openNote = document.getElementById('open-note')!;
 
   input.value = initialQ;
 
@@ -115,7 +209,20 @@ import site from '../site';
     return '';
   }
 
+  // "Open now" / "Closed" badge — only when the listing's hours text parses
+  // cleanly (see src/lib/openNow.ts); otherwise nothing, never a guess.
+  function openBadge(r: Row): string {
+    const st = openStatus(r.hr);
+    if (!st) return '';
+    const style = st.open
+      ? 'padding:3px 9px;border-radius:999px;background:rgba(var(--accent-rgb),.13);color:var(--accent-hover);font-size:11px;font-weight:800'
+      : 'padding:3px 9px;border-radius:999px;background:var(--bg-subtle);color:var(--muted);font-size:11px;font-weight:800';
+    return `<span style="${style}">${st.open ? 'Open now' : 'Closed'}</span>`;
+  }
+
   function renderRow(r: Row, pinned: boolean): string {
+    const badge = openBadge(r);
+    const badgeRow = badge ? `<div style="display:flex;align-items:center;gap:8px;margin-top:7px;flex-wrap:wrap">${badge}</div>` : '';
     if (pinned) {
       const meta = [r.c, r.sb, r.a].filter(Boolean).join(' · ');
       const actions = [
@@ -130,8 +237,9 @@ import site from '../site';
             <span style="font-size:11px;font-weight:700;color:var(--muted)">Sponsored placement</span>
           </div>
           <h2 style="margin:12px 0 6px;font-size:21px;letter-spacing:-.02em;color:var(--navy)"><a href="/business/${r.s}/" style="color:var(--navy)">${escapeHtml(r.n)}</a></h2>
-          <p style="margin:0;font-size:13.5px;font-weight:700;color:var(--muted)">${escapeHtml(meta)}</p>
-          ${r.d ? `<p style="margin:10px 0 0;font-size:14.5px;line-height:1.55;color:var(--text)">${escapeHtml(r.d)}</p>` : ''}
+          <p style="margin:0 0 ${badge ? '8px' : '0'};font-size:13.5px;font-weight:700;color:var(--muted)">${escapeHtml(meta)}</p>
+          ${badge ? `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">${badge}</div>` : ''}
+          ${r.d ? `<p style="margin:${badge ? '0' : '10px'} 0 0;font-size:14.5px;line-height:1.55;color:var(--text)">${escapeHtml(r.d)}</p>` : ''}
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">${actions}</div>
         </article>`;
     }
@@ -143,6 +251,7 @@ import site from '../site';
           ${r.c ? `<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:var(--bg-subtle);color:var(--accent-hover);font-size:11px;font-weight:800;white-space:nowrap">${escapeHtml(r.c)}</span>` : ''}
         </div>
         <p style="margin:8px 0 0;font-size:13.5px;font-weight:600;color:var(--muted)">${escapeHtml(meta)}${planBadge(r.t) ? ' &nbsp;' + planBadge(r.t) : ''}</p>
+        ${badgeRow}
       </article>`;
   }
 
@@ -158,6 +267,177 @@ import site from '../site';
       </div>`;
   }
 
+  // ---- "Nothing matched" suggestions ------------------------------------
+  // All computed from the real category/suburb lists embedded at build time
+  // and the live search index — nothing is canned.
+
+  const STOP = new Set(['in', 'near', 'the', 'and', 'for', 'a', 'an', 'of', 'at', 'to', 'on', 'my', 'me']);
+
+  function norm(s: string): string {
+    return s
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+  }
+
+  function lev(a: string, b: string): number {
+    if (Math.abs(a.length - b.length) > 2) return 3;
+    const prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+      let diag = prev[0];
+      prev[0] = i;
+      for (let j = 1; j <= b.length; j++) {
+        const tmp = prev[j];
+        prev[j] = Math.min(prev[j] + 1, prev[j - 1] + 1, diag + (a[i - 1] === b[j - 1] ? 0 : 1));
+        diag = tmp;
+      }
+    }
+    return prev[b.length];
+  }
+
+  /** How well a typed word matches a target word: 1 exact … 0 no. Handles
+   *  plurals/inflections, prefixes ("plumb"), and one or two typos. */
+  function wordScore(qw: string, tw: string): number {
+    if (qw === tw) return 1;
+    if (qw.length >= 4 && tw.startsWith(qw)) return 0.85;
+    if (tw.length >= 4 && qw.startsWith(tw) && qw.length - tw.length <= 2) return 0.8;
+    const max = qw.length >= 8 ? 2 : qw.length >= 4 ? 1 : 0;
+    if (max && lev(qw, tw) <= max) return 0.7;
+    return 0;
+  }
+
+  function suggestionChip(href: string, label: string): string {
+    return `<a href="${href}" class="suggest-chip" style="padding:9px 14px;border:2px solid var(--border);border-radius:999px;font-size:13.5px;font-weight:700;color:var(--navy);background:#fff;text-decoration:none">${escapeHtml(label)}</a>`;
+  }
+
+  function showEmpty(q: string, suburbSlug: string, data: Row[]) {
+    crumbs.hidden = true;
+    resultsView.hidden = true;
+    emptyView.hidden = false;
+
+    const paramSuburb = suburbSlug ? searchMeta.subs.find((s) => s.s === suburbSlug) : undefined;
+    document.getElementById('empty-title')!.textContent = `Nothing matched “${q || paramSuburb?.n || suburbSlug}”`;
+
+    const qWords = norm(q).split(' ').filter((w) => w.length >= 2 && !STOP.has(w));
+
+    // Each typed word, plus each pair of adjacent words run together.
+    const units = [
+      ...qWords.map((w) => ({ text: w, words: [w] })),
+      ...qWords.slice(1).map((w, i) => ({ text: qWords[i] + w, words: [qWords[i], w] })),
+    ];
+
+    // Suburbs the query names (typo-tolerant); the longest token must match.
+    const consumed = new Set<string>();
+    const suburbHits = searchMeta.subs
+      .map((s) => {
+        const tokens = norm(s.n).split(' ').filter(Boolean);
+        const longest = [...tokens].sort((a, b) => b.length - a.length)[0];
+        let matched = 0;
+        let longestMatched = false;
+        const used: string[] = [];
+        for (const t of tokens) {
+          const best = Math.max(0, ...qWords.map((w) => wordScore(w, t)));
+          if (best >= 0.7) {
+            matched++;
+            if (t === longest) longestMatched = true;
+            used.push(...qWords.filter((w) => wordScore(w, t) >= 0.7));
+          }
+        }
+        let score = longestMatched ? matched / tokens.length : 0;
+        // "greenpoint" for "Green Point": the whole name run together, from a
+        // typed word or two adjacent typed words.
+        if (tokens.length > 1) {
+          const joined = tokens.join('');
+          for (const u of units) {
+            if (u.text.length >= 5 && wordScore(u.text, joined) >= 0.7) {
+              score = 1;
+              used.push(...u.words);
+            }
+          }
+        }
+        return { s, score, used };
+      })
+      .filter((x) => x.score >= 0.5)
+      .sort((a, b) => b.score - a.score || b.s.c - a.s.c)
+      .slice(0, 2);
+    suburbHits.forEach((h) => h.used.forEach((w) => consumed.add(w)));
+    const matchedSuburb = paramSuburb ?? suburbHits[0]?.s;
+
+    // Step 2 — nearby suburbs (same area group), or a plain pointer.
+    const step2Title = document.getElementById('empty-step2-title')!;
+    const step2Body = document.getElementById('empty-step2-body')!;
+    const nearby = matchedSuburb?.g
+      ? searchMeta.subs.filter((s) => s.g === matchedSuburb.g && s.s !== matchedSuburb.s).sort((a, b) => b.c - a.c).slice(0, 3).map((s) => s.n)
+      : [];
+    if (matchedSuburb && nearby.length) {
+      step2Title.textContent = 'Browse nearby suburbs';
+      const joined = nearby.length > 1 ? `${nearby.slice(0, -1).join(', ')} and ${nearby[nearby.length - 1]}` : nearby[0];
+      step2Body.textContent = `${matchedSuburb.n} is close to ${joined}.`;
+    } else {
+      step2Title.textContent = 'Browse by suburb';
+      step2Body.textContent = 'Every suburb we cover is listed in the directory.';
+    }
+
+    // Categories whose name or trade-jargon synonyms resemble what was typed.
+    const catHits = searchMeta.cats
+      .map((c) => {
+        const nameWords = norm(c.n).split(' ').filter((w) => w.length > 1 && !STOP.has(w));
+        const synWords = norm(c.k).split(' ').filter((w) => w.length > 2 && !STOP.has(w));
+        let score = 0;
+        for (const w of qWords) {
+          if (consumed.has(w) || w.length < 3) continue;
+          const inName = Math.max(0, ...nameWords.map((t) => wordScore(w, t)));
+          const inSyn = Math.max(0, ...synWords.map((t) => wordScore(w, t))) * 0.8;
+          score += Math.max(inName, inSyn);
+        }
+        return { c, score };
+      })
+      .filter((x) => x.score >= 0.7)
+      .sort((a, b) => b.score - a.score || b.c.c - a.c.c)
+      .slice(0, 3);
+
+    const chips: string[] = [];
+    const seen = new Set<string>();
+    const add = (href: string, label: string) => {
+      if (seen.has(href) || chips.length >= 6) return;
+      seen.add(href);
+      chips.push(suggestionChip(href, label));
+    };
+    catHits.forEach((h) => add(`/category/${h.c.s}/`, `${h.c.n} — ${cityLabel} wide`));
+    suburbHits.forEach((h) => add(`/suburb/${h.s.s}/`, `All businesses in ${h.s.n}`));
+    if (paramSuburb) add(`/suburb/${paramSuburb.s}/`, `All businesses in ${paramSuburb.n}`);
+    // Single words from the query that DO match something on their own.
+    for (const w of qWords) {
+      if (consumed.has(w) || w.length < 3) continue;
+      const n = search(data, [w], '').length;
+      if (n > 0) add(`/search/?q=${encodeURIComponent(w)}`, `“${w}” — ${n} ${n === 1 ? 'business' : 'businesses'}`);
+    }
+
+    const titleEl = document.getElementById('empty-suggest-title')!;
+    const listEl = document.getElementById('empty-suggestions')!;
+    if (chips.length > 0) {
+      titleEl.textContent = 'You might have meant';
+      listEl.innerHTML = chips.join('');
+    } else {
+      // Nothing resembles the query — show what we're biggest in instead,
+      // labelled honestly (not as a "did you mean").
+      titleEl.textContent = 'Popular categories';
+      listEl.innerHTML = [...searchMeta.cats]
+        .sort((a, b) => b.c - a.c)
+        .slice(0, 5)
+        .map((c) => suggestionChip(`/category/${c.s}/`, c.n))
+        .join('');
+    }
+  }
+
+  function showResultsView() {
+    crumbs.hidden = false;
+    resultsView.hidden = false;
+    emptyView.hidden = true;
+  }
+
   let allRows: Row[] | null = null;
   async function loadIndex(): Promise<Row[]> {
     if (allRows) return allRows;
@@ -166,19 +446,43 @@ import site from '../site';
     return allRows!;
   }
 
+  const OPEN_NOTE_DEFAULT = 'Filter to businesses trading right now.';
+
+  // The pills and the sidebar checkboxes are two views of the same filters.
+  function syncPills() {
+    openBtn.setAttribute('aria-pressed', String(filterOpen.checked));
+    verifiedBtn.setAttribute('aria-pressed', String(filterVerified.checked));
+    openLabel.textContent = filterOpen.checked ? 'Open now · on' : 'Open now';
+  }
+
   async function runSearch() {
+    syncPills();
     const q = input.value.trim();
     const suburbSlug = new URLSearchParams(location.search).get('suburb') ?? '';
     const words = q.toLowerCase().split(/\s+/).filter(Boolean);
     const data = await loadIndex();
-    let results = search(data, words, suburbSlug);
+    const base = search(data, words, suburbSlug);
+
+    // Zero hits before any Refine filter: the full "Nothing matched" screen.
+    if (base.length === 0 && (q || suburbSlug)) {
+      showEmpty(q, suburbSlug, data);
+      return;
+    }
+    showResultsView();
+
+    let results = base;
     if (filterVerified.checked) results = results.filter((r) => r.t >= 1);
     if (filterHours.checked) results = results.filter((r) => r.h);
+    const beforeOpen = results.length;
+    if (filterOpen.checked) results = results.filter((r) => openStatus(r.hr)?.open === true);
+    openNote.textContent = filterOpen.checked
+      ? `Showing ${results.length} of ${beforeOpen} — the rest are closed, or haven't listed trading hours.`
+      : OPEN_NOTE_DEFAULT;
 
     heading.textContent = q ? `${results.length} results for “${q}”` : `${results.length} businesses${suburbSlug ? '' : ' listed'}`;
 
     if (results.length === 0) {
-      list.innerHTML = `<p style="color:var(--muted);font-size:14px;">No matches — try one word, e.g. a category or suburb.</p>`;
+      list.innerHTML = `<p style="color:var(--muted);font-size:14px;">No listings match these filters — try switching one off.</p>`;
       renderSponsorSlot('');
       return;
     }
@@ -190,7 +494,7 @@ import site from '../site';
         <span style="display:block;margin-top:4px;font-size:13.5px;font-weight:700;color:var(--muted)">In-feed unit after the fifth result</span>
       </div>`;
     const rows = rest.map((r) => renderRow(r, false));
-    if (rows.length > 5) rows.splice(5, 0, adSlot);
+    if (rows.length > 5 && document.body.dataset.ads !== '0') rows.splice(5, 0, adSlot);
     list.innerHTML = (featured ? renderRow(featured, true) : '') + rows.join('');
 
     const topCategory = results.find((r) => r.c)?.c ?? '';
@@ -207,6 +511,15 @@ import site from '../site';
   });
   filterVerified.addEventListener('change', runSearch);
   filterHours.addEventListener('change', runSearch);
+  filterOpen.addEventListener('change', runSearch);
+  openBtn.addEventListener('click', () => {
+    filterOpen.checked = !filterOpen.checked;
+    runSearch();
+  });
+  verifiedBtn.addEventListener('click', () => {
+    filterVerified.checked = !filterVerified.checked;
+    runSearch();
+  });
 
   runSearch();
 </script>

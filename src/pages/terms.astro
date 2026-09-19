@@ -1,45 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import LegalPage from '../components/LegalPage.astro';
 import site from '../site';
 ---
 
-<BaseLayout title="Terms of Use" description={`Terms of use for ${site.siteName}.`}>
-  <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 680px;">
-    <h1>Terms of Use</h1>
-    <p style="color: var(--text-muted); font-size: 0.9rem;">Last updated: {new Date().toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-
-    <h2>Listings</h2>
-    <p>
-      {site.siteName} aims for accurate listings but cannot guarantee every detail (hours,
-      contact information, etc.) is current — always confirm directly with a business
-      before relying on it for anything time-sensitive. Report inaccuracies via the "Report
-      this listing" link on any business page.
-    </p>
-
-    <h2>Submitting a listing</h2>
-    <p>
-      By submitting a business listing, you confirm you're authorised to provide that
-      business's information and that it's accurate. We may edit, decline, or remove
-      listings at our discretion.
-    </p>
-
-    <h2>Data sources</h2>
-    <p>
-      Listings come from business owners' own submissions, from research against
-      publicly available web sources (business websites, social media pages, other
-      directories, and map services including Google Maps).
-    </p>
-
-    <h2>Copyright</h2>
-    <p>
-      All original photography, graphics, the {site.siteName} logo, and site design are
-      © {new Date().getFullYear()} {site.siteName}. They may not be copied, downloaded,
-      reproduced, or reused on another site or in another publication without prior
-      written permission. This does not apply to business listing data itself — see
-      "Data sources" above for where that comes from.
-    </p>
-
-    <h2>Contact</h2>
-    <p><a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a></p>
-  </section>
+<BaseLayout
+  title="Terms of use"
+  description={`Terms of use and listing rules for ${site.siteName}.`}
+>
+  <LegalPage route="/terms/" />
 </BaseLayout>

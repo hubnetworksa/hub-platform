@@ -1,99 +1,328 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { priceRand } from '../../lib/data';
+
+const priceVerified = priceRand('price_verified_cents').replace(/\.00$/, '');
+const priceFeatured = priceRand('price_featured_cents').replace(/\.00$/, '');
+
+const TABS = [
+  ['overview', 'Overview'],
+  ['listing', 'Edit listing'],
+  ['enquiries', 'Enquiries'],
+  ['reviews', 'Reviews'],
+  ['billing', 'Billing'],
+];
+
+// Mockup performance tiles. There is no analytics/enquiry/search tracking behind them yet,
+// so each shows an honest "—" instead of a made-up figure.
+const STATS = ['Profile views', 'Phone clicks', 'Enquiries', 'Search appearances'];
+
+const fieldLabel = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)';
+const fieldInput = 'padding:13px;border:2px solid var(--border);border-radius:11px;font-size:14.5px;outline:none;background:#fff;color:var(--text)';
+const cardBox = 'background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden';
+const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0';
 ---
 
-<BaseLayout title="Edit business" description="Edit your business listing details." noindex={true}>
-  <main style="max-width:560px;margin:0 auto;padding:clamp(24px,4vw,44px) 20px 60px">
-    <div id="loading" style="color:var(--muted);">Loading…</div>
+<BaseLayout title="Manage business" description="Manage your business listing, plan and photos." noindex={true}>
+  <main style="max-width:1200px;margin:0 auto;padding:clamp(20px,3vw,36px) 20px 60px" data-price-verified={priceVerified} data-price-featured={priceFeatured} id="owner-main">
+    <div id="loading" style="color:var(--muted);padding:2rem 0;">Loading…</div>
 
-    <form id="edit-form" hidden style="display:flex;flex-direction:column;gap:16px;">
-      <h1 id="business-name" style="margin:0;font-size:clamp(24px,3.4vw,32px);letter-spacing:-.03em;color:var(--navy)"></h1>
-      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
-        Address
-        <input type="text" name="address" maxlength="200" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);" />
-      </label>
-      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
-        Phone
-        <input type="tel" name="phone" maxlength="30" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);" />
-      </label>
-      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
-        Website
-        <input type="url" name="website" maxlength="200" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);" />
-      </label>
-      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
-        Description
-        <textarea name="description" maxlength="600" rows="4" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);resize:vertical;"></textarea>
-      </label>
-      <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
-        Hours
-        <textarea name="hours" maxlength="400" rows="3" placeholder="e.g. Mon-Fri 8am-5pm" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);resize:vertical;"></textarea>
-      </label>
-      <button type="submit" style="align-self:flex-start;padding:14px 22px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;cursor:pointer;">Save changes</button>
-      <p id="form-status" role="status" style="margin:0;font-size:0.9rem;color:var(--muted);"></p>
-    </form>
+    <div id="dashboard" hidden>
+      <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap;padding-bottom:16px;border-bottom:2px solid var(--navy)">
+        <span id="biz-initials" style="width:46px;height:46px;border-radius:12px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800"></span>
+        <div style="min-width:0">
+          <h1 id="business-name" style="margin:0;font-size:clamp(20px,3vw,27px);letter-spacing:-.025em;color:var(--navy)"></h1>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap">
+            <span id="biz-plan-chip" style="padding:3px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase"></span>
+            <span id="biz-meta" style="font-size:12.5px;font-weight:700;color:var(--muted)"></span>
+          </div>
+        </div>
+        <span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+          <a href="/my-businesses/" class="owner-btn-ghost" style="padding:11px 15px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-weight:800;color:var(--navy);background:#fff;text-decoration:none">All my businesses</a>
+          <a id="view-public" href="#" class="owner-btn-ghost" style="padding:11px 15px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-weight:800;color:var(--navy);background:#fff;text-decoration:none">View public page</a>
+        </span>
+      </div>
 
-    <div id="plan-panel" hidden style="border:2px solid var(--navy);border-radius:14px;padding:20px;background:#fff;margin-top:20px;display:flex;flex-direction:column;gap:10px;">
-      <strong style="font-size:15px;color:var(--navy);">Plan</strong>
-      <p id="plan-current" style="margin:0;font-size:13.5px;color:var(--muted);"></p>
-      <div id="plan-buttons" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
-      <p id="plan-status" role="status" style="margin:0;font-size:13px;color:var(--muted);"></p>
-    </div>
+      <div class="owner-shell" style="gap:22px;margin-top:20px">
+        <aside class="owner-nav" style="gap:8px;overflow-x:auto;padding-bottom:4px" role="tablist">
+          {TABS.map(([key, label]) => (
+            <button type="button" role="tab" class="owner-tab" data-tab={key} style="align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border-radius:10px;cursor:pointer;white-space:nowrap;font-size:13.5px;font-weight:800;text-align:left;border:2px solid var(--border);background:#fff;color:var(--navy)">
+              <span>{label}</span>
+            </button>
+          ))}
+        </aside>
 
-    <div id="photos-panel" hidden style="border:2px solid var(--border);border-radius:14px;padding:20px;background:#fff;margin-top:20px;display:flex;flex-direction:column;gap:10px;">
-      <strong style="font-size:15px;color:var(--navy);">Photos</strong>
-      <p style="margin:0;font-size:13.5px;color:var(--muted);">A Featured-plan perk — up to 12 photos shown on your business page.</p>
-      <div id="photos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;"></div>
-      <form id="photo-upload-form" style="display:flex;align-items:center;gap:10px;margin-top:6px;">
-        <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required style="font-size:13px;" />
-        <button type="submit" style="padding:9px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:12.5px;font-weight:800;cursor:pointer;">Upload photo</button>
-      </form>
-      <p id="photo-status" role="status" style="margin:0;font-size:13px;color:var(--muted);"></p>
+        <div style="min-width:0">
+          <div style="margin-bottom:16px">
+            <h2 id="owner-title" style="margin:0;font-size:20px;letter-spacing:-.025em;color:var(--navy)"></h2>
+            <p id="owner-subtitle" style="margin:3px 0 0;font-size:13.5px;font-weight:600;color:var(--muted)"></p>
+          </div>
+
+          <!-- Overview -->
+          <section class="owner-panel" data-panel="overview">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+              {STATS.map((label) => (
+                <div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:18px">
+                  <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">{label}</div>
+                  <div style="font-size:28px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:8px;line-height:1">—</div>
+                  <div style="font-size:12.5px;font-weight:700;color:var(--muted);margin-top:5px">No data yet</div>
+                </div>
+              ))}
+            </div>
+            <div style={`${cardBox};margin-top:14px`}>
+              <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
+                <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">What people searched to find you</h3>
+              </div>
+              <p style={emptyNote}>No search data yet — we don't track listing searches so far.</p>
+            </div>
+          </section>
+
+          <!-- Edit listing -->
+          <section class="owner-panel" data-panel="listing" hidden>
+            <div style="display:flex;flex-direction:column;gap:15px">
+              <form id="edit-form" style="display:flex;flex-direction:column;gap:15px">
+                <label style={fieldLabel}>Business name
+                  <input type="text" name="name" id="field-name" disabled class="owner-input" style={`${fieldInput};background:var(--bg-subtle);color:var(--muted)`} />
+                </label>
+                <label style={fieldLabel}>Description
+                  <textarea name="description" maxlength="600" rows="4" class="owner-input" style={`${fieldInput};resize:vertical`}></textarea>
+                </label>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px">
+                  <label style={fieldLabel}>Phone
+                    <input type="tel" name="phone" maxlength="30" class="owner-input" style={fieldInput} />
+                  </label>
+                  <label style={fieldLabel}>Website
+                    <input type="url" name="website" maxlength="200" class="owner-input" style={fieldInput} />
+                  </label>
+                </div>
+                <label style={fieldLabel}>Address
+                  <input type="text" name="address" maxlength="200" class="owner-input" style={fieldInput} />
+                </label>
+                <label style={fieldLabel}>Opening hours
+                  <textarea name="hours" maxlength="400" rows="3" placeholder="e.g. Mon-Fri 8am-5pm" class="owner-input" style={`${fieldInput};resize:vertical`}></textarea>
+                </label>
+              </form>
+
+              <div style="border:2px solid var(--border);border-radius:14px;overflow:hidden">
+                <div style="padding:13px 16px;border-bottom:2px solid var(--border);font-size:13px;font-weight:800;color:var(--navy)">Photos <span id="photos-count" style="font-weight:600;color:var(--muted)"></span></div>
+                <div id="photos-locked" hidden style="padding:18px 16px;font-size:13.5px;font-weight:600;color:var(--muted);line-height:1.55">
+                  Photos are a Featured-plan perk — up to 12 photos on your business page. <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a> to add photos.
+                </div>
+                <div id="photos-unlocked" hidden>
+                  <div id="photos-grid" style="padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px"></div>
+                  <p id="photos-empty" hidden style="margin:0;padding:4px 16px 14px;font-size:13px;font-weight:600;color:var(--muted)">No photos yet — add your first below.</p>
+                  <form id="photo-upload-form" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:0 14px 14px">
+                    <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required style="font-size:13px;max-width:100%" />
+                    <button type="submit" class="owner-btn-ghost" style="padding:9px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:12.5px;font-weight:800;cursor:pointer">Upload photo</button>
+                  </form>
+                </div>
+                <p id="photo-status" role="status" style="margin:0;padding:0 16px 14px;font-size:13px;font-weight:600;color:var(--muted)" hidden></p>
+              </div>
+
+              <button type="submit" form="edit-form" class="owner-btn-primary" style="align-self:flex-start;padding:14px 22px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;cursor:pointer">Save changes</button>
+              <p id="form-status" role="status" style="margin:0;font-size:13px;font-weight:700;color:var(--muted)"></p>
+              <p style="margin:0;font-size:12px;font-weight:600;color:var(--muted)">Changes to the description, phone, website, address and hours go live immediately. To change your business name or category, <a href="/contact/" style="color:var(--accent-hover);font-weight:800">contact us</a>.</p>
+            </div>
+          </section>
+
+          <!-- Enquiries -->
+          <section class="owner-panel" data-panel="enquiries" hidden>
+            <div style={cardBox}>
+              <p style={emptyNote}>No enquiries yet. Customer messages aren't collected through your listing so far — customers contact you using the phone number and details on your page.</p>
+            </div>
+          </section>
+
+          <!-- Reviews -->
+          <section class="owner-panel" data-panel="reviews" hidden>
+            <div style={cardBox}>
+              <p style={emptyNote}>No reviews yet. Customer reviews aren't available on listings so far.</p>
+            </div>
+          </section>
+
+          <!-- Billing -->
+          <section class="owner-panel" data-panel="billing" hidden>
+            <div style="border:2px solid var(--accent);border-radius:16px;overflow:hidden;background:#fff">
+              <div style="background:var(--accent);padding:8px 20px;font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--contrast)">Current plan</div>
+              <div style="padding:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                <div>
+                  <div id="plan-name" style="font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1"></div>
+                  <div id="plan-current" style="font-size:14px;font-weight:700;color:var(--muted);margin-top:5px"></div>
+                </div>
+                <div id="plan-buttons" style="display:flex;gap:9px;margin-left:auto;flex-wrap:wrap"></div>
+              </div>
+            </div>
+            <p id="plan-status" role="status" style="margin:10px 0 0;font-size:13px;font-weight:700;color:var(--muted)"></p>
+            <p style="margin:8px 0 0;font-size:13px;font-weight:600;color:var(--muted)"><a href="/pricing/" style="color:var(--accent-hover);font-weight:800">Compare plans</a></p>
+
+            <div style={`${cardBox};margin-top:14px`}>
+              <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
+                <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Payment history</h3>
+              </div>
+              <div id="payments-list"></div>
+              <p id="payments-empty" hidden style={emptyNote}>No payments yet.</p>
+            </div>
+          </section>
+        </div>
+      </div>
     </div>
   </main>
 </BaseLayout>
 
+<style is:global>
+  .owner-shell { display: grid; grid-template-columns: 1fr; }
+  .owner-nav { display: flex; flex-direction: row; }
+  .owner-tab { display: flex; font-family: inherit; }
+  .owner-tab.on { border-color: var(--navy) !important; background: var(--navy) !important; color: #fff !important; }
+  .owner-panel[hidden], #dashboard[hidden], #photos-locked[hidden], #photos-unlocked[hidden], #photos-empty[hidden], #photo-status[hidden], #payments-empty[hidden] { display: none !important; }
+  @media (min-width: 760px) {
+    .owner-shell { grid-template-columns: 210px minmax(0, 1fr); }
+    .owner-nav { flex-direction: column; }
+  }
+  .owner-input:focus { border-color: var(--accent) !important; }
+  .owner-btn-primary:hover { background: var(--accent-hover) !important; }
+  .owner-btn-ghost:hover { border-color: var(--accent) !important; }
+  .owner-photo { position: relative; aspect-ratio: 4/3; border-radius: 10px; overflow: hidden; background: var(--bg-subtle); }
+  .owner-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .owner-photo button { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; line-height: 1; font-size: 15px; }
+</style>
+
 <script>
   const params = new URLSearchParams(window.location.search);
   const businessId = params.get('id');
+  const main = document.getElementById('owner-main')!;
   const loading = document.getElementById('loading')!;
+  const dashboard = document.getElementById('dashboard')!;
   const form = document.getElementById('edit-form') as HTMLFormElement;
-  const status = document.getElementById('form-status')!;
+  const formStatus = document.getElementById('form-status')!;
 
   const TIER_NAMES: Record<number, string> = { 0: 'Basic', 1: 'Verified', 2: 'Featured' };
+  const TIER_PRICE: Record<number, string> = { 1: main.dataset.priceVerified ?? '—', 2: main.dataset.priceFeatured ?? '—' };
   const FEATURED_TIER = 2;
+  const PHOTO_CAP = 12;
 
+  const TITLES: Record<string, [string, string]> = {
+    overview: ['Overview', 'Your listing at a glance'],
+    listing: ['Edit listing', 'Everything customers see, editable here'],
+    enquiries: ['Enquiries', 'Messages from customers'],
+    reviews: ['Reviews', 'What customers wrote about you'],
+    billing: ['Billing', 'Your plan and payment history'],
+  };
+
+  type Business = {
+    id: number; slug: string; name: string; created_at: string; suburb_name: string | null;
+    address: string | null; phone: string | null; website: string | null; description: string | null; hours: string | null;
+    subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null;
+  };
+  type Photo = { id: number; r2_key: string; caption: string | null };
+  type Payment = { id: number; amount_cents: number; status: string; paid_at: string; tier: number; product_type: string | null };
+
+  function esc(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function parseDate(s: string | null): Date | null {
+    if (!s) return null;
+    const d = new Date(/[zZ]|[+-]\d\d:?\d\d$/.test(s) ? s : s.replace(' ', 'T') + 'Z');
+    return isNaN(d.getTime()) ? null : d;
+  }
+  function longDate(s: string | null): string | null {
+    const d = parseDate(s);
+    return d ? d.toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric' }) : null;
+  }
+  function shortDate(s: string): string {
+    const d = parseDate(s);
+    return d ? d.toLocaleDateString('en-ZA', { day: '2-digit', month: 'short', year: 'numeric' }) : s;
+  }
+  function initialsOf(name: string): string {
+    const words = name.split(/\s+/).filter((w) => /[A-Za-z0-9]/.test(w[0] ?? ''));
+    return ((words[0]?.[0] ?? '') + (words[1]?.[0] ?? '')).toUpperCase() || '?';
+  }
+
+  // ---- Tabs ----
+  function showTab(key: string) {
+    if (!TITLES[key]) key = 'overview';
+    document.querySelectorAll<HTMLElement>('.owner-tab').forEach((t) => {
+      const on = t.dataset.tab === key;
+      t.classList.toggle('on', on);
+      t.setAttribute('aria-selected', String(on));
+    });
+    document.querySelectorAll<HTMLElement>('.owner-panel').forEach((p) => {
+      p.hidden = p.dataset.panel !== key;
+    });
+    document.getElementById('owner-title')!.textContent = TITLES[key][0];
+    document.getElementById('owner-subtitle')!.textContent = TITLES[key][1];
+  }
+  document.querySelectorAll<HTMLElement>('.owner-tab').forEach((t) => {
+    t.addEventListener('click', () => {
+      const key = t.dataset.tab!;
+      history.replaceState(null, '', `${location.pathname}${location.search}#${key}`);
+      showTab(key);
+    });
+  });
+  document.querySelectorAll<HTMLElement>('[data-goto]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const key = a.dataset.goto!;
+      history.replaceState(null, '', `${location.pathname}${location.search}#${key}`);
+      showTab(key);
+    });
+  });
+
+  // ---- Header ----
+  function renderHeader(b: Business) {
+    document.getElementById('business-name')!.textContent = b.name;
+    document.getElementById('biz-initials')!.textContent = initialsOf(b.name);
+    const chip = document.getElementById('biz-plan-chip')!;
+    const tier = b.subscription_tier;
+    chip.textContent = TIER_NAMES[tier] ?? 'Basic';
+    if (tier >= 2) chip.style.cssText += ';background:var(--accent);color:var(--contrast)';
+    else if (tier === 1) chip.style.cssText += ';background:var(--navy);color:#fff';
+    else chip.style.cssText += ';background:var(--bg-subtle);color:var(--muted);border:1px solid var(--border)';
+    const created = parseDate(b.created_at);
+    const since = created ? `Live since ${created.toLocaleDateString('en-ZA', { month: 'short', year: 'numeric' })}` : '';
+    document.getElementById('biz-meta')!.textContent = [since, b.suburb_name].filter(Boolean).join(' · ');
+    (document.getElementById('view-public') as HTMLAnchorElement).href = `/business/${b.slug}/`;
+  }
+
+  // ---- Billing ----
   function planButton(label: string): HTMLButtonElement {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.textContent = label;
-    btn.style.cssText = 'padding:9px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:12.5px;font-weight:800;cursor:pointer;';
+    btn.style.cssText = 'padding:12px 17px;border:2px solid var(--navy);border-radius:10px;background:#fff;color:var(--navy);font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit;';
     return btn;
   }
 
-  function renderPlanPanel(business: { subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null }) {
-    const panel = document.getElementById('plan-panel')!;
+  function renderPlan(business: Business) {
+    const nameEl = document.getElementById('plan-name')!;
     const current = document.getElementById('plan-current')!;
     const buttons = document.getElementById('plan-buttons')!;
     const planStatus = document.getElementById('plan-status')!;
-    panel.hidden = false;
 
-    const tierName = TIER_NAMES[business.subscription_tier] ?? 'Basic';
-    const expiry = business.subscription_expires_at ? new Date(business.subscription_expires_at).toLocaleDateString() : null;
-    current.textContent =
-      business.subscription_tier > 0
-        ? `Current plan: ${tierName}${expiry ? ` — renews/expires ${expiry}` : ''}${business.subscription_status === 'cancelled' ? ' (cancelled, active until then)' : ''}`
-        : 'Current plan: Basic (free)';
+    const tier = business.subscription_tier;
+    nameEl.textContent = TIER_NAMES[tier] ?? 'Basic';
+    const expiry = longDate(business.subscription_expires_at);
+    if (tier > 0) {
+      const price = TIER_PRICE[tier] && TIER_PRICE[tier] !== '—' ? `${TIER_PRICE[tier]}/month` : null;
+      const tail = business.subscription_status === 'cancelled'
+        ? `cancelled${expiry ? ` · active until ${expiry}` : ''}`
+        : expiry ? `renews ${expiry}` : null;
+      current.textContent = [price, tail].filter(Boolean).join(' · ');
+    } else {
+      current.textContent = 'Free';
+    }
 
     buttons.innerHTML = '';
-    for (const tier of [1, 2]) {
-      if (tier === business.subscription_tier && business.subscription_status === 'active') continue;
-      const btn = planButton(`Upgrade to ${TIER_NAMES[tier]}`);
+    for (const t of [1, 2]) {
+      if (t === tier && business.subscription_status === 'active') continue;
+      if (t < tier && business.subscription_status === 'active') continue; // no downgrade via checkout — cancel instead
+      const btn = planButton(`Upgrade to ${TIER_NAMES[t]}`);
       btn.addEventListener('click', async () => {
         planStatus.textContent = 'Starting checkout…';
         const res = await fetch('/api/subscribe/start', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ businessId: Number(businessId), tier }),
+          body: JSON.stringify({ businessId: Number(businessId), tier: t }),
         });
         const result = await res.json();
         if (result.ok) window.location.href = result.redirectUrl;
@@ -101,8 +330,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       });
       buttons.appendChild(btn);
     }
-    if (business.subscription_tier > 0 && business.subscription_status === 'active') {
-      const cancelBtn = planButton('Cancel plan');
+    if (tier > 0 && business.subscription_status === 'active') {
+      const cancelBtn = planButton('Cancel');
+      cancelBtn.style.borderColor = 'var(--border)';
       cancelBtn.style.color = 'var(--danger)';
       cancelBtn.addEventListener('click', async () => {
         if (!confirm('Cancel your subscription? You keep your current plan until the paid period ends.')) return;
@@ -117,27 +347,68 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       });
       buttons.appendChild(cancelBtn);
     }
+
+    if (params.get('upgraded')) planStatus.textContent = 'Thanks — your payment is being confirmed. Your plan updates as soon as PayFast confirms it (refresh in a minute).';
+    else if (params.get('upgrade_cancelled')) planStatus.textContent = 'Checkout cancelled — you have not been charged.';
   }
 
-  function renderPhotosPanel(business: { subscription_tier: number }, photos: { id: number; r2_key: string; caption: string | null }[]) {
-    const panel = document.getElementById('photos-panel')!;
-    if (business.subscription_tier < FEATURED_TIER) return; // stays hidden — upgrade to Featured to unlock
-    panel.hidden = false;
+  function renderPayments(payments: Payment[]) {
+    const list = document.getElementById('payments-list')!;
+    const empty = document.getElementById('payments-empty')!;
+    if (payments.length === 0) {
+      empty.hidden = false;
+      return;
+    }
+    const pill = 'padding:4px 10px;border-radius:999px;background:rgba(var(--accent-rgb),.13);color:var(--accent-hover);font-size:11px;font-weight:800;text-transform:uppercase';
+    list.innerHTML = payments
+      .map((p, i) => {
+        const what = p.product_type && p.product_type !== 'tier' ? 'Sponsorship' : `${TIER_NAMES[p.tier] ?? 'Plan'} plan`;
+        const cents = p.amount_cents;
+        const amount = `R${(cents / 100).toFixed(cents % 100 ? 2 : 0)}`;
+        const paid = p.status === 'COMPLETE';
+        const border = i === payments.length - 1 ? '' : 'border-bottom:1px solid var(--border);';
+        return `<div style="padding:13px 18px;${border}display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span style="font-size:14px;font-weight:700;color:var(--navy);flex:1;min-width:0">${esc(what)} · ${esc(shortDate(p.paid_at))}</span>
+          <span style="${paid ? pill : 'padding:4px 10px;border-radius:999px;background:var(--bg-subtle);color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase'}">${paid ? 'Paid' : esc(p.status)}</span>
+          <span style="font-size:14px;font-weight:800;color:var(--navy)">${amount}</span>
+        </div>`;
+      })
+      .join('');
+  }
+
+  // ---- Photos ----
+  function renderPhotos(business: Business, initial: Photo[]) {
+    const locked = document.getElementById('photos-locked')!;
+    const unlocked = document.getElementById('photos-unlocked')!;
+    const count = document.getElementById('photos-count')!;
+    if (business.subscription_tier < FEATURED_TIER) {
+      count.textContent = '— a Featured plan perk';
+      locked.hidden = false;
+      return;
+    }
+    unlocked.hidden = false;
 
     const grid = document.getElementById('photos-grid')!;
+    const emptyEl = document.getElementById('photos-empty')!;
     const photoStatus = document.getElementById('photo-status')!;
-    function renderGrid(list: { id: number; r2_key: string; caption: string | null }[]) {
-      grid.innerHTML = list
+    let photos = initial.slice();
+
+    function setStatus(msg: string) {
+      photoStatus.textContent = msg;
+      photoStatus.hidden = !msg;
+    }
+    function renderGrid() {
+      count.textContent = `— ${photos.length} of ${PHOTO_CAP} used on Featured`;
+      emptyEl.hidden = photos.length > 0;
+      grid.hidden = photos.length === 0;
+      grid.innerHTML = photos
         .map(
           (p) =>
-            `<div style="position:relative;">
-              <img src="/media/${p.r2_key}" alt="${p.caption ?? ''}" style="width:100%;height:90px;object-fit:cover;border-radius:10px;border:1px solid var(--border);" />
-              <button type="button" data-photo-id="${p.id}" style="position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;cursor:pointer;line-height:1;">×</button>
-            </div>`
+            `<div class="owner-photo"><img src="/media/${esc(p.r2_key)}" alt="${esc(p.caption ?? '')}" /><button type="button" data-photo-id="${p.id}" aria-label="Remove photo">×</button></div>`
         )
         .join('');
     }
-    renderGrid(photos);
+    renderGrid();
 
     grid.addEventListener('click', async (e) => {
       const btn = (e.target as HTMLElement).closest('button[data-photo-id]') as HTMLButtonElement | null;
@@ -145,8 +416,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       const photoId = Number(btn.dataset.photoId);
       const res = await fetch(`/api/business-photos?photoId=${photoId}`, { method: 'DELETE' });
       const result = await res.json();
-      if (result.ok) btn.parentElement?.remove();
-      else photoStatus.textContent = result.error || 'Could not delete photo.';
+      if (result.ok) {
+        photos = photos.filter((p) => p.id !== photoId);
+        renderGrid();
+        setStatus('');
+      } else setStatus(result.error || 'Could not delete photo.');
     });
 
     const uploadForm = document.getElementById('photo-upload-form') as HTMLFormElement;
@@ -154,19 +428,22 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       e.preventDefault();
       const fileInput = uploadForm.elements.namedItem('photo') as HTMLInputElement;
       if (!fileInput.files?.[0]) return;
-      photoStatus.textContent = 'Uploading…';
+      setStatus('Uploading…');
       const fd = new FormData();
       fd.append('businessId', String(businessId));
       fd.append('photo', fileInput.files[0]);
       const res = await fetch('/api/business-photos', { method: 'POST', body: fd });
       const result = await res.json();
       if (result.ok) {
-        photoStatus.textContent = '';
+        setStatus('');
         uploadForm.reset();
         const refreshed = await fetch(`/api/business-photos?businessId=${businessId}`).then((r) => r.json());
-        if (refreshed.ok) renderGrid(refreshed.photos);
+        if (refreshed.ok) {
+          photos = refreshed.photos;
+          renderGrid();
+        }
       } else {
-        photoStatus.textContent = result.error || 'Could not upload photo.';
+        setStatus(result.error || 'Could not upload photo.');
       }
     });
   }
@@ -186,22 +463,29 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       loading.textContent = data.error || 'Could not load this business.';
       return;
     }
+    const b: Business = data.business;
     loading.hidden = true;
-    form.hidden = false;
-    document.getElementById('business-name')!.textContent = data.business.name;
-    (form.elements.namedItem('address') as HTMLInputElement).value = data.business.address ?? '';
-    (form.elements.namedItem('phone') as HTMLInputElement).value = data.business.phone ?? '';
-    (form.elements.namedItem('website') as HTMLInputElement).value = data.business.website ?? '';
-    (form.elements.namedItem('description') as HTMLTextAreaElement).value = data.business.description ?? '';
-    (form.elements.namedItem('hours') as HTMLTextAreaElement).value = data.business.hours ?? '';
+    dashboard.hidden = false;
 
-    renderPlanPanel(data.business);
-    renderPhotosPanel(data.business, data.photos ?? []);
+    (document.getElementById('field-name') as HTMLInputElement).value = b.name;
+    (form.elements.namedItem('address') as HTMLInputElement).value = b.address ?? '';
+    (form.elements.namedItem('phone') as HTMLInputElement).value = b.phone ?? '';
+    (form.elements.namedItem('website') as HTMLInputElement).value = b.website ?? '';
+    (form.elements.namedItem('description') as HTMLTextAreaElement).value = b.description ?? '';
+    (form.elements.namedItem('hours') as HTMLTextAreaElement).value = b.hours ?? '';
+
+    renderHeader(b);
+    renderPlan(b);
+    renderPayments(data.payments ?? []);
+    renderPhotos(b, data.photos ?? []);
+
+    const fromHash = location.hash.replace('#', '');
+    showTab(params.get('upgraded') || params.get('upgrade_cancelled') ? 'billing' : fromHash || 'overview');
   }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    status.textContent = 'Saving…';
+    formStatus.textContent = 'Saving…';
     const data = Object.fromEntries(new FormData(form).entries());
     const res = await fetch('/api/update-business', {
       method: 'POST',
@@ -209,7 +493,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       body: JSON.stringify({ ...data, businessId: Number(businessId) }),
     });
     const result = await res.json();
-    status.textContent = result.ok ? 'Saved.' : result.error || 'Something went wrong.';
+    formStatus.textContent = result.ok ? 'Saved.' : result.error || 'Something went wrong.';
   });
 
   init();

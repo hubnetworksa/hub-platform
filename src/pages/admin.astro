@@ -7,13 +7,14 @@ import AdminShell from '../components/AdminShell.astro';
   <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
   <div id="content" hidden>
-    <AdminShell active="dashboard" title="Dashboard" subtitle="Overview, approvals waiting, and revenue.">
+    <AdminShell active="dashboard" title="Dashboard" subtitle="Everything happening on this hub today">
       <div id="stats-strip" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px"></div>
 
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px">
         <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
           <div style="padding:14px 18px;border-bottom:2px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px">
             <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Waiting for approval</h2>
+            <a href="/admin/submissions/" style="border:0;background:transparent;font-size:12.5px;font-weight:800;color:var(--accent);cursor:pointer;text-decoration:none">Open queue →</a>
           </div>
           <div id="waiting-list"></div>
         </div>
@@ -35,10 +36,7 @@ import AdminShell from '../components/AdminShell.astro';
 </BaseLayout>
 
 <script>
-  async function postJson(url: string, body: unknown): Promise<{ ok: boolean }> {
-    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    return { ok: res.ok };
-  }
+  import { esc, randFromCents, requireAdmin, showContent, postJson } from '../lib/admin-html';
 
   function statTile(value: string | number, label: string, note?: string): string {
     return `<div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:18px">
@@ -48,59 +46,86 @@ import AdminShell from '../components/AdminShell.astro';
     </div>`;
   }
 
-  function waitingRow(name: string, meta: string, href: string): string {
+  // A submission in the queue — mockup's inline Approve / Reject row.
+  function queueRow(s: { token: string; name: string; category_name: string | null; category_slug: string; suburb_name: string | null; suburb_slug: string }): string {
+    const meta = [s.category_name ?? s.category_slug, s.suburb_name ?? s.suburb_slug].filter(Boolean).join(' · ');
+    return `<div style="padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="min-width:0;flex:1">
+        <div style="font-size:14.5px;font-weight:800;color:var(--navy)">${esc(s.name)}</div>
+        <div style="font-size:12.5px;font-weight:600;color:var(--muted)">${esc(meta)}</div>
+      </div>
+      <button data-action="approve" data-token="${esc(s.token)}" style="padding:8px 12px;border:0;border-radius:8px;background:var(--accent);color:var(--contrast);font-size:12.5px;font-weight:800;cursor:pointer">Approve</button>
+      <button data-action="reject" data-token="${esc(s.token)}" style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--danger);font-size:12.5px;font-weight:800;cursor:pointer">Reject</button>
+    </div>`;
+  }
+
+  // Claims and reports have their own review pages — link out to them.
+  function linkRow(name: string, meta: string, href: string): string {
     return `<a href="${href}" style="display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;">
       <div style="min-width:0;flex:1">
-        <div style="font-size:14.5px;font-weight:800;color:var(--navy)">${name}</div>
-        <div style="font-size:12.5px;font-weight:600;color:var(--muted)">${meta}</div>
+        <div style="font-size:14.5px;font-weight:800;color:var(--navy)">${esc(name)}</div>
+        <div style="font-size:12.5px;font-weight:600;color:var(--muted)">${esc(meta)}</div>
       </div>
       <span style="font-size:12.5px;font-weight:800;color:var(--accent)">Review →</span>
     </a>`;
   }
 
+  async function postForm(url: string, params: Record<string, string>): Promise<void> {
+    await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(params) });
+  }
+
   async function init() {
-    const me = await fetch('/api/me');
-    if (me.status === 401) {
-      window.location.href = '/login/?next=/admin/';
-      return;
-    }
-    const meData = await me.json();
-    if (!meData.isAdmin) {
-      window.location.href = '/my-businesses/';
-      return;
-    }
+    if (!(await requireAdmin('/admin/'))) return;
 
     const res = await fetch('/api/admin/overview');
     const data = await res.json();
-    document.getElementById('loading')!.hidden = true;
-    document.getElementById('content')!.hidden = false;
+    showContent();
+    const s = data.stats;
 
+    // Every number below is computed from D1 by /api/admin/overview.
+    const paid = s.featuredListings + s.verifiedListings;
+    const oldest = s.oldestAwaitingDays;
     document.getElementById('stats-strip')!.innerHTML = [
-      statTile(data.stats.businesses, 'Businesses'),
-      statTile(data.stats.users, 'Users'),
-      statTile(data.stats.pendingSubmissions, 'Pending submissions'),
-      statTile(data.stats.pendingClaims, 'Pending claims'),
-      statTile(data.stats.openReports, 'Open reports'),
+      statTile(s.businesses.toLocaleString('en-US'), 'Live listings', `+${s.newThisWeek.toLocaleString('en-US')} this week`),
+      statTile(paid.toLocaleString('en-US'), 'Paid listings', `${s.featuredListings} featured · ${s.verifiedListings} verified`),
+      statTile(s.awaitingReview, 'Awaiting review', s.awaitingReview === 0 ? 'queue is clear' : oldest === null ? '' : oldest <= 0 ? 'oldest today' : `oldest ${oldest} day${oldest === 1 ? '' : 's'}`),
+      statTile(randFromCents(data.revenue.totalCents), 'Monthly recurring', 'across all products'),
     ].join('');
 
-    document.getElementById('revenue-row')!.innerHTML = `
-      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:800;color:var(--navy)"><span>Tier subscriptions</span><span>R${data.revenue.tierRand}</span></div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:800;color:var(--navy)"><span>Sponsorship slots</span><span>R${data.revenue.sponsorshipRand}</span></div>
-      <div style="border-top:2px solid var(--border);padding-top:12px;display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:var(--navy)"><span>Total MRR</span><span>R${data.revenue.totalRand}</span></div>
-    `;
+    const rows: { label: string; cents: number }[] = data.revenue.rows;
+    const max = Math.max(...rows.map((r) => r.cents), 1);
+    document.getElementById('revenue-row')!.innerHTML =
+      rows
+        .map(
+          (r) => `<div>
+      <div style="display:flex;justify-content:space-between;gap:10px;font-size:13px;font-weight:800;color:var(--navy)"><span>${esc(r.label)}</span><span>${randFromCents(r.cents)}</span></div>
+      <div style="height:8px;border-radius:99px;background:var(--bg-subtle);margin-top:6px;overflow:hidden"><div style="height:100%;border-radius:99px;background:var(--accent);width:${Math.round((r.cents / max) * 100)}%"></div></div>
+    </div>`
+        )
+        .join('') +
+      `<div style="border-top:2px solid var(--border);padding-top:12px;display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:var(--navy)"><span>Monthly recurring</span><span>${randFromCents(data.revenue.totalCents)}</span></div>`;
 
-    const waitingList = document.getElementById('waiting-list')!;
-    const rows: string[] = [];
-    if (data.stats.pendingSubmissions > 0) rows.push(waitingRow(`${data.stats.pendingSubmissions} pending submission${data.stats.pendingSubmissions === 1 ? '' : 's'}`, 'New listings awaiting review', '/admin/submissions/'));
-    if (data.stats.pendingClaims > 0) rows.push(waitingRow(`${data.stats.pendingClaims} pending claim${data.stats.pendingClaims === 1 ? '' : 's'}`, 'Ownership claims awaiting review', '/admin/claims/'));
-    if (data.stats.openReports > 0) rows.push(waitingRow(`${data.stats.openReports} open report${data.stats.openReports === 1 ? '' : 's'}`, 'Reports & removal requests', '/admin/reports/'));
-    waitingList.innerHTML = rows.length > 0 ? rows.join('') : `<div style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted)">Queue is clear.</div>`;
+    const waiting: string[] = [];
+    for (const sub of data.submissions.filter((x: { status: string }) => x.status === 'Pending your approval')) waiting.push(queueRow(sub));
+    if (s.pendingClaims > 0) waiting.push(linkRow(`${s.pendingClaims} pending claim${s.pendingClaims === 1 ? '' : 's'}`, 'Ownership claims awaiting review', '/admin/claims/'));
+    if (s.openReports > 0) waiting.push(linkRow(`${s.openReports} open report${s.openReports === 1 ? '' : 's'}`, 'Reports & removal requests', '/admin/reports/'));
+    document.getElementById('waiting-list')!.innerHTML = waiting.length > 0 ? waiting.join('') : `<div style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted)">Queue is clear.</div>`;
 
     document.getElementById('health-row')!.innerHTML = `
       <span style="font-size:0.78rem;font-weight:600;${data.health.resendConfigured ? 'color:#1a8f5e' : 'color:var(--danger,#c23838)'}">● Resend</span>
       <span style="font-size:0.78rem;font-weight:600;${data.health.dispatchConfigured ? 'color:#1a8f5e' : 'color:var(--danger,#c23838)'}">● Rebuild trigger</span>
     `;
   }
+
+  document.getElementById('waiting-list')!.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-action]') as HTMLButtonElement | null;
+    if (!btn) return;
+    btn.disabled = true;
+    await postForm('/api/confirm-listing', { token: btn.dataset.token!, action: btn.dataset.action! });
+    init();
+  });
+
+  document.addEventListener('admin:listing-saved', () => init());
 
   document.getElementById('rebuild-btn')!.addEventListener('click', async (e) => {
     const btn = e.currentTarget as HTMLButtonElement;

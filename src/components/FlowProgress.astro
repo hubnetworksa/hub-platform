@@ -1,0 +1,15 @@
+---
+// Mockup's 3-segment progress bar for the "Add your business" flow.
+interface Props {
+  step: 1 | 2 | 3;
+  /** Bottom margin in px — the mockup uses 24 on step 1 and 26 on steps 2-3. */
+  mb?: number;
+}
+const { step, mb = 26 } = Astro.props;
+---
+
+<div style={`display:flex;gap:8px;margin-bottom:${mb}px`}>
+  <div style="flex:1;height:5px;border-radius:99px;background:var(--accent)"></div>
+  <div style={`flex:1;height:5px;border-radius:99px;background:${step >= 2 ? 'var(--accent)' : 'var(--border)'}`}></div>
+  <div style={`flex:1;height:5px;border-radius:99px;background:${step >= 3 ? 'var(--accent)' : 'var(--border)'}`}></div>
+</div>

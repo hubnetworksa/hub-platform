@@ -1,102 +1,122 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Icon from '../components/Icon.astro';
 import site from '../site';
 
-const ICONS = {
-  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
-};
+const TOPICS = [
+  'A listing that needs fixing',
+  'Advertising and sponsorship',
+  'Billing or an invoice',
+  'Report incorrect or spam content',
+  'Something else',
+];
+
+// The mockup's "Direct lines" card lists separate addresses per topic; the real
+// site has a single inbox (site.contactEmail), so each line is that address with
+// the topic pre-filled as the subject.
+const LINES = [
+  { label: 'Listings', subject: 'Listings' },
+  { label: 'Advertising', subject: 'Advertising' },
+  { label: 'POPIA requests', subject: 'POPIA request' },
+];
+
+const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)';
+const fieldStyle = 'padding:13px;border:2px solid var(--border);border-radius:11px;font-size:14.5px;outline:none;background:#fff;color:var(--text)';
 ---
 
 <BaseLayout
   title="Contact"
   titleOverride={`Contact ${site.siteName} | ${site.cityLabel}'s Local Business Directory`}
-  description={`Get in touch with ${site.siteName} — questions, listing corrections, or anything else, reach us at ${site.contactEmail}.`}
+  description={`Get in touch with ${site.siteName} — questions, listing corrections, advertising or POPIA requests, reach us at ${site.contactEmail}.`}
 >
-  <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 640px;">
-    <h1>Contact {site.siteName}</h1>
-    <p class="lede">
-      Got a question, a correction for a listing, or something else on your mind? We'd like to hear
-      from you.
-    </p>
-
-    <a href={`mailto:${site.contactEmail}`} class="contact-card">
-      <span class="contact-icon"><Icon path={ICONS.mail} size={22} /></span>
-      <span class="contact-text">
-        <strong>Email us</strong>
-        <span>{site.contactEmail}</span>
-      </span>
-    </a>
-
-    <h2>Before you email</h2>
-    <ul class="tips">
-      <li>To report an issue with a specific listing, use the <strong>"Report this listing"</strong> link on that business's own page — it gets routed straight to us with the listing already attached.</li>
-      <li>To add your business, visit <a href="/list-your-business/">List your business</a> — it's free.</li>
-      <li>Already claimed your business? Manage it from <a href="/my-businesses/">My Businesses</a>.</li>
-    </ul>
-  </section>
+  <main>
+    <section style="background:var(--navy);color:#fff">
+      <div style="max-width:1200px;margin:0 auto;padding:clamp(28px,4.5vw,54px) 20px">
+        <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--grad-from)">Contact</span>
+        <h1 style="margin:12px 0 12px;color:#fff;font-size:clamp(28px,5vw,46px);letter-spacing:-.03em;line-height:1.05;max-width:20ch">Talk to a person, not a form robot</h1>
+        <p style="margin:0;color:rgba(255,255,255,.84);font-size:16px;line-height:1.55;max-width:52ch">Send us a message and a real person will read it.</p>
+      </div>
+    </section>
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(24px,3.5vw,40px) 20px 60px">
+      <div id="contact-shell" style="display:grid;gap:22px">
+        <form id="contact-form" style="display:flex;flex-direction:column;gap:15px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px">
+            <label style={labelStyle}>Your name
+              <input type="text" name="name" class="contact-field" maxlength="120" style={fieldStyle} /></label>
+            <label style={labelStyle}>Email
+              <input type="email" name="email" class="contact-field" maxlength="120" style={fieldStyle} /></label>
+          </div>
+          <label style={labelStyle}>What's this about?
+            <select name="topic" class="contact-field" style={fieldStyle}>
+              {TOPICS.map((t) => <option>{t}</option>)}
+            </select></label>
+          <label style={labelStyle}>Message
+            <textarea name="message" rows="6" required maxlength="4000" class="contact-field" style={`${fieldStyle};resize:vertical`}></textarea></label>
+          <button type="submit" class="contact-send" style="align-self:flex-start;padding:14px 22px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;cursor:pointer">Send message</button>
+          <p id="contact-status" role="status" style="font-size:13.5px;font-weight:600;color:var(--muted);margin:0"></p>
+        </form>
+        <aside style="display:flex;flex-direction:column;gap:14px">
+          <div style="border:2px solid var(--navy);border-radius:14px;overflow:hidden">
+            <div style="background:var(--navy);padding:14px 18px;font-size:14.5px;font-weight:800;color:#fff">Direct lines</div>
+            <div style="background:#fff;padding:16px;display:flex;flex-direction:column;gap:13px">
+              {LINES.map((l) => (
+                <div>
+                  <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">{l.label}</div>
+                  <div style="font-size:14.5px;font-weight:700;margin-top:4px;overflow-wrap:anywhere"><a href={`mailto:${site.contactEmail}?subject=${encodeURIComponent(l.subject)}`} style="color:inherit">{site.contactEmail}</a></div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
+            <h3 style="margin:0 0 8px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Faster than emailing</h3>
+            <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Wrong phone number or address on a listing? Use the Claim button on the listing itself — it routes straight to review.</p>
+            <a href="/my-businesses/claim/" style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--navy);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-align:center;cursor:pointer;text-decoration:none">Claim a listing</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
 </BaseLayout>
 
 <style>
-  .lede {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: var(--text);
+  #contact-shell {
+    grid-template-columns: minmax(0, 1fr);
   }
-  .contact-card {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin: 1.5rem 0 2rem;
-    padding: 1.25rem 1.4rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 16px);
-    background: var(--bg-card);
-    text-decoration: none;
-    color: inherit;
-    transition: border-color 0.15s, box-shadow 0.15s;
+  @media (min-width: 950px) {
+    #contact-shell {
+      grid-template-columns: minmax(0, 1fr) 320px;
+    }
   }
-  .contact-card:hover {
-    border-color: var(--accent);
-    box-shadow: 0 4px 14px rgba(16, 26, 51, 0.08);
+  .contact-field:focus {
+    border-color: var(--accent) !important;
   }
-  .contact-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(var(--accent-rgb), 0.1);
-    color: var(--accent);
-    flex-shrink: 0;
-  }
-  .contact-text {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-  .contact-text strong {
-    color: var(--navy);
-    font-size: 1.05rem;
-  }
-  .contact-text span {
-    color: var(--accent);
-    font-size: 0.95rem;
-  }
-  h2 {
-    font-size: 1.1rem;
-    margin: 0 0 0.6rem;
-    color: var(--navy);
-  }
-  .tips {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    padding-left: 1.1rem;
-    margin: 0;
-  }
-  .tips li {
-    line-height: 1.6;
+  .contact-send:hover {
+    background: var(--accent-hover) !important;
   }
 </style>
+
+<script define:vars={{ contactEmail: site.contactEmail, siteName: site.siteName }}>
+  // NOTE: define:vars forces this script to stay inline and unprocessed by
+  // Astro/Vite (no TypeScript stripping) — it must be plain browser JS.
+  // No server round-trip: this opens the visitor's own email app with a
+  // pre-filled message to our contact address; their mail client does the
+  // actual sending and Cloudflare Email Routing forwards it into our inbox.
+  const form = document.getElementById('contact-form');
+  const status = document.getElementById('contact-status');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries());
+    const lines = [
+      `Name: ${data.name || ''}`,
+      `Email: ${data.email || ''}`,
+      `Topic: ${data.topic || ''}`,
+      '',
+      'Message:',
+      data.message || '',
+    ];
+    const subject = `${siteName} contact: ${data.topic || 'Message'}`;
+    const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
+    status.innerHTML = `Opening your email app to send this — if it didn't open, <a href="${mailto}">click here</a>.`;
+    window.location.href = mailto;
+  });
+</script>

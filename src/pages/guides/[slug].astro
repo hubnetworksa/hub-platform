@@ -1,0 +1,189 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { GUIDES, type Guide } from '../../lib/guides';
+import {
+  categoryBySlug,
+  businessesInCategory,
+  suburbFor,
+  sponsorFor,
+  priceRand,
+  FEATURED_TIER,
+} from '../../lib/data';
+import site from '../../site';
+
+export function getStaticPaths() {
+  return GUIDES.map((guide) => ({ params: { slug: guide.slug }, props: { guide } }));
+}
+
+const { guide } = Astro.props as { guide: Guide };
+const title = guide.title(site.cityLabel);
+const url = `https://${site.domain}/guides/${guide.slug}/`;
+const byline = `Updated ${guide.updatedLabel} · ${guide.readTime} read · by the ${site.siteName} editorial team`;
+
+// Real listings for the guide's category (none if this city has no
+// businesses in it yet — the section then shows an honest empty state).
+const category = categoryBySlug(guide.categorySlug);
+const categoryName = category?.name ?? '';
+const sponsor = category ? sponsorFor('category_sponsor', category.slug) : undefined;
+const inCategory = category ? businessesInCategory(category.id) : [];
+const listed = [...inCategory]
+  .sort((a, b) => {
+    const sa = sponsor && a.slug === sponsor.business_slug ? 1 : 0;
+    const sb = sponsor && b.slug === sponsor.business_slug ? 1 : 0;
+    return sb - sa || b.subscription_tier - a.subscription_tier || a.name.localeCompare(b.name);
+  })
+  .slice(0, 3)
+  .map((b) => ({
+    slug: b.slug,
+    name: b.name,
+    suburb: suburbFor(b)?.name,
+    featured: b.subscription_tier >= FEATURED_TIER || sponsor?.business_slug === b.slug,
+  }));
+
+const sponsorPrice = priceRand('price_sponsor_category_cents');
+const otherGuides = GUIDES.filter((g) => g.slug !== guide.slug).map((g) => ({
+  href: `/guides/${g.slug}/`,
+  title: g.title(site.cityLabel),
+}));
+
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: title,
+  description: guide.intro,
+  url,
+  mainEntityOfPage: url,
+  dateModified: guide.updatedIso,
+  inLanguage: 'en-ZA',
+  image: `https://${site.domain}${site.sectionBannerImage}`,
+  author: { '@type': 'Organization', name: site.siteName, url: `https://${site.domain}/` },
+  publisher: { '@type': 'Organization', name: site.siteName, url: `https://${site.domain}/` },
+  articleSection: guide.categoryLabel,
+};
+---
+
+<BaseLayout title={title} description={guide.intro}>
+  <script type="application/ld+json" set:html={JSON.stringify(articleJsonLd)} />
+
+  <main>
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(20px,3vw,34px) 20px 0">
+      <Breadcrumbs
+        variant="plain"
+        items={[{ label: 'Home', href: '/' }, { label: 'Guides', href: '/guides/' }, { label: guide.breadcrumbLabel }]}
+      />
+    </section>
+
+    <section style="max-width:1200px;margin:0 auto;padding:16px 20px 0">
+      <div id="guide-shell" style="display:grid;gap:26px">
+        <article style="min-width:0">
+          <span style="display:inline-block;padding:5px 11px;border-radius:999px;background:var(--bg-subtle);color:var(--accent-hover);font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Buyer's guide</span>
+          <h1 style="margin:14px 0 12px;font-size:clamp(28px,4.6vw,44px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);max-width:20ch">{title}</h1>
+          <p style="margin:0 0 6px;font-size:13.5px;font-weight:700;color:var(--muted)">{byline}</p>
+          <div style="position:relative;height:clamp(200px,28vw,320px);border:2px solid var(--navy);border-radius:16px;overflow:hidden;background:var(--bg-subtle);margin:18px 0 22px">
+            <img src={site.sectionBannerImage} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 45%" />
+          </div>
+          <p style="margin:0 0 18px;font-size:17px;line-height:1.65;color:var(--text);max-width:66ch">{guide.intro}</p>
+
+          {guide.sections.map((s, i) => (
+            <>
+              <h2 id={s.id} class="guide-h2" style="margin:28px 0 10px;font-size:22px;letter-spacing:-.025em;color:var(--navy)">{s.heading}</h2>
+              {s.paragraphs.map((p, j) => (
+                <p style={`margin:0 0 ${i === guide.sections.length - 1 && j === s.paragraphs.length - 1 ? 22 : 16}px;font-size:16px;line-height:1.65;color:var(--text);max-width:66ch`}>{p}</p>
+              ))}
+            </>
+          ))}
+
+          {category && (
+            <>
+              <div style="border-bottom:2px solid var(--navy);padding-bottom:12px;margin-top:30px">
+                <h2 style="margin:0;font-size:clamp(19px,2.6vw,25px);letter-spacing:-.025em;color:var(--navy)">{categoryName} listed in {site.cityLabel}</h2>
+              </div>
+              {listed.length > 0 ? (
+                <>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:12px;margin-top:16px">
+                    {listed.map((b) => (
+                      <a href={`/business/${b.slug}/`} class="guide-biz" style={`border:2px solid ${b.featured ? 'var(--accent)' : 'var(--border)'};border-radius:14px;padding:16px;background:#fff;display:flex;flex-direction:column;gap:7px;text-decoration:none`}>
+                        {b.featured && (
+                          <span style="align-self:flex-start;padding:4px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Featured</span>
+                        )}
+                        <span style="font-size:16.5px;font-weight:800;color:var(--navy);letter-spacing:-.015em">{b.name}</span>
+                        {b.suburb && <span style="font-size:12.5px;font-weight:600;color:var(--muted)">{b.suburb}</span>}
+                      </a>
+                    ))}
+                  </div>
+                  <a href={`/category/${category.slug}/`} style="display:inline-block;margin-top:16px;font-size:14px;font-weight:800;color:var(--accent);text-decoration:none">See all {inCategory.length} {categoryName.toLowerCase()} →</a>
+                </>
+              ) : (
+                <div style="margin-top:16px;border:2px dashed var(--border);border-radius:14px;padding:26px;text-align:center;background:var(--bg-subtle)">
+                  <div style="font-size:16px;font-weight:800;color:var(--navy)">No {categoryName.toLowerCase()} listed in {site.cityLabel} yet</div>
+                  <a href="/list-your-business/" style="display:inline-block;margin-top:8px;font-size:13.5px;font-weight:800;color:var(--accent);text-decoration:none">Run one? List your business free →</a>
+                </div>
+              )}
+            </>
+          )}
+        </article>
+
+        <aside style="display:flex;flex-direction:column;gap:14px;min-width:0">
+          <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
+            <h3 style="margin:0 0 10px;font-size:14px;letter-spacing:-.01em;color:var(--navy)">In this guide</h3>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:13.5px;font-weight:700">
+              {guide.sections.map((s, i) => (
+                <a href={`#${s.id}`} style={`color:${i === 0 ? 'var(--accent-hover)' : 'var(--text)'};text-decoration:none`}>{s.tocLabel}</a>
+              ))}
+            </div>
+          </div>
+
+          {category && (
+            <div style="border:2px solid var(--navy);border-radius:14px;overflow:hidden">
+              <div style="background:var(--navy);padding:14px 16px">
+                <div style="font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--grad-from)">{sponsor ? 'Sponsored' : 'Sponsorship'}</div>
+                <div style="font-size:16px;font-weight:800;color:#fff;margin-top:5px;letter-spacing:-.02em">One business owns the {categoryName} category</div>
+              </div>
+              <div style="padding:16px;background:#fff">
+                {sponsor ? (
+                  <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text)">
+                    <a href={`/business/${sponsor.business_slug}/`} style="font-weight:800;color:var(--navy);text-decoration:none">{sponsor.business_name}</a> is the current {categoryName.toLowerCase()} category sponsor.
+                  </p>
+                ) : (
+                  <>
+                    <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Category sponsorship puts your card above every {categoryName.toLowerCase()} listing, city-wide.</p>
+                    <a href="/pricing/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-align:center;text-decoration:none">{sponsorPrice === '—' ? 'Enquire' : `Enquire — ${sponsorPrice}/mo`}</a>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
+          {otherGuides.length > 0 && (
+            <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:#fff">
+              <h3 style="margin:0 0 10px;font-size:14px;letter-spacing:-.01em;color:var(--navy)">More guides</h3>
+              <div style="display:flex;flex-direction:column;gap:9px;font-size:13.5px;font-weight:700">
+                {otherGuides.map((g) => (
+                  <a href={g.href} style="color:var(--navy);text-decoration:none">{g.title}</a>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  #guide-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 950px) {
+    #guide-shell {
+      grid-template-columns: minmax(0, 1fr) 320px;
+    }
+  }
+  .guide-h2 {
+    scroll-margin-top: 90px;
+  }
+  .guide-biz:hover {
+    border-color: var(--navy) !important;
+  }
+</style>

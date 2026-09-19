@@ -1,0 +1,225 @@
+---
+// Port of the mockup's standalone "Suburb Map.html". Route /suburb/map/ — a
+// static route, so Astro ranks it above the dynamic suburb/[slug] route (and no
+// suburb is expected to have the slug "map").
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { buildSuburbRegions, countWord } from '../../lib/suburbRegions';
+import site from '../../site';
+
+const regions = buildSuburbRegions();
+const fmt = (n: number) => n.toLocaleString('en-US');
+const totalListings = regions.reduce((a, r) => a + r.total, 0);
+
+// Only suburbs with coordinates are plotted; every suburb is still linked in the list below the map.
+const mapRegions = regions.map((r) => ({
+  key: r.key,
+  name: r.name,
+  color: r.color,
+  subs: r.subs
+    .filter((s) => s.lat !== null && s.lng !== null)
+    .map((s) => ({ name: s.name, slug: s.slug, lat: s.lat as number, lng: s.lng as number, count: s.count })),
+}));
+const plotted = mapRegions.reduce((a, r) => a + r.subs.length, 0);
+// Safe to embed in a <script type="application/json"> block.
+const mapJson = JSON.stringify(mapRegions).replace(/</g, '\\u003c');
+---
+
+<BaseLayout
+  title="Suburb map"
+  description={`Find your suburb on the map — ${regions.length} ${regions.length === 1 ? 'region' : 'regions'} across ${site.cityLabel}, with a page of reviewed businesses for every suburb.`}
+>
+  {plotted > 0 && (
+    <>
+      <link is:inline rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
+      <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+    </>
+  )}
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <Breadcrumbs variant="plain" onDark items={[{ label: 'Home', href: '/' }, { label: 'Suburb map' }]} />
+        <h1>Find your suburb on the map</h1>
+        <p class="lede">{countWord(regions.length)[0].toUpperCase() + countWord(regions.length).slice(1)} {regions.length === 1 ? 'region' : 'regions'} across {site.cityLabel}. Click a region to zoom, then a suburb to see its businesses.</p>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="split">
+        {plotted > 0 ? (
+          <>
+            <div id="map"></div>
+            <aside class="panel">
+              <div class="panel-head"><h2>Regions</h2><span style="font-size:12px;font-weight:800;color:var(--muted)" id="totalCount">{fmt(totalListings)} listings</span></div>
+              <div id="regionList">
+                {regions.map((r, i) => {
+                  const hasPoints = (mapRegions[i]?.subs.length ?? 0) > 0;
+                  return (
+                    <button type="button" class="region-btn" data-region={r.key} aria-pressed="false" disabled={!hasPoints}>
+                      <span class="lbl"><span class="dot" style={`background:${r.color}`}></span>{r.name}</span>
+                      <span class="n">{fmt(r.total)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <div style="padding:14px 16px;background:var(--bg-subtle)">
+                <button id="resetBtn" type="button" style="width:100%;padding:11px 14px;border:2px solid var(--navy);border-radius:10px;background:#fff;color:var(--navy);font:inherit;font-size:13px;font-weight:800;cursor:pointer">Show all of {site.cityLabel}</button>
+              </div>
+            </aside>
+          </>
+        ) : (
+          <div class="panel" style="grid-column:1/-1">
+            <div class="panel-head"><h2>Map coming soon</h2></div>
+            <p style="margin:0;padding:16px;font-size:14px;font-weight:600;line-height:1.55;color:var(--muted)">Suburb locations for {site.cityLabel} haven't been added to the map yet. Every suburb is still listed below, each with its own page of businesses.</p>
+          </div>
+        )}
+      </div>
+
+      <section class="sub">
+        <div class="sub-head">
+          <h2>Every suburb by region</h2>
+          <p>All suburb pages linked below</p>
+        </div>
+        <div id="regionBlocks">
+          {regions.map((r) => (
+            <div class="region-block">
+              <h3><span class="dot" style={`background:${r.color}`}></span>{r.name} · {r.subs.length} {r.subs.length === 1 ? 'suburb' : 'suburbs'}</h3>
+              <div class="links">
+                {r.subs.map((s) => (
+                  <a href={`/suburb/${s.slug}/`}>{s.name}<span>{s.count}</span></a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+
+    <section class="cta">
+      <div class="wrap">
+        <h2>Own the top slot in your suburb — one business per page.</h2>
+        <a href="/pricing/">See suburb rates</a>
+      </div>
+    </section>
+  </main>
+
+  {plotted > 0 && <script type="application/json" id="map-data" set:html={mapJson} />}
+</BaseLayout>
+
+<style>
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+  .hero { background: var(--navy); color: #fff; padding: clamp(26px, 4.5vw, 52px) 0; }
+  .hero h1 { margin: 14px 0 12px; color: #fff; font-size: clamp(28px, 5vw, 48px); letter-spacing: -0.03em; line-height: 1.04; max-width: 20ch; }
+  .lede { margin: 0; color: rgba(255, 255, 255, 0.86); font-size: 16px; line-height: 1.55; max-width: 54ch; }
+  .split { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 22px; align-items: start; }
+  @media (min-width: 900px) { .split { grid-template-columns: minmax(0, 1fr) 300px; } }
+  #map { height: clamp(380px, 58vh, 620px); border: 2px solid var(--navy); border-radius: 16px; z-index: 1; }
+  .panel { border: 2px solid var(--border); border-radius: 16px; background: #fff; overflow: hidden; }
+  .panel-head { padding: 13px 16px; border-bottom: 2px solid var(--navy); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .panel-head h2 { margin: 0; font-size: 14px; letter-spacing: -0.015em; color: var(--navy); }
+  .region-btn { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 12px 16px; border: 0; border-bottom: 1px solid var(--border); background: #fff; cursor: pointer; font: inherit; font-size: 14px; font-weight: 700; color: var(--navy); text-align: left; }
+  .region-btn:hover { background: var(--bg-subtle); }
+  .region-btn:disabled { cursor: default; opacity: 0.55; }
+  .region-btn:disabled:hover { background: #fff; }
+  .region-btn[aria-pressed='true'] { background: var(--navy); color: #fff; }
+  .region-btn .dot { width: 10px; height: 10px; border-radius: 99px; flex-shrink: 0; }
+  .region-btn .n { font-size: 12px; font-weight: 800; color: var(--muted); }
+  .region-btn[aria-pressed='true'] .n { color: rgba(255, 255, 255, 0.7); }
+  .region-btn .lbl { display: flex; align-items: center; gap: 9px; min-width: 0; }
+  .sub { border: 2px solid var(--border); border-radius: 16px; background: #fff; margin-top: 26px; overflow: hidden; }
+  .sub-head { padding: 14px 18px; border-bottom: 2px solid var(--navy); display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .sub-head h2 { margin: 0; font-size: clamp(18px, 2.4vw, 23px); letter-spacing: -0.025em; color: var(--navy); }
+  .sub-head p { margin: 0; font-size: 12.5px; font-weight: 700; color: var(--muted); }
+  .region-block { border-bottom: 1px solid var(--border); padding: 16px 18px; }
+  .region-block:last-child { border-bottom: 0; }
+  .region-block h3 { margin: 0 0 10px; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+  .region-block h3 .dot { width: 9px; height: 9px; border-radius: 99px; }
+  .links { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 6px; }
+  .links a { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 13.5px; font-weight: 700; color: var(--navy); text-decoration: none; }
+  .links a:hover { border-color: var(--navy); background: var(--bg-subtle); }
+  .links a span { font-size: 11.5px; font-weight: 800; color: var(--muted); }
+  .cta { margin-top: 34px; background: var(--accent); }
+  .cta .wrap { padding: clamp(28px, 4.5vw, 50px) 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; }
+  .cta h2 { margin: 0; color: var(--contrast); font-size: clamp(22px, 3.4vw, 34px); letter-spacing: -0.03em; line-height: 1.08; max-width: 26ch; }
+  .cta a { padding: 15px 24px; border-radius: 12px; background: #fff; color: var(--accent-hover); font-size: 15px; font-weight: 800; white-space: nowrap; text-decoration: none; }
+</style>
+
+<style is:global>
+  /* Leaflet injects this markup at runtime, so it can't use scoped styles. */
+  .leaflet-container { font-family: 'Archivo', system-ui, sans-serif; border-radius: 14px; }
+  .pop-t { font-size: 15px; font-weight: 800; color: var(--navy); letter-spacing: -0.015em; }
+  .pop-m { font-size: 12.5px; font-weight: 700; color: var(--muted); margin-top: 2px; }
+  .pop-a { display: inline-block; margin-top: 8px; font-size: 13px; font-weight: 800; color: var(--accent); }
+</style>
+
+<script>
+  declare const L: any;
+
+  interface MapSub { name: string; slug: string; lat: number; lng: number; count: number }
+  interface MapRegion { key: string; name: string; color: string; subs: MapSub[]; layer?: any }
+
+  const dataEl = document.getElementById('map-data');
+  const mapEl = document.getElementById('map');
+  if (dataEl && mapEl && typeof L !== 'undefined') {
+    const REGIONS: MapRegion[] = JSON.parse(dataEl.textContent || '[]');
+
+    const map = L.map('map', { scrollWheelZoom: false }).setView([0, 0], 10);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 18,
+    }).addTo(map);
+
+    const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string);
+
+    const all: [number, number][] = [];
+    REGIONS.forEach((r) => {
+      r.layer = L.layerGroup().addTo(map);
+      r.subs.forEach((s) => {
+        const radius = Math.max(7, Math.min(20, Math.sqrt(s.count) * 0.95));
+        const m = L.circleMarker([s.lat, s.lng], {
+          radius,
+          color: '#fff',
+          weight: 2,
+          fillColor: r.color,
+          fillOpacity: 0.82,
+        }).addTo(r.layer);
+        m.bindTooltip(esc(s.name) + ' · ' + s.count, { direction: 'top', offset: [0, -4] });
+        m.bindPopup(
+          '<div class="pop-t">' + esc(s.name) + '</div>' +
+          '<div class="pop-m">' + esc(r.name) + ' · ' + s.count + ' businesses</div>' +
+          '<a class="pop-a" href="/suburb/' + encodeURIComponent(s.slug) + '/">View businesses →</a>'
+        );
+        all.push([s.lat, s.lng]);
+      });
+    });
+    map.fitBounds(L.latLngBounds(all).pad(0.06));
+
+    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.region-btn'));
+    const clearPressed = () => buttons.forEach((b) => b.setAttribute('aria-pressed', 'false'));
+    const showAll = () => {
+      clearPressed();
+      REGIONS.forEach((x) => map.addLayer(x.layer));
+      map.fitBounds(L.latLngBounds(all).pad(0.06));
+    };
+
+    buttons.forEach((btn) => {
+      const r = REGIONS.find((x) => x.key === btn.dataset.region);
+      if (!r || r.subs.length === 0) return;
+      btn.addEventListener('click', () => {
+        const on = btn.getAttribute('aria-pressed') === 'true';
+        clearPressed();
+        REGIONS.forEach((x) => map.addLayer(x.layer));
+        if (on) {
+          map.fitBounds(L.latLngBounds(all).pad(0.06));
+        } else {
+          btn.setAttribute('aria-pressed', 'true');
+          REGIONS.forEach((x) => { if (x !== r) map.removeLayer(x.layer); });
+          map.fitBounds(L.latLngBounds(r.subs.map((s) => [s.lat, s.lng])).pad(0.18));
+        }
+      });
+    });
+
+    document.getElementById('resetBtn')?.addEventListener('click', showAll);
+  }
+</script>

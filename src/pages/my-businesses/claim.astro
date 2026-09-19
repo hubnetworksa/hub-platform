@@ -5,86 +5,310 @@ import site from '../../site';
 
 const ICONS = {
   search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
-  building: '<path d="M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6"/>',
-  x: '<path d="M18 6 6 18M6 6l12 12"/>',
 };
+
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+// Method tiles: name/note are the mockup's. The third line is deliberately NOT
+// the mockup's "Instant / 1 business day / 2 business days": there is no
+// automatic verification, every claim is reviewed by a person.
+const METHODS = [
+  { key: 'email', name: 'Work email', note: 'Matching your business domain', speed: 'Reviewed by hand' },
+  { key: 'phone', name: 'Phone call', note: 'We call the number on file', speed: 'We call you' },
+  { key: 'docs', name: 'Upload documents', note: 'CIPC registration or a utility bill', speed: 'Not available yet' },
+];
+
+const pick = (active: boolean, disabled: boolean) =>
+  `display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left;padding:15px;border:0;cursor:${disabled ? 'not-allowed' : 'pointer'};background:${active ? 'var(--bg-subtle)' : '#fff'};color:${active ? 'var(--accent-hover)' : 'var(--navy)'};box-shadow:${active ? 'inset 0 0 0 2px var(--accent)' : 'none'}${disabled ? ';opacity:.55' : ''}`;
+
+const INPUT = 'padding:13px;border:2px solid var(--border);border-radius:11px;font-size:14.5px;outline:none;background:#fff;color:var(--text)';
+const INPUT2 = 'padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)';
+const TIME = 'padding:9px 11px;border:2px solid var(--border);border-radius:9px;font-size:13.5px;outline:none;background:#fff;color:var(--text)';
 ---
 
 <BaseLayout title="Claim a business" description={`Claim an existing business listing on ${site.siteName}.`} noindex={true}>
-  <main style="max-width:520px;margin:0 auto;padding:clamp(28px,5vw,52px) 20px 60px">
-    <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Claim a business</span>
-    <h1 style="margin:12px 0 10px;font-size:clamp(24px,3.4vw,32px);letter-spacing:-.03em;color:var(--navy)">Find and claim your listing</h1>
-    <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:var(--text);">Find your business and tell us who you are. We'll review your request and get back to you — no documents needed.</p>
+  <main style="max-width:1200px;margin:0 auto;padding:clamp(22px,3.5vw,42px) 20px 60px">
 
-    <div id="search-section">
-      <span style="display:block;font-size:12.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">1. Find your business</span>
-      <div id="combobox" style="position:relative;display:flex;align-items:center;gap:10px;padding:0 14px;border:2px solid var(--border);border-radius:11px;background:#fff;">
-        <Icon path={ICONS.search} size={17} />
-        <input type="text" id="search-input" autocomplete="off" placeholder="Start typing a business name…" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="search-results" style="flex:1;border:0;background:none;font-size:15px;padding:14px 0;outline:none;color:var(--text);" />
-        <span id="search-spinner" class="spinner" hidden></span>
-        <ul id="search-results" role="listbox" hidden style="list-style:none;position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:20;margin:0;padding:6px;border:2px solid var(--border);border-radius:11px;background:#fff;box-shadow:0 12px 28px rgba(16,26,51,.14);max-height:280px;overflow-y:auto;"></ul>
+    <!-- ============ STEP 1: Claim a listing ============ -->
+    <div id="step-1" data-step="1">
+      <div class="claim-grid">
+        <div style="min-width:0">
+          <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Claim a listing</span>
+          <h1 style="margin:12px 0 10px;font-size:clamp(26px,4.2vw,42px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);max-width:20ch">Prove it's yours, then it's yours to edit</h1>
+          <p style="margin:0 0 24px;font-size:16px;line-height:1.6;color:var(--text);max-width:52ch">Claiming is free and takes about two minutes. We verify ownership before handing over control.</p>
+
+          <p id="auth-check" style="color:var(--muted);margin:0 0 24px">Checking your account…</p>
+
+          <!-- Business search (only when the page wasn't opened from a business's "Claim this listing" button) -->
+          <div id="search-section" hidden style="margin-bottom:24px">
+            <h2 style="margin:0 0 12px;font-size:13px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Find your business</h2>
+            <div id="combobox" style="position:relative;display:flex;align-items:center;gap:10px;padding:0 14px;border:2px solid var(--border);border-radius:11px;background:#fff;">
+              <Icon path={ICONS.search} size={17} />
+              <input type="text" id="search-input" autocomplete="off" placeholder="Start typing a business name…" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="search-results" style="flex:1;border:0;background:none;font-size:15px;padding:14px 0;outline:none;color:var(--text);" />
+              <span id="search-spinner" class="spinner" hidden></span>
+              <ul id="search-results" role="listbox" hidden style="list-style:none;position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:20;margin:0;padding:6px;border:2px solid var(--border);border-radius:11px;background:#fff;box-shadow:0 12px 28px rgba(16,26,51,.14);max-height:280px;overflow-y:auto;"></ul>
+            </div>
+          </div>
+
+          <div id="selected-section" hidden>
+            <div style="border:2px solid var(--navy);border-radius:14px;padding:18px;background:var(--bg-subtle);margin-bottom:24px">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+                <div style="min-width:0">
+                  <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Claiming</div>
+                  <div id="sum-name" style="font-size:19px;font-weight:800;color:var(--navy);letter-spacing:-.02em;margin-top:5px"></div>
+                  <div id="sum-meta" style="font-size:13.5px;font-weight:600;color:var(--muted);margin-top:3px"></div>
+                </div>
+                <button type="button" id="change-selection" style="flex-shrink:0;border:0;background:none;color:var(--accent);font-size:13px;font-weight:800;cursor:pointer;padding:2px 0">Change</button>
+              </div>
+              <p id="sum-warning" hidden style="margin:12px 0 0;font-size:13px;font-weight:700;color:var(--danger)">This listing already has an owner, so it can't be claimed. If that's a mistake, use "Report this listing" on the right.</p>
+            </div>
+
+            <h2 style="margin:0 0 12px;font-size:13px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">How do you want to verify?</h2>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:2px;background:var(--border);border:2px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:12px">
+              {METHODS.map((m) => (
+                <button type="button" class="cl-method" data-method={m.key} data-disabled={m.key === 'docs' ? '1' : undefined} aria-pressed={m.key === 'email' ? 'true' : 'false'} style={pick(m.key === 'email', m.key === 'docs')}>
+                  <span style="font-size:13.5px;font-weight:800;letter-spacing:-.005em">{m.name}</span>
+                  <span style="font-size:12.5px;font-weight:600;line-height:1.45">{m.note}</span>
+                  <span style="font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.75">{m.speed}</span>
+                </button>
+              ))}
+            </div>
+            <p id="method-note" role="status" style="margin:0 0 24px;font-size:13px;line-height:1.55;font-weight:600;color:var(--muted)"></p>
+
+            <form id="claim-form" style="display:flex;flex-direction:column;gap:15px">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px">
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Your full name
+                  <input type="text" id="contact-name" name="contactName" autocomplete="name" required maxlength="120" class="cl-input" style={INPUT} /></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Your role
+                  <select id="role-note" name="roleNote" style={INPUT}>
+                    <option>Owner</option><option>Director</option><option>Manager</option><option>Appointed agent</option>
+                  </select></label>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px">
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Work email <span id="email-hint" style="font-weight:600;color:var(--muted);font-size:12px">we check the domain matches your business</span>
+                  <input type="email" id="contact-email" name="contactEmail" autocomplete="email" required maxlength="120" placeholder="you@yourbusiness.co.za" class="cl-input" style={INPUT} /></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Your phone number <span style="font-weight:600;color:var(--muted);font-size:12px">so we can reach you</span>
+                  <input type="tel" id="contact-phone" name="contactPhone" autocomplete="tel" required maxlength="40" class="cl-input" style={INPUT} /></label>
+              </div>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Anything we should know?
+                <textarea id="contact-note" rows="3" maxlength="400" placeholder="e.g. the phone number on file is the old landline" class="cl-input" style={`${INPUT};resize:vertical`}></textarea></label>
+              <label style="display:flex;align-items:flex-start;gap:10px;font-size:13.5px;font-weight:600;color:var(--text);line-height:1.5">
+                <input type="checkbox" id="confirm" required style="accent-color:var(--accent);width:17px;height:17px;margin-top:2px;flex-shrink:0" />
+                <span>I confirm I am authorised to manage this business, and accept the <a href="/terms/">listing rules</a>.</span>
+              </label>
+              <button type="submit" class="cl-primary" style="align-self:flex-start;padding:14px 22px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;cursor:pointer">Continue to details</button>
+            </form>
+          </div>
+        </div>
+        <aside style="display:flex;flex-direction:column;gap:14px">
+          <div style="border:2px solid var(--border);border-radius:14px;padding:20px;background:var(--bg-subtle)">
+            <h2 style="margin:0 0 12px;font-size:16px;letter-spacing:-.015em;color:var(--navy)">What claiming unlocks</h2>
+            <div style="display:flex;flex-direction:column;gap:9px;font-size:14px;line-height:1.45">
+              <span style="display:flex;gap:9px"><span style="color:var(--accent);font-weight:800">✓</span>Edit name, address, hours and phone</span>
+              <span style="display:flex;gap:9px"><span style="color:var(--accent);font-weight:800">✓</span>Reply to enquiries from your inbox</span>
+              <span style="display:flex;gap:9px"><span style="color:var(--accent);font-weight:800">✓</span>See how many people viewed you</span>
+              <span style="display:flex;gap:9px;color:var(--muted)"><span style="font-weight:800">—</span>Photos and website link need Verified</span>
+            </div>
+          </div>
+          <div style="border:2px solid var(--border);border-radius:14px;padding:20px;background:#fff">
+            <h2 style="margin:0 0 10px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Not your business?</h2>
+            <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Report a listing that's wrong, duplicated or closed and we'll check it.</p>
+            <a id="report-link" href="/report-listing/" style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--navy);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-align:center;text-decoration:none">Report this listing</a>
+          </div>
+        </aside>
       </div>
     </div>
 
-    <div id="selected-section" hidden style="margin-top:24px;">
-      <span style="display:block;font-size:12.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">Claiming</span>
-      <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:11px;background:var(--bg-subtle);border:2px solid var(--border);color:var(--navy);font-weight:700;font-size:14.5px;">
-        <Icon path={ICONS.building} size={16} />
-        <span id="selected-name" style="flex:1;"></span>
-        <button type="button" id="change-selection" aria-label="Change business" style="display:flex;align-items:center;justify-content:center;border:0;background:none;color:var(--muted);cursor:pointer;padding:4px;">
-          <Icon path={ICONS.x} size={14} />
-        </button>
+    <!-- ============ STEP 2: Where customers reach you ============ -->
+    <div id="step-2" data-step="2" hidden>
+      <div class="claim-grid">
+        <div style="min-width:0">
+          <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Step 2 of 3</span>
+          <h1 style="margin:12px 0 10px;font-size:clamp(26px,4.2vw,42px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);max-width:20ch">Where customers reach you</h1>
+          <p style="margin:0 0 22px;font-size:16px;line-height:1.6;color:var(--text);max-width:50ch">Check these details and correct anything that's out of date. We review them with your claim, and you can keep editing once it's approved.</p>
+          <div style="display:flex;gap:8px;margin-bottom:26px">
+            <div style="flex:1;height:5px;border-radius:99px;background:var(--accent)"></div>
+            <div style="flex:1;height:5px;border-radius:99px;background:var(--accent)"></div>
+            <div style="flex:1;height:5px;border-radius:99px;background:var(--border)"></div>
+          </div>
+          <form id="details-form" style="display:flex;flex-direction:column;gap:16px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Street address
+              <input type="text" id="d-address" maxlength="200" placeholder="e.g. 12 Main Road" class="cl-input" style={INPUT2} /></label>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px">
+              <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Postal code
+                <input type="text" id="d-postal" maxlength="12" inputmode="numeric" placeholder="e.g. 8001" class="cl-input" style={INPUT2} /></label>
+              <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Shopping centre <span style="font-weight:600;color:var(--muted);font-size:12px">optional</span>
+                <select id="d-centre" style={INPUT2}>
+                  <option value="0">Not in a centre</option>
+                </select></label>
+            </div>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Website <span style="font-weight:600;color:var(--muted);font-size:12px">Verified plan and up</span>
+              <input type="url" id="d-website" maxlength="200" placeholder="https://" class="cl-input" style={INPUT2} /></label>
+            <div style="border:2px solid var(--border);border-radius:14px;overflow:hidden">
+              <div style="padding:13px 16px;border-bottom:2px solid var(--border);font-size:13px;font-weight:800;color:var(--navy)">Trading hours</div>
+              <div style="padding:6px 0">
+                {WEEKDAYS.map((d) => (
+                  <div class="hours-row" data-day={d} style="display:flex;align-items:center;gap:12px;padding:9px 16px;flex-wrap:wrap">
+                    <span style="width:46px;font-size:13.5px;font-weight:800;color:var(--navy);flex-shrink:0">{d}</span>
+                    <input type="time" class="h-open cl-input" aria-label={`${d} opening time`} style={TIME} />
+                    <span style="font-size:13px;font-weight:700;color:var(--muted)">to</span>
+                    <input type="time" class="h-close cl-input" aria-label={`${d} closing time`} style={TIME} />
+                    <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--muted);margin-left:auto"><input type="checkbox" class="h-closed" style="accent-color:var(--accent);width:16px;height:16px" />Closed</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <p id="hours-onfile" hidden style="margin:-4px 0 0;font-size:13px;line-height:1.5;font-weight:600;color:var(--muted)"></p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+              <button type="submit" class="cl-primary" style="padding:15px 24px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer">Continue to review</button>
+              <button type="button" data-goto="1" style="padding:15px 24px;border:2px solid var(--border);border-radius:11px;background:#fff;color:var(--navy);font-size:15px;font-weight:800;cursor:pointer">Back</button>
+            </div>
+          </form>
+        </div>
+        <aside style="display:flex;flex-direction:column;gap:14px">
+          <div style="border:2px solid var(--border);border-radius:14px;padding:20px;background:var(--bg-subtle)">
+            <h2 style="margin:0 0 10px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Why hours matter</h2>
+            <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text)">Customers check when you're open before they visit. Listings with trading hours show them right on the business page.</p>
+          </div>
+        </aside>
       </div>
     </div>
 
-    <form id="claim-form" hidden style="margin-top:24px;">
-      <span style="display:block;font-size:12.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">2. Tell us who you are</span>
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
-          Your full name
-          <input type="text" id="contact-name" name="contactName" autocomplete="name" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);" />
-        </label>
-        <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
-          Phone number
-          <input type="tel" id="contact-phone" name="contactPhone" autocomplete="tel" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);" />
-        </label>
-        <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
-          Email address
-          <input type="email" id="contact-email" name="contactEmail" autocomplete="email" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);" />
-        </label>
-        <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);">
-          Your role at this business
-          <select id="role-note" name="roleNote" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text);">
-            <option value="Owner">Owner</option>
-            <option value="Manager">Manager</option>
-            <option value="Employee">Employee</option>
-            <option value="Other">Other</option>
-          </select>
-        </label>
-      </div>
+    <!-- ============ STEP 3: Check it, then send it to review ============ -->
+    <div id="step-3" data-step="3" hidden>
+      <div class="claim-grid">
+        <div style="min-width:0">
+          <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Step 3 of 3</span>
+          <h1 style="margin:12px 0 10px;font-size:clamp(26px,4.2vw,42px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);max-width:20ch">Check it, then send it to review</h1>
+          <p style="margin:0 0 22px;font-size:16px;line-height:1.6;color:var(--text);max-width:50ch">This is how your listing will look with your changes.</p>
+          <div style="display:flex;gap:8px;margin-bottom:26px">
+            <div style="flex:1;height:5px;border-radius:99px;background:var(--accent)"></div>
+            <div style="flex:1;height:5px;border-radius:99px;background:var(--accent)"></div>
+            <div style="flex:1;height:5px;border-radius:99px;background:var(--accent)"></div>
+          </div>
 
-      <button type="submit" style="width:100%;margin-top:18px;padding:15px 24px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer;">Submit claim</button>
-      <p id="form-status" role="status" style="margin:0.75rem 0 0;font-size:0.88rem;color:var(--muted);min-height:1.2em;"></p>
-    </form>
+          <div id="review-body">
+            <div style="border:2px solid var(--navy);border-radius:16px;overflow:hidden;background:#fff">
+              <div style="padding:10px 16px;background:var(--bg-subtle);font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Preview</div>
+              <div style="padding:20px">
+                <h2 id="pv-name" style="margin:0 0 8px;font-size:23px;letter-spacing:-.025em;color:var(--navy)"></h2>
+                <p id="pv-meta" style="margin:0 0 12px;font-size:13.5px;font-weight:700;color:var(--muted)"></p>
+                <p id="pv-desc" style="margin:0 0 16px;font-size:15px;line-height:1.6;color:var(--text)"></p>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:2px;background:var(--border);border:1px solid var(--border);border-radius:11px;overflow:hidden">
+                  <div style="background:#fff;padding:12px 14px"><div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Phone</div><div id="pv-phone" style="font-size:14px;font-weight:700;margin-top:4px"></div></div>
+                  <div style="background:#fff;padding:12px 14px"><div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Address</div><div id="pv-address" style="font-size:14px;font-weight:700;margin-top:4px"></div></div>
+                  <div style="background:#fff;padding:12px 14px"><div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Hours</div><div id="pv-hours" style="font-size:14px;font-weight:700;margin-top:4px"></div></div>
+                  <div id="pv-website-cell" hidden style="background:#fff;padding:12px 14px"><div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Website</div><div id="pv-website" style="font-size:14px;font-weight:700;margin-top:4px;overflow-wrap:anywhere"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div style="border:2px solid var(--border);border-radius:14px;padding:18px;margin-top:20px;background:var(--bg-subtle)">
+              <h2 style="margin:0 0 10px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Your plan</h2>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                <div>
+                  <div id="plan-name" style="font-size:18px;font-weight:800;color:var(--navy);letter-spacing:-.02em"></div>
+                  <div id="plan-note" style="font-size:13px;font-weight:700;color:var(--muted);margin-top:3px"></div>
+                </div>
+                <a href="/pricing/" style="font-size:13.5px;font-weight:800;color:var(--accent);text-decoration:none">Change plan</a>
+              </div>
+              <p style="margin:12px 0 0;font-size:13px;line-height:1.5;font-weight:600;color:var(--muted)">Claiming doesn't change your plan and nothing is charged now.</p>
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px">
+              <button type="button" id="submit-claim" class="cl-primary" style="padding:15px 24px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer">Send claim for review</button>
+              <button type="button" id="back-2" data-goto="2" style="padding:15px 24px;border:2px solid var(--border);border-radius:11px;background:#fff;color:var(--navy);font-size:15px;font-weight:800;cursor:pointer">Back</button>
+            </div>
+            <p id="form-status" role="status" style="margin:.75rem 0 0;font-size:.88rem;color:var(--muted);min-height:1.2em"></p>
+          </div>
+
+          <div id="success-card" hidden style="border:2px solid var(--navy);border-radius:16px;padding:22px;background:var(--bg-subtle)">
+            <h2 style="margin:0 0 8px;font-size:20px;letter-spacing:-.02em;color:var(--navy)">Claim submitted</h2>
+            <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:var(--text)">Claim submitted — we'll review it and be in touch.</p>
+            <a href="/my-businesses/" style="display:inline-block;padding:13px 20px;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;text-decoration:none">Go to my businesses</a>
+          </div>
+        </div>
+        <aside style="display:flex;flex-direction:column;gap:14px">
+          <div style="border:2px solid var(--border);border-radius:14px;padding:20px;background:#fff">
+            <h2 style="margin:0 0 10px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">What happens next</h2>
+            <ol style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;font-size:13.5px;line-height:1.5;color:var(--text)">
+              <li>We review your claim by hand and verify it the way you chose.</li>
+              <li>We email you once it's decided.</li>
+              <li>Once approved you can edit the listing from My businesses.</li>
+            </ol>
+          </div>
+        </aside>
+      </div>
+    </div>
   </main>
 </BaseLayout>
 
 <script>
-  const searchSection = document.getElementById('search-section')!;
-  const selectedSection = document.getElementById('selected-section')!;
-  const searchInput = document.getElementById('search-input') as HTMLInputElement;
-  const resultsList = document.getElementById('search-results')!;
-  const claimForm = document.getElementById('claim-form') as HTMLFormElement;
-  const selectedName = document.getElementById('selected-name')!;
-  const changeBtn = document.getElementById('change-selection')!;
-  const spinner = document.getElementById('search-spinner')!;
-  const status = document.getElementById('form-status')!;
+  interface IndexBusiness { id: number; s: string; n: string; sb: string; c: string; p: string; a: string; w: string; h: string; d: string; t: number; sc: number; o: number }
+  interface ClaimIndex { b: IndexBusiness[]; c: { id: number; n: string }[]; plans: Record<string, { name: string; price: string; note: string }> }
+
+  const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
+  const searchSection = $('search-section');
+  const selectedSection = $('selected-section');
+  const searchInput = $<HTMLInputElement>('search-input');
+  const resultsList = $('search-results');
+  const spinner = $('search-spinner');
+  const authCheck = $('auth-check');
+  const claimForm = $<HTMLFormElement>('claim-form');
+  const detailsForm = $<HTMLFormElement>('details-form');
+  const status = $('form-status');
+  const methodNote = $('method-note');
+  const submitBtn = $<HTMLButtonElement>('submit-claim');
+
   let selectedId: number | null = null;
+  let biz: IndexBusiness | null = null;
+  let method: 'email' | 'phone' = 'email';
   let debounceTimer: number;
   let activeIndex = -1;
+  let index: ClaimIndex | null = null;
+  let indexPromise: Promise<ClaimIndex | null> | null = null;
 
+  const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const rows = [...document.querySelectorAll<HTMLElement>('.hours-row')];
+
+  const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   const BUILDING_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6"/></svg>`;
 
+  function loadIndex(): Promise<ClaimIndex | null> {
+    if (!indexPromise) {
+      indexPromise = fetch('/claim-index.json')
+        .then((r) => (r.ok ? (r.json() as Promise<ClaimIndex>) : null))
+        .then((j) => (index = j))
+        .catch(() => null);
+    }
+    return indexPromise;
+  }
+
+  // ---------- login gate ----------
+  (async () => {
+    try {
+      const res = await fetch('/api/me');
+      if (res.status === 401) {
+        window.location.href = `/login/?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+        return;
+      }
+    } catch {
+      /* fall through — the submit call re-checks the session */
+    }
+    authCheck.hidden = true;
+    if (!selectedId) searchSection.hidden = false;
+  })();
+
+  // ---------- steps ----------
+  function go(step: number) {
+    document.querySelectorAll<HTMLElement>('[data-step]').forEach((el) => {
+      el.hidden = el.dataset.step !== String(step);
+    });
+    window.scrollTo({ top: 0 });
+  }
+  document.querySelectorAll<HTMLElement>('[data-goto]').forEach((btn) => btn.addEventListener('click', () => go(Number(btn.dataset.goto))));
+
+  // ---------- search / selection ----------
   function closeResults() {
     resultsList.hidden = true;
     resultsList.innerHTML = '';
@@ -92,42 +316,167 @@ const ICONS = {
     activeIndex = -1;
   }
 
-  function highlight(index: number) {
+  function highlight(i: number) {
     const items = [...resultsList.querySelectorAll('button[data-id]')];
-    items.forEach((el, i) => el.classList.toggle('active', i === index));
-    items[index]?.scrollIntoView({ block: 'nearest' });
-    activeIndex = index;
+    items.forEach((el, n) => el.classList.toggle('active', n === i));
+    items[i]?.scrollIntoView({ block: 'nearest' });
+    activeIndex = i;
   }
 
-  (async () => {
-    const res = await fetch('/api/me');
-    if (res.status === 401) {
-      window.location.href = `/login/?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+  function setMethodNote() {
+    const phoneOnFile = biz?.p || '';
+    const siteDomain = (biz?.w || '').replace(/^https?:\/\//, '').replace(/^www\./, '').split(/[/?#]/)[0];
+    if (method === 'phone') {
+      methodNote.textContent = phoneOnFile
+        ? `Our team will call the number on file (${phoneOnFile}) to confirm it's you. We'll email you once it's decided.`
+        : "There's no number on file for this listing, so our team will call the phone number you enter below. We'll email you once it's decided.";
+    } else {
+      methodNote.textContent = siteDomain
+        ? `Every claim is reviewed by a person. We'll compare your email to this business's website (${siteDomain}) and get in touch if we need more.`
+        : "Every claim is reviewed by a person. This listing has no website on file, so we may contact you to confirm you're connected to the business.";
     }
-  })();
+    const emailInput = $<HTMLInputElement>('contact-email');
+    emailInput.placeholder = siteDomain ? `you@${siteDomain}` : 'you@yourbusiness.co.za';
+  }
 
-  function selectBusiness(id: number, name: string) {
+  function applyMethodStyles() {
+    document.querySelectorAll<HTMLButtonElement>('.cl-method').forEach((btn) => {
+      const active = btn.dataset.method === method;
+      btn.style.background = active ? 'var(--bg-subtle)' : '#fff';
+      btn.style.color = active ? 'var(--accent-hover)' : 'var(--navy)';
+      btn.style.boxShadow = active ? 'inset 0 0 0 2px var(--accent)' : 'none';
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+  }
+  document.querySelectorAll<HTMLButtonElement>('.cl-method').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const m = btn.dataset.method;
+      if (m === 'docs') {
+        methodNote.textContent = "Document upload isn't available yet. Please choose work email or a phone call and we'll take it from there.";
+        return;
+      }
+      method = m === 'phone' ? 'phone' : 'email';
+      applyMethodStyles();
+      setMethodNote();
+    });
+  });
+
+  // ---- hours ----
+  const DAY_RE = '(Mon|Tue|Wed|Thu|Fri|Sat|Sun)';
+  const SEG_RE = new RegExp(`^(?:${DAY_RE}(?:\\s*-\\s*${DAY_RE})?|Daily)\\s+(?:(\\d{1,2}:\\d{2})\\s*-\\s*(\\d{1,2}:\\d{2})|closed)$`, 'i');
+  const norm = (d: string) => d.slice(0, 1).toUpperCase() + d.slice(1, 3).toLowerCase();
+  const pad = (t: string) => (t.length === 4 ? `0${t}` : t);
+
+  // Returns null when the stored free text isn't in a simple "Mon-Fri 08:00-17:00, Sat Closed" shape.
+  function parseHours(text: string): { open: string; close: string; closed: boolean }[] | null {
+    const out: ({ open: string; close: string; closed: boolean } | null)[] = DAYS.map(() => null);
+    for (const raw of text.split(',')) {
+      const seg = raw.trim();
+      const m = SEG_RE.exec(seg);
+      if (!m) return null;
+      let from = 0;
+      let to = 6;
+      if (!/^daily/i.test(seg)) {
+        from = DAYS.indexOf(norm(m[1]));
+        to = m[2] ? DAYS.indexOf(norm(m[2])) : from;
+        if (to < from) return null;
+      }
+      for (let i = from; i <= to; i++) out[i] = m[3] ? { open: pad(m[3]), close: pad(m[4]), closed: false } : { open: '', close: '', closed: true };
+    }
+    return out.map((r) => r ?? { open: '', close: '', closed: false });
+  }
+
+  function setRowDim(row: HTMLElement) {
+    const closed = (row.querySelector('.h-closed') as HTMLInputElement).checked;
+    row.querySelectorAll<HTMLInputElement>('.h-open, .h-close').forEach((i) => {
+      i.style.opacity = closed ? '.45' : '1';
+    });
+  }
+  rows.forEach((row) => {
+    (row.querySelector('.h-closed') as HTMLInputElement).addEventListener('change', () => setRowDim(row));
+  });
+
+  function composeHours(): string {
+    const vals = rows.map((row) => {
+      if ((row.querySelector('.h-closed') as HTMLInputElement).checked) return 'Closed';
+      const o = (row.querySelector('.h-open') as HTMLInputElement).value;
+      const c = (row.querySelector('.h-close') as HTMLInputElement).value;
+      return o && c ? `${o}-${c}` : '';
+    });
+    const parts: string[] = [];
+    let i = 0;
+    while (i < 7) {
+      if (!vals[i]) {
+        i++;
+        continue;
+      }
+      let j = i;
+      while (j + 1 < 7 && vals[j + 1] === vals[i]) j++;
+      parts.push(`${i === j ? DAYS[i] : `${DAYS[i]}-${DAYS[j]}`} ${vals[i]}`);
+      i = j + 1;
+    }
+    return parts.join(', ');
+  }
+
+  // ---- select / clear ----
+  async function selectBusiness(id: number, fallbackName?: string) {
     selectedId = id;
-    selectedName.textContent = name;
-    searchSection.hidden = true;
-    selectedSection.hidden = false;
-    claimForm.hidden = false;
     closeResults();
     searchInput.value = '';
+    searchSection.hidden = true;
+    const idx = await loadIndex();
+    biz = idx?.b.find((b) => b.id === id) ?? null;
+
+    const name = biz?.n ?? fallbackName ?? 'this business';
+    $('sum-name').textContent = name;
+    const meta = biz ? [biz.c, biz.sb, biz.p].filter(Boolean).join(' · ') : '';
+    $('sum-meta').textContent = meta;
+    $('sum-meta').hidden = !meta;
+    $('sum-warning').hidden = !(biz && biz.o);
+    ($('report-link') as HTMLAnchorElement).href = biz ? `/report-listing/?slug=${encodeURIComponent(biz.s)}&name=${encodeURIComponent(biz.n)}` : '/report-listing/';
+
+    // Step 2 prefill from real data.
+    $<HTMLInputElement>('d-address').value = biz?.a ?? '';
+    $<HTMLInputElement>('d-website').value = biz?.w ?? '';
+    $<HTMLInputElement>('d-postal').value = '';
+    const centreSel = $<HTMLSelectElement>('d-centre');
+    centreSel.innerHTML = '<option value="0">Not in a centre</option>' + (idx?.c ?? []).map((c) => `<option value="${c.id}">${esc(c.n)}</option>`).join('');
+    centreSel.value = String(biz?.sc ?? 0);
+    if (centreSel.value !== String(biz?.sc ?? 0)) centreSel.value = '0';
+    rows.forEach((row) => {
+      (row.querySelector('.h-open') as HTMLInputElement).value = '';
+      (row.querySelector('.h-close') as HTMLInputElement).value = '';
+      (row.querySelector('.h-closed') as HTMLInputElement).checked = false;
+    });
+    const parsed = biz?.h ? parseHours(biz.h) : null;
+    if (parsed) {
+      rows.forEach((row, i) => {
+        (row.querySelector('.h-open') as HTMLInputElement).value = parsed[i].open;
+        (row.querySelector('.h-close') as HTMLInputElement).value = parsed[i].close;
+        (row.querySelector('.h-closed') as HTMLInputElement).checked = parsed[i].closed;
+      });
+    }
+    rows.forEach(setRowDim);
+    const onFile = $('hours-onfile');
+    if (biz?.h && !parsed) {
+      onFile.textContent = `Hours currently on file: ${biz.h}. Fill in the days above only if you want to replace them.`;
+      onFile.hidden = false;
+    } else {
+      onFile.hidden = true;
+    }
+
+    selectedSection.hidden = false;
+    setMethodNote();
   }
 
-  // Arriving from a business page's "Claim it" button — skip the search step.
-  const params = new URLSearchParams(window.location.search);
-  const preselectId = params.get('businessId');
-  const preselectName = params.get('name');
-  if (preselectId && preselectName) selectBusiness(Number(preselectId), preselectName);
-
-  changeBtn.addEventListener('click', () => {
+  function clearSelection() {
     selectedId = null;
-    searchSection.hidden = false;
+    biz = null;
     selectedSection.hidden = true;
-    claimForm.hidden = true;
-  });
+    searchSection.hidden = false;
+    go(1);
+  }
+  $('change-selection').addEventListener('click', clearSelection);
 
   searchInput.addEventListener('input', () => {
     clearTimeout(debounceTimer);
@@ -139,20 +488,24 @@ const ICONS = {
     }
     spinner.hidden = false;
     debounceTimer = window.setTimeout(async () => {
-      const res = await fetch(`/api/search-businesses?q=${encodeURIComponent(q)}`);
-      const data = await res.json();
-      spinner.hidden = true;
-      resultsList.hidden = false;
-      searchInput.setAttribute('aria-expanded', 'true');
-      resultsList.innerHTML = data.results.length
-        ? data.results
-            .map(
-              (b: { id: number; name: string }, i: number) =>
-                `<li role="option" style="margin-top:${i > 0 ? '2px' : '0'};"><button type="button" data-id="${b.id}" data-name="${b.name}" data-index="${i}" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:8px;border:0;background:none;color:var(--text);cursor:pointer;font-size:14px;">${BUILDING_SVG}<span>${b.name}</span></button></li>`
-            )
-            .join('')
-        : '<li style="padding:12px;color:var(--muted);font-size:14px;text-align:center;">No matches found.</li>';
-      activeIndex = -1;
+      try {
+        const res = await fetch(`/api/search-businesses?q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        spinner.hidden = true;
+        resultsList.hidden = false;
+        searchInput.setAttribute('aria-expanded', 'true');
+        resultsList.innerHTML = data.results.length
+          ? data.results
+              .map(
+                (b: { id: number; name: string }, i: number) =>
+                  `<li role="option" style="margin-top:${i > 0 ? '2px' : '0'};"><button type="button" data-id="${b.id}" data-name="${esc(b.name)}" data-index="${i}" style="display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:8px;border:0;background:none;color:var(--text);cursor:pointer;font-size:14px;">${BUILDING_SVG}<span>${esc(b.name)}</span></button></li>`
+              )
+              .join('')
+          : '<li style="padding:12px;color:var(--muted);font-size:14px;text-align:center;">No matches found.</li>';
+        activeIndex = -1;
+      } catch {
+        spinner.hidden = true;
+      }
     }, 250);
   });
 
@@ -184,34 +537,136 @@ const ICONS = {
     if (!(e.target as HTMLElement).closest('#combobox')) closeResults();
   });
 
-  claimForm.addEventListener('submit', async (e) => {
+  // Arriving from a business page's "Claim this listing" button: skip the search step.
+  const params = new URLSearchParams(window.location.search);
+  const preselectId = Number(params.get('businessId'));
+  if (preselectId) selectBusiness(preselectId, params.get('name') ?? undefined);
+  else searchSection.hidden = true; // shown once the login check passes
+
+  // ---------- step 1 -> 2 -> 3 ----------
+  claimForm.addEventListener('submit', (e) => {
     e.preventDefault();
     if (!selectedId) return;
+    go(2);
+  });
+
+  const val = (id: string) => $<HTMLInputElement>(id).value.trim();
+  const centreName = () => {
+    const sel = $<HTMLSelectElement>('d-centre');
+    return sel.value === '0' ? '' : (sel.selectedOptions[0]?.textContent ?? '');
+  };
+
+  detailsForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!selectedId) return;
+    const address = val('d-address');
+    const website = val('d-website');
+    const hours = composeHours();
+    const postal = val('d-postal');
+
+    $('pv-name').textContent = biz?.n ?? $('sum-name').textContent ?? '';
+    $('pv-meta').textContent = biz ? [biz.c, biz.sb].filter(Boolean).join(' · ') : '';
+    $('pv-desc').textContent = biz?.d ?? '';
+    $('pv-desc').hidden = !biz?.d;
+    $('pv-phone').textContent = biz?.p || 'Not provided';
+    $('pv-address').textContent = [address, postal].filter(Boolean).join(', ') || 'Not provided';
+    $('pv-hours').textContent = hours || biz?.h || 'Not provided';
+    $('pv-website').textContent = website;
+    $('pv-website-cell').hidden = !website;
+
+    const plan = index?.plans?.[String(biz?.t ?? 0)] ?? index?.plans?.['0'];
+    $('plan-name').textContent = plan ? (plan.price === 'Free' ? `${plan.name} — Free` : `${plan.name} — ${plan.price}`) : 'Basic — Free';
+    $('plan-note').textContent = plan?.note ?? '';
+
+    status.textContent = '';
+    status.style.color = 'var(--muted)';
+    go(3);
+  });
+
+  // ---------- submit ----------
+  submitBtn.addEventListener('click', async () => {
+    if (!selectedId) return;
+    status.style.color = 'var(--muted)';
     status.textContent = 'Submitting…';
-    const contactName = (document.getElementById('contact-name') as HTMLInputElement).value.trim();
-    const contactPhone = (document.getElementById('contact-phone') as HTMLInputElement).value.trim();
-    const contactEmail = (document.getElementById('contact-email') as HTMLInputElement).value.trim();
-    const roleNote = (document.getElementById('role-note') as HTMLSelectElement).value;
+    submitBtn.disabled = true;
+
+    const address = val('d-address');
+    const website = val('d-website');
+    const hours = composeHours();
+    const postal = val('d-postal');
+    const centre = centreName();
+    const onFileCentre = biz?.sc ? (index?.c.find((c) => c.id === biz!.sc)?.n ?? '') : '';
+    // Only send details that differ from what's already on the listing.
+    const details = {
+      address: address !== (biz?.a ?? '') ? address : '',
+      postalCode: postal,
+      centre: centre !== onFileCentre ? centre : '',
+      website: website !== (biz?.w ?? '') ? website : '',
+      hours: hours && hours !== (biz?.h ?? '') ? hours : '',
+    };
+
     try {
       const res = await fetch('/api/claim-business', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ businessId: selectedId, contactName, contactPhone, contactEmail, roleNote }),
+        body: JSON.stringify({
+          businessId: selectedId,
+          contactName: val('contact-name'),
+          contactPhone: val('contact-phone'),
+          contactEmail: val('contact-email'),
+          roleNote: $<HTMLSelectElement>('role-note').value,
+          verifyMethod: method,
+          confirmed: $<HTMLInputElement>('confirm').checked,
+          note: val('contact-note'),
+          details,
+        }),
       });
       if (res.status === 401) {
-        window.location.href = '/login/';
+        window.location.href = `/login/?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         return;
       }
       const result = await res.json();
-      status.textContent = result.ok ? "Claim submitted — we'll review it and be in touch." : result.error || 'Something went wrong.';
-      if (result.ok) claimForm.reset();
+      if (result.ok) {
+        $('review-body').hidden = true;
+        $('success-card').hidden = false;
+        window.scrollTo({ top: 0 });
+      } else {
+        status.style.color = 'var(--danger)';
+        status.textContent = result.error || 'Something went wrong.';
+        submitBtn.disabled = false;
+      }
     } catch {
+      status.style.color = 'var(--danger)';
       status.textContent = 'Something went wrong — please try again.';
+      submitBtn.disabled = false;
     }
   });
 </script>
 
-<style>
+<style is:global>
+  .claim-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+  @media (min-width: 950px) {
+    .claim-grid {
+      grid-template-columns: minmax(0, 1fr) 320px;
+    }
+  }
+  [data-step][hidden],
+  #search-section[hidden],
+  #selected-section[hidden],
+  #review-body[hidden],
+  #success-card[hidden],
+  #auth-check[hidden],
+  #sum-warning[hidden],
+  #hours-onfile[hidden],
+  #pv-website-cell[hidden],
+  #pv-desc[hidden],
+  #sum-meta[hidden] {
+    display: none !important;
+  }
   .spinner {
     width: 15px;
     height: 15px;
@@ -225,10 +680,25 @@ const ICONS = {
     to { transform: rotate(360deg); }
   }
   #combobox:focus-within {
-    border-color: var(--accent);
+    border-color: var(--accent) !important;
   }
   #search-results button:hover,
   #search-results button.active {
     background: rgba(var(--accent-rgb), 0.09) !important;
+  }
+  /* Mockup style-focus / style-hover: inline styles win, so !important. */
+  .cl-input:focus {
+    border-color: var(--accent) !important;
+  }
+  .cl-primary:hover:not(:disabled) {
+    background: var(--accent-hover) !important;
+  }
+  .cl-primary:disabled {
+    opacity: 0.6;
+    cursor: default !important;
+  }
+  .cl-method:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -4px;
   }
 </style>

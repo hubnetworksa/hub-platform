@@ -1,0 +1,184 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { priceRand } from '../../lib/data';
+import site from '../../site';
+
+// Organiser submission form — mockup's "Add event" screen (isAddEvent).
+// Submissions go to /api/submit-event (held for admin review, never
+// published directly).
+const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '');
+---
+
+<BaseLayout
+  title="List your event free"
+  description={`List your event on ${site.siteName} for free — ticket prices and your seller link go live within 24 hours of review.`}
+>
+  <main style="max-width:1200px;margin:0 auto;padding:clamp(22px,3.5vw,42px) 20px 60px">
+    <div id="add-shell" style="display:grid;gap:26px">
+      <div style="min-width:0">
+        <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">For organisers</span>
+        <h1 style="margin:12px 0 10px;font-size:clamp(26px,4.2vw,42px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);max-width:20ch">List your event free</h1>
+        <p style="margin:0 0 24px;font-size:16px;line-height:1.6;color:var(--text);max-width:52ch">Ticket prices and your seller link go live within 24 hours of review.</p>
+        <form id="event-form" data-contact-email={site.contactEmail} data-site-name={site.siteName} style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Event title
+            <input class="add-input" type="text" name="title" required maxlength="120" placeholder="e.g. Pretoria Night Market — Winter Edition" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)" /></label>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Type
+              <select class="add-input" name="type" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)">
+                <option>Music</option><option>Market</option><option>Sport</option><option>Theatre</option><option>Food &amp; Drink</option><option>Family</option>
+              </select></label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Date
+              <input class="add-input" type="date" name="eventDate" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Time
+              <input class="add-input" type="text" name="eventTime" maxlength="60" placeholder="17:00 – 23:00" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)" /></label>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Venue
+              <input class="add-input" type="text" name="venue" required maxlength="120" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Suburb
+              <input class="add-input" type="text" name="suburb" maxlength="80" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)" /></label>
+          </div>
+          <div style="border:2px solid var(--navy);border-radius:14px;overflow:hidden">
+            <div style="background:var(--navy);padding:12px 16px;font-size:13px;font-weight:800;color:#fff">Tickets</div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:14px;background:#fff">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px">
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Price shown on the card
+                  <input class="add-input" type="text" name="price" maxlength="60" placeholder="R60 – R120 / Free entry" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" /></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Seller label
+                  <input class="add-input" type="text" name="host" maxlength="80" placeholder="Sold via Quicket" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" /></label>
+              </div>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Ticket URL
+                <input class="add-input" type="url" name="ticketUrl" maxlength="300" placeholder="https://www.quicket.co.za/…" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" /></label>
+              <p style="margin:0;font-size:12px;font-weight:600;color:var(--muted);line-height:1.5">We link straight to your seller — we don't take a cut of ticket sales.</p>
+            </div>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Poster or photo
+            <div style="position:relative;height:190px;border:2px dashed var(--border);border-radius:12px;overflow:hidden;background:var(--bg-subtle);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px">
+              <span style="font-size:13px;font-weight:700;color:var(--muted);text-align:center">Paste a link to your event poster</span>
+              <input class="add-input" type="url" name="imageUrl" maxlength="300" placeholder="https://…/poster.jpg" style="width:100%;max-width:420px;padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;font-weight:500;outline:none;background:#fff;color:var(--text)" />
+            </div></label>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Description
+            <textarea class="add-input" name="description" rows="4" maxlength="600" placeholder="Two or three sentences — what's on, who's playing, what's included." style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;resize:vertical;background:#fff;color:var(--text)"></textarea></label>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Your name <span style="font-weight:600;color:var(--muted);font-size:12px">optional</span>
+              <input class="add-input" type="text" name="contactName" maxlength="80" autocomplete="name" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;outline:none;background:#fff;color:var(--text)" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Email <span style="font-weight:600;color:var(--muted);font-size:12px">not shown publicly</span>
+              <input class="add-input" type="email" name="contactEmail" maxlength="120" autocomplete="email" placeholder="you@organiser.co.za" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;outline:none;background:#fff;color:var(--text)" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Phone <span style="font-weight:600;color:var(--muted);font-size:12px">optional</span>
+              <input class="add-input" type="tel" name="contactPhone" maxlength="30" autocomplete="tel" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;outline:none;background:#fff;color:var(--text)" /></label>
+          </div>
+
+          {/* honeypot — hidden from real users via CSS, bots tend to fill every field */}
+          <label style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+            Leave this empty
+            <input type="text" name="company_url" tabindex="-1" autocomplete="off" />
+          </label>
+
+          <button id="add-submit" type="submit" style="align-self:flex-start;padding:15px 24px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer">Submit event for review</button>
+          <p id="add-status" role="status" style="margin:0;font-size:0.9rem;color:var(--muted)"></p>
+        </form>
+      </div>
+      <aside style="display:flex;flex-direction:column;gap:14px">
+        <div style="border:2px solid var(--accent);border-radius:14px;overflow:hidden">
+          <div style="background:var(--accent);padding:8px 18px;font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--contrast)">Optional upgrade</div>
+          <div style="padding:18px;background:#fff">
+            <div style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em">{featurePrice}<span style="font-size:14px;font-weight:700;color:var(--muted)"> / event</span></div>
+            <p style="margin:10px 0 0;font-size:13.5px;line-height:1.55;color:var(--text)">Feature it: top of the Events page until the date passes, plus a card on the homepage that week.</p>
+          </div>
+        </div>
+        <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
+          <h2 style="margin:0 0 10px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">What gets rejected</h2>
+          <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text)">Events with no fixed date or venue, ticket links to dead pages, and anything already listed by the venue.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  #add-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 950px) {
+    #add-shell {
+      grid-template-columns: minmax(0, 1fr) 320px;
+    }
+  }
+  .add-input:focus {
+    border-color: var(--accent) !important;
+  }
+  #add-submit:hover {
+    background: var(--accent-hover) !important;
+  }
+  #add-submit:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+</style>
+
+<script>
+  let loadedAt = Date.now();
+  const form = document.getElementById('event-form') as HTMLFormElement;
+  const status = document.getElementById('add-status')!;
+  const submitBtn = document.getElementById('add-submit') as HTMLButtonElement;
+  const contactEmail = form.dataset.contactEmail ?? '';
+  const siteName = form.dataset.siteName ?? '';
+
+  // No point offering dates that have already gone by.
+  const dateInput = form.elements.namedItem('eventDate') as HTMLInputElement;
+  const now = new Date();
+  dateInput.min = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+    if (!data.title?.trim()) return void (status.textContent = 'Please give your event a title.');
+    if (!data.eventDate) return void (status.textContent = 'Please choose the date of the event.');
+    if (!data.venue?.trim()) return void (status.textContent = 'Please add the venue — events with no fixed venue are rejected.');
+
+    status.textContent = 'Submitting…';
+    submitBtn.disabled = true;
+    try {
+      const res = await fetch('/api/submit-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...data, loadedAt }),
+      });
+      const result = await res.json();
+      if (result.ok) {
+        // Saved server-side (held for review) either way. Notifying the
+        // admin is a mailto: link the visitor's own mail app sends — same
+        // pattern as list-your-business.astro; nothing is emailed by the
+        // server.
+        const lines = [
+          `A new event was submitted on ${siteName}.`,
+          '',
+          `Title: ${data.title}`,
+          `Type: ${data.type}`,
+          `Date: ${data.eventDate}${data.eventTime ? ' ' + data.eventTime : ''}`,
+          `Venue: ${data.venue}${data.suburb ? ', ' + data.suburb : ''}`,
+        ];
+        if (data.price) lines.push(`Price: ${data.price}`);
+        if (data.host) lines.push(`Seller: ${data.host}`);
+        if (data.ticketUrl) lines.push(`Ticket URL: ${data.ticketUrl}`);
+        if (data.imageUrl) lines.push(`Poster: ${data.imageUrl}`);
+        if (data.description) lines.push(`Description: ${data.description}`);
+        if (data.contactName) lines.push(`Contact: ${data.contactName}`);
+        if (data.contactEmail) lines.push(`Contact email: ${data.contactEmail}`);
+        if (data.contactPhone) lines.push(`Contact phone: ${data.contactPhone}`);
+        lines.push('', `Review & approve: ${result.reviewUrl}`);
+        const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent(`New event to review: ${data.title}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
+        form.reset();
+        loadedAt = Date.now();
+        window.location.href = mailto;
+        status.innerHTML = `Thanks! Your event is in for review. We've opened your email app with a message to us so we can review it quickly — please hit send. If it didn't open, <a href="${mailto}">click here</a>.`;
+      } else {
+        status.textContent = result.error || 'Something went wrong — please try again.';
+      }
+    } catch {
+      status.textContent = 'Something went wrong — please try again.';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+</script>

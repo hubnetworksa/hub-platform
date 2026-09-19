@@ -16,7 +16,13 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (!user || !isAdminEmail(user.email)) return json({ ok: false }, 403);
 
   const rows = await context.env.DB.prepare('SELECT * FROM events ORDER BY event_date ASC').all();
-  return json({ ok: true, events: rows.results });
+  // Organiser submissions waiting for review (see functions/api/submit-event.ts).
+  const submissions = await context.env.DB.prepare(
+    `SELECT id, title, type, event_date, event_time, venue, suburb, price, ticket_url, host, image_url, description,
+            contact_name, contact_email, contact_phone, submitted_by_user_id, created_at
+     FROM event_submissions WHERE status = 'pending' ORDER BY created_at ASC`
+  ).all();
+  return json({ ok: true, events: rows.results, submissions: submissions.results });
 };
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -40,6 +46,53 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     await db.prepare('DELETE FROM events WHERE id = ?').bind(id).run();
     if (existing) await logActivity(db, 'event_removed', existing.title, `Removed by ${user.email}.`);
     return json({ ok: true });
+  }
+
+  if (action === 'approve-submission' || action === 'reject-submission') {
+    const id = Number(body.id);
+    if (!id) return json({ ok: false, error: 'Missing id.' }, 400);
+    const sub = await db
+      .prepare('SELECT * FROM event_submissions WHERE id = ?')
+      .bind(id)
+      .first<{
+        title: string;
+        type: string;
+        event_date: string;
+        event_time: string | null;
+        venue: string | null;
+        suburb: string | null;
+        price: string;
+        ticket_url: string;
+        host: string | null;
+        image_url: string | null;
+        description: string;
+      }>();
+    if (!sub) return json({ ok: false, error: 'That submission is already gone.' }, 404);
+
+    if (action === 'reject-submission') {
+      await db.prepare('DELETE FROM event_submissions WHERE id = ?').bind(id).run();
+      await logActivity(db, 'event_rejected', sub.title, `Submission rejected by ${user.email}.`);
+      return json({ ok: true });
+    }
+
+    // Slug is title + date; if another event already has it (same title on
+    // the same day) add a numeric suffix rather than failing the approval.
+    const baseSlug = eventSlug(sub.title, sub.event_date);
+    let slug = baseSlug;
+    for (let n = 2; await db.prepare('SELECT 1 AS x FROM events WHERE slug = ?').bind(slug).first(); n++) {
+      slug = `${baseSlug}-${n}`;
+    }
+    await db.batch([
+      db
+        .prepare(
+          `INSERT INTO events (slug, title, type, event_date, event_time, venue, suburb, price, ticket_url, host, image_url, description, source)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'organiser')`
+        )
+        .bind(slug, sub.title, isEventType(sub.type) ? sub.type : 'Music', sub.event_date, sub.event_time, sub.venue, sub.suburb, sub.price, sub.ticket_url, sub.host, sub.image_url, sub.description),
+      db.prepare('DELETE FROM event_submissions WHERE id = ?').bind(id),
+    ]);
+    await logActivity(db, 'event_approved', sub.title, `Organiser submission approved by ${user.email}.`);
+    return json({ ok: true, slug });
   }
 
   if (action === 'toggle-feature') {

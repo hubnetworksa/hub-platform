@@ -1,0 +1,130 @@
+---
+// The mockup's shared Legal screen: breadcrumb, title, "last updated", section
+// list, and a right-hand tab column for the four documents. /privacy/ hosts
+// Privacy & POPIA + Cookies, /terms/ hosts Terms of use + Listing rules; the
+// tabs for the other route's docs are plain links, the in-page ones switch via
+// the URL hash (all docs are rendered, so it degrades to a stacked page with
+// no JS).
+import site from '../site';
+import { legalDocs, LEGAL_UPDATED } from '../lib/legal';
+
+interface Props {
+  route: '/privacy/' | '/terms/';
+}
+const { route } = Astro.props;
+const docs = legalDocs(site);
+const here = docs.filter((d) => d.route === route);
+const primary = here.find((d) => d.hash === '') ?? here[0];
+---
+
+<main style="max-width:1200px;margin:0 auto;padding:clamp(22px,3.5vw,40px) 20px 60px">
+  <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--muted);flex-wrap:wrap">
+    <a href="/" style="color:var(--muted);cursor:pointer">Home</a><span>/</span><span id="legal-crumb" style="color:var(--navy)">{primary.label}</span>
+  </div>
+  <div id="legal-shell" style="display:grid;gap:24px;margin-top:16px">
+    <div>
+      {here.map((d) => (
+        <div class="legal-doc" data-doc={d.key} data-label={d.label}>
+          <h1 style="margin:0 0 8px;font-size:clamp(26px,4.2vw,40px);letter-spacing:-.03em;line-height:1.05;color:var(--navy)">{d.label}</h1>
+          <p style="margin:0 0 24px;font-size:13.5px;font-weight:700;color:var(--muted)">Last updated {LEGAL_UPDATED} · applies to all three hub sites</p>
+          <div style="display:flex;flex-direction:column;gap:22px">
+            {d.sections.map((s) => (
+              <section>
+                <h2 style="margin:0 0 8px;font-size:18px;letter-spacing:-.02em;color:var(--navy)">{s.heading}</h2>
+                {s.paragraphs.map((p, i) => (
+                  <p class="legal-p" style={`margin:${i === 0 ? '0' : '10px 0 0'};font-size:15.5px;line-height:1.65;color:var(--text);max-width:68ch`} set:html={p} />
+                ))}
+              </section>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+    <aside style="display:flex;flex-direction:column;gap:8px">
+      {docs.map((d) => (
+        <a
+          class="legal-tab"
+          href={`${d.route}${d.hash}`}
+          data-doc={d.key}
+          data-route={d.route}
+          aria-current={d.key === primary.key ? 'page' : undefined}
+        >{d.label}</a>
+      ))}
+    </aside>
+  </div>
+</main>
+
+<style>
+  #legal-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 950px) {
+    #legal-shell {
+      grid-template-columns: minmax(0, 1fr) 320px;
+    }
+  }
+  .legal-doc[hidden] {
+    display: none !important;
+  }
+  .legal-doc:not([hidden]) ~ .legal-doc:not([hidden]) {
+    margin-top: 48px;
+  }
+  .legal-tab {
+    padding: 11px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 13.5px;
+    font-weight: 800;
+    text-align: left;
+    text-decoration: none;
+    border: 2px solid var(--border);
+    background: #fff;
+    color: var(--navy);
+  }
+  .legal-tab[aria-current='page'] {
+    border-color: var(--navy);
+    background: var(--navy);
+    color: #fff;
+  }
+  .legal-p :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+</style>
+
+<script>
+  // Show one document at a time (as the mockup does). Without JS every doc on
+  // this route is simply stacked.
+  const docsEls = Array.from(document.querySelectorAll<HTMLElement>('.legal-doc'));
+  const tabs = Array.from(document.querySelectorAll<HTMLAnchorElement>('.legal-tab'));
+  const crumb = document.getElementById('legal-crumb');
+  const HASHES: Record<string, string> = { '#listing-rules': 'listing', '#cookies': 'cookies' };
+
+  function apply() {
+    const wanted = HASHES[location.hash];
+    const active = docsEls.find((el) => el.dataset.doc === wanted) ?? docsEls[0];
+    if (!active) return;
+    docsEls.forEach((el) => {
+      el.hidden = el !== active;
+    });
+    tabs.forEach((t) => {
+      if (t.dataset.doc === active.dataset.doc) t.setAttribute('aria-current', 'page');
+      else t.removeAttribute('aria-current');
+    });
+    if (crumb) crumb.textContent = active.dataset.label ?? '';
+  }
+
+  // In-page tabs: switch via the hash without jumping the scroll position.
+  tabs.forEach((t) => {
+    t.addEventListener('click', (e) => {
+      const url = new URL(t.href);
+      if (url.pathname !== location.pathname) return;
+      e.preventDefault();
+      history.replaceState(null, '', url.pathname + url.hash);
+      apply();
+    });
+  });
+  window.addEventListener('hashchange', apply);
+  apply();
+</script>

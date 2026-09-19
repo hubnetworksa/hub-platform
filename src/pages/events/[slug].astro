@@ -10,6 +10,9 @@ export function getStaticPaths() {
 const { event: e } = Astro.props;
 const detail = eventDetail(e);
 const dateLong = eventDateLong(e);
+
+// Free/no-link events store '#' as the ticket URL — no dead "Buy" buttons.
+const hasTicketLink = (url: string | null | undefined) => !!url && url !== '#';
 ---
 
 <BaseLayout title={e.title} description={e.description || `${e.title} — ${dateLong} at ${e.venue ?? 'TBC'}, ${site.cityLabel}.`}>
@@ -18,18 +21,18 @@ const dateLong = eventDateLong(e);
       <img src={site.sectionBannerImage} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%" />
       <div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(var(--navy-rgb),.94) 0%,rgba(var(--navy-rgb),.78) 48%,rgba(var(--navy-rgb),.26) 100%)"></div>
       <div style="position:relative;max-width:1200px;margin:0 auto;padding:clamp(30px,5vw,58px) 20px clamp(24px,3.5vw,38px)">
-        <span style="display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1.5px solid rgba(255,255,255,.34);border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff"><span>What's on in</span>{site.cityLabel}</span>
+        <span style="display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1.5px solid rgba(255,255,255,.34);border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff"><span>{`What's on in ${site.cityLabel}`}</span></span>
         <p style="margin:16px 0 12px;color:#fff;font-size:clamp(30px,5.4vw,52px);font-weight:800;line-height:1.03;letter-spacing:-.03em;max-width:18ch">Events, markets and gigs — with ticket prices up front.</p>
         <p style="margin:0;color:rgba(255,255,255,.86);font-size:clamp(15px,1.7vw,17.5px);max-width:52ch;line-height:1.5">Every listing shows what a ticket actually costs and links straight to the seller. Organisers list free; featured events sit at the top.</p>
       </div>
     </section>
 
     <section style="max-width:1200px;margin:0 auto;padding:18px 20px 0">
-      <a href="/events/" style="display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">← All events</a>
+      <a href="/events/" class="back-btn" style="display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">← All events</a>
     </section>
 
     <section style="max-width:1200px;margin:0 auto;padding:16px 20px 0">
-      <div id="event-shell" style="display:grid;grid-template-columns:1fr;gap:22px">
+      <div id="event-shell" style="display:grid;gap:22px">
         <div>
           <div style="position:relative;border:2px solid var(--navy);border-radius:16px;overflow:hidden;height:clamp(220px,32vw,360px);background:var(--bg-subtle)">
             {e.image_url ? (
@@ -115,7 +118,7 @@ const dateLong = eventDateLong(e);
                     <span style="font-size:17px;font-weight:800;color:var(--navy);letter-spacing:-.02em;white-space:nowrap">{t.price}</span>
                   </div>
                   {t.note && <span style="font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.4">{t.note}</span>}
-                  <a href={t.url} target="_blank" rel="noopener noreferrer" style="margin-top:2px;padding:10px 13px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;text-align:center;text-decoration:none">Buy this ticket</a>
+                  {hasTicketLink(t.url) && <a href={t.url} target="_blank" rel="noopener noreferrer" class="buy-btn" style="margin-top:2px;padding:10px 13px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;text-align:center;text-decoration:none">Buy this ticket</a>}
                 </div>
               ))}
               <p style="margin:0;font-size:11.5px;font-weight:600;color:var(--muted);line-height:1.45">Tickets are sold by the organiser's own seller. {site.siteName} does not handle payments or refunds.</p>
@@ -136,16 +139,25 @@ const dateLong = eventDateLong(e);
     <section style="margin-top:clamp(36px,5vw,56px);background:var(--accent)">
       <div style="max-width:1200px;margin:0 auto;padding:clamp(30px,4.5vw,52px) 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px">
         <h2 style="margin:0;color:var(--contrast);font-size:clamp(23px,3.4vw,36px);letter-spacing:-.03em;line-height:1.08;max-width:26ch">Selling tickets? Get in front of {site.cityLabel} this weekend.</h2>
-        <a href={`mailto:${site.contactEmail}?subject=${encodeURIComponent('List an event on ' + site.siteName)}`} style="padding:16px 26px;border-radius:12px;background:#fff;color:var(--accent-hover);font-size:15px;font-weight:800;white-space:nowrap;text-decoration:none">List an event</a>
+        <a href="/events/add/" style="padding:16px 26px;border-radius:12px;background:#fff;color:var(--accent-hover);font-size:15px;font-weight:800;white-space:nowrap;text-decoration:none">List an event</a>
       </div>
     </section>
   </main>
 </BaseLayout>
 
 <style>
+  #event-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
   @media (min-width: 950px) {
     #event-shell {
       grid-template-columns: minmax(0, 1fr) 320px;
     }
+  }
+  .back-btn:hover {
+    border-color: var(--navy) !important;
+  }
+  .buy-btn:hover {
+    background: var(--accent-hover) !important;
   }
 </style>

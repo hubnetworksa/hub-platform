@@ -1,7 +1,12 @@
 ---
+import { adsEnabled } from '../../lib/site-overrides';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { eventsSorted, eventTypeCounts, eventDateParts } from '../../lib/data';
+import { eventsSorted, eventTypeCounts, eventDateParts, priceRand } from '../../lib/data';
 import site from '../../site';
+
+// Free/no-link events store '#' as the ticket URL — don't render a
+// "Buy tickets" button that goes nowhere.
+const hasTicketLink = (url: string | null | undefined) => !!url && url !== '#';
 
 const sorted = eventsSorted();
 const counts = eventTypeCounts();
@@ -27,7 +32,7 @@ const cards = sorted.map((e) => {
       <img src={site.sectionBannerImage} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%" />
       <div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(var(--navy-rgb),.94) 0%,rgba(var(--navy-rgb),.78) 48%,rgba(var(--navy-rgb),.26) 100%)"></div>
       <div style="position:relative;max-width:1200px;margin:0 auto;padding:clamp(30px,5vw,58px) 20px clamp(24px,3.5vw,38px)">
-        <span style="display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1.5px solid rgba(255,255,255,.34);border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff"><span>What's on in</span>{site.cityLabel}</span>
+        <span style="display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1.5px solid rgba(255,255,255,.34);border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff"><span>{`What's on in ${site.cityLabel}`}</span></span>
         <h1 style="margin:16px 0 12px;color:#fff;font-size:clamp(30px,5.4vw,52px);line-height:1.03;letter-spacing:-.03em;max-width:18ch">Events, markets and gigs — with ticket prices up front.</h1>
         <p style="margin:0;color:rgba(255,255,255,.86);font-size:clamp(15px,1.7vw,17.5px);max-width:52ch;line-height:1.5">Every listing shows what a ticket actually costs and links straight to the seller. Organisers list free; featured events sit at the top.</p>
       </div>
@@ -42,7 +47,7 @@ const cards = sorted.map((e) => {
     </section>
 
     <section style="max-width:1200px;margin:0 auto;padding:22px 20px 0">
-      <div id="events-shell" style="display:grid;grid-template-columns:1fr;gap:22px">
+      <div id="events-shell" style="display:grid;gap:22px">
         <div style="display:flex;flex-direction:column;gap:12px">
           {cards.map(({ event: e, month, day }) => (
             <article
@@ -80,10 +85,12 @@ const cards = sorted.map((e) => {
                     <span style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Tickets</span>
                     <span style="font-size:19px;font-weight:800;color:var(--navy);letter-spacing:-.02em">{e.price}</span>
                   </div>
-                  <a href={e.ticket_url} target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:8px;padding:12px 17px;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none">
-                    Buy tickets
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"></path></svg>
-                  </a>
+                  {hasTicketLink(e.ticket_url) && (
+                    <a href={e.ticket_url} target="_blank" rel="noopener noreferrer" class="buy-btn" style="display:inline-flex;align-items:center;gap:8px;padding:12px 17px;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none">
+                      Buy tickets
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 17 17 7M9 7h8v8"></path></svg>
+                    </a>
+                  )}
                   {e.host && <span style="font-size:12px;font-weight:700;color:var(--muted);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{e.host}</span>}
                   <a href={`/events/${e.slug}/`} style="margin-left:auto;font-size:13px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">Full details →</a>
                 </div>
@@ -110,8 +117,8 @@ const cards = sorted.map((e) => {
             </div>
             <div style="padding:16px;background:#fff">
               <p style="margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--text)">Add your dates, ticket prices and seller link. Feature it to sit at the top of this page and on the homepage.</p>
-              <a href={`mailto:${site.contactEmail}?subject=${encodeURIComponent('List an event on ' + site.siteName)}`} style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;margin-bottom:8px;text-align:center;text-decoration:none">Add an event</a>
-              <a href="/pricing/#events" style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-align:center;text-decoration:none">Feature it — R450/event</a>
+              <a href="/events/add/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;margin-bottom:8px;text-decoration:none">Add an event</a>
+              <a href="/pricing/#events" style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-decoration:none">Feature it — {priceRand('price_event_feature_cents').replace(/\.00$/, '')}/event</a>
             </div>
           </div>
           <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
@@ -124,23 +131,28 @@ const cards = sorted.map((e) => {
               ))}
             </div>
           </div>
+          {adsEnabled && (
           <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);min-height:250px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:18px">
             <span style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
             <span style="font-size:13.5px;font-weight:700;color:var(--muted)">300×250 — event sponsors</span>
           </div>
+          )}
         </aside>
       </div>
     </section>
     <section style="margin-top:clamp(36px,5vw,56px);background:var(--accent)">
       <div style="max-width:1200px;margin:0 auto;padding:clamp(30px,4.5vw,52px) 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px">
         <h2 style="margin:0;color:var(--contrast);font-size:clamp(23px,3.4vw,36px);letter-spacing:-.03em;line-height:1.08;max-width:26ch">Selling tickets? Get in front of {site.cityLabel} this weekend.</h2>
-        <a href={`mailto:${site.contactEmail}?subject=${encodeURIComponent('List an event on ' + site.siteName)}`} style="padding:16px 26px;border-radius:12px;background:#fff;color:var(--accent-hover);font-size:15px;font-weight:800;white-space:nowrap;text-decoration:none">List an event</a>
+        <a href="/events/add/" style="padding:16px 26px;border-radius:12px;background:#fff;color:var(--accent-hover);font-size:15px;font-weight:800;white-space:nowrap;text-decoration:none">List an event</a>
       </div>
     </section>
   </main>
 </BaseLayout>
 
 <style>
+  #events-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
   @media (min-width: 950px) {
     #events-shell {
       grid-template-columns: minmax(0, 1fr) 320px;
@@ -161,22 +173,15 @@ const cards = sorted.map((e) => {
   .event-card[hidden] {
     display: none !important;
   }
+  .buy-btn:hover {
+    background: var(--accent-hover) !important;
+  }
 </style>
 
 <script>
   const filterButtons = document.querySelectorAll<HTMLButtonElement>('button[data-event-filter]');
   const cards = document.querySelectorAll<HTMLElement>('article[data-event-card]');
   const empty = document.getElementById('events-empty')!;
-
-  // Whole card opens the event, like the mockup — real links inside it
-  // (Buy tickets, title, Full details) keep working as normal.
-  cards.forEach((card) => {
-    card.addEventListener('click', (e) => {
-      if ((e.target as HTMLElement).closest('a')) return;
-      const href = card.dataset.href;
-      if (href) window.location.href = href;
-    });
-  });
 
   // Whole card opens the event, like the mockup — real links inside it
   // (Buy tickets, title, Full details) keep working as normal.

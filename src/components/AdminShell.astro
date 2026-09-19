@@ -1,34 +1,52 @@
 ---
-// Matches the mockup's Admin console chrome exactly: fixed navy sidebar +
-// topbar. The mockup's console is a single-page app with client-side tab
-// state; this site's admin section is (and stays) separate real pages —
-// each a bookmarkable/shareable URL, which a fake single-page tab switcher
-// would have made worse, not better. The sidebar items also cover more
-// ground than the mockup's 6 tabs, since the real data model splits
-// "Approvals" into three distinct workflows (submissions/claims/reports)
-// that the mockup's demo data collapses into one.
+// Matches the mockup's Admin console chrome exactly: navy sidebar + topbar,
+// the "+ New listing" button and the New/Edit listing modal. The mockup's
+// console is a single-page app with client-side tab state; this site's admin
+// section is (and stays) separate real pages — each a bookmarkable/shareable
+// URL. Below 860px the sidebar becomes an off-canvas drawer opened by the
+// topbar's hamburger (instead of the mockup's horizontal strip).
+//
+// The listing modal lives here (not in a page) so "+ New listing" works from
+// every tab: on the Listings page it opens in place, from any other tab it
+// jumps to Listings and opens there — same as the mockup, which switches to
+// the Listings tab and opens the modal.
 import Icon from './Icon.astro';
-import site from '../site';
+import { categories, suburbs } from '../lib/data';
+import { cityLabel, siteName } from '../lib/site-overrides';
 
 interface Props {
-  active: 'dashboard' | 'listings' | 'submissions' | 'claims' | 'reports' | 'users' | 'activity' | 'events' | 'plans' | 'ads';
+  active:
+    | 'dashboard' | 'listings' | 'submissions' | 'claims' | 'reports' | 'events' | 'enquiries' | 'inventory'
+    | 'invoices' | 'analytics' | 'users' | 'activity' | 'plans' | 'ads' | 'settings';
   title: string;
   subtitle: string;
 }
 const { active, title, subtitle } = Astro.props;
 
+// Mockup order (Dashboard, Listings, Approvals, Events, Enquiries, Sponsored
+// inventory, Invoices, Analytics, Users & roles, Plans & pricing, Ads &
+// sponsors, Site settings) plus the real workflows the mockup's single
+// "Approvals" tab folds together (Claims, Reports) and the Activity log.
 const NAV: { key: Props['active']; href: string; label: string }[] = [
   { key: 'dashboard', href: '/admin/', label: 'Dashboard' },
   { key: 'listings', href: '/admin/businesses/', label: 'Listings' },
-  { key: 'submissions', href: '/admin/submissions/', label: 'Submissions' },
+  { key: 'submissions', href: '/admin/submissions/', label: 'Approvals' },
   { key: 'claims', href: '/admin/claims/', label: 'Claims' },
   { key: 'reports', href: '/admin/reports/', label: 'Reports' },
-  { key: 'users', href: '/admin/users/', label: 'Users' },
-  { key: 'activity', href: '/admin/activity/', label: 'Activity' },
   { key: 'events', href: '/admin/events/', label: 'Events' },
+  { key: 'enquiries', href: '/admin/enquiries/', label: 'Enquiries' },
+  { key: 'inventory', href: '/admin/inventory/', label: 'Sponsored inventory' },
+  { key: 'invoices', href: '/admin/invoices/', label: 'Invoices' },
+  { key: 'analytics', href: '/admin/analytics/', label: 'Analytics' },
+  { key: 'users', href: '/admin/users/', label: 'Users & roles' },
+  { key: 'activity', href: '/admin/activity/', label: 'Activity' },
   { key: 'plans', href: '/admin/plans-pricing/', label: 'Plans & pricing' },
   { key: 'ads', href: '/admin/ads-sponsors/', label: 'Ads & sponsors' },
+  { key: 'settings', href: '/admin/settings/', label: 'Site settings' },
 ];
+
+const fieldStyle = 'padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)';
+const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)';
 ---
 
 <div id="admin-shell" style="min-height:100vh;display:grid;background:var(--bg-subtle)">
@@ -37,7 +55,7 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
     <div style="display:flex;align-items:center;gap:10px;padding:4px 8px 18px">
       <img src="/logo-icon.png" alt="" style="height:30px;width:auto" />
       <span style="display:flex;flex-direction:column;line-height:1.1;min-width:0">
-        <span style="font-size:15px;font-weight:800;color:#fff;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{site.cityLabel}Hub</span>
+        <span style="font-size:15px;font-weight:800;color:#fff;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{cityLabel}Hub</span>
         <span style="font-size:9px;font-weight:800;letter-spacing:.16em;color:var(--grad-from);margin-top:3px">ADMIN</span>
       </span>
       <button id="admin-sidebar-close" type="button" aria-label="Close menu" style="margin-left:auto;align-items:center;justify-content:center;width:32px;height:32px;border:0;border-radius:8px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer">
@@ -47,7 +65,8 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
     {NAV.map((n) => (
       <a
         href={n.href}
-        style={`display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border-radius:9px;font-size:13.5px;font-weight:700;text-decoration:none;${n.key === active ? 'background:rgba(255,255,255,.14);color:#fff' : 'color:rgba(255,255,255,.7)'}`}
+        class="admin-nav-link"
+        style={`display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;text-align:left;padding:11px 13px;border-radius:10px;font-size:13.5px;font-weight:800;text-decoration:none;${n.key === active ? 'background:rgba(255,255,255,.14);color:#fff' : 'color:rgba(255,255,255,.66)'}`}
       >
         <span>{n.label}</span>
         <span data-nav-badge={n.key} hidden style="padding:2px 8px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:11px;font-weight:800"></span>
@@ -55,9 +74,10 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
     ))}
     <div style="margin-top:auto;padding-top:18px;display:flex;flex-direction:column;gap:8px">
       <div style="padding:12px;border-radius:10px;background:rgba(255,255,255,.08);font-size:12px;font-weight:700;color:rgba(255,255,255,.72);line-height:1.45">
-        Signed in as<br /><span id="admin-shell-email" style="color:#fff">…</span>
+        Managing<br /><span style="color:#fff">{siteName}</span>
       </div>
-      <button id="admin-shell-logout" type="button" style="padding:11px 13px;border:1.5px solid rgba(255,255,255,.28);border-radius:10px;background:transparent;color:#fff;font-size:13px;font-weight:800;cursor:pointer;text-align:left">Sign out</button>
+      <a href="/" class="admin-exit" style="display:block;padding:11px 13px;border:1.5px solid rgba(255,255,255,.28);border-radius:10px;background:transparent;color:#fff;font-size:13px;font-weight:800;cursor:pointer;text-align:left;text-decoration:none">Exit console</a>
+      <button id="admin-shell-logout" type="button" style="padding:4px 13px;border:0;background:transparent;color:rgba(255,255,255,.6);font-size:12px;font-weight:700;cursor:pointer;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Sign out · <span id="admin-shell-email">…</span></button>
     </div>
   </aside>
 
@@ -67,14 +87,15 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
         <button id="admin-sidebar-open" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="admin-sidebar" style="align-items:center;justify-content:center;width:40px;height:40px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);cursor:pointer;flex-shrink:0">
           <Icon path='<path d="M4 7h16M4 12h16M4 17h16"/>' size={19} />
         </button>
-        <div>
+        <div style="min-width:0">
           <h1 style="margin:0;font-size:21px;letter-spacing:-.025em;color:var(--navy)">{title}</h1>
-          <p style="margin:3px 0 0;font-size:13px;font-weight:600;color:var(--muted)">{subtitle}</p>
+          <p id="admin-subtitle" style="margin:3px 0 0;font-size:13px;font-weight:600;color:var(--muted)">{subtitle}</p>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:9px;margin-left:auto;flex-wrap:wrap">
-        <span style="display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:var(--bg-subtle);font-size:12px;font-weight:800;color:var(--accent-hover)">Managing {site.cityLabel}</span>
-        <a href="/" style="padding:11px 14px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">View site</a>
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:var(--bg-subtle);font-size:12px;font-weight:800;color:var(--accent-hover)"><span>Managing {cityLabel}</span></span>
+        <button id="admin-new-listing" type="button" class="admin-new-listing" style="padding:11px 15px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;cursor:pointer">+ New listing</button>
+        <a href="/" class="admin-mob-out" style="align-items:center;padding:11px 14px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;cursor:pointer;text-decoration:none">Exit console</a>
       </div>
     </div>
 
@@ -84,18 +105,107 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
   </div>
 </div>
 
+<!-- New / Edit listing modal (mockup: adminEditing). -->
+<div id="listing-modal" class="admin-modal" hidden role="dialog" aria-modal="true" aria-labelledby="listing-modal-title">
+  <div class="admin-modal-card" style="width:100%;max-width:620px;max-height:92vh;overflow:auto;background:#fff;border-radius:18px 18px 0 0">
+    <div style="position:sticky;top:0;background:var(--navy);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+      <h2 id="listing-modal-title" style="margin:0;font-size:17px;letter-spacing:-.02em;color:#fff">New listing</h2>
+      <button id="listing-cancel-x" type="button" aria-label="Close" style="border:0;background:transparent;color:rgba(255,255,255,.75);font-size:22px;line-height:1;cursor:pointer;padding:2px 6px">×</button>
+    </div>
+    <form id="listing-form" style="padding:20px;display:flex;flex-direction:column;gap:14px" novalidate>
+      <label style={labelStyle}>
+        Business name
+        <input type="text" name="name" class="admin-modal-name" autocomplete="off" style={fieldStyle} />
+      </label>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+        <label style={labelStyle}>
+          Category
+          <input type="text" name="category" list="listing-categories" autocomplete="off" style={fieldStyle} />
+        </label>
+        <label style={labelStyle}>
+          Suburb
+          <input type="text" name="suburb" list="listing-suburbs" autocomplete="off" style={fieldStyle} />
+        </label>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+        <label style={labelStyle}>
+          Phone
+          <input type="tel" name="phone" style={fieldStyle} />
+        </label>
+        <label style={labelStyle}>
+          Plan
+          <select name="plan" style={fieldStyle}>
+            <option value="0">Basic</option>
+            <option value="1">Verified</option>
+            <option value="2">Featured</option>
+          </select>
+        </label>
+      </div>
+      <label style={labelStyle}>
+        Description
+        <textarea name="description" rows="3" style={`${fieldStyle};resize:vertical`}></textarea>
+      </label>
+      <p id="listing-error" role="alert" hidden style="margin:0;font-size:13px;font-weight:700;color:var(--danger)"></p>
+      <div style="display:flex;gap:9px;flex-wrap:wrap;padding-top:4px">
+        <button id="listing-save" type="submit" class="admin-modal-save" style="padding:13px 20px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;cursor:pointer">Save listing</button>
+        <button id="listing-cancel" type="button" style="padding:13px 20px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font-size:14px;font-weight:800;cursor:pointer">Cancel</button>
+      </div>
+      <div id="listing-extras" class="admin-modal-extras" hidden>
+        <button id="listing-toggle-visibility" type="button" class="admin-modal-link">Hide from site</button>
+        <button id="listing-reassign" type="button" class="admin-modal-link">Reassign owner…</button>
+        <a id="listing-full-editor" href="/my-businesses/" class="admin-modal-link">Photos &amp; opening hours →</a>
+      </div>
+    </form>
+    <datalist id="listing-categories">
+      {categories.map((c) => <option value={c.name} />)}
+    </datalist>
+    <datalist id="listing-suburbs">
+      {suburbs.map((s) => <option value={s.name} />)}
+    </datalist>
+  </div>
+</div>
+
 <style>
-  #admin-sidebar a:hover {
+  .admin-nav-link:hover {
     background: rgba(255, 255, 255, 0.08);
+  }
+  .admin-exit:hover {
+    border-color: #fff !important;
+  }
+  .admin-new-listing:hover {
+    background: var(--accent-hover) !important;
+  }
+  .admin-modal-save:hover {
+    background: var(--accent-hover) !important;
+  }
+  .admin-modal-name:focus {
+    border-color: var(--accent) !important;
+  }
+  .admin-modal-extras {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .admin-modal-extras[hidden] {
+    display: none;
+  }
+  .admin-modal-link {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: none;
   }
   /* Grid columns live here, not as an inline style on #admin-shell —
      an inline style attribute always beats a <style> block rule
      (media query or not, whatever its specificity), so the
      min-width:860px override below could never actually take effect
-     while this was inline. That's what let the sidebar collapse to
-     min-height:100vh at desktop width while the grid stayed
-     single-column, pushing the dashboard content below the sidebar's
-     full viewport height instead of beside it. */
+     while this was inline. */
   #admin-shell {
     grid-template-columns: 1fr;
   }
@@ -122,6 +232,16 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
   #admin-sidebar-close {
     display: inline-flex;
   }
+  /* Mockup: the topbar's own "Exit console" only shows when the sidebar's
+     footer copy isn't visible (< 760px). */
+  .admin-mob-out {
+    display: inline-flex;
+  }
+  @media (min-width: 760px) {
+    .admin-mob-out {
+      display: none;
+    }
+  }
   @media (min-width: 860px) {
     #admin-shell {
       grid-template-columns: 236px 1fr;
@@ -131,6 +251,7 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
       position: static;
       transform: none;
       min-height: 100vh;
+      width: auto;
       max-width: none;
     }
     #admin-sidebar-backdrop {
@@ -140,6 +261,61 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
     #admin-sidebar-close {
       display: none;
     }
+  }
+  /* Modal: bottom sheet on phones, centred card from 760px (mockup's
+     data-admin-modal behaviour). Layout is in CSS (not inline) so the
+     [hidden] attribute and the media query can both win. */
+  .admin-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(10, 15, 30, 0.6);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .admin-modal[hidden] {
+    display: none !important;
+  }
+  @media (min-width: 760px) {
+    .admin-modal {
+      align-items: center;
+    }
+    .admin-modal-card {
+      border-radius: 18px !important;
+    }
+  }
+</style>
+
+<style is:global>
+  /* Shared by every admin table (Listings, Events, Sponsored inventory,
+     Invoices). Rows are usually injected via innerHTML, which never gets
+     Astro's scoped-style attribute, hence is:global. Column layout lives
+     here (not inline) so the breakpoint can change it: the mockup shows all
+     four columns from 950px and only the first + Actions below. */
+  .admin-cols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .admin-hide {
+    display: none;
+  }
+  @media (min-width: 950px) {
+    .admin-cols {
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.4fr) minmax(0, 1fr) auto;
+    }
+    .admin-hide {
+      display: block;
+    }
+  }
+  .admin-row:hover {
+    background: var(--bg-subtle);
+  }
+  .admin-btn-plan:hover {
+    border-color: var(--accent) !important;
+  }
+  .admin-btn-remove:hover {
+    border-color: var(--danger) !important;
   }
 </style>
 
@@ -160,16 +336,16 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
     window.location.href = '/';
   });
 
-  // Nav badges — pending-count pills next to Submissions/Claims/Reports,
-  // matching the mockup's sidebar badges. Every admin page already loads
-  // this shell, so one fetch here covers all of them rather than each
-  // page computing its own counts redundantly.
+  // Nav badges — counts next to Listings/Approvals/Claims/Reports, matching
+  // the mockup's sidebar badges. Every admin page loads this shell, so one
+  // fetch here covers all of them rather than each page computing its own.
   fetch('/api/admin/overview')
     .then((r) => (r.ok ? r.json() : null))
     .then((data) => {
       if (!data?.ok) return;
       const counts: Record<string, number> = {
-        submissions: data.stats.pendingSubmissions,
+        listings: data.stats.businesses,
+        submissions: data.stats.awaitingReview,
         claims: data.stats.pendingClaims,
         reports: data.stats.openReports,
       };
@@ -177,7 +353,7 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
         if (!count) continue;
         const badge = document.querySelector(`[data-nav-badge="${key}"]`) as HTMLElement | null;
         if (badge) {
-          badge.textContent = String(count);
+          badge.textContent = Number(count).toLocaleString('en-US');
           badge.hidden = false;
         }
       }
@@ -210,5 +386,157 @@ const NAV: { key: Props['active']; href: string; label: string }[] = [
   // underneath, then stuck mid-transition if the window shrinks back.
   window.addEventListener('resize', () => {
     if (window.innerWidth >= 860) closeSidebar();
+  });
+
+  // ── New / Edit listing modal ────────────────────────────────────────────
+  const modal = document.getElementById('listing-modal') as HTMLElement;
+  const form = document.getElementById('listing-form') as HTMLFormElement;
+  const modalTitle = document.getElementById('listing-modal-title') as HTMLElement;
+  const errorEl = document.getElementById('listing-error') as HTMLElement;
+  const saveBtn = document.getElementById('listing-save') as HTMLButtonElement;
+  const extras = document.getElementById('listing-extras') as HTMLElement;
+  const visibilityBtn = document.getElementById('listing-toggle-visibility') as HTMLButtonElement;
+  const reassignBtn = document.getElementById('listing-reassign') as HTMLButtonElement;
+  const fullEditor = document.getElementById('listing-full-editor') as HTMLAnchorElement;
+
+  let editingId: number | null = null;
+  let editingStatus = 'published';
+  let editingName = '';
+
+  function field(name: string): HTMLInputElement {
+    return form.elements.namedItem(name) as HTMLInputElement;
+  }
+  function showError(message: string) {
+    errorEl.textContent = message;
+    errorEl.hidden = !message;
+  }
+  function closeModal() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+    editingId = null;
+  }
+  function saved() {
+    document.dispatchEvent(new CustomEvent('admin:listing-saved'));
+  }
+  function setVisibilityLabel() {
+    visibilityBtn.textContent = editingStatus === 'published' ? 'Hide from site' : 'Publish to site';
+  }
+
+  async function openModal(id?: number) {
+    form.reset();
+    showError('');
+    editingId = id ?? null;
+    modalTitle.textContent = id ? 'Edit listing' : 'New listing';
+    extras.hidden = !id;
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    if (id) {
+      saveBtn.disabled = true;
+      try {
+        const res = await fetch(`/api/admin/listings?id=${id}`);
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || 'Could not load that listing.');
+        const l = data.listing;
+        field('name').value = l.name ?? '';
+        field('category').value = l.category_name ?? '';
+        field('suburb').value = l.suburb_name ?? '';
+        field('phone').value = l.phone ?? '';
+        field('plan').value = String(l.subscription_tier ?? 0);
+        field('description').value = l.description ?? '';
+        editingStatus = l.status;
+        editingName = l.name;
+        setVisibilityLabel();
+        fullEditor.href = `/my-businesses/edit/?id=${id}`;
+      } catch (err) {
+        showError(err instanceof Error ? err.message : 'Could not load that listing.');
+      } finally {
+        saveBtn.disabled = false;
+      }
+    }
+    field('name').focus();
+  }
+
+  // Pages call these (a page script can't import from this one).
+  (window as unknown as { adminListing: { open: (id?: number) => void } }).adminListing = { open: (id) => void openModal(id) };
+
+  document.getElementById('admin-new-listing')?.addEventListener('click', () => {
+    if (window.location.pathname.startsWith('/admin/businesses')) void openModal();
+    else window.location.href = '/admin/businesses/?new=1';
+  });
+
+  document.getElementById('listing-cancel')?.addEventListener('click', closeModal);
+  document.getElementById('listing-cancel-x')?.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.hidden) closeModal();
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    showError('');
+    saveBtn.disabled = true;
+    const original = saveBtn.textContent;
+    saveBtn.textContent = 'Saving…';
+    try {
+      const res = await fetch('/api/admin/listings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingId,
+          name: field('name').value,
+          category: field('category').value,
+          suburb: field('suburb').value,
+          phone: field('phone').value,
+          plan: Number(field('plan').value),
+          description: field('description').value,
+        }),
+      });
+      const data = await res.json();
+      if (!data.ok) {
+        showError(data.error || 'Could not save that listing.');
+        return;
+      }
+      closeModal();
+      saved();
+    } catch {
+      showError('Could not save that listing.');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = original;
+    }
+  });
+
+  visibilityBtn.addEventListener('click', async () => {
+    if (!editingId) return;
+    visibilityBtn.disabled = true;
+    const makePublic = editingStatus !== 'published';
+    await fetch('/api/admin/toggle-business-status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ businessId: editingId, status: makePublic ? 'published' : 'rejected' }),
+    });
+    visibilityBtn.disabled = false;
+    closeModal();
+    saved();
+  });
+
+  reassignBtn.addEventListener('click', async () => {
+    if (!editingId) return;
+    const email = window.prompt(`Set the owner's email for "${editingName}" (leave blank to unlink):`);
+    if (email === null) return;
+    const res = await fetch('/api/admin/set-business-owner', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ businessId: editingId, userEmail: email.trim() || null }),
+    });
+    const data = await res.json().catch(() => ({ ok: false }));
+    if (!data.ok) {
+      showError(data.error || 'Could not change the owner.');
+      return;
+    }
+    closeModal();
+    saved();
   });
 </script>

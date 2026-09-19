@@ -20,6 +20,8 @@ import AdminShell from '../../components/AdminShell.astro';
 </BaseLayout>
 
 <script>
+  import { esc } from '../../lib/admin-html';
+
   async function postForm(url: string, params: Record<string, string>): Promise<void> {
     await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(params) });
   }
@@ -28,13 +30,13 @@ import AdminShell from '../../components/AdminShell.astro';
     return `
       <div style="padding:18px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;">
         <div style="min-width:0;">
-          <span style="font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.015em">${c.businessName}</span>
-          <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:4px;">Account: ${c.claimantEmail}</div>
-          <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);max-width:64ch;">${c.contactName ?? 'Not specified'} · ${c.contactPhone ?? 'Not specified'} · ${c.contactEmail ?? 'Not specified'} · ${c.roleNote ?? 'Not specified'}</p>
+          <span style="font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.015em">${esc(c.businessName)}</span>
+          <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:4px;">Account: ${esc(c.claimantEmail)}</div>
+          <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);max-width:64ch;">${esc(c.contactName ?? 'Not specified')} · ${esc(c.contactPhone ?? 'Not specified')} · ${esc(c.contactEmail ?? 'Not specified')} · ${esc(c.roleNote ?? 'Not specified')}</p>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
-          <button data-action="approve" data-token="${c.reviewToken}" style="padding:10px 14px;border:0;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;cursor:pointer;">Approve</button>
-          <button data-action="reject" data-token="${c.reviewToken}" style="padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--danger);font-size:13px;font-weight:800;cursor:pointer;">Reject</button>
+          <button data-action="approve" data-token="${esc(c.reviewToken)}" style="padding:10px 14px;border:0;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;cursor:pointer;">Approve</button>
+          <button data-action="reject" data-token="${esc(c.reviewToken)}" style="padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--danger);font-size:13px;font-weight:800;cursor:pointer;">Reject</button>
         </div>
       </div>`;
   }

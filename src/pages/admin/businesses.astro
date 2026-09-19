@@ -8,137 +8,106 @@ import Icon from '../../components/Icon.astro';
   <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
   <div id="content" hidden>
-    <AdminShell active="listings" title="Listings" subtitle="Publish, hide, edit, delete, or reassign any business.">
-      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
-        <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
-          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Hidden businesses</h2>
-          <p style="margin:4px 0 0;font-size:12.5px;color:var(--muted);font-weight:600">Not on the public site — used for test listings.</p>
+    <AdminShell active="listings" title="Listings" subtitle="Add, edit, re-plan or remove any business">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="display:flex;align-items:center;gap:9px;padding:0 13px;background:#fff;border:2px solid var(--border);border-radius:11px;flex:1;min-width:220px">
+          <Icon path='<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.5-4.5"/>' size={17} />
+          <input type="text" id="manage-search-input" autocomplete="off" placeholder="Filter by name, category or suburb…" style="flex:1;min-width:0;border:0;padding:12px 0;font-size:14px;outline:none;background:transparent;color:var(--text)" />
         </div>
-        <div id="hidden-header" hidden style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) auto;gap:12px;padding:10px 18px;border-bottom:2px solid var(--navy);font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">
-          <span>Business</span><span>Category</span><span>Plan</span><span>Actions</span>
+        <div id="plan-filters" style="display:contents">
+          {['All', 'Featured', 'Verified', 'Basic', 'Hidden'].map((f) => (
+            <button type="button" data-plan-filter={f} style={`padding:11px 15px;border-radius:11px;cursor:pointer;font-size:13px;font-weight:800;border:2px solid ${f === 'All' ? 'var(--navy)' : 'var(--border)'};background:${f === 'All' ? 'var(--navy)' : '#fff'};color:${f === 'All' ? '#fff' : 'var(--navy)'}`}>{f}</button>
+          ))}
         </div>
-        <div id="hidden-list"></div>
-        <p id="hidden-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">Nothing hidden right now.</p>
       </div>
 
       <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
-        <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
-          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Find any business</h2>
-          <p style="margin:4px 0 0;font-size:12.5px;color:var(--muted);font-weight:600">Publish, hide, edit, delete, or reassign the owner.</p>
-        </div>
-        <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:12px">
-          <div style="display:flex;align-items:center;gap:9px;padding:0 13px;background:var(--bg-subtle);border:2px solid var(--border);border-radius:11px">
-            <Icon path='<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.5-4.5"/>' size={17} />
-            <input type="text" id="manage-search-input" autocomplete="off" placeholder="Filter by name…" style="flex:1;min-width:0;border:0;padding:12px 0;font-size:14px;outline:none;background:transparent;color:var(--text)" />
-          </div>
-          <div id="plan-filters" style="display:flex;gap:8px;flex-wrap:wrap">
-            {['All', 'Featured', 'Verified', 'Basic'].map((f) => (
-              <button type="button" data-plan-filter={f} style={`padding:8px 14px;border-radius:999px;cursor:pointer;font-size:12.5px;font-weight:800;border:2px solid ${f === 'All' ? 'var(--navy)' : 'var(--border)'};background:${f === 'All' ? 'var(--navy)' : '#fff'};color:${f === 'All' ? '#fff' : 'var(--navy)'}`}>{f}</button>
-            ))}
-          </div>
-        </div>
-        <div id="manage-results-header" hidden style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) auto;gap:12px;padding:10px 18px;border-bottom:2px solid var(--navy);font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">
-          <span>Business</span><span>Category</span><span>Plan</span><span>Actions</span>
+        <div class="admin-cols" style="gap:12px;padding:12px 18px;border-bottom:2px solid var(--navy);font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">
+          <span>Business</span><span class="admin-hide">Category</span><span class="admin-hide">Plan</span><span>Actions</span>
         </div>
         <div id="manage-search-results"></div>
+        <div id="manage-empty" hidden style="padding:30px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted)">No listings match that filter.</div>
+        <div style="padding:13px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <span id="manage-count" style="font-size:12.5px;font-weight:700;color:var(--muted)"></span>
+          <span style="display:flex;gap:9px;flex-wrap:wrap">
+            <button id="manage-more" type="button" hidden style="padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;cursor:pointer">Show more</button>
+            <button id="manage-add" type="button" style="padding:10px 14px;border:2px solid var(--navy);border-radius:9px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;cursor:pointer">+ Add listing</button>
+          </span>
+        </div>
       </div>
     </AdminShell>
   </div>
 </BaseLayout>
 
 <script>
-  async function postJson(url: string, body: unknown): Promise<void> {
-    await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-  }
-
-  const TIER_NAMES: Record<number, string> = { 0: 'Basic', 1: 'Verified', 2: 'Featured' };
+  import { esc, planPillStyle, TIER_NAMES, postJson, requireAdmin, showContent } from '../../lib/admin-html';
 
   interface Row {
     id: number;
+    slug: string;
     name: string;
     status: string;
-    subscription_tier?: number;
-    phone?: string | null;
-    suburb_name?: string | null;
-    category_name?: string | null;
+    subscription_tier: number;
+    phone: string | null;
+    suburb_name: string | null;
+    category_name: string | null;
   }
 
+  const PAGE = 25;
   let planFilter = 'All';
-  let lastHidden: Row[] = [];
-  let lastSearch: Row[] = [];
+  let rows: Row[] = [];
+  let matching = 0;
+  let total = 0;
+  let requestSeq = 0;
 
-  function renderToggleRow(b: Row): string {
-    const isPublished = b.status === 'published';
+  function renderRow(b: Row): string {
     const tier = b.subscription_tier ?? 0;
-    const planOptions = [0, 1, 2].map((t) => `<option value="${t}" ${t === tier ? 'selected' : ''}>${TIER_NAMES[t]}</option>`).join('');
+    const plan = TIER_NAMES[tier] ?? 'Basic';
     const sub = [b.suburb_name, b.phone].filter(Boolean).join(' · ');
+    const hidden = b.status !== 'published';
     return `
-      <div class="admin-business-row" style="padding:14px 18px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) auto;gap:12px;align-items:center;">
-        <div style="min-width:0;">
-          <div style="font-size:14.5px;font-weight:800;color:var(--navy)">${b.name}</div>
-          <div style="font-size:12.5px;font-weight:600;color:var(--muted)">${sub || `status: ${b.status}`}</div>
+      <div class="admin-cols admin-row" style="gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);align-items:center">
+        <div style="min-width:0">
+          <div style="font-size:14.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em">${esc(b.name)}${hidden ? ' <span style="margin-left:6px;padding:2px 8px;border-radius:999px;background:var(--bg-subtle);color:var(--muted);font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;vertical-align:1px">Hidden</span>' : ''}</div>
+          <div style="font-size:12.5px;font-weight:600;color:var(--muted)">${esc(sub || `status: ${b.status}`)}</div>
         </div>
-        <div style="font-size:13px;font-weight:700;color:var(--text);min-width:0;">${b.category_name ?? ''}</div>
-        <select class="plan-select" data-plan-business-id="${b.id}" style="padding:8px 10px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:700;color:var(--navy);width:fit-content">${planOptions}</select>
-        <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;">
-          <button data-toggle="${isPublished ? 'hide' : 'publish'}" data-business-id="${b.id}" style="padding:8px 11px;border:0;border-radius:8px;background:var(--accent);color:var(--contrast);font-size:12px;font-weight:800;cursor:pointer;">${isPublished ? 'Hide' : 'Publish'}</button>
-          <a href="/my-businesses/edit/?id=${b.id}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);text-decoration:none;">Edit</a>
-          <button data-reassign="${b.id}" data-business-name="${b.name}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);cursor:pointer;">Reassign</button>
-          <button data-delete="${b.id}" data-business-name="${b.name}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--danger);cursor:pointer;">Remove</button>
+        <div class="admin-hide" style="min-width:0;font-size:13px;font-weight:700;color:var(--text)">${esc(b.category_name ?? '')}</div>
+        <div class="admin-hide"><span style="${planPillStyle(plan)}">${plan}</span></div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">
+          <button data-cycle="${b.id}" class="admin-btn-plan" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);cursor:pointer">Plan</button>
+          <button data-edit="${b.id}" style="padding:8px 11px;border:0;border-radius:8px;background:var(--navy);color:#fff;font-size:12px;font-weight:800;cursor:pointer">Edit</button>
+          <button data-delete="${b.id}" class="admin-btn-remove" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--danger);font-size:12px;font-weight:800;cursor:pointer">Remove</button>
         </div>
       </div>`;
   }
 
-  function applyPlanFilter(rows: Row[]): Row[] {
-    if (planFilter === 'All') return rows;
-    const tier = { Basic: 0, Verified: 1, Featured: 2 }[planFilter];
-    return rows.filter((r) => (r.subscription_tier ?? 0) === tier);
+  function render() {
+    document.getElementById('manage-search-results')!.innerHTML = rows.map(renderRow).join('');
+    document.getElementById('manage-empty')!.hidden = rows.length > 0;
+    document.getElementById('manage-count')!.textContent = `${rows.length.toLocaleString('en-US')} of ${matching.toLocaleString('en-US')} listing${matching === 1 ? '' : 's'}${matching !== total ? ` (${total.toLocaleString('en-US')} in total)` : ''}`;
+    (document.getElementById('manage-more') as HTMLButtonElement).hidden = rows.length >= matching;
   }
 
-  function renderHidden() {
-    const list = document.getElementById('hidden-list')!;
-    const empty = document.getElementById('hidden-empty')!;
-    const header = document.getElementById('hidden-header')!;
-    const rows = applyPlanFilter(lastHidden);
-    empty.hidden = rows.length > 0;
-    header.hidden = rows.length === 0;
-    list.innerHTML = rows.map(renderToggleRow).join('');
-  }
-
-  async function loadHidden() {
-    const res = await fetch('/api/admin/overview');
+  async function load(append = false) {
+    const seq = ++requestSeq;
+    const q = (document.getElementById('manage-search-input') as HTMLInputElement).value.trim();
+    const params = new URLSearchParams({ limit: String(PAGE), offset: String(append ? rows.length : 0) });
+    if (q) params.set('q', q);
+    if (planFilter === 'Hidden') params.set('status', 'hidden');
+    else if (planFilter !== 'All') params.set('plan', planFilter);
+    const res = await fetch(`/api/admin/listings?${params}`);
     const data = await res.json();
-    lastHidden = data.hidden;
-    renderHidden();
-  }
-
-  function renderSearchResults() {
-    const results = document.getElementById('manage-search-results')!;
-    const header = document.getElementById('manage-results-header')!;
-    const rows = applyPlanFilter(lastSearch);
-    header.hidden = rows.length === 0;
-    results.innerHTML = rows.length > 0 ? rows.map(renderToggleRow).join('') : lastSearch.length > 0 ? '<p style="padding:20px 18px;color:var(--muted);margin:0;">No matches for this plan filter.</p>' : '';
+    if (seq !== requestSeq || !data.ok) return;
+    rows = append ? rows.concat(data.results) : data.results;
+    matching = data.matching;
+    total = data.total;
+    render();
   }
 
   let searchDebounce: number;
-  document.getElementById('manage-search-input')!.addEventListener('input', (e) => {
+  document.getElementById('manage-search-input')!.addEventListener('input', () => {
     clearTimeout(searchDebounce);
-    const q = (e.target as HTMLInputElement).value.trim();
-    const results = document.getElementById('manage-search-results')!;
-    const header = document.getElementById('manage-results-header')!;
-    if (q.length < 2) {
-      results.innerHTML = '';
-      header.hidden = true;
-      lastSearch = [];
-      return;
-    }
-    searchDebounce = window.setTimeout(async () => {
-      const res = await fetch(`/api/admin/search-businesses?q=${encodeURIComponent(q)}`);
-      const data = await res.json();
-      lastSearch = data.results;
-      renderSearchResults();
-      if (lastSearch.length === 0) results.innerHTML = '<p style="padding:20px 18px;color:var(--muted);margin:0;">No matches.</p>';
-    }, 300);
+    searchDebounce = window.setTimeout(() => load(), 250);
   });
 
   document.getElementById('plan-filters')!.addEventListener('click', (e) => {
@@ -151,76 +120,58 @@ import Icon from '../../components/Icon.astro';
       b.style.background = active ? 'var(--navy)' : '#fff';
       b.style.color = active ? '#fff' : 'var(--navy)';
     });
-    renderHidden();
-    renderSearchResults();
+    load();
+  });
+
+  document.getElementById('manage-more')!.addEventListener('click', () => load(true));
+  document.getElementById('manage-add')!.addEventListener('click', () => (window as unknown as { adminListing: { open: () => void } }).adminListing.open());
+  document.addEventListener('admin:listing-saved', () => load());
+
+  // Basic -> Verified -> Featured -> Basic (the mockup's "Plan" button).
+  const CYCLE: Record<number, number> = { 0: 1, 1: 2, 2: 0 };
+
+  document.getElementById('content')!.addEventListener('click', async (e) => {
+    const target = e.target as HTMLElement;
+
+    const editBtn = target.closest('button[data-edit]') as HTMLButtonElement | null;
+    if (editBtn) {
+      (window as unknown as { adminListing: { open: (id: number) => void } }).adminListing.open(Number(editBtn.dataset.edit));
+      return;
+    }
+
+    const cycleBtn = target.closest('button[data-cycle]') as HTMLButtonElement | null;
+    if (cycleBtn) {
+      const id = Number(cycleBtn.dataset.cycle);
+      const row = rows.find((r) => r.id === id);
+      if (!row) return;
+      const next = CYCLE[row.subscription_tier ?? 0] ?? 1;
+      cycleBtn.disabled = true;
+      const result = await postJson('/api/admin/subscriptions', { businessId: id, tier: next });
+      if (result.ok) row.subscription_tier = next;
+      render();
+      return;
+    }
+
+    const deleteBtn = target.closest('button[data-delete]') as HTMLButtonElement | null;
+    if (deleteBtn) {
+      const id = Number(deleteBtn.dataset.delete);
+      const row = rows.find((r) => r.id === id);
+      if (!window.confirm(`Permanently delete "${row?.name ?? 'this business'}"? This can't be undone.`)) return;
+      deleteBtn.disabled = true;
+      await postJson('/api/admin/delete-business', { businessId: id });
+      load();
+    }
   });
 
   async function init() {
-    const me = await fetch('/api/me');
-    if (me.status === 401) {
-      window.location.href = '/login/?next=/admin/businesses/';
-      return;
+    if (!(await requireAdmin('/admin/businesses/'))) return;
+    showContent();
+    await load();
+    if (new URLSearchParams(window.location.search).get('new')) {
+      history.replaceState(null, '', window.location.pathname);
+      (window as unknown as { adminListing: { open: () => void } }).adminListing.open();
     }
-    const meData = await me.json();
-    if (!meData.isAdmin) {
-      window.location.href = '/my-businesses/';
-      return;
-    }
-
-    document.getElementById('loading')!.hidden = true;
-    document.getElementById('content')!.hidden = false;
-    await loadHidden();
   }
-
-  document.getElementById('content')!.addEventListener('change', async (e) => {
-    const select = (e.target as HTMLElement).closest('select[data-plan-business-id]') as HTMLSelectElement | null;
-    if (!select) return;
-    select.disabled = true;
-    await postJson('/api/admin/subscriptions', { businessId: Number(select.dataset.planBusinessId), tier: Number(select.value) });
-    select.disabled = false;
-  });
-
-  document.getElementById('content')!.addEventListener('click', async (e) => {
-    const toggleBtn = (e.target as HTMLElement).closest('button[data-toggle]') as HTMLButtonElement | null;
-    if (toggleBtn) {
-      toggleBtn.disabled = true;
-      const newStatus = toggleBtn.dataset.toggle === 'publish' ? 'published' : 'rejected';
-      await postJson('/api/admin/toggle-business-status', { businessId: Number(toggleBtn.dataset.businessId), status: newStatus });
-      loadHidden();
-      (document.getElementById('manage-search-input') as HTMLInputElement).dispatchEvent(new Event('input'));
-      return;
-    }
-
-    const reassignBtn = (e.target as HTMLElement).closest('button[data-reassign]') as HTMLButtonElement | null;
-    if (reassignBtn) {
-      const name = reassignBtn.dataset.businessName;
-      const email = window.prompt(`Set the owner's email for "${name}" (leave blank to unlink):`);
-      if (email === null) return;
-      reassignBtn.disabled = true;
-      await postJson('/api/admin/set-business-owner', { businessId: Number(reassignBtn.dataset.reassign), userEmail: email.trim() || null });
-      loadHidden();
-      return;
-    }
-
-    const deleteBtn = (e.target as HTMLElement).closest('button[data-delete]') as HTMLButtonElement | null;
-    if (deleteBtn) {
-      if (!window.confirm(`Permanently delete "${deleteBtn.dataset.businessName}"? This can't be undone.`)) return;
-      deleteBtn.disabled = true;
-      await postJson('/api/admin/delete-business', { businessId: Number(deleteBtn.dataset.delete) });
-      loadHidden();
-      (document.getElementById('manage-search-input') as HTMLInputElement).dispatchEvent(new Event('input'));
-      return;
-    }
-  });
 
   init();
 </script>
-
-<style is:global>
-  /* Rows are injected via innerHTML from the script above, so they never
-     get Astro's scoped-style data attribute — a plain scoped <style>
-     block here wouldn't reach them, hence is:global. */
-  .admin-business-row:hover {
-    background: var(--bg-subtle);
-  }
-</style>

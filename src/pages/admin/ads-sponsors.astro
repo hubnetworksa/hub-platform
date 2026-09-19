@@ -1,17 +1,46 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdminShell from '../../components/AdminShell.astro';
+import { categories, suburbs, shoppingCenters, businessesInCategory, businessesInSuburb } from '../../lib/data';
+import { adsEnabled } from '../../lib/site-overrides';
+
+// Build-time lookups so the client can name slots and pick a few open ones to
+// show as chips. `count` = listings in that category/suburb (bigger = more
+// valuable to an advertiser).
+const slotData = {
+  categories: categories.map((c) => ({ slug: c.slug, name: c.name, count: businessesInCategory(c.id).length })),
+  suburbs: suburbs.map((s) => ({ slug: s.slug, name: s.name, count: businessesInSuburb(s.id).length })),
+  centres: shoppingCenters.map((c) => ({ slug: c.slug, name: c.name })),
+  adsEnabledAtBuild: adsEnabled,
+};
+const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
 ---
 
-<BaseLayout title="Ads & Sponsors" description="Manage exclusive sponsorship slots." noindex={true}>
+<BaseLayout title="Ads & Sponsors" description="Manage ad placements and exclusive sponsorship slots." noindex={true}>
   <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
   <div id="content" hidden>
-    <AdminShell active="ads" title="Ads & sponsors" subtitle="Exclusive spots — one advertiser holds each at a time.">
+    <AdminShell active="ads" title="Ads & sponsors" subtitle="Placements, rates and sold inventory">
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Ad placements</h2>
+          <button id="ads-toggle" type="button"></button>
+        </div>
+        <div id="ad-slots"></div>
+        <p id="ads-note" style="margin:0;padding:12px 18px;font-size:12.5px;font-weight:600;color:var(--muted)">Switching display ads on or off, and changing a rate, reaches the public pages on the next <strong>Rebuild &amp; deploy</strong>. Rates are edited under <a href="/admin/plans-pricing/" style="color:var(--accent);font-weight:800;text-decoration:none">Plans &amp; pricing</a>.</p>
+      </div>
+
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:18px">
+        <h2 style="margin:0 0 6px;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Sponsored category &amp; suburb spots</h2>
+        <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">One advertiser per category and per suburb. Sold slots are marked on the public pages automatically.</p>
+        <div id="spot-chips" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+        <p id="spot-more" hidden style="margin:12px 0 0;font-size:12.5px;font-weight:700;color:var(--muted)"></p>
+      </div>
+
       <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
         <div style="padding:14px 18px;border-bottom:2px solid var(--navy);">
-          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Sponsored category &amp; suburb spots</h2>
-          <p style="margin:4px 0 0;font-size:12.5px;color:var(--muted);font-weight:600">One advertiser per category and per suburb. Sold slots are marked on the public pages automatically. Comping one here doesn't touch PayFast — it's a manual/off-platform sale.</p>
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Sold slots</h2>
+          <p style="margin:4px 0 0;font-size:12.5px;color:var(--muted);font-weight:600">Comping one here doesn't touch PayFast — it's a manual/off-platform sale.</p>
         </div>
         <div id="sold-list"></div>
         <p id="sold-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No sponsorship slots sold yet.</p>
@@ -43,9 +72,23 @@ import AdminShell from '../../components/AdminShell.astro';
       </div>
     </AdminShell>
   </div>
+  <script type="application/json" id="slot-data" set:html={slotJson} />
 </BaseLayout>
 
 <script>
+  import { esc, randFromCents, requireAdmin, showContent, postJson, fmtDate } from '../../lib/admin-html';
+
+  interface SlotData {
+    categories: { slug: string; name: string; count: number }[];
+    suburbs: { slug: string; name: string; count: number }[];
+    centres: { slug: string; name: string }[];
+    adsEnabledAtBuild: boolean;
+  }
+  interface Sold {
+    id: number; product_type: string; product_target: string | null; business_name: string; current_period_end: string | null; comped: number;
+  }
+
+  const slots: SlotData = JSON.parse(document.getElementById('slot-data')!.textContent || '{}');
   const PRODUCT_LABELS: Record<string, string> = {
     category_sponsor: 'Category sponsor',
     suburb_sponsor: 'Suburb sponsor',
@@ -53,34 +96,114 @@ import AdminShell from '../../components/AdminShell.astro';
     centre_sponsor: 'Centre sponsorship',
   };
 
-  async function postJson(url: string, body: unknown) {
-    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    return res.json();
+  const settings = new Map<string, string>();
+  let adsOn = true;
+  let sold: Sold[] = [];
+
+  function slotName(productType: string, target: string | null): string {
+    if (productType === 'homepage_banner') return 'Homepage banner';
+    if (productType === 'category_sponsor') return slots.categories.find((c) => c.slug === target)?.name ?? target ?? '';
+    if (productType === 'suburb_sponsor') return slots.suburbs.find((s) => s.slug === target)?.name ?? target ?? '';
+    if (productType === 'centre_sponsor') return slots.centres.find((c) => c.slug === target)?.name ?? target ?? '';
+    return target ?? '';
   }
 
-  async function loadSold() {
-    const res = await fetch('/api/admin/sponsorships');
-    const data = await res.json();
-    const list = document.getElementById('sold-list')!;
-    const empty = document.getElementById('sold-empty')!;
-    if (!data.sponsorships || data.sponsorships.length === 0) {
-      empty.hidden = false;
-      list.innerHTML = '';
-      return;
-    }
-    list.innerHTML = data.sponsorships
+  function rate(key: string): string {
+    const cents = settings.has(key) ? Number(settings.get(key)) : NaN;
+    return Number.isFinite(cents) && cents > 0 ? `${randFromCents(cents)}/mo` : 'Rate not set';
+  }
+
+  function stateStyle(on: boolean): string {
+    return `padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;${on ? 'background:rgba(var(--accent-rgb),.13);color:var(--accent-hover)' : 'background:var(--bg-subtle);color:var(--muted)'}`;
+  }
+
+  function renderPlacements() {
+    const toggle = document.getElementById('ads-toggle') as HTMLButtonElement;
+    toggle.textContent = adsOn ? 'Display ads ON' : 'Display ads OFF';
+    toggle.setAttribute('style', `padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-size:13px;font-weight:800;background:${adsOn ? 'var(--accent)' : 'var(--bg-subtle)'};color:${adsOn ? 'var(--contrast)' : 'var(--muted)'}`);
+
+    const placements = [
+      { name: 'Homepage in-content', detail: '970×90 desktop · 320×100 mobile', rate: rate('price_sponsor_banner_cents') },
+      { name: 'Search in-feed', detail: 'After the fifth result', rate: rate('price_ad_search_cents') },
+      { name: 'Suburb sidebar', detail: `300×250 · ${slots.suburbs.length.toLocaleString('en-US')} pages`, rate: rate('price_sponsor_suburb_cents') },
+      { name: 'Profile sidebar', detail: '300×250 · every business page', rate: rate('price_ad_profile_cents') },
+    ];
+    document.getElementById('ad-slots')!.innerHTML = placements
       .map(
-        (s: { id: number; product_type: string; product_target: string | null; business_name: string }) =>
-          `<div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-            <div style="min-width:0;flex:1">
-              <div style="font-size:14.5px;font-weight:800;color:var(--navy);">${PRODUCT_LABELS[s.product_type] ?? s.product_type}${s.product_target ? ` — ${s.product_target}` : ''}</div>
-              <div style="font-size:12.5px;font-weight:600;color:var(--muted);">sold to ${s.business_name}</div>
-            </div>
-            <button data-clear="${s.id}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--danger);cursor:pointer;">Clear</button>
-          </div>`
+        (a) => `<div class="admin-row" style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <div style="min-width:0;flex:1">
+          <div style="font-size:14.5px;font-weight:800;color:var(--navy)">${esc(a.name)}</div>
+          <div style="font-size:12.5px;font-weight:600;color:var(--muted)">${esc(a.detail)}</div>
+        </div>
+        <span style="${stateStyle(adsOn)}">${adsOn ? 'Live' : 'Paused'}</span>
+        <span style="font-size:13.5px;font-weight:800;color:var(--navy);min-width:88px;text-align:right">${esc(a.rate)}</span>
+      </div>`
       )
       .join('');
   }
+
+  function renderChips() {
+    const soldKey = new Set(sold.map((s) => `${s.product_type}:${s.product_target ?? ''}`));
+    const chips: string[] = [];
+    for (const s of sold.filter((x) => x.product_type === 'category_sponsor' || x.product_type === 'suburb_sponsor')) {
+      chips.push(`<span style="padding:8px 12px;border-radius:999px;background:rgba(var(--accent-rgb),.12);color:var(--accent-hover);font-size:12.5px;font-weight:800">${esc(slotName(s.product_type, s.product_target))} — sold</span>`);
+    }
+    // A few open, high-traffic slots (the biggest categories/suburbs not yet sold).
+    const openCats = slots.categories.filter((c) => !soldKey.has(`category_sponsor:${c.slug}`)).sort((a, b) => b.count - a.count);
+    const openSubs = slots.suburbs.filter((s) => !soldKey.has(`suburb_sponsor:${s.slug}`)).sort((a, b) => b.count - a.count);
+    const shown = [...openCats.slice(0, 2), ...openSubs.slice(0, 2)];
+    for (const o of shown) {
+      chips.push(`<span style="padding:8px 12px;border-radius:999px;border:2px solid var(--border);color:var(--muted);font-size:12.5px;font-weight:800">${esc(o.name)} — open</span>`);
+    }
+    document.getElementById('spot-chips')!.innerHTML = chips.join('');
+    const moreOpen = openCats.length + openSubs.length - shown.length;
+    const more = document.getElementById('spot-more')!;
+    more.hidden = moreOpen <= 0;
+    more.innerHTML = `+ ${moreOpen.toLocaleString('en-US')} more open — see <a href="/admin/inventory/" style="color:var(--accent);font-weight:800;text-decoration:none">Sponsored inventory</a>.`;
+  }
+
+  function renderSold() {
+    const list = document.getElementById('sold-list')!;
+    const empty = document.getElementById('sold-empty')!;
+    empty.hidden = sold.length > 0;
+    list.innerHTML = sold
+      .map((s) => {
+        const name = slotName(s.product_type, s.product_target);
+        const until = s.comped ? 'complimentary' : s.current_period_end ? `paid to ${fmtDate(s.current_period_end)}` : '';
+        return `<div class="admin-row" style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <div style="min-width:0;flex:1">
+              <div style="font-size:14.5px;font-weight:800;color:var(--navy);">${esc(PRODUCT_LABELS[s.product_type] ?? s.product_type)}${name && s.product_type !== 'homepage_banner' ? ` — ${esc(name)}` : ''}</div>
+              <div style="font-size:12.5px;font-weight:600;color:var(--muted);">sold to ${esc(s.business_name)}${until ? ` · ${esc(until)}` : ''}</div>
+            </div>
+            <button data-clear="${s.id}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--danger);cursor:pointer;">Clear</button>
+          </div>`;
+      })
+      .join('');
+  }
+
+  async function loadAll() {
+    const [settingsRes, soldRes] = await Promise.all([fetch('/api/admin/site-settings'), fetch('/api/admin/sponsorships')]);
+    const settingsData = await settingsRes.json();
+    settings.clear();
+    for (const r of settingsData.settings ?? []) settings.set(r.key, r.value);
+    adsOn = settings.get('ads_enabled') !== '0';
+    sold = (await soldRes.json()).sponsorships ?? [];
+    renderPlacements();
+    renderChips();
+    renderSold();
+  }
+
+  document.getElementById('ads-toggle')!.addEventListener('click', async (e) => {
+    const btn = e.currentTarget as HTMLButtonElement;
+    btn.disabled = true;
+    const next = !adsOn;
+    const result = await postJson('/api/admin/site-settings', { key: 'ads_enabled', value: next ? '1' : '0' });
+    btn.disabled = false;
+    if (result.ok) {
+      adsOn = next;
+      renderPlacements();
+    }
+  });
 
   document.getElementById('sold-list')!.addEventListener('click', async (e) => {
     const btn = (e.target as HTMLElement).closest('button[data-clear]') as HTMLButtonElement | null;
@@ -88,7 +211,7 @@ import AdminShell from '../../components/AdminShell.astro';
     if (!confirm('Clear this sponsorship slot? It becomes available for anyone to buy.')) return;
     btn.disabled = true;
     await postJson('/api/admin/sponsorships', { action: 'clear', id: Number(btn.dataset.clear) });
-    loadSold();
+    loadAll();
   });
 
   const compForm = document.getElementById('comp-form') as HTMLFormElement;
@@ -98,27 +221,17 @@ import AdminShell from '../../components/AdminShell.astro';
     status.textContent = 'Saving…';
     const data = Object.fromEntries(new FormData(compForm).entries());
     const result = await postJson('/api/admin/sponsorships', { action: 'set', businessId: Number(data.businessId), productType: data.productType, productTarget: data.productTarget });
-    status.textContent = result.ok ? 'Assigned.' : result.error || 'Something went wrong.';
+    status.textContent = result.ok ? 'Assigned.' : String(result.error || 'Something went wrong.');
     if (result.ok) {
       compForm.reset();
-      loadSold();
+      loadAll();
     }
   });
 
   async function init() {
-    const me = await fetch('/api/me');
-    if (me.status === 401) {
-      window.location.href = '/login/?next=/admin/ads-sponsors/';
-      return;
-    }
-    const meData = await me.json();
-    if (!meData.isAdmin) {
-      window.location.href = '/my-businesses/';
-      return;
-    }
-    document.getElementById('loading')!.hidden = true;
-    document.getElementById('content')!.hidden = false;
-    await loadSold();
+    if (!(await requireAdmin('/admin/ads-sponsors/'))) return;
+    showContent();
+    await loadAll();
   }
 
   init();

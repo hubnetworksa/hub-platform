@@ -16,7 +16,7 @@ interface Env extends PayfastEnv {
 // rejection) still matter as the first filter before a human ever sees it.
 //
 // Notifying the admin of a new submission is done via a mailto: link the
-// client opens (see list-your-business.astro), not server-side SMTP — this
+// client opens (see list-your-business/review.astro), not server-side SMTP — this
 // Function has no email-sending credentials at all. The site's contact
 // address is a Cloudflare Email Routing address (receive-only); the actual
 // send happens from the submitter's own mail client, which is real email
@@ -133,8 +133,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const fields: Record<string, string> = {
     merchant_id: context.env.PAYFAST_MERCHANT_ID!,
     merchant_key: context.env.PAYFAST_MERCHANT_KEY!,
-    return_url: `https://${site.domain}/list-your-business/?submitted=1`,
-    cancel_url: `https://${site.domain}/list-your-business/?submitted=1&payment_cancelled=1`,
+    return_url: `https://${site.domain}/list-your-business/checkout/?paid=1`,
+    cancel_url: `https://${site.domain}/list-your-business/checkout/?payment_cancelled=1`,
     notify_url: `${origin}/api/subscribe/notify`,
     name_first: name,
     email_address: contactEmail,

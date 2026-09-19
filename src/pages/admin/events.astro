@@ -91,6 +91,15 @@ import AdminShell from '../../components/AdminShell.astro';
         </form>
       </div>
 
+      <div id="review-panel" hidden style="background:#fff;border:2px solid var(--accent);border-radius:14px;overflow:hidden">
+        <div style="background:var(--accent);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+          <span style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--contrast)">Waiting for review</span>
+          <span id="review-count" style="font-size:12px;font-weight:800;color:var(--contrast)"></span>
+        </div>
+        <div id="review-list"></div>
+        <p id="review-status" role="status" style="margin:0;padding:0 18px 14px;font-size:0.85rem;color:var(--muted);"></p>
+      </div>
+
       <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
         <div style="display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.4fr) minmax(0,1fr) auto;gap:12px;padding:12px 18px;border-bottom:2px solid var(--navy);font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">
           <span>Event</span><span>Date &amp; venue</span><span>Tickets</span><span>Actions</span>
@@ -118,6 +127,35 @@ import AdminShell from '../../components/AdminShell.astro';
     description: string;
     featured: number;
     source: string;
+  }
+
+  interface SubmissionRow {
+    id: number;
+    title: string;
+    type: string;
+    event_date: string;
+    event_time: string | null;
+    venue: string | null;
+    suburb: string | null;
+    price: string;
+    ticket_url: string;
+    host: string | null;
+    image_url: string | null;
+    description: string;
+    contact_name: string | null;
+    contact_email: string | null;
+    contact_phone: string | null;
+    created_at: string;
+  }
+
+  // Event text comes from organisers via the public form — always escape it
+  // before it goes into innerHTML.
+  function esc(v: unknown): string {
+    return String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+  }
+
+  function safeUrl(v: string | null): string {
+    return v && /^https?:\/\//i.test(v) ? v : '';
   }
 
   async function postJson(url: string, body: unknown) {
@@ -195,39 +233,76 @@ import AdminShell from '../../components/AdminShell.astro';
       ? 'display:inline-block;padding:4px 10px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase'
       : 'display:inline-block;padding:4px 10px;border-radius:999px;background:var(--bg-subtle);color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase';
     const featLabel = e.featured ? 'Featured' : 'Standard';
-    const sourceNote = e.source === 'agent' ? ' · found by weekly agent' : '';
+    const sourceNote = e.source === 'agent' ? ' · found by weekly agent' : e.source === 'organiser' ? ' · from an organiser' : '';
     return `
       <div style="display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.4fr) minmax(0,1fr) auto;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);align-items:center">
         <div style="min-width:0;display:flex;gap:11px;align-items:center">
           <div style="flex-shrink:0;width:54px;height:54px;border-radius:9px;overflow:hidden;background:var(--bg-subtle)">
-            ${e.image_url ? `<img src="${e.image_url}" alt="" style="width:100%;height:100%;object-fit:cover" />` : ''}
+            ${safeUrl(e.image_url) ? `<img src="${esc(e.image_url)}" alt="" style="width:100%;height:100%;object-fit:cover" />` : ''}
           </div>
           <div style="min-width:0">
-            <div style="font-size:14.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em">${e.title}</div>
+            <div style="font-size:14.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em">${esc(e.title)}</div>
             <div style="display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap">
               <span style="${featStyle}">${featLabel}</span>
-              <span style="font-size:12px;font-weight:700;color:var(--muted)">${e.type}${sourceNote}</span>
+              <span style="font-size:12px;font-weight:700;color:var(--muted)">${esc(e.type)}${sourceNote}</span>
             </div>
           </div>
         </div>
-        <div style="min-width:0;font-size:13px;font-weight:700;color:var(--text)">${e.event_date}<br /><span style="font-weight:600;color:var(--muted)">${e.venue ?? ''}</span></div>
+        <div style="min-width:0;font-size:13px;font-weight:700;color:var(--text)">${esc(e.event_date)}<br /><span style="font-weight:600;color:var(--muted)">${esc(e.venue)}</span></div>
         <div style="min-width:0">
-          <div style="font-size:13px;font-weight:800;color:var(--navy)">${e.price}</div>
-          <div style="font-size:11.5px;font-weight:600;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.host ?? ''}</div>
+          <div style="font-size:13px;font-weight:800;color:var(--navy)">${esc(e.price)}</div>
+          <div style="font-size:11.5px;font-weight:600;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.host)}</div>
         </div>
         <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">
           <button data-feature="${e.id}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);cursor:pointer">Feature</button>
           <button data-edit="${e.id}" style="padding:8px 11px;border:0;border-radius:8px;background:var(--navy);color:#fff;font-size:12px;font-weight:800;cursor:pointer">Edit</button>
-          <button data-remove="${e.id}" data-event-title="${e.title}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--danger);font-size:12px;font-weight:800;cursor:pointer">Remove</button>
+          <button data-remove="${e.id}" data-event-title="${esc(e.title)}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--danger);font-size:12px;font-weight:800;cursor:pointer">Remove</button>
+        </div>
+      </div>`;
+  }
+
+  function submissionRow(s: SubmissionRow): string {
+    const contact = [s.contact_name, s.contact_email, s.contact_phone].filter(Boolean).map(esc).join(' · ');
+    const ticket = safeUrl(s.ticket_url);
+    const poster = safeUrl(s.image_url);
+    const link = (href: string, label: string) => `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-hover);font-weight:800">${label}</a>`;
+    return `
+      <div style="padding:16px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap">
+          <div style="min-width:0;flex:1 1 260px">
+            <div style="font-size:15px;font-weight:800;color:var(--navy);letter-spacing:-.01em">${esc(s.title)}</div>
+            <div style="font-size:12.5px;font-weight:700;color:var(--muted);margin-top:3px">${esc(s.type)} · ${esc(s.event_date)}${s.event_time ? ' · ' + esc(s.event_time) : ''}</div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-top:3px">${esc([s.venue, s.suburb].filter(Boolean).join(', '))}</div>
+          </div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">
+            <button data-approve-sub="${s.id}" style="padding:8px 13px;border:0;border-radius:8px;background:var(--accent);color:var(--contrast);font-size:12px;font-weight:800;cursor:pointer">Approve</button>
+            <button data-reject-sub="${s.id}" data-sub-title="${esc(s.title)}" style="padding:8px 13px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--danger);font-size:12px;font-weight:800;cursor:pointer">Reject</button>
+          </div>
+        </div>
+        <div style="font-size:13px;font-weight:700;color:var(--navy)">${esc(s.price)}${s.host ? ` <span style="font-weight:600;color:var(--muted)">· ${esc(s.host)}</span>` : ''}</div>
+        ${s.description ? `<div style="font-size:13.5px;line-height:1.5;color:var(--text)">${esc(s.description)}</div>` : ''}
+        <div style="font-size:12.5px;font-weight:600;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap">
+          ${ticket ? link(ticket, 'Check the ticket link ↗') : '<span>No ticket link given</span>'}
+          ${poster ? link(poster, 'Check the poster ↗') : ''}
+          <span>Contact: ${contact || 'none given'}</span>
+          <span>Submitted ${esc(s.created_at)}</span>
         </div>
       </div>`;
   }
 
   let currentRows: EventRow[] = [];
 
+  function renderSubmissions(rows: SubmissionRow[]) {
+    const panel = document.getElementById('review-panel')!;
+    panel.hidden = rows.length === 0;
+    document.getElementById('review-count')!.textContent = rows.length === 1 ? '1 event' : `${rows.length} events`;
+    document.getElementById('review-list')!.innerHTML = rows.map(submissionRow).join('');
+  }
+
   async function loadEvents() {
     const res = await fetch('/api/admin/events');
     const data = await res.json();
+    renderSubmissions(data.submissions ?? []);
     currentRows = data.events ?? [];
     document.getElementById('stat-total')!.textContent = String(currentRows.length);
     document.getElementById('stat-featured')!.textContent = String(currentRows.filter((e) => e.featured).length);
@@ -266,6 +341,29 @@ import AdminShell from '../../components/AdminShell.astro';
       await postJson('/api/admin/events', { action: 'delete', id: Number(removeBtn.dataset.remove) });
       loadEvents();
       return;
+    }
+  });
+
+  document.getElementById('review-list')!.addEventListener('click', async (e) => {
+    const status = document.getElementById('review-status')!;
+    const approveBtn = (e.target as HTMLElement).closest('button[data-approve-sub]') as HTMLButtonElement | null;
+    const rejectBtn = (e.target as HTMLElement).closest('button[data-reject-sub]') as HTMLButtonElement | null;
+    if (!approveBtn && !rejectBtn) return;
+
+    if (rejectBtn && !window.confirm(`Reject "${rejectBtn.dataset.subTitle}"? It will be deleted.`)) return;
+    const btn = (approveBtn ?? rejectBtn)!;
+    btn.disabled = true;
+    status.textContent = approveBtn ? 'Approving…' : 'Rejecting…';
+    const result = await postJson('/api/admin/events', {
+      action: approveBtn ? 'approve-submission' : 'reject-submission',
+      id: Number(approveBtn ? approveBtn.dataset.approveSub : rejectBtn!.dataset.rejectSub),
+    });
+    if (result.ok) {
+      status.textContent = approveBtn ? 'Approved — it will show on the public Events page after the next rebuild & deploy.' : 'Rejected.';
+      loadEvents();
+    } else {
+      btn.disabled = false;
+      status.textContent = result.error || 'Something went wrong.';
     }
   });
 

@@ -9,4 +9,7 @@ export const NOINDEX_PATH_PREFIXES = [
   '/register/',
   '/report-listing/',
   '/request-removal/',
+  '/list-your-business/contact/',
+  '/list-your-business/review/',
+  '/list-your-business/checkout/',
 ];

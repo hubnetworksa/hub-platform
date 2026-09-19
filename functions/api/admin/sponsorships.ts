@@ -17,7 +17,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const rows = await context.env.DB
     .prepare(
-      `SELECT s.id, s.product_type, s.product_target, s.current_period_end, b.id AS business_id, b.name AS business_name
+      `SELECT s.id, s.product_type, s.product_target, s.current_period_end, (s.m_payment_id LIKE 'admin-comp-%') AS comped,
+              b.id AS business_id, b.name AS business_name
        FROM subscriptions s JOIN businesses b ON b.id = s.business_id
        WHERE s.product_type != 'tier' AND s.status = 'active'
        ORDER BY s.product_type, s.product_target`

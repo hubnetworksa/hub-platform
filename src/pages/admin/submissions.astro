@@ -3,11 +3,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdminShell from '../../components/AdminShell.astro';
 ---
 
-<BaseLayout title="Pending Submissions" description="Review new business submissions." noindex={true}>
+<BaseLayout title="Approvals" description="Review new business submissions." noindex={true}>
   <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
   <div id="content" hidden>
-    <AdminShell active="submissions" title="Submissions" subtitle="New business listings awaiting review.">
+    <AdminShell active="submissions" title="Approvals" subtitle="Submissions waiting for review">
       <div style="display:flex;gap:9px;">
         <button id="bulk-approve" disabled style="padding:10px 14px;border:0;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;cursor:pointer;">Approve selected</button>
         <button id="bulk-reject" disabled style="padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--danger);font-size:13px;font-weight:800;cursor:pointer;">Reject selected</button>
@@ -24,34 +24,43 @@ import AdminShell from '../../components/AdminShell.astro';
 </BaseLayout>
 
 <script>
+  import { esc, TIER_NAMES, requireAdmin, showContent } from '../../lib/admin-html';
+
   async function postForm(url: string, params: Record<string, string>): Promise<void> {
     await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(params) });
   }
 
-  function renderSubmission(s: {
+  interface Submission {
     token: string; name: string; category_slug: string; suburb_slug: string;
+    category_name: string | null; suburb_name: string | null;
     address: string | null; phone: string | null; email: string | null; website: string | null;
-    description: string; status: string;
-  }): string {
+    description: string; status: string; chosen_tier: number;
+  }
+
+  function renderSubmission(s: Submission): string {
     const canAct = s.status === 'Pending your approval';
-    const details = [s.category_slug, s.suburb_slug, s.address, s.phone, s.email, s.website].filter(Boolean).join(' · ');
+    const meta = [s.category_name ?? s.category_slug, s.suburb_name ?? s.suburb_slug].filter(Boolean).join(' · ');
+    const contact = [s.address, s.phone, s.email, s.website].filter(Boolean).join(' · ');
+    const plan = TIER_NAMES[s.chosen_tier] ?? 'Basic';
     return `
       <div style="padding:18px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;">
         <div style="min-width:0;display:flex;align-items:flex-start;gap:10px;">
-          ${canAct ? `<input type="checkbox" class="submission-check" data-token="${s.token}" style="margin-top:4px;flex-shrink:0;accent-color:var(--accent);" />` : ''}
+          ${canAct ? `<input type="checkbox" class="submission-check" data-token="${esc(s.token)}" style="margin-top:4px;flex-shrink:0;accent-color:var(--accent);" />` : ''}
           <div style="min-width:0;">
             <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
-              <span style="font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.015em">${s.name}</span>
-              ${!canAct ? `<span style="padding:3px 9px;border-radius:999px;background:rgba(var(--accent-rgb),.12);color:var(--accent-hover);font-size:11px;font-weight:800;">${s.status}</span>` : ''}
+              <span style="font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.015em">${esc(s.name)}</span>
+              <span style="padding:3px 9px;border-radius:999px;background:rgba(var(--accent-rgb),.12);color:var(--accent-hover);font-size:11px;font-weight:800">${plan}</span>
+              ${!canAct ? `<span style="padding:3px 9px;border-radius:999px;background:var(--bg-subtle);color:var(--muted);font-size:11px;font-weight:800;">${esc(s.status)}</span>` : ''}
             </div>
-            <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:4px;overflow-wrap:break-word;">${details}</div>
-            <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);max-width:64ch;overflow-wrap:break-word;">${s.description}</p>
+            <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:4px;overflow-wrap:break-word;">${esc(meta)}</div>
+            ${contact ? `<div style="font-size:12.5px;font-weight:600;color:var(--muted);margin-top:2px;overflow-wrap:break-word;">${esc(contact)}</div>` : ''}
+            <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);max-width:64ch;overflow-wrap:break-word;">${esc(s.description)}</p>
           </div>
         </div>
         ${canAct
           ? `<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
-              <button data-action="approve" data-token="${s.token}" style="padding:10px 14px;border:0;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;cursor:pointer;">Approve</button>
-              <button data-action="reject" data-token="${s.token}" style="padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--danger);font-size:13px;font-weight:800;cursor:pointer;">Reject</button>
+              <button data-action="approve" data-token="${esc(s.token)}" style="padding:10px 14px;border:0;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;cursor:pointer;">Approve</button>
+              <button data-action="reject" data-token="${esc(s.token)}" style="padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--danger);font-size:13px;font-weight:800;cursor:pointer;">Reject</button>
             </div>`
           : ''
         }
@@ -65,26 +74,22 @@ import AdminShell from '../../components/AdminShell.astro';
   }
 
   async function init() {
-    const me = await fetch('/api/me');
-    if (me.status === 401) {
-      window.location.href = '/login/?next=/admin/submissions/';
-      return;
-    }
-    const meData = await me.json();
-    if (!meData.isAdmin) {
-      window.location.href = '/my-businesses/';
-      return;
-    }
+    if (!(await requireAdmin('/admin/submissions/'))) return;
 
     const res = await fetch('/api/admin/overview');
     const data = await res.json();
-    document.getElementById('loading')!.hidden = true;
-    document.getElementById('content')!.hidden = false;
+    showContent();
+
+    const n = data.stats.awaitingReview;
+    document.getElementById('admin-subtitle')!.textContent = `${n} submission${n === 1 ? '' : 's'} waiting for review`;
 
     const list = document.getElementById('submissions-list')!;
+    const empty = document.getElementById('submissions-empty')!;
     if (data.submissions.length === 0) {
-      document.getElementById('submissions-empty')!.hidden = false;
+      list.innerHTML = '';
+      empty.hidden = false;
     } else {
+      empty.hidden = true;
       list.innerHTML = data.submissions.map(renderSubmission).join('');
     }
     updateBulkButtons();

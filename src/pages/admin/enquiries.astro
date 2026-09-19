@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminShell from '../../components/AdminShell.astro';
+---
+
+<BaseLayout title="Enquiries" description="Enquiries sent through a listing or event." noindex={true}>
+  <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
+
+  <div id="content" hidden>
+    <AdminShell active="enquiries" title="Enquiries" subtitle="Every enquiry sent through a listing or event">
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div style="background:#fff;border:2px solid var(--accent);border-radius:12px;padding:14px 18px;flex:1;min-width:140px">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)">Unanswered</div>
+          <div style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px">—</div>
+        </div>
+        <div style="background:#fff;border:2px solid var(--border);border-radius:12px;padding:14px 18px;flex:1;min-width:140px">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">This week</div>
+          <div style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px">—</div>
+        </div>
+      </div>
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:40px 18px;text-align:center">
+          <div style="font-size:16px;font-weight:800;color:var(--navy)">Enquiries aren't recorded yet</div>
+          <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin:5px auto 0;max-width:52ch;line-height:1.5">The enquiry form on a listing opens the visitor's own email app, addressed to the business, so nothing passes through the hub to list here. Once enquiries are stored, they'll show up on this page with Reply and Close.</div>
+        </div>
+      </div>
+    </AdminShell>
+  </div>
+</BaseLayout>
+
+<script>
+  import { requireAdmin, showContent } from '../../lib/admin-html';
+
+  async function init() {
+    if (!(await requireAdmin('/admin/enquiries/'))) return;
+    showContent();
+  }
+  init();
+</script>

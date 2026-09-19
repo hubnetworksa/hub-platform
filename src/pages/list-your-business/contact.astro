@@ -1,0 +1,130 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FlowProgress from '../../components/FlowProgress.astro';
+import { shoppingCenters } from '../../lib/data';
+import { DAYS } from '../../lib/list-flow-client';
+import site from '../../site';
+
+const centres = shoppingCenters.filter((c) => c.type === 'mall').sort((a, b) => a.name.localeCompare(b.name));
+---
+
+<BaseLayout
+  title="List your business — contact details"
+  description={`Step 2 of 3: where customers reach your business on ${site.siteName}.`}
+  noindex
+>
+  <main style="max-width:1200px;margin:0 auto;padding:clamp(22px,3.5vw,42px) 20px 60px">
+    <div class="flow-grid" style="display:grid;gap:26px">
+      <div style="min-width:0">
+        <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Step 2 of 3</span>
+        <h1 style="margin:12px 0 10px;font-size:clamp(26px,4.2vw,42px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);max-width:20ch">Where customers reach you</h1>
+        <p style="margin:0 0 22px;font-size:16px;line-height:1.6;color:var(--text);max-width:50ch">Only what you tick as public is shown on your listing.</p>
+        <FlowProgress step={2} />
+        <form id="step2-form" style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Street address
+            <input type="text" name="street" class="fld" maxlength="150" placeholder="69 Daan de Wet Nel Dr" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)" /></label>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Postal code
+              <input type="text" name="postal" class="fld" maxlength="10" placeholder="0182" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Shopping centre <span style="font-weight:600;color:var(--muted);font-size:12px">optional</span>
+              <select name="centre" class="fld" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)">
+                <option value="">Not in a centre</option>
+                {centres.map((c) => <option value={c.slug}>{c.name}</option>)}
+              </select></label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Website <span style="font-weight:600;color:var(--muted);font-size:12px">Verified plan and up</span>
+            <input type="url" name="website" class="fld" maxlength="200" placeholder="https://" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)" /></label>
+          <div style="border:2px solid var(--border);border-radius:14px;overflow:hidden">
+            <div style="padding:13px 16px;border-bottom:2px solid var(--border);font-size:13px;font-weight:800;color:var(--navy)">Trading hours</div>
+            <div style="padding:6px 0">
+              {DAYS.map((d, i) => (
+                <div style="display:flex;align-items:center;gap:12px;padding:9px 16px;flex-wrap:wrap">
+                  <span style="width:46px;font-size:13.5px;font-weight:800;color:var(--navy);flex-shrink:0">{d}</span>
+                  <input type="time" class="fld" data-day={i} data-part="open" aria-label={`${d} opens`} style="padding:9px 11px;border:2px solid var(--border);border-radius:9px;font-size:13.5px;outline:none;background:#fff;color:var(--text)" />
+                  <span style="font-size:13px;font-weight:700;color:var(--muted)">to</span>
+                  <input type="time" class="fld" data-day={i} data-part="close" aria-label={`${d} closes`} style="padding:9px 11px;border:2px solid var(--border);border-radius:9px;font-size:13.5px;outline:none;background:#fff;color:var(--text)" />
+                  <label style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--muted);margin-left:auto"><input type="checkbox" data-day={i} data-part="closed" style="accent-color:var(--accent);width:16px;height:16px" />Closed</label>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
+            <button type="submit" class="btn-primary" style="padding:15px 24px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer">Continue to review</button>
+            <button type="button" id="back-btn" style="padding:15px 24px;border:2px solid var(--border);border-radius:11px;background:#fff;color:var(--navy);font-size:15px;font-weight:800;cursor:pointer">Back</button>
+          </div>
+        </form>
+      </div>
+      <aside style="display:flex;flex-direction:column;gap:14px">
+        <div style="border:2px solid var(--border);border-radius:14px;padding:20px;background:var(--bg-subtle)">
+          <h2 style="margin:0 0 10px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Why hours matter</h2>
+          <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text)">Customers check trading hours before they call or visit, so accurate hours save both of you a wasted trip.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .flow-grid {
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 950px) {
+    .flow-grid {
+      grid-template-columns: minmax(0, 1fr) 320px;
+    }
+  }
+  .fld:focus {
+    border-color: var(--accent) !important;
+  }
+  .btn-primary:hover {
+    background: var(--accent-hover) !important;
+  }
+</style>
+
+<script>
+  import { loadDraft, saveDraft, draftHasBasics, DAYS } from '../../lib/list-flow-client';
+
+  const form = document.getElementById('step2-form') as HTMLFormElement;
+  const draft = loadDraft();
+  // Nothing to build on (direct visit / new tab) — start at step 1.
+  if (!draftHasBasics(draft)) window.location.replace('/list-your-business/');
+
+  const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
+  field('street').value = draft.street;
+  field('postal').value = draft.postal;
+  field('centre').value = draft.centre;
+  field('website').value = draft.website;
+
+  const hourEl = (day: number, part: 'open' | 'close' | 'closed') =>
+    form.querySelector(`[data-day="${day}"][data-part="${part}"]`) as HTMLInputElement;
+  DAYS.forEach((_, i) => {
+    const h = draft.hours[i];
+    hourEl(i, 'open').value = h.open;
+    hourEl(i, 'close').value = h.close;
+    hourEl(i, 'closed').checked = h.closed;
+  });
+
+  function save() {
+    saveDraft({
+      street: field('street').value.trim(),
+      postal: field('postal').value.trim(),
+      centre: field('centre').value,
+      website: field('website').value.trim(),
+      hours: DAYS.map((_, i) => ({
+        open: hourEl(i, 'open').value,
+        close: hourEl(i, 'close').value,
+        closed: hourEl(i, 'closed').checked,
+      })),
+    });
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    save();
+    window.location.href = '/list-your-business/review/';
+  });
+  document.getElementById('back-btn')!.addEventListener('click', () => {
+    save();
+    window.location.href = '/list-your-business/';
+  });
+</script>

@@ -21,11 +21,13 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (!businessId) return json({ ok: false, error: 'Missing business.' }, 400);
 
   const business = await db
-    .prepare('SELECT id, name, address, phone, website, description, hours, owner_user_id, subscription_tier, subscription_status, subscription_expires_at FROM businesses WHERE id = ?')
+    .prepare(
+      'SELECT b.id, b.slug, b.name, b.address, b.phone, b.website, b.description, b.hours, b.owner_user_id, b.subscription_tier, b.subscription_status, b.subscription_expires_at, b.created_at, s.name AS suburb_name FROM businesses b LEFT JOIN suburbs s ON s.id = b.suburb_id WHERE b.id = ?'
+    )
     .bind(businessId)
     .first<{
-      id: number; name: string; address: string | null; phone: string | null; website: string | null; description: string; hours: string | null; owner_user_id: number | null;
-      subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null;
+      id: number; slug: string; name: string; address: string | null; phone: string | null; website: string | null; description: string; hours: string | null; owner_user_id: number | null;
+      subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null; created_at: string; suburb_name: string | null;
     }>();
   if (!business || (business.owner_user_id !== user.id && !isAdminEmail(user.email))) return json({ ok: false, error: 'You do not own this business.' }, 403);
 
@@ -34,13 +36,22 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .bind(businessId)
     .all<{ id: number; r2_key: string; sort_order: number; caption: string | null }>();
 
+  // Real payment history for the Billing tab (PayFast ITNs recorded against this business's subscriptions).
+  const payments = await db
+    .prepare(
+      'SELECT p.id, p.amount_cents, p.status, p.paid_at, s.tier, s.product_type FROM payments p JOIN subscriptions s ON s.id = p.subscription_id WHERE s.business_id = ? ORDER BY p.paid_at DESC, p.id DESC LIMIT 24'
+    )
+    .bind(businessId)
+    .all<{ id: number; amount_cents: number; status: string; paid_at: string; tier: number; product_type: string | null }>();
+
   return json({
     ok: true,
     business: {
-      id: business.id, name: business.name, address: business.address, phone: business.phone, website: business.website, description: business.description, hours: business.hours,
+      id: business.id, slug: business.slug, created_at: business.created_at, suburb_name: business.suburb_name, name: business.name, address: business.address, phone: business.phone, website: business.website, description: business.description, hours: business.hours,
       subscription_tier: business.subscription_tier, subscription_status: business.subscription_status, subscription_expires_at: business.subscription_expires_at,
     },
     photos: photos.results,
+    payments: payments.results,
   });
 };
 

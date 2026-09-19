@@ -58,6 +58,7 @@ h1, h2, h3, h4, h5, h6, p, a {
 
 a {
   color: inherit;
+  text-decoration: none;
 }
 
 .skip-link {
@@ -202,3 +203,7 @@ main {
 .text-muted {
   color: var(--muted);
 }
+
+#wx-chip{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.82)}
+#wx-chip[hidden]{display:none}
+@media(max-width:759px){#wx-chip{display:none}}

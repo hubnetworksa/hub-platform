@@ -7,12 +7,12 @@ import AdminShell from '../../components/AdminShell.astro';
   <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
   <div id="content" hidden>
-    <AdminShell active="plans" title="Plans & pricing" subtitle="Prices drive the public Pricing page and every checkout.">
+    <AdminShell active="plans" title="Plans & pricing" subtitle="Prices here drive every public page">
       <div id="price-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px"></div>
 
       <div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:18px">
         <h2 style="margin:0 0 6px;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Live everywhere</h2>
-        <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text)">Prices set here drive the public Pricing page, the plan picker inside the signup flow, and every upgrade prompt — on the next rebuild for static pages, immediately for new checkouts.</p>
+        <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text)">Prices set here drive the public Pricing page, the plan picker inside the signup flow, and every upgrade prompt — immediately for new checkouts, and on the next rebuild for the static pages.</p>
         <a href="/pricing/" style="display:inline-block;margin-top:13px;padding:11px 15px;border:2px solid var(--navy);border-radius:9px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;text-decoration:none;">View public pricing page</a>
       </div>
 
@@ -29,21 +29,21 @@ import AdminShell from '../../components/AdminShell.astro';
 </BaseLayout>
 
 <script>
+  import { esc, requireAdmin, showContent, postJson } from '../../lib/admin-html';
+
   const TIER_KEYS = [
     { key: 'price_verified_cents', label: 'Verified plan', accent: false },
     { key: 'price_featured_cents', label: 'Featured plan', accent: true },
   ];
-  const SPONSOR_KEYS: Record<string, string> = {
+  const OTHER_KEYS: Record<string, string> = {
     price_sponsor_category_cents: 'Category sponsor',
-    price_sponsor_suburb_cents: 'Suburb sponsor',
-    price_sponsor_banner_cents: 'Homepage banner',
+    price_sponsor_suburb_cents: 'Suburb sponsor (also the suburb sidebar ad)',
+    price_sponsor_banner_cents: 'Homepage banner (also the homepage in-content ad)',
     price_sponsor_centre_cents: 'Centre sponsorship',
+    price_event_feature_cents: 'Featured event',
+    price_ad_search_cents: 'Search in-feed ad',
+    price_ad_profile_cents: 'Profile sidebar ad',
   };
-
-  async function postJson(url: string, body: unknown) {
-    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    return res.json();
-  }
 
   let tierCounts: Record<string, number> = {};
 
@@ -58,9 +58,9 @@ import AdminShell from '../../components/AdminShell.astro';
       list.innerHTML = data.subscriptions
         .map(
           (s: { name: string; tierName: string; subscription_status: string; priceRand: string }) =>
-            `<div style="padding:14px 18px;border-bottom:1px solid var(--border);">
-              <div style="font-size:14.5px;font-weight:800;color:var(--navy);">${s.name}</div>
-              <div style="font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;">${s.tierName} — ${s.subscription_status} — R${s.priceRand}/mo</div>
+            `<div class="admin-row" style="padding:14px 18px;border-bottom:1px solid var(--border);">
+              <div style="font-size:14.5px;font-weight:800;color:var(--navy);">${esc(s.name)}</div>
+              <div style="font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;">${esc(s.tierName)} — ${esc(s.subscription_status)} — R${esc(s.priceRand)}/mo</div>
             </div>`
         )
         .join('');
@@ -73,69 +73,61 @@ import AdminShell from '../../components/AdminShell.astro';
     }
   }
 
+  // Whole rand render as "149", otherwise "149.50".
+  function randValue(cents: number): string {
+    const rand = cents / 100;
+    return Number.isInteger(rand) ? String(rand) : rand.toFixed(2);
+  }
+
+  function priceCard(key: string, label: string, cents: number | undefined, accent: boolean, note?: string): string {
+    return `
+      <div style="background:#fff;border:2px solid ${accent ? 'var(--accent)' : 'var(--border)'};border-radius:14px;padding:20px">
+        <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:${accent ? 'var(--accent)' : 'var(--muted)'}">${esc(label)}</div>
+        <div style="display:flex;align-items:baseline;gap:6px;margin-top:10px">
+          <span style="font-size:22px;font-weight:800;color:var(--navy)">R</span>
+          <input type="number" min="0" step="0.01" value="${cents === undefined ? '' : randValue(cents)}" placeholder="Not set" data-key="${key}" class="price-input" style="width:120px;padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:22px;font-weight:800;color:var(--navy);outline:none;background:#fff" />
+          <span style="font-size:13px;font-weight:700;color:var(--muted)">/ ${key === 'price_event_feature_cents' ? 'event' : 'month'}</span>
+        </div>
+        <p data-note="${key}" style="margin:12px 0 0;font-size:13px;line-height:1.5;color:var(--muted);font-weight:600">${note ?? 'Saves as soon as you change it.'}</p>
+      </div>`;
+  }
+
   async function loadPrices() {
     const res = await fetch('/api/admin/site-settings');
     const data = await res.json();
-    const settingsByKey = new Map(data.settings.map((s: { key: string; value: string }) => [s.key, s.value]));
+    const settingsByKey = new Map<string, string>(data.settings.map((s: { key: string; value: string }) => [s.key, s.value]));
+    const cents = (key: string): number | undefined => (settingsByKey.has(key) ? Number(settingsByKey.get(key)) : undefined);
 
-    document.getElementById('price-cards')!.innerHTML = TIER_KEYS.map(({ key, label, accent }) => {
-      const rand = (Number(settingsByKey.get(key) ?? 0) / 100).toFixed(2);
-      const tierName = label.replace(' plan', '');
-      const count = tierCounts[tierName] ?? 0;
-      return `
-        <div style="background:#fff;border:2px solid ${accent ? 'var(--accent)' : 'var(--border)'};border-radius:14px;padding:20px">
-          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:${accent ? 'var(--accent)' : 'var(--muted)'}">${label}</div>
-          <div style="display:flex;align-items:baseline;gap:6px;margin-top:10px">
-            <span style="font-size:22px;font-weight:800;color:var(--navy)">R</span>
-            <input type="number" min="0" step="0.01" value="${rand}" data-key="${key}" class="price-input" style="width:120px;padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:22px;font-weight:800;color:var(--navy);outline:none;background:#fff" />
-            <span style="font-size:13px;font-weight:700;color:var(--muted)">/ month</span>
-          </div>
-          <p style="margin:12px 0 0;font-size:13px;line-height:1.5;color:var(--muted);font-weight:600">${count} business${count === 1 ? '' : 'es'} on this plan.</p>
-          <button type="button" data-save="${key}" style="margin-top:12px;padding:9px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:12.5px;font-weight:800;cursor:pointer;">Save</button>
-        </div>`;
-    }).join('') + Object.entries(SPONSOR_KEYS).map(([key, label]) => {
-      const rand = (Number(settingsByKey.get(key) ?? 0) / 100).toFixed(2);
-      return `
-        <div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:20px">
-          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">${label}</div>
-          <div style="display:flex;align-items:baseline;gap:6px;margin-top:10px">
-            <span style="font-size:22px;font-weight:800;color:var(--navy)">R</span>
-            <input type="number" min="0" step="0.01" value="${rand}" data-key="${key}" class="price-input" style="width:120px;padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:22px;font-weight:800;color:var(--navy);outline:none;background:#fff" />
-            <span style="font-size:13px;font-weight:700;color:var(--muted)">/ month</span>
-          </div>
-          <button type="button" data-save="${key}" style="margin-top:12px;padding:9px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:12.5px;font-weight:800;cursor:pointer;">Save</button>
-        </div>`;
-    }).join('');
+    document.getElementById('price-cards')!.innerHTML =
+      TIER_KEYS.map(({ key, label, accent }) => {
+        const count = tierCounts[label.replace(' plan', '')] ?? 0;
+        return priceCard(key, label, cents(key), accent, `${count} business${count === 1 ? '' : 'es'} on this plan.`);
+      }).join('') + Object.entries(OTHER_KEYS).map(([key, label]) => priceCard(key, label, cents(key), false)).join('');
   }
 
-  document.getElementById('price-cards')!.addEventListener('click', async (e) => {
-    const btn = (e.target as HTMLElement).closest('button[data-save]') as HTMLButtonElement | null;
-    if (!btn) return;
-    const key = btn.dataset.save!;
-    const input = document.querySelector(`input[data-key="${key}"]`) as HTMLInputElement;
+  // The mockup's inputs save on change (no Save button).
+  document.getElementById('price-cards')!.addEventListener('change', async (e) => {
+    const input = (e.target as HTMLElement).closest('input.price-input') as HTMLInputElement | null;
+    if (!input) return;
+    const key = input.dataset.key!;
+    const note = document.querySelector<HTMLElement>(`[data-note="${key}"]`)!;
+    const previous = note.textContent;
     const cents = Math.round(Number(input.value) * 100);
-    btn.disabled = true;
-    const original = btn.textContent;
-    btn.textContent = 'Saving…';
+    if (!Number.isFinite(cents) || cents < 0 || input.value === '') {
+      note.textContent = 'Enter an amount in rand.';
+      return;
+    }
+    input.disabled = true;
+    note.textContent = 'Saving…';
     const result = await postJson('/api/admin/site-settings', { key, cents });
-    btn.textContent = result.ok ? 'Saved' : result.error || 'Error';
-    btn.disabled = false;
-    setTimeout(() => (btn.textContent = original), 1500);
+    input.disabled = false;
+    note.textContent = result.ok ? 'Saved.' : String(result.error || 'Could not save.');
+    setTimeout(() => (note.textContent = previous), 1800);
   });
 
   async function init() {
-    const me = await fetch('/api/me');
-    if (me.status === 401) {
-      window.location.href = '/login/?next=/admin/plans-pricing/';
-      return;
-    }
-    const meData = await me.json();
-    if (!meData.isAdmin) {
-      window.location.href = '/my-businesses/';
-      return;
-    }
-    document.getElementById('loading')!.hidden = true;
-    document.getElementById('content')!.hidden = false;
+    if (!(await requireAdmin('/admin/plans-pricing/'))) return;
+    showContent();
     // Sequential, not Promise.all — loadPrices() reads tierCounts, which
     // loadSubscribers() computes as a side effect.
     await loadSubscribers();

@@ -1,85 +1,75 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { categories, suburbs, businesses, priceRand } from '../lib/data';
+import FlowProgress from '../components/FlowProgress.astro';
+import { categories, suburbs, businesses } from '../lib/data';
+import { getFlowPlans } from '../lib/list-flow-plans';
 import site from '../site';
 
 const sortedCategories = [...categories].sort((a, b) => a.name.localeCompare(b.name));
 const sortedSuburbs = [...suburbs].sort((a, b) => a.name.localeCompare(b.name));
-
-const PLANS = [
-  { tier: 0, name: 'Basic', price: 'Free', note: 'Listed in search & your suburb' },
-  { tier: 1, name: 'Verified', price: `${priceRand('price_verified_cents')}/mo`, note: 'Verified badge, priority in results' },
-  { tier: 2, name: 'Featured', price: `${priceRand('price_featured_cents')}/mo`, note: 'Featured placement, photo gallery' },
-];
+const plans = getFlowPlans();
 ---
 
 <BaseLayout
   title="List your business"
   description={`List your business on ${site.siteName} for free.`}
 >
-  <main style="max-width:1200px;margin:0 auto;padding:clamp(24px,4vw,44px) 20px 60px">
-    <div id="list-shell" style="display:grid;grid-template-columns:1fr;gap:26px">
-      <div>
-        <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">List your business</span>
+  <main id="flow-root" data-plans={JSON.stringify(plans)} style="max-width:1200px;margin:0 auto;padding:clamp(24px,4vw,44px) 20px 60px">
+    <div class="flow-grid" style="display:grid;gap:26px">
+      <div style="min-width:0">
+        <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Step 1 of 3</span>
         <h1 style="margin:12px 0 10px;font-size:clamp(28px,4.4vw,44px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);max-width:20ch">List your business on {site.siteName}</h1>
         <p style="margin:0 0 22px;font-size:16px;line-height:1.6;color:var(--text);max-width:52ch">Free to be listed. We check every submission by hand — usually live within 48 hours.</p>
 
+        <FlowProgress step={1} mb={24} />
+
         <p id="auth-check" style="color:var(--muted);">Checking your account…</p>
 
-        <form id="listing-form" hidden style="display:flex;flex-direction:column;gap:16px">
+        <form id="step1-form" hidden style="display:flex;flex-direction:column;gap:16px">
           <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);letter-spacing:.01em">
             Business name
-            <input type="text" name="name" class="list-input" required maxlength="120" placeholder="e.g. De Souza Hardware &amp; Brick Depot" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
+            <input type="text" name="name" class="fld" required minlength="2" maxlength="120" placeholder="e.g. De Souza Hardware &amp; Brick Depot" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
           </label>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px">
             <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
               Category
-              <select name="category" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;color:var(--text);outline:none;background:#fff">
+              <select name="category" class="fld" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;color:var(--text);outline:none;background:#fff">
                 <option value="" disabled selected>Choose a category</option>
                 {sortedCategories.map((c) => <option value={c.slug}>{c.name}</option>)}
               </select>
             </label>
             <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
               Suburb
-              <select name="suburb" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;color:var(--text);outline:none;background:#fff">
+              <select name="suburb" class="fld" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;color:var(--text);outline:none;background:#fff">
                 <option value="" disabled selected>Choose a suburb</option>
                 {sortedSuburbs.map((s) => <option value={s.slug}>{s.name}</option>)}
               </select>
             </label>
           </div>
           <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
-            What do you do? <span style="font-weight:600;color:var(--muted);font-size:12px">optional</span>
-            <textarea name="description" maxlength="600" rows="4" placeholder="A sentence or two customers would search for." style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff;resize:vertical"></textarea>
-          </label>
-          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
-            Address <span style="font-weight:600;color:var(--muted);font-size:12px">optional</span>
-            <input type="text" name="address" maxlength="200" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
+            What do you do?
+            <textarea name="description" class="fld" maxlength="600" rows="4" placeholder="A sentence or two customers would search for." style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;font-family:inherit;color:var(--text);outline:none;background:#fff;resize:vertical"></textarea>
           </label>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px">
             <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
-              Phone <span style="font-weight:600;color:var(--muted);font-size:12px">optional</span>
-              <input type="tel" name="phone" maxlength="30" placeholder="012 527 0542" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
+              Phone
+              <input type="tel" name="phone" class="fld" maxlength="30" placeholder="012 527 0542" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
             </label>
             <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
               Email <span style="font-weight:600;color:var(--muted);font-size:12px">not shown publicly</span>
-              <input type="email" name="email" maxlength="120" placeholder="you@business.co.za" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
+              <input type="email" name="email" class="fld" maxlength="120" placeholder="you@business.co.za" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
             </label>
           </div>
-          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
-            Website <span style="font-weight:600;color:var(--muted);font-size:12px">optional, stored but not shown publicly</span>
-            <input type="url" name="website" maxlength="200" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
-          </label>
 
           <div style="border:2px solid var(--navy);border-radius:14px;overflow:hidden;margin-top:4px">
             <div style="background:var(--navy);padding:12px 16px;font-size:13px;font-weight:800;color:#fff;letter-spacing:.01em">Choose how you appear</div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:2px;background:var(--border)">
-              {PLANS.map((p, i) => (
-                <label class="plan-option" style="padding:16px;display:flex;flex-direction:column;gap:4px;cursor:pointer">
-                  <input type="radio" name="chosenTier" value={p.tier} checked={i === 0} style="position:absolute;opacity:0;width:0;height:0;" />
-                  <span style="font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--navy)">{p.name}</span>
-                  <span style="font-size:22px;font-weight:800;letter-spacing:-.02em;color:var(--navy)">{p.price}</span>
-                  <span style="font-size:12.5px;font-weight:600;line-height:1.4;color:var(--muted)">{p.note}</span>
-                </label>
+              {plans.map((p) => (
+                <button type="button" class="plan-btn" data-tier={p.tier} aria-pressed="false" style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left;padding:16px;border:0;cursor:pointer;background:#fff;color:var(--navy);box-shadow:none;font:inherit">
+                  <span style="font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">{p.name}</span>
+                  <span style="font-size:22px;font-weight:800;letter-spacing:-.02em">{p.price}</span>
+                  <span style="font-size:12.5px;font-weight:600;line-height:1.4">{p.note}</span>
+                </button>
               ))}
             </div>
           </div>
@@ -90,8 +80,7 @@ const PLANS = [
             <input type="text" name="company_url" tabindex="-1" autocomplete="off" />
           </label>
 
-          <button type="submit" class="list-submit" style="align-self:flex-start;padding:15px 24px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer">Continue to contact details</button>
-          <p id="form-status" role="status" style="font-size:0.9rem;color:var(--muted);margin:0;"></p>
+          <button type="submit" class="btn-primary" style="align-self:flex-start;padding:15px 24px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer">Continue to contact details</button>
         </form>
       </div>
 
@@ -127,101 +116,98 @@ const PLANS = [
 </BaseLayout>
 
 <style>
+  [hidden] {
+    display: none !important;
+  }
+  .flow-grid {
+    grid-template-columns: 1fr;
+  }
   @media (min-width: 950px) {
-    #list-shell {
-      grid-template-columns: 1fr 320px;
+    .flow-grid {
+      grid-template-columns: minmax(0, 1fr) 320px;
     }
   }
-  .plan-option {
-    background: #fff;
+  .fld:focus {
+    border-color: var(--accent) !important;
+  }
+  .btn-primary:hover {
+    background: var(--accent-hover) !important;
   }
   /* Mockup's selected-plan look: subtle fill, accent ring, accent-hover text. */
-  .plan-option:has(input:checked) {
-    background: var(--bg-subtle);
-    box-shadow: inset 0 0 0 2px var(--accent);
-  }
-  .plan-option:has(input:checked) span:nth-of-type(-n + 2) {
+  .plan-btn.is-active {
+    background: var(--bg-subtle) !important;
     color: var(--accent-hover) !important;
-  }
-  .list-input:focus {
-    border-color: var(--accent);
-  }
-  .list-submit:hover {
-    background: var(--accent-hover);
+    box-shadow: inset 0 0 0 2px var(--accent) !important;
   }
 </style>
 
-<script define:vars={{ contactEmail: site.contactEmail, siteName: site.siteName }}>
-  // NOTE: define:vars forces this script to stay inline and unprocessed by
-  // Astro/Vite (no TypeScript stripping) — it must be plain browser JS, or
-  // it throws a SyntaxError on load and never runs at all.
-  const loadedAt = Date.now();
-  const form = document.getElementById('listing-form');
-  const status = document.getElementById('form-status');
-  const authCheck = document.getElementById('auth-check');
+<script>
+  import { loadDraft, saveDraft, readPlans } from '../lib/list-flow-client';
+
+  const root = document.getElementById('flow-root') as HTMLElement;
+  const form = document.getElementById('step1-form') as HTMLFormElement;
+  const authCheck = document.getElementById('auth-check') as HTMLElement;
+  const planBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.plan-btn'));
+  const plans = readPlans(root);
+
+  // An in-flight PayFast return from before the flow was split into pages.
+  const q = new URLSearchParams(window.location.search);
+  if (q.get('submitted')) {
+    window.location.replace(`/list-your-business/checkout/?${q.get('payment_cancelled') ? 'payment_cancelled=1' : 'paid=1'}`);
+  }
+
+  // Keep the load time for the server's minimum-time-on-form check.
+  let draft = saveDraft({ loadedAt: loadDraft().loadedAt });
+  let tier = plans.some((p) => p.tier === draft.tier) ? draft.tier : 0;
+
+  const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+  for (const name of ['name', 'category', 'suburb', 'description', 'phone', 'email']) {
+    const v = (draft as unknown as Record<string, string>)[name] ?? '';
+    if (v) field(name).value = v;
+  }
+
+  function paintPlans() {
+    planBtns.forEach((b) => {
+      const on = Number(b.dataset.tier) === tier;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+  planBtns.forEach((b) =>
+    b.addEventListener('click', () => {
+      tier = Number(b.dataset.tier);
+      paintPlans();
+    })
+  );
+  paintPlans();
 
   (async () => {
-    const res = await fetch('/api/me');
-    if (res.status === 401) {
-      window.location.href = '/login/?next=/list-your-business/';
-      return;
+    try {
+      const res = await fetch('/api/me');
+      if (res.status === 401) {
+        window.location.href = '/login/?next=/list-your-business/';
+        return;
+      }
+    } catch {
+      /* offline / no functions in dev: submission itself doesn't require a session */
     }
     authCheck.hidden = true;
     form.hidden = false;
   })();
 
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
-    status.textContent = 'Submitting…';
-    const data = Object.fromEntries(new FormData(form).entries());
-    try {
-      const res = await fetch('/api/submit-business', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, loadedAt }),
-      });
-      const result = await res.json();
-      if (result.ok) {
-        // The listing is already safely saved server-side (pending review)
-        // either way. Notifying us is a mailto: link, not server-side SMTP
-        // — this opens the visitor's own email app with the review link
-        // pre-filled; their mail client does the actual sending, and
-        // Cloudflare Email Routing on our side forwards it into our inbox
-        // from there. mailto: launches the OS mail app without navigating
-        // the tab away, so it's safe to fire even when a payment redirect
-        // follows — unlike an http(s) redirect, it can't race/cancel one.
-        const lines = [
-          `A new business listing was submitted on ${siteName}.`,
-          '',
-          `Name: ${data.name || ''}`,
-          `Category: ${data.category || ''}`,
-          `Suburb: ${data.suburb || ''}`,
-        ];
-        if (data.address) lines.push(`Address: ${data.address}`);
-        if (data.phone) lines.push(`Phone: ${data.phone}`);
-        if (data.email) lines.push(`Email: ${data.email}`);
-        if (data.website) lines.push(`Website: ${data.website}`);
-        if (data.description) lines.push(`Description: ${data.description}`);
-        lines.push('', `Review & approve: ${result.reviewUrl}`);
-        const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent(`New business listing to review: ${data.name || ''}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
-        form.reset();
-        window.location.href = mailto;
-
-        // A paid tier: the listing is saved, but the tier only actually
-        // applies once approved+confirmed (see business-submission.ts) —
-        // payment needs to happen now regardless, so surface it as an
-        // explicit next step rather than an automatic redirect (which
-        // could otherwise race the mailto: launch above).
-        if (result.redirectUrl) {
-          status.innerHTML = `Thanks! We've opened your email app to notify us — please hit send. <a href="${result.redirectUrl}">Continue to payment →</a> to activate your plan once your listing is approved.`;
-        } else {
-          status.innerHTML = `Thanks! We've opened your email app with a message to us so we can review it quickly — please hit send. If it didn't open, <a href="${mailto}">click here</a>.`;
-        }
-      } else {
-        status.textContent = result.error || 'Something went wrong — please try again.';
-      }
-    } catch {
-      status.textContent = 'Something went wrong — please try again.';
-    }
+    const v = (name: string) => field(name).value.trim();
+    draft = saveDraft({
+      name: v('name'),
+      category: field('category').value,
+      suburb: field('suburb').value,
+      description: v('description'),
+      phone: v('phone'),
+      email: v('email'),
+      company_url: field('company_url').value,
+      tier,
+    });
+    window.location.href = '/list-your-business/contact/';
   });
 </script>

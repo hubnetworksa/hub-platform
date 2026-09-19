@@ -20,6 +20,8 @@ import AdminShell from '../../components/AdminShell.astro';
 </BaseLayout>
 
 <script>
+  import { esc } from '../../lib/admin-html';
+
   async function postJson(url: string, body: unknown): Promise<void> {
     await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
   }
@@ -32,10 +34,10 @@ import AdminShell from '../../components/AdminShell.astro';
     return `
       <div style="padding:18px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;">
         <div style="min-width:0;">
-          <span style="font-size:15px;font-weight:800;color:var(--navy);">${label}: <a href="/business/${r.business_slug}/" target="_blank" rel="noopener" style="color:var(--accent);">${r.business_name}</a></span>
-          <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);max-width:64ch;">${r.reason}</p>
-          ${r.relationship ? `<div style="font-size:12.5px;color:var(--muted);margin-top:4px;">Relationship: ${r.relationship}</div>` : ''}
-          ${r.requester_email ? `<div style="font-size:12.5px;color:var(--muted);">From: ${r.requester_email}</div>` : ''}
+          <span style="font-size:15px;font-weight:800;color:var(--navy);">${label}: <a href="/business/${encodeURIComponent(r.business_slug)}/" target="_blank" rel="noopener" style="color:var(--accent);">${esc(r.business_name)}</a></span>
+          <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);max-width:64ch;">${esc(r.reason)}</p>
+          ${r.relationship ? `<div style="font-size:12.5px;color:var(--muted);margin-top:4px;">Relationship: ${esc(r.relationship)}</div>` : ''}
+          ${r.requester_email ? `<div style="font-size:12.5px;color:var(--muted);">From: ${esc(r.requester_email)}</div>` : ''}
           <div style="font-size:12.5px;color:var(--muted);margin-top:4px;">${new Date(r.created_at).toLocaleString()}</div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">

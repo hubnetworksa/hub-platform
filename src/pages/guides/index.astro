@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { GUIDES } from '../../lib/guides';
+import { collectionPageJsonLd } from '../../lib/seo';
+import site from '../../site';
+
+const guideRows = GUIDES.map((g) => ({
+  href: `/guides/${g.slug}/`,
+  title: g.title(site.cityLabel),
+  cat: g.categoryLabel,
+  read: g.readTime,
+  blurb: g.blurb,
+}));
+
+const jsonLd = collectionPageJsonLd({
+  name: 'Guides',
+  description: `Plain-language buyer's guides for the trades people get burnt on most — written for ${site.cityLabel}.`,
+  url: `https://${site.domain}/guides/`,
+  items: guideRows.map((g) => ({ name: g.title, url: `https://${site.domain}${g.href}` })),
+});
+---
+
+<BaseLayout
+  title="Guides"
+  description={`Plain-language buyer's guides for the trades people get burnt on most — written for ${site.cityLabel}.`}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <!-- The mockup's Guides hero has no visible breadcrumb; the component is
+       rendered hidden purely so its BreadcrumbList JSON-LD is emitted. -->
+  <div hidden><Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Guides' }]} /></div>
+
+  <main>
+    <section style="background:var(--navy);color:#fff">
+      <div style="max-width:1200px;margin:0 auto;padding:clamp(28px,4.5vw,54px) 20px">
+        <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--grad-from)">Guides</span>
+        <h1 style="margin:12px 0 12px;color:#fff;font-size:clamp(28px,5vw,48px);letter-spacing:-.03em;line-height:1.04;max-width:20ch">Know what to ask before you phone anyone</h1>
+        <p style="margin:0;color:rgba(255,255,255,.86);font-size:16px;line-height:1.55;max-width:54ch">Plain-language buyer's guides for the trades people get burnt on most — written for {site.cityLabel} prices.</p>
+      </div>
+    </section>
+
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(22px,3.5vw,38px) 20px 0">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:16px">
+        {guideRows.map((g) => (
+          <a href={g.href} class="guide-card" style="display:flex;flex-direction:column;border:2px solid var(--border);border-radius:16px;background:#fff;overflow:hidden;text-decoration:none">
+            <div style="position:relative;height:160px;background:var(--bg-subtle)">
+              <img src={site.sectionBannerImage} alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 45%" />
+            </div>
+            <div style="padding:18px;display:flex;flex-direction:column;gap:9px;flex:1">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <span style="font-size:12px;font-weight:700;color:var(--muted)">{g.cat} · {g.read}</span>
+              </div>
+              <h2 style="margin:0;font-size:18.5px;line-height:1.22;letter-spacing:-.02em;color:var(--navy)">{g.title}</h2>
+              <p style="margin:0;font-size:14px;line-height:1.55;color:var(--text)">{g.blurb}</p>
+              <span style="margin-top:auto;padding-top:8px;font-size:13px;font-weight:800;color:var(--accent)">Read the guide →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section style="margin-top:clamp(36px,5vw,56px);background:var(--accent)">
+      <div style="max-width:1200px;margin:0 auto;padding:clamp(30px,4.5vw,52px) 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px">
+        <div>
+          <h2 style="margin:0 0 8px;color:var(--contrast);font-size:clamp(23px,3.4vw,36px);letter-spacing:-.03em;line-height:1.08;max-width:24ch">Put your business in front of people who are choosing</h2>
+          <p style="margin:0;color:var(--contrast);font-size:15px;font-weight:700;opacity:.9">Category, suburb and shopping-centre sponsorships — see what's open.</p>
+        </div>
+        <a href="/pricing/" style="padding:16px 26px;border-radius:12px;background:#fff;color:var(--accent-hover);font-size:15px;font-weight:800;white-space:nowrap;text-decoration:none">See sponsorship rates</a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .guide-card:hover {
+    border-color: var(--navy) !important;
+  }
+</style>

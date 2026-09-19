@@ -1,50 +1,81 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdminShell from '../../components/AdminShell.astro';
-import site from '../../site';
+import { siteName } from '../../lib/site-overrides';
+
+// What each role can actually do today — read off the real permission
+// checks (functions/_lib/auth.ts isAdminEmail; owner checks in
+// functions/api/update-business.ts, subscribe/*, claim-business.ts).
+const ROLES = [
+  { name: 'Admin', can: 'Everything in this console: approve submissions and claims, edit or remove any listing, set plans and prices, comp sponsorships and rebuild the site' },
+  { name: 'Owner', can: 'Edit their own listings, photos and hours; upgrade, downgrade or cancel their plan; buy a sponsorship slot' },
+  { name: 'Member', can: 'Sign in, submit a business or event, and claim an existing listing (an admin reviews each claim)' },
+];
 ---
 
-<BaseLayout title="Users" description={`Registered ${site.siteName} accounts.`} noindex={true}>
+<BaseLayout title="Users & roles" description={`Registered ${siteName} accounts.`} noindex={true}>
   <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
   <div id="content" hidden>
-    <AdminShell active="users" title="Users" subtitle="Registered accounts.">
-      <p style="margin:0;font-size:13px;color:var(--muted);font-weight:600;">To move a business between accounts, use Reassign on the <a href="/admin/businesses/" style="color:var(--accent);">Listings</a> page.</p>
+    <AdminShell active="users" title="Users & roles" subtitle="Accounts and what each can do">
       <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Accounts</h2>
+          <span id="users-count" style="font-size:12.5px;font-weight:700;color:var(--muted)"></span>
+        </div>
         <div id="users-list"></div>
         <p id="users-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No accounts yet.</p>
+        <p style="margin:0;padding:12px 18px;font-size:12.5px;font-weight:600;color:var(--muted);border-top:1px solid var(--border)">To move a business between accounts, use <strong>Edit → Reassign owner</strong> on the <a href="/admin/businesses/" style="color:var(--accent);font-weight:800;text-decoration:none">Listings</a> page.</p>
+      </div>
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">What each role can do</h2>
+        </div>
+        {ROLES.map((r) => (
+          <div style="padding:13px 18px;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:baseline;flex-wrap:wrap">
+            <span style="font-size:13.5px;font-weight:800;color:var(--navy);min-width:100px">{r.name}</span>
+            <span style="font-size:13.5px;font-weight:600;color:var(--text);min-width:0;flex:1">{r.can}</span>
+          </div>
+        ))}
       </div>
     </AdminShell>
   </div>
 </BaseLayout>
 
 <script>
-  function renderUser(u: { email: string; created_at: string; owned_count: number }): string {
+  import { esc, requireAdmin, showContent, timeAgo, fmtDate } from '../../lib/admin-html';
+
+  interface UserRow { email: string; created_at: string; owned_count: number; last_seen: string | null; role: string }
+
+  function roleStyle(role: string): string {
+    const tone = role === 'Admin' ? 'background:var(--accent);color:var(--contrast)' : role === 'Owner' ? 'background:rgba(var(--accent-rgb),.13);color:var(--accent-hover)' : 'background:var(--bg-subtle);color:var(--muted)';
+    return `display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;${tone}`;
+  }
+
+  function renderUser(u: UserRow): string {
+    const initials = u.email.replace(/[^a-z0-9]/gi, '').slice(0, 2).toUpperCase() || '?';
+    const owns = u.role === 'Admin' && u.owned_count === 0 ? 'All hubs' : `owns ${u.owned_count} business${u.owned_count === 1 ? '' : 'es'}`;
     return `
-      <div style="padding:14px 18px;border-bottom:1px solid var(--border);">
-        <div style="font-size:14.5px;font-weight:800;color:var(--navy);">${u.email}</div>
-        <div style="font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;">Joined ${new Date(u.created_at).toLocaleDateString()} · owns ${u.owned_count} business${u.owned_count === 1 ? '' : 'es'}</div>
+      <div class="admin-row" style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:13px;flex-wrap:wrap">
+        <span style="flex-shrink:0;width:40px;height:40px;border-radius:10px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800">${esc(initials)}</span>
+        <div style="min-width:0;flex:1">
+          <div style="font-size:14.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em;overflow-wrap:anywhere">${esc(u.email)}</div>
+          <div style="font-size:12.5px;font-weight:600;color:var(--muted)">Joined ${esc(fmtDate(u.created_at))} · ${owns}</div>
+        </div>
+        <span style="${roleStyle(u.role)}">${esc(u.role)}</span>
+        <span style="font-size:12px;font-weight:700;color:var(--muted);min-width:82px;text-align:right">${esc(timeAgo(u.last_seen))}</span>
       </div>`;
   }
 
   async function init() {
-    const me = await fetch('/api/me');
-    if (me.status === 401) {
-      window.location.href = '/login/?next=/admin/users/';
-      return;
-    }
-    const meData = await me.json();
-    if (!meData.isAdmin) {
-      window.location.href = '/my-businesses/';
-      return;
-    }
+    if (!(await requireAdmin('/admin/users/'))) return;
 
     const res = await fetch('/api/admin/users');
     const data = await res.json();
-    document.getElementById('loading')!.hidden = true;
-    document.getElementById('content')!.hidden = false;
+    showContent();
 
     const list = document.getElementById('users-list')!;
+    document.getElementById('users-count')!.textContent = `${data.users.length.toLocaleString('en-US')} account${data.users.length === 1 ? '' : 's'}`;
     if (data.users.length === 0) {
       document.getElementById('users-empty')!.hidden = false;
     } else {

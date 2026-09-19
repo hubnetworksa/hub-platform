@@ -17,11 +17,13 @@ import AdminShell from '../../components/AdminShell.astro';
 </BaseLayout>
 
 <script>
+  import { esc } from '../../lib/admin-html';
+
   function renderActivity(a: { kind: string; business_name: string | null; detail: string; created_at: string }): string {
     return `
       <div style="padding:14px 18px;border-bottom:1px solid var(--border);">
-        <div style="font-size:14.5px;font-weight:800;color:var(--navy);text-transform:capitalize;">${a.kind.replace(/_/g, ' ')}${a.business_name ? `: ${a.business_name}` : ''}</div>
-        <div style="font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;">${a.detail}</div>
+        <div style="font-size:14.5px;font-weight:800;color:var(--navy);text-transform:capitalize;">${esc(a.kind.replace(/_/g, ' '))}${a.business_name ? `: ${esc(a.business_name)}` : ''}</div>
+        <div style="font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;">${esc(a.detail)}</div>
         <div style="font-size:11.5px;color:var(--muted);margin-top:2px;">${new Date(a.created_at).toLocaleString()}</div>
       </div>`;
   }
