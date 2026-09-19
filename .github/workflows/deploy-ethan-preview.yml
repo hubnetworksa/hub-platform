@@ -40,6 +40,9 @@ jobs:
             pages_project: thecapetownhub
     env:
       SITE: ${{ matrix.site }}
+      # Preview only: fake Featured/Verified listings, sponsors and featured events so every
+      # premium spot can be seen. Never set in deploy.yml, so production is unaffected.
+      DEMO_PREMIUM: "true"
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
