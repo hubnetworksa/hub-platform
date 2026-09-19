@@ -2,6 +2,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import BusinessCard from '../../../components/BusinessCard.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import SponsorSlot from '../../../components/SponsorSlot.astro';
 import { categories, businessesInCategory, suburbFor, type Business } from '../../../lib/data';
 import { groupForCategory } from '../../../lib/categoryGroups';
 import { synonymsFor, locationSynonymsFor } from '../../../lib/categorySynonyms';
@@ -76,6 +77,15 @@ const jsonLd = isEmpty
     </section>
 
     <section style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
+      <div style="max-width:420px;margin-bottom:22px">
+        <SponsorSlot
+          productType="category_sponsor"
+          target={category.slug}
+          title={`Own ${category.name}`}
+          openBody={`One business sponsors ${category.name.toLowerCase()} in ${site.cityLabel}. The slot is open.`}
+          ctaLabel="Sponsor this category"
+        />
+      </div>
       {isEmpty ? (
         <div>
           <p style="color:var(--muted);line-height:1.6;">No {category.name.toLowerCase()} listed yet — this page will fill in as new businesses are added.</p>

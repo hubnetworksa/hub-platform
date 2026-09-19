@@ -5,6 +5,7 @@ import SearchBox from '../components/SearchBox.astro';
 import Icon from '../components/Icon.astro';
 import StatTile from '../components/StatTile.astro';
 import PlanBadge from '../components/PlanBadge.astro';
+import { sponsorFor } from '../lib/data';
 import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory, suburbFor, categoriesFor, FEATURED_TIER, newsSorted, newsDateShort, latestFuel, fuelPeriodLabel } from '../lib/data';
 import { CATEGORY_GROUPS } from '../lib/categoryGroups';
 import site from '../site';
@@ -41,6 +42,7 @@ const CITY_COORDS: Record<string, [number, number]> = {
 };
 const cityCoords = CITY_COORDS[site.slug];
 const homeNews = newsSorted().slice(0, 4);
+const bannerSponsor = sponsorFor('homepage_banner');
 const fuel = latestFuel(site.slug);
 const rand = (cents: number) => `R${(cents / 100).toFixed(2)}`;
 
@@ -87,6 +89,18 @@ const jsonLd = [
         </div>
       </div>
     </section>
+
+    {bannerSponsor && (
+      <section style="background:var(--bg-subtle);border-bottom:2px solid var(--border)">
+        <a href={`/business/${bannerSponsor.business_slug}/`} class="home-banner-sponsor" style="max-width:1200px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--navy);text-decoration:none">
+          <span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span style="padding:3px 9px;border-radius:999px;background:var(--navy);color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase">Homepage sponsor</span>
+            <span style="font-size:16px;font-weight:800;letter-spacing:-.015em">{bannerSponsor.business_name}</span>
+          </span>
+          <span style="font-size:13px;font-weight:800;color:var(--accent-hover)">View listing →</span>
+        </a>
+      </section>
+    )}
 
     <section style="background:var(--navy);border-top:1px solid rgba(255,255,255,.12)">
       <div style="max-width:1200px;margin:0 auto;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
