@@ -1,5 +1,5 @@
 {
-  "suburb_index": 30,
+  "suburb_index": 33,
   "suburbs_per_run": 3,
   "suburb_slugs": [
     "cape-town-cbd",
@@ -173,7 +173,12 @@
   ],
   "shopping_center_index": 0,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
+  "shopping_center_slugs_pending": [
+    "dean-street-arcade-newlands",
+    "cavendish-square-claremont",
+    "access-park-kenilworth",
+    "kenilworth-centre-kenilworth"
+  ],
   "shopping_center_recheck_countdown": 29,
   "new_mall_discovery_countdown": 19,
   "shopping_center_slugs": [
@@ -186,7 +191,11 @@
     "victoria-wharf-shopping-centre-va-waterfront",
     "the-point-sea-point",
     "the-promenade-camps-bay",
-    "riverside-mall-rondebosch"
+    "riverside-mall-rondebosch",
+    "dean-street-arcade-newlands",
+    "cavendish-square-claremont",
+    "access-park-kenilworth",
+    "kenilworth-centre-kenilworth"
   ],
   "closed_check_last_slug": "auterra-jewellery-woodstock",
   "closed_check_batch_size": 5
