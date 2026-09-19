@@ -1,10 +1,17 @@
 -- Events: markets/gigs/sport with ticket prices up front. Admin-manageable
 -- in principle, but for now populated exclusively by the weekly events
--- research routine (see ROUTINE.events.capetown.md), which finds real
+-- research routine (see ROUTINE.events.pretoria.md), which finds real
 -- upcoming events, cross-verifies them against independent non-resale
 -- sources, and proposes them the same way the hourly business routine
 -- proposes businesses (a SQL file under db/routine-updates/).
-CREATE TABLE events (
+--
+-- IF NOT EXISTS: this production database already had an `events` table
+-- with this exact schema before this migration was ever tracked (created
+-- by hand during earlier feature work, outside the migrations system).
+-- A bare CREATE TABLE fails with "table already exists" against that
+-- state, so this is written to be safe whether or not the table is
+-- already there -- it never alters an existing table's columns or rows.
+CREATE TABLE IF NOT EXISTS events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   slug TEXT NOT NULL UNIQUE,
   title TEXT NOT NULL,
@@ -38,4 +45,4 @@ CREATE TABLE events (
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
-CREATE INDEX idx_events_date ON events(event_date);
+CREATE INDEX IF NOT EXISTS idx_events_date ON events(event_date);
