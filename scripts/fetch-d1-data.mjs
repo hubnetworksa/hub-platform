@@ -56,8 +56,9 @@ async function main() {
   );
   const businessCategories = query('SELECT business_id, category_id, is_primary FROM business_categories;');
   const shoppingCenters = query('SELECT id, slug, name, suburb_id, address, lat, lng, type, description FROM shopping_centers ORDER BY name;');
-  // Events (weekly discovery routine, see ROUTINE.events.<site>.md) — read
-  // by src/pages/events/ for the public listing.
+  // Events (weekly discovery routine, see ROUTINE.events.<site>.md). No
+  // public page reads this yet -- fetched here so write-db-snapshot.mjs
+  // can give the routine its dedup state.
   const events = query(
     `SELECT id, slug, title, type, event_date, event_time, venue, suburb, address, price, ticket_url, host,
             image_url, image_credit, organiser, organiser_note, doors, ages, parking, traders, lineup_json, tiers_json,
