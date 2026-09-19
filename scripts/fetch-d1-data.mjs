@@ -56,17 +56,27 @@ async function main() {
   );
   const businessCategories = query('SELECT business_id, category_id, is_primary FROM business_categories;');
   const shoppingCenters = query('SELECT id, slug, name, suburb_id, address, lat, lng, type, description FROM shopping_centers ORDER BY name;');
+  // Events (weekly discovery routine, see ROUTINE.events.<site>.md). No
+  // public page reads this yet -- fetched here so write-db-snapshot.mjs
+  // can give the routine its dedup state.
+  const events = query(
+    `SELECT id, slug, title, type, event_date, event_time, venue, suburb, address, price, ticket_url, host,
+            image_url, image_credit, organiser, organiser_note, doors, ages, parking, traders, lineup_json, tiers_json,
+            description, featured
+     FROM events ORDER BY event_date ASC;`
+  );
 
   await writeFile(`${OUT_DIR}/suburbs.json`, JSON.stringify(suburbs, null, 2));
   await writeFile(`${OUT_DIR}/categories.json`, JSON.stringify(categories, null, 2));
   await writeFile(`${OUT_DIR}/businesses.json`, JSON.stringify(businesses, null, 2));
   await writeFile(`${OUT_DIR}/business-categories.json`, JSON.stringify(businessCategories, null, 2));
   await writeFile(`${OUT_DIR}/shopping-centers.json`, JSON.stringify(shoppingCenters, null, 2));
+  await writeFile(`${OUT_DIR}/events.json`, JSON.stringify(events, null, 2));
 
   process.stderr.write(
     `[${SITE}] Fetched ${suburbs.length} suburbs, ${categories.length} categories, ` +
     `${businesses.length} businesses, ${businessCategories.length} business-category links, ` +
-    `${shoppingCenters.length} shopping centres ` +
+    `${shoppingCenters.length} shopping centres, ${events.length} events ` +
     `(${REMOTE ? 'remote' : 'local'}).\n`
   );
 }

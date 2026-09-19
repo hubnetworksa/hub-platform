@@ -18,6 +18,7 @@ const categories = JSON.parse(readFileSync('src/data/categories.json', 'utf8'));
 const businesses = JSON.parse(readFileSync('src/data/businesses.json', 'utf8'));
 const businessCategories = JSON.parse(readFileSync('src/data/business-categories.json', 'utf8'));
 const shoppingCenters = JSON.parse(readFileSync('src/data/shopping-centers.json', 'utf8'));
+const events = JSON.parse(readFileSync('src/data/events.json', 'utf8'));
 
 const suburbById = new Map(suburbs.map((s) => [s.id, s]));
 const categoryById = new Map(categories.map((c) => [c.id, c]));
@@ -53,6 +54,11 @@ const snapshot = {
     description_enriched_at: b.description_enriched_at,
     hours: b.hours,
   })),
+  // Read by the weekly events research routine (ROUTINE.events.<site>.md)
+  // to know what's already listed, purely for dedup -- it has no other
+  // state file of its own, unlike the hourly business routine's
+  // routine-state.json (no suburb rotation/index to track here).
+  events: events.map((e) => ({ slug: e.slug, title: e.title, event_date: e.event_date, type: e.type })),
 };
 
 // Compact (no pretty-print indentation) since the hourly research routine
@@ -65,5 +71,5 @@ mkdirSync(`status/${SITE}`, { recursive: true });
 writeFileSync(`status/${SITE}/db-snapshot.json`, JSON.stringify(snapshot));
 process.stderr.write(
   `[${SITE}] Wrote status/${SITE}/db-snapshot.json (${snapshot.businesses.length} businesses, ` +
-  `${snapshot.shopping_centers.length} shopping centres).\n`
+  `${snapshot.shopping_centers.length} shopping centres, ${snapshot.events.length} events).\n`
 );
