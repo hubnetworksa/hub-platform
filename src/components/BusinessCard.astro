@@ -6,6 +6,10 @@ import { suburbFor, categoriesFor, shoppingCenterFor, FEATURED_TIER, type Busine
 interface Props {
   business: Business;
   showSuburb?: boolean;
+  /** Replaces the computed meta line entirely (pass '' to hide it) — the
+   *  shopping-centre page shows category (and address on the pinned card)
+   *  only, not "at <this same centre>" on every tenant. */
+  metaOverride?: string;
   variant?: 'card' | 'row';
   // When set, clicking this card remembers "you came from this list" (see
   // ListReturn.astro), so the business page can offer a "Back to <name>"
@@ -14,13 +18,13 @@ interface Props {
   listContext?: { kind: 'suburb' | 'shopping-center'; slug: string; name: string };
 }
 
-const { business, showSuburb = true, variant = 'card', listContext } = Astro.props;
+const { business, showSuburb = true, variant = 'card', listContext, metaOverride } = Astro.props;
 const suburb = suburbFor(business);
 const cats = categoriesFor(business);
 const primary = cats[0];
 const center = shoppingCenterFor(business);
 const isFeatured = business.subscription_tier >= FEATURED_TIER;
-const meta = [showSuburb && suburb ? suburb.name : null, center ? `at ${center.name}` : business.address].filter(Boolean).join(' · ');
+const meta = metaOverride ?? [showSuburb && suburb ? suburb.name : null, center ? `at ${center.name}` : business.address].filter(Boolean).join(' · ');
 ---
 
 {variant === 'row' ? (

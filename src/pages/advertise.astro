@@ -4,6 +4,11 @@ import site, { SITES } from '../site';
 import { businesses, suburbs, categories } from '../lib/data';
 
 const network = Object.values(SITES);
+const BLURBS: Record<string, string> = {
+  polokwane: 'Limpopo’s capital, plus a tourism section for the province.',
+  pretoria: 'Pretoria, Centurion and greater Tshwane — the largest of the three.',
+  capetown: 'Cape Town and the Western Cape metro, launching now.',
+};
 const COLORS: Record<string, string> = { pretoria: '#1d6fe0', polokwane: '#4d9e2f', capetown: '#1f6fd6' };
 
 const TRUST = [
@@ -58,7 +63,7 @@ const TRUST = [
             <div style="padding:18px">
               <h3 style="margin:0 0 4px;font-size:19px;letter-spacing:-.02em;color:var(--navy)">{s.siteName}</h3>
               <p style="margin:0 0 10px;font-size:13px;font-weight:700;color:var(--muted)">{s.domain}</p>
-              <p style="margin:0;font-size:14px;line-height:1.55;color:var(--text)">{s.tagline}</p>
+              <p style="margin:0;font-size:14px;line-height:1.55;color:var(--text)">{BLURBS[s.slug] ?? s.tagline}</p>
             </div>
           </a>
         ))}

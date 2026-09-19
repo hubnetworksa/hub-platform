@@ -36,7 +36,7 @@ import site from '../site';
 <style>
   @media (min-width: 950px) {
     #results-shell {
-      grid-template-columns: 1fr 320px;
+      grid-template-columns: minmax(0, 1fr) 320px;
     }
   }
 </style>
@@ -119,9 +119,9 @@ import site from '../site';
     if (pinned) {
       const meta = [r.c, r.sb, r.a].filter(Boolean).join(' · ');
       const actions = [
-        r.p ? `<a href="tel:${escapeHtml(r.p)}" style="padding:9px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:12.5px;font-weight:800;text-decoration:none">${escapeHtml(r.p)}</a>` : '',
-        r.w ? `<a href="${escapeHtml(r.w)}" target="_blank" rel="noopener noreferrer" style="padding:9px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:12.5px;font-weight:800;text-decoration:none">Website</a>` : '',
-        `<a href="/business/${r.s}/#enquiry-form" style="padding:9px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:12.5px;font-weight:800;text-decoration:none">Send enquiry</a>`,
+        r.p ? `<a href="tel:${escapeHtml(r.p)}" style="padding:10px 14px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:800;text-decoration:none">${escapeHtml(r.p)}</a>` : '',
+        r.w ? `<a href="${escapeHtml(r.w)}" target="_blank" rel="noopener noreferrer" style="padding:10px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">Website</a>` : '',
+        `<a href="/business/${r.s}/#enquiry-form" style="padding:10px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">Send enquiry</a>`,
       ].join('');
       return `
         <article style="border:2px solid var(--accent);border-radius:14px;background:#fff;padding:18px">
@@ -131,7 +131,7 @@ import site from '../site';
           </div>
           <h2 style="margin:12px 0 6px;font-size:21px;letter-spacing:-.02em;color:var(--navy)"><a href="/business/${r.s}/" style="color:var(--navy)">${escapeHtml(r.n)}</a></h2>
           <p style="margin:0;font-size:13.5px;font-weight:700;color:var(--muted)">${escapeHtml(meta)}</p>
-          ${r.d ? `<p style="margin:10px 0 0;font-size:14px;line-height:1.55;color:var(--text)">${escapeHtml(r.d)}</p>` : ''}
+          ${r.d ? `<p style="margin:10px 0 0;font-size:14.5px;line-height:1.55;color:var(--text)">${escapeHtml(r.d)}</p>` : ''}
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">${actions}</div>
         </article>`;
     }
@@ -154,7 +154,7 @@ import site from '../site';
       </div>
       <div style="padding:16px;background:#fff">
         <p style="margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--text)">${category ? `Own the top of every &ldquo;${escapeHtml(category)}&rdquo; page in ${escapeHtml(cityLabel)} — including this one.` : 'Own the top of a category page across the whole site.'}</p>
-        <a href="/pricing/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none;text-align:center">Enquire about this spot</a>
+        <a href="/pricing/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none">Enquire about this spot</a>
       </div>`;
   }
 
@@ -175,7 +175,7 @@ import site from '../site';
     if (filterVerified.checked) results = results.filter((r) => r.t >= 1);
     if (filterHours.checked) results = results.filter((r) => r.h);
 
-    heading.textContent = q ? `${results.length} results for "${q}"` : `${results.length} businesses${suburbSlug ? '' : ' listed'}`;
+    heading.textContent = q ? `${results.length} results for “${q}”` : `${results.length} businesses${suburbSlug ? '' : ' listed'}`;
 
     if (results.length === 0) {
       list.innerHTML = `<p style="color:var(--muted);font-size:14px;">No matches — try one word, e.g. a category or suburb.</p>`;
@@ -185,7 +185,7 @@ import site from '../site';
     const featured = results.find((r) => r.t >= 2);
     const rest = results.filter((r) => r !== featured).slice(0, 40);
     const adSlot = `
-      <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);padding:18px;text-align:center">
+      <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);padding:18px">
         <span style="display:block;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
         <span style="display:block;margin-top:4px;font-size:13.5px;font-weight:700;color:var(--muted)">In-feed unit after the fifth result</span>
       </div>`;

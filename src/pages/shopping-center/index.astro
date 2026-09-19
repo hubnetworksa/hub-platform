@@ -1,76 +1,107 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { shoppingCenters, suburbs, businessesInShoppingCenter, type ShoppingCenter } from '../../lib/data';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import Icon from '../../components/Icon.astro';
+import { shoppingCenters, suburbs, businessesInShoppingCenter, sponsorFor, priceRand } from '../../lib/data';
 import { collectionPageJsonLd } from '../../lib/seo';
 import site from '../../site';
 
-// Grouped by suburb rather than sorted alphabetically/by count: people
-// search this page the way they search anything else on the site —
-// "malls in <suburb>", "shopping centres in <suburb>" — by area first, not
-// by mall name. Grouping this way also gives each suburb its own heading
-// text for that kind of location-based search.
 const suburbById = new Map(suburbs.map((s) => [s.id, s]));
 
-const bySuburb = new Map<string, { name: string; slug: string; centers: { center: ShoppingCenter; count: number }[] }>();
-for (const center of shoppingCenters) {
-  const count = businessesInShoppingCenter(center.id).length;
-  if (count === 0) continue;
-  const suburb = center.suburb_id != null ? suburbById.get(center.suburb_id) : undefined;
-  const key = suburb?.slug ?? 'other';
-  if (!bySuburb.has(key)) bySuburb.set(key, { name: suburb?.name ?? 'Other areas', slug: key, centers: [] });
-  bySuburb.get(key)!.centers.push({ center, count });
-}
-
-const suburbGroups = [...bySuburb.values()]
-  .map((group) => ({ ...group, centers: group.centers.sort((a, b) => a.center.name.localeCompare(b.center.name)) }))
-  .sort((a, b) => a.name.localeCompare(b.name));
-
-const totalCenters = suburbGroups.reduce((sum, g) => sum + g.centers.length, 0);
+// Sponsored centres lead (they paid for that badge on this index), then
+// biggest first — the mockup's own seed order is the same idea: sponsored
+// pair on top, then descending by how many stores are inside.
+const centres = shoppingCenters
+  .map((center) => {
+    const tenants = businessesInShoppingCenter(center.id);
+    return {
+      center,
+      stores: tenants.length,
+      suburb: center.suburb_id != null ? suburbById.get(center.suburb_id)?.name : undefined,
+      sponsored: Boolean(sponsorFor('centre_sponsor', center.slug)),
+      // The mockup lists "anchors" (Woolworths · Checkers…). We don't
+      // track anchor status, so name a few tenants instead of guessing.
+      tenantNames: tenants.slice(0, 3).map((t) => t.name),
+    };
+  })
+  .filter((c) => c.stores > 0)
+  .sort((a, b) => Number(b.sponsored) - Number(a.sponsored) || b.stores - a.stores || a.center.name.localeCompare(b.center.name));
 
 const jsonLd = collectionPageJsonLd({
   name: 'Shopping Centres & Malls',
-  description: `${totalCenters} shopping centres and malls across ${site.cityLabel}, by suburb.`,
+  description: `${centres.length} shopping centres and malls across ${site.cityLabel}.`,
   url: `https://${site.domain}/shopping-center/`,
-  items: suburbGroups.flatMap((group) =>
-    group.centers.map(({ center }) => ({ name: center.name, url: `https://${site.domain}/shopping-center/${center.slug}/` }))
-  ),
+  items: centres.map(({ center }) => ({ name: center.name, url: `https://${site.domain}/shopping-center/${center.slug}/` })),
 });
 ---
 
 <BaseLayout
   title="Shopping Centres & Malls"
-  description={`Browse ${site.cityLabel} shopping centres and malls by suburb — find every mall in a specific area, or a business by the specific centre it's located at.`}
+  description={`Browse ${site.cityLabel} shopping centres and malls — malls, retail parks and village centres, with every store inside them listed and searchable.`}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <main>
     <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">
-      <img src={site.sectionBannerImage} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%" />
-      <div style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(var(--navy-rgb),.94) 0%,rgba(var(--navy-rgb),.82) 42%,rgba(var(--navy-rgb),.34) 78%,rgba(var(--navy-rgb),.12) 100%)"></div>
-      <div style="position:relative;max-width:1200px;margin:0 auto;padding:clamp(30px,5vw,54px) 20px clamp(26px,4vw,38px)">
-        <h1 style="margin:0 0 10px;color:#fff;font-size:clamp(28px,4.6vw,44px);letter-spacing:-.03em;line-height:1.05">Shopping Centres &amp; Malls</h1>
-        <p style="margin:0;color:rgba(255,255,255,.86);font-size:15.5px;max-width:58ch;line-height:1.55">{totalCenters} shopping centres and malls across {site.cityLabel}, by suburb.</p>
+      <img src={site.sectionBannerImage} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 50%" />
+      <div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(var(--navy-rgb),.94) 0%,rgba(var(--navy-rgb),.78) 48%,rgba(var(--navy-rgb),.26) 100%)"></div>
+      <div style="position:relative;max-width:1200px;margin:0 auto;padding:clamp(28px,4.5vw,54px) 20px">
+        <Breadcrumbs variant="plain" onDark items={[{ label: 'Home', href: '/' }, { label: 'Shopping centres' }]} />
+        <h1 style="margin:14px 0 12px;color:#fff;font-size:clamp(28px,5vw,48px);letter-spacing:-.03em;line-height:1.04;max-width:20ch">Shopping centres in {site.cityLabel}</h1>
+        <p style="margin:0;color:rgba(255,255,255,.86);font-size:16px;line-height:1.55;max-width:54ch">Malls, retail parks and village centres — with every store inside them listed and searchable.</p>
       </div>
     </section>
 
-    <section style="max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,44px) 20px 60px">
-      {suburbGroups.length === 0 ? (
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(22px,3.5vw,38px) 20px 0">
+      {centres.length === 0 ? (
         <p style="color:var(--muted);">None linked yet.</p>
       ) : (
-        suburbGroups.map((group, i) => (
-          <div style={i > 0 ? 'margin-top:30px;' : ''}>
-            <h2 style="margin:0 0 14px;font-size:18px;letter-spacing:-.02em;color:var(--navy);border-bottom:2px solid var(--navy);padding-bottom:10px;">{group.name}</h2>
-            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;">
-              {group.centers.map(({ center, count }) => (
-                <a href={`/shopping-center/${center.slug}/`} style="display:flex;flex-direction:column;gap:4px;padding:14px 16px;border:2px solid var(--border);border-radius:12px;background:#fff;text-decoration:none">
-                  <strong style="font-size:14.5px;color:var(--navy);font-weight:800;">{center.name}</strong>
-                  <span style="color:var(--muted);font-size:12.5px;font-weight:700;">{count} businesses</span>
-                </a>
-              ))}
-            </div>
-          </div>
-        ))
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px">
+          {centres.map(({ center, stores, suburb, sponsored, tenantNames }) => (
+            <a
+              href={`/shopping-center/${center.slug}/`}
+              class="centre-card"
+              style={`display:flex;flex-direction:column;border:2px solid ${sponsored ? 'var(--accent)' : 'var(--border)'};border-radius:16px;background:#fff;overflow:hidden;text-decoration:none`}
+            >
+              <div style="position:relative;height:172px;background:var(--bg-subtle);display:flex;align-items:center;justify-content:center;color:var(--accent);opacity:1">
+                <span style="opacity:.55"><Icon path='<path d="M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6"/>' size={44} /></span>
+                {sponsored && (
+                  <span style="position:absolute;top:12px;left:12px;z-index:2;padding:5px 10px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;box-shadow:0 6px 16px rgba(0,0,0,.28)">Sponsored</span>
+                )}
+              </div>
+              <div style="padding:18px;display:flex;flex-direction:column;gap:8px;flex:1">
+                <h2 style="margin:0;font-size:18.5px;line-height:1.2;letter-spacing:-.02em;color:var(--navy)">{center.name}</h2>
+                <p style="margin:0;font-size:13px;font-weight:700;color:var(--muted)">{[center.type === 'mall' ? 'Mall' : 'Fuel station', suburb].filter(Boolean).join(' · ')}</p>
+                {tenantNames.length > 0 && <p style="margin:0;font-size:13.5px;line-height:1.5;color:var(--text)">{tenantNames.join(' · ')}</p>}
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:10px;border-top:1px solid var(--border)">
+                  <span style="font-size:14px;font-weight:800;color:var(--navy)">{stores} {stores === 1 ? 'store' : 'stores'}</span>
+                  <span style="font-size:13px;font-weight:800;color:var(--accent);white-space:nowrap">View stores →</span>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
       )}
+    </section>
+
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(26px,4vw,44px) 20px 60px">
+      <div style="border:2px solid var(--navy);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+        <div style="background:var(--navy);padding:24px">
+          <h2 style="margin:0 0 8px;color:#fff;font-size:22px;letter-spacing:-.02em">Centre management</h2>
+          <p style="margin:0;color:rgba(255,255,255,.8);font-size:14.5px;line-height:1.55">Sponsor your centre's page — your branding at the top, every store listed underneath, and a badge on this index.</p>
+        </div>
+        <div style="background:#fff;padding:24px;display:flex;flex-direction:column;gap:12px;justify-content:center">
+          <div style="font-size:13.5px;font-weight:700;color:var(--muted)">Centre sponsorship from</div>
+          <div style="font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1">{priceRand('price_sponsor_centre_cents')}<span style="font-size:15px;font-weight:700;color:var(--muted)"> / month</span></div>
+          <a href="/pricing/" style="align-self:flex-start;padding:12px 18px;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;text-decoration:none">Enquire</a>
+        </div>
+      </div>
     </section>
   </main>
 </BaseLayout>
+
+<style>
+  .centre-card:hover {
+    border-color: var(--navy) !important;
+  }
+</style>

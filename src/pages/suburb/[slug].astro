@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BusinessCard from '../../components/BusinessCard.astro';
-import PlanBadge from '../../components/PlanBadge.astro';
 import SponsorSlot from '../../components/SponsorSlot.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { suburbs, businessesInSuburb, categoriesFor, FEATURED_TIER, type Business } from '../../lib/data';
@@ -37,7 +36,7 @@ const keywords = [
 
 const description = suburb.bio
   ? suburb.bio.replace(/\s+/g, ' ').trim().slice(0, 155)
-  : `${businesses.length} businesses in ${suburb.name}, part of the Greater ${site.cityLabel} area — browse by category.`;
+  : `${businesses.length} reviewed listings in this ${myGroup?.name ?? site.cityLabel} suburb.`;
 
 const heroSrc = suburb.image_key ? `/media/${suburb.image_key}` : site.sectionBannerImage;
 
@@ -96,9 +95,9 @@ const collectionJsonLd = businesses.length === 0
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
                 {featuredHere.map((b) => (
                   <article style="border:2px solid var(--accent);border-radius:14px;background:#fff;padding:16px;display:flex;flex-direction:column;gap:8px">
-                    <PlanBadge tier={b.subscription_tier} />
+                    <span style="align-self:flex-start;padding:4px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Featured</span>
                     <h3 style="margin:0;font-size:17px;letter-spacing:-.015em;color:var(--navy)">{b.name}</h3>
-                    <p style="margin:0;font-size:13px;font-weight:600;color:var(--muted)">{categoriesFor(b)[0]?.name}</p>
+                    <p style="margin:0;font-size:13px;font-weight:600;color:var(--muted)">{[categoriesFor(b)[0]?.name, suburb.name].filter(Boolean).join(' · ')}</p>
                     <a href={`/business/${b.slug}/`} style="align-self:flex-start;margin-top:4px;font-size:13px;font-weight:800;color:var(--accent);text-decoration:none">View profile →</a>
                   </article>
                 ))}
@@ -149,7 +148,7 @@ const collectionJsonLd = businesses.length === 0
 <style>
   @media (min-width: 950px) {
     #suburb-shell {
-      grid-template-columns: 1fr 320px;
+      grid-template-columns: minmax(0, 1fr) 320px;
     }
   }
 </style>
