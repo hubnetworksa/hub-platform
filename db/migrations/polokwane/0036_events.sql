@@ -4,7 +4,7 @@
 -- upcoming events, cross-verifies them against independent non-resale
 -- sources, and proposes them the same way the hourly business routine
 -- proposes businesses (a SQL file under db/routine-updates/).
-CREATE TABLE events (
+CREATE TABLE IF NOT EXISTS events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   slug TEXT NOT NULL UNIQUE,
   title TEXT NOT NULL,
@@ -38,4 +38,4 @@ CREATE TABLE events (
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
-CREATE INDEX idx_events_date ON events(event_date);
+CREATE INDEX IF NOT EXISTS idx_events_date ON events(event_date);
