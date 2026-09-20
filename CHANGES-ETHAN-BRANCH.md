@@ -73,7 +73,7 @@ Status as of 20 September 2026. Covers everything built on the `Ethan` dev branc
 - Four screens: Details (`/list-your-business/`), Where customers reach you (`.../contact/`), Check it and send (`.../review/`), and Checkout (`.../checkout/`), with progress bar and sidebars.
 - Sign-in required; spam protection (honeypot and minimum time on form) kept.
 - Paid plans go to PayFast through the server-provided link; the free path shows a "sent for review" state. Return and cancel links from PayFast handled.
-- Admin gets an email link to review the listing (as before).
+- Our team is emailed by the server as soon as a listing is saved, with a review link. Nothing opens the visitor's email app.
 - Trading hours and shopping centre are collected but not saved (see section 20).
 
 ## 9. Events
@@ -103,7 +103,8 @@ Status as of 20 September 2026. Covers everything built on the `Ethan` dev branc
 
 ## 13. Contact, legal and error pages
 
-- **Contact:** the mockup layout; the form opens the visitor's email app with a prefilled message; direct-line cards.
+- **Contact:** the mockup layout; the form sends through the website (the message is saved and emailed to us by the server); the contact address is shown as text, not a mail link.
+- **Email handling:** every form on the sites (contact, listing enquiry, report, data removal, add event, add business) posts to the website's own endpoints, which save the message and email it server-side. No `mailto:` links exist anywhere.
 - **Privacy & POPIA and Terms:** one shared layout with four tabs (Privacy, Terms, Listing rules, Cookies). Existing real clauses (copyright, data removal, data sources, AdSense wording) were merged in so none were lost. The mockup's own placeholder wording needs a lawyer's review before launch.
 - **404 page:** "That page has moved or never existed" with three buttons.
 
@@ -111,7 +112,7 @@ Status as of 20 September 2026. Covers everything built on the `Ethan` dev branc
 
 - Navy sidebar (slide-out on phones), topbar with "+ New listing", notification badges on nav items.
 - **Pages:** Dashboard (tiles, waiting list with Approve/Reject, revenue by product including guide sponsors), Listings (search, plan filters, create/edit modal, plan changes, remove, hide, reassign owner), Approvals, Claims, Reports, Events, News, Enquiries, Sponsored inventory (book/release every slot), Invoices (CSV export and printable receipt), Analytics, Users & roles, Activity, Plans & pricing (edit every price), Ads & sponsors (placements, comp a slot), Site settings (site name, city label, footer tagline overrides).
-- Enquiries and Analytics are honest empty states because nothing stores that data yet.
+- The Enquiries tab lists the messages stored from the contact page and each listing's enquiry form (Close, Reopen, Delete). Analytics is still an honest empty state because nothing records views or clicks yet.
 - **Site settings** take effect on the next rebuild through `src/lib/site-overrides.ts`; the global "ads on/off" switch hides all ad placeholders.
 - A demo admin login (`admin@admin.com`) was added for testing. **It must be removed before launch.**
 - Security: all user-supplied text in admin pages is now escaped.
@@ -145,22 +146,23 @@ Status as of 20 September 2026. Covers everything built on the `Ethan` dev branc
 |---|---|---|---|---|---|
 | Premium listings v2 | 0034 | 0033 | 0036 | site settings prices, sponsorship columns, submission payment columns | Applied on all three |
 | Events (this branch's copy) | 0035 | 0034 | 0037 | events table, Featured event price | Applied on all three |
-| Event submissions | 0036 | 0035 | 0038 | organiser submissions queue | Applied on Cape Town only |
-| News and fuel prices | 0037 | 0036 | 0039 | news articles and monthly fuel prices | Applied on Cape Town only |
+| Event submissions | 0036 | 0035 | 0038 | organiser submissions queue | Applied on all three |
+| News and fuel prices | 0037 | 0036 | 0039 | news articles and monthly fuel prices | Applied on all three |
+| Messages | 0038 | 0037 | 0040 | contact messages and listing enquiries | Applied on all three |
 
 Checked against the live databases on 20 September 2026. Each database records both `main`'s events migration (Cape Town `0034_events`, Pretoria `0033_events`, Polokwane `0036_events`) and this branch's (`0035`, `0034`, `0037`), so the earlier numbering clash no longer blocks `main`'s deploys, which are succeeding again.
 
-Pending: run the event submissions and news migrations on Pretoria and Polokwane, and keep both sets of events migration files when merging so the recorded names still match.
+All of the above are applied on all three production databases (20 September 2026, after a backup). When merging, keep both sets of events migration files so the recorded names still match.
 
 ## 19. New and changed API endpoints
 
-- **New:** `submit-event`, `weather`, `admin/listings`, `admin/payments`, `admin/news`, `admin/events`, `admin/sponsorships`, `admin/subscriptions`, `admin/process-expired-subscriptions`, `subscribe/start`, `subscribe/notify`, `subscribe/cancel`, `business-photos`.
+- **New:** `contact`, `enquiry`, `admin/messages`, `submit-event`, `weather`, `admin/listings`, `admin/payments`, `admin/news`, `admin/events`, `admin/sponsorships`, `admin/subscriptions`, `admin/process-expired-subscriptions`, `subscribe/start`, `subscribe/notify`, `subscribe/cancel`, `business-photos`.
 - **Extended:** `submit-business`, `claim-business`, `update-business`, `admin/overview`, `admin/site-settings`, `admin/users`.
 - Every `/api/...` call in the site code has a matching endpoint (checked).
 
 ## 20. Not built or not complete (be aware)
 
-- No reviews or star ratings; no page-view, click or enquiry data (tiles show "No data yet").
+- No reviews or star ratings, and no page-view or click data (tiles show "No data yet"). A business owner's own dashboard does not yet list the enquiries sent to it.
 - No invoice PDFs or "remind" action; no user invite or edit in admin.
 - Only one full guide; the other five guides in the mockup have no text.
 - Trading hours and shopping centre from the listing form are only emailed to admin, not saved.
@@ -169,12 +171,11 @@ Pending: run the event submissions and news migrations on Pretoria and Polokwane
 - Legal wording is the mockup's placeholder text, unreviewed by a lawyer.
 - New backend endpoints have been tested with mocked responses, not against live services, and the `functions/` code has never been type-checked.
 - Data issues found: four Cape Town businesses have no category (hidden from browsing); a few business websites are dead (`amarecapetown.com`, `leeschinesekitchen.co.za`, `arcww.co.za`, `apnisleep.co.za`).
-- "Report this listing" and "Request data removal" pages email through the visitor's mail app, so the admin Reports tab never receives them.
 - `/tourism/` exists on Cape Town and Pretoria but nothing links to it.
 
 ## 21. Changes made outside the code (live data and services)
 
-- Live databases: Cape Town received the event submissions and news migrations; 2 real events (Oranjezicht City Farm Market, First Thursdays) added to Cape Town; 4 news stories and 4 fuel prices added to Cape Town; a demo admin user row added to all three databases; test businesses created during testing were removed.
+- Live databases: all three received the event submissions, news/fuel and messages migrations (after a backup); 2 real events (Oranjezicht City Farm Market, First Thursdays) added to Cape Town; 4 news stories added to Cape Town and September fuel prices to all three; a demo admin user row added to all three databases; test businesses created during testing were removed.
 - `main`: the duplicate-matching fix was copied there as a hotfix. Nothing else from this branch is on `main`.
 - Cloudflare Pages: three preview deployments (one per site) on the `ethan` branch alias.
 

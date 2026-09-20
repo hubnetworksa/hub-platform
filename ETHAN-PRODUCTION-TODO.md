@@ -12,28 +12,29 @@ Status as of 20 September 2026. **[Me]** = I can do it. **[You]** = needs your a
 - [x] Demo premium data (fake Featured/Verified/sponsors) only exists in the preview workflow, never in a production build.
 - [x] Installable Android app (manifest, service worker, icons), verified on all three preview URLs.
 - [x] Full change list written (`CHANGES-ETHAN-BRANCH.md` and `.docx`).
+- [x] **All email is sent by the website itself.** Contact, listing enquiries, report, data removal, add-event and add-business now post to the site's own endpoints, which save the message and email it from the server. No `mailto:` link exists anywhere on the sites, and the admin Enquiries tab shows the stored messages.
+- [x] All three production databases backed up (saved outside the repo in `Hub/db-backups/2026-09-20/`) and fully migrated: event submissions, news and fuel prices, and messages. September fuel prices are loaded for all three cities.
 
 ## 2. Code work still to do on the branch
 
 | # | Task | Owner | Why it matters |
 |---|---|---|---|
 | 2.1 | Save trading hours and shopping centre from the "Add your business" form (needs a small database migration and a change to how approved listings are created) | Me | Today these two fields are collected but only emailed to admin, so the step-3 preview promises something we don't store |
-| 2.2 | Make "Report this listing" and "Request data removal" use the site's own endpoints (email stays as a fallback) | Me | Today they only open the visitor's mail app, so the admin Reports tab never receives anything |
 | 2.3 | Hide `/tourism/` on Cape Town and Pretoria | Me | The page exists there but nothing links to it |
-| 2.4 | Rate limiting on the public forms: add listing, add event, claim, report, removal (per-IP, server side) | Me | Right now they have only a hidden honeypot field and a minimum time on form |
+| 2.4 | Extend the per-visitor rate limit (already on contact and enquiry) to add listing, add event, claim, report and removal | Me | Those forms still have only a hidden honeypot field and a minimum time on form |
 | 2.5 | Add the backend type-check and the news check to the preview build workflow | Me | So a broken change can't be deployed unnoticed |
 | 2.6 | Save the link checker and the browser smoke test as repo scripts (`npm run check:links`, `npm run check:smoke`) | Me | So every release can be verified the same way |
 | 2.7 | Run the payment flow end to end on the PayFast sandbox: subscribe, payment notification, cancel, expiry, sponsorship purchase, rejected-listing refund note | Me + You | This is the biggest untested area |
 | 2.8 | Exercise every new endpoint against a real database (submit-event and approve, claim, listing flow, admin listings, guide sponsorship) | Me | They were only tested with mocked responses |
+| 2.10 | Remove the temporary "[monitor copy]" emails that send a copy of every owner-confirmation email to a personal Gmail address (in `confirm-listing.ts` and `owner-confirm-listing.ts`, marked TEMP) | Me, once you say so | Owners' details should not be copied to a personal inbox once the site is live |
 | 2.9 | Add real content where the mockup is empty and you decide to keep it: reviews, views/clicks/enquiries data, invoice PDFs | Me (after your decision) | Otherwise these stay honest "No data yet" tiles |
 
 ## 3. Database work (the branch's own migrations)
 
-- [ ] **[You]** Back up all three databases before touching anything (`wrangler d1 export`, keep the files private; they contain user emails).
-- [ ] **[You/Me]** Apply the pending migrations to **Pretoria** (event submissions `0035`, news and fuel `0036`) and **Polokwane** (`0038`, `0039`). Cape Town already has everything. The classifier requires your explicit go-ahead for each city.
+- [x] Backups of all three databases taken on 20 September 2026 (`Hub/db-backups/2026-09-20/`, private; they contain user emails). Take a fresh set again on launch day.
+- [x] Migrations applied to all three production databases (Pretoria `0035`/`0036`/`0037`, Polokwane `0038`/`0039`/`0040`, Cape Town `0038`). Cape Town news (4 stories) and all three cities' fuel prices are loaded.
 - [ ] **[You/Me]** After 2.1, apply its migration to all three.
-- [ ] **[Me]** Load the September fuel prices and first news for Pretoria and Polokwane (files are ready in `db/routine-updates/`).
-- [ ] **[You]** Create a **staging** database per city so the dev preview stops sharing the live database (today the preview reads and writes production data).
+- [ ] **[Me]** Publish the first news stories for Pretoria and Polokwane (run their news routines).
 - [ ] **[You]** Delete the demo user row (`admin@admin.com`) from all three databases before launch.
 
 ## 4. Data quality
@@ -46,6 +47,7 @@ Status as of 20 September 2026. **[Me]** = I can do it. **[You]** = needs your a
 
 - [ ] **[You]** Live PayFast merchant ID, key, passphrase and host as secrets on all three Pages projects (currently sandbox).
 - [ ] **[You]** Confirm the other secrets exist on all three Pages projects: `RESEND_API_KEY`, `CRON_SECRET`, the deploy hook for the admin "Rebuild & deploy" button, and Google sign-in keys for Polokwane and Cape Town.
+- [ ] **[You]** Confirm `RESEND_API_KEY` is set on each Pages project (Production and Preview) and that each site's domain is verified in Resend. All email now goes through the website, so without this messages are still saved and visible in the admin Enquiries tab, but nothing is emailed.
 - [ ] **[You]** Turn on Cloudflare Turnstile or a rate-limit rule as a second layer in front of the public forms.
 - [ ] **[You]** Real AdSense units in place of the "Advertisement" placeholder boxes; Google Analytics IDs confirmed.
 
