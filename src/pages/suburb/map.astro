@@ -1,38 +1,70 @@
 ---
-// Port of the mockup's standalone "Suburb Map.html". Route /suburb/map/ — a
-// static route, so Astro ranks it above the dynamic suburb/[slug] route (and no
-// suburb is expected to have the slug "map").
+// Interactive suburb map. Route /suburb/map/ (a static route, so Astro ranks it
+// above suburb/[slug]). MapLibre GL with the free OpenFreeMap basemap (no key,
+// no limits), the suburbs drawn as real outlines from the municipalities' open
+// data where we have them and as approximate areas where we don't. Everything
+// here is free to run: no per-view charges, no API keys.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { buildSuburbRegions, countWord } from '../../lib/suburbRegions';
+import { suburbBoundaries } from '../../lib/suburbBoundaries';
+import { businesses, suburbs, categoriesFor } from '../../lib/data';
 import site from '../../site';
 
 const regions = buildSuburbRegions();
 const fmt = (n: number) => n.toLocaleString('en-US');
 const totalListings = regions.reduce((a, r) => a + r.total, 0);
 
-// Only suburbs with coordinates are plotted; every suburb is still linked in the list below the map.
-const mapRegions = regions.map((r) => ({
-  key: r.key,
-  name: r.name,
-  color: r.color,
-  subs: r.subs
-    .filter((s) => s.lat !== null && s.lng !== null)
-    .map((s) => ({ name: s.name, slug: s.slug, lat: s.lat as number, lng: s.lng as number, count: s.count })),
-}));
-const plotted = mapRegions.reduce((a, r) => a + r.subs.length, 0);
-// Safe to embed in a <script type="application/json"> block.
-const mapJson = JSON.stringify(mapRegions).replace(/</g, '\\u003c');
+// How many businesses each suburb has in each category (for the "shade by category" view).
+const suburbIdBySlug = new Map(suburbs.map((s) => [s.slug, s.id]));
+const perSuburb = new Map<number, Map<string, number>>();
+const catNames = new Map<string, string>();
+const catTotals = new Map<string, number>();
+for (const b of businesses) {
+  for (const c of categoriesFor(b)) {
+    catNames.set(c.slug, c.name);
+    catTotals.set(c.slug, (catTotals.get(c.slug) ?? 0) + 1);
+    const m = perSuburb.get(b.suburb_id) ?? new Map<string, number>();
+    m.set(c.slug, (m.get(c.slug) ?? 0) + 1);
+    perSuburb.set(b.suburb_id, m);
+  }
+}
+const cats = [...catTotals.entries()].sort((a, b) => b[1] - a[1]).map(([slug]) => ({ slug, name: catNames.get(slug)! }));
+const catIndex = new Map(cats.map((c, i) => [c.slug, i]));
+
+const payload = {
+  regions: regions.map((r) => ({ key: r.key, name: r.name, color: r.color })),
+  cats,
+  subs: regions.flatMap((r) =>
+    r.subs.map((s) => ({
+      slug: s.slug,
+      name: s.name,
+      region: r.key,
+      color: r.color,
+      count: s.count,
+      lat: s.lat,
+      lng: s.lng,
+      sold: s.sold,
+      shape: Boolean(suburbBoundaries[s.slug]),
+      cats: [...(perSuburb.get(suburbIdBySlug.get(s.slug) ?? -1) ?? new Map<string, number>()).entries()]
+        .map(([slug, n]) => [catIndex.get(slug)!, n] as [number, number])
+        .sort((a, b) => b[1] - a[1]),
+    }))
+  ),
+};
+const plotted = payload.subs.filter((s) => s.shape || (s.lat !== null && s.lng !== null)).length;
+const outlined = payload.subs.filter((s) => s.shape).length;
+const mapJson = JSON.stringify(payload).replace(/</g, '\\u003c');
 ---
 
 <BaseLayout
   title="Suburb map"
-  description={`Find your suburb on the map — ${regions.length} ${regions.length === 1 ? 'region' : 'regions'} across ${site.cityLabel}, with a page of reviewed businesses for every suburb.`}
+  description={`Explore ${site.cityLabel} suburb by suburb on an interactive map — shade it by number of businesses or by category, search for your suburb, and open its page.`}
 >
   {plotted > 0 && (
     <>
-      <link is:inline rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
-      <script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
+      <link is:inline rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous" />
+      <script is:inline src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js" integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
     </>
   )}
 
@@ -40,41 +72,72 @@ const mapJson = JSON.stringify(mapRegions).replace(/</g, '\\u003c');
     <section class="hero">
       <div class="wrap">
         <Breadcrumbs variant="plain" onDark items={[{ label: 'Home', href: '/' }, { label: 'Suburb map' }]} />
-        <h1>Find your suburb on the map</h1>
-        <p class="lede">{countWord(regions.length)[0].toUpperCase() + countWord(regions.length).slice(1)} {regions.length === 1 ? 'region' : 'regions'} across {site.cityLabel}. Click a region to zoom, then a suburb to see its businesses.</p>
+        <h1>Explore {site.cityLabel} suburb by suburb</h1>
+        <p class="lede">{countWord(regions.length)[0].toUpperCase() + countWord(regions.length).slice(1)} {regions.length === 1 ? 'region' : 'regions'}. Search for your suburb, shade the map by number of businesses or by category, then open a suburb to see who is in it.</p>
       </div>
     </section>
 
     <div class="wrap">
-      <div class="split">
-        {plotted > 0 ? (
-          <>
-            <div id="map"></div>
-            <aside class="panel">
-              <div class="panel-head"><h2>Regions</h2><span style="font-size:12px;font-weight:800;color:var(--muted)" id="totalCount">{fmt(totalListings)} listings</span></div>
-              <div id="regionList">
-                {regions.map((r, i) => {
-                  const hasPoints = (mapRegions[i]?.subs.length ?? 0) > 0;
-                  return (
-                    <button type="button" class="region-btn" data-region={r.key} aria-pressed="false" disabled={!hasPoints}>
+      {plotted > 0 ? (
+        <>
+          <div class="toolbar">
+            <div class="search">
+              <input id="sub-search" type="search" placeholder="Search a suburb…" autocomplete="off" aria-label="Search for a suburb" />
+              <div id="sub-results" class="results" hidden></div>
+            </div>
+            <label class="ctl">Shade by
+              <select id="shade-mode">
+                <option value="region">Region</option>
+                <option value="count">Number of businesses</option>
+                <option value="category">One category…</option>
+              </select>
+            </label>
+            <label class="ctl" id="cat-wrap" hidden>Category
+              <select id="cat-select">
+                {cats.map((c, i) => <option value={i}>{c.name}</option>)}
+              </select>
+            </label>
+            <div class="btns">
+              <button type="button" id="near-btn" class="tbtn">Near me</button>
+              <button type="button" id="style-btn" class="tbtn">Detailed map</button>
+              <button type="button" id="tilt-btn" class="tbtn">Tilt</button>
+            </div>
+          </div>
+
+          <div class="split">
+            <div class="mapwrap">
+              <div id="map" role="application" aria-label={`Interactive map of ${site.cityLabel} suburbs`}></div>
+              <div id="legend" class="legend"></div>
+              <div id="map-loading" class="loading">Loading map…</div>
+            </div>
+            <aside class="side">
+              <div id="info" class="info" hidden></div>
+              <div class="panel">
+                <div class="panel-head"><h2>Regions</h2><span style="font-size:12px;font-weight:800;color:var(--muted)">{fmt(totalListings)} listings</span></div>
+                <div id="regionList">
+                  {regions.map((r) => (
+                    <button type="button" class="region-btn" data-region={r.key} aria-pressed="false">
                       <span class="lbl"><span class="dot" style={`background:${r.color}`}></span>{r.name}</span>
                       <span class="n">{fmt(r.total)}</span>
                     </button>
-                  );
-                })}
-              </div>
-              <div style="padding:14px 16px;background:var(--bg-subtle)">
-                <button id="resetBtn" type="button" style="width:100%;padding:11px 14px;border:2px solid var(--navy);border-radius:10px;background:#fff;color:var(--navy);font:inherit;font-size:13px;font-weight:800;cursor:pointer">Show all of {site.cityLabel}</button>
+                  ))}
+                </div>
+                <div style="padding:14px 16px;background:var(--bg-subtle)">
+                  <button id="resetBtn" type="button" class="reset">Show all of {site.cityLabel}</button>
+                </div>
               </div>
             </aside>
-          </>
-        ) : (
-          <div class="panel" style="grid-column:1/-1">
-            <div class="panel-head"><h2>Map coming soon</h2></div>
-            <p style="margin:0;padding:16px;font-size:14px;font-weight:600;line-height:1.55;color:var(--muted)">Suburb locations for {site.cityLabel} haven't been added to the map yet. Every suburb is still listed below, each with its own page of businesses.</p>
           </div>
-        )}
-      </div>
+          <p class="note">
+            Solid outlines are the official suburb boundaries ({outlined} of {payload.subs.length} suburbs). Dashed shapes are approximate areas around the suburb's centre, drawn where no official boundary is published. Map data © OpenStreetMap contributors, basemap by OpenFreeMap.
+          </p>
+        </>
+      ) : (
+        <div class="panel" style="margin-top:22px">
+          <div class="panel-head"><h2>Map coming soon</h2></div>
+          <p style="margin:0;padding:16px;font-size:14px;font-weight:600;line-height:1.55;color:var(--muted)">Suburb locations for {site.cityLabel} haven't been added to the map yet. Every suburb is still listed below, each with its own page of businesses.</p>
+        </div>
+      )}
 
       <section class="sub">
         <div class="sub-head">
@@ -109,24 +172,69 @@ const mapJson = JSON.stringify(mapRegions).replace(/</g, '\\u003c');
 
 <style>
   .wrap { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-  .hero { background: var(--navy); color: #fff; padding: clamp(26px, 4.5vw, 52px) 0; }
-  .hero h1 { margin: 14px 0 12px; color: #fff; font-size: clamp(28px, 5vw, 48px); letter-spacing: -0.03em; line-height: 1.04; max-width: 20ch; }
-  .lede { margin: 0; color: rgba(255, 255, 255, 0.86); font-size: 16px; line-height: 1.55; max-width: 54ch; }
-  .split { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 22px; align-items: start; }
-  @media (min-width: 900px) { .split { grid-template-columns: minmax(0, 1fr) 300px; } }
-  #map { height: clamp(380px, 58vh, 620px); border: 2px solid var(--navy); border-radius: 16px; z-index: 1; }
+  .hero { background: var(--navy); color: #fff; padding: clamp(20px, 3vw, 34px) 0; }
+  .hero h1 { margin: 12px 0 10px; color: #fff; font-size: clamp(26px, 4.2vw, 40px); letter-spacing: -0.03em; line-height: 1.04; max-width: 22ch; }
+  .lede { margin: 0; color: rgba(255, 255, 255, 0.86); font-size: 16px; line-height: 1.55; max-width: 60ch; }
+
+  .toolbar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; margin-top: 22px; }
+  .search { position: relative; flex: 1 1 240px; min-width: 200px; }
+  .search input { width: 100%; box-sizing: border-box; padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px; font: inherit; font-size: 14px; font-weight: 700; color: var(--navy); background: #fff; }
+  .search input:focus { outline: none; border-color: var(--navy); }
+  .results { position: absolute; z-index: 20; left: 0; right: 0; top: calc(100% + 4px); background: #fff; border: 2px solid var(--navy); border-radius: 10px; overflow: hidden; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18); }
+  .results :global(button) { display: flex; justify-content: space-between; width: 100%; padding: 10px 14px; border: 0; border-bottom: 1px solid var(--border); background: #fff; font: inherit; font-size: 13.5px; font-weight: 700; color: var(--navy); cursor: pointer; text-align: left; }
+  .results :global(button:last-child) { border-bottom: 0; }
+  .results :global(button:hover), .results :global(button.on) { background: var(--bg-subtle); }
+  .results :global(span) { color: var(--muted); font-size: 12px; }
+  .ctl { display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .ctl[hidden] { display: none; }
+  .ctl select { padding: 11px 12px; border: 2px solid var(--border); border-radius: 10px; font: inherit; font-size: 13.5px; font-weight: 700; color: var(--navy); background: #fff; max-width: 220px; }
+  .btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tbtn { padding: 11px 14px; border: 2px solid var(--navy); border-radius: 10px; background: #fff; color: var(--navy); font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
+  .tbtn:hover { background: var(--bg-subtle); }
+  .tbtn[aria-pressed='true'] { background: var(--navy); color: #fff; }
+
+  .split { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 16px; align-items: start; }
+  @media (min-width: 900px) { .split { grid-template-columns: minmax(0, 1fr) 320px; } }
+  .mapwrap { position: relative; }
+  #map { height: clamp(430px, 68vh, 720px); border: 2px solid var(--navy); border-radius: 16px; z-index: 1; overflow: hidden; }
+  .loading { position: absolute; inset: 0; z-index: 3; display: flex; align-items: center; justify-content: center; border-radius: 16px; background: rgba(255, 255, 255, 0.85); font-size: 14px; font-weight: 800; color: var(--navy); }
+  .loading[hidden] { display: none; }
+  .legend { position: absolute; left: 12px; bottom: 30px; z-index: 2; max-width: calc(100% - 24px); padding: 10px 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.94); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18); font-size: 12px; font-weight: 700; color: var(--navy); }
+  .legend :global(.row) { display: flex; align-items: center; gap: 7px; margin: 3px 0; }
+  .legend :global(.sw) { width: 14px; height: 14px; border-radius: 4px; border: 1px solid rgba(15, 27, 61, 0.25); flex-shrink: 0; }
+  .legend :global(.ttl) { font-size: 10.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .note { margin: 12px 2px 0; font-size: 12.5px; font-weight: 600; line-height: 1.5; color: var(--muted); }
+
+  .side { display: flex; flex-direction: column; gap: 14px; }
+  .info { border: 2px solid var(--navy); border-radius: 16px; background: #fff; overflow: hidden; }
+  .info[hidden] { display: none; }
+  .info :global(.ih) { background: var(--navy); color: #fff; padding: 14px 16px; }
+  .info :global(.ih small) { display: flex; align-items: center; gap: 7px; font-size: 10.5px; font-weight: 800; letter-spacing: 0.13em; text-transform: uppercase; color: rgba(255, 255, 255, 0.7); }
+  .info :global(.ih h3) { margin: 6px 0 0; font-size: 21px; letter-spacing: -0.02em; color: #fff; }
+  .info :global(.ib) { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .info :global(.stat) { display: flex; gap: 18px; }
+  .info :global(.stat b) { display: block; font-size: 22px; letter-spacing: -0.02em; color: var(--navy); }
+  .info :global(.stat span) { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .info :global(.cl) { display: flex; flex-direction: column; gap: 4px; }
+  .info :global(.cl a) { display: flex; justify-content: space-between; gap: 10px; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 9px; font-size: 13px; font-weight: 700; color: var(--navy); text-decoration: none; }
+  .info :global(.cl a:hover) { border-color: var(--navy); background: var(--bg-subtle); }
+  .info :global(.cl a span) { color: var(--muted); font-size: 12px; }
+  .info :global(.go) { display: block; padding: 12px 14px; border-radius: 10px; background: var(--accent); color: var(--contrast); font-size: 14px; font-weight: 800; text-align: center; text-decoration: none; }
+  .info :global(.go2) { display: block; padding: 10px 14px; border-radius: 10px; border: 2px solid var(--border); color: var(--navy); font-size: 13px; font-weight: 800; text-align: center; text-decoration: none; }
+  .info :global(.tag) { font-size: 12px; font-weight: 700; color: var(--muted); }
+
   .panel { border: 2px solid var(--border); border-radius: 16px; background: #fff; overflow: hidden; }
   .panel-head { padding: 13px 16px; border-bottom: 2px solid var(--navy); display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .panel-head h2 { margin: 0; font-size: 14px; letter-spacing: -0.015em; color: var(--navy); }
   .region-btn { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; padding: 12px 16px; border: 0; border-bottom: 1px solid var(--border); background: #fff; cursor: pointer; font: inherit; font-size: 14px; font-weight: 700; color: var(--navy); text-align: left; }
   .region-btn:hover { background: var(--bg-subtle); }
-  .region-btn:disabled { cursor: default; opacity: 0.55; }
-  .region-btn:disabled:hover { background: #fff; }
   .region-btn[aria-pressed='true'] { background: var(--navy); color: #fff; }
   .region-btn .dot { width: 10px; height: 10px; border-radius: 99px; flex-shrink: 0; }
   .region-btn .n { font-size: 12px; font-weight: 800; color: var(--muted); }
   .region-btn[aria-pressed='true'] .n { color: rgba(255, 255, 255, 0.7); }
   .region-btn .lbl { display: flex; align-items: center; gap: 9px; min-width: 0; }
+  .reset { width: 100%; padding: 11px 14px; border: 2px solid var(--navy); border-radius: 10px; background: #fff; color: var(--navy); font: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
+
   .sub { border: 2px solid var(--border); border-radius: 16px; background: #fff; margin-top: 26px; overflow: hidden; }
   .sub-head { padding: 14px 18px; border-bottom: 2px solid var(--navy); display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   .sub-head h2 { margin: 0; font-size: clamp(18px, 2.4vw, 23px); letter-spacing: -0.025em; color: var(--navy); }
@@ -146,80 +254,370 @@ const mapJson = JSON.stringify(mapRegions).replace(/</g, '\\u003c');
 </style>
 
 <style is:global>
-  /* Leaflet injects this markup at runtime, so it can't use scoped styles. */
-  .leaflet-container { font-family: 'Archivo', system-ui, sans-serif; border-radius: 14px; }
-  .pop-t { font-size: 15px; font-weight: 800; color: var(--navy); letter-spacing: -0.015em; }
-  .pop-m { font-size: 12.5px; font-weight: 700; color: var(--muted); margin-top: 2px; }
-  .pop-a { display: inline-block; margin-top: 8px; font-size: 13px; font-weight: 800; color: var(--accent); }
+  /* MapLibre injects this markup at runtime, so it can't use scoped styles. */
+  .maplibregl-map { font-family: 'Archivo', system-ui, sans-serif; }
+  .maplibregl-popup-content { padding: 8px 12px; border-radius: 10px; font-size: 13px; font-weight: 800; color: var(--navy); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22); }
+  .maplibregl-popup-content small { display: block; font-size: 11.5px; font-weight: 700; color: var(--muted); }
+  .you-dot { width: 16px; height: 16px; border-radius: 50%; background: #1d6fe0; border: 3px solid #fff; box-shadow: 0 0 0 6px rgba(29, 111, 224, 0.25); }
 </style>
 
 <script>
-  declare const L: any;
+  declare const maplibregl: any;
 
-  interface MapSub { name: string; slug: string; lat: number; lng: number; count: number }
-  interface MapRegion { key: string; name: string; color: string; subs: MapSub[]; layer?: any }
+  type Sub = { slug: string; name: string; region: string; color: string; count: number; lat: number | null; lng: number | null; sold: boolean; shape: boolean; cats: [number, number][] };
+  type Payload = { regions: { key: string; name: string; color: string }[]; cats: { slug: string; name: string }[]; subs: Sub[] };
 
   const dataEl = document.getElementById('map-data');
   const mapEl = document.getElementById('map');
-  if (dataEl && mapEl && typeof L !== 'undefined') {
-    const REGIONS: MapRegion[] = JSON.parse(dataEl.textContent || '[]');
+  if (dataEl && mapEl && typeof maplibregl !== 'undefined') {
+    const DATA: Payload = JSON.parse(dataEl.textContent || '{}');
+    const STYLES = { light: 'https://tiles.openfreemap.org/styles/positron', detail: 'https://tiles.openfreemap.org/styles/liberty' } as const;
+    const RAMP = ['#e3eefc', '#b7d3f6', '#7db0ee', '#3f86e0', '#1c4fa6'];
+    const ZERO = '#eceff4';
 
-    const map = L.map('map', { scrollWheelZoom: false }).setView([0, 0], 10);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 18,
-    }).addTo(map);
-
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
     const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string);
+    const bySlug = new Map(DATA.subs.map((s) => [s.slug, s]));
+    const regionName = new Map(DATA.regions.map((r) => [r.key, r.name]));
 
-    const all: [number, number][] = [];
-    REGIONS.forEach((r) => {
-      r.layer = L.layerGroup().addTo(map);
-      r.subs.forEach((s) => {
-        const radius = Math.max(7, Math.min(20, Math.sqrt(s.count) * 0.95));
-        const m = L.circleMarker([s.lat, s.lng], {
-          radius,
-          color: '#fff',
-          weight: 2,
-          fillColor: r.color,
-          fillOpacity: 0.82,
-        }).addTo(r.layer);
-        m.bindTooltip(esc(s.name) + ' · ' + s.count, { direction: 'top', offset: [0, -4] });
-        m.bindPopup(
-          '<div class="pop-t">' + esc(s.name) + '</div>' +
-          '<div class="pop-m">' + esc(r.name) + ' · ' + s.count + ' businesses</div>' +
-          '<a class="pop-a" href="/suburb/' + encodeURIComponent(s.slug) + '/">View businesses →</a>'
-        );
-        all.push([s.lat, s.lng]);
+    let styleKey: 'light' | 'detail' = 'light';
+    let mode: 'region' | 'count' | 'category' = 'region';
+    let catIdx = 0;
+    let activeRegion: string | null = null;
+    let selected: string | null = null;
+    let hovered: string | null = null;
+    let shapes: Record<string, any> = {};
+    let features: any[] = [];
+    let points: any[] = [];
+    let thresholds: number[] = [];
+    let ready = false;
+
+    // ---------- geometry helpers ----------
+    function circle(lng: number, lat: number, km: number) {
+      const pts: [number, number][] = [];
+      for (let i = 0; i <= 48; i++) {
+        const a = (i / 48) * 2 * Math.PI;
+        pts.push([lng + ((km / (111.32 * Math.cos((lat * Math.PI) / 180))) * Math.cos(a)), lat + (km / 111.32) * Math.sin(a)]);
+      }
+      return { type: 'Polygon', coordinates: [pts] };
+    }
+    function eachRing(g: any, fn: (ring: [number, number][]) => void) {
+      const polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
+      for (const p of polys) fn(p[0]);
+    }
+    function bboxOf(gs: any[]): [[number, number], [number, number]] {
+      let x0 = 180, y0 = 90, x1 = -180, y1 = -90;
+      for (const g of gs) eachRing(g, (ring) => ring.forEach(([x, y]) => { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }));
+      return [[x0, y0], [x1, y1]];
+    }
+    function centroid(g: any): [number, number] {
+      let best: [number, number][] = [];
+      let bestA = -1;
+      eachRing(g, (ring) => {
+        let a = 0;
+        for (let i = 0; i < ring.length - 1; i++) a += ring[i][0] * ring[i + 1][1] - ring[i + 1][0] * ring[i][1];
+        if (Math.abs(a) > bestA) { bestA = Math.abs(a); best = ring; }
       });
-    });
-    map.fitBounds(L.latLngBounds(all).pad(0.06));
-
-    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.region-btn'));
-    const clearPressed = () => buttons.forEach((b) => b.setAttribute('aria-pressed', 'false'));
-    const showAll = () => {
-      clearPressed();
-      REGIONS.forEach((x) => map.addLayer(x.layer));
-      map.fitBounds(L.latLngBounds(all).pad(0.06));
-    };
-
-    buttons.forEach((btn) => {
-      const r = REGIONS.find((x) => x.key === btn.dataset.region);
-      if (!r || r.subs.length === 0) return;
-      btn.addEventListener('click', () => {
-        const on = btn.getAttribute('aria-pressed') === 'true';
-        clearPressed();
-        REGIONS.forEach((x) => map.addLayer(x.layer));
-        if (on) {
-          map.fitBounds(L.latLngBounds(all).pad(0.06));
-        } else {
-          btn.setAttribute('aria-pressed', 'true');
-          REGIONS.forEach((x) => { if (x !== r) map.removeLayer(x.layer); });
-          map.fitBounds(L.latLngBounds(r.subs.map((s) => [s.lat, s.lng])).pad(0.18));
+      let a = 0, cx = 0, cy = 0;
+      for (let i = 0; i < best.length - 1; i++) {
+        const f = best[i][0] * best[i + 1][1] - best[i + 1][0] * best[i][1];
+        a += f; cx += (best[i][0] + best[i + 1][0]) * f; cy += (best[i][1] + best[i + 1][1]) * f;
+      }
+      if (!a) return best[0];
+      return [cx / (3 * a), cy / (3 * a)];
+    }
+    function inside(pt: [number, number], g: any): boolean {
+      const polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
+      for (const p of polys) {
+        let hit = false;
+        for (const ring of p as [number, number][][]) {
+          let c = false;
+          for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+            const [xi, yi] = ring[i], [xj, yj] = ring[j];
+            if (yi > pt[1] !== yj > pt[1] && pt[0] < ((xj - xi) * (pt[1] - yi)) / (yj - yi) + xi) c = !c;
+          }
+          if (c) hit = !hit;
         }
+        if (hit) return true;
+      }
+      return false;
+    }
+
+    // ---------- colouring ----------
+    const valueOf = (s: Sub) => (mode === 'category' ? (s.cats.find(([i]) => i === catIdx)?.[1] ?? 0) : s.count);
+    function computeThresholds() {
+      const vals = DATA.subs.map(valueOf).filter((v) => v > 0).sort((a, b) => a - b);
+      const q = (p: number) => vals[Math.min(vals.length - 1, Math.floor(p * vals.length))];
+      thresholds = vals.length ? [...new Set([q(0.2), q(0.4), q(0.6), q(0.8)])] : [];
+    }
+    function colorFor(s: Sub): string {
+      if (mode === 'region') return s.color;
+      const v = valueOf(s);
+      if (v <= 0) return ZERO;
+      let step = 0;
+      for (const t of thresholds) if (v > t) step++;
+      return RAMP[Math.min(RAMP.length - 1, Math.round((step / Math.max(1, thresholds.length)) * (RAMP.length - 1)))];
+    }
+    function renderLegend() {
+      const el = $('legend');
+      if (mode === 'region') {
+        el.innerHTML = '<div class="ttl">Regions</div>' + DATA.regions.map((r) => `<div class="row"><span class="sw" style="background:${r.color}"></span>${esc(r.name)}</div>`).join('');
+        return;
+      }
+      const title = mode === 'count' ? 'Businesses per suburb' : esc(DATA.cats[catIdx]?.name ?? '') + ' per suburb';
+      const edges = [0, ...thresholds];
+      let html = `<div class="ttl">${title}</div><div class="row"><span class="sw" style="background:${ZERO}"></span>None</div>`;
+      const n = Math.max(1, thresholds.length);
+      for (let i = 0; i <= thresholds.length; i++) {
+        const lo = i === 0 ? 1 : edges[i] + 1;
+        const hi = i < thresholds.length ? thresholds[i] : null;
+        const col = RAMP[Math.min(RAMP.length - 1, Math.round((i / n) * (RAMP.length - 1)))];
+        html += `<div class="row"><span class="sw" style="background:${col}"></span>${hi === null ? lo + '+' : lo === hi ? lo : lo + '–' + hi}</div>`;
+      }
+      el.innerHTML = html;
+    }
+
+    // ---------- build features ----------
+    function build() {
+      features = []; points = [];
+      for (const s of DATA.subs) {
+        let g = shapes[s.slug];
+        let approx = false;
+        if (!g && s.lat !== null && s.lng !== null) {
+          g = circle(s.lng, s.lat, Math.max(0.5, Math.min(1.8, 0.45 + Math.sqrt(s.count) * 0.07)));
+          approx = true;
+        }
+        if (!g) continue;
+        features.push({ type: 'Feature', geometry: g, properties: { slug: s.slug, name: s.name, region: s.region, approx, fill: '#999' } });
+        points.push({ type: 'Feature', geometry: { type: 'Point', coordinates: centroid(g) }, properties: { slug: s.slug, name: s.name, region: s.region } });
+      }
+    }
+    function recolor() {
+      computeThresholds();
+      for (const f of features) f.properties.fill = colorFor(bySlug.get(f.properties.slug)!);
+      const src = map.getSource('suburbs');
+      if (src) src.setData({ type: 'FeatureCollection', features });
+      renderLegend();
+      if (selected) map.setFeatureState({ source: 'suburbs', id: selected }, { selected: true });
+    }
+
+    // ---------- map ----------
+    const map = new maplibregl.Map({ container: 'map', style: STYLES.light, center: [0, 0], zoom: 2, minZoom: 6, attributionControl: { compact: true }, cooperativeGestures: false });
+    map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), 'top-right');
+    map.addControl(new maplibregl.FullscreenControl(), 'top-right');
+    map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-right');
+
+    const tip = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 10 });
+
+    function applyFilters() {
+      if (!map.getLayer('sub-fill')) return;
+      const reg: any[] = activeRegion ? [['==', ['get', 'region'], activeRegion]] : [];
+      const f = (extra: any[]) => (reg.length || extra.length ? ['all', ...reg, ...extra] : null);
+      map.setFilter('sub-fill', f([]));
+      map.setFilter('sub-line', f([['==', ['get', 'approx'], false]]));
+      map.setFilter('sub-line-approx', f([['==', ['get', 'approx'], true]]));
+      map.setFilter('sub-label', f([]));
+    }
+
+    function install() {
+      if (map.getSource('suburbs')) return;
+      const before = (map.getStyle().layers || []).find((l: any) => l.type === 'symbol')?.id;
+      map.addSource('suburbs', { type: 'geojson', data: { type: 'FeatureCollection', features }, promoteId: 'slug' });
+      map.addSource('sub-points', { type: 'geojson', data: { type: 'FeatureCollection', features: points } });
+      map.addLayer({
+        id: 'sub-fill', type: 'fill', source: 'suburbs',
+        paint: {
+          'fill-color': ['get', 'fill'],
+          'fill-opacity': ['case', ['boolean', ['feature-state', 'selected'], false], 0.82, ['boolean', ['feature-state', 'hover'], false], 0.72, ['==', ['get', 'approx'], true], 0.28, 0.45],
+        },
+      }, before);
+      map.addLayer({
+        id: 'sub-line', type: 'line', source: 'suburbs', filter: ['==', ['get', 'approx'], false],
+        paint: { 'line-color': '#0f1b3d', 'line-opacity': 0.6, 'line-width': ['case', ['boolean', ['feature-state', 'selected'], false], 3, ['boolean', ['feature-state', 'hover'], false], 2.2, 1] },
+      }, before);
+      map.addLayer({
+        id: 'sub-line-approx', type: 'line', source: 'suburbs', filter: ['==', ['get', 'approx'], true],
+        paint: { 'line-color': '#0f1b3d', 'line-opacity': 0.5, 'line-dasharray': [2, 2], 'line-width': ['case', ['boolean', ['feature-state', 'selected'], false], 3, 1.2] },
+      }, before);
+      map.addLayer({
+        id: 'sub-label', type: 'symbol', source: 'sub-points', minzoom: 10.5,
+        layout: { 'text-field': ['get', 'name'], 'text-font': ['Noto Sans Bold'], 'text-size': 12, 'text-max-width': 8, 'text-allow-overlap': false },
+        paint: { 'text-color': '#0f1b3d', 'text-halo-color': 'rgba(255,255,255,0.9)', 'text-halo-width': 1.6 },
       });
+      applyFilters();
+      if (selected) map.setFeatureState({ source: 'suburbs', id: selected }, { selected: true });
+
+      map.on('mousemove', 'sub-fill', (e: any) => {
+        const slug = e.features?.[0]?.properties?.slug;
+        if (!slug) return;
+        map.getCanvas().style.cursor = 'pointer';
+        if (hovered !== slug) {
+          if (hovered) map.setFeatureState({ source: 'suburbs', id: hovered }, { hover: false });
+          hovered = slug;
+          map.setFeatureState({ source: 'suburbs', id: slug }, { hover: true });
+        }
+        const s = bySlug.get(slug)!;
+        const v = mode === 'category' ? `${valueOf(s)} in ${esc(DATA.cats[catIdx]?.name ?? '')}` : `${s.count} businesses`;
+        tip.setLngLat(e.lngLat).setHTML(`${esc(s.name)}<small>${v}</small>`).addTo(map);
+      });
+      map.on('mouseleave', 'sub-fill', () => {
+        map.getCanvas().style.cursor = '';
+        if (hovered) map.setFeatureState({ source: 'suburbs', id: hovered }, { hover: false });
+        hovered = null;
+        tip.remove();
+      });
+      map.on('click', 'sub-fill', (e: any) => {
+        const slug = e.features?.[0]?.properties?.slug;
+        if (slug) select(slug, false);
+      });
+    }
+
+    function fitAll(animate = true) {
+      const gs = features.filter((f) => !activeRegion || f.properties.region === activeRegion).map((f) => f.geometry);
+      if (gs.length) map.fitBounds(bboxOf(gs), { padding: 40, animate, maxZoom: 13 });
+    }
+
+    // ---------- selection + info card ----------
+    function select(slug: string | null, fly: boolean) {
+      if (selected) map.setFeatureState({ source: 'suburbs', id: selected }, { selected: false });
+      selected = slug;
+      const info = $('info');
+      if (!slug) { info.hidden = true; history.replaceState(null, '', location.pathname); return; }
+      map.setFeatureState({ source: 'suburbs', id: slug }, { selected: true });
+      const s = bySlug.get(slug)!;
+      const f = features.find((x) => x.properties.slug === slug);
+      if (fly && f) map.fitBounds(bboxOf([f.geometry]), { padding: 70, maxZoom: 14, duration: 900 });
+      const top = s.cats.slice(0, 6).map(([i, n]) => `<a href="/category/${encodeURIComponent(DATA.cats[i].slug)}/${encodeURIComponent(s.slug)}/">${esc(DATA.cats[i].name)}<span>${n}</span></a>`).join('');
+      info.innerHTML =
+        `<div class="ih"><small><span style="width:9px;height:9px;border-radius:99px;background:${s.color};display:inline-block"></span>${esc(regionName.get(s.region) ?? '')}</small><h3>${esc(s.name)}</h3></div>` +
+        `<div class="ib"><div class="stat"><div><b>${s.count}</b><span>Businesses</span></div>${mode === 'category' ? `<div><b>${valueOf(s)}</b><span>${esc(DATA.cats[catIdx]?.name ?? '')}</span></div>` : ''}</div>` +
+        (top ? `<div class="cl">${top}</div>` : '<span class="tag">No businesses listed here yet.</span>') +
+        `<a class="go" href="/suburb/${encodeURIComponent(s.slug)}/">View all businesses in ${esc(s.name)} →</a>` +
+        (s.sold ? '' : '<a class="go2" href="/pricing/">Sponsor this suburb</a>') +
+        (f && f.properties.approx ? '<span class="tag">Shape is approximate: no official boundary is published for this suburb.</span>' : '') +
+        '</div>';
+      info.hidden = false;
+      history.replaceState(null, '', '#' + slug);
+    }
+
+    // ---------- controls ----------
+    const search = $<HTMLInputElement>('sub-search');
+    const results = $('sub-results');
+    function showResults() {
+      const q = search.value.trim().toLowerCase();
+      if (!q) { results.hidden = true; return; }
+      const m = DATA.subs.filter((s) => s.name.toLowerCase().includes(q)).sort((a, b) => Number(b.name.toLowerCase().startsWith(q)) - Number(a.name.toLowerCase().startsWith(q))).slice(0, 8);
+      results.innerHTML = m.map((s, i) => `<button type="button" data-slug="${esc(s.slug)}" class="${i === 0 ? 'on' : ''}">${esc(s.name)}<span>${esc(regionName.get(s.region) ?? '')}</span></button>`).join('') || '<button type="button" disabled>No suburb found</button>';
+      results.hidden = false;
+    }
+    search.addEventListener('input', showResults);
+    search.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { const first = results.querySelector<HTMLButtonElement>('button[data-slug]'); if (first) first.click(); }
+      if (e.key === 'Escape') results.hidden = true;
+    });
+    results.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest('button[data-slug]') as HTMLButtonElement | null;
+      if (!b) return;
+      results.hidden = true;
+      search.value = bySlug.get(b.dataset.slug!)?.name ?? '';
+      if (activeRegion && bySlug.get(b.dataset.slug!)?.region !== activeRegion) setRegion(null);
+      select(b.dataset.slug!, true);
+    });
+    document.addEventListener('click', (e) => { if (!(e.target as HTMLElement).closest('.search')) results.hidden = true; });
+
+    $('shade-mode').addEventListener('change', (e) => {
+      mode = (e.target as HTMLSelectElement).value as typeof mode;
+      $('cat-wrap').hidden = mode !== 'category';
+      recolor();
+      if (selected) select(selected, false);
+    });
+    $('cat-select').addEventListener('change', (e) => {
+      catIdx = Number((e.target as HTMLSelectElement).value);
+      recolor();
+      if (selected) select(selected, false);
     });
 
-    document.getElementById('resetBtn')?.addEventListener('click', showAll);
+    const regionBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.region-btn'));
+    function setRegion(key: string | null) {
+      activeRegion = key;
+      regionBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.region === key)));
+      applyFilters();
+      fitAll();
+    }
+    regionBtns.forEach((b) => b.addEventListener('click', () => setRegion(activeRegion === b.dataset.region ? null : b.dataset.region!)));
+    $('resetBtn').addEventListener('click', () => { setRegion(null); select(null, false); search.value = ''; map.easeTo({ pitch: 0, bearing: 0 }); });
+
+    const styleBtn = $('style-btn');
+    styleBtn.addEventListener('click', () => {
+      styleKey = styleKey === 'light' ? 'detail' : 'light';
+      styleBtn.textContent = styleKey === 'light' ? 'Detailed map' : 'Simple map';
+      map.setStyle(STYLES[styleKey]);
+    });
+    // setStyle() wipes our layers; put them back as soon as the new style will accept them.
+    const reinstall = () => { if (!ready || map.getSource('suburbs')) return; try { install(); } catch { /* style not ready yet; the next event retries */ } };
+    map.on('style.load', reinstall);
+    map.on('styledata', reinstall);
+
+    const tiltBtn = $('tilt-btn');
+    tiltBtn.addEventListener('click', () => {
+      const on = tiltBtn.getAttribute('aria-pressed') === 'true';
+      if (!on && styleKey === 'light') styleBtn.click();
+      tiltBtn.setAttribute('aria-pressed', String(!on));
+      map.easeTo({ pitch: on ? 0 : 58, bearing: on ? 0 : -18, duration: 900 });
+    });
+
+    let youMarker: any = null;
+    $('near-btn').addEventListener('click', () => {
+      const btn = $('near-btn');
+      if (!navigator.geolocation) { btn.textContent = 'Not supported'; return; }
+      btn.textContent = 'Locating…';
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          btn.textContent = 'Near me';
+          const pt: [number, number] = [pos.coords.longitude, pos.coords.latitude];
+          let hit = features.find((f) => inside(pt, f.geometry))?.properties.slug as string | undefined;
+          if (!hit) {
+            let bestD = 1e9;
+            for (const p of points) {
+              const [x, y] = p.geometry.coordinates;
+              const d = Math.hypot((x - pt[0]) * Math.cos((pt[1] * Math.PI) / 180), y - pt[1]) * 111.32;
+              if (d < bestD) { bestD = d; hit = p.properties.slug; }
+            }
+            if (bestD > 25) { btn.textContent = 'Outside this city'; setTimeout(() => (btn.textContent = 'Near me'), 2500); return; }
+          }
+          if (youMarker) youMarker.remove();
+          const el = document.createElement('div');
+          el.className = 'you-dot';
+          youMarker = new maplibregl.Marker({ element: el }).setLngLat(pt).addTo(map);
+          if (activeRegion && bySlug.get(hit!)?.region !== activeRegion) setRegion(null);
+          select(hit!, true);
+        },
+        () => { btn.textContent = 'Location blocked'; setTimeout(() => (btn.textContent = 'Near me'), 2500); },
+        { timeout: 10000 }
+      );
+    });
+
+    // ---------- go ----------
+    fetch('/suburb-boundaries.json')
+      .then((r) => (r.ok ? r.json() : {}))
+      .catch(() => ({}))
+      .then((json) => {
+        shapes = json;
+        build();
+        computeThresholds();
+        for (const f of features) f.properties.fill = colorFor(bySlug.get(f.properties.slug)!);
+        renderLegend();
+        const start = () => {
+          ready = true;
+          install();
+          const gs = features.map((f) => f.geometry);
+          if (gs.length) map.fitBounds(bboxOf(gs), { padding: 40, animate: false, maxZoom: 13 });
+          const fromHash = decodeURIComponent(location.hash.slice(1));
+          if (fromHash && bySlug.has(fromHash)) select(fromHash, true);
+          $('map-loading').hidden = true;
+        };
+        if (map.isStyleLoaded()) start();
+        else map.once('load', start);
+      });
   }
 </script>
