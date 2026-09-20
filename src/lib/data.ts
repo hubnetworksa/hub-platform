@@ -64,6 +64,11 @@ export interface Business {
   subscription_tier: number;
   subscription_status: string | null;
   subscription_expires_at: string | null;
+  /** Featured-plan perk: page links, shown only while the business is Featured. */
+  social_instagram?: string | null;
+  social_facebook?: string | null;
+  social_linkedin?: string | null;
+  social_youtube?: string | null;
 }
 
 /** The Featured tier's numeric value — gates the Photos gallery and

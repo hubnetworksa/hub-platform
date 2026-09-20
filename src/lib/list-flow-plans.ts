@@ -46,7 +46,7 @@ export function getFlowPlans(): FlowPlan[] {
       price: `${featured}/mo`,
       amount: featured,
       note: 'Top of your category and suburb',
-      summary: 'Top of your category and suburb, photos, enquiry form',
+      summary: 'Top of your category and suburb, photos, social page links, enquiry form',
     },
   ];
 }

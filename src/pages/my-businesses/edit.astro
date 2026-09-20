@@ -101,6 +101,26 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
                 <label style={fieldLabel}>Opening hours
                   <textarea name="hours" maxlength="400" rows="3" placeholder="e.g. Mon-Fri 8am-5pm" class="owner-input" style={`${fieldInput};resize:vertical`}></textarea>
                 </label>
+                <div style="border-top:2px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:15px">
+                  <div style="font-size:13px;font-weight:800;color:var(--navy)">Social pages <span id="social-note" style="font-weight:600;color:var(--muted)"></span></div>
+                  <p id="social-locked" hidden style="margin:0;font-size:13.5px;font-weight:600;color:var(--muted);line-height:1.55">
+                    Linking your Instagram, Facebook, LinkedIn and YouTube pages is a Featured-plan perk. <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a> to add them.
+                  </p>
+                  <div id="social-fields" hidden class="social-fields">
+                    <label style={fieldLabel}>Instagram
+                      <input type="url" name="social_instagram" maxlength="200" placeholder="https://instagram.com/yourbusiness" class="owner-input" style={fieldInput} />
+                    </label>
+                    <label style={fieldLabel}>Facebook
+                      <input type="url" name="social_facebook" maxlength="200" placeholder="https://facebook.com/yourbusiness" class="owner-input" style={fieldInput} />
+                    </label>
+                    <label style={fieldLabel}>LinkedIn
+                      <input type="url" name="social_linkedin" maxlength="200" placeholder="https://linkedin.com/company/yourbusiness" class="owner-input" style={fieldInput} />
+                    </label>
+                    <label style={fieldLabel}>YouTube
+                      <input type="url" name="social_youtube" maxlength="200" placeholder="https://youtube.com/@yourbusiness" class="owner-input" style={fieldInput} />
+                    </label>
+                  </div>
+                </div>
               </form>
 
               <div style="border:2px solid var(--border);border-radius:14px;overflow:hidden">
@@ -169,6 +189,8 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 </BaseLayout>
 
 <style is:global>
+  .social-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+  .social-fields[hidden] { display: none; }
   .owner-shell { display: grid; grid-template-columns: 1fr; }
   .owner-nav { display: flex; flex-direction: row; }
   .owner-tab { display: flex; font-family: inherit; }
@@ -212,6 +234,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     id: number; slug: string; name: string; created_at: string; suburb_name: string | null;
     address: string | null; phone: string | null; website: string | null; description: string | null; hours: string | null;
     subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null;
+    social_instagram: string | null; social_facebook: string | null; social_linkedin: string | null; social_youtube: string | null;
   };
   type Photo = { id: number; r2_key: string; caption: string | null };
   type Payment = { id: number; amount_cents: number; status: string; paid_at: string; tier: number; product_type: string | null };
@@ -473,6 +496,14 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     (form.elements.namedItem('website') as HTMLInputElement).value = b.website ?? '';
     (form.elements.namedItem('description') as HTMLTextAreaElement).value = b.description ?? '';
     (form.elements.namedItem('hours') as HTMLTextAreaElement).value = b.hours ?? '';
+
+    const socialOn = b.subscription_status === 'active' && b.subscription_tier >= FEATURED_TIER;
+    document.getElementById('social-fields')!.hidden = !socialOn;
+    document.getElementById('social-locked')!.hidden = socialOn;
+    document.getElementById('social-note')!.textContent = socialOn ? '' : '— a Featured plan perk';
+    for (const k of ['instagram', 'facebook', 'linkedin', 'youtube'] as const) {
+      (form.elements.namedItem('social_' + k) as HTMLInputElement).value = b[('social_' + k) as 'social_instagram'] ?? '';
+    }
 
     renderHeader(b);
     renderPlan(b);

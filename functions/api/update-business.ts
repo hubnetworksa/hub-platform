@@ -1,5 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../_lib/auth';
+import { SOCIAL_KINDS, SOCIAL_LABELS, normalizeSocial } from '../_lib/social';
 
 interface Env {
   DB: D1Database;
@@ -22,12 +23,13 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const business = await db
     .prepare(
-      'SELECT b.id, b.slug, b.name, b.address, b.phone, b.website, b.description, b.hours, b.owner_user_id, b.subscription_tier, b.subscription_status, b.subscription_expires_at, b.created_at, s.name AS suburb_name FROM businesses b LEFT JOIN suburbs s ON s.id = b.suburb_id WHERE b.id = ?'
+      'SELECT b.id, b.slug, b.name, b.address, b.phone, b.website, b.description, b.hours, b.owner_user_id, b.subscription_tier, b.subscription_status, b.subscription_expires_at, b.created_at, b.social_instagram, b.social_facebook, b.social_linkedin, b.social_youtube, s.name AS suburb_name FROM businesses b LEFT JOIN suburbs s ON s.id = b.suburb_id WHERE b.id = ?'
     )
     .bind(businessId)
     .first<{
       id: number; slug: string; name: string; address: string | null; phone: string | null; website: string | null; description: string; hours: string | null; owner_user_id: number | null;
       subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null; created_at: string; suburb_name: string | null;
+      social_instagram: string | null; social_facebook: string | null; social_linkedin: string | null; social_youtube: string | null;
     }>();
   if (!business || (business.owner_user_id !== user.id && !isAdminEmail(user.email))) return json({ ok: false, error: 'You do not own this business.' }, 403);
 
@@ -49,6 +51,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     business: {
       id: business.id, slug: business.slug, created_at: business.created_at, suburb_name: business.suburb_name, name: business.name, address: business.address, phone: business.phone, website: business.website, description: business.description, hours: business.hours,
       subscription_tier: business.subscription_tier, subscription_status: business.subscription_status, subscription_expires_at: business.subscription_expires_at,
+      social_instagram: business.social_instagram, social_facebook: business.social_facebook, social_linkedin: business.social_linkedin, social_youtube: business.social_youtube,
     },
     photos: photos.results,
     payments: payments.results,
@@ -70,7 +73,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const businessId = Number(body.businessId);
   if (!businessId) return json({ ok: false, error: 'Missing business.' }, 400);
 
-  const business = await db.prepare('SELECT owner_user_id FROM businesses WHERE id = ?').bind(businessId).first<{ owner_user_id: number | null }>();
+  const business = await db.prepare('SELECT owner_user_id, subscription_tier, subscription_status FROM businesses WHERE id = ?').bind(businessId).first<{ owner_user_id: number | null; subscription_tier: number; subscription_status: string | null }>();
   if (!business || (business.owner_user_id !== user.id && !isAdminEmail(user.email))) return json({ ok: false, error: 'You do not own this business.' }, 403);
 
   const address = clean(body.address, 200);
@@ -78,6 +81,24 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const website = clean(body.website, 200);
   const description = clean(body.description, 600);
   const hours = clean(body.hours, 400);
+
+  // Social links are a Featured-plan perk: saved only while the plan is active,
+  // and left untouched for any other plan (never wiped by a downgrade).
+  const isFeatured = business.subscription_status === 'active' && business.subscription_tier >= 2;
+  if (isFeatured) {
+    const values: (string | null)[] = [];
+    for (const kind of SOCIAL_KINDS) {
+      const v = normalizeSocial(kind, body[`social_${kind}`]);
+      if (v === undefined) {
+        return json({ ok: false, error: `That doesn't look like a ${SOCIAL_LABELS[kind]} page link. Paste the full address of your page.` }, 400);
+      }
+      values.push(v);
+    }
+    await db
+      .prepare('UPDATE businesses SET social_instagram = ?, social_facebook = ?, social_linkedin = ?, social_youtube = ? WHERE id = ?')
+      .bind(...values, businessId)
+      .run();
+  }
 
   await db
     .prepare('UPDATE businesses SET address = ?, phone = ?, website = ?, description = COALESCE(?, description), hours = ?, updated_at = datetime(\'now\') WHERE id = ?')

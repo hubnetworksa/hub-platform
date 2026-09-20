@@ -28,7 +28,7 @@ export const GET: APIRoute = () => {
   const plans = {
     0: { name: 'Basic', price: 'Free', note: 'Listed in search & your suburb' },
     1: { name: 'Verified', price: `${priceRand('price_verified_cents')}/month`, note: 'Verified badge, priority in results' },
-    2: { name: 'Featured', price: `${priceRand('price_featured_cents')}/month`, note: 'Featured placement, photo gallery' },
+    2: { name: 'Featured', price: `${priceRand('price_featured_cents')}/month`, note: 'Featured placement, photo gallery, social page links' },
   };
   return new Response(JSON.stringify({ b, c, plans }), {
     headers: { 'Content-Type': 'application/json' },

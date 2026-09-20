@@ -58,6 +58,14 @@ const setTier = (list, tier) => {
   }
 };
 setTier(featured, 2);
+// Demo social links for Featured listings (the networks' own pages, so nothing points at a real business).
+for (const b of featured) {
+  const row = businesses.find((x) => x.id === b.id);
+  row.social_instagram = 'https://www.instagram.com/instagram/';
+  row.social_facebook = 'https://www.facebook.com/facebook/';
+  row.social_linkedin = 'https://www.linkedin.com/company/linkedin/';
+  row.social_youtube = 'https://www.youtube.com/@YouTube';
+}
 setTier(verified, 1);
 
 // Sponsors.
