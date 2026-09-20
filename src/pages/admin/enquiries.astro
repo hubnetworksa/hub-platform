@@ -3,25 +3,30 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdminShell from '../../components/AdminShell.astro';
 ---
 
-<BaseLayout title="Enquiries" description="Enquiries sent through a listing or event." noindex={true}>
+<BaseLayout title="Enquiries" description="Messages sent through the contact page and listing enquiry forms." noindex={true}>
   <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
   <div id="content" hidden>
-    <AdminShell active="enquiries" title="Enquiries" subtitle="Every enquiry sent through a listing or event">
+    <AdminShell active="enquiries" title="Enquiries" subtitle="Everything sent through the contact page and each listing's enquiry form">
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <div style="background:#fff;border:2px solid var(--accent);border-radius:12px;padding:14px 18px;flex:1;min-width:140px">
-          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)">Unanswered</div>
-          <div style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px">—</div>
+          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)">Open</div>
+          <div id="stat-open" style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px">—</div>
         </div>
         <div style="background:#fff;border:2px solid var(--border);border-radius:12px;padding:14px 18px;flex:1;min-width:140px">
           <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">This week</div>
-          <div style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px">—</div>
+          <div id="stat-week" style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px">—</div>
+        </div>
+        <div style="background:#fff;border:2px solid var(--border);border-radius:12px;padding:14px 18px;flex:1;min-width:140px">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">All time</div>
+          <div id="stat-total" style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px">—</div>
         </div>
       </div>
       <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
-        <div style="padding:40px 18px;text-align:center">
-          <div style="font-size:16px;font-weight:800;color:var(--navy)">Enquiries aren't recorded yet</div>
-          <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin:5px auto 0;max-width:52ch;line-height:1.5">The enquiry form on a listing opens the visitor's own email app, addressed to the business, so nothing passes through the hub to list here. Once enquiries are stored, they'll show up on this page with Reply and Close.</div>
+        <div id="msg-list"></div>
+        <div id="msg-empty" hidden style="padding:40px 18px;text-align:center">
+          <div style="font-size:16px;font-weight:800;color:var(--navy)">No messages yet</div>
+          <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin:5px auto 0;max-width:52ch;line-height:1.5">Messages from the contact page and from a listing's enquiry form show up here. Each is also emailed to the business or to us when email sending is set up.</div>
         </div>
       </div>
     </AdminShell>
@@ -29,11 +34,65 @@ import AdminShell from '../../components/AdminShell.astro';
 </BaseLayout>
 
 <script>
-  import { requireAdmin, showContent } from '../../lib/admin-html';
+  import { esc, requireAdmin, showContent, postJson, timeAgo } from '../../lib/admin-html';
 
-  async function init() {
+  interface Msg {
+    id: number;
+    kind: 'contact' | 'enquiry';
+    name: string | null;
+    contact: string;
+    topic: string | null;
+    message: string;
+    business_slug: string | null;
+    business_name: string | null;
+    emailed: number;
+    status: 'open' | 'resolved';
+    created_at: string;
+  }
+
+  async function load() {
+    const res = await fetch('/api/admin/messages');
+    const data = await res.json();
+    const rows: Msg[] = data.messages ?? [];
+    document.getElementById('stat-open')!.textContent = String(data.stats?.open ?? 0);
+    document.getElementById('stat-week')!.textContent = String(data.stats?.thisWeek ?? 0);
+    document.getElementById('stat-total')!.textContent = String(data.stats?.total ?? 0);
+    const list = document.getElementById('msg-list')!;
+    document.getElementById('msg-empty')!.hidden = rows.length > 0;
+    list.innerHTML = rows
+      .map((m) => {
+        const open = m.status === 'open';
+        const title =
+          m.kind === 'enquiry'
+            ? `Enquiry about <a href="/business/${esc(m.business_slug ?? '')}/" target="_blank" style="color:var(--accent-hover);text-decoration:none">${esc(m.business_name ?? '')}</a>`
+            : `Contact message${m.topic ? ` · ${esc(m.topic)}` : ''}`;
+        return `<div style="padding:16px 18px;border-bottom:1px solid var(--border);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start;${open ? '' : 'opacity:.6'}">
+          <div style="flex:1;min-width:240px">
+            <div style="font-size:14.5px;font-weight:800;color:var(--navy)">${title}</div>
+            <div style="font-size:12px;font-weight:700;color:var(--muted);margin-top:3px">${esc(m.name || 'No name')} · ${esc(m.contact || 'no contact given')} · ${esc(timeAgo(m.created_at))} · ${m.emailed ? 'emailed' : 'not emailed'}</div>
+            <p style="margin:8px 0 0;font-size:14px;line-height:1.55;color:var(--text);white-space:pre-wrap">${esc(m.message)}</p>
+          </div>
+          <div style="display:flex;gap:7px">
+            <button data-act="${open ? 'resolve' : 'reopen'}" data-id="${m.id}" style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);cursor:pointer">${open ? 'Close' : 'Reopen'}</button>
+            <button data-act="delete" data-id="${m.id}" style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--danger);cursor:pointer">Delete</button>
+          </div>
+        </div>`;
+      })
+      .join('');
+  }
+
+  document.getElementById('msg-list')!.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-act]') as HTMLButtonElement | null;
+    if (!btn) return;
+    if (btn.dataset.act === 'delete' && !confirm('Delete this message for good?')) return;
+    btn.disabled = true;
+    await postJson('/api/admin/messages', { action: btn.dataset.act, id: Number(btn.dataset.id) });
+    load();
+  });
+
+  (async () => {
     if (!(await requireAdmin('/admin/enquiries/'))) return;
     showContent();
-  }
-  init();
+    await load();
+  })();
 </script>

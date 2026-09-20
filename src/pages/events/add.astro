@@ -146,32 +146,10 @@ const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '')
       });
       const result = await res.json();
       if (result.ok) {
-        // Saved server-side (held for review) either way. Notifying the
-        // admin is a mailto: link the visitor's own mail app sends — same
-        // pattern as list-your-business.astro; nothing is emailed by the
-        // server.
-        const lines = [
-          `A new event was submitted on ${siteName}.`,
-          '',
-          `Title: ${data.title}`,
-          `Type: ${data.type}`,
-          `Date: ${data.eventDate}${data.eventTime ? ' ' + data.eventTime : ''}`,
-          `Venue: ${data.venue}${data.suburb ? ', ' + data.suburb : ''}`,
-        ];
-        if (data.price) lines.push(`Price: ${data.price}`);
-        if (data.host) lines.push(`Seller: ${data.host}`);
-        if (data.ticketUrl) lines.push(`Ticket URL: ${data.ticketUrl}`);
-        if (data.imageUrl) lines.push(`Poster: ${data.imageUrl}`);
-        if (data.description) lines.push(`Description: ${data.description}`);
-        if (data.contactName) lines.push(`Contact: ${data.contactName}`);
-        if (data.contactEmail) lines.push(`Contact email: ${data.contactEmail}`);
-        if (data.contactPhone) lines.push(`Contact phone: ${data.contactPhone}`);
-        lines.push('', `Review & approve: ${result.reviewUrl}`);
-        const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent(`New event to review: ${data.title}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
+        // Saved for review and emailed to our team by the server.
         form.reset();
         loadedAt = Date.now();
-        window.location.href = mailto;
-        status.innerHTML = `Thanks! Your event is in for review. We've opened your email app with a message to us so we can review it quickly — please hit send. If it didn't open, <a href="${mailto}">click here</a>.`;
+        status.textContent = "Thanks! Your event is in for review. It goes live once we've approved it, and we'll be in touch if we need anything else.";
       } else {
         status.textContent = result.error || 'Something went wrong — please try again.';
       }

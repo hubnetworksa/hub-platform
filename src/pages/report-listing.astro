@@ -13,6 +13,7 @@ import site from '../site';
     <p id="business-name" style="color: var(--text-muted);">Loading listing…</p>
 
     <form id="report-form">
+      <input type="text" name="company_url" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0" />
       <label>
         What's wrong? *
         <textarea name="issue" required minlength="5" maxlength="1000" rows="4" placeholder="e.g. wrong phone number, business has closed, wrong address..."></textarea>
@@ -46,23 +47,44 @@ import site from '../site';
   const form = document.getElementById('report-form');
   const status = document.getElementById('form-status');
 
-  // No server round-trip — this opens the visitor's own email app with a
-  // pre-filled message to our contact address. Their mail client does the
-  // actual sending; Cloudflare Email Routing on our side just forwards it
-  // into our inbox from there.
-  form.addEventListener('submit', (e) => {
+  // Sent by the website itself (saved for the admin Reports tab and emailed by
+  // the server) — the visitor's own email app is never opened.
+  const loadedAt = Date.now();
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!slug || !name) {
       status.textContent = 'No listing specified.';
       return;
     }
     const data = Object.fromEntries(new FormData(form).entries());
-    const businessUrl = `https://${domain}/business/${slug}/`;
-    const lines = [`Business: ${name}`, `Link: ${businessUrl}`, '', "What's wrong:", data.issue || ''];
-    if (data.reporterEmail) lines.push('', `Reply to: ${data.reporterEmail}`);
-    const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent(`Listing issue: ${name}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
-    status.innerHTML = `Opening your email app to send this — if it didn't open, <a href="${mailto}">click here</a>.`;
-    window.location.href = mailto;
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    status.textContent = 'Sending…';
+    try {
+      const res = await fetch('/api/report-listing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          businessSlug: slug,
+          businessName: name,
+          issue: data.issue,
+          reporterEmail: data.reporterEmail || undefined,
+          company_url: data.company_url || '',
+          loadedAt,
+        }),
+      });
+      const result = await res.json();
+      if (result.ok) {
+        form.reset();
+        status.textContent = 'Thank you — your report has been sent and our team will look into it.';
+      } else {
+        status.textContent = result.error || 'Something went wrong — please try again.';
+        btn.disabled = false;
+      }
+    } catch {
+      status.textContent = 'Something went wrong — please try again.';
+      btn.disabled = false;
+    }
   });
 </script>
 

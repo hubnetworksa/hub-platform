@@ -129,8 +129,6 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
     draftHasBasics,
     buildAddress,
     formatHours,
-    buildMailto,
-    openMail,
     readPlans,
     readMap,
   } from '../../lib/list-flow-client';
@@ -143,7 +141,6 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
   const centreNames = readMap(root, 'data-centres');
   const siteName = root.dataset.siteName || '';
   const cityLabel = root.dataset.cityLabel || '';
-  const contactEmail = root.dataset.contactEmail || '';
 
   const draft = loadDraft();
   // Nothing to review (direct visit / already submitted) — start at step 1.
@@ -195,6 +192,8 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
           email: draft.email,
           website: draft.website,
           address,
+          hours,
+          centre: centreName,
           chosenTier: draft.tier,
           company_url: draft.company_url,
           loadedAt: draft.loadedAt,
@@ -207,25 +206,14 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
         return;
       }
 
-      // The listing is saved server-side (pending human review) either way.
-      // Notifying the admin is a mailto: the visitor's own mail client sends
-      // (there is no server-side SMTP); it opens without navigating the tab.
-      const mailto = buildMailto({
-        contactEmail,
-        siteName,
-        draft,
-        categoryName,
-        suburbName,
-        centreName,
-        reviewUrl: result.reviewUrl || '',
-      });
+      // The listing is saved server-side (pending human review) and our team is
+      // emailed by the server — the visitor's own email app is never opened.
       clearDraft();
-      openMail(mailto);
 
       if (paid && result.redirectUrl) {
         // Hand off to the checkout summary; its "Pay with PayFast" button
         // uses the server-signed redirect URL kept in sessionStorage.
-        saveResult({ name: draft.name, tier: draft.tier, redirectUrl: result.redirectUrl, mailto });
+        saveResult({ name: draft.name, tier: draft.tier, redirectUrl: result.redirectUrl });
         status.textContent = 'Saved — taking you to checkout…';
         window.setTimeout(() => {
           window.location.href = '/list-your-business/checkout/';
@@ -237,12 +225,7 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
       $('done-meta').textContent = `${categoryName} · ${suburbName}`;
       const note = $('done-note');
       note.textContent = '';
-      const lead = document.createElement('span');
-      lead.textContent = "We've opened your email app with a message to us so we can review it quickly — please hit send. If it didn't open, ";
-      const link = document.createElement('a');
-      link.href = mailto;
-      link.textContent = 'click here';
-      note.append(lead, link, '.');
+      note.textContent = "We've received your listing. Our team will review it and email you as soon as it's live.";
       if (paid) {
         const p = document.createElement('span');
         p.style.display = 'block';

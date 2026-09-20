@@ -50,7 +50,6 @@ export interface SubmitResult {
   name: string;
   tier: number;
   redirectUrl: string;
-  mailto: string;
 }
 
 export function emptyDraft(): Draft {
@@ -164,56 +163,6 @@ export function formatHours(hours: DayHours[]): string {
       return `${days} ${g.text}`;
     })
     .join(', ');
-}
-
-export interface MailtoInput {
-  contactEmail: string;
-  siteName: string;
-  draft: Draft;
-  categoryName: string;
-  suburbName: string;
-  centreName: string;
-  reviewUrl: string;
-}
-
-/**
- * The admin-notification mailto: — the submitter's own mail client sends it
- * (the site's contact address is a receive-only Cloudflare Email Routing
- * address; there is no server-side SMTP). Fields the server has no column
- * for yet (trading hours, shopping centre) ride along here so the reviewer
- * sees them.
- */
-export function buildMailto(i: MailtoInput): string {
-  const d = i.draft;
-  const lines = [
-    `A new business listing was submitted on ${i.siteName}.`,
-    '',
-    `Name: ${d.name}`,
-    `Category: ${i.categoryName}`,
-    `Suburb: ${i.suburbName}`,
-  ];
-  const address = buildAddress(d);
-  if (address) lines.push(`Address: ${address}`);
-  if (i.centreName) lines.push(`Shopping centre: ${i.centreName}`);
-  if (d.phone) lines.push(`Phone: ${d.phone}`);
-  if (d.email) lines.push(`Email: ${d.email}`);
-  if (d.website) lines.push(`Website: ${d.website}`);
-  const hours = formatHours(d.hours);
-  if (hours) lines.push(`Trading hours: ${hours}`);
-  if (d.description) lines.push(`Description: ${d.description}`);
-  lines.push(`Plan chosen: tier ${d.tier}`);
-  lines.push('', `Review & approve: ${i.reviewUrl}`);
-  return `mailto:${i.contactEmail}?subject=${encodeURIComponent(`New business listing to review: ${d.name}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
-}
-
-/** Launch the visitor's mail app without navigating the tab away. */
-export function openMail(mailto: string): void {
-  const a = document.createElement('a');
-  a.href = mailto;
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
 }
 
 export function readPlans(el: HTMLElement): FlowPlanData[] {

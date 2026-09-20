@@ -3,10 +3,13 @@ import { getSite } from '../_lib/site';
 import { getSessionUser } from '../_lib/auth';
 import { signFields, payfastConfigured, type PayfastEnv } from '../_lib/payfast';
 import { TIER_NAMES, tierPriceCents, centsToRand } from '../_lib/pricing';
+import { sendEmail } from '../_lib/send-email';
+import { escapeHtml } from '../../src/lib/business-submission';
 
 interface Env extends PayfastEnv {
   DB: D1Database;
   SITE: string;
+  RESEND_API_KEY?: string;
 }
 
 // Submissions no longer publish immediately — they're held in
@@ -15,12 +18,11 @@ interface Env extends PayfastEnv {
 // checks below (honeypot, minimum time-on-form, length caps, raw-tag
 // rejection) still matter as the first filter before a human ever sees it.
 //
-// Notifying the admin of a new submission is done via a mailto: link the
-// client opens (see list-your-business/review.astro), not server-side SMTP — this
-// Function has no email-sending credentials at all. The site's contact
-// address is a Cloudflare Email Routing address (receive-only); the actual
-// send happens from the submitter's own mail client, which is real email
-// transport start to finish, just not something this Function drives.
+// The admin is emailed about each new submission by this function, straight
+// after it is saved (best-effort — the saved row is what matters). The
+// visitor's own mail app is never used. Trading hours and the shopping centre
+// the form collects have no database column yet, so they travel only in that
+// email for the reviewer.
 
 const MAX_LEN: Record<string, number> = {
   name: 120,
@@ -29,6 +31,8 @@ const MAX_LEN: Record<string, number> = {
   email: 120,
   website: 200,
   description: 600,
+  hours: 300,
+  centre: 120,
 };
 
 function clean(v: unknown, field: string): string | null {
@@ -74,8 +78,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const db = context.env.DB;
 
-  const category = await db.prepare('SELECT id FROM categories WHERE slug = ?').bind(categorySlug).first();
-  const suburb = await db.prepare('SELECT id FROM suburbs WHERE slug = ?').bind(suburbSlug).first();
+  const category = await db.prepare('SELECT id, name FROM categories WHERE slug = ?').bind(categorySlug).first<{ id: number; name: string }>();
+  const suburb = await db.prepare('SELECT id, name FROM suburbs WHERE slug = ?').bind(suburbSlug).first<{ id: number; name: string }>();
   if (!category || !suburb) {
     return json({ ok: false, error: 'Unknown category or suburb.' }, 400);
   }
@@ -104,9 +108,37 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const reviewUrl = `https://${site.domain}/verify-listing?token=${token}`;
 
-  // No paid tier chosen — nothing more to do. The client builds and opens
-  // the mailto: notification from this response, we don't send anything
-  // server-side here.
+  // Tell the admin there is a listing to review. Hours and shopping centre
+  // are free text from the form (no column for them yet), for the reviewer only.
+  const hours = clean(body.hours, 'hours');
+  const centre = clean(body.centre, 'centre');
+  const details = [
+    `Name: ${name}`,
+    `Category: ${category.name}`,
+    `Suburb: ${suburb.name}`,
+    ...(address ? [`Address: ${address}`] : []),
+    ...(centre ? [`Shopping centre: ${centre}`] : []),
+    ...(phone ? [`Phone: ${phone}`] : []),
+    ...(email ? [`Email: ${email}`] : []),
+    ...(website ? [`Website: ${website}`] : []),
+    ...(hours ? [`Trading hours: ${hours}`] : []),
+    ...(description ? [`Description: ${description}`] : []),
+    `Plan chosen: ${TIER_NAMES[chosenTier]}`,
+    ...(sessionUser ? [`Submitted by account: ${sessionUser.email}`] : []),
+  ];
+  await sendEmail(context.env, {
+    from: `${site.siteName} <${site.contactEmail}>`,
+    to: site.contactEmail,
+    subject: `New business listing to review: ${name}`,
+    replyTo: email ?? sessionUser?.email ?? undefined,
+    text: `A new business listing was submitted on ${site.siteName}.\n\n${details.join('\n')}\n\nReview & approve: ${reviewUrl}`,
+    html: `<div style="font-family:sans-serif;max-width:520px">
+      <h2>New business listing to review</h2>
+      <p>${details.map((d) => escapeHtml(d)).join('<br>')}</p>
+      <p><a href="${reviewUrl}">Review &amp; approve</a></p></div>`,
+  });
+
+  // No paid tier chosen — nothing more to do.
   if (chosenTier === 0 || !payfastConfigured(context.env)) {
     return json({ ok: true, reviewUrl });
   }

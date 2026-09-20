@@ -39,6 +39,7 @@ const fieldStyle = 'padding:13px;border:2px solid var(--border);border-radius:11
     <section style="max-width:1200px;margin:0 auto;padding:clamp(24px,3.5vw,40px) 20px 60px">
       <div id="contact-shell" style="display:grid;gap:22px">
         <form id="contact-form" style="display:flex;flex-direction:column;gap:15px">
+          <input type="text" name="company_url" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0" />
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px">
             <label style={labelStyle}>Your name
               <input type="text" name="name" class="contact-field" maxlength="120" style={fieldStyle} /></label>
@@ -61,7 +62,7 @@ const fieldStyle = 'padding:13px;border:2px solid var(--border);border-radius:11
               {LINES.map((l) => (
                 <div>
                   <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">{l.label}</div>
-                  <div style="font-size:14.5px;font-weight:700;margin-top:4px;overflow-wrap:anywhere"><a href={`mailto:${site.contactEmail}?subject=${encodeURIComponent(l.subject)}`} style="color:inherit">{site.contactEmail}</a></div>
+                  <div style="font-size:14.5px;font-weight:700;margin-top:4px;overflow-wrap:anywhere">{site.contactEmail}</div>
                 </div>
               ))}
             </div>
@@ -97,26 +98,52 @@ const fieldStyle = 'padding:13px;border:2px solid var(--border);border-radius:11
 <script define:vars={{ contactEmail: site.contactEmail, siteName: site.siteName }}>
   // NOTE: define:vars forces this script to stay inline and unprocessed by
   // Astro/Vite (no TypeScript stripping) — it must be plain browser JS.
-  // No server round-trip: this opens the visitor's own email app with a
-  // pre-filled message to our contact address; their mail client does the
-  // actual sending and Cloudflare Email Routing forwards it into our inbox.
+  // Sent by the website itself (saved, then emailed to us by the server) —
+  // the visitor's own email app is never opened.
   const form = document.getElementById('contact-form');
   const status = document.getElementById('contact-status');
+  const loadedAt = Date.now();
 
-  form.addEventListener('submit', (e) => {
+  // Deep links such as /contact/?topic=Advertising&message=... pre-fill the form.
+  const params = new URLSearchParams(location.search);
+  const wantedTopic = (params.get('topic') || '').toLowerCase();
+  if (wantedTopic) {
+    for (const option of form.elements.topic.options) {
+      if (option.value.toLowerCase().includes(wantedTopic)) form.elements.topic.value = option.value;
+    }
+  }
+  if (params.get('message')) form.elements.message.value = params.get('message');
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
-    const lines = [
-      `Name: ${data.name || ''}`,
-      `Email: ${data.email || ''}`,
-      `Topic: ${data.topic || ''}`,
-      '',
-      'Message:',
-      data.message || '',
-    ];
-    const subject = `${siteName} contact: ${data.topic || 'Message'}`;
-    const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join('\n'))}`;
-    status.innerHTML = `Opening your email app to send this — if it didn't open, <a href="${mailto}">click here</a>.`;
-    window.location.href = mailto;
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    status.textContent = 'Sending…';
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.name || undefined,
+          email: data.email || undefined,
+          topic: data.topic,
+          message: data.message,
+          company_url: data.company_url || '',
+          loadedAt,
+        }),
+      });
+      const result = await res.json();
+      if (result.ok) {
+        form.reset();
+        status.textContent = 'Thank you — your message has been sent. A real person will read it.';
+      } else {
+        status.textContent = result.error || 'Something went wrong — please try again.';
+        btn.disabled = false;
+      }
+    } catch {
+      status.textContent = 'Something went wrong — please try again.';
+      btn.disabled = false;
+    }
   });
 </script>

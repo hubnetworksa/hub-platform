@@ -48,7 +48,6 @@ const payMethods = [
           </label>
           <button type="submit" id="pay-btn" class="btn-primary" style="align-self:flex-start;padding:15px 26px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer">Pay with PayFast</button>
           <p style="margin:0;font-size:12px;font-weight:600;color:var(--muted);line-height:1.5">You'll be redirected to PayFast to complete payment. {site.siteName} never stores your card details.</p>
-          <p id="mail-fallback" hidden style="margin:0;font-size:12px;font-weight:600;color:var(--muted);line-height:1.5">Your listing is saved and waiting for review. If your email app didn't open a message to us, <a id="mail-link" href="#">send it now</a> so we can review it sooner.</p>
         </form>
       </div>
       <aside style="display:flex;flex-direction:column;gap:14px">
@@ -147,10 +146,6 @@ const payMethods = [
       $('sum-price').textContent = plan.amount;
       $('sum-total').textContent = plan.amount;
       $('pay-btn').textContent = `Pay ${plan.amount} with PayFast`;
-      if (result.mailto) {
-        ($('mail-link') as HTMLAnchorElement).href = result.mailto;
-        $('mail-fallback').hidden = false;
-      }
       $('co-pay').hidden = false;
 
       const form = $('pay-form') as HTMLFormElement;

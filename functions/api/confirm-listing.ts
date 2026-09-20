@@ -156,14 +156,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return html(site, `<h1>Approved — awaiting owner confirmation</h1><p>"${escapeHtml(row.name)}" won't publish yet. An email has been sent to <strong>${escapeHtml(row.email)}</strong> asking them to confirm the details before it goes live.</p>`);
   }
 
-  // No RESEND_API_KEY configured for this site yet — fall back to opening
-  // the admin's own mail client instead of hard-failing.
-  const mailtoOwner = `mailto:${encodeURIComponent(row.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+  // The email could not be sent (no RESEND_API_KEY for this site, or Resend
+  // refused it). Nothing opens the admin's mail app — the message is shown here
+  // instead so it can be copied and sent another way.
   return html(site, `
-    <h1>Approved — awaiting owner confirmation</h1>
-    <p>"${escapeHtml(row.name)}" won't publish yet. An email is opening now, pre-filled to <strong>${escapeHtml(row.email)}</strong>, asking them to confirm the details before it goes live.</p>
-    <p>If it didn't open, <a href="${mailtoOwner}">click here to send it</a>.</p>
-    <script>window.location.href = ${JSON.stringify(mailtoOwner)};</script>
+    <h1>Approved — but the email could not be sent</h1>
+    <p>"${escapeHtml(row.name)}" won't publish until the owner confirms, but the confirmation email to <strong>${escapeHtml(row.email)}</strong> was not delivered (email sending is not set up or failed for this site). Send the message below to them another way:</p>
+    <p><strong>Subject:</strong> ${escapeHtml(subject)}</p>
+    <pre style="white-space:pre-wrap;background:#f4f4f4;padding:12px;border-radius:8px">${escapeHtml(bodyText)}</pre>
   `);
 };
 

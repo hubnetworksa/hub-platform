@@ -64,18 +64,18 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       businessName: row.name,
       detail: reason ? `Reason given: ${reason}` : 'No reason given.',
     });
-    return html(site, `<h1>Thanks for letting us know</h1><p>"${escapeHtml(row.name)}" won't be published. If you'd like to submit corrected details, or have any questions, email us at <a href="mailto:${site.contactEmail}">${site.contactEmail}</a>.</p>`);
+    return html(site, `<h1>Thanks for letting us know</h1><p>"${escapeHtml(row.name)}" won't be published. If you'd like to submit corrected details, or have any questions, get in touch through <a href="https://${site.domain}/contact/">our contact form</a>.</p>`);
   }
 
   const category = await db.prepare('SELECT id FROM categories WHERE slug = ?').bind(row.category_slug).first<{ id: number }>();
   const suburb = await db.prepare('SELECT id FROM suburbs WHERE slug = ?').bind(row.suburb_slug).first<{ id: number }>();
   if (!category || !suburb) {
-    return html(site, `<h1>Couldn't publish</h1><p>The category or suburb on this submission no longer exists — please contact us at <a href="mailto:${site.contactEmail}">${site.contactEmail}</a>.</p>`);
+    return html(site, `<h1>Couldn't publish</h1><p>The category or suburb on this submission no longer exists — please contact us through <a href="https://${site.domain}/contact/">our contact form</a>.</p>`);
   }
 
   const slug = await generateUniqueSlug(db, row.name, row.suburb_slug);
   if (!slug) {
-    return html(site, `<h1>Couldn't publish</h1><p>Ran out of unique slug attempts for "${escapeHtml(row.name)}" — please contact us at <a href="mailto:${site.contactEmail}">${site.contactEmail}</a>.</p>`);
+    return html(site, `<h1>Couldn't publish</h1><p>Ran out of unique slug attempts for "${escapeHtml(row.name)}" — please contact us through <a href="https://${site.domain}/contact/">our contact form</a>.</p>`);
   }
 
   await insertApprovedBusiness(db, {

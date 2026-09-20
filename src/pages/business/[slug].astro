@@ -213,6 +213,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
         <div style="border:2px solid var(--navy);border-radius:16px;overflow:hidden;background:#fff">
           <div style="background:var(--navy);padding:14px 18px;font-size:15px;font-weight:800;color:#fff;letter-spacing:-.01em">Send an enquiry</div>
           <form id="enquiry-form" style="padding:16px;display:flex;flex-direction:column;gap:10px">
+            <input type="text" name="company_url" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0" />
             <input type="text" name="name" placeholder="Your name" required style="padding:12px 13px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)" />
             <input type="text" name="contact" placeholder="Phone or email" required style="padding:12px 13px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)" />
             <textarea name="message" rows="3" placeholder="What do you need a quote on?" required style="padding:12px 13px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text);resize:vertical"></textarea>
@@ -277,20 +278,42 @@ const mapsUrl = (business.address || (business.lat && business.lng))
   }
 </script>
 
-<script define:vars={{ contactEmail: business.email ?? site.contactEmail, businessName: business.name, siteName: site.siteName }}>
-  // No enquiry-storage backend exists yet — same mailto: pattern as
-  // list-your-business.astro/submit-business.ts: opens the visitor's own
-  // mail client addressed to the business (or the site, if no email is on
-  // file), pre-filled with their message. Real email transport, just not
-  // server-sent.
+<script define:vars={{ businessSlug: business.slug }}>
+  // Sent by the website itself: the server saves the enquiry and emails it to
+  // the business (or to us if no address is on file), so the business's email
+  // is never placed in this page and the visitor's own email app is never opened.
   const form = document.getElementById('enquiry-form');
   const status = document.getElementById('enquiry-status');
-  form.addEventListener('submit', (e) => {
+  const loadedAt = Date.now();
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(form).entries());
-    const body = `From: ${data.name}\nContact: ${data.contact}\n\n${data.message}`;
-    const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent(`Enquiry via ${siteName}: ${businessName}`)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailto;
-    status.textContent = "Opening your email app — please hit send.";
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    status.textContent = 'Sending…';
+    try {
+      const res = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          businessSlug,
+          name: data.name,
+          contact: data.contact,
+          message: data.message,
+          company_url: data.company_url || '',
+          loadedAt,
+        }),
+      });
+      const result = await res.json();
+      if (result.ok) {
+        form.reset();
+        status.textContent = 'Thank you — your enquiry has been sent.';
+      } else {
+        status.textContent = result.error || 'Something went wrong — please try again.';
+      }
+    } catch {
+      status.textContent = 'Something went wrong — please try again.';
+    }
+    btn.disabled = false;
   });
 </script>

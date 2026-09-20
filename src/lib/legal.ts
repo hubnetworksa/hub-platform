@@ -30,7 +30,7 @@ export interface LegalDoc {
 export const LEGAL_UPDATED = '1 September 2026';
 
 export function legalDocs(site: Pick<Site, 'siteName' | 'contactEmail'>): LegalDoc[] {
-  const mail = `<a href="mailto:${site.contactEmail}">${site.contactEmail}</a>`;
+  const mail = `<strong>${site.contactEmail}</strong> (or use the <a href="/contact/">contact form</a>)`;
   const year = new Date().getFullYear();
 
   return [

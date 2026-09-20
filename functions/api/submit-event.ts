@@ -2,10 +2,13 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSite } from '../_lib/site';
 import { getSessionUser } from '../_lib/auth';
 import { isEventType } from '../_lib/events';
+import { sendEmail } from '../_lib/send-email';
+import { escapeHtml } from '../../src/lib/business-submission';
 
 interface Env {
   DB: D1Database;
   SITE: string;
+  RESEND_API_KEY?: string;
 }
 
 // Organiser-submitted events (the "List your event free" form at
@@ -15,9 +18,9 @@ interface Env {
 //
 // Same anti-abuse pattern as submit-business.ts — honeypot, minimum
 // time-on-form, length caps and raw-tag rejection are the first filter
-// before a human ever sees it. The admin is notified by a mailto: link the
-// client opens from this response (see src/pages/events/add.astro), not by
-// server-side email.
+// before a human ever sees it. The admin is emailed by this function once the
+// submission is saved (best-effort — the saved row is what matters); the
+// visitor's own mail app is never used.
 
 const MAX_LEN: Record<string, number> = {
   title: 120,
@@ -156,6 +159,31 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .run();
 
   const reviewUrl = `https://${site.domain}/admin/events/`;
+  const details = [
+    `Title: ${title}`,
+    `Type: ${type}`,
+    `Date: ${eventDate}${fields.eventTime ? ' ' + fields.eventTime : ''}`,
+    `Venue: ${venue}${fields.suburb ? ', ' + fields.suburb : ''}`,
+    ...(fields.price ? [`Price: ${fields.price}`] : []),
+    ...(fields.host ? [`Seller: ${fields.host}`] : []),
+    ...(ticketUrl ? [`Ticket URL: ${ticketUrl}`] : []),
+    ...(imageUrl ? [`Poster: ${imageUrl}`] : []),
+    ...(fields.description ? [`Description: ${fields.description}`] : []),
+    ...(fields.contactName ? [`Contact: ${fields.contactName}`] : []),
+    ...((contactEmail ?? sessionUser?.email) ? [`Contact email: ${contactEmail ?? sessionUser?.email}`] : []),
+    ...(fields.contactPhone ? [`Contact phone: ${fields.contactPhone}`] : []),
+  ];
+  await sendEmail(context.env, {
+    from: `${site.siteName} <${site.contactEmail}>`,
+    to: site.contactEmail,
+    subject: `New event to review: ${title}`,
+    replyTo: contactEmail ?? sessionUser?.email ?? undefined,
+    text: `A new event was submitted on ${site.siteName}.\n\n${details.join('\n')}\n\nReview & approve: ${reviewUrl}`,
+    html: `<div style="font-family:sans-serif;max-width:520px">
+      <h2>New event to review</h2>
+      <p>${details.map((d) => escapeHtml(d)).join('<br>')}</p>
+      <p><a href="${reviewUrl}">Review &amp; approve</a></p></div>`,
+  });
   return json({ ok: true, reviewUrl });
 };
 
