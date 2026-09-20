@@ -1,0 +1,87 @@
+name: Deploy one-off branch preview
+
+# Manual, single-branch preview deploy — separate from deploy-dev.yml's
+# shared "dev" environment. Lets you preview whatever branch is checked out
+# under its own alias (e.g. https://<alias>.polokwanehub.pages.dev) without
+# touching the shared dev.<project>.pages.dev URLs anyone else might be
+# looking at. Read-only like deploy-dev.yml: no migrations, no routine-SQL
+# apply, no snapshot commits.
+on:
+  workflow_dispatch:
+    inputs:
+      site:
+        description: "Which site to preview"
+        required: true
+        default: polokwane
+        type: choice
+        options:
+          - polokwane
+          - pretoria
+          - capetown
+      alias:
+        description: "Cloudflare Pages preview alias (blank = derive from branch name)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    env:
+      SITE: ${{ inputs.site }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve pages project name and alias
+        id: resolve
+        run: |
+          case "${{ inputs.site }}" in
+            polokwane) echo "pages_project=polokwanehub" >> "$GITHUB_OUTPUT" ;;
+            pretoria) echo "pages_project=pretoriahub" >> "$GITHUB_OUTPUT" ;;
+            capetown) echo "pages_project=thecapetownhub" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+          alias="${{ inputs.alias }}"
+          if [ -z "$alias" ]; then
+            alias="${GITHUB_REF_NAME}"
+          fi
+          # Cloudflare Pages branch aliases: lowercase alphanumeric + hyphens,
+          # max 28 chars, no leading/trailing hyphen.
+          alias="$(echo "$alias" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-28 | sed -E 's/-+$//')"
+          echo "alias=$alias" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Read-only: pulls this site's current *published* data for preview.
+      - name: Fetch D1 data
+        run: npm run fetch-data
+
+      - name: Select site assets
+        run: npm run select-assets
+
+      - name: Build with Astro
+        run: npx astro build
+
+      - name: Deploy preview to Cloudflare Pages
+        run: |
+          cp wrangler.${{ inputs.site }}.jsonc wrangler.jsonc
+          npx wrangler pages deploy dist \
+            --project-name=${{ steps.resolve.outputs.pages_project }} \
+            --branch=${{ steps.resolve.outputs.alias }} \
+            --commit-dirty=true
+
+      - name: Print preview URL
+        run: |
+          echo "Preview URL: https://${{ steps.resolve.outputs.alias }}.${{ steps.resolve.outputs.pages_project }}.pages.dev"
