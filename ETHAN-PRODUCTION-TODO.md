@@ -84,12 +84,11 @@ Today there are nine runbooks totalling about 3,800 lines. The three business ru
 - [ ] Give every routine a hard time/step budget, one clear success log line, and a failure that is visible (admin overview health tile).
 
 **Routines to add (all [Me] to build, [You] to switch on)**
-- [ ] **Map locations:** geocode any business whose address is new or changed and save its coordinates (needed for the proper map plan; about 1,900 businesses are missing coordinates today).
 - [ ] **Business emails and websites:** visit each business's own site, keep the website status honest (dead links cleared), and pick up a public contact email for claim verification. Weekly, script first, agent only for the unclear ones.
 - [ ] **Tourism refresh (monthly, three cities):** re-check attraction prices, opening hours and closures shown on the Things to do page, and add new attractions.
 - [ ] **Database backup:** scheduled export of all three databases to storage (weekly, kept for a set number of weeks), so launch-day backups are not a manual job.
 - [ ] **Data health report (weekly):** counts of businesses with no category, coordinates, email, hours or website; shown on the admin overview.
-- [ ] **Suburb boundaries:** yearly refresh of the boundary shapes for the proper map.
+- [ ] **Suburb boundaries:** yearly refresh of the suburb outlines for the map (`scripts/fetch-official-boundaries.mjs`).
 - [ ] **Guides:** a routine (or scheduled task) to draft and refresh the five missing buyer's guides for review.
 - [ ] **Expired events and stale news:** tidy items that have passed so the pages never show old content.
 - [ ] Already running (keep, review the schedule): owner reminders and subscription expiry (GitHub Actions).
