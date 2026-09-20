@@ -74,7 +74,7 @@ Status as of 20 September 2026. Covers everything built on the `Ethan` dev branc
 - Sign-in required; spam protection (honeypot and minimum time on form) kept.
 - Paid plans go to PayFast through the server-provided link; the free path shows a "sent for review" state. Return and cancel links from PayFast handled.
 - Our team is emailed by the server as soon as a listing is saved, with a review link. Nothing opens the visitor's email app.
-- Trading hours and shopping centre are collected but not saved (see section 20).
+- Trading hours and shopping centre are saved on the pending listing and copied onto the business when it is approved.
 
 ## 9. Events
 
@@ -133,6 +133,8 @@ Status as of 20 September 2026. Covers everything built on the `Ethan` dev branc
 
 ## 17. Bug fixes and data-quality fixes
 
+- Public forms are rate limited per visitor per hour; `/tourism/` redirects home on the sites without a tourism section; a backend type-check runs before each preview deploy; `npm run check:links` and `npm run check:smoke` verify a build.
+
 - Business submission duplicate matching now requires the same suburb (also copied to `main` as a hotfix).
 - Website links: values saved without `https://` (e.g. `www.builders.co.za`) rendered as broken relative links on some Pretoria pages; now fixed everywhere a website is shown.
 - The 404 page no longer claims `/404/` as its canonical address.
@@ -149,6 +151,8 @@ Status as of 20 September 2026. Covers everything built on the `Ethan` dev branc
 | Event submissions | 0036 | 0035 | 0038 | organiser submissions queue | Applied on all three |
 | News and fuel prices | 0037 | 0036 | 0039 | news articles and monthly fuel prices | Applied on all three |
 | Messages | 0038 | 0037 | 0040 | contact messages and listing enquiries | Applied on all three |
+| Submission hours and centre | 0039 | 0038 | 0041 | trading hours and shopping centre kept on a pending listing | Applied on all three |
+| Rate limits | 0040 | 0039 | 0042 | per-visitor request counts for the public forms | Applied on all three |
 
 Checked against the live databases on 20 September 2026. Each database records both `main`'s events migration (Cape Town `0034_events`, Pretoria `0033_events`, Polokwane `0036_events`) and this branch's (`0035`, `0034`, `0037`), so the earlier numbering clash no longer blocks `main`'s deploys, which are succeeding again.
 
@@ -165,16 +169,15 @@ All of the above are applied on all three production databases (20 September 202
 - No reviews or star ratings, and no page-view or click data (tiles show "No data yet"). A business owner's own dashboard does not yet list the enquiries sent to it.
 - No invoice PDFs or "remind" action; no user invite or edit in admin.
 - Only one full guide; the other five guides in the mockup have no text.
-- Trading hours and shopping centre from the listing form are only emailed to admin, not saved.
-- Suburb map has no data for Cape Town (no coordinates).
+- Suburb map: 6 Cape Town, 38 Pretoria and 7 Polokwane suburbs still have no coordinates and are not plotted.
 - Logos and favicons are placeholders (Cape Town borrows Pretoria's).
 - Legal wording is the mockup's placeholder text, unreviewed by a lawyer.
 - New backend endpoints have been tested with mocked responses, not against live services, and the `functions/` code has never been type-checked.
-- Data issues found: four Cape Town businesses have no category (hidden from browsing); a few business websites are dead (`amarecapetown.com`, `leeschinesekitchen.co.za`, `arcww.co.za`, `apnisleep.co.za`).
-- `/tourism/` exists on Cape Town and Pretoria but nothing links to it.
+- Data issues found: a few business websites are dead (`amarecapetown.com`, `leeschinesekitchen.co.za`, `arcww.co.za`, `apnisleep.co.za`).
 
 ## 21. Changes made outside the code (live data and services)
 
+- Live data added on 20 September: suburb map coordinates (Cape Town 162 of 168 suburbs, Pretoria +2, Polokwane +1, from OpenStreetMap), four missing categories added to Cape Town and four businesses categorised, news for Pretoria (2) and Polokwane (2), and every migration above applied to all three databases.
 - Live databases: all three received the event submissions, news/fuel and messages migrations (after a backup); 2 real events (Oranjezicht City Farm Market, First Thursdays) added to Cape Town; 4 news stories added to Cape Town and September fuel prices to all three; a demo admin user row added to all three databases; test businesses created during testing were removed.
 - `main`: the duplicate-matching fix was copied there as a hotfix. Nothing else from this branch is on `main`.
 - Cloudflare Pages: three preview deployments (one per site) on the `ethan` branch alias.

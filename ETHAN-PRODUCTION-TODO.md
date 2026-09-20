@@ -14,34 +14,35 @@ Status as of 20 September 2026. **[Me]** = I can do it. **[You]** = needs your a
 - [x] Full change list written (`CHANGES-ETHAN-BRANCH.md` and `.docx`).
 - [x] **All email is sent by the website itself.** Contact, listing enquiries, report, data removal, add-event and add-business now post to the site's own endpoints, which save the message and email it from the server. No `mailto:` link exists anywhere on the sites, and the admin Enquiries tab shows the stored messages.
 - [x] All three production databases backed up (saved outside the repo in `Hub/db-backups/2026-09-20/`) and fully migrated: event submissions, news and fuel prices, and messages. September fuel prices are loaded for all three cities.
+- [x] **Trading hours and shopping centre are now saved.** The "Add your business" form stores them, and approving the listing copies them onto the published business (checked end to end on the live preview with a test listing, since deleted).
+- [x] **Every public form is rate limited** per visitor per hour (add listing, add event, claim, report, removal, contact, enquiry), on top of the honeypot and minimum time on form.
+- [x] `/tourism/` now redirects home (and stays out of the sitemap) on Cape Town and Pretoria, which have no tourism section; Polokwane keeps it.
+- [x] The backend type-check now runs in the preview build and stops a broken change from deploying.
+- [x] `npm run check:links` (crawls a build for broken links) and `npm run check:smoke` (opens 40 pages at desktop and phone width) are saved in the repo; both pass.
+- [x] The four Cape Town businesses that had no category are categorised (four missing categories were added to Cape Town to fit them).
+- [x] **Suburb map coordinates:** Cape Town went from 0 to 162 of 168 suburbs, Pretoria from 178 to 180 of 218, Polokwane from 30 to 31 of 38. The map page now draws them.
+- [x] First news stories published for all three cities (Cape Town 4, Pretoria 2, Polokwane 2), each checked against two sources.
 
 ## 2. Code work still to do on the branch
 
 | # | Task | Owner | Why it matters |
 |---|---|---|---|
-| 2.1 | Save trading hours and shopping centre from the "Add your business" form (needs a small database migration and a change to how approved listings are created) | Me | Today these two fields are collected but only emailed to admin, so the step-3 preview promises something we don't store |
-| 2.2 | Hide `/tourism/` on Cape Town and Pretoria | Me | The page exists there but nothing links to it |
-| 2.3 | Extend the per-visitor rate limit (already on contact and enquiry) to add listing, add event, claim, report and removal | Me | Those forms still have only a hidden honeypot field and a minimum time on form |
-| 2.4 | Add the backend type-check and the news check to the preview build workflow | Me | So a broken change can't be deployed unnoticed |
-| 2.5 | Save the link checker and the browser smoke test as repo scripts (`npm run check:links`, `npm run check:smoke`) | Me | So every release can be verified the same way |
-| 2.6 | Run the payment flow end to end on the PayFast sandbox: subscribe, payment notification, cancel, expiry, sponsorship purchase, rejected-listing refund note | Me + You | This is the biggest untested area |
-| 2.7 | Exercise every new endpoint against a real database (submit-event and approve, claim, listing flow, admin listings, guide sponsorship) | Me | They were only tested with mocked responses |
-| 2.8 | Remove the temporary "[monitor copy]" emails that send a copy of every owner-confirmation email to a personal Gmail address (in `confirm-listing.ts` and `owner-confirm-listing.ts`, marked TEMP) | Me, once you say so | Owners' details should not be copied to a personal inbox once the site is live |
-| 2.9 | Add real content where the mockup is empty and you decide to keep it: reviews, views/clicks/enquiries data, invoice PDFs | Me (after your decision) | Otherwise these stay honest "No data yet" tiles |
+| 2.1 | Run the payment flow end to end on the PayFast sandbox: subscribe, payment notification, cancel, expiry, sponsorship purchase, rejected-listing refund note | Me + You | The biggest untested area. Needs PayFast values in the Preview environment (see section 5) |
+| 2.2 | Exercise the remaining endpoints against the real database: claim, submit-event and approve, admin listings, guide sponsorship. (Contact, enquiry and add-business with approval are already verified live.) | Me | The rest were only tested with mocked responses |
+| 2.3 | Remove the temporary "[monitor copy]" emails that send a copy of every owner-confirmation email to a personal Gmail address (in `confirm-listing.ts` and `owner-confirm-listing.ts`, marked TEMP) | Me, once you say so | Owners' details should not be copied to a personal inbox once the site is live |
+| 2.4 | Add real content where the mockup is empty and you decide to keep it: reviews, views/clicks data, an owner's own enquiries, invoice PDFs | Me (after your decision) | Otherwise these stay honest "No data yet" tiles |
 
 ## 3. Database work (the branch's own migrations)
 
 - [x] Backups of all three databases taken on 20 September 2026 (`Hub/db-backups/2026-09-20/`, private; they contain user emails). Take a fresh set again on launch day.
-- [x] Migrations applied to all three production databases (Pretoria `0035`/`0036`/`0037`, Polokwane `0038`/`0039`/`0040`, Cape Town `0038`). Cape Town news (4 stories) and all three cities' fuel prices are loaded.
-- [ ] **[You/Me]** After 2.1, apply its migration to all three.
-- [ ] **[Me]** Publish the first news stories for Pretoria and Polokwane (run their news routines). Their news tables are empty, so the homepage news panel stays hidden there until this is done.
+- [x] Every migration is applied to all three production databases: event submissions, news and fuel, messages, submission hours and centre, and rate limits.
+- [x] News is loaded for all three cities (Cape Town 4 stories, Pretoria 2, Polokwane 2) and fuel prices for all three.
 - [ ] **[You]** Delete the demo user row (`admin@admin.com`) from all three databases before launch.
 
 ## 4. Data quality
 
-- [ ] **[You/Me]** Give the four Cape Town businesses with no category one (they are hidden from browsing): Advanced Electric Fencing, Craigmore Poultry Farm, Nicol Coachworks, Photo Booth World. Needs a database write.
-- [ ] **[You/Me]** Remove or fix the dead business websites (`amarecapetown.com`, `leeschinesekitchen.co.za`, `arcww.co.za`, `apnisleep.co.za`).
-- [ ] **[You/Me]** Add coordinates to the 168 Cape Town suburbs so the suburb map shows something (Pretoria and Polokwane already have data or need checking).
+- [ ] **[You/Me]** Remove or fix the dead business websites (`amarecapetown.com` and `leeschinesekitchen.co.za` do not exist; `arcww.co.za` and `apnisleep.co.za` returned errors). Needs your call on whether to clear them.
+- [ ] **[You/Me]** Suburbs still without map coordinates: 6 in Cape Town, 38 in Pretoria, 7 in Polokwane, mostly small industrial and farm areas the public map service does not know. They simply are not plotted. Add them by hand or with a paid geocoder if you want them on the map.
 
 ## 5. Payments, secrets and accounts
 
@@ -69,7 +70,7 @@ Status as of 20 September 2026. **[Me]** = I can do it. **[You]** = needs your a
 ## 8. Launch-day checklist (run in this order)
 
 1. Back up all three databases.
-2. Run the link checker and the smoke test on the final preview build.
+2. Run `npm run check:links` on a build of each city and `npm run check:smoke` against the final preview build.
 3. Apply pending migrations city by city, then load the fuel prices and news.
 4. Delete the demo user rows.
 5. Confirm the live PayFast secrets and that `domainLive` and DNS are correct for each domain.
