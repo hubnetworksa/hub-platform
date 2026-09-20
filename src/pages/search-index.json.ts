@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { businesses, suburbFor, categoriesFor } from '../lib/data';
+import { businesses, suburbFor, categoriesFor, websiteUrl } from '../lib/data';
 import { groupForCategory } from '../lib/categoryGroups';
 import { synonymsFor, locationSynonymsFor } from '../lib/categorySynonyms';
 import site from '../site';
@@ -32,7 +32,7 @@ export const GET: APIRoute = () => {
       // renderRow(r, pinned=true) in search.astro — so they're worth the
       // extra bytes despite not being used by every row.
       p: b.phone ?? '',
-      w: b.website ?? '',
+      w: websiteUrl(b.website) ?? '',
       a: b.address ?? '',
       d: b.description ?? '',
     };

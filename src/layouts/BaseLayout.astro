@@ -27,7 +27,9 @@ interface Props {
 const { title, description, canonical, titleOverride, noindex, impactVerification } = Astro.props;
 const fullTitle = titleOverride ?? `${title} | ${site.siteName}`;
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
-const canonicalUrl = canonical ?? (siteUrl + Astro.url.pathname);
+// The 404 page is served for any missing URL, so it must not claim /404/ as its own address.
+const isNotFoundPage = Astro.url.pathname.replace(/\/$/, '') === '/404';
+const canonicalUrl = isNotFoundPage ? undefined : (canonical ?? (siteUrl + Astro.url.pathname));
 
 const ICONS = {
   home: '<path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v10h12V10"/>',
@@ -133,7 +135,7 @@ const themeCss = `:root {
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalUrl} />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
     <meta property="og:site_name" content={site.siteName} />
     <meta property="og:image" content={siteUrl + '/logo-icon.png'} />
 

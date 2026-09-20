@@ -196,6 +196,21 @@ export function priceRand(key: string): string {
   return Number.isFinite(cents) && cents > 0 ? `R${centsToRand(cents)}` : '—';
 }
 
+/** A business's saved website as a usable https link, or null. Some rows were saved
+ *  without a scheme ("www.builders.co.za") or aren't a web address at all
+ *  ("Farmersfolly") — rendered raw those became broken relative links. */
+export function websiteUrl(raw: string | null | undefined): string | null {
+  const value = (raw ?? '').trim();
+  if (!value || /\s/.test(value)) return null;
+  const candidate = /^https?:\/\//i.test(value) ? value : /^[a-z][a-z0-9+.-]*:/i.test(value) ? '' : `https://${value.replace(/^\/\//, '')}`;
+  try {
+    const url = new URL(candidate);
+    return url.hostname.includes('.') ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}
+
 export function parseSourceUrls(business: Business): string[] {
   try {
     return JSON.parse(business.source_urls);

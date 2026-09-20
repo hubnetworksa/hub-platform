@@ -4,7 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
 import PlanBadge from '../../components/PlanBadge.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory } from '../../lib/data';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, websiteUrl } from '../../lib/data';
 import { synonymsFor, locationSynonymsFor } from '../../lib/categorySynonyms';
 import { schemaTypeFor } from '../../lib/categorySchemaTypes';
 import Icon from '../../components/Icon.astro';
@@ -123,8 +123,8 @@ const mapsUrl = (business.address || (business.lat && business.lng))
                   {business.phone}
                 </a>
               )}
-              {business.website && (
-                <a href={business.website} target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:9px;padding:14px 16px;border-radius:11px;border:2px solid var(--navy);color:var(--navy);font-size:14.5px;font-weight:800;text-decoration:none">
+              {websiteUrl(business.website) && (
+                <a href={websiteUrl(business.website)!} target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:9px;padding:14px 16px;border-radius:11px;border:2px solid var(--navy);color:var(--navy);font-size:14.5px;font-weight:800;text-decoration:none">
                   <Icon path="<circle cx='12' cy='12' r='9'/><path d='M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18'/>" size={17} />
                   Website
                 </a>
