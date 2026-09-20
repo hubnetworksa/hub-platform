@@ -41,7 +41,8 @@ Status as of 20 September 2026. **[Me]** = I can do it. **[You]** = needs your a
 
 ## 4. Data quality
 
-- [ ] **[You/Me]** Remove or fix the dead business websites (`amarecapetown.com` and `leeschinesekitchen.co.za` do not exist; `arcww.co.za` and `apnisleep.co.za` returned errors). Needs your call on whether to clear them.
+- [x] The four dead business websites (`amarecapetown.com` and `leeschinesekitchen.co.za` do not exist; `arcww.co.za` serves a 404 and `apnisleep.co.za` a 500) were cleared from the Cape Town database on 20 September, so those listings no longer show a broken Website button.
+- [ ] **[Me]** Proper map (Property24 style): business pins, suburb boundaries, a production-grade map provider. Plan sent 20 September; needs your go-ahead and a provider choice.
 - [ ] **[You/Me]** Suburbs still without map coordinates: 6 in Cape Town, 38 in Pretoria, 7 in Polokwane, mostly small industrial and farm areas the public map service does not know. They simply are not plotted. Add them by hand or with a paid geocoder if you want them on the map.
 
 ## 5. Payments, secrets and accounts
