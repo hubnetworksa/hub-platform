@@ -53,6 +53,8 @@ Status as of 20 September 2026. **[Me]** = I can do it. **[You]** = needs your a
 
 ## 5. Payments, secrets and accounts
 
+- [ ] **[You]** Cloudflare D1 **free plan daily read limit** was reached on 20 September (Cloudflare error 7500) after many test builds: every build reads all three databases (Pretoria alone has about 9,660 businesses). The limit resets at midnight UTC (02:00 South African time). Live sites kept working, but builds and deploys that read the databases fail until the reset. Before launch, decide whether to move the Cloudflare account to the Workers Paid plan (about $5 a month, far higher limits) so a busy day of deploys can never block a release.
+- [ ] **[Me]** Cut the reads a build needs: reuse the saved database snapshot when nothing changed, and only pull the tables a build uses, so routine and preview deploys stay well inside the free limit.
 - [x] Checked on 20 September 2026: the **Production** environment of all three Pages projects already has `RESEND_API_KEY`, `CRON_SECRET`, `GITHUB_DISPATCH_TOKEN` (the rebuild hook), Google sign-in keys and the four PayFast values. Only their names can be seen, not the values.
 - [ ] **[You]** Switch PayFast to **live** credentials: check that the merchant ID, key, passphrase and host stored in Production on all three projects are the live ones, not the sandbox ones.
 - [ ] **[You]** The **Preview** environment has no secrets at all, so the dev preview cannot send email, take payments or use Google sign-in (a test message on the Cape Town preview was saved but not emailed). To test those on the preview, add `RESEND_API_KEY` (and the PayFast values) to the Preview environment of each project. Production is unaffected.
