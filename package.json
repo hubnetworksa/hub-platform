@@ -21,7 +21,8 @@
     "build:pretoria": "cross-env SITE=pretoria npm run build",
     "build:capetown": "cross-env SITE=capetown npm run build",
     "db:migrate:local": "node scripts/db-migrate.mjs --local",
-    "db:migrate:remote": "node scripts/db-migrate.mjs --remote"
+    "db:migrate:remote": "node scripts/db-migrate.mjs --remote",
+    "typecheck:functions": "npx --yes -p typescript@5 tsc -p tsconfig.functions.json"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",

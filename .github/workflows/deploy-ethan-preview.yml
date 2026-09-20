@@ -64,6 +64,12 @@ jobs:
       # Same reason as deploy.yml: wrangler pages deploy only reads a
       # literal ./wrangler.jsonc, so the per-site config has to be copied
       # into place under that exact name right before deploying.
+      # Preview only: turn the demo admin login (admin@admin.com) on for this
+      # deployment. The committed default is false, and deploy.yml never
+      # touches this file, so production always rejects it.
+      - name: Enable demo admin for the preview build
+        run: echo "export const DEMO_ADMIN_ENABLED = true;" > functions/_lib/demo-flags.ts
+
       - name: Deploy preview to Cloudflare Pages
         run: |
           cp wrangler.${{ matrix.site }}.jsonc wrangler.jsonc

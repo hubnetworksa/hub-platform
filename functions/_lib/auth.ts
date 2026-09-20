@@ -1,11 +1,12 @@
 import type { D1Database } from '@cloudflare/workers-types';
+import { DEMO_ADMIN_ENABLED } from './demo-flags';
 
 // Password hashing via PBKDF2-SHA256 (Workers' native crypto.subtle) — no
 // external dependency needed. Stored as "iterations:saltHex:hashHex" so the
 // iteration count can be bumped later without invalidating existing hashes.
 const PBKDF2_ITERATIONS = 100_000;
 
-function toHex(buf: ArrayBuffer): string {
+function toHex(buf: ArrayBuffer | Uint8Array): string {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
@@ -73,17 +74,17 @@ export interface SessionUser {
 const ADMIN_EMAIL = 'hubnetworksa@gmail.com';
 
 // A second, clearly-labeled demo admin account (admin@admin.com / "admin")
-// for trying out the admin console without the real credentials — added
-// per explicit request while testing the Premium Listings redesign.
-// Deliberately weak on purpose (a fixed, guessable password on a real,
-// shared production database) — remove this before any public/real launch,
-// since anyone who finds/guesses it gets full admin access (delete any
-// business, view user emails, change subscription plans and prices).
+// for trying out the admin console on the dev preview without the real
+// credentials. Deliberately weak (a fixed, guessable password), so it is only
+// honoured when DEMO_ADMIN_ENABLED is true — which only the Ethan preview
+// workflow sets (see functions/_lib/demo-flags.ts). Production deploys ignore
+// it even though its user row exists in the shared database; delete that row
+// before launch.
 const DEMO_ADMIN_EMAIL = 'admin@admin.com';
 
 export function isAdminEmail(email: string): boolean {
   const lower = email.toLowerCase();
-  return lower === ADMIN_EMAIL || lower === DEMO_ADMIN_EMAIL;
+  return lower === ADMIN_EMAIL || (DEMO_ADMIN_ENABLED && lower === DEMO_ADMIN_EMAIL);
 }
 
 // Reads the session cookie, validates it against D1, and returns the user —
