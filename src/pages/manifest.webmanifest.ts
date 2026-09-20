@@ -8,7 +8,7 @@ export const GET: APIRoute = () => {
   const manifest = {
     id: '/',
     name: site.siteName,
-    short_name: `${site.cityLabel} Hub`,
+    short_name: site.siteName,
     description: site.tagline,
     lang: 'en-ZA',
     start_url: '/?source=pwa',
