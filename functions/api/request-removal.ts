@@ -1,6 +1,7 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { escapeHtml } from '../../src/lib/business-submission';
 import { getSite } from '../_lib/site';
+import { rateLimited } from '../_lib/messages';
 import { sendEmail } from '../_lib/send-email';
 
 interface Env {
@@ -42,6 +43,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const loadedAt = Number(body.loadedAt);
   if (!loadedAt || Date.now() - loadedAt < 2000) {
     return json({ ok: false, error: 'Submission rejected.' }, 400);
+  }
+  if (await rateLimited(context.env.DB, context.request, site.slug, 'request-removal', 5)) {
+    return json({ ok: false, error: 'Too many submissions from your connection. Please try again in an hour.' }, 429);
   }
 
   const businessSlug = clean(body.businessSlug, 120);

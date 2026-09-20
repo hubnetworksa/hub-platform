@@ -1,5 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSite } from '../_lib/site';
+import { rateLimited } from '../_lib/messages';
 import { getSessionUser } from '../_lib/auth';
 import { isEventType } from '../_lib/events';
 import { sendEmail } from '../_lib/send-email';
@@ -88,6 +89,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const loadedAt = Number(body.loadedAt);
   if (!loadedAt || Date.now() - loadedAt < 3000) {
     return json({ ok: false, error: 'Submission rejected.' }, 400);
+  }
+  if (await rateLimited(context.env.DB, context.request, site.slug, 'submit-event', 5)) {
+    return json({ ok: false, error: 'Too many submissions from your connection. Please try again in an hour.' }, 429);
   }
 
   const fields: Record<string, string | null> = {};

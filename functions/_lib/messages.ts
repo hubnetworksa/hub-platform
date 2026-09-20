@@ -36,3 +36,21 @@ export async function overMessageLimit(db: D1Database, ipHash: string, max = 5):
 export function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
 }
+
+/**
+ * Per-visitor rate limit for the public forms. Returns true when this visitor
+ * has already made `max` requests for `action` in the last hour (the caller
+ * should answer 429); otherwise it records this request and returns false.
+ */
+export async function rateLimited(db: D1Database, request: Request, siteSlug: string, action: string, max: number): Promise<boolean> {
+  const ipHash = await visitorHash(request, siteSlug);
+  const row = await db
+    .prepare(`SELECT COUNT(*) AS n FROM rate_limits WHERE action = ? AND ip_hash = ? AND created_at > datetime('now', '-1 hour')`)
+    .bind(action, ipHash)
+    .first<{ n: number }>();
+  if ((row?.n ?? 0) >= max) return true;
+  await db.prepare('INSERT INTO rate_limits (action, ip_hash) VALUES (?, ?)').bind(action, ipHash).run();
+  // Housekeeping: now and then drop rows older than a day.
+  if (Math.random() < 0.05) await db.prepare(`DELETE FROM rate_limits WHERE created_at < datetime('now', '-1 day')`).run();
+  return false;
+}

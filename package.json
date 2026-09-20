@@ -22,7 +22,9 @@
     "build:capetown": "cross-env SITE=capetown npm run build",
     "db:migrate:local": "node scripts/db-migrate.mjs --local",
     "db:migrate:remote": "node scripts/db-migrate.mjs --remote",
-    "typecheck:functions": "npx --yes -p typescript@5 tsc -p tsconfig.functions.json"
+    "typecheck:functions": "npx --yes -p typescript@5 tsc -p tsconfig.functions.json",
+    "check:links": "node scripts/check-links.mjs",
+    "check:smoke": "node scripts/smoke-test.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",

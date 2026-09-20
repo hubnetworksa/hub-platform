@@ -7,6 +7,10 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { TOURISM_OVERVIEW, ATTRACTIONS } from '../../site-content/polokwane/tourism';
 import site from '../../site';
 
+// Tourism is only a feature of some sites (site.features.tourism). On the others
+// nothing links here, so send anyone who lands on the URL to the homepage.
+if (!site.features.tourism) return Astro.redirect('/');
+
 const ICON_COMPASS = '<circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-2 5-5 2 2-5 5-2Z"/>';
 
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';

@@ -1,5 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSite } from '../_lib/site';
+import { rateLimited } from '../_lib/messages';
 import { getSessionUser } from '../_lib/auth';
 import { signFields, payfastConfigured, type PayfastEnv } from '../_lib/payfast';
 import { TIER_NAMES, tierPriceCents, centsToRand } from '../_lib/pricing';
@@ -21,8 +22,8 @@ interface Env extends PayfastEnv {
 // The admin is emailed about each new submission by this function, straight
 // after it is saved (best-effort — the saved row is what matters). The
 // visitor's own mail app is never used. Trading hours and the shopping centre
-// the form collects have no database column yet, so they travel only in that
-// email for the reviewer.
+// the form collects are stored on the pending row and copied onto the business
+// when it is approved (see business-submission.ts).
 
 const MAX_LEN: Record<string, number> = {
   name: 120,
@@ -62,6 +63,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!loadedAt || Date.now() - loadedAt < 3000) {
     return json({ ok: false, error: 'Submission rejected.' }, 400);
   }
+  if (await rateLimited(context.env.DB, context.request, site.slug, 'submit-business', 5)) {
+    return json({ ok: false, error: 'Too many submissions from your connection. Please try again in an hour.' }, 429);
+  }
 
   const name = clean(body.name, 'name');
   const categorySlug = typeof body.category === 'string' ? body.category.trim() : '';
@@ -95,29 +99,35 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // submission rather than blocking the listing itself.
   const chosenTier = [0, 1, 2].includes(Number(body.chosenTier)) ? Number(body.chosenTier) : 0;
 
+  // Trading hours (free text, "Mon–Fri 08:00–17:00, Sat Closed") and the
+  // shopping centre (its slug) from the form. Both are kept on the pending row
+  // and copied onto the business when it is approved. An unknown centre slug is ignored.
+  const hours = clean(body.hours, 'hours');
+  const centreSlug = clean(body.centre, 'centre');
+  const centre = centreSlug
+    ? await db.prepare('SELECT slug, name FROM shopping_centers WHERE slug = ?').bind(centreSlug).first<{ slug: string; name: string }>()
+    : null;
+
   const token = crypto.randomUUID();
   const insert = await db
     .prepare(
       `INSERT INTO pending_submissions
-        (token, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id, chosen_tier)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        (token, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id, chosen_tier, hours, shopping_center_slug)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
-    .bind(token, name, categorySlug, suburbSlug, address, phone, email, website, description, sessionUser?.id ?? null, chosenTier)
+    .bind(token, name, categorySlug, suburbSlug, address, phone, email, website, description, sessionUser?.id ?? null, chosenTier, hours, centre?.slug ?? null)
     .run();
   const submissionId = insert.meta.last_row_id;
 
   const reviewUrl = `https://${site.domain}/verify-listing?token=${token}`;
 
-  // Tell the admin there is a listing to review. Hours and shopping centre
-  // are free text from the form (no column for them yet), for the reviewer only.
-  const hours = clean(body.hours, 'hours');
-  const centre = clean(body.centre, 'centre');
+  // Tell the admin there is a listing to review.
   const details = [
     `Name: ${name}`,
     `Category: ${category.name}`,
     `Suburb: ${suburb.name}`,
     ...(address ? [`Address: ${address}`] : []),
-    ...(centre ? [`Shopping centre: ${centre}`] : []),
+    ...(centre ? [`Shopping centre: ${centre.name}`] : []),
     ...(phone ? [`Phone: ${phone}`] : []),
     ...(email ? [`Email: ${email}`] : []),
     ...(website ? [`Website: ${website}`] : []),

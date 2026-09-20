@@ -2,6 +2,7 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser } from '../_lib/auth';
 import { sendEmail } from '../_lib/send-email';
 import { getSite } from '../_lib/site';
+import { rateLimited } from '../_lib/messages';
 
 interface Env {
   DB: D1Database;
@@ -59,6 +60,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const db = context.env.DB;
   const user = await getSessionUser(context.request, db);
   if (!user) return json({ ok: false, error: 'Please log in first.' }, 401);
+  if (await rateLimited(db, context.request, site.slug, 'claim-business', 5)) {
+    return json({ ok: false, error: 'Too many submissions from your connection. Please try again in an hour.' }, 429);
+  }
 
   let body: ClaimBody;
   try {

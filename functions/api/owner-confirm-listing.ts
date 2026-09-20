@@ -1,5 +1,5 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
-import { generateUniqueSlug, insertApprovedBusiness } from '../../src/lib/business-submission';
+import { generateUniqueSlug, insertApprovedBusiness, shoppingCenterIdForSlug } from '../../src/lib/business-submission';
 import { getSite, type Site } from '../_lib/site';
 import { triggerRebuild } from '../_lib/deploy-hook';
 import { sendEmail } from '../_lib/send-email';
@@ -27,6 +27,8 @@ interface PendingRow {
   chosen_tier: number;
   m_payment_id: string | null;
   payment_status: string | null;
+  hours: string | null;
+  shopping_center_slug: string | null;
 }
 
 // The business owner's confirm/dispute step, reached from the email sent
@@ -43,7 +45,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const row = await db
     .prepare(
       `SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description,
-              submitted_by_user_id, chosen_tier, m_payment_id, payment_status
+              submitted_by_user_id, chosen_tier, m_payment_id, payment_status, hours, shopping_center_slug
        FROM pending_submissions WHERE owner_confirm_token = ?`
     )
     .bind(token)
@@ -91,6 +93,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     ownerUserId: row.submitted_by_user_id,
     chosenTier: row.chosen_tier,
     paidMPaymentId: row.payment_status === 'paid' ? row.m_payment_id : null,
+    hours: row.hours,
+    shoppingCenterId: await shoppingCenterIdForSlug(db, row.shopping_center_slug),
   });
   await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
   const listingUrl = `https://${site.domain}/business/${slug}/`;

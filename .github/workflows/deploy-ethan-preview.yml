@@ -58,6 +58,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Fail the preview before it deploys if the backend code doesn't type-check.
+      - name: Type-check the backend (Pages Functions)
+        run: npm run typecheck:functions
+
       - name: Build with Astro
         run: npm run build
 

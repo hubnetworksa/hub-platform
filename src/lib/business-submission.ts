@@ -36,6 +36,17 @@ export interface ApprovedListing {
    *  blocking the listing. */
   chosenTier?: number;
   paidMPaymentId?: string | null;
+  /** Trading hours as free text ("Mon–Fri 08:00–17:00, Sat Closed"), from the listing form. */
+  hours?: string | null;
+  /** The shopping centre the business trades from, if the form named one. */
+  shoppingCenterId?: number | null;
+}
+
+/** Id of the shopping centre with this slug, or null (unknown / not given). */
+export async function shoppingCenterIdForSlug(db: D1Database, slug: string | null | undefined): Promise<number | null> {
+  if (!slug) return null;
+  const row = await db.prepare('SELECT id FROM shopping_centers WHERE slug = ?').bind(slug).first<{ id: number }>();
+  return row?.id ?? null;
 }
 
 // If a business with this exact name already exists IN THE SAME SUBURB
@@ -64,10 +75,11 @@ export async function insertApprovedBusiness(db: D1Database, listing: ApprovedLi
       .prepare(
         `UPDATE businesses
           SET suburb_id = ?, address = ?, phone = ?, website = ?, email = ?, description = ?,
+              hours = COALESCE(?, hours), shopping_center_id = COALESCE(?, shopping_center_id),
               status = 'published', origin = 'owner_submitted', owner_user_id = ?
           WHERE id = ?`
       )
-      .bind(listing.suburbId, listing.address, listing.phone, listing.website, listing.email, listing.description, ownerUserId, existing.id)
+      .bind(listing.suburbId, listing.address, listing.phone, listing.website, listing.email, listing.description, listing.hours ?? null, listing.shoppingCenterId ?? null, ownerUserId, existing.id)
       .run();
 
     await db.prepare('DELETE FROM business_categories WHERE business_id = ? AND is_primary = 1').bind(existing.id).run();
@@ -80,8 +92,8 @@ export async function insertApprovedBusiness(db: D1Database, listing: ApprovedLi
     const insert = await db
       .prepare(
         `INSERT INTO businesses
-          (slug, name, suburb_id, address, phone, website, email, description, source_urls, status, origin, owner_user_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', 'owner_submitted', ?)`
+          (slug, name, suburb_id, address, phone, website, email, description, source_urls, hours, shopping_center_id, status, origin, owner_user_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', 'owner_submitted', ?)`
       )
       .bind(
         listing.slug,
@@ -93,6 +105,8 @@ export async function insertApprovedBusiness(db: D1Database, listing: ApprovedLi
         listing.email,
         listing.description,
         JSON.stringify(['owner-submitted']),
+        listing.hours ?? null,
+        listing.shoppingCenterId ?? null,
         listing.ownerUserId ?? null
       )
       .run();

@@ -46,6 +46,7 @@ export default defineConfig({
       filter: (page) => {
         const path = new URL(page).pathname;
         if (NOINDEX_PATH_PREFIXES.some((prefix) => path.startsWith(prefix))) return false;
+        if (path === '/tourism/' && !site.features?.tourism) return false;
         const match = path.match(/^\/category\/([^/]+)\/?$/);
         if (match && EMPTY_CATEGORIES.has(match[1])) return false;
         return true;
