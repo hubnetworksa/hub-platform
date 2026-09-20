@@ -1,158 +1,200 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageBanner from '../../components/PageBanner.astro';
-import Breadcrumbs from '../../components/Breadcrumbs.astro';
-// Tourism content is currently only authored for Polokwane (site-content/polokwane/tourism.ts).
-// Once a second site gets its own, switch this to a per-site lookup like src/site-content/index.ts.
-import { TOURISM_OVERVIEW, ATTRACTIONS } from '../../site-content/polokwane/tourism';
+import { adsEnabled } from '../../lib/site-overrides';
+import { TOURISM, TOUR_CATEGORIES } from '../../site-content/tourism';
 import site from '../../site';
 
-// Tourism is only a feature of some sites (site.features.tourism). On the others
-// nothing links here, so send anyone who lands on the URL to the homepage.
-if (!site.features.tourism) return Astro.redirect('/');
+// Port of the mockup's "Things to do" screen. Every site has one; a site with no
+// content block yet sends visitors home rather than showing an empty page.
+const content = TOURISM[site.slug];
+if (!site.features.tourism || !content) return Astro.redirect('/');
 
-const ICON_COMPASS = '<circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-2 5-5 2 2-5 5-2Z"/>';
+// Sponsored badges are demo placement: only in the dev preview build.
+const demoSponsors = process.env.DEMO_PREMIUM === 'true';
+
+const mapsUrl = (name: string) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name}, ${site.cityLabel}`)}`;
+
+const picks = content.picks.map((p) => ({
+  ...p,
+  sponsored: demoSponsors && p.sponsored,
+  href: p.slug ? `/tourism/${p.slug}/` : mapsUrl(p.name),
+  external: !p.slug,
+}));
+// Only chips that have something under them.
+const filters = TOUR_CATEGORIES.filter((c) => c === 'All' || picks.some((p) => p.cat === c));
 
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
-
-// TouristDestination schema for the overview, per the CSC brief. Attraction
-// sub-pages each carry their own TouristAttraction schema.
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'TouristDestination',
   name: site.cityLabel,
-  description: TOURISM_OVERVIEW.metaDescription,
+  description: content.blurb,
   url: `${siteUrl}/tourism/`,
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: site.cityLabel,
-    addressRegion: site.province,
-    addressCountry: 'ZA',
-  },
-  includesAttraction: ATTRACTIONS.map((a) => ({
-    '@type': 'TouristAttraction',
-    name: a.name,
-    url: `${siteUrl}/tourism/${a.slug}/`,
-  })),
+  address: { '@type': 'PostalAddress', addressLocality: site.cityLabel, addressRegion: site.province, addressCountry: 'ZA' },
+  includesAttraction: picks
+    .filter((p) => p.slug)
+    .map((p) => ({ '@type': 'TouristAttraction', name: p.name, url: `${siteUrl}/tourism/${p.slug}/` })),
 };
+
+const featureMessage = `I'd like to feature our attraction or tour on the ${site.cityLabel} things-to-do page.`;
 ---
 
-{site.features.tourism ? (
-<BaseLayout title={TOURISM_OVERVIEW.pageTitle} description={TOURISM_OVERVIEW.metaDescription}>
+<BaseLayout title={`Things to do in ${site.cityLabel}`} description={content.blurb}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-
-  <PageBanner
-    title={`Things to Do in ${site.cityLabel}`}
-    description="Attractions, nature reserves, museums and day trips."
-    iconPath={ICON_COMPASS}
-  >
-    <Breadcrumbs slot="breadcrumbs" items={[{ label: 'Home', href: '/' }, { label: 'Tourism' }]} />
-  </PageBanner>
-
-  <section class="container" style="padding-top: 2rem; padding-bottom: 1rem; max-width: 780px;">
-    <p class="lede">{TOURISM_OVERVIEW.intro}</p>
-  </section>
-
-  <section class="container" style="padding-bottom: 1rem;">
-    <h2>Top attractions &amp; day trips</h2>
-    <div class="attraction-grid">
-      {ATTRACTIONS.map((a) => (
-        <a class="attraction-card" href={`/tourism/${a.slug}/`}>
-          <span class="attraction-name">{a.name}</span>
-          <span class="attraction-teaser">{a.teaser}</span>
-          <span class="attraction-more">Read more →</span>
-        </a>
-      ))}
-    </div>
-  </section>
-
-  <section class="container" style="padding-top: 1.5rem; padding-bottom: 1rem; max-width: 780px;">
-    <h2>Plan your visit</h2>
-    {TOURISM_OVERVIEW.practical.map((p) => (
-      <div class="plan-block">
-        <h3>{p.heading}</h3>
-        <p>{p.body}</p>
+  <main>
+    <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">
+      <img src={site.sectionBannerImage} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%" />
+      <div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(var(--navy-rgb),.94) 0%,rgba(var(--navy-rgb),.78) 48%,rgba(var(--navy-rgb),.26) 100%)"></div>
+      <div style="position:relative;max-width:1200px;margin:0 auto;padding:clamp(30px,5vw,58px) 20px clamp(24px,3.5vw,38px)">
+        <span style="display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1.5px solid rgba(255,255,255,.34);border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff"><span>{`Visiting ${site.cityLabel}`}</span></span>
+        <h1 style="margin:16px 0 12px;color:#fff;font-size:clamp(30px,5.4vw,52px);line-height:1.03;letter-spacing:-.03em;max-width:17ch">Things to do in {site.cityLabel}</h1>
+        <p style="margin:0;color:rgba(255,255,255,.86);font-size:clamp(15px,1.7vw,17.5px);max-width:54ch;line-height:1.5">{content.blurb}</p>
       </div>
-    ))}
-  </section>
+    </section>
 
-  <section class="container" style="padding-top: 1rem; padding-bottom: 3rem; max-width: 780px;">
-    <h2>Where to eat &amp; stay</h2>
-    <p>
-      Browse <a href="/category/accommodation/">accommodation</a> and
-      {' '}<a href="/category/restaurants-takeaways/">restaurants &amp; takeaways</a> in the
-      directory, or start from a <a href="/suburb/">suburb</a> to find what's near you.
-    </p>
-  </section>
+    <section style="max-width:1200px;margin:0 auto;padding:22px 20px 0">
+      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;border-bottom:2px solid var(--navy)">
+        {filters.map((f) => (
+          <button type="button" data-tour-filter={f} style={`padding:9px 15px;border-radius:999px;cursor:pointer;white-space:nowrap;font-size:13px;font-weight:800;border:2px solid ${f === 'All' ? 'var(--navy)' : 'var(--border)'};background:${f === 'All' ? 'var(--navy)' : '#fff'};color:${f === 'All' ? '#fff' : 'var(--navy)'}`}>{f}</button>
+        ))}
+      </div>
+    </section>
+
+    <section style="max-width:1200px;margin:0 auto;padding:20px 20px 0">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
+        {picks.map((p) => (
+          <article data-tour-card data-tour-cat={p.cat} class="tour-card" style={`display:flex;flex-direction:column;border:2px solid ${p.sponsored ? 'var(--accent)' : 'var(--border)'};border-radius:16px;background:#fff;overflow:hidden`}>
+            <div style="position:relative;height:172px;background:var(--bg-subtle);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">
+              {p.cat}
+              {p.sponsored && (
+                <span style="position:absolute;top:12px;left:12px;z-index:2;pointer-events:none;padding:4px 10px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;box-shadow:0 6px 16px rgba(0,0,0,.28)">Sponsored</span>
+              )}
+            </div>
+            <div style="padding:18px;display:flex;flex-direction:column;gap:9px;flex:1">
+              <span style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)">{p.cat} · {p.suburb}</span>
+              <h2 style="margin:0;font-size:18.5px;line-height:1.22;letter-spacing:-.02em;color:var(--navy)">{p.name}</h2>
+              <p style="margin:0;font-size:14px;line-height:1.55;color:var(--text)">{p.blurb}</p>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:11px;border-top:1px solid var(--border)">
+                <span style="font-size:13px;font-weight:800;color:var(--navy)">{p.price} · {p.time}</span>
+                <a href={p.href} target={p.external ? '_blank' : undefined} rel={p.external ? 'noopener noreferrer' : undefined} style="font-size:13px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">{p.external ? 'Map →' : 'Details →'}</a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div id="tour-empty" hidden style="border:2px dashed var(--border);border-radius:14px;padding:34px;text-align:center;background:var(--bg-subtle)">
+        <div style="font-size:16px;font-weight:800;color:var(--navy)">Nothing listed in that category yet</div>
+        <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin-top:5px">Run an attraction or a tour? List it free.</div>
+      </div>
+    </section>
+
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(30px,4.5vw,50px) 20px 0">
+      <div id="tour-shell" style="display:grid;gap:20px">
+        <div>
+          <div style="border-bottom:2px solid var(--navy);padding-bottom:12px">
+            <h2 style="margin:0;font-size:clamp(19px,2.6vw,25px);letter-spacing:-.025em;color:var(--navy)">Ready-made itineraries</h2>
+          </div>
+          <div style="border:2px solid var(--border);border-radius:14px;overflow:hidden;background:#fff;margin-top:16px">
+            {content.itineraries.map((it) => (
+              <a href="/guides/" class="it-row" style="display:flex;align-items:center;gap:14px;padding:15px 18px;border-bottom:1px solid var(--border);color:var(--navy);text-decoration:none">
+                <span style="min-width:0;flex:1;display:flex;flex-direction:column;gap:4px">
+                  <span style="font-size:16px;font-weight:800;letter-spacing:-.015em">{it.name}</span>
+                  <span style="font-size:13px;font-weight:600;color:var(--muted);line-height:1.45">{it.stops}</span>
+                </span>
+                <span style="flex-shrink:0;padding:5px 11px;border-radius:999px;background:var(--bg-subtle);color:var(--accent-hover);font-size:12px;font-weight:800;white-space:nowrap">{it.time}</span>
+              </a>
+            ))}
+          </div>
+
+          <div style="border-bottom:2px solid var(--navy);padding-bottom:12px;margin-top:28px">
+            <h2 style="margin:0;font-size:clamp(19px,2.6vw,25px);letter-spacing:-.025em;color:var(--navy)">When to come</h2>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:16px">
+            {content.seasons.map((sn) => (
+              <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:#fff">
+                <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)">{sn.when}</div>
+                <div style="font-size:17px;font-weight:800;color:var(--navy);letter-spacing:-.02em;margin-top:7px">{sn.name}</div>
+                <p style="margin:8px 0 0;font-size:13.5px;line-height:1.55;color:var(--text)">{sn.note}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <aside style="display:flex;flex-direction:column;gap:14px">
+          <div style="border:2px solid var(--navy);border-radius:14px;overflow:hidden">
+            <div style="background:var(--navy);padding:16px 18px">
+              <div style="font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--grad-from)">For operators</div>
+              <div style="font-size:19px;font-weight:800;color:#fff;margin-top:6px;letter-spacing:-.02em">List your attraction free</div>
+            </div>
+            <div style="padding:16px;background:#fff">
+              <p style="margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--text)">Tours, guesthouses, restaurants and activities. Feature it to sit at the top of this page.</p>
+              <a href="/list-your-business/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;margin-bottom:8px;text-align:center;text-decoration:none">Add an attraction</a>
+              <a href={`/contact/?topic=Advertising&message=${encodeURIComponent(featureMessage)}`} style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-align:center;text-decoration:none">Feature it</a>
+            </div>
+          </div>
+          <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
+            <h3 style="margin:0 0 8px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Visiting for a weekend?</h3>
+            <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Check what's on while you're here — markets, sport and live music with ticket prices.</p>
+            <a href="/events/" style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--navy);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-align:center;text-decoration:none">See events</a>
+          </div>
+          {adsEnabled && (
+            <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);min-height:250px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:18px">
+              <span style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
+              <span style="font-size:13.5px;font-weight:700;color:var(--muted)">300×250 — tourism sponsors</span>
+            </div>
+          )}
+        </aside>
+      </div>
+    </section>
+
+    <section style="margin-top:clamp(36px,5vw,56px);background:var(--accent)">
+      <div style="max-width:1200px;margin:0 auto;padding:clamp(30px,4.5vw,52px) 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px">
+        <h2 style="margin:0;color:var(--contrast);font-size:clamp(23px,3.4vw,36px);letter-spacing:-.03em;line-height:1.08;max-width:26ch">Visitors plan here. Make sure they find you.</h2>
+        <a href="/pricing/" style="padding:16px 26px;border-radius:12px;background:#fff;color:var(--accent-hover);font-size:15px;font-weight:800;white-space:nowrap;text-decoration:none">See tourism rates</a>
+      </div>
+    </section>
+  </main>
 </BaseLayout>
-) : (
-<BaseLayout title="Tourism" description={`Tourism content for ${site.cityLabel} is on the way.`}>
-  <section class="container" style="padding: 3rem 0;">
-    <h1>Tourism</h1>
-    <p>We're still putting together a tourism guide for {site.cityLabel} — check back soon.</p>
-  </section>
-</BaseLayout>
-)}
 
 <style>
-  .lede {
-    font-size: 1.05rem;
-    line-height: 1.7;
-    color: var(--text);
-    margin: 0;
+  #tour-shell {
+    grid-template-columns: minmax(0, 1fr);
   }
-  h2 {
-    font-size: 1.15rem;
-    margin: 0 0 1rem;
+  @media (min-width: 950px) {
+    #tour-shell {
+      grid-template-columns: minmax(0, 1fr) 320px;
+    }
   }
-  .attraction-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 0.85rem;
+  .tour-card[hidden] {
+    display: none !important;
   }
-  .attraction-card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    padding: 1.1rem 1.15rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--bg-card);
-    text-decoration: none;
-    color: inherit;
-    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
-  }
-  .attraction-card:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-  }
-  .attraction-name {
-    font-weight: 800;
-    color: var(--navy);
-  }
-  .attraction-teaser {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    line-height: 1.45;
-  }
-  .attraction-more {
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--accent);
-    margin-top: 0.15rem;
-  }
-  .plan-block {
-    margin-bottom: 1.1rem;
-  }
-  .plan-block h3 {
-    font-size: 0.98rem;
-    margin: 0 0 0.25rem;
-    color: var(--navy);
-  }
-  .plan-block p {
-    margin: 0;
-    color: var(--text);
-    line-height: 1.65;
+  .it-row:hover {
+    background: var(--bg-subtle);
   }
 </style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('button[data-tour-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('article[data-tour-card]');
+  const empty = document.getElementById('tour-empty')!;
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.tourFilter!;
+      buttons.forEach((b) => {
+        const active = b === btn;
+        b.style.borderColor = active ? 'var(--navy)' : 'var(--border)';
+        b.style.background = active ? 'var(--navy)' : '#fff';
+        b.style.color = active ? '#fff' : 'var(--navy)';
+      });
+      let visible = 0;
+      cards.forEach((card) => {
+        const show = filter === 'All' || card.dataset.tourCat === filter;
+        card.hidden = !show;
+        if (show) visible++;
+      });
+      empty.hidden = visible > 0;
+    });
+  });
+</script>

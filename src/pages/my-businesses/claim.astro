@@ -224,7 +224,7 @@ const TIME = 'padding:9px 11px;border:2px solid var(--border);border-radius:9px;
 
           <div id="success-card" hidden style="border:2px solid var(--navy);border-radius:16px;padding:22px;background:var(--bg-subtle)">
             <h2 style="margin:0 0 8px;font-size:20px;letter-spacing:-.02em;color:var(--navy)">Claim submitted</h2>
-            <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:var(--text)">Claim submitted — we'll review it and be in touch.</p>
+            <p id="success-msg" style="margin:0 0 16px;font-size:15px;line-height:1.6;color:var(--text)">Claim submitted — we'll review it and be in touch.</p>
             <a href="/my-businesses/" style="display:inline-block;padding:13px 20px;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;text-decoration:none">Go to my businesses</a>
           </div>
         </div>
@@ -232,8 +232,8 @@ const TIME = 'padding:9px 11px;border:2px solid var(--border);border-radius:9px;
           <div style="border:2px solid var(--border);border-radius:14px;padding:20px;background:#fff">
             <h2 style="margin:0 0 10px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">What happens next</h2>
             <ol style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;font-size:13.5px;line-height:1.5;color:var(--text)">
-              <li>We review your claim by hand and verify it the way you chose.</li>
-              <li>We email you once it's decided.</li>
+              <li>If the business has an email on file, we send the verification link to that address, not yours. Otherwise a person reviews your claim.</li>
+              <li>We email you once it's confirmed.</li>
               <li>Once approved you can edit the listing from My businesses.</li>
             </ol>
           </div>
@@ -628,6 +628,9 @@ const TIME = 'padding:9px 11px;border:2px solid var(--border);border-radius:9px;
       const result = await res.json();
       if (result.ok) {
         $('review-body').hidden = true;
+        $('success-msg').textContent = result.verification === 'business-email'
+          ? `We've sent a verification email to the business's email address on file (${result.sentTo}). Your claim is only completed once someone confirms it from that inbox — it can't be verified from your own email. We've also emailed you a copy of these instructions.`
+          : "This listing has no business email address on file, so a person will review your claim and contact you. We may ask you to prove you're connected to the business.";
         $('success-card').hidden = false;
         window.scrollTo({ top: 0 });
       } else {

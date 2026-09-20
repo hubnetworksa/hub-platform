@@ -220,3 +220,9 @@ All of the above are applied on all three production databases (20 September 202
 | abb7fb2 | 20 Sep | Make the site installable as an Android app: web manifest, service worker and 512px icons |
 | 176a08a | 20 Sep | Use each site's real name as the installed app label |
 | 616dc91 | 20 Sep | Fix broken business website links and drop the canonical on the 404 page |
+
+## Added 20 September (later)
+
+- **Things to do (tourism) page rebuilt from the mockup** for all three cities (`src/site-content/tourism.ts`, `src/pages/tourism/index.astro`). "Things to do" now appears in the header, mobile menu and footer. Attraction cards link to Polokwane's full attraction pages where they exist and to a map search otherwise; the Sponsored badge shows only in the dev preview.
+- **Claims are verified at the business's own email address.** `functions/api/claim-business.ts` sends the link to the business email on file, tells the claimant to expect it there, and `functions/verify-claim.ts` plus `functions/api/verify-claim.ts` complete or decline the claim. New migration adds `verify_token`, `verify_sent_to` and `email_verified_at` to `business_claims` (Cape Town 0041, Pretoria 0040, Polokwane 0043; applied to all three production databases). Businesses with no email on file still go to manual review.
+- **Four dead business websites cleared** in Cape Town.

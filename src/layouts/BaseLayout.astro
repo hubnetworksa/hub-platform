@@ -196,9 +196,9 @@ const themeCss = `:root {
           <a href="/suburb/" class="nav-desk-link">Directory</a>
           <a href="/category/" class="nav-desk-link">Categories</a>
           <a href="/events/" class="nav-desk-link">Events</a>
+          {site.features.tourism && <a href="/tourism/" class="nav-desk-link">Things to do</a>}
           <a href="/shopping-center/" class="nav-desk-link">Shopping centres</a>
           <a href="/guides/" class="nav-desk-link">Guides</a>
-          {site.features.tourism && <a href="/tourism/" class="nav-desk-link">Tourism</a>}
           <a href="/about/" class="nav-desk-link">About</a>
         </nav>
         <div style="display:flex;align-items:center;gap:10px;margin-left:auto">
@@ -217,6 +217,7 @@ const themeCss = `:root {
         <a href="/suburb/" class="nav-mob-link">Directory</a>
         <a href="/category/" class="nav-mob-link">Categories</a>
         <a href="/events/" class="nav-mob-link">Events</a>
+        {site.features.tourism && <a href="/tourism/" class="nav-mob-link">Things to do</a>}
         <a href="/shopping-center/" class="nav-mob-link">Shopping centres</a>
         <a href="/pricing/" class="nav-mob-link">Plans &amp; pricing</a>
         <a href="/about/" class="nav-mob-link">About</a>
@@ -241,6 +242,7 @@ const themeCss = `:root {
             <a href="/suburb/" style="color:rgba(255,255,255,.75)">Suburbs</a>
             <a href="/category/" style="color:rgba(255,255,255,.75)">Categories</a>
             <a href="/events/" style="color:rgba(255,255,255,.75)">Events</a>
+            {site.features.tourism && <a href="/tourism/" style="color:rgba(255,255,255,.75)">Things to do</a>}
             <a href="/shopping-center/" style="color:rgba(255,255,255,.75)">Shopping centres</a>
             <a href="/guides/" style="color:rgba(255,255,255,.75)">Guides</a>
           </div>

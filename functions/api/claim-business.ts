@@ -3,6 +3,7 @@ import { getSessionUser } from '../_lib/auth';
 import { sendEmail } from '../_lib/send-email';
 import { getSite } from '../_lib/site';
 import { rateLimited } from '../_lib/messages';
+import { escapeHtml } from '../../src/lib/business-submission';
 
 interface Env {
   DB: D1Database;
@@ -92,9 +93,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   const business = await db
-    .prepare('SELECT id, name, website, owner_user_id FROM businesses WHERE id = ?')
+    .prepare('SELECT id, name, website, email, owner_user_id FROM businesses WHERE id = ?')
     .bind(businessId)
-    .first<{ id: number; name: string; website: string | null; owner_user_id: number | null }>();
+    .first<{ id: number; name: string; website: string | null; email: string | null; owner_user_id: number | null }>();
   if (!business) return json({ ok: false, error: 'Business not found.' }, 404);
   if (business.owner_user_id) return json({ ok: false, error: 'This business has already been claimed.' }, 400);
 
@@ -131,24 +132,80 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (note) parts.push(`Note: ${note}`);
   const roleNote = parts.join(' | ').slice(0, 1400);
 
+  // Ownership is proved at the BUSINESS's own email address (the one on file),
+  // never the claimant's. Only when there is one on file; otherwise a person
+  // reviews the claim by hand.
+  const businessEmail = business.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(business.email.trim()) ? business.email.trim() : null;
+  const verifyToken = businessEmail ? crypto.randomUUID() : null;
+
   const reviewToken = crypto.randomUUID();
   await db
-    .prepare('INSERT INTO business_claims (business_id, user_id, document_keys, contact_name, contact_phone, contact_email, role_note, review_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-    .bind(businessId, user.id, '[]', contactName, contactPhone, contactEmail, roleNote, reviewToken)
+    .prepare('INSERT INTO business_claims (business_id, user_id, document_keys, contact_name, contact_phone, contact_email, role_note, review_token, verify_token, verify_sent_to) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(businessId, user.id, '[]', contactName, contactPhone, contactEmail, roleNote, reviewToken, verifyToken, businessEmail)
     .run();
 
   const reviewUrl = `https://${site.domain}/review-claim?token=${reviewToken}`;
+  const masked = businessEmail ? maskEmail(businessEmail) : null;
+
+  if (businessEmail && verifyToken) {
+    const verifyUrl = `https://${site.domain}/verify-claim?token=${verifyToken}`;
+    await sendEmail(context.env, {
+      from: `${site.siteName} <${site.contactEmail}>`,
+      to: businessEmail,
+      subject: `Confirm the claim on "${business.name}"`,
+      text: `Someone has asked to manage the listing for "${business.name}" on ${site.siteName}.
+
+Name: ${contactName}
+Role: ${role || 'Not specified'}
+
+If this is you or someone you authorised, confirm it here:
+${verifyUrl}
+
+If you don't recognise this request, ignore this email or use the link to say it isn't yours — nothing changes until someone at this address confirms.`,
+      html: `<div style="font-family:sans-serif;max-width:520px"><h2>Confirm the claim on ${escapeHtml(business.name)}</h2><p>Someone has asked to manage this listing on ${escapeHtml(site.siteName)}.</p><p>Name: <strong>${escapeHtml(contactName)}</strong><br>Role: <strong>${escapeHtml(role || 'Not specified')}</strong></p><p><a href="${verifyUrl}" style="display:inline-block;padding:12px 20px;border-radius:9px;background:#1d6fe0;color:#fff;font-weight:700;text-decoration:none">Review this claim</a></p><p style="color:#5b6478;font-size:13px">If you don't recognise this request, ignore this email. Nothing changes until someone at this address confirms.</p></div>`,
+    });
+  }
+
+  // The claimant is told where the verification went — it has to be confirmed
+  // from the business's own inbox, so opening it themselves is not enough.
+  await sendEmail(context.env, {
+    from: `${site.siteName} <${site.contactEmail}>`,
+    to: contactEmail,
+    subject: `Your claim on "${business.name}"`,
+    text: masked
+      ? `Thanks, ${contactName}. We've received your claim on "${business.name}".
+
+To prove the business is yours, we sent a verification email to the business's email address on file (${masked}). Your claim is only completed once someone confirms it from that inbox — it can't be verified from your own email address.
+
+If you no longer have access to that inbox, reply to this email and we'll review your claim by hand.`
+      : `Thanks, ${contactName}. We've received your claim on "${business.name}".
+
+This listing has no business email address on file, so a person will review your claim and contact you. We may ask you to prove you're connected to the business.`,
+  });
 
   await sendEmail(context.env, {
     from: `${site.siteName} <${site.contactEmail}>`,
     to: site.contactEmail,
     subject: `Business claim to review: ${business.name}`,
-    text: `${user.email} wants to claim "${business.name}".\n\nName: ${contactName}\nPhone: ${contactPhone}\nEmail: ${contactEmail}\n${parts.join('\n')}\n\nReview and approve/reject here: ${reviewUrl}`,
+    text: `${user.email} wants to claim "${business.name}".
+
+Name: ${contactName}
+Phone: ${contactPhone}
+Email: ${contactEmail}
+${parts.join('\n')}
+
+${masked ? `A verification link was sent to the business's email on file (${masked}); the claim completes when someone confirms it there. You can still approve or reject by hand:` : 'No business email on file, so this needs a manual decision:'}
+${reviewUrl}`,
   });
 
-  return json({ ok: true });
+  return json({ ok: true, verification: masked ? 'business-email' : 'manual', sentTo: masked });
 };
 
 function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
+}
+
+function maskEmail(email: string): string {
+  const [local, domain] = email.split('@');
+  return `${local.slice(0, 1)}${'*'.repeat(Math.max(2, Math.min(6, local.length - 1)))}@${domain}`;
 }
