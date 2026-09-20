@@ -28,7 +28,7 @@ Status as of 20 September 2026. **[Me]** = I can do it. **[You]** = needs your a
 | # | Task | Owner | Why it matters |
 |---|---|---|---|
 | 2.1 | Run the payment flow end to end on the PayFast sandbox: subscribe, payment notification, cancel, expiry, sponsorship purchase, rejected-listing refund note | Me + You | The biggest untested area. Needs PayFast values in the Preview environment (see section 5) |
-| 2.2 | Exercise the remaining endpoints against the real database: claim, submit-event and approve, admin listings, guide sponsorship. (Contact, enquiry and add-business with approval are already verified live.) | Me | The rest were only tested with mocked responses |
+| 2.2 | Exercise the last endpoints against the real database: claim and guide-sponsorship checkout. (Verified live on 20 Sept: contact, enquiry, add-business with approval, submit-event with approve and delete, and all nine admin endpoints answering with real data.) | Me | Claim needs a signed-in owner with a document upload; guide sponsorship needs PayFast values in Preview (item 2.1) |
 | 2.3 | Remove the temporary "[monitor copy]" emails that send a copy of every owner-confirmation email to a personal Gmail address (in `confirm-listing.ts` and `owner-confirm-listing.ts`, marked TEMP) | Me, once you say so | Owners' details should not be copied to a personal inbox once the site is live |
 | 2.4 | Add real content where the mockup is empty and you decide to keep it: reviews, views/clicks data, an owner's own enquiries, invoice PDFs | Me (after your decision) | Otherwise these stay honest "No data yet" tiles |
 
