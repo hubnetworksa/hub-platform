@@ -46,8 +46,10 @@ Status as of 20 September 2026. **[Me]** = I can do it. **[You]** = needs your a
 ## 5. Payments, secrets and accounts
 
 - [ ] **[You]** Live PayFast merchant ID, key, passphrase and host as secrets on all three Pages projects (currently sandbox).
-- [ ] **[You]** Confirm the other secrets exist on all three Pages projects: `RESEND_API_KEY`, `CRON_SECRET`, the deploy hook for the admin "Rebuild & deploy" button, and Google sign-in keys for Polokwane and Cape Town.
-- [ ] **[You]** Confirm `RESEND_API_KEY` is set on each Pages project (Production and Preview) and that each site's domain is verified in Resend. All email now goes through the website, so without this messages are still saved and visible in the admin Enquiries tab, but nothing is emailed.
+- [x] Checked on 20 September 2026: the **Production** environment of all three Pages projects already has `RESEND_API_KEY`, `CRON_SECRET`, `GITHUB_DISPATCH_TOKEN` (the rebuild hook), Google sign-in keys and the four PayFast values. Only their names can be seen, not the values.
+- [ ] **[You]** Confirm the PayFast values in Production are the **live** credentials, not the sandbox ones.
+- [ ] **[You]** The **Preview** environment has no secrets at all, so the dev preview cannot send email, take payments or use Google sign-in (a test message on the Cape Town preview was saved but not emailed). To test those on the preview, add `RESEND_API_KEY` (and the PayFast values) to the Preview environment of each project. Production is unaffected.
+- [ ] **[You]** Confirm each site's domain is verified in Resend (the key exists in Production; the sender is `hello@<domain>`). All email now goes through the website, so if a domain is not verified messages are still saved and visible in the admin Enquiries tab, but not emailed.
 - [ ] **[You]** Turn on Cloudflare Turnstile or a rate-limit rule as a second layer in front of the public forms.
 - [ ] **[You]** Real AdSense units in place of the "Advertisement" placeholder boxes; Google Analytics IDs confirmed.
 
