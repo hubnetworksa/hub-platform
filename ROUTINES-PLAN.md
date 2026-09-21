@@ -10,7 +10,8 @@ The aim: every routine does only the work that is needed, uses as little of the 
 |---|---|---|---|
 | **Business routine** (one per city) | Hourly cloud agent | Five jobs: (1) discover new businesses, 3 suburbs per run; (2) discover shopping centres and their tenants; (3) sweep one shopping centre's own website; (4) enrich descriptions and hours of existing businesses; (5) check for permanently closed businesses. Writes a SQL file to `db/routine-updates/<city>/`. | `ROUTINE.capetown.md` (903 lines), `ROUTINE.pretoria.md` (720), `ROUTINE.polokwane.md` (922) |
 | **Events routine** (one per city) | Weekly cloud agent | Finds upcoming public events and proposes them for the Events page. | `ROUTINE.events.<city>.md` (144 lines each) |
-| **News routine** (one per city) | Daily cloud agent | Writes the day's local news articles and the monthly fuel prices. Checked by `npm run check:news` before pushing. | `ROUTINE.news.<city>.md` (174 lines each) |
+| **News routine** (one per city) | Daily cloud agent | Writes the day's local news articles. Checked by `npm run check:news` before pushing. | `ROUTINE.news.<city>.md` (about 145 lines each) |
+| **Fuel prices routine** (one for all three cities) | Monthly: first Wednesday, with two catch-up days | Loads the month's coastal and inland pump prices for all three sites in one run. Split out of the news routine on 21 September because prices only change on the first Wednesday. Guarded by `scripts/fuel-due.mjs` so it does nothing on any other day. | `ROUTINE.fuel.md` |
 | **Owner reminders** | Daily 07:00 UTC, GitHub Actions | Emails owners whose listing confirmation is outstanding. | `.github/workflows/owner-reminders.yml` |
 | **Subscription expiry** | Daily 07:15 UTC, GitHub Actions | Expires paid plans and sponsorships that have lapsed. | `.github/workflows/subscription-expiry.yml` |
 
@@ -49,7 +50,8 @@ How agent output reaches the site: the agent commits a SQL file, and the deploy 
 | **Description and hours enrichment** (job 4) | Its own daily batch routine. Script hands the agent the next batch of businesses that still lack enrichment. Also fills business emails (see 4.2). |
 | **Closed-business check** (job 5) | Weekly, script-first: check the business's website and phone status; the agent only decides the unclear cases. Never deletes, only hides (as today). |
 | **Events** | One shared runbook, weekly. Script drops events already past and skips sources unchanged since last run. |
-| **News** | One shared runbook, daily. Each source fetched once; `npm run check:news` must pass before push; fuel prices only in the monthly window, not daily. Raise the 20-second fetch timeout that is flaky on the City of Cape Town site. |
+| **News** | One shared runbook, daily, news only (fuel is now its own routine, done). Each source fetched once; `npm run check:news` must pass before push. Raise the 20-second fetch timeout that is flaky on the City of Cape Town site. |
+| **Fuel prices** | Done: one runbook for all three cities (Cape Town coastal, Pretoria and Polokwane inland, researched once), monthly, and `scripts/fuel-due.mjs` stops the run on every day except the first Wednesday and the two catch-up days after it. Still to do: a small GitHub Action that runs the guard first and only starts the agent when it is due. |
 | **Owner reminders, subscription expiry** | Keep as GitHub Actions. Review the schedule and add failure alerts. |
 
 ### 4.2 New routines

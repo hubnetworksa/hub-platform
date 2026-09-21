@@ -81,7 +81,8 @@ Today there are nine runbooks totalling about 3,800 lines. The three business ru
 - [ ] **Business routine (Cape Town, Pretoria, Polokwane):** replace the three near-identical runbooks with one shared runbook plus a small per-city config file. Put the five jobs on their own schedules instead of every run (suburb research often; shopping-centre sweep, description enrichment and closed-business check less often; new-mall discovery monthly).
 - [ ] **Stop repeating work:** skip anything already verified recently, track what each run touched in `routine-state.json`, read only the slice of the database snapshot the run needs, and end the run early when nothing is due.
 - [ ] **Move mechanical work out of the AI agent into scripts** that run in GitHub Actions: link and website checks, slug and category validation, SQL syntax check, duplicate detection. The agent then only does the parts that need judgement (finding and verifying new information).
-- [ ] **News routine (daily, three cities):** one shared runbook; fetch each source once; publish only stories that pass `npm run check:news`; fuel prices only in the monthly window, not daily.
+- [x] **Fuel prices split from news:** one monthly routine for all three cities (`ROUTINE.fuel.md`), guarded by `scripts/fuel-due.mjs` so it only runs on the first Wednesday of the month and the two days after. The news runbooks no longer touch fuel.
+- [ ] **News routine (daily, three cities):** one shared runbook (news only); fetch each source once; publish only stories that pass `npm run check:news`.
 - [ ] **Events routine (weekly, three cities):** one shared runbook; only look at sources that changed; drop events that have passed instead of re-checking them.
 - [ ] Give every routine a hard time/step budget, one clear success log line, and a failure that is visible (admin overview health tile).
 

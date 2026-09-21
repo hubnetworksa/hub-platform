@@ -2,8 +2,8 @@
 
 You are a scheduled cloud agent — **separate from this site's hourly
 business-research routine** (`ROUTINE.pretoria.md`) and its weekly events
-routine (`ROUTINE.events.pretoria.md`). You run **once a day** and own two
-tables: `news` and `fuel_prices`. Never touch anything the other routines own, and they never
+routine (`ROUTINE.events.pretoria.md`). You run **once a day** and own one
+table: `news`. Never touch anything the other routines own, and they never
 touch anything you own. You have zero memory of previous runs — everything
 you need is in this file, in `status/pretoria/db-snapshot.json`, and in
 `status/pretoria/news-agent-log.jsonl`.
@@ -91,7 +91,7 @@ news outlet's photo.
 ## Writing the SQL file
 
 One new file per run: `db/routine-updates/pretoria/<UTC timestamp, e.g.
-2026-10-01T06-00-00>.sql`. Only `INSERT OR IGNORE INTO news` (and, monthly, `INSERT OR IGNORE INTO fuel_prices`) statements — nothing
+2026-10-01T06-00-00>.sql`. Only `INSERT OR IGNORE INTO news` statements — nothing
 else. Slug = lowercase-hyphenated title fragment + `-` + `published_date`
 (e.g. `n1-resurfacing-two-lanes-closed-2026-10-01`); if taken, append `-2`.
 
@@ -115,35 +115,9 @@ Motorists are advised to ...',
 
 (Escape a single quote inside a string by doubling it.)
 
-## Monthly fuel prices (the homepage "Fuel price" panel)
+## Fuel prices are not your job
 
-South African pump prices are regulated and change **once a month** (announced
-by the Department of Mineral and Petroleum Resources / Central Energy Fund,
-effective the first Wednesday of the month). The homepage shows this month's
-prices for this site's region — **inland** for PretoriaHub. You keep them current:
-
-1. Check `status/pretoria/db-snapshot.json`'s `fuel_prices` array. If the current
-   month (`YYYY-MM`) already has the four `inland` grades, do nothing here.
-2. Otherwise, once the new prices are announced, find the official
-   announcement and at least one more independent source (AA of South Africa,
-   a major news outlet). Read them. Take the **inland** prices per litre for:
-   `Petrol 95`, `Petrol 93`, `Diesel 50ppm`, `Diesel 500ppm`. Note `Diesel 50ppm` is the 0.005% sulphur grade and
-   `Diesel 500ppm` is the 0.05% sulphur grade — announcements usually label them by sulphur %. (Use the
-   inland region column — Gauteng/Limpopo are inland, Cape Town is coastal.)
-3. Add one `INSERT OR IGNORE INTO fuel_prices` per grade to the same SQL file you
-   write for news (or its own file if no news passed today):
-
-```sql
-INSERT OR IGNORE INTO fuel_prices (period, region, grade, price_cents, change_cents, source_url, verification_json)
-VALUES ('2026-10', 'inland', 'Petrol 95', 2184, -42, 'https://official-announcement-url',
-  '["https://official-announcement-url", "https://second-independent-source"]');
-```
-
-`price_cents` is rand-per-litre times 100 (R21.84 → 2184). `change_cents` is the
-change versus last month's price for that grade (negative = cheaper); work it out
-from the previous month's row in the snapshot, or take the announced change.
-Only use figures that are printed in the sources — never estimate. The check
-script verifies every price appears in a source and fails the file otherwise.
+Fuel prices have their own monthly routine (`ROUTINE.fuel.md`), because pump prices only change on the first Wednesday of the month. Do not write `fuel_prices` rows here.
 
 ## Run the check — every time, before you push
 
