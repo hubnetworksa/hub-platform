@@ -1,5 +1,5 @@
 import type { PagesFunction, R2Bucket } from '@cloudflare/workers-types';
-import { getSite, allowedHostsFor } from '../_lib/site';
+import { getSite, isAllowedMediaHost } from '../_lib/site';
 
 interface Env {
   MEDIA: R2Bucket;
@@ -13,11 +13,11 @@ interface Env {
 // these are real photos, not build-time assets, so they aren't covered by
 // that per-file approach.
 export const onRequestGet: PagesFunction<Env> = async (context) => {
-  const allowedHosts = allowedHostsFor(getSite(context.env.SITE));
+  const site = getSite(context.env.SITE);
   const referer = context.request.headers.get('Referer');
   if (referer) {
     try {
-      if (!allowedHosts.includes(new URL(referer).hostname)) {
+      if (!isAllowedMediaHost(site, new URL(referer).hostname)) {
         return new Response('Forbidden', { status: 403 });
       }
     } catch {

@@ -52,13 +52,21 @@ export function getSite(slug: string | undefined): Site {
   return SITES[slug];
 }
 
-export function allowedHostsFor(site: Site): string[] {
-  // Includes the "dev." branch-preview alias (dev.<project>.pages.dev, used
-  // by the hosted dev environment — see deploy-dev.yml) alongside the bare
-  // pagesDevHost (the project's default/production preview alias) — without
-  // this, browsing the dev preview directly sends a Referer that matches
-  // neither the real domain nor the bare pages.dev host, so this hotlink
-  // guard 403s every logo-icon.png/hero-skyline.jpg/media request (visible
-  // as a missing logo image, broken banner, etc. only on the dev preview).
-  return [site.domain, `www.${site.domain}`, site.pagesDevHost, `dev.${site.pagesDevHost}`];
+// A hostname allowed to hotlink this site's media (real domain, or any
+// Cloudflare Pages preview of this project). Cloudflare hands out a new
+// subdomain of pagesDevHost for every kind of preview — the hosted dev
+// environment (dev.<host>), a branch alias (ethan-orjd.<host>), and a
+// fresh one per deployment (<commit-hash>.<host>) — so this matches ANY
+// subdomain of pagesDevHost rather than keeping a fixed list of the ones
+// seen so far. Getting this wrong 403s every logo-icon.png/hero-skyline.jpg/
+// media request when browsed from a preview URL not on the list — visible
+// as a missing logo, a broken banner, or a broken image icon in place of a
+// real photo, confirmed live on the Ethan branch preview (21 September).
+export function isAllowedMediaHost(site: Site, hostname: string): boolean {
+  return (
+    hostname === site.domain ||
+    hostname === `www.${site.domain}` ||
+    hostname === site.pagesDevHost ||
+    hostname.endsWith(`.${site.pagesDevHost}`)
+  );
 }

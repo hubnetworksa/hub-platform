@@ -1,5 +1,5 @@
 import type { PagesFunction, Fetcher } from '@cloudflare/workers-types';
-import { getSite, allowedHostsFor } from './_lib/site';
+import { getSite, isAllowedMediaHost } from './_lib/site';
 
 interface Env {
   ASSETS: Fetcher;
@@ -7,11 +7,11 @@ interface Env {
 }
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
-  const allowedHosts = allowedHostsFor(getSite(context.env.SITE));
+  const site = getSite(context.env.SITE);
   const referer = context.request.headers.get('Referer');
   if (referer) {
     try {
-      if (!allowedHosts.includes(new URL(referer).hostname)) {
+      if (!isAllowedMediaHost(site, new URL(referer).hostname)) {
         return new Response('Forbidden', { status: 403 });
       }
     } catch {
