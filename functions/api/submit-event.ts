@@ -115,8 +115,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const ticketUrl = fields.ticketUrl;
   if (ticketUrl && !isHttpUrl(ticketUrl)) return json({ ok: false, error: 'The ticket URL should start with https://.' }, 400);
+  // Must be one of our own uploads (see /api/submit-event-image), never an
+  // arbitrary external link — organisers upload the poster, they don't paste
+  // a URL to it (a pasted link can 404 or get replaced later; an upload is a
+  // real copy we keep).
   const imageUrl = fields.imageUrl;
-  if (imageUrl && !isHttpUrl(imageUrl)) return json({ ok: false, error: 'The poster link should be a full https:// address.' }, 400);
+  if (imageUrl && !/^\/media\/event-submissions\/[a-zA-Z0-9-]+\.(jpg|png|webp)$/.test(imageUrl)) {
+    return json({ ok: false, error: 'Please upload a poster image using the upload button, not a pasted link.' }, 400);
+  }
 
   const contactEmail = fields.contactEmail;
   if (contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {

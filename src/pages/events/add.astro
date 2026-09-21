@@ -52,11 +52,27 @@ const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '')
               <p style="margin:0;font-size:12px;font-weight:600;color:var(--muted);line-height:1.5">We link straight to your seller — we don't take a cut of ticket sales.</p>
             </div>
           </div>
-          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Poster or photo
-            <div style="position:relative;height:190px;border:2px dashed var(--border);border-radius:12px;overflow:hidden;background:var(--bg-subtle);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px">
-              <span style="font-size:13px;font-weight:700;color:var(--muted);text-align:center">Paste a link to your event poster</span>
-              <input class="add-input" type="url" name="imageUrl" maxlength="300" placeholder="https://…/poster.jpg" style="width:100%;max-width:420px;padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;font-weight:500;outline:none;background:#fff;color:var(--text)" />
-            </div></label>
+          <div style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+            Poster or photo <span style="font-weight:600;color:var(--muted);font-size:12px">optional</span>
+            <input type="hidden" name="imageUrl" id="event-image-url" />
+            <div id="image-drop" style="position:relative;min-height:190px;border:2px dashed var(--border);border-radius:12px;overflow:hidden;background:var(--bg-subtle);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px;text-align:center">
+              <div id="image-empty" style="display:flex;flex-direction:column;align-items:center;gap:10px">
+                <span style="font-size:13px;font-weight:700;color:var(--muted)">Upload your event poster</span>
+                <label for="event-image-file" style="padding:11px 18px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;cursor:pointer">Choose image</label>
+                <span style="font-size:12px;font-weight:600;color:var(--muted);max-width:340px">Landscape works best — <strong>1200 × 630px</strong> is ideal. JPG, PNG or WEBP, under 5MB.</span>
+              </div>
+              <div id="image-preview-wrap" hidden style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;padding:6px 0">
+                <img id="image-preview" alt="" style="max-width:100%;max-height:160px;border-radius:8px;display:block;object-fit:contain" />
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center">
+                  <span id="image-filename" style="font-size:12px;font-weight:700;color:var(--muted)"></span>
+                  <label for="event-image-file" style="padding:8px 14px;border-radius:8px;border:2px solid var(--border);background:#fff;color:var(--navy);font-size:12.5px;font-weight:800;cursor:pointer">Change</label>
+                  <button type="button" id="image-remove" style="padding:8px 14px;border-radius:8px;border:2px solid var(--border);background:#fff;color:var(--danger);font-size:12.5px;font-weight:800;cursor:pointer">Remove</button>
+                </div>
+              </div>
+              <input type="file" id="event-image-file" accept="image/jpeg,image/png,image/webp" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden" />
+            </div>
+            <p id="image-status" style="margin:0;font-size:12px;font-weight:700;color:var(--muted);min-height:1.2em"></p>
+          </div>
           <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Description
             <textarea class="add-input" name="description" rows="4" maxlength="600" placeholder="Two or three sentences — what's on, who's playing, what's included." style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;resize:vertical;background:#fff;color:var(--text)"></textarea></label>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
@@ -129,8 +145,76 @@ const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '')
   const now = new Date();
   dateInput.min = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
+  // ---- Poster upload: uploads immediately on choosing a file (not on form
+  // submit), so the organiser sees straight away if it didn't work rather
+  // than losing the rest of the form's typing to a failed upload later. ----
+  const imageFile = document.getElementById('event-image-file') as HTMLInputElement;
+  const imageUrlField = document.getElementById('event-image-url') as HTMLInputElement;
+  const imageEmpty = document.getElementById('image-empty')!;
+  const imagePreviewWrap = document.getElementById('image-preview-wrap')!;
+  const imagePreview = document.getElementById('image-preview') as HTMLImageElement;
+  const imageFilename = document.getElementById('image-filename')!;
+  const imageStatus = document.getElementById('image-status')!;
+  const imageRemoveBtn = document.getElementById('image-remove') as HTMLButtonElement;
+  let uploadingImage = false;
+
+  function resetImage() {
+    imageFile.value = '';
+    imageUrlField.value = '';
+    imagePreviewWrap.hidden = true;
+    imageEmpty.style.display = 'flex';
+  }
+
+  imageFile.addEventListener('change', async () => {
+    const file = imageFile.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      imageStatus.style.color = 'var(--danger)';
+      imageStatus.textContent = 'That image is over 5MB — please use a smaller file.';
+      imageFile.value = '';
+      return;
+    }
+
+    const localPreview = URL.createObjectURL(file);
+    imagePreview.src = localPreview;
+    imageFilename.textContent = file.name;
+    imageEmpty.style.display = 'none';
+    imagePreviewWrap.hidden = false;
+    imageStatus.style.color = 'var(--muted)';
+    imageStatus.textContent = 'Uploading…';
+    uploadingImage = true;
+
+    try {
+      const body = new FormData();
+      body.append('photo', file);
+      const res = await fetch('/api/submit-event-image', { method: 'POST', body });
+      const result = await res.json();
+      if (result.ok) {
+        imageUrlField.value = result.url;
+        imageStatus.textContent = 'Uploaded.';
+      } else {
+        imageUrlField.value = '';
+        imageStatus.style.color = 'var(--danger)';
+        imageStatus.textContent = result.error || 'Could not upload that image — please try again.';
+      }
+    } catch {
+      imageUrlField.value = '';
+      imageStatus.style.color = 'var(--danger)';
+      imageStatus.textContent = 'Could not upload that image — please try again.';
+    } finally {
+      uploadingImage = false;
+      URL.revokeObjectURL(localPreview);
+    }
+  });
+
+  imageRemoveBtn.addEventListener('click', () => {
+    resetImage();
+    imageStatus.textContent = '';
+  });
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (uploadingImage) return void (status.textContent = 'Your poster is still uploading — one moment.');
     const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
     if (!data.title?.trim()) return void (status.textContent = 'Please give your event a title.');
     if (!data.eventDate) return void (status.textContent = 'Please choose the date of the event.');
@@ -148,6 +232,8 @@ const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '')
       if (result.ok) {
         // Saved for review and emailed to our team by the server.
         form.reset();
+        resetImage();
+        imageStatus.textContent = '';
         loadedAt = Date.now();
         status.textContent = "Thanks! Your event is in for review. It goes live once we've approved it, and we'll be in touch if we need anything else.";
       } else {
