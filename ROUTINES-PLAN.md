@@ -47,17 +47,26 @@ How agent output reaches the site: the agent commits a SQL file, and the deploy 
 |---|---|
 | **1. Business discovery** (job 1) | Own routine. A script picks the next suburbs and pre-computes the known businesses for just those suburbs (phone and address dedupe done by script, including neighbouring suburbs). Agent searches and verifies only. Runs hourly while a city has unfinished suburbs, then weekly. |
 | **2. Shopping centres** (jobs 2 and 3 plus new-mall discovery) | Own routine, one centre per run: read that centre's own website, link or unlink tenants, and add tenants that are new businesses. Daily until every centre has been swept once, then weekly. New-mall discovery monthly. Jobs 2 and 3 share the same centre list and state, so they belong together. |
-| **3. Description and hours enrichment** (job 4) | Own routine, daily batch. A script hands the agent the next batch of businesses that still lack enrichment (guarded by `description_enriched_at IS NULL`). Also picks up business emails (see 4.2). Runs after discovery, never at the same time. |
+| **3. Description, hours and email enrichment** (job 4) | Own routine, daily batch. A script hands the agent the next batch of businesses that still lack enrichment (guarded by `description_enriched_at IS NULL`). For each one the agent rewrites the description, captures the trading hours **and finds the company's contact email**. Runs after discovery, never at the same time. Details of the email rule are below. |
 | **4. Closed-business check** (job 5) | Own routine, weekly. Script-first: check the business's website and phone status; the agent only decides the unclear cases. Never deletes, only hides (as today). |
 | **Events** | One shared runbook, weekly. Script drops events already past and skips sources unchanged since last run. |
 | **News** | One shared runbook, daily, news only (fuel is now its own routine, done). Each source fetched once; `npm run check:news` must pass before push. Raise the 20-second fetch timeout that is flaky on the City of Cape Town site. |
 | **Fuel prices** | Done: one runbook for all three cities (Cape Town coastal, Pretoria and Polokwane inland, researched once), monthly, and `scripts/fuel-due.mjs` stops the run on every day except the first Wednesday and the two catch-up days after it. Still to do: a small GitHub Action that runs the guard first and only starts the agent when it is due. |
 | **Owner reminders, subscription expiry** | Keep as GitHub Actions. Review the schedule and add failure alerts. |
 
+**Company emails in the enrichment routine (new rule)**
+
+- Job 4 gains one more allowed write: setting `email` on an existing business, **only when `email` is empty** (`UPDATE ... SET email = ? WHERE id = ? AND (email IS NULL OR email = '')`). It never overwrites an email that is already there.
+- **Only a company contact address that is published by the business itself:** its own website (contact page, footer, or schema markup) or its official listing. Generic role addresses such as info@, hello@, sales@ or accounts@ are fine. Personal addresses of named individuals, addresses found on third-party data-broker sites, and guessed addresses are never used.
+- **Verification:** the address must appear on a page that also carries the business's name or phone number, and its domain should match the business's website when it has one. The agent records the page it came from in `source_urls`.
+- **Purpose and privacy:** the email is used to send the ownership-verification link when someone claims the business (already built). It is not shown on the public pages today and should stay that way. Handle it under the POPIA wording in the Privacy page.
+- Existing businesses that already have a description but no email are queued by the script for an email-only pass, so the whole directory gets covered, not just newly discovered businesses.
+- The data health report tracks the share of businesses with an email per city (today 2 to 7%).
+
 **Why splitting works, and how the pieces stay out of each other's way**
 
 - Each routine has its own schedule, its own small runbook and its own state file (for example `discovery-state.json`, `centres-state.json`), instead of one shared `routine-state.json` that every job edits. That avoids merge conflicts when two routines commit close together.
-- Writes stay narrow and guarded, exactly as the current runbook already requires: discovery only inserts new businesses; the centre routine only changes `shopping_center_id`; enrichment only changes `description`, `hours` and `description_enriched_at` once per business; the closed check only sets `closed_at` once.
+- Writes stay narrow and guarded, exactly as the current runbook already requires: discovery only inserts new businesses; the centre routine only changes `shopping_center_id`; enrichment only changes `description`, `hours`, `description_enriched_at` and an empty `email`; the closed check only sets `closed_at` once.
 - Ordering rule: enrichment and the closed check work on businesses that already exist, so they are scheduled to start after the discovery run for that city, not at the same minute.
 - Each routine still uses one shared runbook for all three cities plus a city config, so this is four runbooks in total, not twelve.
 - Jobs 2 and 3 are merged into one routine on purpose (same centre list and state). If you would rather have five, they can be split further, at the cost of loading the centre list twice.
