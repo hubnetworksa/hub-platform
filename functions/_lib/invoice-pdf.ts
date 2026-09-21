@@ -63,7 +63,7 @@ export async function buildInvoicePdf(input: InvoiceInput): Promise<Uint8Array> 
   doc.setTitle(`Invoice ${input.invoiceNumber} — ${input.siteName}`);
   doc.setAuthor(input.siteName);
   doc.setProducer(input.siteName);
-  doc.setSubject(`Tax invoice ${input.invoiceNumber}`);
+  doc.setSubject(`Invoice ${input.invoiceNumber}`);
   const page = doc.addPage([PAGE_W, PAGE_H]);
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -102,7 +102,7 @@ export async function buildInvoicePdf(input: InvoiceInput): Promise<Uint8Array> 
   page.drawText(input.siteName, { x: wordmarkX, y: PAGE_H - 44, size: 19, font: bold, color: navy });
   page.drawText(input.domain, { x: wordmarkX, y: PAGE_H - 60, size: 9.5, font, color: grey });
 
-  const title = 'TAX INVOICE';
+  const title = 'INVOICE';
   const titleSize = 20;
   const titleW = bold.widthOfTextAtSize(title, titleSize);
   page.drawText(title, { x: PAGE_W - MARGIN - titleW, y: PAGE_H - 42, size: titleSize, font: bold, color: navy });
@@ -233,7 +233,7 @@ export async function buildInvoicePdf(input: InvoiceInput): Promise<Uint8Array> 
   page.drawLine({ start: { x: MARGIN, y: footerY + 24 }, end: { x: PAGE_W - MARGIN, y: footerY + 24 }, thickness: 0.75, color: lightGrey });
   page.drawText(input.siteName, { x: MARGIN, y: footerY + 9, size: 9, font: bold, color: navy });
   page.drawText(`${input.domain}  ·  ${input.contactEmail}`, { x: MARGIN, y: footerY - 3, size: 8.5, font, color: grey });
-  page.drawText('This is a computer-generated tax invoice — no signature is required.', { x: MARGIN, y: footerY - 15, size: 8, font, color: grey });
+  page.drawText('This is a computer-generated invoice — no signature is required.', { x: MARGIN, y: footerY - 15, size: 8, font, color: grey });
   const invLabel = `Invoice ${input.invoiceNumber}`;
   const invLabelW = font.widthOfTextAtSize(invLabel, 8.5);
   page.drawText(invLabel, { x: PAGE_W - MARGIN - invLabelW, y: footerY + 9, size: 8.5, font, color: grey });
