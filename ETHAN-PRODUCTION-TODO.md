@@ -73,6 +73,8 @@ Status as of 20 September 2026. **[Me]** = I can do it. **[You]** = needs your a
 
 ## 7. Scheduled routines: rewrite, then add the missing ones
 
+The full plan is in `ROUTINES-PLAN.md` (inventory, what is inefficient, target set of routines, rollout order and decisions needed).
+
 Today there are nine runbooks totalling about 3,800 lines. The three business runbooks (700 to 920 lines each) are near-copies with only the city changed, and every run re-reads a lot before it does anything. The aim is routines that do only the work that is needed and nothing else.
 
 **Rewrite the existing routines (all [Me])**
