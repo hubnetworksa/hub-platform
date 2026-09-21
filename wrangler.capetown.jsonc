@@ -26,5 +26,22 @@
       "binding": "MEDIA",
       "bucket_name": "thecapetownhub-media"
     }
-  ]
+  ],
+
+  // Ethan-branch-only: PayFast SANDBOX credentials for the dev preview
+  // (Production has its own, set as encrypted Pages secrets — never
+  // touched by this file). These are PayFast's own publicly documented
+  // sandbox test pair (developers.payfast.co.za), safe to commit — they
+  // only work against sandbox.payfast.co.za and move no real money. Preview
+  // deploys use this env.preview block automatically; Production ignores it.
+  "env": {
+    "preview": {
+      "vars": {
+        "PAYFAST_MERCHANT_ID": "10004002",
+        "PAYFAST_MERCHANT_KEY": "q1cd2rdny4a53",
+        "PAYFAST_PASSPHRASE": "payfast",
+        "PAYFAST_HOST": "sandbox.payfast.co.za"
+      }
+    }
+  }
 }
