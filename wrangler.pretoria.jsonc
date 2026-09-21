@@ -46,7 +46,11 @@
         "PAYFAST_MERCHANT_ID": "10004002",
         "PAYFAST_MERCHANT_KEY": "q1cd2rdny4a53",
         "PAYFAST_PASSPHRASE": "payfast",
-        "PAYFAST_HOST": "sandbox.payfast.co.za"
+        "PAYFAST_HOST": "sandbox.payfast.co.za",
+        // Not a third-party secret — our own admin-sweep endpoints just
+        // check this string matches, so a freshly generated Preview-only
+        // value is exactly as valid as Production's own (different) value.
+        "CRON_SECRET": "191aaf944fa3bb5f8b1fce46e55917513371444c0373f1b3"
       },
       "d1_databases": [
         {
