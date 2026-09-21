@@ -139,22 +139,28 @@ export function buildCheckoutParams(fields: Record<string, string | undefined>, 
 }
 
 // The Subscriptions REST API uses a DIFFERENT signature scheme than the
-// checkout/ITN flow above: headers + params merged, sorted alphabetically
-// (PHP `ksort` — the opposite rule from the fixed field order used for
-// checkout), passphrase appended, MD5'd, sent as a `signature` header
-// rather than a form field. Confirmed against PayFast's own SDK source
-// (Auth.php / PayFastApi.php), used here only for cancelling a
-// subscription — pause/resume/update follow the identical pattern if
-// ever needed.
+// checkout/ITN flow above: headers + params + passphrase all merged into
+// ONE object and sorted alphabetically together (PHP `ksort`) — unlike
+// checkout, where passphrase is always appended last regardless of the
+// fixed field order. Getting this wrong doesn't fail loudly: PayFast still
+// returns a 401 "Merchant authorization failed", identical to a genuinely
+// wrong merchant ID or passphrase, so it looks like a credentials problem
+// rather than a field-ordering one. Confirmed against two independent
+// working implementations (github.com/payfast-api/core,
+// github.com/jpbester/payfast-mcp) and directly against the PayFast
+// sandbox: appending passphrase last gets "Merchant authorization failed";
+// sorting it in alphabetically (its place is between "merchant-id" and
+// "timestamp") gets past authorization to the next real validation step.
+// Used here for cancelling a subscription — pause/resume/update follow the
+// identical pattern if ever needed.
 async function signApiRequest(
   passphrase: string,
   headers: Record<string, string>,
   params: Record<string, string>
 ): Promise<string> {
-  const merged: Record<string, string> = { ...headers, ...params };
+  const merged: Record<string, string> = { ...headers, ...params, passphrase };
   const keys = Object.keys(merged).sort();
   const parts = keys.map((k) => `${k}=${phpUrlEncode(merged[k])}`);
-  parts.push(`passphrase=${phpUrlEncode(passphrase)}`);
   return md5(parts.join('&'));
 }
 
@@ -189,7 +195,23 @@ export async function cancelPayfastSubscription(env: PayfastEnv, token: string):
     },
   });
   const body = await res.text();
-  return { ok: res.ok, status: res.status, body };
+
+  // PayFast doesn't reliably use the HTTP status to mean success — a token
+  // it can't find still comes back as HTTP 200 with a JSON body saying
+  // {"code":400,"status":"failed",...}, confirmed directly against the
+  // sandbox. Trusting res.ok alone here would tell an owner "cancelled"
+  // while PayFast quietly did nothing, and keep charging their card — the
+  // exact failure mode this function exists to prevent. Treat it as failed
+  // whenever the body itself says so, even on a 2xx response.
+  let bodyOk = res.ok;
+  try {
+    const parsed = JSON.parse(body) as { code?: number; status?: string };
+    if (parsed.status === 'failed' || (typeof parsed.code === 'number' && parsed.code >= 400)) bodyOk = false;
+  } catch {
+    // Not JSON — fall back to the HTTP status alone.
+  }
+
+  return { ok: res.ok && bodyOk, status: res.status, body };
 }
 
 // Checks the incoming ITN's host actually resolves to one of PayFast's own
