@@ -1,7 +1,7 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { getSite } from '../../_lib/site';
-import { signFields, payfastConfigured, type PayfastEnv } from '../../_lib/payfast';
+import { signFields, buildCheckoutParams, payfastConfigured, type PayfastEnv } from '../../_lib/payfast';
 import {
   TIER_NAMES,
   isSlotTaken,
@@ -119,7 +119,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   };
 
   const signature = await signFields(fields, context.env.PAYFAST_PASSPHRASE!);
-  const params = new URLSearchParams({ ...fields, signature });
+  const params = buildCheckoutParams(fields, signature);
 
   return json({ ok: true, redirectUrl: `https://${context.env.PAYFAST_HOST}/eng/process?${params.toString()}` });
 };

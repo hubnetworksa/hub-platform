@@ -2,7 +2,7 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSite } from '../_lib/site';
 import { rateLimited } from '../_lib/messages';
 import { getSessionUser } from '../_lib/auth';
-import { signFields, payfastConfigured, type PayfastEnv } from '../_lib/payfast';
+import { signFields, buildCheckoutParams, payfastConfigured, type PayfastEnv } from '../_lib/payfast';
 import { TIER_NAMES, tierPriceCents, centsToRand } from '../_lib/pricing';
 import { sendEmail } from '../_lib/send-email';
 import { escapeHtml } from '../../src/lib/business-submission';
@@ -193,7 +193,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     cycles: '0',
   };
   const signature = await signFields(fields, context.env.PAYFAST_PASSPHRASE!);
-  const params = new URLSearchParams({ ...fields, signature });
+  const params = buildCheckoutParams(fields, signature);
   const redirectUrl = `https://${context.env.PAYFAST_HOST}/eng/process?${params.toString()}`;
 
   return json({ ok: true, reviewUrl, redirectUrl });

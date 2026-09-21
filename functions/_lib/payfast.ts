@@ -112,6 +112,32 @@ export async function signFields(fields: Record<string, string | undefined>, pas
   return md5(buildSignatureString(fields, passphrase));
 }
 
+// Builds the actual outgoing query string for the checkout redirect — the
+// exact same field set the signature was computed over, and nothing more.
+//
+// This matters because buildSignatureString skips any field that's
+// undefined OR an empty string (PayFast's own documented behaviour: an
+// unused optional field is simply left out). Naively building
+// `new URLSearchParams({ ...fields, signature })` instead sends every key
+// that exists in the object, empty strings included (e.g. a plain tier
+// upgrade's `custom_str3: productTarget ?? ''`). PayFast then sees a field
+// in the request that wasn't part of what it was signed over, recomputes a
+// different signature on its end, and rejects the whole checkout with
+// "Generated signature does not match submitted signature" — confirmed
+// directly against the sandbox. Always build the redirect URL through this
+// function, never through URLSearchParams directly, so the signed fields
+// and the sent fields can never drift apart again.
+export function buildCheckoutParams(fields: Record<string, string | undefined>, signature: string): URLSearchParams {
+  const params = new URLSearchParams();
+  for (const key of FIELD_ORDER) {
+    const value = fields[key];
+    if (value === undefined || value === '') continue;
+    params.set(key, value);
+  }
+  params.set('signature', signature);
+  return params;
+}
+
 // The Subscriptions REST API uses a DIFFERENT signature scheme than the
 // checkout/ITN flow above: headers + params merged, sorted alphabetically
 // (PHP `ksort` — the opposite rule from the fixed field order used for
