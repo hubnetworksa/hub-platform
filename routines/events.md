@@ -14,7 +14,17 @@ If you cannot find 3 qualifying independent sources agreeing on the same event w
 
 ## Images
 
-First try an image the organiser or venue has **explicitly made free to reuse** (their press or media kit, or a photo marked Creative Commons or public domain). This is rare: do not spend long hunting for one. Otherwise search a free stock site (Pexels, Unsplash, Pixabay) for a **themed** image matching the event's category, not the specific event, and set `image_source` to `'stock'` with a short `image_credit` such as "Photo via Pexels". Use `'official'` when you used an explicitly reusable organiser or venue image, with `image_credit` saying why it is free. If nothing usable turns up, leave `image_url`, `image_credit` and `image_source` as `NULL`.
+First try an image the organiser or venue has **explicitly made free to reuse** (their press or media kit, or a photo marked Creative Commons or public domain). This is rare: do not spend long hunting for one. Otherwise search a free stock site (Pexels, Unsplash, Pixabay) for a **themed** image matching the event's category, not the specific event, and set `image_source` to `'stock'` with a short `image_credit` such as "Photo via Pexels". Use `'official'` when you used an explicitly reusable organiser or venue image, with `image_credit` saying why it is free. **If nothing usable turns up, leave `image_url`, `image_credit` and `image_source` as `NULL` — do not skip the event over a missing image.** A separate step (below) fills in a generated one for anything still blank once the event is live, so every event ends up with an image either way, never a placeholder.
+
+### Filling in the rest: `scripts/generate-event-images.mjs`
+
+Run once per city after this run's SQL has been applied (i.e. after the deploy that inserts these events), not by the agent itself — it needs Cloudflare credentials the agent doesn't have:
+
+```
+node scripts/generate-event-images.mjs --site <city> [--limit 20]
+```
+
+It finds every event with `image_url IS NULL`, generates a free, non-copyrighted, flat-illustration scene matching the event's `type` (Market, Music, Sport, Theatre, Food & Drink, Family, Other) via Cloudflare Workers AI (`@cf/black-forest-labs/flux-1-schnell` — no external API key, billed against this account's own free daily neuron allowance, comfortably enough for the volume this routine produces), stores it in this site's own R2 bucket at `events/<slug>.jpg`, and sets `image_url = '/media/events/<slug>.jpg'`, `image_credit = 'AI-generated image'`, `image_source = 'ai'`. It never touches an event that already has an image (real or generated), so it's safe to run repeatedly or fold into the deploy workflow as its own step. `--dry-run` lists what it would generate without spending anything.
 
 ## The SQL file
 

@@ -32,6 +32,7 @@ One shared runbook per routine type serves all three cities: the city is passed 
 | `health.mjs [--json]` | Last run and lateness per routine and city, from the logs; exit code 1 when anything is late. For the admin health tile and a GitHub Action alert. |
 | `../fuel-due.mjs` | Guard for the fuel routine (first Wednesday of the month, South African time). |
 | `../check-news.mjs` | Existing gate for news and fuel rows. |
+| `../generate-event-images.mjs --site C` | Gives every event with no image a free, non-copyrighted, AI-generated one matching its type (Cloudflare Workers AI, no external key). Run after an events deploy, not by the agent — done live for Pretoria on 21 September (all 20 events that had none). |
 
 State lives in small per-routine files (`status/<city>/state/discovery.json`, `centres.json`, `enrichment.json`, `closed-check.json`) so two routines never edit the same file. A new shopping centre found by discovery queues itself for its first sweep because the centres routine treats "no recorded sweep" as "never swept", so no routine writes into another's state.
 
@@ -59,5 +60,6 @@ node scripts/fuel-due.mjs --date 2026-10-07
 
 - A validator for events (like `validate.mjs`) and for tourism proposals.
 - A small GitHub Action that runs `fuel-due.mjs` first and only starts the fuel agent when due.
+- A GitHub Action step that runs `generate-event-images.mjs` for each city right after an events deploy, so this stops being a manual step once the routine itself is scheduled.
 - Batched daily apply-and-deploy of routine SQL, and lighter build reads, so routine commits do not each trigger a full three-city deploy (see `ROUTINES-PLAN.md`, phase 0).
 - The database backup routine, the data health report and the expired-content tidy-up (script-only routines listed in the plan).
