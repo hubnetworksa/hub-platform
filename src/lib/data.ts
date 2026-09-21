@@ -253,6 +253,7 @@ export interface Event {
   tiers_json: string | null;
   description: string;
   featured: number;
+  event_owner_user_id: number | null;
 }
 
 export interface EventTier {

@@ -66,6 +66,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         host: string | null;
         image_url: string | null;
         description: string;
+        submitted_by_user_id: number | null;
       }>();
     if (!sub) return json({ ok: false, error: 'That submission is already gone.' }, 404);
 
@@ -85,10 +86,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     await db.batch([
       db
         .prepare(
-          `INSERT INTO events (slug, title, type, event_date, event_time, venue, suburb, price, ticket_url, host, image_url, description, source)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'organiser')`
+          `INSERT INTO events (slug, title, type, event_date, event_time, venue, suburb, price, ticket_url, host, image_url, description, source, event_owner_user_id)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'organiser', ?)`
         )
-        .bind(slug, sub.title, isEventType(sub.type) ? sub.type : 'Music', sub.event_date, sub.event_time, sub.venue, sub.suburb, sub.price, sub.ticket_url, sub.host, sub.image_url, sub.description),
+        .bind(slug, sub.title, isEventType(sub.type) ? sub.type : 'Music', sub.event_date, sub.event_time, sub.venue, sub.suburb, sub.price, sub.ticket_url, sub.host, sub.image_url, sub.description, sub.submitted_by_user_id ?? null),
       db.prepare('DELETE FROM event_submissions WHERE id = ?').bind(id),
     ]);
     await logActivity(db, 'event_approved', sub.title, `Organiser submission approved by ${user.email}.`);

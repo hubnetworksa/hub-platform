@@ -1,0 +1,225 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import site from '../../site';
+
+const ICONS = {
+  search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+};
+
+const INPUT = 'padding:13px;border:2px solid var(--border);border-radius:11px;font-size:14.5px;outline:none;background:#fff;color:var(--text)';
+---
+
+<BaseLayout title="Claim an event" description={`Claim an existing event listing on ${site.siteName}.`} noindex={true}>
+  <main style="max-width:900px;margin:0 auto;padding:clamp(22px,3.5vw,42px) 20px 60px">
+    <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Claim a listing</span>
+    <h1 style="margin:12px 0 10px;font-size:clamp(26px,4.2vw,42px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);max-width:20ch">Prove it's yours, then it's yours to edit</h1>
+    <p style="margin:0 0 24px;font-size:16px;line-height:1.6;color:var(--text);max-width:52ch">Claiming is free. A person reviews every claim before ownership transfers.</p>
+
+    <p id="auth-check" style="color:var(--muted);margin:0 0 24px">Checking your account…</p>
+
+    <div id="search-section" hidden style="margin-bottom:24px">
+      <h2 style="margin:0 0 12px;font-size:13px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Find your event</h2>
+      <div id="combobox" style="position:relative;display:flex;align-items:center;gap:10px;padding:0 14px;border:2px solid var(--border);border-radius:11px;background:#fff;">
+        <Icon path={ICONS.search} size={17} />
+        <input type="text" id="search-input" autocomplete="off" placeholder="Start typing an event title…" role="combobox" aria-expanded="false" aria-autocomplete="list" aria-controls="search-results" style="flex:1;border:0;background:none;font-size:15px;padding:14px 0;outline:none;color:var(--text);" />
+        <span id="search-spinner" class="spinner" hidden></span>
+        <ul id="search-results" role="listbox" hidden style="list-style:none;position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:20;margin:0;padding:6px;border:2px solid var(--border);border-radius:11px;background:#fff;box-shadow:0 12px 28px rgba(16,26,51,.14);max-height:280px;overflow-y:auto;"></ul>
+      </div>
+    </div>
+
+    <div id="selected-section" hidden>
+      <div style="border:2px solid var(--navy);border-radius:14px;padding:18px;background:var(--bg-subtle);margin-bottom:24px">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+          <div style="min-width:0">
+            <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Claiming</div>
+            <div id="sum-name" style="font-size:19px;font-weight:800;color:var(--navy);letter-spacing:-.02em;margin-top:5px"></div>
+            <div id="sum-meta" style="font-size:13.5px;font-weight:600;color:var(--muted);margin-top:3px"></div>
+          </div>
+          <button type="button" id="change-selection" style="flex-shrink:0;border:0;background:none;color:var(--accent);font-size:13px;font-weight:800;cursor:pointer;padding:2px 0">Change</button>
+        </div>
+      </div>
+
+      <form id="claim-form" style="display:flex;flex-direction:column;gap:15px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Your full name
+            <input type="text" id="contact-name" name="contactName" autocomplete="name" required maxlength="120" style={INPUT} /></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Your role
+            <select id="role-note" name="roleNote" style={INPUT}>
+              <option>Organiser</option><option>Venue</option><option>Ticket seller</option><option>Appointed agent</option>
+            </select></label>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:15px">
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Your email
+            <input type="email" id="contact-email" name="contactEmail" autocomplete="email" required maxlength="120" style={INPUT} /></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Your phone number
+            <input type="tel" id="contact-phone" name="contactPhone" autocomplete="tel" required maxlength="40" style={INPUT} /></label>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Anything we should know?
+          <textarea id="contact-note" name="note" rows="3" maxlength="400" placeholder="How you're connected to this event" style={`${INPUT};resize:vertical`}></textarea></label>
+        <label style="display:flex;align-items:flex-start;gap:10px;font-size:13.5px;font-weight:600;color:var(--text);line-height:1.5">
+          <input type="checkbox" id="confirm" required style="accent-color:var(--accent);width:17px;height:17px;margin-top:2px;flex-shrink:0" />
+          <span>I confirm I am authorised to manage this event.</span>
+        </label>
+        <button type="submit" id="submit-claim" style="align-self:flex-start;padding:14px 22px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;cursor:pointer">Send claim for review</button>
+        <p id="form-status" role="status" style="margin:0;font-size:13px;color:var(--muted);min-height:1.2em"></p>
+      </form>
+    </div>
+
+    <div id="success-card" hidden style="border:2px solid var(--navy);border-radius:16px;padding:22px;background:var(--bg-subtle)">
+      <h2 style="margin:0 0 8px;font-size:20px;letter-spacing:-.02em;color:var(--navy)">Claim submitted</h2>
+      <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:var(--text)">A person will review your claim and be in touch.</p>
+      <a href="/my-events/" style="display:inline-block;padding:13px 20px;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;text-decoration:none">Go to my events</a>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  interface SearchResult { id: number; title: string; event_date: string; venue: string | null }
+
+  const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
+  const authCheck = $('auth-check');
+  const searchSection = $('search-section');
+  const selectedSection = $('selected-section');
+  const searchInput = $<HTMLInputElement>('search-input');
+  const resultsList = $('search-results');
+  const spinner = $('search-spinner');
+  const claimForm = $<HTMLFormElement>('claim-form');
+  const status = $('form-status');
+  const submitBtn = $<HTMLButtonElement>('submit-claim');
+
+  let selectedId: number | null = null;
+  let debounceTimer: number;
+
+  const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  // ---------- login gate ----------
+  (async () => {
+    try {
+      const res = await fetch('/api/me');
+      if (res.status === 401) {
+        window.location.href = `/login/?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+        return;
+      }
+    } catch {
+      /* submit re-checks the session */
+    }
+    authCheck.hidden = true;
+    const params = new URLSearchParams(window.location.search);
+    const preselectId = Number(params.get('eventId'));
+    if (preselectId) selectEvent(preselectId, params.get('name') ?? 'this event');
+    else searchSection.hidden = false;
+  })();
+
+  function closeResults() {
+    resultsList.hidden = true;
+    resultsList.innerHTML = '';
+  }
+
+  function selectEvent(id: number, title: string, meta?: string) {
+    selectedId = id;
+    closeResults();
+    searchInput.value = '';
+    searchSection.hidden = true;
+    $('sum-name').textContent = title;
+    $('sum-meta').textContent = meta ?? '';
+    selectedSection.hidden = false;
+  }
+
+  $('change-selection').addEventListener('click', () => {
+    selectedId = null;
+    selectedSection.hidden = true;
+    searchSection.hidden = false;
+  });
+
+  searchInput.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    const q = searchInput.value.trim();
+    if (q.length < 2) {
+      spinner.hidden = true;
+      closeResults();
+      return;
+    }
+    spinner.hidden = false;
+    debounceTimer = window.setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/search-events?q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        spinner.hidden = true;
+        resultsList.hidden = false;
+        const results = data.results as SearchResult[];
+        resultsList.innerHTML = results.length
+          ? results
+              .map(
+                (e) =>
+                  `<li style="margin-top:2px"><button type="button" data-id="${e.id}" data-title="${esc(e.title)}" data-meta="${esc([e.event_date, e.venue].filter(Boolean).join(' · '))}" style="display:block;width:100%;text-align:left;padding:10px 12px;border-radius:8px;border:0;background:none;color:var(--text);cursor:pointer;font-size:14px;">${esc(e.title)}</button></li>`
+              )
+              .join('')
+          : '<li style="padding:12px;color:var(--muted);font-size:14px;text-align:center;">No matches found.</li>';
+      } catch {
+        spinner.hidden = true;
+      }
+    }, 250);
+  });
+
+  resultsList.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-id]') as HTMLButtonElement | null;
+    if (!btn) return;
+    selectEvent(Number(btn.dataset.id), btn.dataset.title ?? '', btn.dataset.meta);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!(e.target as HTMLElement).closest('#combobox')) closeResults();
+  });
+
+  const val = (id: string) => $<HTMLInputElement>(id).value.trim();
+
+  claimForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!selectedId) return;
+    status.style.color = 'var(--muted)';
+    status.textContent = 'Submitting…';
+    submitBtn.disabled = true;
+    try {
+      const res = await fetch('/api/claim-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eventId: selectedId,
+          contactName: val('contact-name'),
+          contactPhone: val('contact-phone'),
+          contactEmail: val('contact-email'),
+          roleNote: $<HTMLSelectElement>('role-note').value,
+          confirmed: $<HTMLInputElement>('confirm').checked,
+          note: val('contact-note'),
+        }),
+      });
+      if (res.status === 401) {
+        window.location.href = `/login/?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+        return;
+      }
+      const result = await res.json();
+      if (result.ok) {
+        selectedSection.hidden = true;
+        $('success-card').hidden = false;
+        window.scrollTo({ top: 0 });
+      } else {
+        status.style.color = 'var(--danger)';
+        status.textContent = result.error || 'Something went wrong.';
+        submitBtn.disabled = false;
+      }
+    } catch {
+      status.style.color = 'var(--danger)';
+      status.textContent = 'Something went wrong — please try again.';
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+
+<style is:global>
+  #search-section[hidden], #selected-section[hidden], #success-card[hidden], #auth-check[hidden] { display: none !important; }
+  .spinner { width: 15px; height: 15px; flex-shrink: 0; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #combobox:focus-within { border-color: var(--accent) !important; }
+  #search-results button:hover { background: rgba(var(--accent-rgb), 0.09) !important; }
+</style>

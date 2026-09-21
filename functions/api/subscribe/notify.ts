@@ -16,7 +16,7 @@ interface Env extends PayfastEnv {
 // source-IP/hostname validation) doesn't translate directly to a Workers
 // Function. All three here are required to pass, not just the signature.
 //
-// Two payment shapes land here, distinguished by custom_str1's prefix:
+// Three payment shapes land here, distinguished by custom_str1's prefix:
 //  - "business:<id>"   — an existing, owned business upgrading its tier or
 //                         buying a sponsorship slot (started in subscribe/start.ts).
 //  - "submission:<id>" — a not-yet-approved pending_submissions row paying
@@ -26,6 +26,9 @@ interface Env extends PayfastEnv {
 //                         tier is actually applied once the submission is
 //                         approved+confirmed — see business-submission.ts's
 //                         insertApprovedBusiness.
+//  - "event:<id>"      — an owned, already-published event paying the
+//                         once-off "Feature this event" fee (started in
+//                         functions/api/events/feature-start.ts).
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!payfastConfigured(context.env)) return new Response('Not configured', { status: 503 });
 
@@ -42,7 +45,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const db = context.env.DB;
   const [scope, rawId] = (posted.custom_str1 ?? '').split(':');
   const targetId = Number(rawId);
-  if (!targetId || (scope !== 'business' && scope !== 'submission')) {
+  if (!targetId || (scope !== 'business' && scope !== 'submission' && scope !== 'event')) {
     return new Response('Unrecognized payment context', { status: 400 });
   }
 
@@ -66,8 +69,42 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (scope === 'submission') {
     return handleSubmissionPayment(db, targetId, posted, postedAmount, raw);
   }
+  if (scope === 'event') {
+    return handleEventPayment(db, targetId, posted, postedAmount, raw);
+  }
   return handleBusinessPayment(context.env, db, targetId, posted, postedAmount, raw);
 };
+
+async function handleEventPayment(
+  db: D1Database,
+  eventId: number,
+  posted: Record<string, string>,
+  postedAmount: number,
+  raw: string
+): Promise<Response> {
+  const mPaymentId = posted.m_payment_id;
+  const payment = await db
+    .prepare("SELECT id, event_id, amount_cents FROM event_payments WHERE event_id = ? AND m_payment_id = ? AND status = 'pending'")
+    .bind(eventId, mPaymentId)
+    .first<{ id: number; event_id: number; amount_cents: number }>();
+  if (!payment) return new Response('Unknown or already-resolved event payment', { status: 400 });
+
+  // 2. Posted data matches what we expect (amount, with float tolerance for rounding).
+  if (Math.abs(postedAmount - payment.amount_cents / 100) > 0.05) {
+    return new Response('Amount mismatch', { status: 400 });
+  }
+
+  await db
+    .prepare(`UPDATE event_payments SET status = 'complete', raw_itn = ?, paid_at = datetime('now') WHERE id = ?`)
+    .bind(raw, payment.id)
+    .run();
+  await db.prepare(`UPDATE events SET featured = 1, updated_at = datetime('now') WHERE id = ?`).bind(eventId).run();
+
+  const event = await db.prepare('SELECT title FROM events WHERE id = ?').bind(eventId).first<{ title: string }>();
+  if (event) await logActivity(db, 'event_featured', event.title, 'Featured via PayFast.');
+
+  return new Response('OK', { status: 200 });
+}
 
 async function handleBusinessPayment(
   env: Env,

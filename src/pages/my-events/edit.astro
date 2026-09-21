@@ -1,0 +1,167 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { priceRand } from '../../lib/data';
+
+const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '');
+
+const fieldLabel = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)';
+const fieldInput = 'padding:13px;border:2px solid var(--border);border-radius:11px;font-size:14.5px;outline:none;background:#fff;color:var(--text)';
+const cardBox = 'background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden';
+---
+
+<BaseLayout title="Manage event" description="Manage your event listing and featuring." noindex={true}>
+  <main style="max-width:900px;margin:0 auto;padding:clamp(20px,3vw,36px) 20px 60px" data-price-feature={featurePrice}>
+    <div id="loading" style="color:var(--muted);padding:2rem 0;">Loading…</div>
+
+    <div id="dashboard" hidden>
+      <a href="/my-events/" style="display:inline-block;margin-bottom:14px;font-size:13px;font-weight:800;color:var(--muted);text-decoration:none">← My events</a>
+      <h1 id="event-title" style="margin:0 0 4px;font-size:clamp(22px,3.2vw,30px);letter-spacing:-.025em;color:var(--navy)"></h1>
+      <p id="event-meta" style="margin:0 0 22px;font-size:13.5px;font-weight:700;color:var(--muted)"></p>
+
+      <div style={cardBox}>
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy);font-size:15px;font-weight:800;color:var(--navy)">Feature this event</div>
+        <div style="padding:18px">
+          <p id="feature-status" style="margin:0 0 14px;font-size:14px;line-height:1.6;color:var(--text)"></p>
+          <button id="feature-btn" type="button" style="padding:13px 20px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;cursor:pointer">Feature for {featurePrice}</button>
+          <p id="feature-note" role="status" style="margin:10px 0 0;font-size:13px;color:var(--muted);min-height:1.2em"></p>
+        </div>
+      </div>
+
+      <div style={`${cardBox};margin-top:16px`}>
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy);font-size:15px;font-weight:800;color:var(--navy)">Event details</div>
+        <form id="event-form" style="padding:18px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+            <label style={fieldLabel}>Venue <input class="ev-input" type="text" name="venue" maxlength="120" style={fieldInput} /></label>
+            <label style={fieldLabel}>Suburb <input class="ev-input" type="text" name="suburb" maxlength="80" style={fieldInput} /></label>
+          </div>
+          <label style={fieldLabel}>Address <input class="ev-input" type="text" name="address" maxlength="200" style={fieldInput} /></label>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+            <label style={fieldLabel}>Price shown on the card <input class="ev-input" type="text" name="price" maxlength="60" style={fieldInput} /></label>
+            <label style={fieldLabel}>Time <input class="ev-input" type="text" name="eventTime" maxlength="60" style={fieldInput} /></label>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+            <label style={fieldLabel}>Ticket URL <input class="ev-input" type="url" name="ticketUrl" maxlength="300" style={fieldInput} /></label>
+            <label style={fieldLabel}>Seller label <input class="ev-input" type="text" name="host" maxlength="80" style={fieldInput} /></label>
+          </div>
+          <label style={fieldLabel}>Description <textarea class="ev-input" name="description" rows="4" maxlength="600" style={`${fieldInput};resize:vertical`}></textarea></label>
+          <button type="submit" style="align-self:flex-start;padding:13px 20px;border:0;border-radius:10px;background:var(--navy);color:#fff;font-size:14px;font-weight:800;cursor:pointer">Save changes</button>
+          <p id="save-status" role="status" style="margin:0;font-size:13px;color:var(--muted);min-height:1.2em"></p>
+        </form>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style is:global>
+  #dashboard[hidden] { display: none !important; }
+  .ev-input:focus { border-color: var(--accent) !important; }
+</style>
+
+<script>
+  const main = document.querySelector('main') as HTMLElement;
+  const featurePrice = main.dataset.priceFeature ?? '—';
+  const params = new URLSearchParams(window.location.search);
+  const eventId = params.get('id');
+
+  const loading = document.getElementById('loading')!;
+  const dashboard = document.getElementById('dashboard')!;
+  const featureStatus = document.getElementById('feature-status')!;
+  const featureBtn = document.getElementById('feature-btn') as HTMLButtonElement;
+  const featureNote = document.getElementById('feature-note')!;
+  const form = document.getElementById('event-form') as HTMLFormElement;
+  const saveStatus = document.getElementById('save-status')!;
+
+  function dateLabel(d: string): string {
+    const dt = new Date(d.includes('T') ? d : `${d}T00:00:00Z`);
+    return isNaN(dt.getTime()) ? d : dt.toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+  }
+
+  async function init() {
+    if (!eventId) {
+      window.location.href = '/my-events/';
+      return;
+    }
+    const res = await fetch(`/api/update-event?id=${encodeURIComponent(eventId)}`);
+    if (res.status === 401) {
+      window.location.href = `/login/?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+      return;
+    }
+    if (res.status === 403) {
+      loading.textContent = 'You do not manage this event.';
+      return;
+    }
+    const data = await res.json();
+    if (!data.ok) {
+      loading.textContent = data.error || 'Could not load this event.';
+      return;
+    }
+    const e = data.event;
+    loading.hidden = true;
+    dashboard.hidden = false;
+
+    document.getElementById('event-title')!.textContent = e.title;
+    document.getElementById('event-meta')!.textContent = [dateLabel(e.event_date), e.venue].filter(Boolean).join(' · ');
+
+    (form.elements.namedItem('venue') as HTMLInputElement).value = e.venue ?? '';
+    (form.elements.namedItem('suburb') as HTMLInputElement).value = e.suburb ?? '';
+    (form.elements.namedItem('address') as HTMLInputElement).value = e.address ?? '';
+    (form.elements.namedItem('price') as HTMLInputElement).value = e.price ?? '';
+    (form.elements.namedItem('eventTime') as HTMLInputElement).value = e.event_time ?? '';
+    (form.elements.namedItem('ticketUrl') as HTMLInputElement).value = e.ticket_url === '#' ? '' : (e.ticket_url ?? '');
+    (form.elements.namedItem('host') as HTMLInputElement).value = e.host ?? '';
+    (form.elements.namedItem('description') as HTMLTextAreaElement).value = e.description ?? '';
+
+    if (e.featured) {
+      featureStatus.textContent = 'This event is featured — top of the Events page until the date passes.';
+      featureBtn.hidden = true;
+    } else {
+      featureStatus.textContent = `Feature it: top of the Events page until the date passes, plus a card on the homepage that week.`;
+      featureBtn.hidden = false;
+    }
+
+    if (params.get('featured')) featureNote.textContent = 'Thanks — your payment is being confirmed. It shows as featured as soon as PayFast confirms it (refresh in a minute).';
+    else if (params.get('feature_cancelled')) featureNote.textContent = 'Checkout cancelled — you have not been charged.';
+  }
+
+  featureBtn.addEventListener('click', async () => {
+    if (!eventId) return;
+    featureBtn.disabled = true;
+    featureNote.textContent = 'Starting checkout…';
+    try {
+      const res = await fetch('/api/events/feature-start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId: Number(eventId) }),
+      });
+      const result = await res.json();
+      if (result.ok) window.location.href = result.redirectUrl;
+      else {
+        featureNote.textContent = result.error || 'Could not start checkout.';
+        featureBtn.disabled = false;
+      }
+    } catch {
+      featureNote.textContent = 'Could not start checkout.';
+      featureBtn.disabled = false;
+    }
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!eventId) return;
+    const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+    saveStatus.textContent = 'Saving…';
+    try {
+      const res = await fetch('/api/update-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId: Number(eventId), ...data }),
+      });
+      const result = await res.json();
+      saveStatus.textContent = result.ok ? 'Saved.' : result.error || 'Could not save changes.';
+    } catch {
+      saveStatus.textContent = 'Could not save changes.';
+    }
+  });
+
+  init();
+</script>

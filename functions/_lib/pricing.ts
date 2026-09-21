@@ -63,6 +63,11 @@ export async function sponsorPriceCents(db: D1Database, productType: SponsorProd
   return settingCents(db, SPONSOR_SETTING_KEYS[productType]);
 }
 
+/** Cents to feature an event (a one-off purchase, not a recurring plan). `null` if not configured. */
+export async function eventFeaturePriceCents(db: D1Database): Promise<number | null> {
+  return settingCents(db, 'price_event_feature_cents');
+}
+
 export function centsToRand(cents: number): string {
   return (cents / 100).toFixed(2);
 }

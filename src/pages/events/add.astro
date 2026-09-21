@@ -18,8 +18,11 @@ const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '')
       <div style="min-width:0">
         <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">For organisers</span>
         <h1 style="margin:12px 0 10px;font-size:clamp(26px,4.2vw,42px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);max-width:20ch">List your event free</h1>
-        <p style="margin:0 0 24px;font-size:16px;line-height:1.6;color:var(--text);max-width:52ch">Ticket prices and your seller link go live within 24 hours of review.</p>
-        <form id="event-form" data-contact-email={site.contactEmail} data-site-name={site.siteName} style="display:flex;flex-direction:column;gap:16px">
+        <p style="margin:0 0 24px;font-size:16px;line-height:1.6;color:var(--text);max-width:52ch">Ticket prices and your seller link go live within 24 hours of review. You'll need an account so we can hand you the edit rights once it's approved.</p>
+
+        <p id="auth-check" style="color:var(--muted);">Checking your account…</p>
+
+        <form id="event-form" data-contact-email={site.contactEmail} data-site-name={site.siteName} hidden style="display:flex;flex-direction:column;gap:16px">
           <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Event title
             <input class="add-input" type="text" name="title" required maxlength="120" placeholder="e.g. Pretoria Night Market — Winter Edition" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)" /></label>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px">
@@ -112,6 +115,9 @@ const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '')
 </BaseLayout>
 
 <style>
+  [hidden] {
+    display: none !important;
+  }
   #add-shell {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -135,10 +141,27 @@ const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '')
 <script>
   let loadedAt = Date.now();
   const form = document.getElementById('event-form') as HTMLFormElement;
+  const authCheck = document.getElementById('auth-check')!;
   const status = document.getElementById('add-status')!;
   const submitBtn = document.getElementById('add-submit') as HTMLButtonElement;
   const contactEmail = form.dataset.contactEmail ?? '';
   const siteName = form.dataset.siteName ?? '';
+
+  // Same login gate as list-your-business.astro — an event owner needs an
+  // account so approval can hand them edit rights (see /my-events/).
+  (async () => {
+    try {
+      const res = await fetch('/api/me');
+      if (res.status === 401) {
+        window.location.href = '/login/?next=/events/add/';
+        return;
+      }
+    } catch {
+      /* offline / no functions in dev: submission itself doesn't require a session */
+    }
+    authCheck.hidden = true;
+    form.hidden = false;
+  })();
 
   // No point offering dates that have already gone by.
   const dateInput = form.elements.namedItem('eventDate') as HTMLInputElement;

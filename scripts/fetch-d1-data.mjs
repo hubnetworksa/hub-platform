@@ -80,7 +80,7 @@ async function main() {
   const events = query(
     `SELECT id, slug, title, type, event_date, event_time, venue, suburb, address, price, ticket_url, host,
             image_url, image_credit, organiser, organiser_note, doors, ages, parking, traders, lineup_json, tiers_json,
-            description, featured
+            description, featured, event_owner_user_id
      FROM events ORDER BY event_date ASC;`
   );
 
