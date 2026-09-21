@@ -13,8 +13,10 @@ export interface SiteTheme {
   text: string;
   textMuted: string;
   accent: string;
+  accentRgb: string;
   accentContrast: string;
   navy: string;
+  navyRgb: string;
 }
 
 export interface Site {
@@ -28,6 +30,14 @@ export interface Site {
   contactEmail: string;
   bannerImage: string;
   theme: SiteTheme;
+  /** Registered trading details for invoices — null until the owner supplies
+   *  them (see functions/_lib/invoicing.ts). An invoice is still valid and
+   *  professional without these; they just don't appear until set. */
+  invoicing?: {
+    registeredAddress: string | null;
+    vatNumber: string | null;
+    registrationNumber: string | null;
+  };
 }
 
 const SITES: Record<string, Site> = { polokwane, pretoria, capetown };

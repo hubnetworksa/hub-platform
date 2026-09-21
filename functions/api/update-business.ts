@@ -41,10 +41,10 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   // Real payment history for the Billing tab (PayFast ITNs recorded against this business's subscriptions).
   const payments = await db
     .prepare(
-      'SELECT p.id, p.amount_cents, p.status, p.paid_at, s.tier, s.product_type FROM payments p JOIN subscriptions s ON s.id = p.subscription_id WHERE s.business_id = ? ORDER BY p.paid_at DESC, p.id DESC LIMIT 24'
+      'SELECT p.id, p.amount_cents, p.status, p.paid_at, p.invoice_number, s.tier, s.product_type FROM payments p JOIN subscriptions s ON s.id = p.subscription_id WHERE s.business_id = ? ORDER BY p.paid_at DESC, p.id DESC LIMIT 24'
     )
     .bind(businessId)
-    .all<{ id: number; amount_cents: number; status: string; paid_at: string; tier: number; product_type: string | null }>();
+    .all<{ id: number; amount_cents: number; status: string; paid_at: string; invoice_number: string | null; tier: number; product_type: string | null }>();
 
   return json({
     ok: true,

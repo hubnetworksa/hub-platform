@@ -1,10 +1,13 @@
-import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
+import type { PagesFunction, D1Database, R2Bucket } from '@cloudflare/workers-types';
 import { buildSignatureString, md5, payfastConfigured, type PayfastEnv } from '../../_lib/payfast';
 import { logActivity } from '../../_lib/activity-log';
 import { tierPriceCents, sponsorPriceCents, isSponsorProductType } from '../../_lib/pricing';
+import { issueInvoice } from '../../_lib/invoicing';
 
 interface Env extends PayfastEnv {
   DB: D1Database;
+  MEDIA: R2Bucket;
+  SITE: string;
 }
 
 // PayFast's ITN webhook. Three of the four checks their own SDK performs
@@ -63,10 +66,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (scope === 'submission') {
     return handleSubmissionPayment(db, targetId, posted, postedAmount, raw);
   }
-  return handleBusinessPayment(db, targetId, posted, postedAmount, raw);
+  return handleBusinessPayment(context.env, db, targetId, posted, postedAmount, raw);
 };
 
 async function handleBusinessPayment(
+  env: Env,
   db: D1Database,
   businessId: number,
   posted: Record<string, string>,
@@ -111,7 +115,7 @@ async function handleBusinessPayment(
       .run();
   }
 
-  await db
+  const paymentInsert = await db
     .prepare('INSERT INTO payments (subscription_id, pf_payment_id, amount_cents, status, raw_itn) VALUES (?, ?, ?, ?, ?)')
     .bind(subscription.id, posted.pf_payment_id ?? null, Math.round(postedAmount * 100), posted.payment_status, raw)
     .run();
@@ -121,6 +125,8 @@ async function handleBusinessPayment(
     const label = subscription.product_type === 'tier' ? `Tier ${subscription.tier}` : `${subscription.product_type} (${subscription.product_target ?? 'n/a'})`;
     await logActivity(db, 'subscription_activated', business.name, `${label} activated via PayFast.`);
   }
+
+  await issueInvoice(env, paymentInsert.meta.last_row_id as number);
 
   return new Response('OK', { status: 200 });
 }

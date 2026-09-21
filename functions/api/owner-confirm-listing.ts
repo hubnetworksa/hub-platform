@@ -1,4 +1,4 @@
-import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
+import type { PagesFunction, D1Database, R2Bucket } from '@cloudflare/workers-types';
 import { generateUniqueSlug, insertApprovedBusiness, shoppingCenterIdForSlug } from '../../src/lib/business-submission';
 import { getSite, type Site } from '../_lib/site';
 import { triggerRebuild } from '../_lib/deploy-hook';
@@ -8,6 +8,7 @@ import { logActivity } from '../_lib/activity-log';
 
 interface Env {
   DB: D1Database;
+  MEDIA: R2Bucket;
   SITE: string;
   GITHUB_DISPATCH_TOKEN?: string;
   RESEND_API_KEY?: string;
@@ -95,7 +96,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     paidMPaymentId: row.payment_status === 'paid' ? row.m_payment_id : null,
     hours: row.hours,
     shoppingCenterId: await shoppingCenterIdForSlug(db, row.shopping_center_slug),
-  });
+  }, { DB: db, MEDIA: context.env.MEDIA, RESEND_API_KEY: context.env.RESEND_API_KEY, SITE: context.env.SITE });
   await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
   const listingUrl = `https://${site.domain}/business/${slug}/`;
   await logActivity(db, 'owner_confirmed', row.name, `Published: ${listingUrl}`);

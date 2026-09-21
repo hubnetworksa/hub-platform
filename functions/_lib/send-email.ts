@@ -17,6 +17,8 @@ export interface SendEmailOptions {
   html?: string;
   /** Where the recipient's "Reply" goes — e.g. the visitor who filled in a form. */
   replyTo?: string;
+  /** Files to attach (e.g. a generated invoice PDF). Resend wants base64 content. */
+  attachments?: { filename: string; content: string; contentType?: string }[];
 }
 
 export async function sendEmail(
@@ -39,6 +41,9 @@ export async function sendEmail(
         text: opts.text,
         ...(opts.html ? { html: opts.html } : {}),
         ...(opts.replyTo ? { reply_to: opts.replyTo } : {}),
+        ...(opts.attachments?.length
+          ? { attachments: opts.attachments.map((a) => ({ filename: a.filename, content: a.content, ...(a.contentType ? { content_type: a.contentType } : {}) })) }
+          : {}),
       }),
     });
 

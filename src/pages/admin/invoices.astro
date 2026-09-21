@@ -40,7 +40,7 @@ import { siteName } from '../../lib/site-overrides';
   import { esc, randFromCents, statusPillStyle, requireAdmin, showContent, fmtDate } from '../../lib/admin-html';
 
   interface Invoice {
-    id: string; reference: string | null; client: string; product: string; amountCents: number; date: string; status: string; method: string;
+    id: string; paymentId: number | null; invoiceNumber: string | null; reference: string | null; client: string; product: string; amountCents: number; date: string; status: string; method: string;
   }
   let invoices: Invoice[] = [];
 
@@ -59,7 +59,11 @@ import { siteName } from '../../lib/site-overrides';
           <div class="admin-hide" style="min-width:0;font-size:13px;font-weight:700;color:var(--text)">${esc(fmtDate(v.date))}<br /><span style="font-weight:600;color:var(--muted);font-size:12px">${esc(v.product)} · ${esc(v.method)}</span></div>
           <div class="admin-hide" style="font-size:15px;font-weight:800;color:var(--navy)">${randFromCents(v.amountCents)}</div>
           <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">
-            ${v.status === 'Paid' ? `<button data-receipt="${i}" style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--navy);font-size:12px;font-weight:800;cursor:pointer">PDF</button>` : ''}
+            ${v.status === 'Paid' && v.invoiceNumber
+              ? `<a href="/api/invoice?paymentId=${v.paymentId}" target="_blank" rel="noopener" style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--navy);font-size:12px;font-weight:800;cursor:pointer;text-decoration:none">Invoice</a>`
+              : v.status === 'Paid'
+                ? `<button data-receipt="${i}" style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--navy);font-size:12px;font-weight:800;cursor:pointer">PDF</button>`
+                : ''}
           </div>
         </div>`
       )

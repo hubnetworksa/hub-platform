@@ -18,13 +18,13 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const paid = await db
     .prepare(
-      `SELECT p.id, p.pf_payment_id, p.amount_cents, p.status, p.paid_at, s.tier, s.product_type, s.product_target, b.name AS business_name
+      `SELECT p.id, p.pf_payment_id, p.amount_cents, p.status, p.paid_at, p.invoice_number, s.tier, s.product_type, s.product_target, b.name AS business_name
        FROM payments p
        JOIN subscriptions s ON s.id = p.subscription_id
        JOIN businesses b ON b.id = s.business_id
        ORDER BY p.paid_at DESC, p.id DESC LIMIT 200`
     )
-    .all<{ id: number; pf_payment_id: string | null; amount_cents: number; status: string; paid_at: string; tier: number; product_type: string; product_target: string | null; business_name: string }>();
+    .all<{ id: number; pf_payment_id: string | null; amount_cents: number; status: string; paid_at: string; invoice_number: string | null; tier: number; product_type: string; product_target: string | null; business_name: string }>();
 
   const overdueSubs = await db
     .prepare(
@@ -41,8 +41,10 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       ? `${TIER_NAMES[tier] ?? 'Plan'} plan`
       : sponsorProductLabel(productType as SponsorProductType, target);
 
-  const rows = paid.results.map((p) => ({
+  const rows: { id: string; paymentId: number | null; invoiceNumber: string | null; reference: string | null; client: string; product: string; amountCents: number; date: string; status: string; method: string }[] = paid.results.map((p) => ({
     id: `PF-${p.id}`,
+    paymentId: p.id as number | null,
+    invoiceNumber: p.invoice_number,
     reference: p.pf_payment_id,
     client: p.business_name,
     product: label(p.product_type, p.tier, p.product_target),
@@ -59,6 +61,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         : (await sponsorPriceCents(db, o.product_type as SponsorProductType)) ?? 0;
     rows.push({
       id: `SUB-${o.id}`,
+      paymentId: null,
+      invoiceNumber: null,
       reference: null,
       client: o.business_name,
       product: label(o.product_type, o.tier, o.product_target),

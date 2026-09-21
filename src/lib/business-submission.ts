@@ -1,6 +1,7 @@
 import type { D1Database } from '@cloudflare/workers-types';
 import { slugify } from './slug';
 import { tierPriceCents } from '../../functions/_lib/pricing';
+import { issueInvoice, type InvoicingEnv } from '../../functions/_lib/invoicing';
 
 // Shared between submit-business.ts (holds the pending row + emails the
 // preview) and confirm-listing.ts (actually inserts on approval) so the
@@ -58,7 +59,7 @@ export async function shoppingCenterIdForSlug(db: D1Database, slug: string | nul
 // two different shops both called "House" — would collide, silently
 // overwriting one with the other's submitted details instead of both
 // existing as distinct listings.
-export async function insertApprovedBusiness(db: D1Database, listing: ApprovedListing): Promise<void> {
+export async function insertApprovedBusiness(db: D1Database, listing: ApprovedListing, invoicingEnv?: InvoicingEnv): Promise<void> {
   const existing = await db
     .prepare('SELECT id, owner_user_id FROM businesses WHERE lower(name) = lower(?) AND suburb_id = ?')
     .bind(listing.name, listing.suburbId)
@@ -118,7 +119,7 @@ export async function insertApprovedBusiness(db: D1Database, listing: ApprovedLi
       .run();
   }
 
-  await applyChosenTier(db, businessId, listing);
+  await applyChosenTier(db, businessId, listing, invoicingEnv);
 }
 
 // A tier chosen (and paid for) back at submit-business.ts only takes
@@ -126,7 +127,7 @@ export async function insertApprovedBusiness(db: D1Database, listing: ApprovedLi
 // attach a `subscriptions` row (it requires a business_id) until now. A
 // chosen-but-unpaid tier (abandoned checkout) just publishes free; it
 // never blocks the listing itself.
-async function applyChosenTier(db: D1Database, businessId: number, listing: ApprovedListing): Promise<void> {
+async function applyChosenTier(db: D1Database, businessId: number, listing: ApprovedListing, invoicingEnv?: InvoicingEnv): Promise<void> {
   const tier = listing.chosenTier ?? 0;
   if (tier <= 0 || !listing.paidMPaymentId) return;
 
@@ -154,10 +155,12 @@ async function applyChosenTier(db: D1Database, businessId: number, listing: Appr
   // to attach it to — the actual PayFast ITN was already verified back in
   // subscribe/notify.ts's submission branch, this just completes the audit
   // trail to match the direct-upgrade path's shape.
-  await db
+  const paymentInsert = await db
     .prepare('INSERT INTO payments (subscription_id, amount_cents, status, raw_itn) VALUES (?, ?, ?, ?)')
     .bind(sub.meta.last_row_id, priceCents, 'COMPLETE', 'applied at approval — see subscribe/notify.ts submission branch for the original ITN')
     .run();
+
+  if (invoicingEnv) await issueInvoice(invoicingEnv, paymentInsert.meta.last_row_id as number);
 }
 
 export function escapeHtml(s: string): string {

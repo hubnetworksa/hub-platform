@@ -237,7 +237,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     social_instagram: string | null; social_facebook: string | null; social_linkedin: string | null; social_youtube: string | null;
   };
   type Photo = { id: number; r2_key: string; caption: string | null };
-  type Payment = { id: number; amount_cents: number; status: string; paid_at: string; tier: number; product_type: string | null };
+  type Payment = { id: number; amount_cents: number; status: string; paid_at: string; invoice_number: string | null; tier: number; product_type: string | null };
 
   function esc(s: string): string {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -394,6 +394,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
           <span style="font-size:14px;font-weight:700;color:var(--navy);flex:1;min-width:0">${esc(what)} · ${esc(shortDate(p.paid_at))}</span>
           <span style="${paid ? pill : 'padding:4px 10px;border-radius:999px;background:var(--bg-subtle);color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase'}">${paid ? 'Paid' : esc(p.status)}</span>
           <span style="font-size:14px;font-weight:800;color:var(--navy)">${amount}</span>
+          ${p.invoice_number ? `<a href="/api/invoice?paymentId=${p.id}" target="_blank" rel="noopener" style="padding:7px 12px;border:2px solid var(--border);border-radius:8px;color:var(--navy);font-size:12px;font-weight:800;text-decoration:none;white-space:nowrap">Invoice</a>` : ''}
         </div>`;
       })
       .join('');
