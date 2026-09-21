@@ -34,9 +34,13 @@
   // sandbox test pair (developers.payfast.co.za), safe to commit — they
   // only work against sandbox.payfast.co.za and move no real money. Preview
   // deploys use this env.preview block automatically; Production ignores it.
+  // IMPORTANT: env.preview.vars REPLACES the top-level vars for preview
+  // deploys rather than merging with it, so SITE has to be repeated here too
+  // — leaving it out breaks every page on preview (confirmed the hard way).
   "env": {
     "preview": {
       "vars": {
+        "SITE": "capetown",
         "PAYFAST_MERCHANT_ID": "10004002",
         "PAYFAST_MERCHANT_KEY": "q1cd2rdny4a53",
         "PAYFAST_PASSPHRASE": "payfast",
