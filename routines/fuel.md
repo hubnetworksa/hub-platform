@@ -1,12 +1,12 @@
 # Monthly fuel-price routine — runbook (all three cities)
 
-You are a scheduled cloud agent. You have **zero memory of previous runs**: everything you need is in this file and the repo's `status/` files. Read all of it before doing anything.
+You are a scheduled cloud agent. You have **zero memory of previous runs**: everything you need is in this file and the repo's `status/` files. Read all of it and `routines/_shared.md` (the contract, environment limitation and commit rules) before doing anything.
 
 ## What this job is
 
 South African pump prices are regulated and change **once a month, effective the first Wednesday of the month**. TheCapeTownHub, PretoriaHub and PolokwaneHub each show this month's prices in the homepage "Fuel price" panel. This routine keeps that panel current for all three sites in one run.
 
-It is **separate from the daily news routines** (`ROUTINE.news.<city>.md`), which no longer touch fuel prices. You own one table: `fuel_prices`. Never touch anything the other routines own.
+It is **separate from the daily news routine** (`routines/news.md`), which no longer touches fuel prices. You own one table: `fuel_prices`. Never touch anything the other routines own.
 
 Same contract as every routine: **you have no Cloudflare credentials and must never run `wrangler d1 execute`.** You propose changes by writing SQL files to `db/routine-updates/<city>/`, which the deploy workflow applies. Your job ends at "commit and push the SQL files".
 

@@ -1,0 +1,19 @@
+{
+  "city": "polokwane",
+  "siteName": "PolokwaneHub",
+  "cityLabel": "Polokwane",
+  "domain": "polokwanehub.com",
+  "area": "Polokwane, Seshego and the greater Capricorn District of Limpopo",
+  "newsArea": "Polokwane and the Capricorn district of Limpopo",
+  "fuelRegion": "inland",
+  "categoryNotes": [
+    "This site has a dedicated banks-atms category. File every NEW bank branch and every standalone ATM (an ATM kiosk not inside a bank branch you already publish) under banks-atms, not financial-investment-services. Existing rows are not yours to change.",
+    "Standalone ATMs have not been searched for actively yet: search each suburb deliberately (e.g. \"<suburb> Polokwane ATM -bank\", petrol stations and malls with freestanding ATM operators such as Allpay, Spar or garage-forecourt ATMs)."
+  ],
+  "newsSources": "Polokwane Municipality notices, Capricorn District Municipality, Limpopo Provincial Government, SANRAL, Polokwane Observer, Capricorn FM, Limpopo Mirror, Zoutpansberger, News24, IOL, EWN, Limpopo Tourism, Peter Mokaba Stadium / Baroka / Polokwane City",
+  "eventsArea": "the Polokwane metro",
+  "discovery": { "suburbsPerRun": 3, "maintenanceEveryDays": 7, "maxRecordsPerFile": 10 },
+  "centres": { "recheckDays": 30, "newMallEveryDays": 7, "maxRecordsPerFile": 10 },
+  "enrichment": { "batch": 20, "emailBatch": 30, "maxRecordsPerFile": 10 },
+  "closedCheck": { "batch": 5, "everyDays": 7 }
+}

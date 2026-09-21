@@ -55,6 +55,9 @@ const snapshot = {
     source_urls: b.source_urls,
     description_enriched_at: b.description_enriched_at,
     hours: b.hours,
+    // Used by the split routines: website to research from, and whether an email is already on file (the address itself stays out of the snapshot).
+    website: b.website ?? null,
+    has_email: Boolean(b.email),
   })),
   // Read by the weekly events research routine (ROUTINE.events.<slug>.md)
   // to know what's already listed, purely for dedup — it has no other

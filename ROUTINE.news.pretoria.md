@@ -117,7 +117,7 @@ Motorists are advised to ...',
 
 ## Fuel prices are not your job
 
-Fuel prices have their own monthly routine (`ROUTINE.fuel.md`), because pump prices only change on the first Wednesday of the month. Do not write `fuel_prices` rows here.
+Fuel prices have their own monthly routine (`routines/fuel.md`), because pump prices only change on the first Wednesday of the month. Do not write `fuel_prices` rows here.
 
 ## Run the check — every time, before you push
 

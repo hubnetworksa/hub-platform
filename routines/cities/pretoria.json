@@ -1,0 +1,18 @@
+{
+  "city": "pretoria",
+  "siteName": "PretoriaHub",
+  "cityLabel": "Pretoria",
+  "domain": "pretoriahub.com",
+  "area": "Pretoria, Centurion and the greater Tshwane metro",
+  "newsArea": "the City of Tshwane metro (Pretoria, Centurion and surrounds)",
+  "fuelRegion": "inland",
+  "categoryNotes": [
+    "About 7,800 businesses were imported from a scraper file and still carry a generic copy-pasted description (\"<Name> is a business in <Suburb>, part of the <Region> area of the Pretoria/Tshwane metro.\"). The enrichment routine rewrites them, so it works in large batches here."
+  ],
+  "newsSources": "City of Tshwane media releases, SANRAL, Gautrain, Pretoria News, Rekord, Netwerk24/Maroela Media, News24, IOL, EWN, Tshwane Tourism, Loftus Versfeld / Blue Bulls / Mamelodi Sundowns",
+  "eventsArea": "Pretoria, Centurion and the greater Tshwane metro",
+  "discovery": { "suburbsPerRun": 3, "maintenanceEveryDays": 7, "maxRecordsPerFile": 10 },
+  "centres": { "recheckDays": 30, "newMallEveryDays": 30, "maxRecordsPerFile": 10 },
+  "enrichment": { "batch": 100, "emailBatch": 60, "maxRecordsPerFile": 100 },
+  "closedCheck": { "batch": 5, "everyDays": 7 }
+}
