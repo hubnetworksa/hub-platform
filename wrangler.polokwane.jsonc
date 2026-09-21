@@ -34,9 +34,11 @@
   // sandbox test pair (developers.payfast.co.za), safe to commit — they
   // only work against sandbox.payfast.co.za and move no real money. Preview
   // deploys use this env.preview block automatically; Production ignores it.
-  // IMPORTANT: env.preview.vars REPLACES the top-level vars for preview
-  // deploys rather than merging with it, so SITE has to be repeated here too
-  // — leaving it out breaks every page on preview (confirmed the hard way).
+  // IMPORTANT: defining env.preview at all makes Cloudflare Pages stop
+  // inheriting EVERYTHING top-level for preview deploys — not just vars,
+  // also d1_databases and r2_buckets (confirmed the hard way, twice: SITE
+  // missing broke every page, then DB missing broke every D1 query). So
+  // every top-level binding is repeated below, not just the new PayFast vars.
   "env": {
     "preview": {
       "vars": {
@@ -45,7 +47,21 @@
         "PAYFAST_MERCHANT_KEY": "q1cd2rdny4a53",
         "PAYFAST_PASSPHRASE": "payfast",
         "PAYFAST_HOST": "sandbox.payfast.co.za"
-      }
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "polokwanehub-db",
+          "database_id": "e1e3d9ce-5de2-4d88-ace5-aeb4ad6994c1",
+          "migrations_dir": "db/migrations/polokwane"
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "MEDIA",
+          "bucket_name": "polokwanehub-media"
+        }
+      ]
     }
   }
 
