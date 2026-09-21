@@ -1,7 +1,7 @@
 // Builds the actual invoice PDF, branded per site. Pure JS (pdf-lib), so it
 // runs in the Cloudflare Workers runtime with no filesystem, no canvas and no
 // Node APIs — the same constraint every other function in this repo has.
-import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage, type RGB } from 'pdf-lib';
+import { PDFDocument, StandardFonts, rgb, degrees, type PDFFont, type PDFImage, type PDFPage, type RGB } from 'pdf-lib';
 
 export interface InvoiceLine {
   description: string;
@@ -15,6 +15,12 @@ export interface InvoiceInput {
   contactEmail: string;
   accentRgb: string; // "R, G, B" 0-255, e.g. site.theme.accentRgb
   navyRgb: string;
+  /** The site's small square/portrait logo mark (PNG bytes) — NOT the big
+   *  photographic hero banner. A financial document reads as more
+   *  professional with a clean logo mark than a full-bleed photo, and it
+   *  keeps the file small. Optional: the invoice still looks complete
+   *  without it (falls back to the wordmark alone). */
+  logoPng?: Uint8Array | null;
   /** Optional — only shown once the owner has supplied real company details. */
   registeredAddress?: string | null;
   vatNumber?: string | null;
@@ -42,7 +48,7 @@ export interface InvoiceInput {
 
 const PAGE_W = 595.28;
 const PAGE_H = 841.89;
-const MARGIN = 48;
+const MARGIN = 50;
 
 const zar = (cents: number) => `R${(cents / 100).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 const fmtDate = (d: Date) => d.toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Africa/Johannesburg' });
@@ -55,7 +61,9 @@ function rgbFromCsv(csv: string): RGB {
 export async function buildInvoicePdf(input: InvoiceInput): Promise<Uint8Array> {
   const doc = await PDFDocument.create();
   doc.setTitle(`Invoice ${input.invoiceNumber} — ${input.siteName}`);
+  doc.setAuthor(input.siteName);
   doc.setProducer(input.siteName);
+  doc.setSubject(`Tax invoice ${input.invoiceNumber}`);
   const page = doc.addPage([PAGE_W, PAGE_H]);
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -64,29 +72,59 @@ export async function buildInvoicePdf(input: InvoiceInput): Promise<Uint8Array> 
   const navy = rgbFromCsv(input.navyRgb);
   const grey = rgb(0.36, 0.4, 0.47);
   const lightGrey = rgb(0.88, 0.9, 0.93);
+  const paleBg = rgb(0.96, 0.97, 0.98);
   const white = rgb(1, 1, 1);
+  const green = rgb(0.13, 0.46, 0.23);
+
+  let logo: PDFImage | null = null;
+  if (input.logoPng?.length) {
+    try {
+      logo = await doc.embedPng(input.logoPng);
+    } catch {
+      logo = null; // a corrupt/unexpected image must never break the invoice
+    }
+  }
 
   let y = PAGE_H;
 
-  // ---- Header band ----
-  const bandH = 92;
-  page.drawRectangle({ x: 0, y: PAGE_H - bandH, width: PAGE_W, height: bandH, color: navy });
-  page.drawText(input.siteName, { x: MARGIN, y: PAGE_H - 40, size: 20, font: bold, color: white });
-  page.drawText(input.domain, { x: MARGIN, y: PAGE_H - 58, size: 10, font, color: rgb(0.75, 0.82, 0.92) });
-  const title = 'TAX INVOICE';
-  const titleW = bold.widthOfTextAtSize(title, 20);
-  page.drawText(title, { x: PAGE_W - MARGIN - titleW, y: PAGE_H - 40, size: 20, font: bold, color: white });
-  const numLabel = `#${input.invoiceNumber}`;
-  const numW = font.widthOfTextAtSize(numLabel, 11);
-  page.drawText(numLabel, { x: PAGE_W - MARGIN - numW, y: PAGE_H - 58, size: 11, font, color: accent });
+  // ---- Header — white letterhead with a colour accent, not a solid photo
+  // or a full-width dark block: the logo mark is designed for a light
+  // background (it's used on the site's own white nav bar), and a large
+  // block of solid colour reads more like a flyer than an official document.
+  const bandH = 108;
+  let wordmarkX = MARGIN;
+  if (logo) {
+    const logoH = 40;
+    const logoW = logo.width * (logoH / logo.height);
+    page.drawImage(logo, { x: MARGIN, y: PAGE_H - 32 - logoH, width: logoW, height: logoH });
+    wordmarkX = MARGIN + logoW + 12;
+  }
+  page.drawText(input.siteName, { x: wordmarkX, y: PAGE_H - 44, size: 19, font: bold, color: navy });
+  page.drawText(input.domain, { x: wordmarkX, y: PAGE_H - 60, size: 9.5, font, color: grey });
 
-  y = PAGE_H - bandH - 34;
+  const title = 'TAX INVOICE';
+  const titleSize = 20;
+  const titleW = bold.widthOfTextAtSize(title, titleSize);
+  page.drawText(title, { x: PAGE_W - MARGIN - titleW, y: PAGE_H - 42, size: titleSize, font: bold, color: navy });
+  const numLabel = `#${input.invoiceNumber}`;
+  const numW = font.widthOfTextAtSize(numLabel, 10.5);
+  page.drawText(numLabel, { x: PAGE_W - MARGIN - numW, y: PAGE_H - 60, size: 10.5, font, color: accent });
+
+  // A confident accent-coloured rule under the letterhead — the one bold
+  // brand touch, doing the job the old full-width colour block did with
+  // far less visual weight.
+  page.drawRectangle({ x: 0, y: PAGE_H - bandH, width: PAGE_W, height: 3, color: accent });
+
+  y = PAGE_H - bandH - 30;
 
   // ---- From / Bill To / Invoice details, three columns ----
   const colW = (PAGE_W - MARGIN * 2 - 32) / 3;
   const col = (i: number) => MARGIN + i * (colW + 16);
 
-  const label = (text: string, x: number, yy: number) => page.drawText(text, { x, y: yy, size: 9, font: bold, color: grey });
+  const label = (text: string, x: number, yy: number) => {
+    page.drawText(text, { x, y: yy, size: 8.5, font: bold, color: accent });
+    page.drawLine({ start: { x, y: yy - 6 }, end: { x: x + colW, y: yy - 6 }, thickness: 0.75, color: lightGrey });
+  };
   let lines: string[];
 
   label('FROM', col(0), y);
@@ -97,11 +135,11 @@ export async function buildInvoicePdf(input: InvoiceInput): Promise<Uint8Array> 
     ...(input.registrationNumber ? [`Reg. ${input.registrationNumber}`] : []),
     ...(input.vatNumber ? [`VAT ${input.vatNumber}`] : []),
   ];
-  drawLines(page, lines, col(0), y - 16, 12, font, 10, navy);
+  drawLines(page, lines, col(0), y - 22, 12.5, font, 10, navy);
 
   label('BILL TO', col(1), y);
   lines = [input.billToName, ...(input.billToDetail ? wrap(input.billToDetail, colW, font, 10) : []), ...(input.billToEmail ? [input.billToEmail] : [])];
-  drawLines(page, lines, col(1), y - 16, 12, font, 10, navy);
+  drawLines(page, lines, col(1), y - 22, 12.5, font, 10, navy);
 
   label('INVOICE DETAILS', col(2), y);
   const details: [string, string][] = [
@@ -110,48 +148,50 @@ export async function buildInvoicePdf(input: InvoiceInput): Promise<Uint8Array> 
     ['Paid via', input.paymentMethod],
     ...(input.paymentReference ? ([['Reference', input.paymentReference]] as [string, string][]) : []),
   ];
-  let dy = y - 16;
+  let dy = y - 22;
   for (const [k, v] of details) {
     page.drawText(k, { x: col(2), y: dy, size: 9, font, color: grey });
-    page.drawText(v, { x: col(2) + 78, y: dy, size: 9, font: bold, color: navy });
-    dy -= 13;
+    page.drawText(v, { x: col(2) + 80, y: dy, size: 9, font: bold, color: navy });
+    dy -= 13.5;
   }
 
-  y = Math.min(y - 16 - 12 * Math.max(lines.length, details.length), y - 90) - 24;
+  y = Math.min(y - 22 - 12.5 * Math.max(lines.length, details.length), y - 96) - 26;
 
-  // ---- PAID stamp ----
-  page.drawText('PAID', {
-    x: PAGE_W - MARGIN - 62,
-    y: y + 6,
-    size: 13,
-    font: bold,
-    color: rgb(0.16, 0.5, 0.24),
+  // ---- PAID stamp — a light rotated badge, restrained rather than a heavy graphic ----
+  const stampCx = PAGE_W - MARGIN - 46;
+  const stampCy = y + 8;
+  page.drawRectangle({
+    x: stampCx - 44, y: stampCy - 13, width: 88, height: 26, rotate: degrees(-6),
+    borderColor: green, borderWidth: 1.3, color: green, opacity: 0.07,
   });
-  page.drawRectangle({ x: PAGE_W - MARGIN - 72, y: y - 2, width: 74, height: 20, borderColor: rgb(0.16, 0.5, 0.24), borderWidth: 1.2, color: rgb(0.16, 0.5, 0.24), opacity: 0.08 });
+  page.drawText('PAID IN FULL', {
+    x: stampCx - 38, y: stampCy - 5, size: 11.5, font: bold, color: green, rotate: degrees(-6),
+  });
 
-  y -= 30;
+  y -= 26;
 
   // ---- Line items table ----
   const tableTop = y;
   const cDesc = MARGIN;
   const cAmt = PAGE_W - MARGIN - 90;
-  page.drawRectangle({ x: MARGIN, y: tableTop - 24, width: PAGE_W - MARGIN * 2, height: 24, color: rgb(0.95, 0.96, 0.98) });
-  page.drawText('DESCRIPTION', { x: cDesc + 8, y: tableTop - 16, size: 9, font: bold, color: grey });
-  page.drawText('AMOUNT', { x: cAmt, y: tableTop - 16, size: 9, font: bold, color: grey });
-  y = tableTop - 24;
+  page.drawRectangle({ x: MARGIN, y: tableTop - 26, width: PAGE_W - MARGIN * 2, height: 26, color: navy });
+  page.drawText('DESCRIPTION', { x: cDesc + 10, y: tableTop - 17, size: 9, font: bold, color: white });
+  page.drawText('AMOUNT', { x: cAmt, y: tableTop - 17, size: 9, font: bold, color: white });
+  y = tableTop - 26;
 
   let subtotal = 0;
-  for (const line of input.lines) {
+  input.lines.forEach((line, i) => {
     subtotal += line.amountCents;
-    const rowH = 34;
-    page.drawText(line.description, { x: cDesc + 8, y: y - 15, size: 11, font: bold, color: navy });
-    page.drawText(line.detail, { x: cDesc + 8, y: y - 28, size: 9, font, color: grey });
+    const rowH = 36;
+    if (i % 2 === 1) page.drawRectangle({ x: MARGIN, y: y - rowH, width: PAGE_W - MARGIN * 2, height: rowH, color: paleBg });
+    page.drawText(line.description, { x: cDesc + 10, y: y - 16, size: 11, font: bold, color: navy });
+    page.drawText(line.detail, { x: cDesc + 10, y: y - 29, size: 9, font, color: grey });
     const amtText = zar(line.amountCents);
     const amtW = font.widthOfTextAtSize(amtText, 11);
-    page.drawText(amtText, { x: PAGE_W - MARGIN - 8 - amtW, y: y - 15, size: 11, font, color: navy });
+    page.drawText(amtText, { x: PAGE_W - MARGIN - 10 - amtW, y: y - 16, size: 11, font, color: navy });
     y -= rowH;
-    page.drawLine({ start: { x: MARGIN, y }, end: { x: PAGE_W - MARGIN, y }, thickness: 0.75, color: lightGrey });
-  }
+  });
+  page.drawLine({ start: { x: MARGIN, y }, end: { x: PAGE_W - MARGIN, y }, thickness: 1, color: navy });
 
   // ---- Totals ----
   // subtotal (the sum of the lines drawn above) IS the amount actually charged.
@@ -162,30 +202,41 @@ export async function buildInvoicePdf(input: InvoiceInput): Promise<Uint8Array> 
   const exVat = vatRate > 0 ? Math.round(total / (1 + vatRate / 100)) : total;
   const vatCents = total - exVat;
 
-  y -= 10;
-  const totalsX = PAGE_W - MARGIN - 190;
+  y -= 14;
+  const totalsX = PAGE_W - MARGIN - 200;
   const totalRow = (lbl: string, val: string, yy: number, strong = false) => {
-    page.drawText(lbl, { x: totalsX, y: yy, size: strong ? 11 : 10, font: strong ? bold : font, color: strong ? navy : grey });
-    const w = (strong ? bold : font).widthOfTextAtSize(val, strong ? 12 : 10);
-    page.drawText(val, { x: PAGE_W - MARGIN - 8 - w, y: yy, size: strong ? 12 : 10, font: strong ? bold : font, color: navy });
+    page.drawText(lbl, { x: totalsX, y: yy, size: strong ? 11.5 : 10, font: strong ? bold : font, color: strong ? white : grey });
+    const w = (strong ? bold : font).widthOfTextAtSize(val, strong ? 13 : 10);
+    page.drawText(val, { x: PAGE_W - MARGIN - 12 - w, y: yy, size: strong ? 13 : 10, font: strong ? bold : font, color: strong ? white : navy });
   };
   if (vatRate > 0) {
     totalRow('Subtotal (excl. VAT)', zar(exVat), y);
-    y -= 15;
+    y -= 16;
     totalRow(`VAT (${vatRate}%)`, zar(vatCents), y);
-    y -= 8;
+    y -= 12;
+  } else {
+    y -= 6;
   }
-  page.drawLine({ start: { x: totalsX, y }, end: { x: PAGE_W - MARGIN, y }, thickness: 1, color: navy });
-  y -= 18;
-  totalRow('Total paid', zar(total), y, true);
-  y -= 40;
+  // A solid navy band behind "Total paid" — the one figure that should be unmissable at a glance.
+  const bandTop = y + 8;
+  page.drawRectangle({ x: totalsX - 12, y: bandTop - 26, width: PAGE_W - MARGIN - (totalsX - 12), height: 26, color: navy });
+  totalRow('Total paid', zar(total), bandTop - 18, true);
+  y = bandTop - 26 - 34;
+
+  // ---- Payment confirmation line ----
+  page.drawText(`Payment of ${zar(total)} received via ${input.paymentMethod}${input.paymentReference ? ` (ref. ${input.paymentReference})` : ''} on ${fmtDate(input.paidAt)}.`, {
+    x: MARGIN, y, size: 9, font, color: grey,
+  });
 
   // ---- Footer ----
-  const footerY = 60;
-  page.drawLine({ start: { x: MARGIN, y: footerY + 22 }, end: { x: PAGE_W - MARGIN, y: footerY + 22 }, thickness: 0.75, color: lightGrey });
-  page.drawText(`${input.siteName} — ${input.domain} — ${input.contactEmail}`, { x: MARGIN, y: footerY + 8, size: 8.5, font, color: grey });
-  page.drawText('This is a computer-generated invoice; no signature is required.', { x: MARGIN, y: footerY - 5, size: 8.5, font, color: grey });
-  page.drawText(`Invoice ${input.invoiceNumber}`, { x: MARGIN, y: footerY - 18, size: 8.5, font, color: grey });
+  const footerY = 58;
+  page.drawLine({ start: { x: MARGIN, y: footerY + 24 }, end: { x: PAGE_W - MARGIN, y: footerY + 24 }, thickness: 0.75, color: lightGrey });
+  page.drawText(input.siteName, { x: MARGIN, y: footerY + 9, size: 9, font: bold, color: navy });
+  page.drawText(`${input.domain}  ·  ${input.contactEmail}`, { x: MARGIN, y: footerY - 3, size: 8.5, font, color: grey });
+  page.drawText('This is a computer-generated tax invoice — no signature is required.', { x: MARGIN, y: footerY - 15, size: 8, font, color: grey });
+  const invLabel = `Invoice ${input.invoiceNumber}`;
+  const invLabelW = font.widthOfTextAtSize(invLabel, 8.5);
+  page.drawText(invLabel, { x: PAGE_W - MARGIN - invLabelW, y: footerY + 9, size: 8.5, font, color: grey });
 
   return doc.save();
 }

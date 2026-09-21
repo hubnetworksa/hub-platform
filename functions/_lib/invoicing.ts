@@ -43,6 +43,21 @@ function toBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
+/** The site's own small logo mark (not the big photographic hero banner —
+ *  see invoice-pdf.ts for why), already deployed as a public static file.
+ *  Functions have no filesystem access to it, so it's fetched over HTTPS
+ *  from the live site itself. Never blocks invoice generation: a failed
+ *  fetch just means the invoice renders without a logo. */
+async function fetchLogo(domain: string): Promise<Uint8Array | null> {
+  try {
+    const res = await fetch(`https://${domain}/logo-icon.png`);
+    if (!res.ok) return null;
+    return new Uint8Array(await res.arrayBuffer());
+  } catch {
+    return null;
+  }
+}
+
 const fmtShort = (iso: string | null): string =>
   iso ? new Date(iso.includes('T') ? iso : iso.replace(' ', 'T') + 'Z').toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
 
@@ -96,6 +111,7 @@ export async function issueInvoice(env: InvoicingEnv, paymentId: number): Promis
       contactEmail: site.contactEmail,
       accentRgb: site.theme.accentRgb,
       navyRgb: site.theme.navyRgb,
+      logoPng: await fetchLogo(site.domain),
       registeredAddress: site.invoicing?.registeredAddress ?? null,
       vatNumber: site.invoicing?.vatNumber ?? null,
       registrationNumber: site.invoicing?.registrationNumber ?? null,
