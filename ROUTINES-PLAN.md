@@ -1,6 +1,6 @@
 # Routines plan: rewrite the existing routines, add the missing ones
 
-Status as of 21 September 2026. Scope: TheCapeTownHub, PretoriaHub and PolokwaneHub. **[Me]** = I build it. **[You]** = needs your accounts or a decision.
+Status as of 21 September 2026 (routines below are planned or written but none are scheduled yet). Scope: TheCapeTownHub, PretoriaHub and PolokwaneHub. **[Me]** = I build it. **[You]** = needs your accounts or a decision.
 
 The aim: every routine does only the work that is needed, uses as little of the AI agent (and as few database reads) as possible, and tells you when it fails.
 
@@ -11,7 +11,7 @@ The aim: every routine does only the work that is needed, uses as little of the 
 | **Business routine** (one per city) | Hourly cloud agent | Five jobs: (1) discover new businesses, 3 suburbs per run; (2) discover shopping centres and their tenants; (3) sweep one shopping centre's own website; (4) enrich descriptions and hours of existing businesses; (5) check for permanently closed businesses. Writes a SQL file to `db/routine-updates/<city>/`. | `ROUTINE.capetown.md` (903 lines), `ROUTINE.pretoria.md` (720), `ROUTINE.polokwane.md` (922) |
 | **Events routine** (one per city) | Weekly cloud agent | Finds upcoming public events and proposes them for the Events page. | `ROUTINE.events.<city>.md` (144 lines each) |
 | **News routine** (one per city) | Daily cloud agent | Writes the day's local news articles. Checked by `npm run check:news` before pushing. | `ROUTINE.news.<city>.md` (about 145 lines each) |
-| **Fuel prices routine** (one for all three cities) | Monthly: first Wednesday, with two catch-up days | Loads the month's coastal and inland pump prices for all three sites in one run. Split out of the news routine on 21 September because prices only change on the first Wednesday. Guarded by `scripts/fuel-due.mjs` so it does nothing on any other day. | `ROUTINE.fuel.md` |
+| **Fuel prices routine** (one for all three cities) | Monthly: first Wednesday, with two catch-up days | Loads the month's pump prices for all three sites in one run. Prices are split by region: Cape Town uses the **coastal** price, Pretoria and Polokwane use the **inland** price (Gauteng and Limpopo), so it reads both columns of the announcement once and writes eight rows (four grades x two regions) across the three cities. Split out of the news routine on 21 September because prices only change on the first Wednesday. Guarded by `scripts/fuel-due.mjs` so it does nothing on any other day. | `ROUTINE.fuel.md` |
 | **Owner reminders** | Daily 07:00 UTC, GitHub Actions | Emails owners whose listing confirmation is outstanding. | `.github/workflows/owner-reminders.yml` |
 | **Subscription expiry** | Daily 07:15 UTC, GitHub Actions | Expires paid plans and sponsorships that have lapsed. | `.github/workflows/subscription-expiry.yml` |
 

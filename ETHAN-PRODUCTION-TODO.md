@@ -1,7 +1,7 @@
 # Ethan branch: production-readiness todo list
 
 Scope: only the `Ethan` dev branch (TheCapeTownHub, PretoriaHub, PolokwaneHub). Nothing here is about what has changed on `main`.
-Status as of 20 September 2026. **[Me]** = I can do it. **[You]** = needs your accounts, a decision, or a real-world action.
+Status as of 21 September 2026. **[Me]** = I can do it. **[You]** = needs your accounts, a decision, or a real-world action.
 
 ## 1. Done (already on the branch)
 
@@ -26,6 +26,8 @@ Status as of 20 September 2026. **[Me]** = I can do it. **[You]** = needs your a
 - [x] **"Things to do" (tourism) page now follows the mockup on all three cities:** header link, hero, category chips, attraction cards, itineraries, "When to come", operator sidebar. It was previously Polokwane-only in the old design. The mockup's own attraction prices and times are shown as written and must be confirmed with each operator before launch (see section 7). Polokwane keeps its seven full attraction pages, linked from the cards.
 - [x] **Claim verification now goes to the business's own email.** When someone claims a business that has an email on file, the verification link is sent to that business address (never the claimant's), and the claimant gets an email saying the claim only completes once someone confirms it from that inbox. Confirming approves the claim automatically; "this isn't us" rejects it; links last 14 days. If the business has no email on file the claim falls back to manual review by an admin. Only 43 of 645 Cape Town, 172 of 9,660 Pretoria and 167 of 1,055 Polokwane businesses have an email on file, so most claims will still be manual until emails are added (see section 4).
 - [x] **Featured plan: social page links.** Featured businesses can add Instagram, Facebook, LinkedIn and YouTube page links from My businesses > Edit listing (each checked to be a real link to that network, saved only while the plan is active). They show as buttons on the public business page while the business is Featured, and are kept but hidden if it downgrades. Listed in the Featured perks on the pricing page and plan picker. New columns on businesses (migration Cape Town 0042, Pretoria 0041, Polokwane 0044, applied to all three).
+
+- [ ] **[Me] Push the interactive map and the routine documents.** They are committed on the `Ethan` branch but not pushed. Build all three cities first (the Cloudflare D1 read limit that blocked builds resets at 02:00 South African time), then run the link check and the map test on Pretoria and Polokwane, which have not been tested with their real data yet.
 
 ## 2. Code work still to do on the branch
 
@@ -81,7 +83,7 @@ Today there are nine runbooks totalling about 3,800 lines. The three business ru
 - [ ] **Business routine (Cape Town, Pretoria, Polokwane):** replace the three near-identical runbooks with one shared runbook plus a small per-city config file. Put the five jobs on their own schedules instead of every run (suburb research often; shopping-centre sweep, description enrichment and closed-business check less often; new-mall discovery monthly).
 - [ ] **Stop repeating work:** skip anything already verified recently, track what each run touched in `routine-state.json`, read only the slice of the database snapshot the run needs, and end the run early when nothing is due.
 - [ ] **Move mechanical work out of the AI agent into scripts** that run in GitHub Actions: link and website checks, slug and category validation, SQL syntax check, duplicate detection. The agent then only does the parts that need judgement (finding and verifying new information).
-- [x] **Fuel prices split from news:** one monthly routine for all three cities (`ROUTINE.fuel.md`), guarded by `scripts/fuel-due.mjs` so it only runs on the first Wednesday of the month and the two days after. The news runbooks no longer touch fuel.
+- [x] **Fuel prices split from news:** one monthly routine for all three cities (`ROUTINE.fuel.md`), guarded by `scripts/fuel-due.mjs` so it only runs on the first Wednesday of the month and the two days after. Prices are split by region (Cape Town coastal; Pretoria and Polokwane inland), researched once for both. The news runbooks no longer touch fuel.
 - [ ] **News routine (daily, three cities):** one shared runbook (news only); fetch each source once; publish only stories that pass `npm run check:news`.
 - [ ] **Events routine (weekly, three cities):** one shared runbook; only look at sources that changed; drop events that have passed instead of re-checking them.
 - [ ] Give every routine a hard time/step budget, one clear success log line, and a failure that is visible (admin overview health tile).
