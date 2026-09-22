@@ -98,6 +98,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Off the R71', addressLocality: 'Polokwane', addressRegion: 'Limpopo', addressCountry: 'ZA' },
     geo: { lat: -23.9430, lng: 29.4720 },
     imageNeeded: 'Real photo of wildlife in the reserve (white lion, giraffe or zebra) or the hiking trail — avoid unrelated Kruger/generic safari stock photos.',
+    imageUrl: '/media/tourism/polokwane-game-reserve.jpg',
+    imageCredit: 'Photo: Derek Keats / Wikimedia Commons, CC BY 2.0 — a Marico flycatcher photographed in the reserve',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Marico_flycatcher,_Bradornis_mariquensis_at_Polokwane_Nature_Reserve,_Polokwane,_Limpopo,_South_Africa_(14678516682).jpg',
   },
   {
     slug: 'hugh-exton-photographic-museum',
@@ -128,6 +131,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Civic Square, Cnr Church Street & Bodenstein Street, Polokwane Central', addressLocality: 'Polokwane', addressRegion: 'Limpopo', postalCode: '0700', addressCountry: 'ZA' },
     geo: { lat: -23.9008, lng: 29.4530 },
     imageNeeded: 'A real archive photograph (if usage rights allow) or a current photo of the museum building / exhibit space — check copyright before using any Exton archive image.',
+    imageUrl: '/media/tourism/hugh-exton-photographic-museum.jpg',
+    imageCredit: 'Photo: JasonMoe289 / Wikimedia Commons, CC BY-SA 4.0 — Polokwane city centre, where the museum is located',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Polokwane_(Pietersbrug)_City_Centre_and_Part_of_CBD.jpg',
   },
   {
     slug: 'meropa-casino-entertainment-world',
@@ -190,6 +196,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Voortrekker Street', addressLocality: 'Polokwane', addressRegion: 'Limpopo', postalCode: '0699', addressCountry: 'ZA' },
     geo: { lat: -23.9130, lng: 29.4460 },
     imageNeeded: 'Real photo of the Polokwane Golf Club course or clubhouse — no generic golf stock imagery.',
+    imageUrl: '/media/tourism/polokwane-golf-club.jpg',
+    imageCredit: 'Photo: South African Tourism / Wikimedia Commons, CC BY 2.0 — illustrative (Legends Golf Estate, Limpopo — not Polokwane Golf Club itself)',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Golf_course,_Legends_Golf_Estate,_Limpopo,_South_Africa_(6252687015).jpg',
   },
   {
     slug: 'the-ranch-golf-course',
@@ -221,6 +230,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'The Ranch Resort, N1 South', addressLocality: 'Polokwane', addressRegion: 'Limpopo', addressCountry: 'ZA' },
     geo: { lat: -24.0870, lng: 29.3660 },
     imageNeeded: 'Real photo of The Ranch golf course or resort grounds — no generic golf/resort stock imagery.',
+    imageUrl: '/media/tourism/the-ranch-golf-course.jpg',
+    imageCredit: 'Photo: Heribert Bechen / Wikimedia Commons, CC BY-SA 2.0 — illustrative bushveld lodge grounds (Bongani Lodge — not The Ranch itself)',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:DSC04833_L4_BONGANI_LODGE_(49739470122).jpg',
   },
   {
     slug: 'magoebaskloof-debengeni-falls',
@@ -252,6 +264,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'R71, Magoebaskloof Pass', addressLocality: 'Magoebaskloof', addressRegion: 'Limpopo', addressCountry: 'ZA' },
     geo: { lat: -23.8710, lng: 29.9650 },
     imageNeeded: 'Real photo of Debengeni Falls or the misty forest / canopy — one of the more photogenic assets for the whole site; prioritise if only one new photo can be sourced.',
+    imageUrl: '/media/tourism/magoebaskloof-debengeni-falls.jpg',
+    imageCredit: 'Photo: South African Tourism / Wikimedia Commons, CC BY 2.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Magoebaskloof,_Limpopo,_South_Africa_(2417714031).jpg',
   },
   {
     slug: 'mapungubwe-national-park',
@@ -282,6 +297,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Mapungubwe National Park, off the N1 via Musina', addressLocality: 'Musina', addressRegion: 'Limpopo', addressCountry: 'ZA' },
     geo: { lat: -22.2020, lng: 29.3450 },
     imageNeeded: 'Real photo of the Limpopo/Shashe confluence, the treetop walkway, or Mapungubwe Hill — not a generic gold-artefact or unrelated safari stock image.',
+    imageUrl: '/media/tourism/mapungubwe-national-park.jpg',
+    imageCredit: 'Photo: Petrus Potgieter / Wikimedia Commons, CC BY-SA 3.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Landscape_in_the_Mapungubwe_National_Park,_with_zebras.jpg',
   },
   {
     slug: 'modjadji-cycad-reserve',
@@ -311,6 +329,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Modjadji Cycad Reserve, R36', addressLocality: 'Modjadjiskloof', addressRegion: 'Limpopo', addressCountry: 'ZA' },
     geo: { lat: -23.6360, lng: 30.1720 },
     imageNeeded: 'Real photo of the cycad forest or the valley viewpoint — not a generic palm-tree/cycad stock image.',
+    imageUrl: '/media/tourism/modjadji-cycad-reserve.jpg',
+    imageCredit: 'Photo: Krzysztof Ziarnek, Kenraiz / Wikimedia Commons, CC BY-SA 4.0 — Encephalartos transvenosus, the Modjadji cycad',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Encephalartos_transvenosus_kz01.jpg',
   },
   {
     slug: 'peter-mokaba-stadium',
@@ -339,6 +360,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Bram Fischer Street', addressLocality: 'Polokwane', addressRegion: 'Limpopo', addressCountry: 'ZA' },
     geo: { lat: -23.8560, lng: 29.4680 },
     imageNeeded: 'Real photo of the stadium exterior (baobab-shaped roof) or a match-day crowd — not a generic stadium stock image.',
+    imageUrl: '/media/tourism/peter-mokaba-stadium.jpg',
+    imageCredit: 'Photo: Brieuc Saffré / Wikimedia Commons, CC BY 2.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Mokaba_stadium_(4739619696).jpg',
   },
 ];
 

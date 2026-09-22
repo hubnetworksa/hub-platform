@@ -46,6 +46,7 @@ const jsonLd = {
   name: attraction.name,
   description: attraction.metaDescription,
   url: canonical,
+  ...(attraction.imageUrl ? { image: `${siteUrl}${attraction.imageUrl}` } : {}),
   address: {
     '@type': 'PostalAddress',
     ...(attraction.address.streetAddress ? { streetAddress: attraction.address.streetAddress } : {}),
@@ -80,7 +81,17 @@ const paras = (text: string) => text.split(/\n{2,}/);
   </PageBanner>
 
   <section class="container" style="padding-top: 2rem; padding-bottom: 3rem; max-width: 760px;">
-    {/* IMAGE NEEDED: {attraction.imageNeeded} — no stock/generic bushveld photos. */}
+    {attraction.imageUrl && (
+      <figure style="margin:0 0 1.5rem">
+        <img src={attraction.imageUrl} alt={attraction.name} style="width:100%;height:auto;max-height:420px;object-fit:cover;border-radius:var(--radius);display:block" />
+        {attraction.imageCredit && (
+          <figcaption style="margin-top:0.4rem;font-size:0.78rem;color:var(--text-muted)">
+            {attraction.imageSourceUrl ? <a href={attraction.imageSourceUrl} target="_blank" rel="noopener noreferrer">{attraction.imageCredit}</a> : attraction.imageCredit}
+          </figcaption>
+        )}
+      </figure>
+    )}
+    {!attraction.imageUrl && <Fragment set:html={`<!-- IMAGE NEEDED: ${attraction.imageNeeded.replace(/--/g, '—')} -->`} />}
 
     <h2>What it is</h2>
     {paras(attraction.whatItIs).map((p) => <p>{p}</p>)}

@@ -45,6 +45,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Tafelberg Road', addressLocality: 'Cape Town', addressRegion: 'Western Cape', postalCode: '8001', addressCountry: 'ZA' },
     geo: { lat: -33.9575, lng: 18.4030 },
     imageNeeded: 'Real photo of the cable car in motion or the summit plateau view — not a generic mountain/cable-car stock image.',
+    imageUrl: '/media/tourism/table-mountain-cableway.jpg',
+    imageCredit: 'Photo: Dietmar Rabich / Wikimedia Commons, CC BY-SA 4.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Cape_Town_(ZA),_Table_Mountain,_Seilbahn_--_2024_--_2846.jpg',
   },
   {
     slug: 'va-waterfront',
@@ -76,6 +79,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Dock Road', addressLocality: 'Cape Town', addressRegion: 'Western Cape', postalCode: '8001', addressCountry: 'ZA' },
     geo: { lat: -33.9036, lng: 18.4197 },
     imageNeeded: 'Real photo of the harbour, the Ferris wheel, or Zeitz MOCAA\'s silo building — not a generic waterfront stock image.',
+    imageUrl: '/media/tourism/va-waterfront.jpg',
+    imageCredit: 'Photo: Dietmar Rabich / Wikimedia Commons, CC BY-SA 4.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Cape_Town_(ZA),_Waterfront,_Kran_--_2024_--_2907.jpg',
   },
   {
     slug: 'cape-point-chapmans-peak',
@@ -108,6 +114,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Cape Point Road, Table Mountain National Park', addressLocality: 'Cape Town', addressRegion: 'Western Cape', addressCountry: 'ZA' },
     geo: { lat: -34.3568, lng: 18.4970 },
     imageNeeded: 'Real photo of Chapman\'s Peak Drive\'s cliff road or the Cape Point lighthouse — not a generic coastal-drive stock image.',
+    imageUrl: '/media/tourism/cape-point-chapmans-peak.jpg',
+    imageCredit: 'Photo: kallerna / Wikimedia Commons, CC BY-SA 4.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Chapmans_Peak_Drive_2.jpg',
   },
   {
     slug: 'kirstenbosch-botanical-garden',
@@ -141,6 +150,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Rhodes Drive', addressLocality: 'Newlands', addressRegion: 'Western Cape', postalCode: '7735', addressCountry: 'ZA' },
     geo: { lat: -33.9881, lng: 18.4322 },
     imageNeeded: 'Real photo of the Boomslang canopy walkway or the fynbos lawns — not a generic botanical-garden stock image.',
+    imageUrl: '/media/tourism/kirstenbosch-botanical-garden.jpg',
+    imageCredit: 'Photo: Axxter99 / Wikimedia Commons, CC BY-SA 3.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Boomslang_Kirstenbosch_1.jpg',
   },
   {
     slug: 'robben-island-museum',
@@ -173,6 +185,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Nelson Mandela Gateway, V&A Waterfront', addressLocality: 'Cape Town', addressRegion: 'Western Cape', postalCode: '8001', addressCountry: 'ZA' },
     geo: { lat: -33.8065, lng: 18.3708 },
     imageNeeded: 'Real photo of the prison building, Mandela\'s cell, or the ferry crossing — not a generic island/harbour stock image, and be mindful of the site\'s significance when choosing an image.',
+    imageUrl: '/media/tourism/robben-island-museum.jpg',
+    imageCredit: 'Photo: Moheen Reeyad / Wikimedia Commons, CC BY-SA 4.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:B-Section_courtyard,_Maximum_Security_Prison,_Robben_Island_(01).jpg',
   },
   {
     slug: 'stellenbosch-winelands',
@@ -204,6 +219,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Stellenbosch', addressLocality: 'Stellenbosch', addressRegion: 'Western Cape', postalCode: '7600', addressCountry: 'ZA' },
     geo: { lat: -33.9321, lng: 18.8602 },
     imageNeeded: 'Real photo of Dorp Street, an oak-lined avenue, or a vineyard on one of the estate routes — not a generic vineyard stock image.',
+    imageUrl: '/media/tourism/stellenbosch-winelands.jpg',
+    imageCredit: 'Photo: South African Tourism / Wikimedia Commons, CC BY 2.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Stellenbosch_Wine_Route,_Western_Cape,_South_Africa_(20317525878).jpg',
   },
 ];
 

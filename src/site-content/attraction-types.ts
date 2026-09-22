@@ -44,6 +44,17 @@ export interface Attraction {
   priceRange?: string;
   /** true when entry is free; leave undefined if paid or unknown. */
   isAccessibleForFree?: boolean;
-  /** Description of the real photo required. Rendered as an HTML comment. */
+  /** Description of the real photo required. Rendered as an HTML comment
+   *  when no imageUrl is set yet. */
   imageNeeded: string;
+  /** /media/tourism/<slug>.jpg — a real, freely-licensed photo (Wikimedia
+   *  Commons: public domain or CC-BY/-SA/-ND, never NC), uploaded to R2.
+   *  Undefined until one has actually been sourced — imageNeeded above is
+   *  the placeholder until then. */
+  imageUrl?: string;
+  /** "Photo by <artist> / Wikimedia Commons, <license>" — required whenever
+   *  imageUrl is set; Commons' CC-BY/-SA licenses require attribution. */
+  imageCredit?: string;
+  /** The Commons file's own description-page URL, for the credit link. */
+  imageSourceUrl?: string;
 }

@@ -42,6 +42,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Government Avenue', addressLocality: 'Arcadia', addressRegion: 'Gauteng', postalCode: '0083', addressCountry: 'ZA' },
     geo: { lat: -25.7406, lng: 28.2114 },
     imageNeeded: 'Real photo of the Mandela statue or the gardens with the Union Buildings behind — not a generic government-building stock image.',
+    imageUrl: '/media/tourism/union-buildings-gardens.jpg',
+    imageCredit: 'Photo: Ruby D-Brown / Wikimedia Commons, CC BY 4.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Union_Buildings_Pretoria_05.jpg',
   },
   {
     slug: 'voortrekker-monument',
@@ -74,6 +77,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Eeufees Road', addressLocality: 'Groenkloof', addressRegion: 'Gauteng', postalCode: '0002', addressCountry: 'ZA' },
     geo: { lat: -25.7853, lng: 28.1897 },
     imageNeeded: 'Real photo of the granite monument exterior or the midday-sunbeam Cenotaph moment — not a generic monument stock image.',
+    imageUrl: '/media/tourism/voortrekker-monument.jpg',
+    imageCredit: 'Photo: Ymblanter / Wikimedia Commons, CC BY-SA 4.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Pretoria_View_of_Central_Pretoria_from_the_bottom_of_the_Voortrekker_Monument_staircase.jpg',
   },
   {
     slug: 'rietvlei-nature-reserve',
@@ -104,6 +110,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Rietvlei Dam Road, off the R21', addressLocality: 'Pretoria', addressRegion: 'Gauteng', addressCountry: 'ZA' },
     geo: { lat: -25.8460, lng: 28.3230 },
     imageNeeded: 'Real photo of wildlife in the reserve (rhino, zebra or the dam) — not a generic safari stock image.',
+    imageUrl: '/media/tourism/rietvlei-nature-reserve.jpg',
+    imageCredit: 'Photo: Ossewa / Wikimedia Commons, CC BY-SA 4.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Rietvlei_Nature_Reserve.jpg',
   },
   {
     slug: 'national-zoological-garden',
@@ -135,6 +144,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Boom Street', addressLocality: 'Pretoria Central', addressRegion: 'Gauteng', postalCode: '0001', addressCountry: 'ZA' },
     geo: { lat: -25.7420, lng: 28.1910 },
     imageNeeded: 'Real photo of the cableway over the enclosures or a signature animal exhibit — not a generic zoo stock image.',
+    imageUrl: '/media/tourism/national-zoological-garden.jpg',
+    imageCredit: 'Photo: NJR ZA / Wikimedia Commons, CC BY-SA 3.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:South_Africa-Pretoria_Zoo-Cableway01.jpg',
   },
   {
     slug: 'freedom-park',
@@ -165,6 +177,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Salvokop', addressLocality: 'Pretoria', addressRegion: 'Gauteng', postalCode: '0002', addressCountry: 'ZA' },
     geo: { lat: -25.7660, lng: 28.1810 },
     imageNeeded: 'Real photo of the //hapo museum structure or the Wall of Names — not a generic memorial stock image.',
+    imageUrl: '/media/tourism/freedom-park.jpg',
+    imageCredit: 'Photo: Leo za1 / Wikimedia Commons, CC BY-SA 3.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Freedom_Park-333.jpg',
   },
   {
     slug: 'cullinan-diamond-mine-tour',
@@ -194,6 +209,9 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Oak Avenue, Cullinan', addressLocality: 'Cullinan', addressRegion: 'Gauteng', postalCode: '1000', addressCountry: 'ZA' },
     geo: { lat: -25.6740, lng: 28.5140 },
     imageNeeded: 'Real photo of the open pit, the historic mine buildings, or the village — not a generic mining/diamond stock image.',
+    imageUrl: '/media/tourism/cullinan-diamond-mine-tour.jpg',
+    imageCredit: 'Photo: Paul Parsons / Wikimedia Commons, CC BY-SA 3.0',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:South_Africa-Cullinan_Premier_Mine02.jpg',
   },
 ];
 

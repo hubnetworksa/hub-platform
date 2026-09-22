@@ -3,6 +3,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { adsEnabled } from '../../lib/site-overrides';
 import { TOURISM, TOUR_CATEGORIES } from '../../site-content/tourism';
 import { sponsorFor } from '../../lib/data';
+import { ATTRACTIONS as CAPETOWN_ATTRACTIONS } from '../../site-content/capetown/tourism';
+import { ATTRACTIONS as PRETORIA_ATTRACTIONS } from '../../site-content/pretoria/tourism';
+import { ATTRACTIONS as POLOKWANE_ATTRACTIONS } from '../../site-content/polokwane/tourism';
+import type { Attraction } from '../../site-content/attraction-types';
 import site from '../../site';
 
 // Port of the mockup's "Things to do" screen. Every site has one; a site with no
@@ -18,12 +22,16 @@ const demoSponsors = process.env.DEMO_PREMIUM === 'true';
 const mapsUrl = (name: string) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name}, ${site.cityLabel}`)}`;
 
+const attractionsBySite: Record<string, Attraction[]> = { capetown: CAPETOWN_ATTRACTIONS, pretoria: PRETORIA_ATTRACTIONS, polokwane: POLOKWANE_ATTRACTIONS };
+const imageBySlug = new Map((attractionsBySite[site.slug] ?? []).map((a) => [a.slug, a.imageUrl]));
+
 const picks = content.picks
   .map((p) => ({
     ...p,
     sponsored: (p.slug && Boolean(sponsorFor('tourism_sponsor', p.slug))) || (demoSponsors && p.sponsored),
     href: p.slug ? `/tourism/${p.slug}/` : mapsUrl(p.name),
     external: !p.slug,
+    imageUrl: p.slug ? imageBySlug.get(p.slug) : undefined,
   }))
   // Sponsored picks rise to the top, same as a Featured business listing.
   .sort((a, b) => Number(b.sponsored) - Number(a.sponsored));
@@ -70,8 +78,12 @@ const jsonLd = {
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">
         {picks.map((p) => (
           <article data-tour-card data-tour-cat={p.cat} class="tour-card" style={`display:flex;flex-direction:column;border:2px solid ${p.sponsored ? 'var(--accent)' : 'var(--border)'};border-radius:16px;background:#fff;overflow:hidden`}>
-            <div style="position:relative;height:172px;background:var(--bg-subtle);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">
-              {p.cat}
+            <div style="position:relative;height:172px;background:var(--bg-subtle);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;overflow:hidden">
+              {p.imageUrl ? (
+                <img src={p.imageUrl} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+              ) : (
+                p.cat
+              )}
               {p.sponsored && (
                 <span style="position:absolute;top:12px;left:12px;z-index:2;pointer-events:none;padding:4px 10px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;box-shadow:0 6px 16px rgba(0,0,0,.28)">Sponsored</span>
               )}
