@@ -4,6 +4,7 @@ import AdminShell from '../../components/AdminShell.astro';
 import { categories, suburbs, shoppingCenters, businessesInCategory, businessesInSuburb } from '../../lib/data';
 import { adsEnabled } from '../../lib/site-overrides';
 import { GUIDES } from '../../lib/guides';
+import { TOURISM } from '../../site-content/tourism';
 import site from '../../site';
 
 // Build-time lookups so the client can name slots and pick a few open ones to
@@ -14,6 +15,7 @@ const slotData = {
   suburbs: suburbs.map((s) => ({ slug: s.slug, name: s.name, count: businessesInSuburb(s.id).length })),
   centres: shoppingCenters.map((c) => ({ slug: c.slug, name: c.name })),
   guides: GUIDES.map((g) => ({ slug: g.slug, name: g.title(site.cityLabel) })),
+  tourism: (TOURISM[site.slug]?.picks ?? []).filter((p) => p.slug).map((p) => ({ slug: p.slug as string, name: p.name })),
   adsEnabledAtBuild: adsEnabled,
 };
 const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
@@ -68,7 +70,7 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
             </select>
           </label>
           <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
-            Target slug <span style="font-weight:600;color:var(--muted);font-size:11.5px">category/suburb/centre slug — blank for homepage banner or things-to-do sponsor</span>
+            Target slug <span style="font-weight:600;color:var(--muted);font-size:11.5px">category/suburb/centre/attraction slug — blank for homepage banner only</span>
             <input type="text" name="productTarget" style="padding:12px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)" />
           </label>
           <button type="submit" style="align-self:flex-start;padding:12px 17px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;cursor:pointer;">Assign</button>
@@ -88,6 +90,7 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
     suburbs: { slug: string; name: string; count: number }[];
     centres: { slug: string; name: string }[];
     guides: { slug: string; name: string }[];
+    tourism: { slug: string; name: string }[];
     adsEnabledAtBuild: boolean;
   }
   interface Sold {
@@ -114,7 +117,7 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
     if (productType === 'suburb_sponsor') return slots.suburbs.find((s) => s.slug === target)?.name ?? target ?? '';
     if (productType === 'centre_sponsor') return slots.centres.find((c) => c.slug === target)?.name ?? target ?? '';
     if (productType === 'guide_sponsor') return slots.guides.find((g) => g.slug === target)?.name ?? target ?? '';
-    if (productType === 'tourism_sponsor') return 'Things to do sponsor';
+    if (productType === 'tourism_sponsor') return slots.tourism.find((t) => t.slug === target)?.name ?? target ?? '';
     return target ?? '';
   }
 
@@ -182,7 +185,7 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
         const until = s.comped ? 'complimentary' : s.current_period_end ? `paid to ${fmtDate(s.current_period_end)}` : '';
         return `<div class="admin-row" style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
             <div style="min-width:0;flex:1">
-              <div style="font-size:14.5px;font-weight:800;color:var(--navy);">${esc(PRODUCT_LABELS[s.product_type] ?? s.product_type)}${name && s.product_type !== 'homepage_banner' && s.product_type !== 'tourism_sponsor' ? ` — ${esc(name)}` : ''}</div>
+              <div style="font-size:14.5px;font-weight:800;color:var(--navy);">${esc(PRODUCT_LABELS[s.product_type] ?? s.product_type)}${name && s.product_type !== 'homepage_banner' ? ` — ${esc(name)}` : ''}</div>
               <div style="font-size:12.5px;font-weight:600;color:var(--muted);">sold to ${esc(s.business_name)}${until ? ` · ${esc(until)}` : ''}</div>
             </div>
             <button data-clear="${s.id}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--danger);cursor:pointer;">Clear</button>

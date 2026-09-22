@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageBanner from '../../components/PageBanner.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Icon from '../../components/Icon.astro';
+import SponsorSlot from '../../components/SponsorSlot.astro';
 import { ATTRACTIONS as CAPETOWN_ATTRACTIONS } from '../../site-content/capetown/tourism';
 import { ATTRACTIONS as PRETORIA_ATTRACTIONS } from '../../site-content/pretoria/tourism';
 import { ATTRACTIONS as POLOKWANE_ATTRACTIONS } from '../../site-content/polokwane/tourism';
@@ -124,7 +125,17 @@ const paras = (text: string) => text.split(/\n{2,}/);
       </ul>
     )}
 
-    <p style="margin-top: 2rem;">
+    <div style="margin-top: 2rem; max-width: 420px;">
+      <SponsorSlot
+        productType="tourism_sponsor"
+        target={attraction.slug}
+        title="Sponsor this page"
+        openBody="Put your business here as the sponsor of this attraction's page — one advertiser at a time, month to month."
+        ctaLabel="See pricing"
+      />
+    </div>
+
+    <p style="margin-top: 1.25rem;">
       <a href="/tourism/">← All {site.cityLabel} attractions</a>
     </p>
   </section>

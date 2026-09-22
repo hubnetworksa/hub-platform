@@ -35,7 +35,7 @@ export function sponsorProductLabel(productType: SponsorProductType, target: str
     case 'guide_sponsor':
       return `Guide sponsor — ${target ?? ''}`;
     case 'tourism_sponsor':
-      return 'Things to do sponsor';
+      return `Things to do sponsor — ${target ?? ''}`;
   }
 }
 

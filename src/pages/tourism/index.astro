@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import SponsorSlot from '../../components/SponsorSlot.astro';
 import { adsEnabled } from '../../lib/site-overrides';
 import { TOURISM, TOUR_CATEGORIES } from '../../site-content/tourism';
+import { sponsorFor } from '../../lib/data';
 import site from '../../site';
 
 // Port of the mockup's "Things to do" screen. Every site has one; a site with no
@@ -10,18 +10,23 @@ import site from '../../site';
 const content = TOURISM[site.slug];
 if (!site.features.tourism || !content) return Astro.redirect('/');
 
-// Sponsored badges are demo placement: only in the dev preview build.
+// Demo placement (dev preview only) layers on top of real sponsorship data —
+// a genuinely purchased tourism_sponsor slot (see /tourism/<slug>/'s SponsorSlot
+// box) always wins, regardless of environment.
 const demoSponsors = process.env.DEMO_PREMIUM === 'true';
 
 const mapsUrl = (name: string) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name}, ${site.cityLabel}`)}`;
 
-const picks = content.picks.map((p) => ({
-  ...p,
-  sponsored: demoSponsors && p.sponsored,
-  href: p.slug ? `/tourism/${p.slug}/` : mapsUrl(p.name),
-  external: !p.slug,
-}));
+const picks = content.picks
+  .map((p) => ({
+    ...p,
+    sponsored: (p.slug && Boolean(sponsorFor('tourism_sponsor', p.slug))) || (demoSponsors && p.sponsored),
+    href: p.slug ? `/tourism/${p.slug}/` : mapsUrl(p.name),
+    external: !p.slug,
+  }))
+  // Sponsored picks rise to the top, same as a Featured business listing.
+  .sort((a, b) => Number(b.sponsored) - Number(a.sponsored));
 // Only chips that have something under them.
 const filters = TOUR_CATEGORIES.filter((c) => c === 'All' || picks.some((p) => p.cat === c));
 
@@ -141,16 +146,15 @@ const jsonLd = {
               <div style="font-size:19px;font-weight:800;color:#fff;margin-top:6px;letter-spacing:-.02em">List your attraction free</div>
             </div>
             <div style="padding:16px;background:#fff">
-              <p style="margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--text)">Tours, guesthouses, restaurants and activities. Sponsor this page to sit at the top.</p>
+              <p style="margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--text)">Tours, guesthouses, restaurants and activities. Sponsor an attraction's own page to sit at the top of it.</p>
               <a href="/list-your-business/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-align:center;text-decoration:none">Add an attraction</a>
             </div>
           </div>
-          <SponsorSlot
-            productType="tourism_sponsor"
-            title="Sponsor this page"
-            openBody="The single sponsored placement on this page — one advertiser at a time, month to month."
-            ctaLabel="See pricing"
-          />
+          <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
+            <h3 style="margin:0 0 8px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Sponsor an attraction</h3>
+            <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Every attraction below has its own sponsor slot — open its page to see if it's taken.</p>
+            <a href="/pricing/" style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--navy);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-align:center;text-decoration:none">See pricing</a>
+          </div>
           <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
             <h3 style="margin:0 0 8px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Visiting for a weekend?</h3>
             <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Check what's on while you're here — markets, sport and live music with ticket prices.</p>

@@ -3,7 +3,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SponsorSlot from '../components/SponsorSlot.astro';
 import { priceRand, categories, suburbs } from '../lib/data';
 import { GUIDES } from '../lib/guides';
+import { TOURISM } from '../site-content/tourism';
 import site from '../site';
+
+const tourismPickCount = TOURISM[site.slug]?.picks.length ?? 0;
 
 const SPOTS = [
   { productType: 'category_sponsor' as const, name: 'Category sponsor', price: priceRand('price_sponsor_category_cents'), blurb: `Your card above every listing in one of ${categories.length} categories, city-wide.` },
@@ -13,8 +16,8 @@ const SPOTS = [
   ...(GUIDES.length > 0
     ? [{ productType: 'guide_sponsor' as const, name: 'Guide sponsorship', price: priceRand('price_sponsor_guide_cents'), blurb: `One business per buyer's guide — currently ${GUIDES.length} guide${GUIDES.length === 1 ? '' : 's'} live.` }]
     : []),
-  ...(site.features.tourism
-    ? [{ productType: 'tourism_sponsor' as const, name: 'Things to do sponsor', price: priceRand('price_sponsor_tourism_cents'), blurb: 'The single sponsored placement on the Things to do page. One advertiser at a time, month to month.' }]
+  ...(site.features.tourism && tourismPickCount > 0
+    ? [{ productType: 'tourism_sponsor' as const, name: 'Things to do sponsor', price: priceRand('price_sponsor_tourism_cents'), blurb: `One business per attraction page — currently ${tourismPickCount} attraction${tourismPickCount === 1 ? '' : 's'} live, and more added over time.` }]
     : []),
 ];
 ---
@@ -105,22 +108,19 @@ const SPOTS = [
       </div>
       <p style="margin:16px 0 0;font-size:12.5px;color:var(--muted);font-weight:600">Prices shown are placeholders and subject to change.</p>
 
-      <div style="margin-top:18px;max-width:420px;display:flex;flex-direction:column;gap:14px">
+      <div style="margin-top:18px;max-width:420px;">
         <SponsorSlot
           productType="homepage_banner"
           title="Homepage banner"
           openBody="The single sponsor slot on the homepage — one advertiser at a time."
           ctaLabel="Enquire about the banner"
         />
-        {site.features.tourism && (
-          <SponsorSlot
-            productType="tourism_sponsor"
-            title="Things to do sponsor"
-            openBody="The single sponsor slot on the Things to do page — one advertiser at a time."
-            ctaLabel="Enquire about this slot"
-          />
-        )}
       </div>
+      {site.features.tourism && tourismPickCount > 0 && (
+        <p style="margin:14px 0 0;font-size:13px;font-weight:600;color:var(--muted)">
+          Things to do sponsor slots are sold per attraction — see each attraction's own page under <a href="/tourism/" style="color:var(--accent-hover);font-weight:800">Things to do</a> to sponsor it.
+        </p>
+      )}
     </section>
 
     <section id="events" style="max-width:1200px;margin:0 auto;padding:clamp(32px,4vw,52px) 20px 0">

@@ -1,11 +1,22 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { priceRand } from '../../lib/data';
+import { priceRand, sponsorships } from '../../lib/data';
+import { TOURISM } from '../../site-content/tourism';
 import site from '../../site';
 
 const priceVerified = priceRand('price_verified_cents').replace(/\.00$/, '');
 const priceFeatured = priceRand('price_featured_cents').replace(/\.00$/, '');
 const priceTourismSponsor = priceRand('price_sponsor_tourism_cents').replace(/\.00$/, '');
+
+// One sponsor slot per attraction (not a single citywide slot) — more
+// attractions get added over time, so this list just grows with them.
+// `sponsoredSlugs` is a build-time snapshot (same eventual-consistency
+// tradeoff as every other sponsorship slot on this site — refreshes on
+// the next rebuild); subscribe/start.ts's isSlotTaken() check is what
+// actually guards against double-selling in real time.
+const tourismPicks = (TOURISM[site.slug]?.picks ?? []).filter((p): p is typeof p & { slug: string } => Boolean(p.slug)).map((p) => ({ slug: p.slug, name: p.name }));
+const tourismSponsoredSlugs = sponsorships.filter((s) => s.product_type === 'tourism_sponsor' && s.product_target).map((s) => s.product_target as string);
+const tourismPicksJson = JSON.stringify({ picks: tourismPicks, sponsoredSlugs: tourismSponsoredSlugs }).replace(/</g, '\\u003c');
 
 const TABS = [
   ['overview', 'Overview'],
@@ -176,18 +187,20 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
             <p id="plan-status" role="status" style="margin:10px 0 0;font-size:13px;font-weight:700;color:var(--muted)"></p>
             <p style="margin:8px 0 0;font-size:13px;font-weight:600;color:var(--muted)"><a href="/pricing/" style="color:var(--accent-hover);font-weight:800">Compare plans</a></p>
 
-            {site.features.tourism && (
+            {site.features.tourism && tourismPicks.length > 0 && (
               <div style={`${cardBox};margin-top:14px`}>
                 <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
-                  <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Sponsorships</h3>
+                  <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Things to do sponsorships</h3>
+                  <p style="margin:4px 0 0;font-size:12.5px;font-weight:600;color:var(--muted)">{priceTourismSponsor} / month per attraction — one sponsor per attraction page, and more attractions get added over time.</p>
                 </div>
-                <div style="padding:18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-                  <div>
-                    <div style="font-size:15.5px;font-weight:800;color:var(--navy)">Things to do sponsor</div>
-                    <div id="tourism-sponsor-status" style="font-size:13px;font-weight:700;color:var(--muted);margin-top:4px">{priceTourismSponsor} / month — the single sponsored placement on the Things to do page.</div>
-                  </div>
-                  <div id="tourism-sponsor-buttons" style="display:flex;gap:9px;margin-left:auto;flex-wrap:wrap"></div>
+                <div id="tourism-sponsor-list"></div>
+                <p id="tourism-sponsor-empty" hidden style={emptyNote}>Not sponsoring any attractions yet.</p>
+                <div id="tourism-sponsor-picker" style="padding:16px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--border)">
+                  <select id="tourism-sponsor-select" style="padding:11px 13px;border:2px solid var(--border);border-radius:9px;font-size:13.5px;outline:none;background:#fff;color:var(--text);flex:1;min-width:200px"></select>
+                  <button id="tourism-sponsor-buy" type="button" style="padding:11px 16px;border:2px solid var(--navy);border-radius:9px;background:#fff;color:var(--navy);font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap">Sponsor this attraction</button>
                 </div>
+                <p id="tourism-sponsor-all-taken" hidden style={emptyNote}>Every attraction is currently sponsored — check back later.</p>
+                <p id="tourism-sponsor-status" role="status" style="margin:0;padding:0 18px 14px;font-size:13px;font-weight:700;color:var(--muted)"></p>
               </div>
             )}
 
@@ -203,6 +216,9 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       </div>
     </div>
   </main>
+  {site.features.tourism && tourismPicks.length > 0 && (
+    <script type="application/json" id="tourism-picks-data" set:html={tourismPicksJson} />
+  )}
 </BaseLayout>
 
 <style is:global>
@@ -393,53 +409,82 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     else if (params.get('upgrade_cancelled')) planStatus.textContent = 'Checkout cancelled — you have not been charged.';
   }
 
-  // ---- Sponsorships (currently just the Things to do slot — a real
-  // monthly recurring subscription via the same subscribe/start.ts path as
-  // a tier upgrade, unlike an event feature which is a once-off payment). ----
+  // ---- Sponsorships: one slot per Things to do attraction (not a single
+  // citywide slot — more attractions get added over time, so this list
+  // just grows with them), each a real monthly recurring subscription via
+  // the same subscribe/start.ts path as a tier upgrade — unlike an event
+  // feature, which is a once-off payment. ----
+  interface TourismPick { slug: string; name: string }
   function renderSponsorships(sponsorships: Sponsorship[]) {
+    const listEl = document.getElementById('tourism-sponsor-list');
+    const emptyEl = document.getElementById('tourism-sponsor-empty');
+    const pickerEl = document.getElementById('tourism-sponsor-picker');
+    const selectEl = document.getElementById('tourism-sponsor-select') as HTMLSelectElement | null;
+    const buyBtn = document.getElementById('tourism-sponsor-buy') as HTMLButtonElement | null;
+    const allTakenEl = document.getElementById('tourism-sponsor-all-taken');
     const statusEl = document.getElementById('tourism-sponsor-status');
-    const buttons = document.getElementById('tourism-sponsor-buttons');
-    if (!statusEl || !buttons) return; // site.features.tourism was false at build time — card not rendered
+    if (!listEl || !emptyEl || !pickerEl || !selectEl || !buyBtn || !allTakenEl || !statusEl) return; // no tourism picks at build time — card not rendered
 
+    const dataEl = document.getElementById('tourism-picks-data');
+    const { picks, sponsoredSlugs }: { picks: TourismPick[]; sponsoredSlugs: string[] } = dataEl ? JSON.parse(dataEl.textContent || '{}') : { picks: [], sponsoredSlugs: [] };
     const priceLabel = main.dataset.priceTourismSponsor ?? '—';
-    const active = sponsorships.find((s) => s.product_type === 'tourism_sponsor');
-    buttons.innerHTML = '';
 
-    if (active) {
-      const expiry = longDate(active.current_period_end);
-      statusEl.textContent = [`${priceLabel}/month`, expiry ? `renews ${expiry}` : null].filter(Boolean).join(' · ');
-      const cancelBtn = planButton('Cancel');
-      cancelBtn.style.borderColor = 'var(--border)';
-      cancelBtn.style.color = 'var(--danger)';
-      cancelBtn.addEventListener('click', async () => {
-        if (!confirm('Cancel the Things to do sponsorship? You keep the slot until the paid period ends.')) return;
-        statusEl.textContent = 'Cancelling…';
-        const res = await fetch('/api/subscribe/cancel', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ businessId: Number(businessId), productType: 'tourism_sponsor' }),
+    const mine = sponsorships.filter((s) => s.product_type === 'tourism_sponsor' && s.product_target);
+    const mineBySlug = new Map(mine.map((s) => [s.product_target as string, s]));
+    // Open to buy: not sponsored by anyone (per the build-time snapshot) and not already mine.
+    const soldSlugs = new Set(sponsoredSlugs);
+    const open = picks.filter((p) => !soldSlugs.has(p.slug) && !mineBySlug.has(p.slug));
+
+    listEl.innerHTML = '';
+    emptyEl.hidden = mine.length > 0;
+    if (mine.length > 0) {
+      for (const s of mine) {
+        const pick = picks.find((p) => p.slug === s.product_target);
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--border)';
+        const expiry = longDate(s.current_period_end);
+        row.innerHTML = `<span style="font-size:14.5px;font-weight:800;color:var(--navy)">${esc(pick?.name ?? s.product_target ?? '')}</span><span style="font-size:12.5px;font-weight:700;color:var(--muted)">${esc(expiry ? `renews ${expiry}` : '')}</span>`;
+        const cancelBtn = planButton('Cancel');
+        cancelBtn.style.borderColor = 'var(--border)';
+        cancelBtn.style.color = 'var(--danger)';
+        cancelBtn.style.padding = '8px 13px';
+        cancelBtn.style.fontSize = '12.5px';
+        cancelBtn.addEventListener('click', async () => {
+          if (!confirm(`Cancel sponsoring "${pick?.name ?? s.product_target}"? You keep the slot until the paid period ends.`)) return;
+          statusEl.textContent = 'Cancelling…';
+          const res = await fetch('/api/subscribe/cancel', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ businessId: Number(businessId), productType: 'tourism_sponsor', productTarget: s.product_target }),
+          });
+          const result = await res.json();
+          statusEl.textContent = result.ok ? 'Cancelled — active until the current period ends.' : result.error || 'Could not cancel.';
         });
-        const result = await res.json();
-        statusEl.textContent = result.ok ? 'Cancelled — active until your current period ends.' : result.error || 'Could not cancel.';
-      });
-      buttons.appendChild(cancelBtn);
-    } else {
-      statusEl.textContent = `${priceLabel} / month — the single sponsored placement on the Things to do page.`;
-      const buyBtn = planButton('Sponsor this slot');
-      buyBtn.addEventListener('click', async () => {
+        row.appendChild(cancelBtn);
+        listEl.appendChild(row);
+      }
+    }
+
+    pickerEl.hidden = open.length === 0;
+    allTakenEl.hidden = open.length > 0;
+    if (open.length > 0) {
+      selectEl.innerHTML = open.map((p) => `<option value="${esc(p.slug)}">${esc(p.name)}</option>`).join('');
+      buyBtn.onclick = async () => {
+        const target = selectEl.value;
+        if (!target) return;
         statusEl.textContent = 'Starting checkout…';
         const res = await fetch('/api/subscribe/start', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ businessId: Number(businessId), productType: 'tourism_sponsor' }),
+          body: JSON.stringify({ businessId: Number(businessId), productType: 'tourism_sponsor', productTarget: target }),
         });
         const result = await res.json();
         if (result.ok) window.location.href = result.redirectUrl;
         else statusEl.textContent = result.error || 'Could not start checkout.';
-      });
-      buttons.appendChild(buyBtn);
+      };
     }
 
+    statusEl.textContent = `${priceLabel} / month per attraction.`;
     if (params.get('upgraded')) statusEl.textContent = 'Thanks — your payment is being confirmed (refresh in a minute).';
     else if (params.get('upgrade_cancelled')) statusEl.textContent = 'Checkout cancelled — you have not been charged.';
   }
