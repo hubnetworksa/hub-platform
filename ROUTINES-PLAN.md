@@ -8,7 +8,7 @@ The aim: every routine does only the work that is needed, uses as little of the 
 
 | Routine | Runs | Does what | Where |
 |---|---|---|---|
-| **Business routine** (one per city) | Hourly cloud agent | Five jobs: (1) discover new businesses, 3 suburbs per run; (2) discover shopping centres and their tenants; (3) sweep one shopping centre's own website; (4) enrich descriptions and hours of existing businesses; (5) check for permanently closed businesses. Writes a SQL file to `db/routine-updates/<city>/`. | `ROUTINE.capetown.md` (903 lines), `ROUTINE.pretoria.md` (720), `ROUTINE.polokwane.md` (922) |
+| **Business routine** (one per city) | Cloud agent, every 3 hours (Pretoria/Polokwane — was hourly until 22 September, changed after this pattern contributed to a second D1 quota incident that day; Cape Town already runs daily) | Five jobs: (1) discover new businesses, 3 suburbs per run; (2) discover shopping centres and their tenants; (3) sweep one shopping centre's own website; (4) enrich descriptions and hours of existing businesses; (5) check for permanently closed businesses. Writes a SQL file to `db/routine-updates/<city>/`. | `ROUTINE.capetown.md` (903 lines), `ROUTINE.pretoria.md` (720), `ROUTINE.polokwane.md` (922) |
 | **Events routine** (one per city) | Weekly cloud agent | Finds upcoming public events and proposes them for the Events page. | `ROUTINE.events.<city>.md` (144 lines each) |
 | **News routine** (one per city) | Daily cloud agent | Writes the day's local news articles. Checked by `npm run check:news` before pushing. | `ROUTINE.news.<city>.md` (about 145 lines each) |
 | **Fuel prices routine** (one for all three cities) | Monthly: first Wednesday, with two catch-up days | Loads the month's pump prices for all three sites in one run. Prices are split by region: Cape Town uses the **coastal** price, Pretoria and Polokwane use the **inland** price (Gauteng and Limpopo), so it reads both columns of the announcement once and writes eight rows (four grades x two regions) across the three cities. Split out of the news routine on 21 September because prices only change on the first Wednesday. Guarded by `scripts/fuel-due.mjs` so it does nothing on any other day. | `routines/fuel.md` |
@@ -20,10 +20,10 @@ How agent output reaches the site: the agent commits a SQL file, and the deploy 
 ## 2. What is inefficient today
 
 1. **Three near-identical business runbooks** (about 2,500 lines in total). An agent with no memory reads its whole runbook on every run, then works out which of the five jobs is due.
-2. **Every run reads the full snapshot.** Pretoria's is 3.9 MB, Polokwane's 0.46 MB and Cape Town's 0.09 MB, read on every hourly run to check what already exists.
+2. **Every run reads the full snapshot.** Pretoria's is 3.9 MB, Polokwane's 0.46 MB and Cape Town's 0.09 MB, read on every run (every 3 hours for Pretoria/Polokwane, daily for Cape Town) to check what already exists.
 3. **The agent does mechanical work**: duplicate checks by phone and address, slug and category validation, SQL formatting, link checks. Scripts do these faster, more reliably and for free.
 4. **Jobs run whether or not they are due.** Jobs 3, 4 and 5 often find nothing to do but still cost a read of the runbook.
-5. **Every routine commit triggers a full production deploy** (three builds, each reading all three databases). With hourly routines across three cities that is many deploys a day. This very likely contributed to the Cloudflare D1 free read limit being hit on 20 September (to be confirmed from the deploy history).
+5. **Every routine commit triggers a full production deploy** (three builds, each reading all three databases). With hourly routines across three cities that was many deploys a day — this very likely contributed to the Cloudflare D1 free read limit being hit on 20 September (to be confirmed from the deploy history), and the same pattern hit the limit again on 22 September, which is why Pretoria/Polokwane's business routine moved to every 3 hours that day.
 6. **Failures are silent.** Nothing tells you when a routine has stopped or keeps failing.
 7. **Gaps:** no scheduled database backup, no data-quality report, no refresh of the tourism page, no routine to collect business emails (needed for claim verification), no clean-up of passed events or stale news.
 
@@ -33,7 +33,7 @@ How agent output reaches the site: the agent commits a SQL file, and the deploy 
 2. **One shared runbook per routine type**, plus a small per-city config file (suburbs, sources, city name, tone). No more three copies.
 3. **Run only what is due.** A cheap script decides which job needs to run, and the run ends early when nothing is due.
 4. **Small inputs.** The agent reads a small slice (its suburbs, its batch), never the whole snapshot.
-5. **Cadence follows value.** Fast-changing data (news) daily, slow-changing data (attractions, boundaries) monthly or yearly. Once a city's backlog is done, hourly runs slow down automatically.
+5. **Cadence follows value.** Fast-changing data (news) daily, slow-changing data (attractions, boundaries) monthly or yearly. Once a city's backlog is done, the every-3-hours runs slow down automatically.
 6. **Batch the deploys.** Routine SQL is applied and the sites rebuilt once a day (plus on demand), not on every commit.
 7. **Hard budget per run** (steps and time), one clear success line in the log, and a failure that you can see.
 8. **Every write is idempotent and guarded** (already the rule today: one-time flags such as `description_enriched_at IS NULL`). Keep that.
@@ -45,7 +45,7 @@ How agent output reaches the site: the agent commits a SQL file, and the deploy 
 
 | Routine | New shape |
 |---|---|
-| **1. Business discovery** (job 1) | Own routine. A script picks the next suburbs and pre-computes the known businesses for just those suburbs (phone and address dedupe done by script, including neighbouring suburbs). Agent searches and verifies only. Runs hourly while a city has unfinished suburbs, then weekly. |
+| **1. Business discovery** (job 1) | Own routine. A script picks the next suburbs and pre-computes the known businesses for just those suburbs (phone and address dedupe done by script, including neighbouring suburbs). Agent searches and verifies only. Runs every 3 hours while a city has unfinished suburbs, then weekly. |
 | **2. Shopping centres** (jobs 2 and 3 plus new-mall discovery) | Own routine, one centre per run: read that centre's own website, link or unlink tenants, and add tenants that are new businesses. Daily until every centre has been swept once, then weekly. New-mall discovery monthly. Jobs 2 and 3 share the same centre list and state, so they belong together. |
 | **3. Description, hours and email enrichment** (job 4) | Own routine, daily batch. A script hands the agent the next batch of businesses that still lack enrichment (guarded by `description_enriched_at IS NULL`). For each one the agent rewrites the description, captures the trading hours **and finds the company's contact email**. Runs after discovery, never at the same time. Details of the email rule are below. |
 | **4. Closed-business check** (job 5) | Own routine, weekly. Script-first: check the business's website and phone status; the agent only decides the unclear cases. Never deletes, only hides (as today). |
@@ -108,7 +108,7 @@ Acceptance for each phase: the routine runs cleanly twice in a row on the dev br
 
 ## 7. Decisions needed from you
 
-1. **Business routine cadence:** keep hourly while a city has unfinished suburbs (recommended), or move to a fixed schedule?
+1. **Business routine cadence: decided, 22 September.** Every 3 hours while a city has unfinished suburbs (was hourly) — changed after the hourly cadence contributed to hitting the Cloudflare D1 free read limit a second time that day.
 2. **Cloudflare plan: decided.** You are staying on the free plan for now, so Phase 0 (batched deploys and lighter build reads) is a must-do before the routines go live, not an option.
 3. **Who reviews guides and tourism changes** before they publish (recommended: you approve, agents only draft).
 4. **Alert address:** where should failure emails go?

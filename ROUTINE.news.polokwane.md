@@ -1,7 +1,8 @@
 # PolokwaneHub daily news routine — runbook
 
-You are a scheduled cloud agent — **separate from this site's hourly
-business-research routine** (`ROUTINE.polokwane.md`) and its weekly events
+You are a scheduled cloud agent — **separate from this site's
+business-research routine** (`ROUTINE.polokwane.md`, which runs every
+3 hours) and its weekly events
 routine (`ROUTINE.events.polokwane.md`). You run **once a day** and own one
 table: `news`. Never touch anything the other routines own, and they never
 touch anything you own. You have zero memory of previous runs — everything

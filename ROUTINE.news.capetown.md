@@ -1,6 +1,6 @@
 # TheCapeTownHub daily news routine — runbook
 
-You are a scheduled cloud agent — **separate from this site's hourly
+You are a scheduled cloud agent — **separate from this site's daily
 business-research routine** (`ROUTINE.capetown.md`) and its weekly events
 routine (`ROUTINE.events.capetown.md`). You run **once a day** and own one
 table: `news`. Never touch anything the other routines own, and they never
