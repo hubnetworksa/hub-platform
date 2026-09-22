@@ -2,7 +2,7 @@ import type { PagesFunction, D1Database, R2Bucket } from '@cloudflare/workers-ty
 import { buildSignatureString, md5, payfastConfigured, type PayfastEnv } from '../../_lib/payfast';
 import { logActivity } from '../../_lib/activity-log';
 import { tierPriceCents, sponsorPriceCents, isSponsorProductType, eventFeaturePriceCents } from '../../_lib/pricing';
-import { issueInvoice } from '../../_lib/invoicing';
+import { issueInvoice, issueEventInvoice } from '../../_lib/invoicing';
 
 interface Env extends PayfastEnv {
   DB: D1Database;
@@ -77,7 +77,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return handleSubmissionPayment(db, targetId, posted, postedAmount, raw);
   }
   if (scope === 'event') {
-    return handleEventPayment(db, targetId, posted, postedAmount, raw);
+    return handleEventPayment(context.env, db, targetId, posted, postedAmount, raw);
   }
   if (scope === 'event-submission') {
     return handleEventSubmissionPayment(db, targetId, posted, postedAmount);
@@ -110,6 +110,7 @@ async function handleEventSubmissionPayment(
 }
 
 async function handleEventPayment(
+  env: Env,
   db: D1Database,
   eventId: number,
   posted: Record<string, string>,
@@ -136,6 +137,8 @@ async function handleEventPayment(
 
   const event = await db.prepare('SELECT title FROM events WHERE id = ?').bind(eventId).first<{ title: string }>();
   if (event) await logActivity(db, 'event_featured', event.title, 'Featured via PayFast.');
+
+  await issueEventInvoice(env, payment.id);
 
   return new Response('OK', { status: 200 });
 }

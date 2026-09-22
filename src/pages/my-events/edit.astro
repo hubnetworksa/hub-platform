@@ -28,6 +28,12 @@ const cardBox = 'background:#fff;border:2px solid var(--border);border-radius:14
       </div>
 
       <div style={`${cardBox};margin-top:16px`}>
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy);font-size:15px;font-weight:800;color:var(--navy)">Payments &amp; invoices</div>
+        <div id="payments-list"></div>
+        <p id="payments-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No payments yet.</p>
+      </div>
+
+      <div style={`${cardBox};margin-top:16px`}>
         <div style="padding:14px 18px;border-bottom:2px solid var(--navy);font-size:15px;font-weight:800;color:var(--navy)">Event details</div>
         <form id="event-form" style="padding:18px;display:flex;flex-direction:column;gap:14px">
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
@@ -54,6 +60,7 @@ const cardBox = 'background:#fff;border:2px solid var(--border);border-radius:14
 
 <style is:global>
   #dashboard[hidden] { display: none !important; }
+  #payments-empty[hidden] { display: none !important; }
   .ev-input:focus { border-color: var(--accent) !important; }
 </style>
 
@@ -74,6 +81,33 @@ const cardBox = 'background:#fff;border:2px solid var(--border);border-radius:14
   function dateLabel(d: string): string {
     const dt = new Date(d.includes('T') ? d : `${d}T00:00:00Z`);
     return isNaN(dt.getTime()) ? d : dt.toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+  }
+
+  type Payment = { id: number; amount_cents: number; status: string; paid_at: string | null; invoice_number: string | null };
+
+  function renderPayments(payments: Payment[]) {
+    const list = document.getElementById('payments-list')!;
+    const empty = document.getElementById('payments-empty')!;
+    if (payments.length === 0) {
+      empty.hidden = false;
+      return;
+    }
+    list.innerHTML = payments
+      .map((p, i) => {
+        const rand = `R${(p.amount_cents / 100).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const when = p.paid_at ? dateLabel(p.paid_at.slice(0, 10)) : 'Pending';
+        const invoiceLink = p.invoice_number
+          ? `<a href="/api/invoice?eventPaymentId=${p.id}" target="_blank" rel="noopener" style="padding:7px 12px;border:2px solid var(--border);border-radius:8px;color:var(--navy);font-size:12px;font-weight:800;text-decoration:none;white-space:nowrap">Invoice</a>`
+          : '';
+        return `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;${i === payments.length - 1 ? '' : 'border-bottom:1px solid var(--border);'}">
+          <div>
+            <div style="font-size:14.5px;font-weight:800;color:var(--navy)">Featured event — ${rand}</div>
+            <div style="font-size:12.5px;font-weight:700;color:var(--muted);margin-top:2px">${when} · ${p.status}</div>
+          </div>
+          ${invoiceLink}
+        </div>`;
+      })
+      .join('');
   }
 
   async function init() {
@@ -101,6 +135,8 @@ const cardBox = 'background:#fff;border:2px solid var(--border);border-radius:14
 
     document.getElementById('event-title')!.textContent = e.title;
     document.getElementById('event-meta')!.textContent = [dateLabel(e.event_date), e.venue].filter(Boolean).join(' · ');
+
+    renderPayments(data.payments ?? []);
 
     (form.elements.namedItem('venue') as HTMLInputElement).value = e.venue ?? '';
     (form.elements.namedItem('suburb') as HTMLInputElement).value = e.suburb ?? '';

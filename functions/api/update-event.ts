@@ -39,9 +39,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   }
 
   const payments = await db
-    .prepare('SELECT id, amount_cents, status, paid_at FROM event_payments WHERE event_id = ? ORDER BY id DESC LIMIT 24')
+    .prepare('SELECT id, amount_cents, status, paid_at, invoice_number FROM event_payments WHERE event_id = ? ORDER BY id DESC LIMIT 24')
     .bind(eventId)
-    .all<{ id: number; amount_cents: number; status: string; paid_at: string | null }>();
+    .all<{ id: number; amount_cents: number; status: string; paid_at: string | null; invoice_number: string | null }>();
 
   return json({ ok: true, event, payments: payments.results });
 };

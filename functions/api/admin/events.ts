@@ -1,11 +1,15 @@
-import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
+import type { PagesFunction, D1Database, R2Bucket } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { eventSlug, isEventType } from '../../_lib/events';
 import { logActivity } from '../../_lib/activity-log';
 import { eventFeaturePriceCents } from '../../_lib/pricing';
+import { issueEventInvoice } from '../../_lib/invoicing';
 
 interface Env {
   DB: D1Database;
+  MEDIA: R2Bucket;
+  SITE: string;
+  RESEND_API_KEY?: string;
 }
 
 // Backs the admin "Events" tab — same shape as admin/businesses.astro and
@@ -106,16 +110,15 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       .run();
     const eventId = inserted.meta.last_row_id as number;
 
-    const batch = [db.prepare('DELETE FROM event_submissions WHERE id = ?').bind(id)];
     if (paid) {
       const amountCents = await eventFeaturePriceCents(db);
-      batch.push(
-        db
-          .prepare(`INSERT INTO event_payments (event_id, m_payment_id, amount_cents, status, paid_at) VALUES (?, ?, ?, 'complete', datetime('now'))`)
-          .bind(eventId, sub.m_payment_id, amountCents ?? 0)
-      );
+      const paymentInsert = await db
+        .prepare(`INSERT INTO event_payments (event_id, m_payment_id, amount_cents, status, paid_at) VALUES (?, ?, ?, 'complete', datetime('now'))`)
+        .bind(eventId, sub.m_payment_id, amountCents ?? 0)
+        .run();
+      await issueEventInvoice(context.env, paymentInsert.meta.last_row_id as number);
     }
-    await db.batch(batch);
+    await db.prepare('DELETE FROM event_submissions WHERE id = ?').bind(id).run();
     await logActivity(db, 'event_approved', sub.title, `Organiser submission approved by ${user.email}.${paid ? ' Featured (paid at submission).' : ''}`);
     return json({ ok: true, slug });
   }

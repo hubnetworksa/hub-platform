@@ -165,3 +165,94 @@ export async function issueInvoice(env: InvoicingEnv, paymentId: number): Promis
     console.error('issueInvoice failed', paymentId, err);
   }
 }
+
+/**
+ * Same as issueInvoice, but for a completed "Feature this event" payment
+ * (event_payments, not payments/subscriptions/businesses) — called from
+ * subscribe/notify.ts's handleEventPayment (featuring an already-owned,
+ * already-published event) and admin/events.ts's approve-submission (a
+ * feature paid for at submission time, applied once the event is
+ * approved). Same idempotency and never-throws guarantees as issueInvoice.
+ */
+export async function issueEventInvoice(env: InvoicingEnv, eventPaymentId: number): Promise<void> {
+  try {
+    const db = env.DB;
+    const payment = await db
+      .prepare(
+        `SELECT ep.id, ep.amount_cents, ep.status, ep.paid_at, ep.invoice_number, ep.m_payment_id,
+                e.id AS event_id, e.title AS event_title, e.event_owner_user_id,
+                u.email AS owner_email
+         FROM event_payments ep
+         JOIN events e ON e.id = ep.event_id
+         LEFT JOIN users u ON u.id = e.event_owner_user_id
+         WHERE ep.id = ?`
+      )
+      .bind(eventPaymentId)
+      .first<{
+        id: number; amount_cents: number; status: string; paid_at: string | null; invoice_number: string | null; m_payment_id: string;
+        event_id: number; event_title: string; event_owner_user_id: number | null; owner_email: string | null;
+      }>();
+    if (!payment || payment.invoice_number || payment.status !== 'complete') return;
+
+    const site = getSite(env.SITE);
+    const paidAt = payment.paid_at ? new Date(payment.paid_at.includes('T') ? payment.paid_at : payment.paid_at.replace(' ', 'T') + 'Z') : new Date();
+    const invoiceNumber = `${invoiceNumberFor(site.slug, payment.id, paidAt)}-EVT`;
+
+    const lines: InvoiceLine[] = [{ description: `Featured event — ${payment.event_title}`, detail: 'One-off payment', amountCents: payment.amount_cents }];
+
+    const pdfBytes = await buildInvoicePdf({
+      siteName: site.siteName,
+      domain: site.domain,
+      contactEmail: site.contactEmail,
+      accentRgb: site.theme.accentRgb,
+      navyRgb: site.theme.navyRgb,
+      logoPng: await fetchLogo(site.domain),
+      registeredAddress: site.invoicing?.registeredAddress ?? null,
+      vatNumber: site.invoicing?.vatNumber ?? null,
+      registrationNumber: site.invoicing?.registrationNumber ?? null,
+      invoiceNumber,
+      issuedAt: paidAt,
+      billToName: payment.event_title,
+      billToDetail: null,
+      billToEmail: payment.owner_email,
+      lines,
+      vatRatePercent: site.invoicing?.vatNumber ? 15 : 0,
+      paymentMethod: 'PayFast',
+      paymentReference: payment.m_payment_id,
+      paidAt,
+    });
+
+    const pdfKey = `invoices/${invoiceNumber}.pdf`;
+    await env.MEDIA.put(pdfKey, pdfBytes, { httpMetadata: { contentType: 'application/pdf' } });
+
+    await db
+      .prepare(`UPDATE event_payments SET invoice_number = ?, invoice_pdf_key = ?, invoiced_at = datetime('now') WHERE id = ? AND invoice_number IS NULL`)
+      .bind(invoiceNumber, pdfKey, payment.id)
+      .run();
+
+    const attachments = [{ filename: `${invoiceNumber}.pdf`, content: toBase64(pdfBytes), contentType: 'application/pdf' }];
+    const amountRand = `R${(payment.amount_cents / 100).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const dashboardUrl = `https://${site.domain}/my-events/edit/?id=${payment.event_id}`;
+
+    if (payment.owner_email) {
+      await sendEmail(env, {
+        from: `${site.siteName} <${site.contactEmail}>`,
+        to: payment.owner_email,
+        subject: `Your ${site.siteName} invoice ${invoiceNumber}`,
+        text: `Thanks for your payment.\n\nInvoice: ${invoiceNumber}\nFor: Featured event — ${payment.event_title}\nAmount: ${amountRand}\n\nThe invoice is attached as a PDF, and you can download it again any time from your dashboard: ${dashboardUrl}`,
+        html: `<div style="font-family:sans-serif;max-width:520px"><h2>Thanks for your payment</h2><p>Invoice <strong>${invoiceNumber}</strong> for featuring "${payment.event_title}".</p><p>Amount paid: <strong>${amountRand}</strong></p><p>The invoice is attached as a PDF. You can download it again any time from <a href="${dashboardUrl}">your dashboard</a>.</p></div>`,
+        attachments,
+      });
+    }
+
+    await sendEmail(env, {
+      from: `${site.siteName} <${site.contactEmail}>`,
+      to: site.contactEmail,
+      subject: `[Invoice] ${invoiceNumber} — ${payment.event_title}`,
+      text: `Featured event — ${payment.event_title}\nAmount: ${amountRand}\nOwner: ${payment.owner_email ?? 'no account email on file'}\n\nStored at R2 key: ${pdfKey}`,
+      attachments,
+    });
+  } catch (err) {
+    console.error('issueEventInvoice failed', eventPaymentId, err);
+  }
+}
