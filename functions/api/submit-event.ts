@@ -5,8 +5,10 @@ import { getSessionUser } from '../_lib/auth';
 import { isEventType } from '../_lib/events';
 import { sendEmail } from '../_lib/send-email';
 import { escapeHtml } from '../../src/lib/business-submission';
+import { signFields, buildCheckoutParams, payfastConfigured, type PayfastEnv } from '../_lib/payfast';
+import { eventFeaturePriceCents, centsToRand } from '../_lib/pricing';
 
-interface Env {
+interface Env extends PayfastEnv {
   DB: D1Database;
   SITE: string;
   RESEND_API_KEY?: string;
@@ -140,13 +142,15 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // is signed in we keep the link and fall back to their account email.
   const sessionUser = await getSessionUser(context.request, db);
 
+  const wantsFeature = String(body.wantsFeature ?? '') === 'true' || String(body.wantsFeature ?? '') === 'on';
+
   const token = crypto.randomUUID();
-  await db
+  const insert = await db
     .prepare(
       `INSERT INTO event_submissions
         (token, title, type, event_date, event_time, venue, suburb, price, ticket_url, host, image_url, description,
-         contact_name, contact_email, contact_phone, submitted_by_user_id)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+         contact_name, contact_email, contact_phone, submitted_by_user_id, wants_feature)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
     .bind(
       token,
@@ -164,9 +168,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       fields.contactName,
       contactEmail ?? sessionUser?.email ?? null,
       fields.contactPhone,
-      sessionUser?.id ?? null
+      sessionUser?.id ?? null,
+      wantsFeature ? 1 : 0
     )
     .run();
+  const submissionId = insert.meta.last_row_id as number;
 
   const reviewUrl = `https://${site.domain}/admin/events/`;
   const details = [
@@ -194,7 +200,52 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       <p>${details.map((d) => escapeHtml(d)).join('<br>')}</p>
       <p><a href="${reviewUrl}">Review &amp; approve</a></p></div>`,
   });
-  return json({ ok: true, reviewUrl });
+
+  // No feature requested — nothing more to do.
+  if (!wantsFeature || !payfastConfigured(context.env)) {
+    return json({ ok: true, reviewUrl });
+  }
+
+  // Featuring at submission time: a real PayFast checkout right here,
+  // mirroring submit-business.ts's inline checkout for a chosen tier —
+  // there's no `events` row (and so nothing for events/feature-start.ts to
+  // authorize against) yet. Once-off, not a subscription (an event has a
+  // fixed date, nothing to recur). The feature is actually applied when the
+  // submission is approved — see admin/events.ts's approve-submission,
+  // which reads payment_status and sets `featured` on the new events row —
+  // via the "event-submission:<id>" branch of subscribe/notify.ts.
+  const priceCents = await eventFeaturePriceCents(db);
+  if (!priceCents) return json({ ok: true, reviewUrl });
+
+  const amount = centsToRand(priceCents);
+  const mPaymentId = crypto.randomUUID();
+  await db
+    .prepare(`UPDATE event_submissions SET m_payment_id = ?, payment_status = 'pending' WHERE id = ?`)
+    .bind(mPaymentId, submissionId)
+    .run();
+
+  const origin = new URL(context.request.url).origin;
+  const payerEmail = contactEmail ?? sessionUser?.email ?? site.contactEmail;
+  const fields2: Record<string, string> = {
+    merchant_id: context.env.PAYFAST_MERCHANT_ID!,
+    merchant_key: context.env.PAYFAST_MERCHANT_KEY!,
+    return_url: `https://${site.domain}/events/add/?event_featured=1`,
+    cancel_url: `https://${site.domain}/events/add/?event_feature_cancelled=1`,
+    notify_url: `${origin}/api/subscribe/notify`,
+    name_first: fields.contactName ?? title,
+    email_address: payerEmail,
+    m_payment_id: mPaymentId,
+    amount,
+    item_name: `${site.siteName} — Featured event`,
+    item_description: `Feature "${title}" on ${site.siteName} (applies once your event is approved)`,
+    custom_str1: `event-submission:${submissionId}`,
+    custom_str2: 'event_feature',
+  };
+  const signature = await signFields(fields2, context.env.PAYFAST_PASSPHRASE!);
+  const params = buildCheckoutParams(fields2, signature);
+  const redirectUrl = `https://${context.env.PAYFAST_HOST}/eng/process?${params.toString()}`;
+
+  return json({ ok: true, reviewUrl, redirectUrl });
 };
 
 function json(data: unknown, status = 200): Response {

@@ -2,6 +2,7 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { eventSlug, isEventType } from '../../_lib/events';
 import { logActivity } from '../../_lib/activity-log';
+import { eventFeaturePriceCents } from '../../_lib/pricing';
 
 interface Env {
   DB: D1Database;
@@ -67,12 +68,25 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         image_url: string | null;
         description: string;
         submitted_by_user_id: number | null;
+        payment_status: string | null;
+        m_payment_id: string | null;
       }>();
     if (!sub) return json({ ok: false, error: 'That submission is already gone.' }, 404);
 
+    const paid = sub.payment_status === 'paid';
+
     if (action === 'reject-submission') {
       await db.prepare('DELETE FROM event_submissions WHERE id = ?').bind(id).run();
-      await logActivity(db, 'event_rejected', sub.title, `Submission rejected by ${user.email}.`);
+      // A paid-to-feature submission that gets rejected needs a manual
+      // refund via PayFast's dashboard — same documented gap as a rejected
+      // paid business listing (see submit-business.ts's own comment); there
+      // is no automated refund flow.
+      await logActivity(
+        db,
+        'event_rejected',
+        sub.title,
+        paid ? `Submission rejected by ${user.email}. It was paid to feature (m_payment_id ${sub.m_payment_id}) — refund manually via PayFast.` : `Submission rejected by ${user.email}.`
+      );
       return json({ ok: true });
     }
 
@@ -83,16 +97,26 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     for (let n = 2; await db.prepare('SELECT 1 AS x FROM events WHERE slug = ?').bind(slug).first(); n++) {
       slug = `${baseSlug}-${n}`;
     }
-    await db.batch([
-      db
-        .prepare(
-          `INSERT INTO events (slug, title, type, event_date, event_time, venue, suburb, price, ticket_url, host, image_url, description, source, event_owner_user_id)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'organiser', ?)`
-        )
-        .bind(slug, sub.title, isEventType(sub.type) ? sub.type : 'Music', sub.event_date, sub.event_time, sub.venue, sub.suburb, sub.price, sub.ticket_url, sub.host, sub.image_url, sub.description, sub.submitted_by_user_id ?? null),
-      db.prepare('DELETE FROM event_submissions WHERE id = ?').bind(id),
-    ]);
-    await logActivity(db, 'event_approved', sub.title, `Organiser submission approved by ${user.email}.`);
+    const inserted = await db
+      .prepare(
+        `INSERT INTO events (slug, title, type, event_date, event_time, venue, suburb, price, ticket_url, host, image_url, description, source, event_owner_user_id, featured)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'organiser', ?, ?)`
+      )
+      .bind(slug, sub.title, isEventType(sub.type) ? sub.type : 'Music', sub.event_date, sub.event_time, sub.venue, sub.suburb, sub.price, sub.ticket_url, sub.host, sub.image_url, sub.description, sub.submitted_by_user_id ?? null, paid ? 1 : 0)
+      .run();
+    const eventId = inserted.meta.last_row_id as number;
+
+    const batch = [db.prepare('DELETE FROM event_submissions WHERE id = ?').bind(id)];
+    if (paid) {
+      const amountCents = await eventFeaturePriceCents(db);
+      batch.push(
+        db
+          .prepare(`INSERT INTO event_payments (event_id, m_payment_id, amount_cents, status, paid_at) VALUES (?, ?, ?, 'complete', datetime('now'))`)
+          .bind(eventId, sub.m_payment_id, amountCents ?? 0)
+      );
+    }
+    await db.batch(batch);
+    await logActivity(db, 'event_approved', sub.title, `Organiser submission approved by ${user.email}.${paid ? ' Featured (paid at submission).' : ''}`);
     return json({ ok: true, slug });
   }
 

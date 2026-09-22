@@ -102,7 +102,11 @@ const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '')
           <div style="background:var(--accent);padding:8px 18px;font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--contrast)">Optional upgrade</div>
           <div style="padding:18px;background:#fff">
             <div style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em">{featurePrice}<span style="font-size:14px;font-weight:700;color:var(--muted)"> / event</span></div>
-            <p style="margin:10px 0 0;font-size:13.5px;line-height:1.55;color:var(--text)">Feature it: top of the Events page until the date passes, plus a card on the homepage that week.</p>
+            <p style="margin:10px 0 14px;font-size:13.5px;line-height:1.55;color:var(--text)">Feature it: top of the Events page until the date passes, plus a card on the homepage that week.</p>
+            <label style="display:flex;align-items:flex-start;gap:10px;font-size:13.5px;font-weight:700;color:var(--navy);line-height:1.5;cursor:pointer">
+              <input type="checkbox" name="wantsFeature" form="event-form" id="wants-feature" style="accent-color:var(--accent);width:17px;height:17px;margin-top:2px;flex-shrink:0" />
+              <span>Feature this event for {featurePrice} — you'll pay now, it goes live once we approve the listing.</span>
+            </label>
           </div>
         </div>
         <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
@@ -252,6 +256,13 @@ const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '')
         body: JSON.stringify({ ...data, loadedAt }),
       });
       const result = await res.json();
+      if (result.ok && result.redirectUrl) {
+        // Chose to feature it — off to PayFast now, before the "saved for
+        // review" message (the submission is already saved either way).
+        status.textContent = 'Taking you to PayFast to pay for featuring…';
+        window.location.href = result.redirectUrl;
+        return;
+      }
       if (result.ok) {
         // Saved for review and emailed to our team by the server.
         form.reset();
@@ -268,4 +279,12 @@ const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '')
       submitBtn.disabled = false;
     }
   });
+
+  // Returning from PayFast after paying to feature a just-submitted event.
+  const returnParams = new URLSearchParams(window.location.search);
+  if (returnParams.get('event_featured')) {
+    status.textContent = 'Thanks — your payment is being confirmed. Your event will show as featured once an admin approves it and PayFast confirms the payment.';
+  } else if (returnParams.get('event_feature_cancelled')) {
+    status.textContent = 'Checkout cancelled — you have not been charged. Your event is still in for review, just not featured.';
+  }
 </script>

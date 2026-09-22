@@ -1,7 +1,7 @@
 import type { PagesFunction, D1Database, R2Bucket } from '@cloudflare/workers-types';
 import { buildSignatureString, md5, payfastConfigured, type PayfastEnv } from '../../_lib/payfast';
 import { logActivity } from '../../_lib/activity-log';
-import { tierPriceCents, sponsorPriceCents, isSponsorProductType } from '../../_lib/pricing';
+import { tierPriceCents, sponsorPriceCents, isSponsorProductType, eventFeaturePriceCents } from '../../_lib/pricing';
 import { issueInvoice } from '../../_lib/invoicing';
 
 interface Env extends PayfastEnv {
@@ -16,7 +16,7 @@ interface Env extends PayfastEnv {
 // source-IP/hostname validation) doesn't translate directly to a Workers
 // Function. All three here are required to pass, not just the signature.
 //
-// Three payment shapes land here, distinguished by custom_str1's prefix:
+// Four payment shapes land here, distinguished by custom_str1's prefix:
 //  - "business:<id>"   — an existing, owned business upgrading its tier or
 //                         buying a sponsorship slot (started in subscribe/start.ts).
 //  - "submission:<id>" — a not-yet-approved pending_submissions row paying
@@ -29,6 +29,12 @@ interface Env extends PayfastEnv {
 //  - "event:<id>"      — an owned, already-published event paying the
 //                         once-off "Feature this event" fee (started in
 //                         functions/api/events/feature-start.ts).
+//  - "event-submission:<id>" — a not-yet-approved event_submissions row
+//                         paying to be featured at submission time (started
+//                         inline in submit-event.ts). No `events` row exists
+//                         yet, so this just marks the submission paid; the
+//                         feature is actually applied once admin approves
+//                         it — see admin/events.ts's approve-submission.
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!payfastConfigured(context.env)) return new Response('Not configured', { status: 503 });
 
@@ -45,7 +51,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const db = context.env.DB;
   const [scope, rawId] = (posted.custom_str1 ?? '').split(':');
   const targetId = Number(rawId);
-  if (!targetId || (scope !== 'business' && scope !== 'submission' && scope !== 'event')) {
+  const KNOWN_SCOPES = ['business', 'submission', 'event', 'event-submission'];
+  if (!targetId || !KNOWN_SCOPES.includes(scope)) {
     return new Response('Unrecognized payment context', { status: 400 });
   }
 
@@ -72,8 +79,35 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (scope === 'event') {
     return handleEventPayment(db, targetId, posted, postedAmount, raw);
   }
+  if (scope === 'event-submission') {
+    return handleEventSubmissionPayment(db, targetId, posted, postedAmount);
+  }
   return handleBusinessPayment(context.env, db, targetId, posted, postedAmount, raw);
 };
+
+async function handleEventSubmissionPayment(
+  db: D1Database,
+  submissionId: number,
+  posted: Record<string, string>,
+  postedAmount: number
+): Promise<Response> {
+  const mPaymentId = posted.m_payment_id;
+  const submission = await db
+    .prepare("SELECT id, title FROM event_submissions WHERE id = ? AND m_payment_id = ? AND payment_status = 'pending'")
+    .bind(submissionId, mPaymentId)
+    .first<{ id: number; title: string }>();
+  if (!submission) return new Response('Unknown or already-resolved event submission payment', { status: 400 });
+
+  const expectedCents = await eventFeaturePriceCents(db);
+  if (!expectedCents || Math.abs(postedAmount - expectedCents / 100) > 0.05) {
+    return new Response('Amount mismatch', { status: 400 });
+  }
+
+  await db.prepare(`UPDATE event_submissions SET payment_status = 'paid' WHERE id = ?`).bind(submissionId).run();
+  await logActivity(db, 'event_submission_payment_received', submission.title, 'Paid to feature at submission time — applies once approved.');
+
+  return new Response('OK', { status: 200 });
+}
 
 async function handleEventPayment(
   db: D1Database,
