@@ -1,0 +1,159 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageBanner from '../../../components/PageBanner.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { TOURISM } from '../../../site-content/tourism';
+import site from '../../../site';
+
+export function getStaticPaths() {
+  if (!site.features.tourism) return [];
+  const content = TOURISM[site.slug];
+  if (!content) return [];
+  return content.itineraries.map((itinerary) => ({ params: { slug: itinerary.slug }, props: { itinerary } }));
+}
+
+const { itinerary } = Astro.props;
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
+const canonical = `${siteUrl}/tourism/itineraries/${itinerary.slug}/`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TouristTrip',
+  name: itinerary.name,
+  description: itinerary.teaser,
+  url: canonical,
+  itinerary: itinerary.stops
+    .filter((s: { slug?: string }) => s.slug)
+    .map((s: { name: string; slug?: string }) => ({ '@type': 'TouristAttraction', name: s.name, url: `${siteUrl}/tourism/${s.slug}/` })),
+};
+---
+
+<BaseLayout title={`${itinerary.name} | ${site.cityLabel} Itinerary`} description={itinerary.teaser} canonical={canonical}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <PageBanner title={itinerary.name} description={itinerary.teaser}>
+    <Breadcrumbs
+      slot="breadcrumbs"
+      items={[
+        { label: 'Home', href: '/' },
+        { label: 'Tourism', href: '/tourism/' },
+        { label: itinerary.name },
+      ]}
+    />
+  </PageBanner>
+
+  <section class="container" style="padding-top: 2rem; padding-bottom: 3rem; max-width: 760px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem">
+      <span style="padding:6px 13px;border-radius:999px;background:var(--navy);color:#fff;font-size:12.5px;font-weight:800">{itinerary.time}</span>
+    </div>
+
+    {itinerary.intro.split(/\n{2,}/).map((p: string) => <p>{p}</p>)}
+
+    <h2>The itinerary</h2>
+    <ol class="stop-list">
+      {itinerary.stops.map((stop: { name: string; slug?: string; time: string; description: string }) => (
+        <li class="stop">
+          <div class="stop-time">{stop.time}</div>
+          <div class="stop-body">
+            <div class="stop-name">
+              {stop.slug ? <a href={`/tourism/${stop.slug}/`}>{stop.name} →</a> : stop.name}
+            </div>
+            <p class="stop-desc">{stop.description}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    {itinerary.tips.length > 0 && (
+      <div class="tips-box">
+        <strong>Before you go</strong>
+        <ul>
+          {itinerary.tips.map((tip: string) => <li>{tip}</li>)}
+        </ul>
+      </div>
+    )}
+
+    <p style="margin-top: 2rem;">
+      <a href="/tourism/">← All {site.cityLabel} things to do</a>
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  h2 {
+    font-size: 1.1rem;
+    margin: 2rem 0 0.9rem;
+    color: var(--navy);
+  }
+  section :global(p) {
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .stop-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    overflow: hidden;
+  }
+  .stop {
+    display: grid;
+    grid-template-columns: 8.5rem 1fr;
+    gap: 0.9rem;
+    padding: 1rem 1.15rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .stop:last-child {
+    border-bottom: none;
+  }
+  .stop-time {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding-top: 0.15rem;
+  }
+  .stop-name {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 0.3rem;
+  }
+  .stop-name a {
+    color: var(--navy);
+  }
+  .stop-desc {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  @media (max-width: 520px) {
+    .stop {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+  }
+  .tips-box {
+    margin: 1.75rem 0 0;
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--warning, #9c5f00);
+    border-left-width: 4px;
+    border-radius: var(--radius);
+    background: rgba(156, 95, 0, 0.06);
+  }
+  .tips-box strong {
+    color: var(--warning, #9c5f00);
+  }
+  .tips-box ul {
+    margin: 0.5rem 0 0;
+    padding-left: 1.2rem;
+  }
+  .tips-box li {
+    margin: 0.3rem 0;
+    line-height: 1.55;
+  }
+</style>
