@@ -3,16 +3,23 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageBanner from '../../components/PageBanner.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Icon from '../../components/Icon.astro';
-// Tourism content is currently only authored for Polokwane — see tourism/index.astro's note.
-import { ATTRACTIONS } from '../../site-content/polokwane/tourism';
+import { ATTRACTIONS as CAPETOWN_ATTRACTIONS } from '../../site-content/capetown/tourism';
+import { ATTRACTIONS as PRETORIA_ATTRACTIONS } from '../../site-content/pretoria/tourism';
+import { ATTRACTIONS as POLOKWANE_ATTRACTIONS } from '../../site-content/polokwane/tourism';
+import type { Attraction } from '../../site-content/attraction-types';
 import site from '../../site';
 
 const ICON_PIN = '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>';
 
 export function getStaticPaths() {
-  // Full attraction pages are only authored for Polokwane; the other cities' /tourism/ cards link out to a map.
-  if (!site.features.tourism || site.slug !== 'polokwane') return [];
-  return ATTRACTIONS.map((attraction) => ({ params: { slug: attraction.slug }, props: { attraction } }));
+  if (!site.features.tourism) return [];
+  const attractionsBySite: Record<string, Attraction[]> = {
+    capetown: CAPETOWN_ATTRACTIONS,
+    pretoria: PRETORIA_ATTRACTIONS,
+    polokwane: POLOKWANE_ATTRACTIONS,
+  };
+  const attractions = attractionsBySite[site.slug] ?? [];
+  return attractions.map((attraction) => ({ params: { slug: attraction.slug }, props: { attraction } }));
 }
 
 const { attraction } = Astro.props;

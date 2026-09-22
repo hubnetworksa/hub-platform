@@ -10,53 +10,8 @@
 // all: exact `geo` coordinates (values below are approximate — source from
 // Google Maps) and the real photos (each page carries an `imageNeeded` note).
 
-export interface PracticalRow {
-  label: string;
-  value: string;
-}
-
-export interface TieIn {
-  label: string;
-  href: string;
-}
-
-export interface Attraction {
-  slug: string;
-  name: string;
-  /** Used verbatim for <title> — written for search, per the brief. */
-  pageTitle: string;
-  /** Used verbatim for <meta name="description">. */
-  metaDescription: string;
-  /** One-line teaser for the overview page grid. */
-  teaser: string;
-  /** Paragraphs separated by a blank line. */
-  whatItIs: string;
-  whatToDo: string;
-  practical: PracticalRow[];
-  /** ⚠ items from the brief — rendered as a "Before you go" callout. */
-  beforeYouGo: string[];
-  /** "Nearby tie-ins" prose. */
-  nearby: string;
-  /** Explicit internal links (suburb pages / directory categories). */
-  tieIns: TieIn[];
-  address: {
-    streetAddress?: string;
-    addressLocality: string;
-    addressRegion: string;
-    postalCode?: string;
-    addressCountry: 'ZA';
-  };
-  /** Approximate — verify against Google Maps. */
-  geo?: { lat: number; lng: number };
-  /** schema.org openingHours strings (e.g. "Mo-Fr 08:00-15:30"). Set only once confirmed. */
-  openingHours?: string[];
-  /** schema.org priceRange (e.g. "R12 – R18"). Set only once confirmed. */
-  priceRange?: string;
-  /** true when entry is free; leave undefined if paid or unknown. */
-  isAccessibleForFree?: boolean;
-  /** Description of the real photo required (brief Section 6). Rendered as an HTML comment. */
-  imageNeeded: string;
-}
+export type { PracticalRow, TieIn, Attraction } from '../attraction-types';
+import type { Attraction } from '../attraction-types';
 
 export const TOURISM_OVERVIEW = {
   pageTitle: 'Things to Do in Polokwane | Attractions, Nature & Day Trips',
@@ -297,6 +252,93 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'R71, Magoebaskloof Pass', addressLocality: 'Magoebaskloof', addressRegion: 'Limpopo', addressCountry: 'ZA' },
     geo: { lat: -23.8710, lng: 29.9650 },
     imageNeeded: 'Real photo of Debengeni Falls or the misty forest / canopy — one of the more photogenic assets for the whole site; prioritise if only one new photo can be sourced.',
+  },
+  {
+    slug: 'mapungubwe-national-park',
+    name: 'Mapungubwe National Park',
+    pageTitle: 'Mapungubwe National Park | World Heritage Site near Polokwane',
+    metaDescription:
+      'A UNESCO World Heritage Site at the Limpopo–Shashe confluence, where three countries meet — Iron Age ruins, the golden rhino story, and Big Five game viewing on the Zimbabwe/Botswana border.',
+    teaser: 'World Heritage site at the Limpopo–Shashe confluence, home of the golden rhino — a full day out from Polokwane.',
+    whatItIs:
+      "Mapungubwe National Park sits at the confluence of the Limpopo and Shashe rivers, where South Africa, Zimbabwe and Botswana meet — roughly a 3–3.5 hour drive north of Polokwane via Musina. It protects the site of the Mapungubwe Kingdom, a sophisticated Iron Age trading civilisation that flourished here from around 1220 to 1290 AD, and was declared a UNESCO World Heritage Site in 2003 for the archaeological evidence of southern Africa's earliest known class-based society.\n\nThe park is best known for the small gold rhino figurine excavated from a royal grave on Mapungubwe Hill in the 1930s — now one of South Africa's most significant archaeological finds, on display at the University of Pretoria's Mapungubwe Museum (a cast is shown at the park's own interpretive centre).",
+    whatToDo:
+      "Guided heritage tours of Mapungubwe Hill and the K2 archaeological site explain the kingdom's rise and the gold-rhino discovery — these must be booked through the park, as the hill itself is not open to unguided visitors. Beyond the heritage side, this is also a proper game park: self-drive routes and a treetop walkway along the Limpopo River floodplain give views over ancient baobabs, elephant, eland and a wide range of riverine birdlife, with the option of spotting all three countries from a single viewpoint. Most visitors combine the heritage tour with a half-day game drive.",
+    practical: [
+      { label: 'Distance from Polokwane', value: 'Approx. 280 km via the N1 through Musina (3–3.5 hour drive).' },
+      { label: 'Conservation fee', value: 'Standard SANParks daily conservation fee applies (South African citizens/residents pay a lower rate with ID) — confirm the current rate on the SANParks website before travelling.' },
+      { label: 'Heritage tours', value: 'Guided Mapungubwe Hill / K2 tours run on a set daily schedule and should be booked in advance, either online or at the gate on arrival.' },
+      { label: 'Getting there', value: 'Tarred road via the N1 to Musina, then a signposted gravel/tar approach road; a sedan is generally fine outside the wet season.' },
+    ],
+    beforeYouGo: [
+      'Current SANParks conservation fees and heritage-tour booking times, which change periodically.',
+      'Fuel up in Musina — there is limited fuel between there and the park gate.',
+    ],
+    nearby:
+      "This is a full-day (or overnight) trip from Polokwane, not a quick stop — most visitors either do a long day trip or stay over at the park's own rest camps. Pair with a stop in Musina on the way up or back.",
+    tieIns: [
+      { label: 'Polokwane accommodation', href: '/category/accommodation/' },
+    ],
+    address: { streetAddress: 'Mapungubwe National Park, off the N1 via Musina', addressLocality: 'Musina', addressRegion: 'Limpopo', addressCountry: 'ZA' },
+    geo: { lat: -22.2020, lng: 29.3450 },
+    imageNeeded: 'Real photo of the Limpopo/Shashe confluence, the treetop walkway, or Mapungubwe Hill — not a generic gold-artefact or unrelated safari stock image.',
+  },
+  {
+    slug: 'modjadji-cycad-reserve',
+    name: 'Modjadji Cycad Reserve',
+    pageTitle: 'Modjadji Cycad Reserve | Rain Queen\'s Valley near Polokwane',
+    metaDescription:
+      "The world's largest concentration of a single cycad species, in the valley of South Africa's Rain Queen — hiking trails through an ancient forest about an hour from Polokwane.",
+    teaser: "The largest concentration of a single cycad species on earth, in the Rain Queen's valley.",
+    whatItIs:
+      "Modjadji Cycad Reserve protects a forest of Modjadji cycads (Encephalartos transvenosus) on the slopes above Modjadjiskloof, roughly 65–70 km (about an hour) east of Polokwane on the way to Tzaneen. Some of these cycads are estimated to be several hundred years old and can reach over 10 metres tall, making this the largest single stand of one cycad species anywhere in the world.\n\nThe reserve takes its name from the Balobedu royal line's Rain Queen, Modjadji, whose royal kraal lies in the same valley — the cycads have long held ceremonial significance for the Balobedu people, and the reserve sits within their traditional territory.",
+    whatToDo:
+      "A network of walking trails winds through the cycad forest and up onto the hillside, with viewpoints over the valley — most visitors walk the main loop in 1–2 hours. Interpretive signage covers the cycads' age and ecology, and guides are sometimes available at the entrance to explain both the plants and the cultural history of the Rain Queen. It's a quiet, shaded walk rather than an adrenaline activity, and works well combined with a broader Magoebaskloof-area day out.",
+    practical: [
+      { label: 'Distance from Polokwane', value: 'Approx. 65–70 km via the R36 towards Tzaneen/Modjadjiskloof (roughly 1 hour drive).' },
+      { label: 'Entry fee', value: 'A modest per-person conservation/entry fee applies — confirm the current amount with Limpopo Tourism or the reserve gate before travelling.' },
+      { label: 'Best time to visit', value: 'Year-round — the cycad forest is evergreen — though the drive and views are at their best in the dry winter months (May–August) with clearer air.' },
+      { label: 'Getting there', value: 'Tarred road most of the way, with a short signposted approach road to the reserve gate; a standard sedan is fine.' },
+    ],
+    beforeYouGo: [
+      'Current entry fee and gate hours, which are set locally and change from time to time.',
+    ],
+    nearby:
+      'Combine with a Magoebaskloof/Debengeni Falls day out, since both are on the same eastward route out of Polokwane.',
+    tieIns: [
+      { label: 'Magoebaskloof & Debengeni Falls', href: '/tourism/magoebaskloof-debengeni-falls/' },
+    ],
+    address: { streetAddress: 'Modjadji Cycad Reserve, R36', addressLocality: 'Modjadjiskloof', addressRegion: 'Limpopo', addressCountry: 'ZA' },
+    geo: { lat: -23.6360, lng: 30.1720 },
+    imageNeeded: 'Real photo of the cycad forest or the valley viewpoint — not a generic palm-tree/cycad stock image.',
+  },
+  {
+    slug: 'peter-mokaba-stadium',
+    name: 'Peter Mokaba Stadium',
+    pageTitle: 'Peter Mokaba Stadium | Sport & Events in Polokwane',
+    metaDescription:
+      'The baobab-shaped 2010 World Cup stadium in Polokwane — home to PSL football and occasional concerts and events, a short drive from the city centre.',
+    teaser: 'World Cup stadium shaped after the baobab, hosting PSL fixtures through the season.',
+    whatItIs:
+      "Peter Mokaba Stadium, on the northern edge of Polokwane, was built for the 2010 FIFA World Cup and is one of the tournament's most recognisable venues for its roof design, modelled on the shape of a baobab tree in reference to Limpopo's iconic trees. It holds roughly 45,000 spectators and is named after Peter Mokaba, the Limpopo-born anti-apartheid activist and ANC Youth League leader.",
+    whatToDo:
+      "The stadium is the home ground for Premier Soccer League fixtures involving Polokwane's top-flight clubs, and hosts occasional concerts, rugby matches and other large events through the year — check current fixtures before planning a visit, since it isn't generally open for casual walk-in tours outside event days. On a match day it's the biggest atmosphere in the city; supporters typically arrive well before kickoff for parking and the pre-match build-up around the grounds.",
+    practical: [
+      { label: 'Address', value: 'Peter Mokaba Stadium, Bram Fischer Street, Polokwane' },
+      { label: 'Access', value: 'Open on match days and event days; ticketed entry via the relevant event promoter or PSL club.' },
+      { label: 'Getting there', value: 'A short drive from the CBD, well signposted; expect heavier traffic and parking demand on match days.' },
+    ],
+    beforeYouGo: [
+      'Current match/event schedule and ticket prices, which depend entirely on the fixture or event in question.',
+    ],
+    nearby:
+      'Combine a match day with dinner in the city centre or at Savannah Mall on the way back.',
+    tieIns: [
+      { label: 'Restaurants & Takeaways', href: '/category/restaurants-takeaways/' },
+    ],
+    address: { streetAddress: 'Bram Fischer Street', addressLocality: 'Polokwane', addressRegion: 'Limpopo', addressCountry: 'ZA' },
+    geo: { lat: -23.8560, lng: 29.4680 },
+    imageNeeded: 'Real photo of the stadium exterior (baobab-shaped roof) or a match-day crowd — not a generic stadium stock image.',
   },
 ];
 

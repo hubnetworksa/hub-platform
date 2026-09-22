@@ -3,6 +3,11 @@
 // figures and should be confirmed with each operator before launch. `sponsored`
 // is demo placement only: the page shows the Sponsored badge in the dev preview
 // (DEMO_PREMIUM build) and never on a production build.
+//
+// Picks with a `slug` link to a full detail page authored in
+// src/site-content/<city>/tourism.ts (via src/pages/tourism/[slug].astro).
+// Itinerary stops with a `slug` link the same way; a stop without one (a
+// district, a drive, a meal) is just text — there's no page for it.
 
 export const TOUR_CATEGORIES = ['All', 'Landmark', 'Heritage', 'Outdoors', 'Family', 'Day trip'] as const;
 
@@ -18,32 +23,78 @@ export interface TourPick {
   slug?: string;
 }
 
+export interface ItineraryStop {
+  name: string;
+  /** Links to /tourism/<slug>/ when this stop has its own detail page. */
+  slug?: string;
+}
+
+export interface Itinerary {
+  name: string;
+  stops: ItineraryStop[];
+  time: string;
+  /** One line of practical context — why this order, timing tips, what to skip if short on time. */
+  note: string;
+}
+
+export interface Season {
+  name: string;
+  when: string;
+  note: string;
+}
+
 export interface TourContent {
   blurb: string;
   picks: TourPick[];
-  itineraries: { name: string; stops: string; time: string }[];
-  seasons: { name: string; when: string; note: string }[];
+  itineraries: Itinerary[];
+  seasons: Season[];
 }
 
 export const TOURISM: Record<string, TourContent> = {
   pretoria: {
     blurb: 'Jacaranda streets, Union Buildings, the Voortrekker Monument and a working game reserve inside the city limits.',
     picks: [
-      { name: 'Union Buildings & Gardens', cat: 'Landmark', suburb: 'Arcadia', price: 'Free', time: '1–2 hours', sponsored: true, blurb: 'Herbert Baker’s terraced gardens above the city, with the Mandela statue and the best skyline view in Pretoria.' },
-      { name: 'Voortrekker Monument', cat: 'Heritage', suburb: 'Groenkloof', price: 'R110 adults', time: 'Half day', sponsored: false, blurb: 'Granite monument and heritage site on a ridge, with a museum, walking trails and a viewing dome.' },
-      { name: 'Rietvlei Nature Reserve', cat: 'Outdoors', suburb: 'Rietvallei', price: 'R92 per adult', time: 'Half day', sponsored: true, blurb: 'Self-drive Big-Five-minus-lion reserve twenty minutes from Menlyn — rhino, buffalo, cheetah and 300 bird species.' },
-      { name: 'National Zoological Garden', cat: 'Family', suburb: 'Pretoria Central', price: 'R145 adults', time: 'Full day', sponsored: false, blurb: 'One of the largest zoos in the world by species count, with an aerial cableway over the enclosures.' },
-      { name: 'Freedom Park', cat: 'Heritage', suburb: 'Salvokop', price: 'R150 guided', time: '2–3 hours', sponsored: false, blurb: 'Memorial and museum tracing 3.6 billion years of the region, opposite the Voortrekker Monument.' },
-      { name: 'Cullinan Diamond Mine Tour', cat: 'Day trip', suburb: 'Cullinan', price: 'R220 surface tour', time: 'Full day', sponsored: false, blurb: 'Surface and underground tours of the mine that produced the largest gem diamond ever found.' },
+      { name: 'Union Buildings & Gardens', cat: 'Landmark', suburb: 'Arcadia', price: 'Free', time: '1–2 hours', sponsored: true, blurb: 'Herbert Baker’s terraced gardens above the city, with the Mandela statue and the best skyline view in Pretoria.', slug: 'union-buildings-gardens' },
+      { name: 'Voortrekker Monument', cat: 'Heritage', suburb: 'Groenkloof', price: 'R110 adults', time: 'Half day', sponsored: false, blurb: 'Granite monument and heritage site on a ridge, with a museum, walking trails and a viewing dome.', slug: 'voortrekker-monument' },
+      { name: 'Rietvlei Nature Reserve', cat: 'Outdoors', suburb: 'Rietvallei', price: 'R92 per adult', time: 'Half day', sponsored: true, blurb: 'Self-drive Big-Five-minus-lion reserve twenty minutes from Menlyn — rhino, buffalo, cheetah and 300 bird species.', slug: 'rietvlei-nature-reserve' },
+      { name: 'National Zoological Garden', cat: 'Family', suburb: 'Pretoria Central', price: 'R145 adults', time: 'Full day', sponsored: false, blurb: 'One of the largest zoos in the world by species count, with an aerial cableway over the enclosures.', slug: 'national-zoological-garden' },
+      { name: 'Freedom Park', cat: 'Heritage', suburb: 'Salvokop', price: 'R150 guided', time: '2–3 hours', sponsored: false, blurb: 'Memorial and museum tracing 3.6 billion years of the region, opposite the Voortrekker Monument.', slug: 'freedom-park' },
+      { name: 'Cullinan Diamond Mine Tour', cat: 'Day trip', suburb: 'Cullinan', price: 'R220 surface tour', time: 'Full day', sponsored: false, blurb: 'Surface and underground tours of the mine that produced the largest gem diamond ever found.', slug: 'cullinan-diamond-mine-tour' },
     ],
     itineraries: [
-      { name: 'One day in Pretoria', stops: 'Union Buildings → Church Square → Voortrekker Monument → Menlyn for dinner', time: '8 hours' },
-      { name: 'Weekend with kids', stops: 'Zoo → Sci-Enza → Rietvlei game drive → Hazel Food Market', time: '2 days' },
-      { name: 'Jacaranda season walk', stops: 'Herbert Baker St → Bourke St → Loftus → Brooklyn', time: '3 hours' },
+      {
+        name: 'One day in Pretoria',
+        stops: [
+          { name: 'Union Buildings & Gardens', slug: 'union-buildings-gardens' },
+          { name: 'Church Square' },
+          { name: 'Voortrekker Monument', slug: 'voortrekker-monument' },
+          { name: 'Menlyn for dinner' },
+        ],
+        time: '8 hours',
+        note: 'Start early at the Union Buildings before the heat — the gardens and Mandela statue are best in soft morning light, and it\'s free.',
+      },
+      {
+        name: 'Weekend with kids',
+        stops: [
+          { name: 'National Zoological Garden', slug: 'national-zoological-garden' },
+          { name: 'Sci-Enza' },
+          { name: 'Rietvlei game drive', slug: 'rietvlei-nature-reserve' },
+          { name: 'Hazel Food Market' },
+        ],
+        time: '2 days',
+        note: 'Split it — the zoo is a full day on its own. Do Rietvlei\'s self-drive loop in the cool of the morning on day two.',
+      },
+      {
+        name: 'Jacaranda season walk',
+        stops: [{ name: 'Herbert Baker St' }, { name: 'Bourke St' }, { name: 'Loftus' }, { name: 'Brooklyn' }],
+        time: '3 hours',
+        note: 'Only worth doing in the bloom window (mid-October to mid-November) — see "When to come" below.',
+      },
     ],
     seasons: [
-      { name: 'Jacaranda bloom', when: 'Mid-October to mid-November', note: 'Seventy thousand trees; Herbert Baker and Bourke streets are the classic routes.' },
-      { name: 'Dry winter game viewing', when: 'May to August', note: 'Best time for Rietvlei — thin bush, animals at the waterholes.' },
+      { name: 'Jacaranda bloom', when: 'Mid-October to mid-November', note: 'Seventy thousand trees; Herbert Baker and Bourke streets are the classic routes. Peak bloom rarely lasts more than two to three weeks, so timing is tight.' },
+      { name: 'Dry winter game viewing', when: 'May to August', note: 'Best time for Rietvlei — thin bush, animals at the waterholes, and cold mornings that warm up fast by midday.' },
+      { name: 'Summer thunderstorms', when: 'November to March', note: 'Warm, green and lush, with reliable late-afternoon Highveld storms — plan outdoor stops for the morning and keep an eye on the sky after 3pm.' },
     ],
   },
   polokwane: {
@@ -51,9 +102,9 @@ export const TOURISM: Record<string, TourContent> = {
     picks: [
       { name: 'Polokwane Game Reserve', cat: 'Outdoors', suburb: 'Polokwane', price: 'R60 per adult', time: 'Half day', sponsored: true, blurb: 'Three thousand hectares on the edge of town with white rhino, sable and twenty-one game species.', slug: 'polokwane-game-reserve' },
       { name: 'Bakone Malapa Open-Air Museum', cat: 'Heritage', suburb: 'Chuenespoort Rd', price: 'R40 adults', time: '2 hours', sponsored: false, blurb: 'Living Northern Sotho village museum showing traditional building, cooking and iron smelting.', slug: 'bakone-malapa-open-air-museum' },
-      { name: 'Mapungubwe National Park', cat: 'Day trip', suburb: 'Musina road', price: 'R120 conservation fee', time: 'Full day', sponsored: false, blurb: 'World Heritage site at the Limpopo–Shashe confluence, home of the golden rhino.' },
-      { name: 'Modjadji Cycad Reserve', cat: 'Outdoors', suburb: 'Modjadjiskloof', price: 'R45 per adult', time: 'Half day', sponsored: false, blurb: 'The largest concentration of a single cycad species on earth, in the Rain Queen’s valley.' },
-      { name: 'Peter Mokaba Stadium', cat: 'Landmark', suburb: 'Polokwane', price: 'Match dependent', time: '3 hours', sponsored: false, blurb: 'World Cup stadium shaped after the baobab, hosting PSL fixtures through the season.' },
+      { name: 'Mapungubwe National Park', cat: 'Day trip', suburb: 'Musina road', price: 'R120 conservation fee', time: 'Full day', sponsored: false, blurb: 'World Heritage site at the Limpopo–Shashe confluence, home of the golden rhino.', slug: 'mapungubwe-national-park' },
+      { name: 'Modjadji Cycad Reserve', cat: 'Outdoors', suburb: 'Modjadjiskloof', price: 'R45 per adult', time: 'Half day', sponsored: false, blurb: 'The largest concentration of a single cycad species on earth, in the Rain Queen’s valley.', slug: 'modjadji-cycad-reserve' },
+      { name: 'Peter Mokaba Stadium', cat: 'Landmark', suburb: 'Polokwane', price: 'Match dependent', time: '3 hours', sponsored: false, blurb: 'World Cup stadium shaped after the baobab, hosting PSL fixtures through the season.', slug: 'peter-mokaba-stadium' },
       { name: 'Tzaneen & the Magoebaskloof', cat: 'Day trip', suburb: 'R71 east', price: 'Free drive', time: 'Full day', sponsored: true, blurb: 'Mist-belt forest, waterfalls and tea estates an hour east on one of the best drives in the province.', slug: 'magoebaskloof-debengeni-falls' },
       { name: 'Hugh Exton Photographic Museum', cat: 'Heritage', suburb: 'Polokwane', price: 'See page', time: '1 hour', sponsored: false, blurb: 'Early 1900s photographs charting the growth of Pietersburg/Polokwane, in the city centre.', slug: 'hugh-exton-photographic-museum' },
       { name: 'Meropa Casino & Entertainment World', cat: 'Family', suburb: 'N1', price: 'See page', time: 'Evening', sponsored: false, blurb: 'Polokwane’s biggest entertainment complex — casino, cinema, restaurants and events on the N1.', slug: 'meropa-casino-entertainment-world' },
@@ -61,33 +112,84 @@ export const TOURISM: Record<string, TourContent> = {
       { name: 'The Ranch Golf Course', cat: 'Outdoors', suburb: 'N1 south', price: 'See page', time: 'Half day', sponsored: false, blurb: 'A 12-hole executive par-3 course and academy at The Ranch Resort, 25 km south on the N1.', slug: 'the-ranch-golf-course' },
     ],
     itineraries: [
-      { name: 'One day in Polokwane', stops: 'Game reserve → Bakone Malapa → Irish House Museum → Savannah Mall', time: '7 hours' },
-      { name: 'Kruger gateway run', stops: 'Polokwane → Tzaneen → Phalaborwa Gate', time: '1 day' },
-      { name: 'Heritage loop', stops: 'Bakone Malapa → Modjadji → Mapungubwe', time: '3 days' },
+      {
+        name: 'One day in Polokwane',
+        stops: [
+          { name: 'Polokwane Game Reserve', slug: 'polokwane-game-reserve' },
+          { name: 'Bakone Malapa Open-Air Museum', slug: 'bakone-malapa-open-air-museum' },
+          { name: 'Irish House Museum' },
+          { name: 'Savannah Mall' },
+        ],
+        time: '7 hours',
+        note: 'Do the game reserve first thing — gates open at 06:00 and animals are more active before it heats up.',
+      },
+      {
+        name: 'Kruger gateway run',
+        stops: [{ name: 'Polokwane' }, { name: 'Tzaneen' }, { name: 'Phalaborwa Gate' }],
+        time: '1 day',
+        note: 'A through-drive, not a stopping tour — fuel up in Tzaneen, the last reliable stop before the gate.',
+      },
+      {
+        name: 'Heritage loop',
+        stops: [
+          { name: 'Bakone Malapa Open-Air Museum', slug: 'bakone-malapa-open-air-museum' },
+          { name: 'Modjadji Cycad Reserve', slug: 'modjadji-cycad-reserve' },
+          { name: 'Mapungubwe National Park', slug: 'mapungubwe-national-park' },
+        ],
+        time: '3 days',
+        note: 'Mapungubwe is a 3.5-hour drive from Polokwane each way — worth an overnight stop there rather than doing it as a day trip on top of the other two.',
+      },
     ],
     seasons: [
       { name: 'Marula season', when: 'February to March', note: 'Marula festivals across Limpopo; elephants in the northern parks follow the fruit.' },
-      { name: 'Winter bushveld', when: 'May to August', note: 'Dry, mild days — the best window for game drives and the Magoebaskloof passes.' },
+      { name: 'Winter bushveld', when: 'May to August', note: 'Dry, mild days — the best window for game drives and the Magoebaskloof passes. Cold mornings, so layer up for early starts at the game reserve.' },
+      { name: 'Summer rains & waterfalls', when: 'November to March', note: 'Debengeni Falls and the Magoebaskloof forest are at their greenest and fullest after summer rain — afternoon thunderstorms are common, so aim for morning visits.' },
     ],
   },
   capetown: {
     blurb: 'Table Mountain, two oceans, the winelands an hour out, and more coastline than you can do in a week.',
     picks: [
-      { name: 'Table Mountain Cableway', cat: 'Landmark', suburb: 'Tafelberg Rd', price: 'R420 return', time: 'Half day', sponsored: true, blurb: 'Rotating cable car to the summit plateau, with walking routes along the top and the Platteklip descent.' },
-      { name: 'V&A Waterfront', cat: 'Family', suburb: 'Waterfront', price: 'Free entry', time: 'Full day', sponsored: false, blurb: 'Working harbour with the Zeitz MOCAA museum, Two Oceans Aquarium and the Robben Island ferry.' },
-      { name: 'Cape Point & Chapman’s Peak', cat: 'Outdoors', suburb: 'Cape Peninsula', price: 'R400 park fee', time: 'Full day', sponsored: true, blurb: 'The peninsula drive — Hout Bay, Chapman’s Peak toll road, Boulders penguins and the Cape of Good Hope.' },
-      { name: 'Kirstenbosch Botanical Garden', cat: 'Outdoors', suburb: 'Newlands', price: 'R250 adults', time: 'Half day', sponsored: false, blurb: 'Fynbos garden on the eastern slope, with the canopy Boomslang walkway and summer sunset concerts.' },
-      { name: 'Robben Island Museum', cat: 'Heritage', suburb: 'Table Bay', price: 'R600 incl. ferry', time: 'Half day', sponsored: false, blurb: 'Ferry from the Waterfront to the prison island, with tours led by former political prisoners.' },
-      { name: 'Stellenbosch Winelands', cat: 'Day trip', suburb: 'R44 east', price: 'Tastings from R120', time: 'Full day', sponsored: false, blurb: 'Oak-lined town forty-five minutes out, with several hundred estates on the surrounding routes.' },
+      { name: 'Table Mountain Cableway', cat: 'Landmark', suburb: 'Tafelberg Rd', price: 'R420 return', time: 'Half day', sponsored: true, blurb: 'Rotating cable car to the summit plateau, with walking routes along the top and the Platteklip descent.', slug: 'table-mountain-cableway' },
+      { name: 'V&A Waterfront', cat: 'Family', suburb: 'Waterfront', price: 'Free entry', time: 'Full day', sponsored: false, blurb: 'Working harbour with the Zeitz MOCAA museum, Two Oceans Aquarium and the Robben Island ferry.', slug: 'va-waterfront' },
+      { name: 'Cape Point & Chapman’s Peak', cat: 'Outdoors', suburb: 'Cape Peninsula', price: 'R400 park fee', time: 'Full day', sponsored: true, blurb: 'The peninsula drive — Hout Bay, Chapman’s Peak toll road, Boulders penguins and the Cape of Good Hope.', slug: 'cape-point-chapmans-peak' },
+      { name: 'Kirstenbosch Botanical Garden', cat: 'Outdoors', suburb: 'Newlands', price: 'R250 adults', time: 'Half day', sponsored: false, blurb: 'Fynbos garden on the eastern slope, with the canopy Boomslang walkway and summer sunset concerts.', slug: 'kirstenbosch-botanical-garden' },
+      { name: 'Robben Island Museum', cat: 'Heritage', suburb: 'Table Bay', price: 'R600 incl. ferry', time: 'Half day', sponsored: false, blurb: 'Ferry from the Waterfront to the prison island, with tours led by former political prisoners.', slug: 'robben-island-museum' },
+      { name: 'Stellenbosch Winelands', cat: 'Day trip', suburb: 'R44 east', price: 'Tastings from R120', time: 'Full day', sponsored: false, blurb: 'Oak-lined town forty-five minutes out, with several hundred estates on the surrounding routes.', slug: 'stellenbosch-winelands' },
     ],
     itineraries: [
-      { name: 'One day in Cape Town', stops: 'Table Mountain → Bo-Kaap → Waterfront → Camps Bay sunset', time: '9 hours' },
-      { name: 'Peninsula loop', stops: 'Hout Bay → Chapman’s Peak → Cape Point → Boulders → Kalk Bay', time: 'Full day' },
-      { name: 'Wine country', stops: 'Stellenbosch → Franschhoek tram → Paarl', time: '2 days' },
+      {
+        name: 'One day in Cape Town',
+        stops: [
+          { name: 'Table Mountain', slug: 'table-mountain-cableway' },
+          { name: 'Bo-Kaap' },
+          { name: 'Waterfront', slug: 'va-waterfront' },
+          { name: 'Camps Bay sunset' },
+        ],
+        time: '9 hours',
+        note: 'Do the mountain first — the cableway closes for wind and cloud, so don\'t leave it for the end of the day if conditions look marginal.',
+      },
+      {
+        name: 'Peninsula loop',
+        stops: [
+          { name: 'Hout Bay' },
+          { name: 'Chapman’s Peak & Cape Point', slug: 'cape-point-chapmans-peak' },
+          { name: 'Boulders penguins' },
+          { name: 'Kalk Bay' },
+        ],
+        time: 'Full day',
+        note: 'A full loop, not a quick drive — Chapman\'s Peak closes periodically for weather, so check it\'s open before you set out.',
+      },
+      {
+        name: 'Wine country',
+        stops: [{ name: 'Stellenbosch', slug: 'stellenbosch-winelands' }, { name: 'Franschhoek tram' }, { name: 'Paarl' }],
+        time: '2 days',
+        note: 'Arrange a designated driver or shuttle between estates — this isn\'t a self-drive-and-taste day.',
+      },
     ],
     seasons: [
       { name: 'Whale season', when: 'June to November', note: 'Southern rights off False Bay and Hermanus, closest in September and October.' },
-      { name: 'Summer wind', when: 'December to February', note: 'The south-easter closes the cableway on the worst days — check before driving up.' },
+      { name: 'Summer wind', when: 'December to February', note: 'The south-easter closes the cableway on the worst days — check before driving up. Beaches and outdoor dining are at their best regardless.' },
+      { name: 'Best all-round weather', when: 'March to May', note: 'Cape Town\'s most reliable stretch — warm days, cooler nights, before the winter rain sets in. Good for hiking and the winelands without summer\'s crowds.' },
     ],
   },
 };
