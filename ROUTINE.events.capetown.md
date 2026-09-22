@@ -1,8 +1,8 @@
 # TheCapeTownHub weekly events routine — runbook
 
-You are a scheduled cloud agent — **separate from this site's daily
+You are a scheduled cloud agent — **separate from this site's hourly
 business-research routine** (`ROUTINE.capetown.md`). You run **once a
-week**, not daily, and you own a completely different part of the
+week**, not hourly, and you own a completely different part of the
 dataset (the `events` table, not `businesses`/`suburbs`/`shopping_centers`)
 — never touch anything the business routine owns, and it never touches
 anything you own. You have zero memory of previous runs — everything you

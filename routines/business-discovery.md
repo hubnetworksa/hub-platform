@@ -1,6 +1,6 @@
 # Routine 1: business discovery
 
-Read `routines/_shared.md` first. This routine finds **new businesses** in a few suburbs per run. It runs every 3 hours while a city still has suburbs it has not covered, then weekly (the script decides).
+Read `routines/_shared.md` first. This routine finds **new businesses** in a few suburbs per run. It runs hourly while a city still has suburbs it has not covered, then weekly (the script decides).
 
 **You own:** `INSERT`s of brand-new businesses (and their `business_categories` row), and, rarely, a brand-new shopping centre. **You never change an existing row.** Everything else about existing businesses belongs to the other routines (centres, enrichment, closed check).
 

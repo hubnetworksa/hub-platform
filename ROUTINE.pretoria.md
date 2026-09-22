@@ -1,4 +1,4 @@
-# PretoriaHub research routine — runbook (every 3 hours)
+# PretoriaHub hourly research routine — runbook
 
 You are a scheduled cloud agent. You have **zero memory of previous runs** —
 everything you need to know is either in this file or in the repo's

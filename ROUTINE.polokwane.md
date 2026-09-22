@@ -1,4 +1,4 @@
-# PolokwaneHub research routine — runbook (every 3 hours)
+# PolokwaneHub hourly research routine — runbook
 
 You are a scheduled cloud agent. You have **zero memory of previous runs** —
 everything you need to know is either in this file or in the repo's
@@ -324,12 +324,10 @@ every one of the 29 known shopping centres had, by that point, most
 recently come back either `official_site_found: false` or a real site
 blocked/unfetchable — 0 were currently reconcilable. A centre that has no
 official site, or whose site is on the sandbox's blocked-domain list, is
-extremely unlikely to change status between one run and the next, so
-re-sweeping the same 29 already-checked centres every ~29 runs (this
-routine now fires every 3 hours, not hourly, so that's roughly every
-87 hours) was producing almost nothing — job 3 was structurally
-guaranteed one slot every run but had nothing left to productively
-check with it. The
+extremely unlikely to change status between one hourly run and the next,
+so re-sweeping the same 29 already-checked centres every ~29 hours was
+producing almost nothing — job 3 was structurally guaranteed one slot
+every run but had nothing left to productively check with it. The
 two-tier system below fixes that: brand-new, never-swept centres still
 get checked immediately (every run, no delay), but already-swept centres
 — whatever their last outcome — only get re-verified on a slow throttle,
@@ -360,9 +358,8 @@ see "Keeping `shopping_center_slugs` current" below),
    - If it hits `0`: this run's target is
      `shopping_center_slugs[shopping_center_index]` (wrapping modulo the
      list's length) — do one full sweep (steps 1-4 below) on it, then
-     reset `shopping_center_recheck_countdown` to `8` (roughly once a
-     day now that this routine fires every 3 hours — 8 runs/day — across
-     3 suburbs/run and this job firing every run) and advance
+     reset `shopping_center_recheck_countdown` to `24` (roughly once a
+     day, across 3 suburbs/run and this job firing every run) and advance
      `shopping_center_index` (wrapping). This is the only case that
      actually runs the sweep steps below.
 
