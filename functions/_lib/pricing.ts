@@ -7,7 +7,7 @@ import type { D1Database } from '@cloudflare/workers-types';
 
 export const TIER_NAMES: Record<number, string> = { 0: 'Basic', 1: 'Verified', 2: 'Featured' };
 
-export type SponsorProductType = 'category_sponsor' | 'suburb_sponsor' | 'homepage_banner' | 'centre_sponsor' | 'guide_sponsor';
+export type SponsorProductType = 'category_sponsor' | 'suburb_sponsor' | 'homepage_banner' | 'centre_sponsor' | 'guide_sponsor' | 'tourism_sponsor';
 
 const SPONSOR_TYPES = new Set<SponsorProductType>([
   'category_sponsor',
@@ -15,6 +15,7 @@ const SPONSOR_TYPES = new Set<SponsorProductType>([
   'homepage_banner',
   'centre_sponsor',
   'guide_sponsor',
+  'tourism_sponsor',
 ]);
 
 export function isSponsorProductType(v: unknown): v is SponsorProductType {
@@ -33,6 +34,8 @@ export function sponsorProductLabel(productType: SponsorProductType, target: str
       return `Shopping centre sponsor — ${target ?? ''}`;
     case 'guide_sponsor':
       return `Guide sponsor — ${target ?? ''}`;
+    case 'tourism_sponsor':
+      return 'Things to do sponsor';
   }
 }
 
@@ -43,6 +46,7 @@ const SPONSOR_SETTING_KEYS: Record<SponsorProductType, string> = {
   homepage_banner: 'price_sponsor_banner_cents',
   centre_sponsor: 'price_sponsor_centre_cents',
   guide_sponsor: 'price_sponsor_guide_cents',
+  tourism_sponsor: 'price_sponsor_tourism_cents',
 };
 
 async function settingCents(db: D1Database, key: string): Promise<number | null> {

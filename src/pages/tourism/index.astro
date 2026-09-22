@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import SponsorSlot from '../../components/SponsorSlot.astro';
 import { adsEnabled } from '../../lib/site-overrides';
 import { TOURISM, TOUR_CATEGORIES } from '../../site-content/tourism';
 import site from '../../site';
@@ -37,7 +38,6 @@ const jsonLd = {
     .map((p) => ({ '@type': 'TouristAttraction', name: p.name, url: `${siteUrl}/tourism/${p.slug}/` })),
 };
 
-const featureMessage = `I'd like to feature our attraction or tour on the ${site.cityLabel} things-to-do page.`;
 ---
 
 <BaseLayout title={`Things to do in ${site.cityLabel}`} description={content.blurb}>
@@ -141,11 +141,16 @@ const featureMessage = `I'd like to feature our attraction or tour on the ${site
               <div style="font-size:19px;font-weight:800;color:#fff;margin-top:6px;letter-spacing:-.02em">List your attraction free</div>
             </div>
             <div style="padding:16px;background:#fff">
-              <p style="margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--text)">Tours, guesthouses, restaurants and activities. Feature it to sit at the top of this page.</p>
-              <a href="/list-your-business/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;margin-bottom:8px;text-align:center;text-decoration:none">Add an attraction</a>
-              <a href={`/contact/?topic=Advertising&message=${encodeURIComponent(featureMessage)}`} style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-align:center;text-decoration:none">Feature it</a>
+              <p style="margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--text)">Tours, guesthouses, restaurants and activities. Sponsor this page to sit at the top.</p>
+              <a href="/list-your-business/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-align:center;text-decoration:none">Add an attraction</a>
             </div>
           </div>
+          <SponsorSlot
+            productType="tourism_sponsor"
+            title="Sponsor this page"
+            openBody="The single sponsored placement on this page — one advertiser at a time, month to month."
+            ctaLabel="See pricing"
+          />
           <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
             <h3 style="margin:0 0 8px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Visiting for a weekend?</h3>
             <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Check what's on while you're here — markets, sport and live music with ticket prices.</p>

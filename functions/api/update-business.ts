@@ -46,6 +46,16 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .bind(businessId)
     .all<{ id: number; amount_cents: number; status: string; paid_at: string; invoice_number: string | null; tier: number; product_type: string | null }>();
 
+  // Active sponsorship slots this business holds (category/suburb/banner/centre/guide/tourism) —
+  // separate from the tier plan, shown as their own "buy/cancel" cards on the Billing tab.
+  const sponsorships = await db
+    .prepare(
+      `SELECT product_type, product_target, current_period_end, status FROM subscriptions
+       WHERE business_id = ? AND product_type != 'tier' AND status = 'active' ORDER BY id DESC`
+    )
+    .bind(businessId)
+    .all<{ product_type: string; product_target: string | null; current_period_end: string | null; status: string }>();
+
   return json({
     ok: true,
     business: {
@@ -55,6 +65,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     },
     photos: photos.results,
     payments: payments.results,
+    sponsorships: sponsorships.results,
   });
 };
 

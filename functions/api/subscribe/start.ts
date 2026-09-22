@@ -63,7 +63,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!isSponsorProductType(body.productType)) return json({ ok: false, error: 'Unknown sponsorship product.' }, 400);
     productType = body.productType;
     productTarget = typeof body.productTarget === 'string' && body.productTarget ? body.productTarget : null;
-    if (productType !== 'homepage_banner' && !productTarget) {
+    if (productType !== 'homepage_banner' && productType !== 'tourism_sponsor' && !productTarget) {
       return json({ ok: false, error: 'Missing sponsorship target.' }, 400);
     }
     if (await isSlotTaken(db, productType, productTarget)) {

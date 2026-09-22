@@ -13,6 +13,9 @@ const SPOTS = [
   ...(GUIDES.length > 0
     ? [{ productType: 'guide_sponsor' as const, name: 'Guide sponsorship', price: priceRand('price_sponsor_guide_cents'), blurb: `One business per buyer's guide — currently ${GUIDES.length} guide${GUIDES.length === 1 ? '' : 's'} live.` }]
     : []),
+  ...(site.features.tourism
+    ? [{ productType: 'tourism_sponsor' as const, name: 'Things to do sponsor', price: priceRand('price_sponsor_tourism_cents'), blurb: 'The single sponsored placement on the Things to do page. One advertiser at a time, month to month.' }]
+    : []),
 ];
 ---
 
@@ -102,13 +105,21 @@ const SPOTS = [
       </div>
       <p style="margin:16px 0 0;font-size:12.5px;color:var(--muted);font-weight:600">Prices shown are placeholders and subject to change.</p>
 
-      <div style="margin-top:18px;max-width:420px;">
+      <div style="margin-top:18px;max-width:420px;display:flex;flex-direction:column;gap:14px">
         <SponsorSlot
           productType="homepage_banner"
           title="Homepage banner"
           openBody="The single sponsor slot on the homepage — one advertiser at a time."
           ctaLabel="Enquire about the banner"
         />
+        {site.features.tourism && (
+          <SponsorSlot
+            productType="tourism_sponsor"
+            title="Things to do sponsor"
+            openBody="The single sponsor slot on the Things to do page — one advertiser at a time."
+            ctaLabel="Enquire about this slot"
+          />
+        )}
       </div>
     </section>
 

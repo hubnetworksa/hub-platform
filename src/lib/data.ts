@@ -91,7 +91,7 @@ export interface BusinessPhoto {
  *  same rebuild-to-refresh pattern as every other static data file here. */
 export interface Sponsorship {
   id: number;
-  product_type: 'category_sponsor' | 'suburb_sponsor' | 'homepage_banner' | 'centre_sponsor';
+  product_type: 'category_sponsor' | 'suburb_sponsor' | 'homepage_banner' | 'centre_sponsor' | 'guide_sponsor' | 'tourism_sponsor';
   product_target: string | null;
   business_id: number;
   business_name: string;

@@ -73,6 +73,7 @@ const tile = 'background:#fff;border:2px solid var(--border);border-radius:12px;
     centre_sponsor: { kind: 'Centre sponsor', rateKey: 'price_sponsor_centre_cents' },
     guide_sponsor: { kind: 'Guide sponsor', rateKey: 'price_sponsor_guide_cents' },
     homepage_banner: { kind: 'Display', rateKey: 'price_sponsor_banner_cents' },
+    tourism_sponsor: { kind: 'Things to do sponsor', rateKey: 'price_sponsor_tourism_cents' },
   };
 
   const PAGE = 30;
@@ -88,6 +89,7 @@ const tile = 'background:#fff;border:2px solid var(--border);border-radius:12px;
     });
     const list: Slot[] = [
       make('homepage_banner', null, 'Homepage banner', Number.MAX_SAFE_INTEGER),
+      make('tourism_sponsor', null, 'Things to do sponsor', Number.MAX_SAFE_INTEGER),
       ...slots.categories.map((c) => make('category_sponsor', c.slug, c.name, c.count)),
       ...slots.suburbs.map((s) => make('suburb_sponsor', s.slug, s.name, s.count)),
       ...slots.centres.map((c) => make('centre_sponsor', c.slug, c.name, c.count)),

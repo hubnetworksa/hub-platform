@@ -1,9 +1,11 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { priceRand } from '../../lib/data';
+import site from '../../site';
 
 const priceVerified = priceRand('price_verified_cents').replace(/\.00$/, '');
 const priceFeatured = priceRand('price_featured_cents').replace(/\.00$/, '');
+const priceTourismSponsor = priceRand('price_sponsor_tourism_cents').replace(/\.00$/, '');
 
 const TABS = [
   ['overview', 'Overview'],
@@ -24,7 +26,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 ---
 
 <BaseLayout title="Manage business" description="Manage your business listing, plan and photos." noindex={true}>
-  <main style="max-width:1200px;margin:0 auto;padding:clamp(20px,3vw,36px) 20px 60px" data-price-verified={priceVerified} data-price-featured={priceFeatured} id="owner-main">
+  <main style="max-width:1200px;margin:0 auto;padding:clamp(20px,3vw,36px) 20px 60px" data-price-verified={priceVerified} data-price-featured={priceFeatured} data-price-tourism-sponsor={priceTourismSponsor} id="owner-main">
     <div id="loading" style="color:var(--muted);padding:2rem 0;">Loading…</div>
 
     <div id="dashboard" hidden>
@@ -174,6 +176,21 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
             <p id="plan-status" role="status" style="margin:10px 0 0;font-size:13px;font-weight:700;color:var(--muted)"></p>
             <p style="margin:8px 0 0;font-size:13px;font-weight:600;color:var(--muted)"><a href="/pricing/" style="color:var(--accent-hover);font-weight:800">Compare plans</a></p>
 
+            {site.features.tourism && (
+              <div style={`${cardBox};margin-top:14px`}>
+                <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
+                  <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Sponsorships</h3>
+                </div>
+                <div style="padding:18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                  <div>
+                    <div style="font-size:15.5px;font-weight:800;color:var(--navy)">Things to do sponsor</div>
+                    <div id="tourism-sponsor-status" style="font-size:13px;font-weight:700;color:var(--muted);margin-top:4px">{priceTourismSponsor} / month — the single sponsored placement on the Things to do page.</div>
+                  </div>
+                  <div id="tourism-sponsor-buttons" style="display:flex;gap:9px;margin-left:auto;flex-wrap:wrap"></div>
+                </div>
+              </div>
+            )}
+
             <div style={`${cardBox};margin-top:14px`}>
               <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
                 <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Payment history</h3>
@@ -238,6 +255,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   };
   type Photo = { id: number; r2_key: string; caption: string | null };
   type Payment = { id: number; amount_cents: number; status: string; paid_at: string; invoice_number: string | null; tier: number; product_type: string | null };
+  type Sponsorship = { product_type: string; product_target: string | null; current_period_end: string | null; status: string };
 
   function esc(s: string): string {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -375,6 +393,57 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     else if (params.get('upgrade_cancelled')) planStatus.textContent = 'Checkout cancelled — you have not been charged.';
   }
 
+  // ---- Sponsorships (currently just the Things to do slot — a real
+  // monthly recurring subscription via the same subscribe/start.ts path as
+  // a tier upgrade, unlike an event feature which is a once-off payment). ----
+  function renderSponsorships(sponsorships: Sponsorship[]) {
+    const statusEl = document.getElementById('tourism-sponsor-status');
+    const buttons = document.getElementById('tourism-sponsor-buttons');
+    if (!statusEl || !buttons) return; // site.features.tourism was false at build time — card not rendered
+
+    const priceLabel = main.dataset.priceTourismSponsor ?? '—';
+    const active = sponsorships.find((s) => s.product_type === 'tourism_sponsor');
+    buttons.innerHTML = '';
+
+    if (active) {
+      const expiry = longDate(active.current_period_end);
+      statusEl.textContent = [`${priceLabel}/month`, expiry ? `renews ${expiry}` : null].filter(Boolean).join(' · ');
+      const cancelBtn = planButton('Cancel');
+      cancelBtn.style.borderColor = 'var(--border)';
+      cancelBtn.style.color = 'var(--danger)';
+      cancelBtn.addEventListener('click', async () => {
+        if (!confirm('Cancel the Things to do sponsorship? You keep the slot until the paid period ends.')) return;
+        statusEl.textContent = 'Cancelling…';
+        const res = await fetch('/api/subscribe/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId: Number(businessId), productType: 'tourism_sponsor' }),
+        });
+        const result = await res.json();
+        statusEl.textContent = result.ok ? 'Cancelled — active until your current period ends.' : result.error || 'Could not cancel.';
+      });
+      buttons.appendChild(cancelBtn);
+    } else {
+      statusEl.textContent = `${priceLabel} / month — the single sponsored placement on the Things to do page.`;
+      const buyBtn = planButton('Sponsor this slot');
+      buyBtn.addEventListener('click', async () => {
+        statusEl.textContent = 'Starting checkout…';
+        const res = await fetch('/api/subscribe/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId: Number(businessId), productType: 'tourism_sponsor' }),
+        });
+        const result = await res.json();
+        if (result.ok) window.location.href = result.redirectUrl;
+        else statusEl.textContent = result.error || 'Could not start checkout.';
+      });
+      buttons.appendChild(buyBtn);
+    }
+
+    if (params.get('upgraded')) statusEl.textContent = 'Thanks — your payment is being confirmed (refresh in a minute).';
+    else if (params.get('upgrade_cancelled')) statusEl.textContent = 'Checkout cancelled — you have not been charged.';
+  }
+
   function renderPayments(payments: Payment[]) {
     const list = document.getElementById('payments-list')!;
     const empty = document.getElementById('payments-empty')!;
@@ -508,6 +577,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 
     renderHeader(b);
     renderPlan(b);
+    renderSponsorships(data.sponsorships ?? []);
     renderPayments(data.payments ?? []);
     renderPhotos(b, data.photos ?? []);
 
