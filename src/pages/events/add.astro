@@ -255,6 +255,12 @@ const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '')
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...data, loadedAt }),
       });
+      if (res.status === 401) {
+        // Session expired between page load and submit (the page already
+        // checked once on load) — straight to login, no error message shown.
+        window.location.href = '/login/?next=/events/add/';
+        return;
+      }
       const result = await res.json();
       if (result.ok && result.redirectUrl) {
         // Chose to feature it — off to PayFast now, before the "saved for

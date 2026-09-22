@@ -76,6 +76,16 @@ function isRealDate(v: string): boolean {
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const site = getSite(context.env.SITE);
+  const db = context.env.DB;
+
+  // Unlike a business listing, an account is required to submit an event —
+  // organisers need somewhere to end up owning it once it's approved (see
+  // /my-events/), and featuring it always needs a real payer identity. The
+  // page gates on this too (see src/pages/events/add.astro), but that's a
+  // UX nicety, not the enforcement — this check is what actually matters.
+  const sessionUser = await getSessionUser(context.request, db);
+  if (!sessionUser) return json({ ok: false, error: 'Please log in first.' }, 401);
+
   let body: Record<string, unknown>;
   try {
     body = await context.request.json();
@@ -131,16 +141,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return json({ ok: false, error: 'That email address doesn\'t look right.' }, 400);
   }
 
-  const db = context.env.DB;
-
   const pending = await db.prepare(`SELECT COUNT(*) AS n FROM event_submissions WHERE status = 'pending'`).first<{ n: number }>();
   if ((pending?.n ?? 0) >= MAX_PENDING) {
     return json({ ok: false, error: 'We have a backlog of events to review right now — please try again in a few days.' }, 503);
   }
-
-  // Not required (anonymous submission is allowed), but when the organiser
-  // is signed in we keep the link and fall back to their account email.
-  const sessionUser = await getSessionUser(context.request, db);
 
   const wantsFeature = String(body.wantsFeature ?? '') === 'true' || String(body.wantsFeature ?? '') === 'on';
 
