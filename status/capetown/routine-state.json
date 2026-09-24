@@ -1,5 +1,5 @@
 {
-  "suburb_index": 33,
+  "suburb_index": 34,
   "suburbs_per_run": 3,
   "suburb_slugs": [
     "cape-town-cbd",
@@ -173,7 +173,10 @@
   ],
   "shopping_center_index": 0,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
+  "shopping_center_slugs_pending": [
+    "wynberg-centre-wynberg",
+    "maynard-mall-wynberg"
+  ],
   "shopping_center_recheck_countdown": 22,
   "new_mall_discovery_countdown": 97,
   "shopping_center_slugs": [
@@ -294,7 +297,9 @@
     "the-watershed-va-waterfront",
     "adelphi-centre-sea-point",
     "portside-shopping-centre-green-point",
-    "montebello-design-centre-newlands"
+    "montebello-design-centre-newlands",
+    "wynberg-centre-wynberg",
+    "maynard-mall-wynberg"
   ],
   "closed_check_last_slug": "beauty-zone-monte-vista",
   "closed_check_batch_size": 5
