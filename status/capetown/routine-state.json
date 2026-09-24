@@ -1,5 +1,5 @@
 {
-  "suburb_index": 163,
+  "suburb_index": 164,
   "suburbs_per_run": 3,
   "suburb_slugs": [
     "cape-town-cbd",
@@ -173,7 +173,9 @@
   ],
   "shopping_center_index": 0,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
+  "shopping_center_slugs_pending": [
+    "sitari-village-centre-croydon"
+  ],
   "shopping_center_recheck_countdown": 29,
   "new_mall_discovery_countdown": 107,
   "shopping_center_slugs": [
@@ -289,7 +291,8 @@
     "montague-gardens-convenience-centre-montague-gardens",
     "the-muize-muizenberg",
     "bay-harbour-market-hout-bay",
-    "longbeach-mall-noordhoek"
+    "longbeach-mall-noordhoek",
+    "sitari-village-centre-croydon"
   ],
   "closed_check_last_slug": "alta-bay-higgovale",
   "closed_check_batch_size": 5
