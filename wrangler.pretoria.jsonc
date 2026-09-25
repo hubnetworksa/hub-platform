@@ -46,11 +46,13 @@
         "PAYFAST_MERCHANT_ID": "10004002",
         "PAYFAST_MERCHANT_KEY": "q1cd2rdny4a53",
         "PAYFAST_PASSPHRASE": "payfast",
-        "PAYFAST_HOST": "sandbox.payfast.co.za",
-        // Not a third-party secret — our own admin-sweep endpoints just
-        // check this string matches, so a freshly generated Preview-only
-        // value is exactly as valid as Production's own (different) value.
-        "CRON_SECRET": "191aaf944fa3bb5f8b1fce46e55917513371444c0373f1b3"
+        "PAYFAST_HOST": "sandbox.payfast.co.za"
+        // CRON_SECRET is deliberately NOT set here. This repo is public and
+        // preview deploys bind the production database, so a committed value
+        // would let anyone run the admin sweep endpoints against live data.
+        // With it unset those endpoints return 401 on preview; set it as a
+        // Preview-environment secret in the Cloudflare dashboard if you need
+        // to exercise them there.
       },
       "d1_databases": [
         {

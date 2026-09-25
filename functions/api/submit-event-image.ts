@@ -1,5 +1,6 @@
 import type { PagesFunction, D1Database, R2Bucket } from '@cloudflare/workers-types';
 import { getSite } from '../_lib/site';
+import { getSessionUser } from '../_lib/auth';
 import { rateLimited, json } from '../_lib/messages';
 
 interface Env {
@@ -14,13 +15,15 @@ const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 // Uploads an organiser's event poster for the "List your event free" form
 // (src/pages/events/add.astro) — an upload, not a pasted link, so we always
 // have a real copy of the image rather than trusting a URL that can 404 or
-// change later. Anonymous (the whole add-event form is), so it gets its own
-// rate limit — same visitor-hash pattern as every other public form — since
-// unlike a text field, an upload endpoint left unlimited could be used to
-// fill R2 storage for free.
+// change later. Requires a session, exactly like submit-event.ts: without
+// one this was free anonymous image hosting straight into the production
+// bucket (every such upload orphaned, since the matching submit is 401).
+// The rate limit stays as a second guard against a logged-in user filling R2.
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const site = getSite(context.env.SITE);
   const db = context.env.DB;
+  const user = await getSessionUser(context.request, db);
+  if (!user) return json({ ok: false, error: 'Please log in first.' }, 401);
   if (await rateLimited(db, context.request, site.slug, 'submit-event-image', 10)) {
     return json({ ok: false, error: 'Too many uploads from your connection. Please try again in an hour.' }, 429);
   }
