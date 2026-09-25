@@ -1,4 +1,5 @@
 ---
+import { sponsorFor } from '../../lib/data';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageBanner from '../../components/PageBanner.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
@@ -64,9 +65,12 @@ const jsonLd = {
 };
 
 const paras = (text: string) => text.split(/\n{2,}/);
+// No Google ads anywhere a paid listing or sponsor is shown (see
+// BaseLayout's noAds): this page shows one if this is true.
+const showsPaid = !!sponsorFor('tourism_sponsor', attraction.slug);
 ---
 
-<BaseLayout title={attraction.pageTitle} description={attraction.metaDescription} canonical={canonical} ogImage={attraction.imageUrl}>
+<BaseLayout noAds={showsPaid} title={attraction.pageTitle} description={attraction.metaDescription} canonical={canonical} ogImage={attraction.imageUrl}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <PageBanner title={attraction.name} description={attraction.teaser}>

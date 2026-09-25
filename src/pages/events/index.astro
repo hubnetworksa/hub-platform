@@ -23,9 +23,12 @@ const cards = sorted.map((e) => {
   const { month, day } = eventDateParts(e);
   return { event: e, month, day };
 });
+// No Google ads anywhere a paid listing or sponsor is shown (see
+// BaseLayout's noAds): this page shows one if this is true.
+const showsPaid = sorted.some((e) => !!e.featured);
 ---
 
-<BaseLayout
+<BaseLayout noAds={showsPaid}
   title="Events"
   description={`Markets, gigs, sport and family events in ${site.cityLabel} — with ticket prices up front and a direct link to the seller.`}
 >
@@ -134,7 +137,7 @@ const cards = sorted.map((e) => {
               ))}
             </div>
           </div>
-          {adsEnabled && (
+          {adsEnabled && !showsPaid && (
           <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);min-height:250px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:18px">
             <span style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
             <span style="font-size:13.5px;font-weight:700;color:var(--muted)">300×250 — event sponsors</span>

@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { categories, suburbs, businessesInCategory, businessesInSuburb, sponsorFor } from '../lib/data';
+import { categories, suburbs, businessesInCategory, businessesInSuburb, sponsorFor, isPaidListing, businesses, sponsorships } from '../lib/data';
 import { groupForSuburb } from '../site-content';
 import { synonymsFor } from '../lib/categorySynonyms';
 import site from '../site';
@@ -29,9 +29,12 @@ const searchMeta = {
 const searchMetaJson = JSON.stringify(searchMeta).replace(/</g, '\\u003c');
 
 const stepStyle = 'flex-shrink:0;width:28px;height:28px;border-radius:8px;background:var(--bg-subtle);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px';
+// No Google ads anywhere a paid listing or sponsor is shown (see
+// BaseLayout's noAds): this page shows one if this is true.
+const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.product_type === 'category_sponsor');
 ---
 
-<BaseLayout title="Search results" description={`Search ${site.siteName}'s directory.`} noindex={true}>
+<BaseLayout noAds={showsPaid} title="Search results" description={`Search ${site.siteName}'s directory.`} noindex={true}>
   <main style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
     <div id="crumbs" style="display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--muted);flex-wrap:wrap">
       <a href="/" style="color:var(--muted)">Home</a><span>/</span><span style="color:var(--navy)">Search</span>

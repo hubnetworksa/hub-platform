@@ -55,9 +55,12 @@ const jsonLd = {
     .map((p) => ({ '@type': 'TouristAttraction', name: p.name, url: `${siteUrl}/tourism/${p.slug}/` })),
 };
 
+// No Google ads anywhere a paid listing or sponsor is shown (see
+// BaseLayout's noAds): this page shows one if this is true.
+const showsPaid = picks.some((p) => p.sponsored);
 ---
 
-<BaseLayout title={`Things to do in ${site.cityLabel}`} description={content.blurb}>
+<BaseLayout noAds={showsPaid} title={`Things to do in ${site.cityLabel}`} description={content.blurb}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
   <main>
     <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">
@@ -181,7 +184,7 @@ const jsonLd = {
             <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Check what's on while you're here — markets, sport and live music with ticket prices.</p>
             <a href="/events/" style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--navy);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-align:center;text-decoration:none">See events</a>
           </div>
-          {adsEnabled && (
+          {adsEnabled && !showsPaid && (
             <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);min-height:250px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:18px">
               <span style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
               <span style="font-size:13.5px;font-weight:700;color:var(--muted)">300×250 — tourism sponsors</span>

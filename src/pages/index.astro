@@ -69,9 +69,12 @@ const jsonLd = [
     logo: `https://${site.domain}/logo-icon.png`,
   },
 ];
+// No Google ads anywhere a paid listing or sponsor is shown (see
+// BaseLayout's noAds): this page shows one if this is true.
+const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEvents.length > 0;
 ---
 
-<BaseLayout
+<BaseLayout noAds={showsPaid}
   title={`${site.cityLabel} Business Directory`}
   description={`Find businesses across ${site.cityLabel} and surrounding areas — browse by suburb or category to discover what's nearby.`}
   impactVerification
@@ -187,7 +190,7 @@ const jsonLd = [
     </section>
 
     <section style="max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,44px) 20px 0">
-      {adsEnabled && (
+      {adsEnabled && !showsPaid && (
       <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);min-height:118px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;padding:20px">
         <span style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
         <span style="font-size:14px;font-weight:700;color:var(--muted)">AdSense in-content unit — 970×90 desktop / 320×100 mobile</span>

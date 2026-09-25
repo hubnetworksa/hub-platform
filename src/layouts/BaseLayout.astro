@@ -33,7 +33,10 @@ interface Props {
   noAds?: boolean;
 }
 
-const { title, description, canonical, titleOverride, noindex, impactVerification, ogImage, ogType = 'website', noAds = false } = Astro.props;
+const { title, description, canonical, titleOverride, noindex, impactVerification, ogImage, ogType = 'website', noAds: noAdsProp = false } = Astro.props;
+// Account, admin and other noindex utility pages are ad-free too (an owner's
+// dashboard shows their own paid listing).
+const noAds = noAdsProp || Boolean(noindex);
 const fullTitle = titleOverride ?? `${title} | ${site.siteName}`;
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
 const shareImage = ogImage ? (/^https?:\/\//i.test(ogImage) ? ogImage : siteUrl + ogImage) : siteUrl + '/logo-icon.png';
@@ -174,7 +177,7 @@ const themeCss = `:root {
 
     <style set:html={themeCss}></style>
   </head>
-  <body data-city-label={cityLabel} data-ads={adsEnabled ? '1' : '0'}>
+  <body data-city-label={cityLabel} data-ads={adsEnabled && !noAds ? '1' : '0'}>
     <a href="#main-content" class="skip-link">Skip to content</a>
 
     <div style="position:sticky;top:0;z-index:80;background:var(--navy);color:#fff">

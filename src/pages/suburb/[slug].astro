@@ -5,7 +5,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import SponsorSlot from '../../components/SponsorSlot.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Icon from '../../components/Icon.astro';
-import { suburbs, businessesInSuburb, businessesInSuburbAndCategory, categoriesFor, categoryBySlug, FEATURED_TIER, type Business } from '../../lib/data';
+import { suburbs, businessesInSuburb, businessesInSuburbAndCategory, categoriesFor, categoryBySlug, FEATURED_TIER, type Business, isPaidListing, sponsorFor } from '../../lib/data';
 import { groupForSuburb } from '../../site-content';
 import { CATEGORY_GROUPS } from '../../lib/categoryGroups';
 import { synonymsFor, suburbSynonymsFor } from '../../lib/categorySynonyms';
@@ -72,9 +72,12 @@ const collectionJsonLd = businesses.length === 0
       url: `https://${site.domain}/suburb/${suburb.slug}/`,
       items: businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` })),
     });
+// No Google ads anywhere a paid listing or sponsor is shown (see
+// BaseLayout's noAds): this page shows one if this is true.
+const showsPaid = businesses.some(isPaidListing) || !!sponsorFor('suburb_sponsor', suburb.slug);
 ---
 
-<BaseLayout title={suburb.name} description={description}>
+<BaseLayout noAds={showsPaid} title={suburb.name} description={description}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
   {collectionJsonLd && <script type="application/ld+json" set:html={JSON.stringify(collectionJsonLd).replace(/</g, '\\u003c')} />}
 
@@ -153,7 +156,7 @@ const collectionJsonLd = businesses.length === 0
         </div>
 
         <aside style="display:flex;flex-direction:column;gap:14px">
-          {adsEnabled && (
+          {adsEnabled && !showsPaid && (
           <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);min-height:250px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:18px">
             <span style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
             <span style="font-size:13.5px;font-weight:700;color:var(--muted)">300×250 sidebar unit</span>

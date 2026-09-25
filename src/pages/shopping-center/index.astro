@@ -33,9 +33,12 @@ const jsonLd = collectionPageJsonLd({
   url: `https://${site.domain}/shopping-center/`,
   items: centres.map(({ center }) => ({ name: center.name, url: `https://${site.domain}/shopping-center/${center.slug}/` })),
 });
+// No Google ads anywhere a paid listing or sponsor is shown (see
+// BaseLayout's noAds): this page shows one if this is true.
+const showsPaid = centres.some((c) => c.sponsored);
 ---
 
-<BaseLayout
+<BaseLayout noAds={showsPaid}
   title="Shopping Centres & Malls"
   description={`Browse ${site.cityLabel} shopping centres and malls — malls, retail parks and village centres, with every store inside them listed and searchable.`}
 >

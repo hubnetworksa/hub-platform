@@ -4,7 +4,7 @@ import BusinessCard from '../../components/BusinessCard.astro';
 import SponsorBanner from '../../components/SponsorBanner.astro';
 import StatTile from '../../components/StatTile.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { shoppingCenters, suburbs, businessesInShoppingCenter, categoriesFor, FEATURED_TIER, sponsorFor, priceRand } from '../../lib/data';
+import { shoppingCenters, suburbs, businessesInShoppingCenter, categoriesFor, FEATURED_TIER, sponsorFor, priceRand, isPaidListing } from '../../lib/data';
 import { collectionPageJsonLd } from '../../lib/seo';
 import { synonymsFor } from '../../lib/categorySynonyms';
 import site from '../../site';
@@ -49,9 +49,12 @@ const rest = businesses.filter((b) => b !== pinned).sort((a, b) => (b.subscripti
 const heroSrc = site.sectionBannerImage;
 const centreSponsor = sponsorFor('centre_sponsor', center.slug);
 import { sponsorHref } from '../../lib/sponsor-link';
+// No Google ads anywhere a paid listing or sponsor is shown (see
+// BaseLayout's noAds): this page shows one if this is true.
+const showsPaid = businesses.some(isPaidListing) || !!centreSponsor;
 ---
 
-<BaseLayout
+<BaseLayout noAds={showsPaid}
   title={center.name}
   description={center.description ?? `${businesses.length} businesses at ${center.name}, ${site.cityLabel}.`}
 >

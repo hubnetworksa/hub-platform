@@ -4,7 +4,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
 import PlanBadge from '../../components/PlanBadge.astro';
 import AdUnit from '../../components/AdUnit.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, websiteUrl } from '../../lib/data';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, websiteUrl, isPaidListing } from '../../lib/data';
 import { synonymsFor, locationSynonymsFor } from '../../lib/categorySynonyms';
 import { schemaTypeFor } from '../../lib/categorySchemaTypes';
 import Icon from '../../components/Icon.astro';
@@ -68,6 +68,9 @@ const photos = photosFor(business).slice(0, PHOTO_CAP_BY_TIER[business.subscript
 const similar = cats[0]
   ? businessesInCategory(cats[0].id).filter((b) => b.id !== business.id).slice(0, 4)
   : [];
+// No Google ads when this business pays, or when a paid business is shown
+// in the "similar" list on this page.
+const showsPaid = isPaying || similar.some(isPaidListing);
 
 const keywords = [
   ...new Set(cats.flatMap((c) => [...synonymsFor(c.slug), ...locationSynonymsFor(c.name, site.cityLabel)])),
@@ -95,7 +98,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
   : null;
 ---
 
-<BaseLayout title={pageTitle} description={metaDescription} canonical={canonicalUrl} noAds={isPaying}>
+<BaseLayout title={pageTitle} description={metaDescription} canonical={canonicalUrl} noAds={showsPaid}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <main style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
@@ -195,7 +198,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
           </div>
         </div>
 
-        {!isPaying && <div style="margin-top:22px"><AdUnit placement="businessInContent" /></div>}
+        {!showsPaid && <div style="margin-top:22px"><AdUnit placement="businessInContent" /></div>}
 
         {photos.length > 0 && (
           <>
@@ -272,7 +275,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
             <a href={`/my-businesses/claim/?businessId=${business.id}&name=${encodeURIComponent(business.name)}`} style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--navy);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-decoration:none">Claim this listing</a>
           </div>
         )}
-        {!isPaying && <AdUnit placement="businessSidebar" />}
+        {!showsPaid && <AdUnit placement="businessSidebar" />}
       </aside>
     </div>
   </main>

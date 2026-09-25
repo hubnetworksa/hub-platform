@@ -78,6 +78,12 @@ export interface Business {
  *  Functions — so the tier numbers are just duplicated as a constant). */
 export const FEATURED_TIER = 2;
 
+/** Any paid plan (Verified or Featured). Pages that show one never carry
+ *  Google ads — see BaseLayout's noAds. */
+export function isPaidListing(b: { subscription_tier: number }): boolean {
+  return (b.subscription_tier ?? 0) >= 1;
+}
+
 /** Listing order everywhere a plan should count: Featured, then Verified,
  *  then everyone else, alphabetical within each. */
 export function byPlanThenName(a: { subscription_tier: number; name: string }, b: { subscription_tier: number; name: string }): number {

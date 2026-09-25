@@ -2,14 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { GUIDES, type Guide } from '../../lib/guides';
-import {
-  categoryBySlug,
-  businessesInCategory,
-  suburbFor,
-  sponsorFor,
-  priceRand,
-  FEATURED_TIER,
-} from '../../lib/data';
+import { categoryBySlug, businessesInCategory, suburbFor, sponsorFor, priceRand, FEATURED_TIER, isPaidListing } from '../../lib/data';
 import site from '../../site';
 
 export function getStaticPaths() {
@@ -65,9 +58,12 @@ const articleJsonLd = {
   articleSection: guide.categoryLabel,
 };
 import { sponsorHref } from '../../lib/sponsor-link';
+// No Google ads anywhere a paid listing or sponsor is shown (see
+// BaseLayout's noAds): this page shows one if this is true.
+const showsPaid = !!guideSponsor || inCategory.some((b) => isPaidListing(b) && listed.some((l) => l.slug === b.slug));
 ---
 
-<BaseLayout title={title} description={guide.intro} ogType="article">
+<BaseLayout noAds={showsPaid} title={title} description={guide.intro} ogType="article">
   <script type="application/ld+json" set:html={JSON.stringify(articleJsonLd).replace(/</g, '\\u003c')} />
 
   <main>
