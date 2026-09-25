@@ -22,8 +22,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .all<{ id: number; status: string; business_name: string }>();
 
   const pending = await db
-    .prepare('SELECT id, name, owner_confirm_token, admin_approved_at FROM pending_submissions WHERE email = ? ORDER BY created_at DESC')
-    .bind(user.email)
+    // Submitted while logged in OR submitted anonymously with this address —
+    // matching on email alone hid a logged-in submitter's own pending row
+    // whenever they gave the business's email instead of their own.
+    .prepare('SELECT id, name, owner_confirm_token, admin_approved_at FROM pending_submissions WHERE submitted_by_user_id = ? OR email = ? ORDER BY created_at DESC')
+    .bind(user.id, user.email)
     .all<{ id: number; name: string; owner_confirm_token: string | null; admin_approved_at: string | null }>();
 
   const pendingWithStatus = pending.results.map((row) => ({

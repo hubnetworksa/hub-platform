@@ -17,6 +17,15 @@ export function getStaticPaths() {
 const { business } = Astro.props;
 const suburb = suburbFor(business);
 const cats = categoriesFor(business);
+
+// "Name – Category in Suburb" gives every listing a distinct, descriptive
+// title (bare names collide across cities and say nothing to a searcher),
+// and a listing with no description still gets a real meta description.
+const pageTitle = [business.name, cats[0] && suburb ? `${cats[0].name} in ${suburb.name}` : suburb?.name].filter(Boolean).join(' – ');
+const metaDescription = (
+  business.description?.trim() ||
+  `${business.name}${cats[0] ? `, ${cats[0].name.toLowerCase()}` : ''}${suburb ? ` in ${suburb.name}` : ''}. Address, phone, hours and directions.`
+).slice(0, 155);
 const sourceUrls = parseSourceUrls(business);
 const isOsmSourced = sourceUrls.some((u) => u.includes('openstreetmap.org'));
 const SOURCE_LABELS: Record<string, string> = {
@@ -80,8 +89,8 @@ const mapsUrl = (business.address || (business.lat && business.lng))
   : null;
 ---
 
-<BaseLayout title={business.name} description={business.description.slice(0, 155)} canonical={canonicalUrl}>
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+<BaseLayout title={pageTitle} description={metaDescription} canonical={canonicalUrl}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <main style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
     <Breadcrumbs

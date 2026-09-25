@@ -1,8 +1,11 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../_lib/auth';
+import { isHttpUrl } from '../_lib/events';
+import { requestRebuild } from '../_lib/deploy-hook';
 
 interface Env {
   DB: D1Database;
+  GITHUB_DISPATCH_TOKEN?: string;
 }
 
 function clean(v: unknown, maxLen: number): string | null {
@@ -70,7 +73,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const suburb = clean(body.suburb, 80);
   const address = clean(body.address, 200);
   const price = clean(body.price, 60) ?? 'Price TBC';
-  const ticketUrl = clean(body.ticketUrl, 300) ?? '#';
+  // Empty stays '#' (the "no ticket link" sentinel the public pages check
+  // for); anything else has to be a real http(s) link, never `javascript:`.
+  const rawTicketUrl = clean(body.ticketUrl, 300);
+  if (rawTicketUrl && !isHttpUrl(rawTicketUrl)) {
+    return json({ ok: false, error: 'The ticket URL should start with https://.' }, 400);
+  }
+  const ticketUrl = rawTicketUrl ?? '#';
   const host = clean(body.host, 80);
   const eventTime = clean(body.eventTime, 60);
   const description = clean(body.description, 600) ?? '';
@@ -82,6 +91,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     )
     .bind(venue, suburb, address, price, ticketUrl, host, eventTime, description, eventId)
     .run();
+
+  await requestRebuild(context.env, 'event updated by owner');
 
   return json({ ok: true });
 };

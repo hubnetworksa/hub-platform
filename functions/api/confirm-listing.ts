@@ -5,6 +5,7 @@ import { triggerRebuild } from '../_lib/deploy-hook';
 import { sendEmail } from '../_lib/send-email';
 import { ownerConfirmEmailHtml } from '../_lib/email-template';
 import { logActivity } from '../_lib/activity-log';
+import { closePaidSubmission } from '../_lib/paid-submission';
 
 interface Env {
   DB: D1Database;
@@ -12,6 +13,10 @@ interface Env {
   SITE: string;
   GITHUB_DISPATCH_TOKEN?: string;
   RESEND_API_KEY?: string;
+  PAYFAST_MERCHANT_ID?: string;
+  PAYFAST_MERCHANT_KEY?: string;
+  PAYFAST_PASSPHRASE?: string;
+  PAYFAST_HOST?: string;
 }
 
 interface PendingRow {
@@ -28,6 +33,7 @@ interface PendingRow {
   chosen_tier: number;
   m_payment_id: string | null;
   payment_status: string | null;
+  payfast_token: string | null;
   hours: string | null;
   shopping_center_slug: string | null;
 }
@@ -48,7 +54,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const row = await db
     .prepare(
       `SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description,
-              submitted_by_user_id, chosen_tier, m_payment_id, payment_status, hours, shopping_center_slug
+              submitted_by_user_id, chosen_tier, m_payment_id, payment_status, payfast_token, hours, shopping_center_slug
        FROM pending_submissions WHERE token = ?`
     )
     .bind(token)
@@ -60,8 +66,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   if (action !== 'approve') {
     await db.prepare('DELETE FROM pending_submissions WHERE id = ?').bind(row.id).run();
-    const refundNote = row.payment_status === 'paid' ? ` PAID (tier ${row.chosen_tier}, m_payment_id ${row.m_payment_id}) — needs a manual PayFast refund.` : '';
-    await logActivity(db, 'submission_rejected', row.name, `Rejected by admin.${refundNote}`);
+    await logActivity(db, 'submission_rejected', row.name, 'Rejected by admin.');
+    await closePaidSubmission(context.env, db, site, row, 'rejected by admin');
     return html(site, `<h1>Rejected</h1><p>"${escapeHtml(row.name)}" was not published.</p>`);
   }
 
@@ -92,6 +98,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       ownerUserId: row.submitted_by_user_id,
       chosenTier: row.chosen_tier,
       paidMPaymentId: row.payment_status === 'paid' ? row.m_payment_id : null,
+      payfastToken: row.payfast_token,
       hours: row.hours,
       shoppingCenterId: await shoppingCenterIdForSlug(db, row.shopping_center_slug),
     }, { DB: db, MEDIA: context.env.MEDIA, RESEND_API_KEY: context.env.RESEND_API_KEY, SITE: context.env.SITE });
@@ -142,16 +149,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     from: `${site.siteName} <${site.contactEmail}>`,
     to: row.email,
     subject,
-    text: bodyText,
-    html: ownerHtml,
-  });
-
-  // TEMP: a separate copy while trusting the flow on the first few real
-  // approvals — remove once confirmed reliable (user request, 2026-09-09).
-  await sendEmail(context.env, {
-    from: `${site.siteName} <${site.contactEmail}>`,
-    to: 'ethanmglindeque@gmail.com',
-    subject: `[monitor copy] ${subject}`,
     text: bodyText,
     html: ownerHtml,
   });

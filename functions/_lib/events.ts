@@ -42,3 +42,21 @@ export function parseJsonArray<T>(raw: string | null): T[] {
     return [];
   }
 }
+
+// A link we're willing to store and later put in an href. Anything that isn't
+// http(s) — `javascript:`, `data:`, `vbscript:` — is stored XSS waiting for a
+// render, so it never gets saved in the first place.
+export function isHttpUrl(v: string): boolean {
+  try {
+    const u = new URL(v);
+    return u.protocol === 'http:' || u.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+// Posters are either an external image or one of our own R2 uploads served
+// from /media/ (see functions/api/submit-event-image.ts).
+export function isAllowedImageUrl(v: string): boolean {
+  return isHttpUrl(v) || /^\/media\/[A-Za-z0-9._/-]+\.(jpg|jpeg|png|webp)$/i.test(v);
+}

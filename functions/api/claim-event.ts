@@ -49,7 +49,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!contactName) return json({ ok: false, error: 'Please enter your name.' }, 400);
   if (!contactPhone) return json({ ok: false, error: 'Please enter a phone number.' }, 400);
   if (!contactEmail || !contactEmail.includes('@')) return json({ ok: false, error: 'Please enter a valid email address.' }, 400);
-  if (body.confirmed === false) {
+  // Must be an explicit yes: a request that simply omits the field (any
+  // script, not our form) used to pass as confirmed.
+  if (body.confirmed !== true && body.confirmed !== 'true' && body.confirmed !== 'on') {
     return json({ ok: false, error: 'Please confirm you are authorised to manage this event.' }, 400);
   }
 

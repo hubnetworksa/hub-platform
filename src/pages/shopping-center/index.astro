@@ -39,7 +39,7 @@ const jsonLd = collectionPageJsonLd({
   title="Shopping Centres & Malls"
   description={`Browse ${site.cityLabel} shopping centres and malls — malls, retail parks and village centres, with every store inside them listed and searchable.`}
 >
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <main>
     <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">

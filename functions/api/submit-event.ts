@@ -2,7 +2,7 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSite } from '../_lib/site';
 import { rateLimited } from '../_lib/messages';
 import { getSessionUser } from '../_lib/auth';
-import { isEventType } from '../_lib/events';
+import { isEventType, isHttpUrl } from '../_lib/events';
 import { sendEmail } from '../_lib/send-email';
 import { escapeHtml } from '../../src/lib/business-submission';
 import { signFields, buildCheckoutParams, payfastConfigured, type PayfastEnv } from '../_lib/payfast';
@@ -56,15 +56,6 @@ function clean(v: unknown, field: string): Cleaned {
   if (trimmed.length > (MAX_LEN[field] ?? 200)) return { ok: false };
   if (/<[a-z\/!]/i.test(trimmed)) return { ok: false };
   return { ok: true, value: trimmed };
-}
-
-function isHttpUrl(v: string): boolean {
-  try {
-    const u = new URL(v);
-    return u.protocol === 'http:' || u.protocol === 'https:';
-  } catch {
-    return false;
-  }
 }
 
 function isRealDate(v: string): boolean {
@@ -148,35 +139,59 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const wantsFeature = String(body.wantsFeature ?? '') === 'true' || String(body.wantsFeature ?? '') === 'on';
 
-  const token = crypto.randomUUID();
-  const insert = await db
+  // A double-submit (back button, second tab, retrying after an abandoned
+  // PayFast redirect) shouldn't leave the admin two identical rows to
+  // review — this account's own pending row for the same title and date is
+  // updated in place instead.
+  const duplicate = await db
     .prepare(
-      `INSERT INTO event_submissions
-        (token, title, type, event_date, event_time, venue, suburb, price, ticket_url, host, image_url, description,
-         contact_name, contact_email, contact_phone, submitted_by_user_id, wants_feature)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `SELECT id, m_payment_id, payment_status FROM event_submissions
+       WHERE status = 'pending' AND submitted_by_user_id = ? AND title = ? AND event_date = ?`
     )
-    .bind(
-      token,
-      title,
-      type,
-      eventDate,
-      fields.eventTime,
-      venue,
-      fields.suburb,
-      fields.price || 'Price TBC',
-      ticketUrl || '#',
-      fields.host,
-      imageUrl,
-      fields.description ?? '',
-      fields.contactName,
-      contactEmail ?? sessionUser?.email ?? null,
-      fields.contactPhone,
-      sessionUser?.id ?? null,
-      wantsFeature ? 1 : 0
-    )
-    .run();
-  const submissionId = insert.meta.last_row_id as number;
+    .bind(sessionUser.id, title, eventDate)
+    .first<{ id: number; m_payment_id: string | null; payment_status: string | null }>();
+
+  const values = [
+    type,
+    fields.eventTime,
+    venue,
+    fields.suburb,
+    fields.price || 'Price TBC',
+    ticketUrl || '#',
+    fields.host,
+    imageUrl,
+    fields.description ?? '',
+    fields.contactName,
+    contactEmail ?? sessionUser?.email ?? null,
+    fields.contactPhone,
+    wantsFeature ? 1 : 0,
+  ];
+
+  let submissionId: number;
+  if (duplicate) {
+    await db
+      .prepare(
+        `UPDATE event_submissions
+         SET type = ?, event_time = ?, venue = ?, suburb = ?, price = ?, ticket_url = ?, host = ?, image_url = ?,
+             description = ?, contact_name = ?, contact_email = ?, contact_phone = ?, wants_feature = ?
+         WHERE id = ?`
+      )
+      .bind(...values, duplicate.id)
+      .run();
+    submissionId = duplicate.id;
+  } else {
+    const token = crypto.randomUUID();
+    const insert = await db
+      .prepare(
+        `INSERT INTO event_submissions
+          (token, title, event_date, submitted_by_user_id, type, event_time, venue, suburb, price, ticket_url, host, image_url, description,
+           contact_name, contact_email, contact_phone, wants_feature)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      )
+      .bind(token, title, eventDate, sessionUser?.id ?? null, ...values)
+      .run();
+    submissionId = insert.meta.last_row_id as number;
+  }
 
   const reviewUrl = `https://${site.domain}/admin/events/`;
   const details = [
@@ -196,7 +211,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   await sendEmail(context.env, {
     from: `${site.siteName} <${site.contactEmail}>`,
     to: site.contactEmail,
-    subject: `New event to review: ${title}`,
+    subject: duplicate ? `Event resubmitted (details updated): ${title}` : `New event to review: ${title}`,
     replyTo: contactEmail ?? sessionUser?.email ?? undefined,
     text: `A new event was submitted on ${site.siteName}.\n\n${details.join('\n')}\n\nReview & approve: ${reviewUrl}`,
     html: `<div style="font-family:sans-serif;max-width:520px">
@@ -208,6 +223,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // No feature requested — nothing more to do.
   if (!wantsFeature || !payfastConfigured(context.env)) {
     return json({ ok: true, reviewUrl });
+  }
+  // Already paid on an earlier attempt — never send them to pay twice.
+  if (duplicate?.payment_status === 'paid') {
+    return json({ ok: true, reviewUrl, alreadyPaid: true });
   }
 
   // Featuring at submission time: a real PayFast checkout right here,
@@ -222,10 +241,15 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!priceCents) return json({ ok: true, reviewUrl });
 
   const amount = centsToRand(priceCents);
-  const mPaymentId = crypto.randomUUID();
+  // Reusing an unfinished checkout's id means a late ITN from the first
+  // attempt still matches this row instead of being rejected as unknown.
+  const mPaymentId = (duplicate?.payment_status === 'pending' && duplicate.m_payment_id) || crypto.randomUUID();
+  // amount_cents is stored with the checkout so approval invoices what was
+  // actually charged, not whatever the price happens to be that day (see
+  // admin/events.ts's approve-submission).
   await db
-    .prepare(`UPDATE event_submissions SET m_payment_id = ?, payment_status = 'pending' WHERE id = ?`)
-    .bind(mPaymentId, submissionId)
+    .prepare(`UPDATE event_submissions SET m_payment_id = ?, payment_status = 'pending', amount_cents = ? WHERE id = ?`)
+    .bind(mPaymentId, priceCents, submissionId)
     .run();
 
   const origin = new URL(context.request.url).origin;
@@ -233,8 +257,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const fields2: Record<string, string> = {
     merchant_id: context.env.PAYFAST_MERCHANT_ID!,
     merchant_key: context.env.PAYFAST_MERCHANT_KEY!,
-    return_url: `https://${site.domain}/events/add/?event_featured=1`,
-    cancel_url: `https://${site.domain}/events/add/?event_feature_cancelled=1`,
+    // Origin-based, like feature-start.ts — a preview deploy's payer has to
+    // come back to the preview, not to the live domain.
+    return_url: `${origin}/events/add/?event_featured=1`,
+    cancel_url: `${origin}/events/add/?event_feature_cancelled=1`,
     notify_url: `${origin}/api/subscribe/notify`,
     name_first: fields.contactName ?? title,
     email_address: payerEmail,

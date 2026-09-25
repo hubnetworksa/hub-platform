@@ -51,7 +51,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const sponsorships = await db
     .prepare(
       `SELECT product_type, product_target, current_period_end, status FROM subscriptions
-       WHERE business_id = ? AND product_type != 'tier' AND status = 'active' ORDER BY id DESC`
+       WHERE business_id = ? AND product_type != 'tier'
+         AND (status = 'active' OR (status = 'cancelled' AND current_period_end IS NOT NULL AND datetime(current_period_end) > datetime('now')))
+       ORDER BY id DESC`
     )
     .bind(businessId)
     .all<{ product_type: string; product_target: string | null; current_period_end: string | null; status: string }>();
@@ -95,7 +97,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   // Social links are a Featured-plan perk: saved only while the plan is active,
   // and left untouched for any other plan (never wiped by a downgrade).
-  const isFeatured = business.subscription_status === 'active' && business.subscription_tier >= 2;
+  const isFeatured = (business.subscription_status === 'active' || business.subscription_status === 'cancelled') && business.subscription_tier >= 2;
   if (isFeatured) {
     const values: (string | null)[] = [];
     for (const kind of SOCIAL_KINDS) {

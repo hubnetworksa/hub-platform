@@ -70,8 +70,8 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
             </select>
           </label>
           <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
-            Target slug <span style="font-weight:600;color:var(--muted);font-size:11.5px">category/suburb/centre/attraction slug — blank for homepage banner only</span>
-            <input type="text" name="productTarget" style="padding:12px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)" />
+            Slot
+            <select name="productTarget" id="comp-target" style="padding:12px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)"></select>
           </label>
           <button type="submit" style="align-self:flex-start;padding:12px 17px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;cursor:pointer;">Assign</button>
           <p id="comp-status" role="status" style="margin:0;font-size:0.85rem;color:var(--muted);"></p>
@@ -222,12 +222,34 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
     const btn = (e.target as HTMLElement).closest('button[data-clear]') as HTMLButtonElement | null;
     if (!btn) return;
     if (!confirm('Clear this sponsorship slot? It becomes available for anyone to buy.')) return;
+    if (!window.confirm('Clear this slot? If it is a paid sponsorship, its PayFast billing is cancelled too.')) return;
     btn.disabled = true;
-    await postJson('/api/admin/sponsorships', { action: 'clear', id: Number(btn.dataset.clear) });
+    const cleared = await postJson('/api/admin/sponsorships', { action: 'clear', id: Number(btn.dataset.clear) });
+    if (cleared.warning) window.alert(cleared.warning);
     loadAll();
   });
 
   const compForm = document.getElementById('comp-form') as HTMLFormElement;
+  const compType = compForm.elements.namedItem('productType') as HTMLSelectElement;
+  const compTarget = document.getElementById('comp-target') as HTMLSelectElement;
+  // Real slots only, by product: a free-text slug let a typo "sell" a slot
+  // that no page ever shows.
+  function fillTargets() {
+    const lists: Record<string, { slug: string; name: string }[]> = {
+      category_sponsor: slots.categories,
+      suburb_sponsor: slots.suburbs,
+      centre_sponsor: slots.centres,
+      guide_sponsor: slots.guides,
+      tourism_sponsor: slots.tourism,
+    };
+    const list = lists[compType.value];
+    compTarget.disabled = !list;
+    compTarget.innerHTML = list
+      ? list.map((t) => `<option value="${esc(t.slug)}">${esc(t.name)}</option>`).join('')
+      : '<option value="">Homepage (single slot)</option>';
+  }
+  compType.addEventListener('change', fillTargets);
+  fillTargets();
   compForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const status = document.getElementById('comp-status')!;
@@ -237,6 +259,7 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
     status.textContent = result.ok ? 'Assigned.' : String(result.error || 'Something went wrong.');
     if (result.ok) {
       compForm.reset();
+      fillTargets();
       loadAll();
     }
   });

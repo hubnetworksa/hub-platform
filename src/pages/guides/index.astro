@@ -25,7 +25,7 @@ const jsonLd = collectionPageJsonLd({
   title="Guides"
   description={`Plain-language buyer's guides for the trades people get burnt on most — written for ${site.cityLabel}.`}
 >
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
   <!-- The mockup's Guides hero has no visible breadcrumb; the component is
        rendered hidden purely so its BreadcrumbList JSON-LD is emitted. -->
   <div hidden><Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Guides' }]} /></div>

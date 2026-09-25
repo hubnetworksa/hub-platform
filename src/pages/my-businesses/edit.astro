@@ -400,12 +400,18 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
           body: JSON.stringify({ businessId: Number(businessId) }),
         });
         const result = await res.json();
-        planStatus.textContent = result.ok ? 'Cancelled — active until your current period ends.' : result.error || 'Could not cancel.';
+        if (result.ok) {
+          business.subscription_status = 'cancelled';
+          renderPlan(business);
+          document.getElementById('plan-status')!.textContent = 'Cancelled — you keep your plan until the current period ends.';
+        } else {
+          planStatus.textContent = result.error || 'Could not cancel.';
+        }
       });
       buttons.appendChild(cancelBtn);
     }
 
-    if (params.get('upgraded')) planStatus.textContent = 'Thanks — your payment is being confirmed. Your plan updates as soon as PayFast confirms it (refresh in a minute).';
+    if (params.get('upgraded') && !planStatus.textContent) planStatus.textContent = 'Thanks — your payment is being confirmed. Your plan updates as soon as PayFast confirms it (refresh in a minute).';
     else if (params.get('upgrade_cancelled')) planStatus.textContent = 'Checkout cancelled — you have not been charged.';
   }
 
@@ -429,7 +435,14 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     const { picks, sponsoredSlugs }: { picks: TourismPick[]; sponsoredSlugs: string[] } = dataEl ? JSON.parse(dataEl.textContent || '{}') : { picks: [], sponsoredSlugs: [] };
     const priceLabel = main.dataset.priceTourismSponsor ?? '—';
 
-    const mine = sponsorships.filter((s) => s.product_type === 'tourism_sponsor' && s.product_target);
+    const mine = sponsorships.filter((s) => s.product_target || s.product_type === 'homepage_banner');
+    const TYPE_LABELS: Record<string, string> = {
+      category_sponsor: 'Category sponsor',
+      suburb_sponsor: 'Suburb sponsor',
+      homepage_banner: 'Homepage banner',
+      centre_sponsor: 'Shopping centre sponsor',
+      guide_sponsor: 'Guide sponsor',
+    };
     const mineBySlug = new Map(mine.map((s) => [s.product_target as string, s]));
     // Open to buy: not sponsored by anyone (per the build-time snapshot) and not already mine.
     const soldSlugs = new Set(sponsoredSlugs);
@@ -443,22 +456,36 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
         const row = document.createElement('div');
         row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--border)';
         const expiry = longDate(s.current_period_end);
-        row.innerHTML = `<span style="font-size:14.5px;font-weight:800;color:var(--navy)">${esc(pick?.name ?? s.product_target ?? '')}</span><span style="font-size:12.5px;font-weight:700;color:var(--muted)">${esc(expiry ? `renews ${expiry}` : '')}</span>`;
+        const label = s.product_type === 'tourism_sponsor'
+          ? pick?.name ?? s.product_target ?? ''
+          : `${TYPE_LABELS[s.product_type] ?? 'Sponsorship'}${s.product_target ? ` — ${s.product_target}` : ''}`;
+        const when = s.status === 'cancelled' ? (expiry ? `cancelled · ends ${expiry}` : 'cancelled') : expiry ? `renews ${expiry}` : '';
+        row.innerHTML = `<span style="font-size:14.5px;font-weight:800;color:var(--navy)">${esc(label)}</span><span style="font-size:12.5px;font-weight:700;color:var(--muted)">${esc(when)}</span>`;
+        if (s.status === 'cancelled') {
+          listEl.appendChild(row);
+          continue;
+        }
         const cancelBtn = planButton('Cancel');
         cancelBtn.style.borderColor = 'var(--border)';
         cancelBtn.style.color = 'var(--danger)';
         cancelBtn.style.padding = '8px 13px';
         cancelBtn.style.fontSize = '12.5px';
         cancelBtn.addEventListener('click', async () => {
-          if (!confirm(`Cancel sponsoring "${pick?.name ?? s.product_target}"? You keep the slot until the paid period ends.`)) return;
+          if (!confirm(`Cancel sponsoring "${label}"? You keep the slot until the paid period ends.`)) return;
           statusEl.textContent = 'Cancelling…';
           const res = await fetch('/api/subscribe/cancel', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ businessId: Number(businessId), productType: 'tourism_sponsor', productTarget: s.product_target }),
+            body: JSON.stringify({ businessId: Number(businessId), productType: s.product_type, productTarget: s.product_target }),
           });
           const result = await res.json();
-          statusEl.textContent = result.ok ? 'Cancelled — active until the current period ends.' : result.error || 'Could not cancel.';
+          if (result.ok) {
+            s.status = 'cancelled';
+            renderSponsorships(sponsorships);
+            document.getElementById('tourism-sponsor-status')!.textContent = 'Cancelled — you keep the slot until the current period ends.';
+          } else {
+            statusEl.textContent = result.error || 'Could not cancel.';
+          }
         });
         row.appendChild(cancelBtn);
         listEl.appendChild(row);
@@ -612,7 +639,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     (form.elements.namedItem('description') as HTMLTextAreaElement).value = b.description ?? '';
     (form.elements.namedItem('hours') as HTMLTextAreaElement).value = b.hours ?? '';
 
-    const socialOn = b.subscription_status === 'active' && b.subscription_tier >= FEATURED_TIER;
+    const socialOn = (b.subscription_status === 'active' || b.subscription_status === 'cancelled') && b.subscription_tier >= FEATURED_TIER;
     document.getElementById('social-fields')!.hidden = !socialOn;
     document.getElementById('social-locked')!.hidden = socialOn;
     document.getElementById('social-note')!.textContent = socialOn ? '' : '— a Featured plan perk';

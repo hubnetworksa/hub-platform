@@ -2,6 +2,7 @@ import type { PagesFunction, D1Database, R2Bucket } from '@cloudflare/workers-ty
 import { getSite } from '../_lib/site';
 import { getSessionUser } from '../_lib/auth';
 import { rateLimited, json } from '../_lib/messages';
+import { sniffImage } from '../_lib/images';
 
 interface Env {
   DB: D1Database;
@@ -40,9 +41,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (file.size > MAX_FILE_BYTES) return json({ ok: false, error: 'That image is over 5MB — please use a smaller file.' }, 400);
   if (!ALLOWED_TYPES.has(file.type)) return json({ ok: false, error: 'Please upload a JPG, PNG or WEBP image.' }, 400);
 
-  const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
-  const key = `event-submissions/${crypto.randomUUID()}.${ext}`;
-  await context.env.MEDIA.put(key, await file.arrayBuffer(), { httpMetadata: { contentType: file.type } });
+  const bytes = await file.arrayBuffer();
+  const kind = sniffImage(bytes);
+  if (!kind) return json({ ok: false, error: 'Please upload a JPG, PNG or WEBP image.' }, 400);
+  const key = `event-submissions/${crypto.randomUUID()}.${kind.ext}`;
+  await context.env.MEDIA.put(key, bytes, { httpMetadata: { contentType: kind.contentType } });
 
   return json({ ok: true, url: `/media/${key}` });
 };

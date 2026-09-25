@@ -29,7 +29,7 @@ const jsonLd = {
 ---
 
 <BaseLayout title={`${itinerary.name} | ${site.cityLabel} Itinerary`} description={itinerary.teaser} canonical={canonical}>
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <PageBanner title={itinerary.name} description={itinerary.teaser}>
     <Breadcrumbs

@@ -75,6 +75,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   } else {
     tier = Number(body.tier);
     if (!tier) return json({ ok: false, error: 'Choose a valid tier.' }, 400);
+    const current = await db
+      .prepare('SELECT subscription_tier, subscription_status FROM businesses WHERE id = ?')
+      .bind(businessId)
+      .first<{ subscription_tier: number; subscription_status: string | null }>();
+    if (current?.subscription_status === 'active' && current.subscription_tier >= tier) {
+      return json({ ok: false, error: 'You already have this plan or a higher one. To move down, cancel and choose again once it ends.' }, 400);
+    }
     amountCents = await tierPriceCents(db, tier);
     itemName = `${TIER_NAMES[tier] ?? 'Listing'} listing`;
     productType = 'tier';
@@ -85,15 +92,28 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const site = getSite(context.env.SITE);
   const amount = centsToRand(amountCents);
-  const mPaymentId = crypto.randomUUID();
-
-  await db
+  // Clicking "Upgrade" twice, or coming back after abandoning PayFast,
+  // reuses the same unpaid checkout instead of piling up pending rows —
+  // and a late ITN for the first attempt still finds its row.
+  const open = await db
     .prepare(
-      `INSERT INTO subscriptions (business_id, tier, product_type, product_target, m_payment_id, status)
-       VALUES (?, ?, ?, ?, ?, 'pending')`
+      `SELECT m_payment_id FROM subscriptions
+       WHERE business_id = ? AND status = 'pending' AND product_type = ? AND product_target IS ? AND tier = ?
+       ORDER BY id DESC LIMIT 1`
     )
-    .bind(businessId, tier, productType, productTarget, mPaymentId)
-    .run();
+    .bind(businessId, productType, productTarget, tier)
+    .first<{ m_payment_id: string }>();
+  const mPaymentId = open?.m_payment_id ?? crypto.randomUUID();
+
+  if (!open) {
+    await db
+      .prepare(
+        `INSERT INTO subscriptions (business_id, tier, product_type, product_target, m_payment_id, status)
+         VALUES (?, ?, ?, ?, ?, 'pending')`
+      )
+      .bind(businessId, tier, productType, productTarget, mPaymentId)
+      .run();
+  }
 
   const origin = new URL(context.request.url).origin;
   const fields: Record<string, string> = {

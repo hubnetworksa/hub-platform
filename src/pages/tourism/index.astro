@@ -23,7 +23,7 @@ const mapsUrl = (name: string) =>
   `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${name}, ${site.cityLabel}`)}`;
 
 const attractionsBySite: Record<string, Attraction[]> = { capetown: CAPETOWN_ATTRACTIONS, pretoria: PRETORIA_ATTRACTIONS, polokwane: POLOKWANE_ATTRACTIONS };
-const imageBySlug = new Map((attractionsBySite[site.slug] ?? []).map((a) => [a.slug, a.imageUrl]));
+const attractionBySlugMap = new Map((attractionsBySite[site.slug] ?? []).map((a) => [a.slug, a]));
 
 const picks = content.picks
   .map((p) => ({
@@ -31,7 +31,11 @@ const picks = content.picks
     sponsored: (p.slug && Boolean(sponsorFor('tourism_sponsor', p.slug))) || (demoSponsors && p.sponsored),
     href: p.slug ? `/tourism/${p.slug}/` : mapsUrl(p.name),
     external: !p.slug,
-    imageUrl: p.slug ? imageBySlug.get(p.slug) : undefined,
+    imageUrl: p.slug ? attractionBySlugMap.get(p.slug)?.imageUrl : undefined,
+    // CC BY / BY-SA photos must be credited wherever they're shown — the
+    // grid too, not only the detail page. Short form: the part before " — ".
+    imageCredit: p.slug ? attractionBySlugMap.get(p.slug)?.imageCredit?.split(' — ')[0] : undefined,
+    imageSourceUrl: p.slug ? attractionBySlugMap.get(p.slug)?.imageSourceUrl : undefined,
   }))
   // Sponsored picks rise to the top, same as a Featured business listing.
   .sort((a, b) => Number(b.sponsored) - Number(a.sponsored));
@@ -54,7 +58,7 @@ const jsonLd = {
 ---
 
 <BaseLayout title={`Things to do in ${site.cityLabel}`} description={content.blurb}>
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
   <main>
     <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">
       <img src={site.sectionBannerImage} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%" />
@@ -80,7 +84,12 @@ const jsonLd = {
           <article data-tour-card data-tour-cat={p.cat} class="tour-card" style={`display:flex;flex-direction:column;border:2px solid ${p.sponsored ? 'var(--accent)' : 'var(--border)'};border-radius:16px;background:#fff;overflow:hidden`}>
             <div style="position:relative;height:172px;background:var(--bg-subtle);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;overflow:hidden">
               {p.imageUrl ? (
-                <img src={p.imageUrl} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+                <>
+                  <img src={p.imageUrl} alt="" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" />
+                  {p.imageCredit && (
+                    <a href={p.imageSourceUrl ?? undefined} target="_blank" rel="noopener noreferrer" style="position:absolute;right:6px;bottom:6px;z-index:2;max-width:calc(100% - 12px);padding:2px 7px;border-radius:6px;background:rgba(0,0,0,.55);color:#fff;font-size:9.5px;font-weight:600;letter-spacing:0;text-transform:none;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{p.imageCredit}</a>
+                  )}
+                </>
               ) : (
                 p.cat
               )}

@@ -43,8 +43,10 @@ import site from '../site';
   const form = document.getElementById('login-form') as HTMLFormElement;
   const status = document.getElementById('form-status')!;
   const next = new URLSearchParams(window.location.search).get('next');
-  if (next && next.startsWith('/')) {
+  if (next && /^\/(?![\/\\])/.test(next)) {
     (document.getElementById('google-btn') as HTMLAnchorElement).href = `/api/auth/google/start?next=${encodeURIComponent(next)}`;
+    const other = document.querySelector<HTMLAnchorElement>('.switch-link a');
+    if (other) other.href = `${other.pathname}?next=${encodeURIComponent(next)}`;
   }
 
   form.addEventListener('submit', async (e) => {
@@ -59,7 +61,7 @@ import site from '../site';
       });
       const result = await res.json();
       if (result.ok) {
-        window.location.href = result.isAdmin ? '/admin/' : next && next.startsWith('/') ? next : '/my-businesses/';
+        window.location.href = result.isAdmin ? '/admin/' : next && /^\/(?![\/\\])/.test(next) ? next : '/my-businesses/';
       } else {
         status.textContent = result.error || 'Something went wrong — please try again.';
       }

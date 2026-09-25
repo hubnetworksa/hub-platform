@@ -12,6 +12,8 @@ interface Env {
 // hotlink-protection pattern as logo-icon.png.ts/hero-skyline.jpg.ts, since
 // these are real photos, not build-time assets, so they aren't covered by
 // that per-file approach.
+const PRIVATE_PREFIXES = ['invoices/'];
+
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const site = getSite(context.env.SITE);
   const referer = context.request.headers.get('Referer');
@@ -27,6 +29,10 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const key = (context.params.path as string[] | undefined)?.join('/');
   if (!key) return new Response('Not found', { status: 404 });
+  // Invoices share this bucket but are private: they name the payer and are
+  // numbered sequentially, so serving them here would let anyone walk every
+  // invoice. They're only served by /api/invoice, which checks ownership.
+  if (PRIVATE_PREFIXES.some((p) => key.startsWith(p))) return new Response('Not found', { status: 404 });
 
   const object = await context.env.MEDIA.get(key);
   if (!object) return new Response('Not found', { status: 404 });

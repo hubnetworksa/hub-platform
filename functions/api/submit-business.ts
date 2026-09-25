@@ -175,8 +175,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const fields: Record<string, string> = {
     merchant_id: context.env.PAYFAST_MERCHANT_ID!,
     merchant_key: context.env.PAYFAST_MERCHANT_KEY!,
-    return_url: `https://${site.domain}/list-your-business/checkout/?paid=1`,
-    cancel_url: `https://${site.domain}/list-your-business/checkout/?payment_cancelled=1`,
+    // Same origin the request came in on (like notify_url) — hardcoding the
+    // production domain bounced preview-deploy checkouts to the live site.
+    return_url: `${origin}/list-your-business/checkout/?paid=1`,
+    cancel_url: `${origin}/list-your-business/checkout/?payment_cancelled=1`,
     notify_url: `${origin}/api/subscribe/notify`,
     name_first: name,
     email_address: contactEmail,

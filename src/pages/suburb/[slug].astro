@@ -74,8 +74,8 @@ const collectionJsonLd = businesses.length === 0
 ---
 
 <BaseLayout title={suburb.name} description={description}>
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-  {collectionJsonLd && <script type="application/ld+json" set:html={JSON.stringify(collectionJsonLd)} />}
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
+  {collectionJsonLd && <script type="application/ld+json" set:html={JSON.stringify(collectionJsonLd).replace(/</g, '\\u003c')} />}
 
   <main>
     <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">

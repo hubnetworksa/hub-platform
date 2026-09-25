@@ -62,6 +62,25 @@ export function buildSignatureString(fields: Record<string, string | undefined>,
   return parts.join('&');
 }
 
+// An ITN is NOT signed over FIELD_ORDER: PayFast signs an incoming
+// notification over *all* the variables it posted, in the order it posted
+// them, with the passphrase appended last. FIELD_ORDER is the outgoing
+// checkout's field set and has no payment_status / amount_gross /
+// pf_payment_id / token in it at all, so validating an ITN with
+// buildSignatureString() silently ignores every field that actually says
+// what was paid — an attacker could rewrite the amount and the signature
+// would still verify. Keep the two functions separate: this one for
+// incoming ITNs, buildSignatureString() for the outgoing checkout.
+export function buildItnSignatureString(posted: Record<string, string>, passphrase: string): string {
+  const parts: string[] = [];
+  for (const [key, value] of Object.entries(posted)) {
+    if (key === 'signature' || value === undefined) continue;
+    parts.push(`${key}=${phpUrlEncode(String(value).trim())}`);
+  }
+  parts.push(`passphrase=${phpUrlEncode(passphrase.trim())}`);
+  return parts.join('&');
+}
+
 export async function md5(input: string): Promise<string> {
   // Web Crypto has no MD5 (by design — it's not a security-grade hash),
   // and this Function has no Node `crypto` module without opting into

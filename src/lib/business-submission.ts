@@ -41,6 +41,29 @@ export interface ApprovedListing {
   hours?: string | null;
   /** The shopping centre the business trades from, if the form named one. */
   shoppingCenterId?: number | null;
+  /** PayFast's own subscription token for the signup-tier payment, captured
+   *  by the ITN onto the pending row. Stored on the `subscriptions` row so
+   *  the subscription can actually be cancelled later — without it a Cancel
+   *  button can only update our database while PayFast keeps billing. */
+  payfastToken?: string | null;
+}
+
+/** The published listing a new submission for `name` in `suburbSlug` would be
+ *  merged into, if any — so the admin review page can warn before approving. */
+export async function findMergeTarget(
+  db: D1Database,
+  name: string,
+  suburbSlug: string
+): Promise<{ id: number; name: string; slug: string; owner_user_id: number | null } | null> {
+  const row = await db
+    .prepare(
+      `SELECT b.id, b.name, b.slug, b.owner_user_id FROM businesses b
+       JOIN suburbs s ON s.id = b.suburb_id
+       WHERE lower(b.name) = lower(?) AND s.slug = ?`
+    )
+    .bind(name, suburbSlug)
+    .first<{ id: number; name: string; slug: string; owner_user_id: number | null }>();
+  return row ?? null;
 }
 
 /** Id of the shopping centre with this slug, or null (unknown / not given). */
@@ -51,42 +74,45 @@ export async function shoppingCenterIdForSlug(db: D1Database, slug: string | nul
 }
 
 // If a business with this exact name already exists IN THE SAME SUBURB
-// (e.g. auto-added earlier by the research routine), the owner's submitted
-// details replace it in place rather than creating a duplicate listing —
-// same business, more authoritative data, existing slug/URL kept intact.
-// Matching on name alone (no suburb check) previously meant any two
-// unrelated businesses sharing a common name anywhere in the city — e.g.
-// two different shops both called "House" — would collide, silently
-// overwriting one with the other's submitted details instead of both
-// existing as distinct listings.
+// (e.g. auto-added earlier by the research routine), the submission is
+// merged into it rather than creating a duplicate listing — but only to
+// fill gaps. Anyone can submit a listing under any name, so a submission is
+// not proof of ownership: it never overwrites data already on the listing
+// and never makes the submitter its owner. Taking over an existing listing
+// has to go through the claim flow, which verifies against the business's
+// own contact details. The admin review page flags these merges up front
+// (see findMergeTarget).
 export async function insertApprovedBusiness(db: D1Database, listing: ApprovedListing, invoicingEnv?: InvoicingEnv): Promise<void> {
   const existing = await db
-    .prepare('SELECT id, owner_user_id FROM businesses WHERE lower(name) = lower(?) AND suburb_id = ?')
+    .prepare('SELECT id FROM businesses WHERE lower(name) = lower(?) AND suburb_id = ?')
     .bind(listing.name, listing.suburbId)
-    .first<{ id: number; owner_user_id: number | null }>();
+    .first<{ id: number }>();
 
   let businessId: number;
 
   if (existing) {
-    // Never overwrite an existing claim's ownership just because a new
-    // submission happened to reuse the same business name — only fill in
-    // owner_user_id if the business isn't already owned by someone.
-    const ownerUserId = existing.owner_user_id ?? listing.ownerUserId ?? null;
     await db
       .prepare(
         `UPDATE businesses
-          SET suburb_id = ?, address = ?, phone = ?, website = ?, email = ?, description = ?,
-              hours = COALESCE(?, hours), shopping_center_id = COALESCE(?, shopping_center_id),
-              status = 'published', origin = 'owner_submitted', owner_user_id = ?
+          SET address = COALESCE(NULLIF(address, ''), ?),
+              phone = COALESCE(NULLIF(phone, ''), ?),
+              website = COALESCE(NULLIF(website, ''), ?),
+              email = COALESCE(NULLIF(email, ''), ?),
+              description = COALESCE(NULLIF(description, ''), ?),
+              hours = COALESCE(NULLIF(hours, ''), ?),
+              shopping_center_id = COALESCE(shopping_center_id, ?),
+              status = 'published'
           WHERE id = ?`
       )
-      .bind(listing.suburbId, listing.address, listing.phone, listing.website, listing.email, listing.description, listing.hours ?? null, listing.shoppingCenterId ?? null, ownerUserId, existing.id)
+      .bind(listing.address, listing.phone, listing.website, listing.email, listing.description, listing.hours ?? null, listing.shoppingCenterId ?? null, existing.id)
       .run();
 
-    await db.prepare('DELETE FROM business_categories WHERE business_id = ? AND is_primary = 1').bind(existing.id).run();
     await db
-      .prepare('INSERT INTO business_categories (business_id, category_id, is_primary) VALUES (?, ?, 1)')
-      .bind(existing.id, listing.categoryId)
+      .prepare(
+        `INSERT INTO business_categories (business_id, category_id, is_primary)
+         SELECT ?, ?, 1 WHERE NOT EXISTS (SELECT 1 FROM business_categories WHERE business_id = ? AND is_primary = 1)`
+      )
+      .bind(existing.id, listing.categoryId, existing.id)
       .run();
     businessId = existing.id;
   } else {
@@ -134,21 +160,17 @@ async function applyChosenTier(db: D1Database, businessId: number, listing: Appr
   const priceCents = await tierPriceCents(db, tier);
   if (!priceCents) return;
 
-  const now = new Date();
-  const periodEnd = new Date(now);
-  periodEnd.setMonth(periodEnd.getMonth() + 1);
-
   const sub = await db
     .prepare(
-      `INSERT INTO subscriptions (business_id, tier, product_type, m_payment_id, status, started_at, current_period_end)
-       VALUES (?, ?, 'tier', ?, 'active', datetime('now'), ?)`
+      `INSERT INTO subscriptions (business_id, tier, product_type, m_payment_id, payfast_token, status, started_at, current_period_end)
+       VALUES (?, ?, 'tier', ?, ?, 'active', datetime('now'), datetime('now', '+1 month'))`
     )
-    .bind(businessId, tier, listing.paidMPaymentId, periodEnd.toISOString())
+    .bind(businessId, tier, listing.paidMPaymentId, listing.payfastToken ?? null)
     .run();
 
   await db
-    .prepare(`UPDATE businesses SET subscription_tier = ?, subscription_status = 'active', subscription_expires_at = ? WHERE id = ?`)
-    .bind(tier, periodEnd.toISOString(), businessId)
+    .prepare(`UPDATE businesses SET subscription_tier = ?, subscription_status = 'active', subscription_expires_at = datetime('now', '+1 month') WHERE id = ?`)
+    .bind(tier, businessId)
     .run();
 
   // Backfill the reconciliation record now that a subscription_id exists

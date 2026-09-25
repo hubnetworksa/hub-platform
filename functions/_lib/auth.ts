@@ -3,7 +3,10 @@ import { DEMO_ADMIN_ENABLED } from './demo-flags';
 
 // Password hashing via PBKDF2-SHA256 (Workers' native crypto.subtle) — no
 // external dependency needed. Stored as "iterations:saltHex:hashHex" so the
-// iteration count can be bumped later without invalidating existing hashes.
+// iteration count can be bumped later without invalidating existing hashes
+// (needsRehash + login.ts upgrade old hashes on the next login). 100k is the
+// ceiling: Cloudflare Workers' crypto.subtle throws for PBKDF2 above 100,000
+// iterations, so raising this would break every signup and login.
 const PBKDF2_ITERATIONS = 100_000;
 
 function toHex(buf: ArrayBuffer | Uint8Array): string {
@@ -27,12 +30,38 @@ export async function hashPassword(password: string): Promise<string> {
   return `${PBKDF2_ITERATIONS}:${toHex(salt)}:${toHex(hash)}`;
 }
 
+// Constant-time comparison of two hex strings — a plain === leaks, through
+// how long it takes to fail, how many leading characters matched.
+function hexEquals(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
 export async function verifyPassword(password: string, stored: string): Promise<boolean> {
   const [iterationsStr, saltHex, hashHex] = stored.split(':');
   const iterations = Number(iterationsStr);
   if (!iterations || !saltHex || !hashHex) return false;
   const hash = await pbkdf2(password, fromHex(saltHex), iterations);
-  return toHex(hash) === hashHex;
+  return hexEquals(toHex(hash), hashHex);
+}
+
+/** True when `stored` was made with fewer iterations than we now use. */
+export function needsRehash(stored: string): boolean {
+  const iterations = Number(stored.split(':')[0]);
+  return !iterations || iterations < PBKDF2_ITERATIONS;
+}
+
+/** A single-use secret for an emailed link: 32 random bytes, hex-encoded. */
+export function randomToken(): string {
+  return toHex(crypto.getRandomValues(new Uint8Array(32)));
+}
+
+/** Only the SHA-256 of a link token is stored, so a database copy can't be
+ *  replayed as a live password-reset or verification link. */
+export async function hashToken(token: string): Promise<string> {
+  return toHex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(token)));
 }
 
 const SESSION_COOKIE = 'session';
@@ -51,6 +80,18 @@ export function sessionCookie(token: string): string {
 
 export function clearSessionCookie(): string {
   return `${SESSION_COOKIE}=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0`;
+}
+
+export function readSessionToken(request: Request): string | null {
+  return readCookie(request, SESSION_COOKIE);
+}
+
+// Issues a fresh session and drops whatever session the request arrived with,
+// so a session id fixed by an attacker before login can't survive it.
+export async function rotateSession(db: D1Database, request: Request, userId: number): Promise<string> {
+  const previous = readSessionToken(request);
+  if (previous) await db.prepare('DELETE FROM sessions WHERE token = ?').bind(previous).run();
+  return createSession(db, userId);
 }
 
 function readCookie(request: Request, name: string): string | null {
@@ -104,5 +145,9 @@ export async function getSessionUser(request: Request, db: D1Database): Promise<
     await db.prepare('DELETE FROM sessions WHERE token = ?').bind(token).run();
     return null;
   }
+  // Now and then sweep every expired row, not just the one that was touched —
+  // sessions belonging to people who never come back are otherwise never
+  // cleaned up.
+  if (Math.random() < 0.02) await db.prepare(`DELETE FROM sessions WHERE expires_at < datetime('now')`).run();
   return { id: row.id, email: row.email };
 }

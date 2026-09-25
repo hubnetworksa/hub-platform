@@ -84,17 +84,29 @@ export async function allPrices(db: D1Database): Promise<Record<string, number>>
   return out;
 }
 
-/** "Sold one at a time" — true if an active subscription already holds this exact slot. */
+// A cancelled slot is still occupied until the period the owner already
+// paid for runs out — cancelling stops future billing, it doesn't hand the
+// slot to someone else the same afternoon (the UI promises exactly that,
+// and process-expired-subscriptions.ts does the real freeing once the date
+// passes). current_period_end exists in both ISO ("…T…Z", written by
+// notify.ts) and SQLite ("YYYY-MM-DD HH:MM:SS", written by admin comps)
+// formats, so every comparison has to go through datetime().
+export const SLOT_HELD_SQL = `(status = 'active' OR (status = 'cancelled' AND current_period_end IS NOT NULL AND datetime(current_period_end) > datetime('now')))`;
+
+/** "Sold one at a time" — true if a live subscription already holds this
+ *  exact slot. `excludeSubscriptionId` skips one row (the caller's own
+ *  subscription, when re-checking just before activating it). */
 export async function isSlotTaken(
   db: D1Database,
   productType: SponsorProductType,
-  productTarget: string | null
+  productTarget: string | null,
+  excludeSubscriptionId?: number
 ): Promise<boolean> {
   const row = await db
     .prepare(
-      `SELECT 1 FROM subscriptions WHERE product_type = ? AND product_target IS ? AND status = 'active' LIMIT 1`
+      `SELECT 1 FROM subscriptions WHERE product_type = ? AND product_target IS ? AND ${SLOT_HELD_SQL} AND id != ? LIMIT 1`
     )
-    .bind(productType, productTarget)
+    .bind(productType, productTarget, excludeSubscriptionId ?? -1)
     .first();
   return !!row;
 }

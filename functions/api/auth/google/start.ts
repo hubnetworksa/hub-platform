@@ -19,7 +19,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   // Only ever a same-site path (validated again in callback.ts), never an
   // absolute URL, to avoid becoming an open redirect.
   const nextParam = new URL(context.request.url).searchParams.get('next');
-  const next = nextParam && nextParam.startsWith('/') ? nextParam : '/my-businesses/';
+  const next = nextParam && /^\/(?![\/\\])/.test(nextParam) ? nextParam : '/my-businesses/';
   const csrf = crypto.randomUUID();
   const state = `${csrf}|${next}`;
   const redirectUri = `${new URL(context.request.url).origin}/api/auth/google/callback`;

@@ -46,7 +46,7 @@ const jsonLd = collectionPageJsonLd({
   title="Categories"
   description={`Every business category ${site.siteName} covers, organised by section — from food and shopping to trade services and professionals.`}
 >
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <main>
     <section style="background:var(--navy);color:#fff">

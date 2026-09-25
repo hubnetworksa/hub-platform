@@ -35,7 +35,7 @@ const jsonLd = collectionPageJsonLd({
   title="Suburbs"
   description={`Browse ${site.cityLabel} area by area, suburb by suburb — local businesses across ${suburbs.length} areas.`}
 >
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <main>
     <section style="background:var(--navy);color:#fff">

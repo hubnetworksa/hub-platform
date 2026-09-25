@@ -145,6 +145,9 @@ import AdminShell from '../../components/AdminShell.astro';
     contact_name: string | null;
     contact_email: string | null;
     contact_phone: string | null;
+    wants_feature: number | null;
+    payment_status: string | null;
+    amount_cents: number | null;
     created_at: string;
   }
 
@@ -155,7 +158,7 @@ import AdminShell from '../../components/AdminShell.astro';
   }
 
   function safeUrl(v: string | null): string {
-    return v && /^https?:\/\//i.test(v) ? v : '';
+    return v && (/^https?:\/\//i.test(v) || /^\/media\/[A-Za-z0-9._\/-]+$/.test(v)) ? v : '';
   }
 
   async function postJson(url: string, body: unknown) {
@@ -254,11 +257,21 @@ import AdminShell from '../../components/AdminShell.astro';
           <div style="font-size:11.5px;font-weight:600;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.host)}</div>
         </div>
         <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">
-          <button data-feature="${e.id}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);cursor:pointer">Feature</button>
+          <button data-feature="${e.id}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);cursor:pointer">${e.featured ? 'Unfeature' : 'Feature'}</button>
           <button data-edit="${e.id}" style="padding:8px 11px;border:0;border-radius:8px;background:var(--navy);color:#fff;font-size:12px;font-weight:800;cursor:pointer">Edit</button>
           <button data-remove="${e.id}" data-event-title="${esc(e.title)}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--danger);font-size:12px;font-weight:800;cursor:pointer">Remove</button>
         </div>
       </div>`;
+  }
+
+  // Tells the admin, before they click, that approving features the event
+  // and rejecting means a refund is owed.
+  function paidBadge(s: SubmissionRow): string {
+    const pill = (bg: string, fg: string, text: string) =>
+      ` <span style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:${bg};color:${fg};font-size:11px;font-weight:800;vertical-align:middle">${text}</span>`;
+    if (s.payment_status === 'paid') return pill('var(--accent)', 'var(--contrast)', `Paid to feature · R${((s.amount_cents ?? 0) / 100).toFixed(2)}`);
+    if (s.wants_feature) return pill('var(--bg-subtle)', 'var(--muted)', 'Wants feature · not paid');
+    return '';
   }
 
   function submissionRow(s: SubmissionRow): string {
@@ -270,7 +283,7 @@ import AdminShell from '../../components/AdminShell.astro';
       <div style="padding:16px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px">
         <div style="display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap">
           <div style="min-width:0;flex:1 1 260px">
-            <div style="font-size:15px;font-weight:800;color:var(--navy);letter-spacing:-.01em">${esc(s.title)}</div>
+            <div style="font-size:15px;font-weight:800;color:var(--navy);letter-spacing:-.01em">${esc(s.title)}${paidBadge(s)}</div>
             <div style="font-size:12.5px;font-weight:700;color:var(--muted);margin-top:3px">${esc(s.type)} · ${esc(s.event_date)}${s.event_time ? ' · ' + esc(s.event_time) : ''}</div>
             <div style="font-size:13px;font-weight:600;color:var(--text);margin-top:3px">${esc([s.venue, s.suburb].filter(Boolean).join(', '))}</div>
           </div>
@@ -291,8 +304,10 @@ import AdminShell from '../../components/AdminShell.astro';
   }
 
   let currentRows: EventRow[] = [];
+  let currentSubs: SubmissionRow[] = [];
 
   function renderSubmissions(rows: SubmissionRow[]) {
+    currentSubs = rows;
     const panel = document.getElementById('review-panel')!;
     panel.hidden = rows.length === 0;
     document.getElementById('review-count')!.textContent = rows.length === 1 ? '1 event' : `${rows.length} events`;
@@ -322,7 +337,11 @@ import AdminShell from '../../components/AdminShell.astro';
     const featureBtn = (e.target as HTMLElement).closest('button[data-feature]') as HTMLButtonElement | null;
     if (featureBtn) {
       featureBtn.disabled = true;
-      await postJson('/api/admin/events', { action: 'toggle-feature', id: Number(featureBtn.dataset.feature) });
+      const id = Number(featureBtn.dataset.feature);
+      let result = await postJson('/api/admin/events', { action: 'toggle-feature', id });
+      if (result.needsForce && window.confirm(result.error)) {
+        result = await postJson('/api/admin/events', { action: 'toggle-feature', id, force: true });
+      }
       loadEvents();
       return;
     }
@@ -350,7 +369,8 @@ import AdminShell from '../../components/AdminShell.astro';
     const rejectBtn = (e.target as HTMLElement).closest('button[data-reject-sub]') as HTMLButtonElement | null;
     if (!approveBtn && !rejectBtn) return;
 
-    if (rejectBtn && !window.confirm(`Reject "${rejectBtn.dataset.subTitle}"? It will be deleted.`)) return;
+    const rejectPaid = rejectBtn && currentSubs.find((s) => s.id === Number(rejectBtn.dataset.rejectSub))?.payment_status === 'paid';
+    if (rejectBtn && !window.confirm(`Reject "${rejectBtn.dataset.subTitle}"? It will be deleted.${rejectPaid ? ' The organiser PAID to feature it — you will be emailed to refund them in PayFast.' : ''}`)) return;
     const btn = (approveBtn ?? rejectBtn)!;
     btn.disabled = true;
     status.textContent = approveBtn ? 'Approving…' : 'Rejecting…';

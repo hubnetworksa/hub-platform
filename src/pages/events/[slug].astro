@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { events, eventDetail, eventDateLong } from '../../lib/data';
+import { events, eventDetail, eventDateLong, todaySast } from '../../lib/data';
 import site from '../../site';
 
 export function getStaticPaths() {
@@ -12,10 +12,36 @@ const detail = eventDetail(e);
 const dateLong = eventDateLong(e);
 
 // Free/no-link events store '#' as the ticket URL — no dead "Buy" buttons.
-const hasTicketLink = (url: string | null | undefined) => !!url && url !== '#';
+// Only real web links become buttons: older rows were stored before the
+// server checked the scheme, and a `javascript:` href must never render.
+const hasTicketLink = (url: string | null | undefined) => !!url && /^https?:\/\//i.test(url);
+
+const isPast = e.event_date < todaySast();
+
+// schema.org Event, so the listing can show up in Google's event results.
+// `<` is escaped because organiser text ends up inside a <script> tag.
+const eventLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: e.title,
+  startDate: e.event_date,
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  ...(e.description ? { description: e.description } : {}),
+  ...(e.image_url ? { image: new URL(e.image_url, `https://${site.domain}`).toString() } : {}),
+  location: {
+    '@type': 'Place',
+    name: e.venue ?? site.cityLabel,
+    address: { '@type': 'PostalAddress', streetAddress: e.address ?? undefined, addressLocality: e.suburb ?? site.cityLabel, addressCountry: 'ZA' },
+  },
+  ...(e.host || e.organiser ? { organizer: { '@type': 'Organization', name: e.organiser ?? e.host } } : {}),
+  ...(hasTicketLink(e.ticket_url) ? { offers: { '@type': 'Offer', url: e.ticket_url, priceCurrency: 'ZAR', availability: 'https://schema.org/InStock' } } : {}),
+};
+const eventLdJson = JSON.stringify(eventLd).replace(/</g, '\\u003c');
 ---
 
 <BaseLayout title={e.title} description={e.description || `${e.title} — ${dateLong} at ${e.venue ?? 'TBC'}, ${site.cityLabel}.`}>
+  <script type="application/ld+json" set:html={eventLdJson} />
   <main>
     <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">
       <img src={site.sectionBannerImage} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%" />
@@ -36,7 +62,7 @@ const hasTicketLink = (url: string | null | undefined) => !!url && url !== '#';
         <div>
           <div style="position:relative;border:2px solid var(--navy);border-radius:16px;overflow:hidden;height:clamp(220px,32vw,360px);background:var(--bg-subtle)">
             {e.image_url ? (
-              <img src={e.image_url} alt="" style="width:100%;height:100%;object-fit:cover;display:block" />
+              <img src={e.image_url} alt={`${e.title} poster`} decoding="async" style="width:100%;height:100%;object-fit:cover;display:block" />
             ) : (
               <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;font-weight:700">Event poster</div>
             )}
@@ -49,6 +75,11 @@ const hasTicketLink = (url: string | null | undefined) => !!url && url !== '#';
             <span style="font-size:13px;font-weight:800;color:var(--navy)">{dateLong}</span>
             {e.event_time && <span style="font-size:13px;font-weight:700;color:var(--muted)">{e.event_time}</span>}
           </div>
+          {isPast && (
+            <p style="margin:14px 0 0;padding:10px 14px;border-radius:10px;background:var(--bg-subtle);border:2px solid var(--border);font-size:13.5px;font-weight:700;color:var(--muted)">
+              This event has already happened. <a href="/events/" style="color:var(--accent);font-weight:800">See what's on next →</a>
+            </p>
+          )}
           <h1 style="margin:12px 0 10px;font-size:clamp(26px,4.2vw,42px);letter-spacing:-.03em;line-height:1.05;color:var(--navy)">{e.title}</h1>
           {e.description && <p style="margin:0 0 20px;font-size:16.5px;line-height:1.6;color:var(--text);max-width:62ch">{e.description}</p>}
 

@@ -1,9 +1,13 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { isSlotTaken, isSponsorProductType } from '../../_lib/pricing';
+import { cancelPayfastSubscription, payfastConfigured, type PayfastEnv } from '../../_lib/payfast';
+import { requestRebuild } from '../../_lib/deploy-hook';
+import { logActivity } from '../../_lib/activity-log';
 
-interface Env {
+interface Env extends PayfastEnv {
   DB: D1Database;
+  GITHUB_DISPATCH_TOKEN?: string;
 }
 
 // Backs the "Ads & sponsors" admin page — the exclusive-slot counterpart
@@ -17,10 +21,14 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const rows = await context.env.DB
     .prepare(
-      `SELECT s.id, s.product_type, s.product_target, s.current_period_end, (s.m_payment_id LIKE 'admin-comp-%') AS comped,
+      // Same "held" rule as pricing.ts's SLOT_HELD_SQL (written out with the
+      // s. prefix because businesses has its own status column): a cancelled
+      // slot is still occupied until its paid period ends.
+      `SELECT s.id, s.product_type, s.product_target, s.status, s.current_period_end, (s.m_payment_id LIKE 'admin-comp-%') AS comped,
               b.id AS business_id, b.name AS business_name
        FROM subscriptions s JOIN businesses b ON b.id = s.business_id
-       WHERE s.product_type != 'tier' AND s.status = 'active'
+       WHERE s.product_type != 'tier'
+         AND (s.status = 'active' OR (s.status = 'cancelled' AND s.current_period_end IS NOT NULL AND datetime(s.current_period_end) > datetime('now')))
        ORDER BY s.product_type, s.product_target`
     )
     .all();
@@ -44,13 +52,27 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   if (action === 'clear') {
     const id = Number(body.id);
-    if (!id) return json({ ok: false, error: 'Missing id.' }, 400);
-    await db.prepare(`UPDATE subscriptions SET status = 'expired' WHERE id = ?`).bind(id).run();
-    return json({ ok: true });
+    if (!Number.isInteger(id) || id <= 0) return json({ ok: false, error: 'Missing id.' }, 400);
+    const sub = await db
+      .prepare(`SELECT id, status, payfast_token, product_type, product_target FROM subscriptions WHERE id = ? AND product_type != 'tier'`)
+      .bind(id)
+      .first<{ id: number; status: string; payfast_token: string | null; product_type: string; product_target: string | null }>();
+    if (!sub) return json({ ok: false, error: 'Sponsorship not found.' }, 404);
+    // Clearing a slot someone is paying for has to stop their billing too.
+    let warning: string | null = null;
+    if (sub.status === 'active' && sub.payfast_token && payfastConfigured(context.env)) {
+      const r = await cancelPayfastSubscription(context.env, sub.payfast_token).catch(() => ({ ok: false, status: 0 }));
+      if (!r.ok) warning = `PayFast refused the cancel (HTTP ${r.status}) — cancel it in the PayFast dashboard.`;
+    }
+    await db.prepare(`UPDATE subscriptions SET status = 'expired', current_period_end = datetime('now') WHERE id = ?`).bind(id).run();
+    await logActivity(db, 'sponsorship_cleared', null, `${sub.product_type} (${sub.product_target ?? 'n/a'}) cleared by admin.${warning ? ' ' + warning : ''}`);
+    await requestRebuild(context.env, 'sponsorship cleared');
+    return json({ ok: true, warning });
   }
 
   if (action === 'set') {
     const businessId = Number(body.businessId);
+    if (!Number.isInteger(businessId) || businessId <= 0) return json({ ok: false, error: 'Invalid business.' }, 400);
     const productType = body.productType;
     const productTarget = typeof body.productTarget === 'string' && body.productTarget ? body.productTarget : null;
     if (!businessId || !isSponsorProductType(productType)) return json({ ok: false, error: 'Invalid business or product type.' }, 400);
@@ -71,6 +93,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       .bind(businessId, productType, productTarget, `admin-comp-${crypto.randomUUID()}`)
       .run();
 
+    await requestRebuild(context.env, 'sponsorship comped');
     return json({ ok: true });
   }
 

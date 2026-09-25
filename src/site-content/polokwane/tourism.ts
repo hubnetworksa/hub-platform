@@ -196,9 +196,6 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'Voortrekker Street', addressLocality: 'Polokwane', addressRegion: 'Limpopo', postalCode: '0699', addressCountry: 'ZA' },
     geo: { lat: -23.9130, lng: 29.4460 },
     imageNeeded: 'Real photo of the Polokwane Golf Club course or clubhouse — no generic golf stock imagery.',
-    imageUrl: '/media/tourism/polokwane-golf-club.jpg',
-    imageCredit: 'Photo: South African Tourism / Wikimedia Commons, CC BY 2.0 — illustrative (Legends Golf Estate, Limpopo — not Polokwane Golf Club itself)',
-    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Golf_course,_Legends_Golf_Estate,_Limpopo,_South_Africa_(6252687015).jpg',
   },
   {
     slug: 'the-ranch-golf-course',
@@ -230,9 +227,6 @@ export const ATTRACTIONS: Attraction[] = [
     address: { streetAddress: 'The Ranch Resort, N1 South', addressLocality: 'Polokwane', addressRegion: 'Limpopo', addressCountry: 'ZA' },
     geo: { lat: -24.0870, lng: 29.3660 },
     imageNeeded: 'Real photo of The Ranch golf course or resort grounds — no generic golf/resort stock imagery.',
-    imageUrl: '/media/tourism/the-ranch-golf-course.jpg',
-    imageCredit: 'Photo: Heribert Bechen / Wikimedia Commons, CC BY-SA 2.0 — illustrative bushveld lodge grounds (Bongani Lodge — not The Ranch itself)',
-    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:DSC04833_L4_BONGANI_LODGE_(49739470122).jpg',
   },
   {
     slug: 'magoebaskloof-debengeni-falls',

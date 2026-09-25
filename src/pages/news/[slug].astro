@@ -30,7 +30,7 @@ const jsonLd = {
 
 <BaseLayout title={a.title} description={a.summary}>
   <main>
-    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
     <section style="max-width:1200px;margin:0 auto;padding:18px 20px 0">
       <Breadcrumbs variant="plain" items={[{ label: 'Home', href: '/' }, { label: 'Local news', href: '/news/' }, { label: a.category }]} />
     </section>

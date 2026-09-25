@@ -276,9 +276,22 @@ const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export const eventBySlug = (slug: string) => events.find((e) => e.slug === slug);
 
+/** Today's date in South Africa (UTC+2, no DST) as YYYY-MM-DD — the
+ *  cut-off for what counts as upcoming at build time. */
+export function todaySast(now = new Date()): string {
+  return new Date(now.getTime() + 2 * 3600_000).toISOString().slice(0, 10);
+}
+
+/** Events that haven't happened yet. Past events keep their own pages (they
+ *  may be linked or indexed) but drop off every listing. */
+export function upcomingEvents(): Event[] {
+  const today = todaySast();
+  return events.filter((e) => e.event_date >= today);
+}
+
 /** Featured first, then soonest first — same ordering as the mockup's public listing. */
 export function eventsSorted(): Event[] {
-  return [...events].sort((a, b) => {
+  return upcomingEvents().sort((a, b) => {
     if (!!a.featured !== !!b.featured) return a.featured ? -1 : 1;
     return a.event_date < b.event_date ? -1 : 1;
   });
@@ -287,7 +300,7 @@ export function eventsSorted(): Event[] {
 /** How many events of each type — feeds the "This month" sidebar box. */
 export function eventTypeCounts(): { label: string; count: number }[] {
   const counts = new Map<string, number>();
-  for (const e of events) counts.set(e.type, (counts.get(e.type) ?? 0) + 1);
+  for (const e of upcomingEvents()) counts.set(e.type, (counts.get(e.type) ?? 0) + 1);
   return [...counts.entries()].map(([label, count]) => ({ label, count }));
 }
 

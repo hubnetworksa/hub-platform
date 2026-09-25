@@ -1,9 +1,11 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { logActivity } from '../../_lib/activity-log';
+import { requestRebuild } from '../../_lib/deploy-hook';
 
 interface Env {
   DB: D1Database;
+  GITHUB_DISPATCH_TOKEN?: string;
 }
 
 // Money settings — stored as integer cents.
@@ -71,6 +73,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const keys = Object.keys(TEXT_KEYS);
     await db.prepare(`DELETE FROM site_settings WHERE key IN (${keys.map(() => '?').join(',')})`).bind(...keys).run();
     await logActivity(db, 'settings_reset', null, `Site text overrides cleared by admin (${user.email}).`);
+    await requestRebuild(context.env, 'site settings changed');
     return json({ ok: true });
   }
 
@@ -86,6 +89,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       else await upsert(db, key, text);
     }
     await logActivity(db, 'settings_saved', null, `Site text settings saved by admin (${user.email}).`);
+    await requestRebuild(context.env, 'site settings changed');
     return json({ ok: true });
   }
 
@@ -94,6 +98,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (FLAG_KEYS.includes(key)) {
     await upsert(db, key, body.value === '0' || body.value === false || body.value === 0 ? '0' : '1');
     await logActivity(db, 'settings_saved', null, `${key} set to ${body.value === '0' || body.value === false || body.value === 0 ? 'off' : 'on'} by admin (${user.email}).`);
+    await requestRebuild(context.env, 'site settings changed');
     return json({ ok: true });
   }
 
@@ -103,6 +108,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   await upsert(db, key, String(cents));
+  await logActivity(db, 'settings_saved', null, `${key} set to ${cents} cents by admin (${user.email}).`);
+  await requestRebuild(context.env, 'price changed');
   return json({ ok: true });
 };
 

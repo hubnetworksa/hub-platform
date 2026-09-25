@@ -5,6 +5,8 @@ interface Env {
   DB: D1Database;
 }
 
+const MAX_AGE_DAYS = 14;
+
 // Mirrors functions/api/review-claim.ts for events.
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const form = await context.request.formData();
@@ -13,12 +15,18 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const db = context.env.DB;
 
   const claim = await db
-    .prepare("SELECT ec.id, ec.event_id, ec.user_id, ec.status, e.title AS event_title, u.email AS claimant_email FROM event_claims ec JOIN events e ON e.id = ec.event_id JOIN users u ON u.id = ec.user_id WHERE ec.review_token = ?")
+    .prepare("SELECT ec.id, ec.event_id, ec.user_id, ec.status, ec.created_at, e.title AS event_title, u.email AS claimant_email FROM event_claims ec JOIN events e ON e.id = ec.event_id JOIN users u ON u.id = ec.user_id WHERE ec.review_token = ?")
     .bind(token)
-    .first<{ id: number; event_id: number; user_id: number; status: string; event_title: string; claimant_email: string }>();
+    .first<{ id: number; event_id: number; user_id: number; status: string; created_at: string; event_title: string; claimant_email: string }>();
 
   if (!claim || claim.status !== 'pending') {
     return html(`<h1>Already handled</h1><p>This claim was already actioned — no action taken.</p>`);
+  }
+
+  // Same 14-day window as business claims (review-claim.ts).
+  const created = Date.parse(claim.created_at.includes('T') ? claim.created_at : claim.created_at.replace(' ', 'T') + 'Z');
+  if (Number.isFinite(created) && Date.now() - created > MAX_AGE_DAYS * 86_400_000) {
+    return html(`<h1>This link has expired</h1><p>Claims can only be reviewed within ${MAX_AGE_DAYS} days. Nothing has changed — ask the claimant to submit it again.</p>`);
   }
 
   if (action !== 'approve') {
@@ -27,8 +35,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return html(`<h1>Claim rejected</h1><p>The event remains unclaimed.</p>`);
   }
 
+  // Only ever hands over an UNOWNED event — the unconditional update let a
+  // second claim silently take an event away from whoever already runs it.
+  const linked = await db
+    .prepare('UPDATE events SET event_owner_user_id = ? WHERE id = ? AND event_owner_user_id IS NULL')
+    .bind(claim.user_id, claim.event_id)
+    .run();
+  if (!linked.meta.changes) {
+    return html(`<h1>Already claimed</h1><p>This event is already linked to another account, so the claim was not applied. Nothing has changed.</p>`);
+  }
   await db.prepare("UPDATE event_claims SET status = 'approved', reviewed_at = datetime('now') WHERE id = ?").bind(claim.id).run();
-  await db.prepare('UPDATE events SET event_owner_user_id = ? WHERE id = ?').bind(claim.user_id, claim.event_id).run();
   await logActivity(db, 'event_claim_approved', claim.event_title, `Claim by ${claim.claimant_email} approved.`);
 
   return html(`<h1>Claim approved</h1><p>The event is now linked to that account.</p>`);

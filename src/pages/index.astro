@@ -5,7 +5,7 @@ import SearchBox from '../components/SearchBox.astro';
 import Icon from '../components/Icon.astro';
 import StatTile from '../components/StatTile.astro';
 import PlanBadge from '../components/PlanBadge.astro';
-import { sponsorFor } from '../lib/data';
+import { sponsorFor, eventsSorted, eventDateParts } from '../lib/data';
 import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory, suburbFor, categoriesFor, FEATURED_TIER, newsSorted, newsDateShort, latestFuel, fuelPeriodLabel } from '../lib/data';
 import { CATEGORY_GROUPS } from '../lib/categoryGroups';
 import site from '../site';
@@ -27,6 +27,11 @@ const popularCategories = [...categories].sort((a, b) => businessesInCategory(b.
 // business/[slug].astro and the Premium Listings v2 plan for how a
 // business gets here.
 const featuredBusinesses = businesses.filter((b) => b.subscription_tier >= FEATURED_TIER).slice(0, 3);
+
+// Paying to feature an event promises a spot on the homepage as well as the
+// top of /events/ — this is that spot. Featured upcoming events only; the
+// strip doesn't render at all when there are none.
+const featuredEvents = eventsSorted().filter((e) => e.featured).slice(0, 3);
 
 // WebSite + Organization structured data — Google's documented way to hint
 // the bold "sitename" shown in search results (otherwise it falls back to
@@ -68,7 +73,7 @@ const jsonLd = [
   description={`Find businesses across ${site.cityLabel} and surrounding areas — browse by suburb or category to discover what's nearby.`}
   impactVerification
 >
-  {jsonLd.map((d) => <script type="application/ld+json" set:html={JSON.stringify(d)} />)}
+  {jsonLd.map((d) => <script type="application/ld+json" set:html={JSON.stringify(d).replace(/</g, '\\u003c')} />)}
 
   <main>
     <section style="position:relative;background:var(--navy);overflow:hidden">
@@ -263,6 +268,34 @@ const jsonLd = [
       </section>
     )}
 
+    {featuredEvents.length > 0 && (
+      <section style="max-width:1200px;margin:0 auto;padding:clamp(34px,5vw,56px) 20px 0">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;flex-wrap:wrap">
+          <h2 style="margin:0;font-size:clamp(22px,3vw,30px);letter-spacing:-.025em;color:var(--navy)">Featured events</h2>
+          <a href="/events/" style="font-size:13.5px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">All events →</a>
+        </div>
+        <div class="home-events-grid" style="display:grid;gap:14px;margin-top:18px">
+          {featuredEvents.map((e) => {
+            const { month, day, weekday } = eventDateParts(e);
+            return (
+              <a href={`/events/${e.slug}/`} class="home-featured-card" data-event-date={e.event_date} style="display:flex;gap:14px;align-items:center;padding:14px;border:2px solid var(--border);border-radius:14px;background:#fff;text-decoration:none;min-width:0">
+                <span style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding:9px 12px;border-radius:10px;background:var(--accent);color:var(--contrast)">
+                  <span style="font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.85">{month}</span>
+                  <span style="font-size:24px;font-weight:800;line-height:1">{day}</span>
+                  <span style="font-size:10px;font-weight:700;opacity:.85">{weekday}</span>
+                </span>
+                <span style="min-width:0;display:flex;flex-direction:column;gap:3px">
+                  <span style="font-size:15.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{e.title}</span>
+                  {(e.venue || e.suburb) && <span style="font-size:12.5px;font-weight:700;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{[e.venue, e.suburb].filter(Boolean).join(' · ')}</span>}
+                  <span style="font-size:13px;font-weight:800;color:var(--accent-hover)">{e.price}</span>
+                </span>
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    )}
+
     <section style="max-width:1200px;margin:0 auto;padding:clamp(34px,5vw,56px) 20px 0">
       <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;flex-wrap:wrap">
         <h2 style="margin:0;font-size:clamp(22px,3vw,30px);letter-spacing:-.025em;color:var(--navy)">Browse by suburb</h2>
@@ -348,6 +381,18 @@ const jsonLd = [
 </script>
 
 <style>
+  /* Inline display:flex would otherwise beat the [hidden] attribute. */
+  #today-left[hidden] {
+    display: none !important;
+  }
+  .home-events-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 760px) {
+    .home-events-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
   @media (min-width: 760px) {
     .today-row:has(#today-left:not([hidden])) {
       grid-template-columns: 300px minmax(0, 1fr) !important;

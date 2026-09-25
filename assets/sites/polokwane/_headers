@@ -29,8 +29,18 @@
 # other half of this fix — an explicit zone-wide purge on every deploy, so
 # nothing has to wait even for a max-age=0 revalidation round trip.
 
+# 3. Baseline security headers on everything: no framing by other sites
+#    (clickjacking on the login/admin/checkout forms), no MIME sniffing of
+#    uploaded media, and no full URLs (tokens in review/confirm links) leaked
+#    to third parties through the Referer header.
+
 /*
   Cache-Control: public, max-age=0, must-revalidate
+  X-Frame-Options: SAMEORIGIN
+  Content-Security-Policy: frame-ancestors 'self'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), payment=()
 
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable

@@ -52,8 +52,8 @@ const centreSponsor = sponsorFor('centre_sponsor', center.slug);
   title={center.name}
   description={center.description ?? `${businesses.length} businesses at ${center.name}, ${site.cityLabel}.`}
 >
-  <script type="application/ld+json" set:html={JSON.stringify(centerJsonLd)} />
-  <script type="application/ld+json" set:html={JSON.stringify(tenantsJsonLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(centerJsonLd).replace(/</g, '\\u003c')} />
+  <script type="application/ld+json" set:html={JSON.stringify(tenantsJsonLd).replace(/</g, '\\u003c')} />
 
   <main>
     <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">

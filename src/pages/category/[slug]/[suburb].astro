@@ -47,7 +47,7 @@ const jsonLd = collectionPageJsonLd({
   title={`${category.name} in ${suburb.name}`}
   description={`${businesses.length} ${category.name} in ${suburb.name} — part of the Greater ${site.cityLabel} area.${synonymLine}`}
 >
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <main>
     <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">
