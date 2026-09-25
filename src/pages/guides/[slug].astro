@@ -66,7 +66,7 @@ const articleJsonLd = {
 };
 ---
 
-<BaseLayout title={title} description={guide.intro}>
+<BaseLayout title={title} description={guide.intro} ogType="article">
   <script type="application/ld+json" set:html={JSON.stringify(articleJsonLd).replace(/</g, '\\u003c')} />
 
   <main>

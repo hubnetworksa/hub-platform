@@ -40,7 +40,7 @@ const eventLd = {
 const eventLdJson = JSON.stringify(eventLd).replace(/</g, '\\u003c');
 ---
 
-<BaseLayout title={e.title} description={e.description || `${e.title} — ${dateLong} at ${e.venue ?? 'TBC'}, ${site.cityLabel}.`}>
+<BaseLayout title={e.title} description={e.description || `${e.title} — ${dateLong} at ${e.venue ?? 'TBC'}, ${site.cityLabel}.`} ogImage={e.image_url && /^(https?:\/\/|\/media\/)/i.test(e.image_url) ? e.image_url : null}>
   <script type="application/ld+json" set:html={eventLdJson} />
   <main>
     <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">

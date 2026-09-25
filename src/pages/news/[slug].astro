@@ -28,7 +28,7 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={a.title} description={a.summary}>
+<BaseLayout title={a.title} description={a.summary} ogType="article">
   <main>
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
     <section style="max-width:1200px;margin:0 auto;padding:18px 20px 0">

@@ -42,5 +42,12 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   headers.set('etag', object.httpEtag);
   headers.set('Cache-Control', 'public, max-age=31536000, immutable');
 
-  return new Response(object.body as unknown as BodyInit, { headers });
+  if (context.request.headers.get('If-None-Match') === object.httpEtag) {
+    return new Response(null, { status: 304, headers });
+  }
+  return new Response(context.request.method === 'HEAD' ? null : (object.body as unknown as BodyInit), { headers });
 };
+
+// Crawlers and link checkers probe images with HEAD; without this they got a
+// 405 and treated every photo as broken.
+export const onRequestHead = onRequestGet;

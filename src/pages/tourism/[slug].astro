@@ -66,7 +66,7 @@ const jsonLd = {
 const paras = (text: string) => text.split(/\n{2,}/);
 ---
 
-<BaseLayout title={attraction.pageTitle} description={attraction.metaDescription} canonical={canonical}>
+<BaseLayout title={attraction.pageTitle} description={attraction.metaDescription} canonical={canonical} ogImage={attraction.imageUrl}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <PageBanner title={attraction.name} description={attraction.teaser}>

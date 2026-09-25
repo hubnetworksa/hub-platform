@@ -22,11 +22,17 @@ interface Props {
    *  ever passed `true` from the homepage, per Impact.com's own
    *  instructions that this tag is homepage-only, not site-wide. */
   impactVerification?: boolean;
+  /** Share image for this page (an event poster, an attraction photo).
+   *  Root-relative or absolute. Pages without one share the logo. */
+  ogImage?: string | null;
+  /** og:type — 'article' for news/guides, 'website' otherwise. */
+  ogType?: 'website' | 'article';
 }
 
-const { title, description, canonical, titleOverride, noindex, impactVerification } = Astro.props;
+const { title, description, canonical, titleOverride, noindex, impactVerification, ogImage, ogType = 'website' } = Astro.props;
 const fullTitle = titleOverride ?? `${title} | ${site.siteName}`;
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
+const shareImage = ogImage ? (/^https?:\/\//i.test(ogImage) ? ogImage : siteUrl + ogImage) : siteUrl + '/logo-icon.png';
 // The 404 page is served for any missing URL, so it must not claim /404/ as its own address.
 const isNotFoundPage = Astro.url.pathname.replace(/\/$/, '') === '/404';
 const canonicalUrl = isNotFoundPage ? undefined : (canonical ?? (siteUrl + Astro.url.pathname));
@@ -134,13 +140,14 @@ const themeCss = `:root {
     <!-- Open Graph -->
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
     <meta property="og:site_name" content={site.siteName} />
-    <meta property="og:image" content={siteUrl + '/logo-icon.png'} />
+    <meta property="og:image" content={shareImage} />
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:image" content={shareImage} />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
 

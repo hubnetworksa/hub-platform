@@ -148,6 +148,6 @@ export async function getSessionUser(request: Request, db: D1Database): Promise<
   // Now and then sweep every expired row, not just the one that was touched —
   // sessions belonging to people who never come back are otherwise never
   // cleaned up.
-  if (Math.random() < 0.02) await db.prepare(`DELETE FROM sessions WHERE expires_at < datetime('now')`).run();
+  if (Math.random() < 0.02) await db.prepare(`DELETE FROM sessions WHERE datetime(expires_at) < datetime('now')`).run();
   return { id: row.id, email: row.email };
 }

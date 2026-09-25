@@ -1,9 +1,23 @@
 # Ethan branch: production-readiness todo list
 
 Scope: only the `Ethan` dev branch (TheCapeTownHub, PretoriaHub, PolokwaneHub). Nothing here is about what has changed on `main`.
-Status as of 21 September 2026. **[Me]** = I can do it. **[You]** = needs your accounts, a decision, or a real-world action.
+Status as of 25 September 2026. **[Me]** = I can do it. **[You]** = needs your accounts, a decision, or a real-world action.
 
 ## 1. Done (already on the branch)
+
+### Production-readiness pass, 25 September 2026
+
+- [x] **Monthly renewals now work.** PayFast's second and later monthly charges used to be ignored, so the expiry sweep would have downgraded every paying customer after their first month. Renewals now extend the paid period and are invoiced. A plan bought at signup renews correctly too.
+- [x] **Upgrading stops the old plan's billing** once the new plan is paid. Before, PayFast kept charging for both.
+- [x] **Rejected or disputed paid listings** cancel the PayFast billing automatically and email the site inbox a refund to-do. The reminder sweep no longer deletes paid listings.
+- [x] **Late renewals get a 3-day grace period** before anything is downgraded, and a charge that lands after a lapse brings the plan back.
+- [x] **Invoices are private.** They were downloadable by anyone who guessed an invoice number.
+- [x] **Password reset** (`/forgot-password/`), linked from the log-in page. Links work once, for 60 minutes, and sign the account out everywhere else.
+- [x] Security: open redirect after log-in closed, log-in and sign-up rate limited, sessions renewed at log-in, photo uploads checked by file content (no SVG), security headers on every page, owner text can no longer break out of structured data.
+- [x] Events: homepage "Featured events" strip, past events drop off listings, Google event markup, admin sees which submissions were paid for, and un-featuring a paid event needs confirmation.
+- [x] SEO: business page titles now read "Name – Category in Suburb", every page has share tags, and Cape Town's banners went from about 4MB to 280KB.
+- [x] The deploy workflow type-checks before it touches the databases.
+- [x] Item 2.3 is done: the "[monitor copy]" emails to a personal inbox are removed.
 
 - [x] All three cities build cleanly; about 935,000 links, images, scripts and anchors checked, no broken internal links.
 - [x] Backend code type-checks with zero errors (`npm run typecheck:functions`).
@@ -36,7 +50,7 @@ Status as of 21 September 2026. **[Me]** = I can do it. **[You]** = needs your a
 |---|---|---|---|
 | 2.1 | **One piece left: completing a real payment on PayFast's sandbox checkout page**, which is the only way to trigger a genuine ITN callback — confirmed a synthetic one can't be faked (PayFast's own validate endpoint checks it against a real transaction, not just the signature). This is a 2-minute step on PayFast's own hosted checkout UI (login, then a test card) and needs a browser, which I don't have in this session. Everything else in this row is now verified live against the real sandbox and real data (see done list): checkout (tier + sponsorship), the exclusivity guard, expiry (downgrade + slot freed + re-purchasable), cancel (found and fixed two real signing bugs, verified the failure path end-to-end), and the rejected-paid-listing refund note. | You (the checkout step) + Me (everything else, done) | Walk me through it or I can talk you through it — 2 minutes on PayFast's sandbox page |
 | 2.2 | Exercise the last endpoints against the real database: claim (needs Resend on Preview and a business that has an email) and guide-sponsorship checkout. (Verified live: contact, enquiry, add-business with approval, submit-event with approve and delete, all nine admin endpoints, and a tier-upgrade PayFast checkout accepted by the sandbox.) | Me | Claim needs a signed-in owner with a document upload |
-| 2.3 | Remove the temporary "[monitor copy]" emails that send a copy of every owner-confirmation email to a personal Gmail address (in `confirm-listing.ts` and `owner-confirm-listing.ts`, marked TEMP) | Me, once you say so | Owners' details should not be copied to a personal inbox once the site is live |
+| 2.3 | ~~Remove the temporary "[monitor copy]" emails~~ Done 25 September. | Me | |
 | 2.4 | Add real content where the mockup is empty and you decide to keep it: reviews, views/clicks data, an owner's own enquiries | Me (after your decision) | Otherwise these stay honest "No data yet" tiles |
 
 ## 3. Database work (the branch's own migrations)
@@ -55,6 +69,9 @@ Status as of 21 September 2026. **[Me]** = I can do it. **[You]** = needs your a
 - [ ] **[Me]** Add business email addresses at scale (only 2 to 7% of listings have one), so claim verification can go to the business inbox instead of a manual review. Decided: the description, hours and email enrichment routine (job 4) also collects the company's published contact email, only when empty and only from the business's own site or official listing (see `ROUTINES-PLAN.md`).
 
 ## 5. Payments, secrets and accounts
+
+- [ ] **[You] Urgent: rotate `CRON_SECRET` in Production on all three Pages projects**, and update the GitHub Actions secret of the same name. The old value was committed to this public repo in the preview config and must be treated as known to anyone. It was removed from the repo on 24 September.
+- [ ] **[You]** Refunds stay manual: PayFast only allows them from the merchant dashboard. When a paid listing or event is rejected, the site inbox gets an email naming the exact payment to refund.
 
 - [ ] **[You]** Cloudflare D1 **free plan daily read limit** was reached on 20 September (Cloudflare error 7500) after many test builds: every build reads all three databases (Pretoria alone has about 9,660 businesses). It resets at midnight UTC (02:00 South African time). Live sites kept working. **Decision (21 September): staying on the free plan for now**, so cutting build reads (next item) is a must-do, not optional.
 - [ ] **[Me] Must do (staying on the free plan):** cut the reads a build needs: reuse the saved database snapshot when nothing changed, and only pull the tables a build uses, so routine and preview deploys stay well inside the free limit.

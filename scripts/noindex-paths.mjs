@@ -5,8 +5,12 @@
 export const NOINDEX_PATH_PREFIXES = [
   '/admin/',
   '/my-businesses/',
+  '/my-events/',
   '/login/',
   '/register/',
+  '/forgot-password/',
+  '/reset-password/',
+  '/search/',
   '/report-listing/',
   '/request-removal/',
   '/list-your-business/contact/',
