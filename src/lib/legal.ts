@@ -194,7 +194,7 @@ export function legalDocs(site: Pick<Site, 'siteName' | 'contactEmail'>): LegalD
         {
           heading: 'Advertising',
           paragraphs: [
-            'This site is prepared for advertising through Google AdSense, but no ads are shown yet — the AdSense script is loaded for site verification only, and no cookies are set by it at this stage. Once ads go live, Google and its partners may use cookies to serve and measure ads, including personalised ads based on your visits to this and other sites. You can view or opt out of personalised advertising at Google’s <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer">Ads Settings</a>, and read more at Google’s <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer">How Google uses information from sites that use its services</a>. This page will be updated again once ads are actually switched on.',
+            'This site shows advertising through Google AdSense on some pages, including the pages of businesses on the free listing. Google and its partners may use cookies to serve and measure ads, including personalised ads based on your visits to this and other sites. You can view or opt out of personalised advertising at Google’s <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer">Ads Settings</a>, and read more at Google’s <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer">How Google uses information from sites that use its services</a>.',
           ],
         },
       ],

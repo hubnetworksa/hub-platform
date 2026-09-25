@@ -27,9 +27,13 @@ interface Props {
   ogImage?: string | null;
   /** og:type — 'article' for news/guides, 'website' otherwise. */
   ogType?: 'website' | 'article';
+  /** Ad-free page: the AdSense script isn't loaded at all, so neither
+   *  manual units nor Google's Auto ads can appear. Used for paying
+   *  businesses' pages. */
+  noAds?: boolean;
 }
 
-const { title, description, canonical, titleOverride, noindex, impactVerification, ogImage, ogType = 'website' } = Astro.props;
+const { title, description, canonical, titleOverride, noindex, impactVerification, ogImage, ogType = 'website', noAds = false } = Astro.props;
 const fullTitle = titleOverride ?? `${title} | ${site.siteName}`;
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
 const shareImage = ogImage ? (/^https?:\/\//i.test(ogImage) ? ogImage : siteUrl + ogImage) : siteUrl + '/logo-icon.png';
@@ -126,10 +130,10 @@ const themeCss = `:root {
       </script>
     )}
 
-    <!-- AdSense loader. Auto ads (if enabled) are controlled from the AdSense
-         dashboard per-site; no <ins class="adsbygoogle"> units are placed in
-         markup here. Only rendered once this site has a publisher ID. -->
-    {site.adsensePublisherId && (
+    <!-- AdSense loader. Needed by the manual units (components/AdUnit.astro)
+         and by Auto ads, which are switched on per site in the AdSense
+         dashboard. Left off ad-free pages (noAds), e.g. a paying business. -->
+    {site.adsensePublisherId && !noAds && (
       <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${site.adsensePublisherId}`} crossorigin="anonymous"></script>
     )}
     <title>{fullTitle}</title>

@@ -71,6 +71,9 @@ export interface Site {
   impactSiteVerification: string | null;
   googleAnalyticsId: string | null;
   adsensePublisherId: string | null;
+  /** AdSense ad-unit slot IDs (the numeric data-ad-slot from the AdSense
+   *  dashboard) per placement. null = no manual unit there. */
+  adsenseSlots?: { businessSidebar?: string | null; businessInContent?: string | null };
   features: SiteFeatures;
   theme: SiteTheme;
 }

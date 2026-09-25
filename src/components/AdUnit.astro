@@ -1,0 +1,31 @@
+---
+// One real Google AdSense display unit. Renders nothing unless the site has
+// a publisher ID, ads are switched on in admin Site settings, and this
+// placement has an ad-unit slot ID in sites/<city>.json ("adsenseSlots").
+// With no slot ID, Google's Auto ads (switched on in the AdSense dashboard)
+// can still fill the page, since the loader script is on it.
+import site from '../site';
+import { adsEnabled } from '../lib/site-overrides';
+
+interface Props {
+  placement: 'businessSidebar' | 'businessInContent';
+}
+const { placement } = Astro.props;
+const slot = site.adsenseSlots?.[placement] ?? null;
+const show = Boolean(adsEnabled && site.adsensePublisherId && slot);
+---
+
+{show && (
+  <div class="ad-unit" style="min-width:0">
+    <span style="display:block;margin-bottom:6px;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
+    <ins
+      class="adsbygoogle"
+      style="display:block"
+      data-ad-client={site.adsensePublisherId}
+      data-ad-slot={slot}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    ></ins>
+    <script is:inline>(window.adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+)}
