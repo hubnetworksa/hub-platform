@@ -18,6 +18,7 @@ Status as of 25 September 2026. **[Me]** = I can do it. **[You]** = needs your a
 - [x] SEO: business page titles now read "Name – Category in Suburb", every page has share tags, and Cape Town's banners went from about 4MB to 280KB.
 - [x] The deploy workflow type-checks before it touches the databases.
 - [x] Item 2.3 is done: the "[monitor copy]" emails to a personal inbox are removed.
+- [x] **Premium and sponsorships are self-serve and automatic.** Every sponsorship type can be bought at `/my-businesses/sponsor/` straight to PayFast (before, all but tourism needed an admin). Paid placements go live through `rebuild-flush.yml` within about 15 minutes, and the expiry sweep runs every 6 hours. Sponsors now show above the listings they sponsor, paid businesses list first, and photo limits match the pricing page.
 
 - [x] All three cities build cleanly; about 935,000 links, images, scripts and anchors checked, no broken internal links.
 - [x] Backend code type-checks with zero errors (`npm run typecheck:functions`).
@@ -71,6 +72,10 @@ Status as of 25 September 2026. **[Me]** = I can do it. **[You]** = needs your a
 ## 5. Payments, secrets and accounts
 
 - [ ] **[You] Urgent: rotate `CRON_SECRET` in Production on all three Pages projects**, and update the GitHub Actions secret of the same name. The old value was committed to this public repo in the preview config and must be treated as known to anyone. It was removed from the repo on 24 September.
+- [ ] **[You]** The scheduled jobs (`rebuild-flush.yml`, `subscription-expiry.yml`, `owner-reminders.yml`) only run from `main`, so automatic go-live and expiry start when the branch is merged. They need the rotated `CRON_SECRET` in GitHub Actions secrets and in each Pages project's Production secrets.
+- [ ] **[You]** To have preview purchases rebuild the preview automatically, add `GITHUB_DISPATCH_TOKEN` as a Preview-environment secret on all three Pages projects. Without it the preview only rebuilds on a push.
+- [ ] **[You]** Decide whether a new listing that pays for a plan at signup should skip admin approval. Today it waits for approval and owner confirmation, like every new listing. Upgrades and sponsorships for existing listings need no admin at all.
+- [ ] **[You]** The pricing page says Basic has no website link and no enquiry form, but every listing shows both today. Either gate them to paid plans or change the pricing copy.
 - [ ] **[You]** Refunds stay manual: PayFast only allows them from the merchant dashboard. When a paid listing or event is rejected, the site inbox gets an email naming the exact payment to refund.
 
 - [ ] **[You]** Cloudflare D1 **free plan daily read limit** was reached on 20 September (Cloudflare error 7500) after many test builds: every build reads all three databases (Pretoria alone has about 9,660 businesses). It resets at midnight UTC (02:00 South African time). Live sites kept working. **Decision (21 September): staying on the free plan for now**, so cutting build reads (next item) is a must-do, not optional.
