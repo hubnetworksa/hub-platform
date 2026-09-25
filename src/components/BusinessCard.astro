@@ -45,6 +45,7 @@ const meta = metaOverride ?? [showSuburb && suburb ? suburb.name : null, center 
 ) : (
   <article class="business-card" style={`border:2px solid ${isFeatured ? 'var(--accent)' : 'var(--border)'};border-radius:14px;padding:16px;background:#fff;display:flex;flex-direction:column;gap:6px`}>
     {isFeatured && <span style="align-self:flex-start;padding:4px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Featured</span>}
+    {business.subscription_tier === 1 && <span style="align-self:flex-start;padding:4px 9px;border-radius:999px;background:rgba(var(--accent-rgb),.12);color:var(--accent-hover);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Verified</span>}
     <h3 style="margin:0;font-size:16.5px;letter-spacing:-.015em;color:var(--navy)">{business.name}</h3>
     {(primary || meta) && <p style="margin:0;font-size:13px;font-weight:600;color:var(--muted)">{[primary?.name, meta].filter(Boolean).join(' · ')}</p>}
     <a

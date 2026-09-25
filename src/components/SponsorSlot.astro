@@ -3,6 +3,7 @@
 // (e.g. Suburb's "Own {suburb}" box, Pricing's homepage-banner tile) —
 // one box that either shows who currently holds it, or the buy CTA.
 import { sponsorFor, type Sponsorship } from '../lib/data';
+import { sponsorHref } from '../lib/sponsor-link';
 
 interface Props {
   productType: Sponsorship['product_type'];
@@ -14,8 +15,8 @@ interface Props {
 }
 const { productType, target, title, openBody, ctaLabel = 'Enquire' } = Astro.props;
 const sponsor = sponsorFor(productType, target);
-// Straight into a pre-filled enquiry naming this exact slot, rather than a
-// generic pricing page the visitor then has to explain themselves from.
+const buyHref = sponsorHref(productType, target);
+// Questions go to a pre-filled enquiry naming this exact slot.
 const enquireHref = `/contact/?topic=Advertising&message=${encodeURIComponent(`I'd like to sponsor this spot: ${title}${target ? ` (${target})` : ''}.`)}`;
 ---
 
@@ -29,8 +30,8 @@ const enquireHref = `/contact/?topic=Advertising&message=${encodeURIComponent(`I
   ) : (
     <>
       <p style="margin:0 0 14px;font-size:14px;line-height:1.55;color:var(--text)">{openBody}</p>
-      <a href={enquireHref} style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none">{ctaLabel}</a>
-      <a href="/pricing/" style="display:block;margin-top:8px;font-size:12.5px;font-weight:800;color:var(--accent);text-decoration:none">See sponsorship prices →</a>
+      <a href={buyHref} style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none">{ctaLabel}</a>
+      <a href={enquireHref} style="display:block;margin-top:8px;font-size:12.5px;font-weight:800;color:var(--accent);text-decoration:none">Questions? Ask us →</a>
     </>
   )}
 </div>

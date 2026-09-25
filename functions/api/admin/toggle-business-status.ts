@@ -1,6 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
-import { triggerRebuild } from '../../_lib/deploy-hook';
+import { triggerRebuild, rebuildTarget } from '../../_lib/deploy-hook';
 import { logActivity } from '../../_lib/activity-log';
 
 interface Env {
@@ -37,7 +37,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .run();
   await logActivity(db, makePublic ? 'business_published' : 'business_hidden', business?.name ?? null, `By admin (${user.email}).`);
 
-  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
 
   return json({ ok: true });
 };

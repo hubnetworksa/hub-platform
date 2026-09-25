@@ -1,6 +1,7 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { getSite } from '../../_lib/site';
+import { isValidSponsorTarget } from '../../_lib/sponsor-targets';
 import { signFields, buildCheckoutParams, payfastConfigured, type PayfastEnv } from '../../_lib/payfast';
 import {
   TIER_NAMES,
@@ -63,8 +64,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!isSponsorProductType(body.productType)) return json({ ok: false, error: 'Unknown sponsorship product.' }, 400);
     productType = body.productType;
     productTarget = typeof body.productTarget === 'string' && body.productTarget ? body.productTarget : null;
-    if (productType !== 'homepage_banner' && !productTarget) {
-      return json({ ok: false, error: 'Missing sponsorship target.' }, 400);
+    if (productType === 'homepage_banner') productTarget = null;
+    if (!(await isValidSponsorTarget(db, context.env.SITE, productType, productTarget))) {
+      return json({ ok: false, error: 'That sponsorship spot does not exist.' }, 400);
     }
     if (await isSlotTaken(db, productType, productTarget)) {
       return json({ ok: false, error: 'That spot is already sold — check back later.' }, 409);

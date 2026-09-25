@@ -46,7 +46,12 @@
         "PAYFAST_MERCHANT_ID": "10004002",
         "PAYFAST_MERCHANT_KEY": "q1cd2rdny4a53",
         "PAYFAST_PASSPHRASE": "payfast",
-        "PAYFAST_HOST": "sandbox.payfast.co.za"
+        "PAYFAST_HOST": "sandbox.payfast.co.za",
+        // Purchases made on the preview rebuild the preview (its own
+        // workflow on the Ethan branch), never production. Needs a
+        // GITHUB_DISPATCH_TOKEN secret on the Preview environment to fire.
+        "REBUILD_WORKFLOW": "deploy-ethan-preview.yml",
+        "REBUILD_REF": "Ethan"
         // CRON_SECRET is deliberately NOT set here. This repo is public and
         // preview deploys bind the production database, so a committed value
         // would let anyone run the admin sweep endpoints against live data.

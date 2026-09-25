@@ -1,7 +1,7 @@
 import type { PagesFunction, D1Database, R2Bucket } from '@cloudflare/workers-types';
 import { generateUniqueSlug, insertApprovedBusiness, shoppingCenterIdForSlug } from '../../src/lib/business-submission';
 import { getSite, type Site } from '../_lib/site';
-import { triggerRebuild } from '../_lib/deploy-hook';
+import { triggerRebuild, rebuildTarget } from '../_lib/deploy-hook';
 import { sendEmail } from '../_lib/send-email';
 import { listingLiveEmailHtml } from '../_lib/email-template';
 import { logActivity } from '../_lib/activity-log';
@@ -104,7 +104,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     hours: row.hours,
     shoppingCenterId: await shoppingCenterIdForSlug(db, row.shopping_center_slug),
   }, { DB: db, MEDIA: context.env.MEDIA, RESEND_API_KEY: context.env.RESEND_API_KEY, SITE: context.env.SITE });
-  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
   const listingUrl = `https://${site.domain}/business/${slug}/`;
   await logActivity(db, 'owner_confirmed', row.name, `Published: ${listingUrl}`);
   await notifyAdmin(context.env, site, {

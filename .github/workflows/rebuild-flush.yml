@@ -1,0 +1,41 @@
+name: Rebuild flush (paid placements go live)
+
+# Payments, expiries and admin edits ask for a site rebuild through
+# requestRebuild(), which dispatches at most once per 15 minutes and
+# otherwise records a "rebuild owed" flag in each city's database. This
+# turns an owed flag into a real deploy, so a newly paid plan or
+# sponsorship shows on the public pages within about 15 minutes with no one
+# pressing a button. When nothing is owed it does nothing (a few D1 reads).
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: rebuild-flush
+  cancel-in-progress: false
+
+jobs:
+  flush:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # deploy.yml rebuilds all three cities, so once one city dispatches,
+      # the others only mark their owed rebuild as covered.
+      - name: Flush owed rebuilds
+        run: |
+          DISPATCHED=false
+          for SITE in capetown pretoria polokwane; do
+            HOST=$(node -e "
+              const s = require('./sites/$SITE.json');
+              console.log(s.domainLive ? s.domain : s.pagesDevHost);
+            ")
+            if [ "$DISPATCHED" = true ]; then BODY='{"dispatch":false}'; else BODY='{}'; fi
+            RESULT=$(curl -sS -f -X POST "https://$HOST/api/admin/flush-rebuild" \
+              -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+              -H "Content-Type: application/json" -d "$BODY") || { echo "$SITE: flush failed"; continue; }
+            echo "$SITE: $RESULT"
+            case "$RESULT" in *'"rebuilt":true'*) DISPATCHED=true ;; esac
+          done

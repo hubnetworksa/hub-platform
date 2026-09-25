@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { categories, suburbs, businessesInCategory, businessesInSuburb } from '../lib/data';
+import { categories, suburbs, businessesInCategory, businessesInSuburb, sponsorFor } from '../lib/data';
 import { groupForSuburb } from '../site-content';
 import { synonymsFor } from '../lib/categorySynonyms';
 import site from '../site';
@@ -17,6 +17,14 @@ const searchMeta = {
   subs: suburbs
     .map((s) => ({ n: s.name, s: s.slug, c: businessesInSuburb(s.id).length, g: groupForSuburb(s.slug)?.slug ?? '' }))
     .filter((s) => s.c > 0),
+  // Category name -> its slug and current sponsor (if sold), so the
+  // "Sponsored category spot" beside results shows who bought it.
+  sp: Object.fromEntries(
+    categories.map((c) => {
+      const sp = sponsorFor('category_sponsor', c.slug);
+      return [c.name, { cs: c.slug, ...(sp ? { n: sp.business_name, s: sp.business_slug } : {}) }];
+    })
+  ),
 };
 const searchMetaJson = JSON.stringify(searchMeta).replace(/</g, '\\u003c');
 
@@ -142,6 +150,7 @@ const stepStyle = 'flex-shrink:0;width:28px;height:28px;border-radius:8px;backgr
   interface Meta {
     cats: { n: string; s: string; c: number; k: string }[];
     subs: { n: string; s: string; c: number; g: string }[];
+    sp?: Record<string, { cs: string; n?: string; s?: string }>;
   }
 
   const searchMeta: Meta = JSON.parse(document.getElementById('search-meta')?.textContent || '{"cats":[],"subs":[]}');
@@ -256,6 +265,19 @@ const stepStyle = 'flex-shrink:0;width:28px;height:28px;border-radius:8px;backgr
   }
 
   function renderSponsorSlot(category: string) {
+    const info = category ? searchMeta.sp?.[category] : undefined;
+    if (info?.n && info.s) {
+      sponsorSlot.innerHTML = `
+      <div style="background:var(--navy);padding:14px 16px">
+        <div style="font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--grad-from)">Sponsored · ${escapeHtml(category)}</div>
+        <a href="/business/${encodeURIComponent(info.s)}/" style="display:block;font-size:17px;font-weight:800;color:#fff;margin-top:6px;letter-spacing:-.02em;text-decoration:none">${escapeHtml(info.n)}</a>
+      </div>
+      <div style="padding:16px;background:#fff">
+        <a href="/business/${encodeURIComponent(info.s)}/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none">View listing</a>
+      </div>`;
+      return;
+    }
+    const buyHref = `/my-businesses/sponsor/?type=category_sponsor${info?.cs ? `&target=${encodeURIComponent(info.cs)}` : ''}`;
     sponsorSlot.innerHTML = `
       <div style="background:var(--navy);padding:14px 16px">
         <div style="font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--grad-from)">Sponsored category spot</div>
@@ -263,7 +285,7 @@ const stepStyle = 'flex-shrink:0;width:28px;height:28px;border-radius:8px;backgr
       </div>
       <div style="padding:16px;background:#fff">
         <p style="margin:0 0 12px;font-size:14px;line-height:1.55;color:var(--text)">${category ? `Own the top of every &ldquo;${escapeHtml(category)}&rdquo; page in ${escapeHtml(cityLabel)} — including this one.` : 'Own the top of a category page across the whole site.'}</p>
-        <a href="/pricing/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none">Enquire about this spot</a>
+        <a href="${buyHref}" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none">Sponsor this category</a>
       </div>`;
   }
 

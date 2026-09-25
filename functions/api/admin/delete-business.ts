@@ -1,7 +1,7 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { logActivity } from '../../_lib/activity-log';
-import { triggerRebuild } from '../../_lib/deploy-hook';
+import { triggerRebuild, rebuildTarget } from '../../_lib/deploy-hook';
 
 interface Env {
   DB: D1Database;
@@ -32,7 +32,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   await db.prepare('DELETE FROM business_categories WHERE business_id = ?').bind(businessId).run();
   await db.prepare('DELETE FROM businesses WHERE id = ?').bind(businessId).run();
 
-  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
 
   return json({ ok: true });
 };

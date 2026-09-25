@@ -73,7 +73,7 @@ async function main() {
   const sponsorships = query(
     `SELECT s.id, s.product_type, s.product_target, s.business_id, b.name AS business_name, b.slug AS business_slug, s.current_period_end
      FROM subscriptions s JOIN businesses b ON b.id = s.business_id
-     WHERE s.product_type != 'tier'
+     WHERE s.product_type != 'tier' AND b.status = 'published' AND b.closed_at IS NULL
        AND (s.status = 'active' OR (s.status = 'cancelled' AND s.current_period_end IS NOT NULL AND datetime(s.current_period_end) > datetime('now')));`
   );
   // Events (mockup's new "Events" screen) — admin-added plus whatever the

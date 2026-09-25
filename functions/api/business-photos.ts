@@ -9,9 +9,9 @@ interface Env {
 
 const MAX_FILE_BYTES = 8 * 1024 * 1024; // 8MB per photo
 // Photo caps by tier (0=Basic, 1=Verified, 2=Featured) — see the Premium
-// Listings v2 plan. Only Featured gets photos; enforced here at upload
-// time, not just hidden in the UI.
-const TIER_PHOTO_CAP: Record<number, number> = { 0: 0, 1: 0, 2: 12 };
+// pricing page: Verified up to 4, Featured up to 10. Enforced here at
+// upload time, and the public page shows no more than the current cap.
+const TIER_PHOTO_CAP: Record<number, number> = { 0: 0, 1: 4, 2: 10 };
 
 async function ownedBusiness(db: D1Database, businessId: number, userId: number, isAdmin: boolean) {
   const business = await db
@@ -54,7 +54,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // Cancelled still means paid-through: the expiry sweep drops the tier once that period ends.
   const tier = business.subscription_status === 'active' || business.subscription_status === 'cancelled' ? business.subscription_tier : 0;
   const cap = TIER_PHOTO_CAP[tier] ?? 0;
-  if (cap === 0) return json({ ok: false, error: 'Photos are a Featured-plan perk — upgrade to add photos.' }, 403);
+  if (cap === 0) return json({ ok: false, error: 'Photos come with the Verified and Featured plans — upgrade to add photos.' }, 403);
 
   const existing = await db.prepare('SELECT COUNT(*) as n FROM business_photos WHERE business_id = ?').bind(businessId).first<{ n: number }>();
   if ((existing?.n ?? 0) >= cap) return json({ ok: false, error: `Your tier allows up to ${cap} photos — remove one first.` }, 400);

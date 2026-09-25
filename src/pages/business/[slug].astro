@@ -57,7 +57,10 @@ const socials = isFeatured
 // Featured-tier perk — see functions/api/business-photos.ts. Photos stay
 // in R2/business_photos through a downgrade (never deleted), but the
 // gallery only renders while the business is CURRENTLY Featured.
-const photos = isFeatured ? photosFor(business) : [];
+// Verified shows up to 4 photos, Featured up to 10 (the pricing page's
+// promise). A downgrade hides the extras; nothing is deleted.
+const PHOTO_CAP_BY_TIER: Record<number, number> = { 1: 4, 2: 10 };
+const photos = photosFor(business).slice(0, PHOTO_CAP_BY_TIER[business.subscription_tier] ?? 0);
 
 const similar = cats[0]
   ? businessesInCategory(cats[0].id).filter((b) => b.id !== business.id).slice(0, 4)

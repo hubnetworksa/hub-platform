@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SponsorSlot from '../components/SponsorSlot.astro';
+import { sponsorHref } from '../lib/sponsor-link';
 import { priceRand, categories, suburbs } from '../lib/data';
 import { GUIDES } from '../lib/guides';
 import { TOURISM } from '../site-content/tourism';
@@ -103,6 +104,7 @@ const SPOTS = [
             <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)">{spot.name}</div>
             <div style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.025em;margin-top:8px">{spot.price} <span style="font-size:14px;font-weight:700;color:var(--muted)">/ mo</span></div>
             <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text)">{spot.blurb}</p>
+            <a href={sponsorHref(spot.productType)} style="display:inline-block;margin-top:12px;font-size:13.5px;font-weight:800;color:var(--accent);text-decoration:none">Choose a spot →</a>
           </div>
         ))}
       </div>
@@ -113,12 +115,12 @@ const SPOTS = [
           productType="homepage_banner"
           title="Homepage banner"
           openBody="The single sponsor slot on the homepage — one advertiser at a time."
-          ctaLabel="Enquire about the banner"
+          ctaLabel="Sponsor the homepage"
         />
       </div>
       {site.features.tourism && tourismPickCount > 0 && (
         <p style="margin:14px 0 0;font-size:13px;font-weight:600;color:var(--muted)">
-          Things to do sponsor slots are sold per attraction — see each attraction's own page under <a href="/tourism/" style="color:var(--accent-hover);font-weight:800">Things to do</a> to sponsor it.
+          Things to do sponsor slots are sold per attraction — <a href={sponsorHref('tourism_sponsor')} style="color:var(--accent-hover);font-weight:800">pick an attraction to sponsor</a>, or browse <a href="/tourism/" style="color:var(--accent-hover);font-weight:800">Things to do</a>.
         </p>
       )}
     </section>

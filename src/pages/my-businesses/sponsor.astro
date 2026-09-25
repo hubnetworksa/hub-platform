@@ -1,0 +1,205 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { categories, suburbs, shoppingCenters, priceRand } from '../../lib/data';
+import { GUIDES } from '../../lib/guides';
+import { TOURISM } from '../../site-content/tourism';
+import site from '../../site';
+
+// Self-serve sponsorship checkout for every slot type. Everything the page
+// needs to name a slot is baked in at build time; whether the slot is free
+// right now comes from /api/sponsor-slot, and the purchase itself goes
+// through /api/subscribe/start -> PayFast -> subscribe/notify.ts, which
+// activates it and asks for a rebuild with no admin involved.
+const products = {
+  category_sponsor: {
+    label: 'Category sponsor',
+    what: 'Your business shown above every listing on that category page, and on the search results for it.',
+    price: priceRand('price_sponsor_category_cents'),
+    targets: [...categories].sort((a, b) => a.name.localeCompare(b.name)).map((c) => ({ slug: c.slug, name: c.name })),
+  },
+  suburb_sponsor: {
+    label: 'Suburb sponsor',
+    what: 'Your business shown at the top of that suburb page.',
+    price: priceRand('price_sponsor_suburb_cents'),
+    targets: [...suburbs].sort((a, b) => a.name.localeCompare(b.name)).map((s) => ({ slug: s.slug, name: s.name })),
+  },
+  homepage_banner: {
+    label: 'Homepage banner',
+    what: `The single sponsor banner under the hero on the ${site.siteName} homepage.`,
+    price: priceRand('price_sponsor_banner_cents'),
+    targets: [] as { slug: string; name: string }[],
+  },
+  centre_sponsor: {
+    label: 'Shopping centre sponsor',
+    what: 'Your business branded across that shopping centre page and its store list.',
+    price: priceRand('price_sponsor_centre_cents'),
+    targets: [...shoppingCenters].sort((a, b) => a.name.localeCompare(b.name)).map((c) => ({ slug: c.slug, name: c.name })),
+  },
+  guide_sponsor: {
+    label: 'Guide sponsor',
+    what: "Your business named as the sponsor of that buyer's guide.",
+    price: priceRand('price_sponsor_guide_cents'),
+    targets: GUIDES.map((g) => ({ slug: g.slug, name: g.title(site.cityLabel) })),
+  },
+  tourism_sponsor: {
+    label: 'Things to do sponsor',
+    what: "Your business shown as the sponsor of that attraction's page, and marked Sponsored on the Things to do page.",
+    price: priceRand('price_sponsor_tourism_cents'),
+    targets: (TOURISM[site.slug]?.picks ?? []).filter((p) => p.slug).map((p) => ({ slug: p.slug as string, name: p.name })),
+  },
+};
+const productJson = JSON.stringify(products).replace(/</g, '\\u003c');
+const BOX = 'border:2px solid var(--border);border-radius:14px;background:#fff;padding:20px';
+const FIELD = 'padding:12px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text);width:100%;box-sizing:border-box';
+---
+
+<BaseLayout title="Sponsor a spot" description={`Buy an exclusive sponsorship spot on ${site.siteName}.`} noindex={true}>
+  <main style="max-width:720px;margin:0 auto;padding:clamp(22px,3.5vw,42px) 20px 60px">
+    <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Exclusive sponsorship</span>
+    <h1 id="sp-title" style="margin:12px 0 8px;font-size:clamp(26px,4vw,38px);letter-spacing:-.03em;line-height:1.08;color:var(--navy)">Sponsor a spot</h1>
+    <p id="sp-what" style="margin:0 0 22px;font-size:15.5px;line-height:1.6;color:var(--text)"></p>
+
+    <p id="sp-loading" style="color:var(--muted)">Checking your account…</p>
+
+    <form id="sp-form" hidden style={`${BOX};display:flex;flex-direction:column;gap:16px`}>
+      <label id="sp-target-wrap" style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:800;color:var(--navy)">
+        Which spot
+        <select id="sp-target" style={FIELD}></select>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:800;color:var(--navy)">
+        Sponsoring business
+        <select id="sp-business" style={FIELD}></select>
+      </label>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--border)">
+        <span id="sp-price" style="font-size:22px;font-weight:800;color:var(--navy);letter-spacing:-.02em"></span>
+        <span style="font-size:12.5px;font-weight:700;color:var(--muted)">Billed monthly by PayFast · cancel any time from Billing</span>
+      </div>
+      <p id="sp-availability" role="status" style="margin:0;font-size:13.5px;font-weight:700;color:var(--muted)"></p>
+      <button id="sp-buy" type="submit" disabled style="padding:14px 18px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer">Continue to secure payment</button>
+      <p style="margin:0;font-size:12.5px;line-height:1.5;color:var(--muted)">It goes live automatically once PayFast confirms the payment, and shows on the public page within about 15 minutes. You get an invoice by email.</p>
+    </form>
+
+    <div id="sp-no-business" hidden style={BOX}>
+      <h2 style="margin:0 0 8px;font-size:18px;color:var(--navy)">First, link your business</h2>
+      <p style="margin:0 0 14px;font-size:14.5px;line-height:1.55;color:var(--text)">A sponsorship shows one of your listings, so your account needs a business on {site.siteName} first.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a href="/my-businesses/claim/" style="padding:12px 16px;border-radius:10px;background:var(--navy);color:#fff;font-weight:800;font-size:14px;text-decoration:none">Claim my listing</a>
+        <a href="/list-your-business/" style="padding:12px 16px;border-radius:10px;border:2px solid var(--navy);color:var(--navy);font-weight:800;font-size:14px;text-decoration:none">Add my business</a>
+      </div>
+    </div>
+
+    <p id="sp-error" hidden style={`${BOX};color:var(--danger);font-weight:700`}></p>
+  </main>
+  <script type="application/json" id="sp-products" set:html={productJson} />
+</BaseLayout>
+
+<script>
+  type Target = { slug: string; name: string };
+  type Product = { label: string; what: string; price: string; targets: Target[] };
+  const products: Record<string, Product> = JSON.parse(document.getElementById('sp-products')!.textContent || '{}');
+  const params = new URLSearchParams(window.location.search);
+  const type = params.get('type') ?? '';
+  const product = products[type];
+
+  const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+  const form = $<HTMLFormElement>('sp-form');
+  const targetSel = $<HTMLSelectElement>('sp-target');
+  const bizSel = $<HTMLSelectElement>('sp-business');
+  const buy = $<HTMLButtonElement>('sp-buy');
+  const availability = $('sp-availability');
+
+  function esc(s: string): string {
+    return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+  }
+  function fail(message: string) {
+    $('sp-loading').hidden = true;
+    const box = $('sp-error');
+    box.textContent = message;
+    box.hidden = false;
+  }
+
+  async function checkSlot() {
+    const target = product.targets.length ? targetSel.value : '';
+    buy.disabled = true;
+    availability.textContent = 'Checking the spot is still free…';
+    try {
+      const q = new URLSearchParams({ type });
+      if (target) q.set('target', target);
+      const res = await fetch(`/api/sponsor-slot?${q}`);
+      const data = await res.json();
+      if (!data.ok || !data.valid) {
+        availability.textContent = 'That spot does not exist.';
+      } else if (data.taken) {
+        availability.textContent = 'Someone already sponsors this spot. Pick another, or check back when it frees up.';
+      } else if (!data.priceCents) {
+        availability.textContent = 'This spot is not priced yet. Please contact us.';
+      } else {
+        $('sp-price').textContent = `R${(data.priceCents / 100).toFixed(2)} / month`;
+        availability.textContent = 'Available.';
+        buy.disabled = false;
+      }
+    } catch {
+      availability.textContent = 'Could not check this spot. Please try again.';
+    }
+  }
+
+  async function init() {
+    if (!product) return fail('Unknown sponsorship. Go back to the pricing page and pick a spot.');
+    $('sp-title').textContent = `Sponsor: ${product.label}`;
+    $('sp-what').textContent = product.what;
+    $('sp-price').textContent = product.price === '—' ? '' : `${product.price} / month`;
+
+    const res = await fetch('/api/my-businesses');
+    if (res.status === 401) {
+      window.location.href = `/login/?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+      return;
+    }
+    const data = await res.json();
+    $('sp-loading').hidden = true;
+    const owned: { id: number; name: string }[] = data.owned ?? [];
+    if (owned.length === 0) {
+      $('sp-no-business').hidden = false;
+      return;
+    }
+    bizSel.innerHTML = owned.map((b) => `<option value="${b.id}">${esc(b.name)}</option>`).join('');
+
+    if (product.targets.length) {
+      targetSel.innerHTML = product.targets.map((t) => `<option value="${esc(t.slug)}">${esc(t.name)}</option>`).join('');
+      const wanted = params.get('target');
+      if (wanted && product.targets.some((t) => t.slug === wanted)) targetSel.value = wanted;
+      targetSel.addEventListener('change', checkSlot);
+    } else {
+      $('sp-target-wrap').hidden = true;
+    }
+    form.hidden = false;
+    await checkSlot();
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    buy.disabled = true;
+    availability.textContent = 'Starting secure checkout…';
+    try {
+      const res = await fetch('/api/subscribe/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          businessId: Number(bizSel.value),
+          productType: type,
+          productTarget: product.targets.length ? targetSel.value : null,
+        }),
+      });
+      const result = await res.json();
+      if (result.ok) {
+        window.location.href = result.redirectUrl;
+        return;
+      }
+      availability.textContent = result.error || 'Could not start checkout.';
+    } catch {
+      availability.textContent = 'Could not start checkout. Please try again.';
+    }
+    buy.disabled = false;
+  });
+
+  init().catch(() => fail('Something went wrong loading this page. Please refresh.'));
+</script>

@@ -139,7 +139,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
               <div style="border:2px solid var(--border);border-radius:14px;overflow:hidden">
                 <div style="padding:13px 16px;border-bottom:2px solid var(--border);font-size:13px;font-weight:800;color:var(--navy)">Photos <span id="photos-count" style="font-weight:600;color:var(--muted)"></span></div>
                 <div id="photos-locked" hidden style="padding:18px 16px;font-size:13.5px;font-weight:600;color:var(--muted);line-height:1.55">
-                  Photos are a Featured-plan perk — up to 12 photos on your business page. <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a> to add photos.
+                  Photos come with a paid plan: up to 4 on Verified, up to 10 on Featured. <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a> to add photos.
                 </div>
                 <div id="photos-unlocked" hidden>
                   <div id="photos-grid" style="padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px"></div>
@@ -253,7 +253,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   const TIER_NAMES: Record<number, string> = { 0: 'Basic', 1: 'Verified', 2: 'Featured' };
   const TIER_PRICE: Record<number, string> = { 1: main.dataset.priceVerified ?? '—', 2: main.dataset.priceFeatured ?? '—' };
   const FEATURED_TIER = 2;
-  const PHOTO_CAP = 12;
+  const PHOTO_CAPS: Record<number, number> = { 1: 4, 2: 10 };
 
   const TITLES: Record<string, [string, string]> = {
     overview: ['Overview', 'Your listing at a glance'],
@@ -411,7 +411,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       buttons.appendChild(cancelBtn);
     }
 
-    if (params.get('upgraded') && !planStatus.textContent) planStatus.textContent = 'Thanks — your payment is being confirmed. Your plan updates as soon as PayFast confirms it (refresh in a minute).';
+    if (params.get('upgraded') && !planStatus.textContent) planStatus.textContent = 'Thanks — your payment is being confirmed. Your plan switches on as soon as PayFast confirms it (refresh in a minute), and your public page shows it within about 15 minutes.';
     else if (params.get('upgrade_cancelled')) planStatus.textContent = 'Checkout cancelled — you have not been charged.';
   }
 
@@ -512,7 +512,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     }
 
     statusEl.textContent = `${priceLabel} / month per attraction.`;
-    if (params.get('upgraded')) statusEl.textContent = 'Thanks — your payment is being confirmed (refresh in a minute).';
+    if (params.get('upgraded')) statusEl.textContent = 'Thanks — your payment is being confirmed (refresh in a minute). The sponsorship shows on the public page within about 15 minutes.';
     else if (params.get('upgrade_cancelled')) statusEl.textContent = 'Checkout cancelled — you have not been charged.';
   }
 
@@ -546,8 +546,10 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     const locked = document.getElementById('photos-locked')!;
     const unlocked = document.getElementById('photos-unlocked')!;
     const count = document.getElementById('photos-count')!;
-    if (business.subscription_tier < FEATURED_TIER) {
-      count.textContent = '— a Featured plan perk';
+    const PHOTO_CAP = PHOTO_CAPS[business.subscription_tier] ?? 0;
+    const planName = business.subscription_tier >= FEATURED_TIER ? 'Featured' : 'Verified';
+    if (PHOTO_CAP === 0) {
+      count.textContent = '— a Verified and Featured plan perk';
       locked.hidden = false;
       return;
     }
@@ -563,7 +565,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       photoStatus.hidden = !msg;
     }
     function renderGrid() {
-      count.textContent = `— ${photos.length} of ${PHOTO_CAP} used on Featured`;
+      count.textContent = `— ${Math.min(photos.length, PHOTO_CAP)} of ${PHOTO_CAP} used on ${planName}`;
       emptyEl.hidden = photos.length > 0;
       grid.hidden = photos.length === 0;
       grid.innerHTML = photos

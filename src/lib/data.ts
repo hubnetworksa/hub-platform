@@ -78,6 +78,12 @@ export interface Business {
  *  Functions — so the tier numbers are just duplicated as a constant). */
 export const FEATURED_TIER = 2;
 
+/** Listing order everywhere a plan should count: Featured, then Verified,
+ *  then everyone else, alphabetical within each. */
+export function byPlanThenName(a: { subscription_tier: number; name: string }, b: { subscription_tier: number; name: string }): number {
+  return (b.subscription_tier ?? 0) - (a.subscription_tier ?? 0) || a.name.localeCompare(b.name);
+}
+
 export interface BusinessPhoto {
   id: number;
   business_id: number;

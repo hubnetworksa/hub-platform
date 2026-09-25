@@ -26,7 +26,10 @@ const popularCategories = [...categories].sort((a, b) => businessesInCategory(b.
 // section just doesn't render, rather than showing an empty state. See
 // business/[slug].astro and the Premium Listings v2 plan for how a
 // business gets here.
-const featuredBusinesses = businesses.filter((b) => b.subscription_tier >= FEATURED_TIER).slice(0, 3);
+// Every Featured business is rendered (capped for page weight) and the
+// browser shows a random three per visit, so it really is a rotation and
+// no Featured customer is permanently stuck below the fold.
+const featuredBusinesses = businesses.filter((b) => b.subscription_tier >= FEATURED_TIER).slice(0, 24);
 
 // Paying to feature an event promises a spot on the homepage as well as the
 // top of /events/ — this is that spot. Featured upcoming events only; the
@@ -133,11 +136,11 @@ const jsonLd = [
           </div>
           <a href="/pricing/" style="font-size:13.5px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">Get this spot →</a>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px">
-          {featuredBusinesses.map((b) => {
+        <div id="home-featured-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px">
+          {featuredBusinesses.map((b, i) => {
             const suburb = suburbFor(b);
             return (
-              <article class="home-featured-card" style="border:2px solid var(--border);border-radius:14px;background:#fff;overflow:hidden;display:flex;flex-direction:column">
+              <article class="home-featured-card" data-rotate hidden={i >= 3} style="border:2px solid var(--border);border-radius:14px;background:#fff;overflow:hidden;display:flex;flex-direction:column">
                 <div style="height:6px;background:var(--accent)"></div>
                 <div style="padding:18px 18px 20px;display:flex;flex-direction:column;gap:10px;flex:1">
                   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -380,7 +383,20 @@ const jsonLd = [
   }
 </script>
 
+<script>
+  // Pick three Featured cards at random for this visit.
+  const rotating = [...document.querySelectorAll<HTMLElement>('#home-featured-grid [data-rotate]')];
+  if (rotating.length > 3) {
+    const picks = new Set<number>();
+    while (picks.size < 3) picks.add(Math.floor(Math.random() * rotating.length));
+    rotating.forEach((el, i) => (el.hidden = !picks.has(i)));
+  }
+</script>
+
 <style>
+  .home-featured-card[hidden] {
+    display: none !important;
+  }
   /* Inline display:flex would otherwise beat the [hidden] attribute. */
   #today-left[hidden] {
     display: none !important;

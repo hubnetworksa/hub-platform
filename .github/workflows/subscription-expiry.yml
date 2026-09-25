@@ -2,7 +2,9 @@ name: Subscription & sponsorship expiry sweep
 
 on:
   schedule:
-    - cron: "15 7 * * *"
+    # Every 6 hours: a cancelled plan or sponsorship comes off the public
+    # pages within hours of its paid period ending, not up to a day later.
+    - cron: "15 */6 * * *"
   workflow_dispatch:
 
 jobs:

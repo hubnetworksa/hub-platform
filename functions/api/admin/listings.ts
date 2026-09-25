@@ -1,7 +1,7 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { logActivity } from '../../_lib/activity-log';
-import { triggerRebuild } from '../../_lib/deploy-hook';
+import { triggerRebuild, rebuildTarget } from '../../_lib/deploy-hook';
 import { generateUniqueSlug, insertApprovedBusiness } from '../../../src/lib/business-submission';
 
 interface Env {
@@ -169,7 +169,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if ((current?.subscription_tier ?? 0) !== tier) await applyTierOverride(db, id, tier);
 
     await logActivity(db, 'business_edited', name, `Edited by admin (${user.email}).`);
-    await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+    await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
     return json({ ok: true, id });
   }
 
@@ -202,7 +202,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (created && tier > 0) await applyTierOverride(db, created.id, tier);
 
   await logActivity(db, 'business_created', name, `Added by admin (${user.email}).`);
-  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
   return json({ ok: true, id: created?.id ?? null, slug });
 };
 

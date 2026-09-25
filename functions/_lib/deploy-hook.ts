@@ -17,17 +17,31 @@ import type { D1Database } from '@cloudflare/workers-types';
 // unset — the business is still published in D1 either way, it just won't
 // be visible on the static pages until the next rebuild happens some other
 // way (e.g. the hourly research routine's commits).
-export async function triggerRebuild(githubToken: string | undefined): Promise<void> {
+export interface RebuildTarget {
+  workflow: string;
+  ref: string;
+}
+
+// Which deploy a rebuild request should run. Production uses deploy.yml on
+// main; the Ethan preview sets REBUILD_WORKFLOW/REBUILD_REF in its
+// wrangler env.preview vars so its own purchases rebuild the preview, not
+// production.
+export function rebuildTarget(env: object): RebuildTarget {
+  const e = env as { REBUILD_WORKFLOW?: string; REBUILD_REF?: string };
+  return { workflow: e.REBUILD_WORKFLOW || 'deploy.yml', ref: e.REBUILD_REF || 'main' };
+}
+
+export async function triggerRebuild(githubToken: string | undefined, target: RebuildTarget = { workflow: 'deploy.yml', ref: 'main' }): Promise<void> {
   if (!githubToken) return;
   try {
-    await fetch('https://api.github.com/repos/hubnetworksa/hub-platform/actions/workflows/deploy.yml/dispatches', {
+    await fetch(`https://api.github.com/repos/hubnetworksa/hub-platform/actions/workflows/${encodeURIComponent(target.workflow)}/dispatches`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${githubToken}`,
         Accept: 'application/vnd.github+json',
         'User-Agent': 'hub-platform-owner-confirm',
       },
-      body: JSON.stringify({ ref: 'main' }),
+      body: JSON.stringify({ ref: target.ref }),
     });
   } catch {
     // Best-effort — a failed trigger doesn't undo the fact that the
@@ -38,6 +52,8 @@ export async function triggerRebuild(githubToken: string | undefined): Promise<v
 export interface RebuildEnv {
   DB: D1Database;
   GITHUB_DISPATCH_TOKEN?: string;
+  REBUILD_WORKFLOW?: string;
+  REBUILD_REF?: string;
 }
 
 // Every rebuild is a full three-city deploy that reads all three databases,
@@ -50,8 +66,14 @@ export interface RebuildEnv {
 // flush. State lives in site_settings as epoch-millisecond strings, so
 // allPrices()' Number() coercion stays sane if it ever sees these keys.
 const REBUILD_WINDOW_MS = 15 * 60 * 1000;
-const LAST_DISPATCH_KEY = 'meta_rebuild_last_dispatched_ms';
-const REQUESTED_KEY = 'meta_rebuild_requested_ms';
+// Preview and production share one database, so the bookkeeping is kept
+// per deploy target — otherwise a preview dispatch would look like it had
+// already covered a production rebuild that is still owed.
+function keysFor(env: RebuildEnv): { last: string; requested: string } {
+  const t = rebuildTarget(env);
+  const suffix = t.workflow === 'deploy.yml' && t.ref === 'main' ? '' : `:${t.workflow}@${t.ref}`;
+  return { last: `meta_rebuild_last_dispatched_ms${suffix}`, requested: `meta_rebuild_requested_ms${suffix}` };
+}
 
 async function readMs(db: D1Database, key: string): Promise<number> {
   const row = await db.prepare('SELECT value FROM site_settings WHERE key = ?').bind(key).first<{ value: string }>();
@@ -73,38 +95,48 @@ async function writeMs(db: D1Database, key: string, ms: number): Promise<void> {
  *  must not undo the D1 write that prompted it. */
 export async function requestRebuild(env: RebuildEnv, reason: string): Promise<void> {
   try {
+    const k = keysFor(env);
     const now = Date.now();
-    const last = await readMs(env.DB, LAST_DISPATCH_KEY);
+    const last = await readMs(env.DB, k.last);
     if (now - last < REBUILD_WINDOW_MS || !env.GITHUB_DISPATCH_TOKEN) {
-      // Inside the window (or no token to dispatch with, e.g. a preview
-      // deploy): remember that a rebuild is owed and let the next caller or
-      // the daily sweep pick it up.
-      await writeMs(env.DB, REQUESTED_KEY, now);
+      // Inside the window (or no token to dispatch with): remember that a
+      // rebuild is owed. The rebuild-flush workflow picks it up within
+      // about 15 minutes.
+      await writeMs(env.DB, k.requested, now);
       return;
     }
-    await triggerRebuild(env.GITHUB_DISPATCH_TOKEN);
-    await writeMs(env.DB, LAST_DISPATCH_KEY, now);
-    await writeMs(env.DB, REQUESTED_KEY, 0);
+    await triggerRebuild(env.GITHUB_DISPATCH_TOKEN, rebuildTarget(env));
+    await writeMs(env.DB, k.last, now);
+    await writeMs(env.DB, k.requested, 0);
   } catch (err) {
     console.error('requestRebuild failed', reason, err);
   }
 }
 
-/** For the daily cron sweeps: dispatch a rebuild if one was requested while
- *  the debounce window was closed and nothing has dispatched since. */
-export async function flushPendingRebuild(env: RebuildEnv): Promise<boolean> {
+/** For the scheduled flush (and the daily sweeps): dispatch a rebuild if one
+ *  was requested while the debounce window was closed and nothing has
+ *  dispatched since. With `dispatch: false` the owed rebuild is only marked
+ *  as covered — used when another city's flush has just dispatched the
+ *  same all-cities workflow a moment ago. */
+export async function flushPendingRebuild(env: RebuildEnv, opts: { dispatch?: boolean } = {}): Promise<boolean> {
   try {
-    const requested = await readMs(env.DB, REQUESTED_KEY);
+    const k = keysFor(env);
+    const requested = await readMs(env.DB, k.requested);
     if (!requested) return false;
-    const last = await readMs(env.DB, LAST_DISPATCH_KEY);
+    const last = await readMs(env.DB, k.last);
     if (last >= requested) {
-      await writeMs(env.DB, REQUESTED_KEY, 0);
+      await writeMs(env.DB, k.requested, 0);
+      return false;
+    }
+    if (opts.dispatch === false) {
+      await writeMs(env.DB, k.last, Date.now());
+      await writeMs(env.DB, k.requested, 0);
       return false;
     }
     if (!env.GITHUB_DISPATCH_TOKEN) return false;
-    await triggerRebuild(env.GITHUB_DISPATCH_TOKEN);
-    await writeMs(env.DB, LAST_DISPATCH_KEY, Date.now());
-    await writeMs(env.DB, REQUESTED_KEY, 0);
+    await triggerRebuild(env.GITHUB_DISPATCH_TOKEN, rebuildTarget(env));
+    await writeMs(env.DB, k.last, Date.now());
+    await writeMs(env.DB, k.requested, 0);
     return true;
   } catch (err) {
     console.error('flushPendingRebuild failed', err);

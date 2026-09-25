@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import BusinessCard from '../../../components/BusinessCard.astro';
+import SponsorBanner from '../../../components/SponsorBanner.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import SponsorSlot from '../../../components/SponsorSlot.astro';
-import { categories, businessesInCategory, suburbFor, type Business } from '../../../lib/data';
+import {categories, businessesInCategory, suburbFor, type Business, byPlanThenName, FEATURED_TIER} from '../../../lib/data';
 import { groupForCategory } from '../../../lib/categoryGroups';
 import { synonymsFor, locationSynonymsFor } from '../../../lib/categorySynonyms';
 import { collectionPageJsonLd } from '../../../lib/seo';
@@ -23,7 +24,11 @@ for (const business of businesses) {
   if (!bySuburb.has(suburb.slug)) bySuburb.set(suburb.slug, { name: suburb.name, slug: suburb.slug, businesses: [] });
   bySuburb.get(suburb.slug)!.businesses.push(business);
 }
+for (const g of bySuburb.values()) g.businesses.sort(byPlanThenName);
 const suburbGroups = [...bySuburb.values()].sort((a, b) => b.businesses.length - a.businesses.length);
+// "Top of your category page" for the Featured plan: every Featured
+// business in this category, above the suburb-by-suburb list.
+const featuredInCategory = businesses.filter((b) => b.subscription_tier >= FEATURED_TIER).sort(byPlanThenName);
 const group = groupForCategory(category.slug);
 const isEmpty = businesses.length === 0;
 
@@ -86,6 +91,15 @@ const jsonLd = isEmpty
           ctaLabel="Sponsor this category"
         />
       </div>
+      <SponsorBanner productType="category_sponsor" target={category.slug} context={`${category.name} in ${site.cityLabel}`} />
+      {featuredInCategory.length > 0 && (
+        <div style="margin-bottom:28px">
+          <h2 style="margin:0 0 12px;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)">Featured {category.name.toLowerCase()}</h2>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px">
+            {featuredInCategory.map((business) => <BusinessCard business={business} />)}
+          </div>
+        </div>
+      )}
       {isEmpty ? (
         <div>
           <p style="color:var(--muted);line-height:1.6;">No {category.name.toLowerCase()} listed yet — this page will fill in as new businesses are added.</p>
