@@ -1,5 +1,5 @@
 {
-  "suburb_index": 146,
+  "suburb_index": 147,
   "suburbs_per_run": 3,
   "suburb_slugs": [
     "cape-town-cbd",
@@ -173,9 +173,9 @@
   ],
   "shopping_center_index": 0,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
-  "shopping_center_recheck_countdown": 14,
-  "new_mall_discovery_countdown": 70,
+  "shopping_center_slugs_pending": ["glencairn-shopping-centre-glencairn"],
+  "shopping_center_recheck_countdown": 13,
+  "new_mall_discovery_countdown": 69,
   "shopping_center_slugs": [
     "canal-walk-century-city",
     "imhoff-farm-kommetjie",
@@ -323,7 +323,8 @@
     "colorado-city-centre-colorado",
     "poppys-village-retreat",
     "centre-point-shopping-centre-milnerton",
-    "birkenhead-shopping-centre-melkbosstrand"
+    "birkenhead-shopping-centre-melkbosstrand",
+    "glencairn-shopping-centre-glencairn"
   ],
   "closed_check_last_slug": "clicks-vangate-mall-athlone",
   "closed_check_batch_size": 5
