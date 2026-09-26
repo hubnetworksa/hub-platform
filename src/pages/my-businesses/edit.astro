@@ -31,6 +31,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <button type="submit" class="btn btn-primary">Save changes</button>
       <p id="form-status" role="status"></p>
     </form>
+
+    <a id="customize-cta" class="customize-cta" href="#" hidden>
+      <span class="customize-cta-icon">🎨</span>
+      <span class="customize-cta-text">
+        <strong>Customise business page</strong>
+        <span>Preview your page and manage photos, template &amp; layout</span>
+      </span>
+      <span class="customize-cta-arrow">→</span>
+    </a>
   </section>
 </BaseLayout>
 
@@ -64,6 +73,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     (form.elements.namedItem('website') as HTMLInputElement).value = data.business.website ?? '';
     (form.elements.namedItem('description') as HTMLTextAreaElement).value = data.business.description ?? '';
     (form.elements.namedItem('hours') as HTMLTextAreaElement).value = data.business.hours ?? '';
+
+    const cta = document.getElementById('customize-cta') as HTMLAnchorElement;
+    cta.href = `/my-businesses/customize/?id=${businessId}`;
+    cta.hidden = false;
   }
 
   form.addEventListener('submit', async (e) => {
@@ -113,5 +126,44 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     font-size: 0.9rem;
     color: var(--text-muted);
     margin: 0;
+  }
+  .customize-cta {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-top: 2rem;
+    padding: 1.1rem 1.25rem;
+    border-radius: var(--radius-lg, 16px);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .customize-cta:hover {
+    border-color: var(--accent);
+    box-shadow: 0 6px 18px -8px rgba(var(--accent-rgb), 0.35);
+  }
+  .customize-cta-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+  }
+  .customize-cta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex: 1;
+  }
+  .customize-cta-text strong {
+    font-size: 1.02rem;
+    color: var(--navy);
+  }
+  .customize-cta-text span {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  .customize-cta-arrow {
+    font-size: 1.3rem;
+    color: var(--accent);
   }
 </style>

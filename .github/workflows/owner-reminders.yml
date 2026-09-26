@@ -27,3 +27,12 @@ jobs:
           ")
           curl -sS -f -X POST "https://$HOST/api/admin/process-owner-reminders" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+
+      - name: Call process-expired-subscriptions
+        run: |
+          HOST=$(node -e "
+            const s = require('./sites/${{ matrix.site }}.json');
+            console.log(s.domainLive ? s.domain : s.pagesDevHost);
+          ")
+          curl -sS -f -X POST "https://$HOST/api/admin/process-expired-subscriptions" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

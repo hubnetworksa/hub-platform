@@ -1,0 +1,472 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Customise business page" description="Manage your business page's photos and template.">
+  <section class="container" style="padding-top: 3rem; padding-bottom: 4rem; max-width: 680px;">
+    <div id="loading">Loading…</div>
+
+    <div id="content" hidden>
+      <a id="back-link" href="#" class="back-link">← Back to editing</a>
+      <h1>Customise <span id="business-name-hl"></span></h1>
+
+      <div id="upsell-photos" class="upsell" hidden>
+        <p><strong>Photos</strong> unlock at Verified Plus (R99/mo).</p>
+        <a href="#" class="upsell-link">Upgrade to add photos →</a>
+      </div>
+      <section id="photos-section" hidden>
+        <h2>Photos</h2>
+        <p id="photos-cap-label" class="muted"></p>
+        <div id="photo-grid" class="photo-grid"></div>
+        <form id="photo-upload-form">
+          <input type="file" name="photo" accept="image/*" id="photo-input" />
+          <button type="submit" class="btn btn-outline btn-sm">Upload photo</button>
+        </form>
+        <p id="photo-status" role="status" class="muted"></p>
+      </section>
+
+      <div id="upsell-template" class="upsell" hidden>
+        <p><strong>Page templates</strong> unlock at Featured (R199/mo).</p>
+        <a href="#" class="upsell-link">Upgrade to choose a template →</a>
+      </div>
+      <section id="template-picker" hidden>
+        <h2>Page template</h2>
+        <div class="option-grid">
+          <button type="button" class="tpl-btn" data-tpl="classic"><b>Classic</b><span>Clean &amp; simple</span></button>
+          <button type="button" class="tpl-btn" data-tpl="gallery"><b>Gallery-Forward</b><span>Photo leads the page</span></button>
+          <button type="button" class="tpl-btn" data-tpl="services"><b>Services Grid</b><span>Structured service cards</span></button>
+        </div>
+        <div id="design-actions" hidden>
+          <button type="button" id="publish-btn" class="btn btn-primary btn-sm" hidden>Publish template</button>
+          <button type="button" id="revert-btn" class="btn btn-outline btn-sm" hidden>Revert to published</button>
+        </div>
+        <p id="design-status" role="status" class="muted" hidden></p>
+      </section>
+
+      <div id="upsell-blocks" class="upsell" hidden>
+        <p><strong>Custom sections and page colors</strong> unlock at Premium (R299/mo).</p>
+        <a href="#" class="upsell-link">Upgrade to Premium →</a>
+      </div>
+      <div id="edit-on-page-callout" class="callout" hidden>
+        <p><strong>Sections and page colors are edited right on your live page.</strong> Open it, click "Edit this page", and drag sections, resize photos, or click any text to change it — no separate editor to learn.</p>
+        <a id="edit-on-page-link" href="#" class="btn btn-primary btn-sm">Edit your page →</a>
+      </div>
+    </div>
+  </section>
+
+  <div id="photo-modal" class="photo-modal" hidden>
+    <div id="photo-modal-backdrop" class="photo-modal-backdrop"></div>
+    <div class="photo-modal-content">
+      <button type="button" id="photo-modal-close" class="photo-modal-close" aria-label="Close">×</button>
+      <img id="photo-modal-img" src="" alt="Full-size uploaded photo" />
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const businessId = params.get('id');
+  const loading = document.getElementById('loading');
+  const content = document.getElementById('content');
+
+  let selectedTemplate = 'classic';
+  let liveTemplateId = 'classic';
+  let hasUnpublishedChanges = false;
+  let draftUpdatedAt = null;
+  let tier = 0;
+  let canChooseTemplate = false;
+  let canUseBuilder = false;
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  }
+
+  let autosaveTimer;
+  function scheduleAutosave() {
+    hasUnpublishedChanges = true;
+    updateDesignStatus();
+    window.clearTimeout(autosaveTimer);
+    autosaveTimer = window.setTimeout(doAutosave, 900);
+  }
+
+  async function doAutosave() {
+    const designStatus = document.getElementById('design-status');
+    designStatus.textContent = 'Saving…';
+    const res = await fetch('/api/business-design', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ businessId: Number(businessId), action: 'autosave', templateId: selectedTemplate }),
+    });
+    const result = await res.json();
+    if (result.ok) {
+      draftUpdatedAt = result.draftUpdatedAt;
+    } else {
+      designStatus.textContent = result.error || 'Could not save your draft.';
+      return;
+    }
+    updateDesignStatus();
+  }
+
+  function updateDesignStatus() {
+    const designStatus = document.getElementById('design-status');
+    const publishBtn = document.getElementById('publish-btn');
+    const revertBtn = document.getElementById('revert-btn');
+    publishBtn.hidden = !hasUnpublishedChanges;
+    revertBtn.hidden = !hasUnpublishedChanges;
+    if (hasUnpublishedChanges) {
+      designStatus.textContent = draftUpdatedAt
+        ? `Draft saved ${new Date(draftUpdatedAt).toLocaleTimeString()} — not published yet.`
+        : 'Draft saved — not published yet.';
+    } else {
+      designStatus.textContent = 'Everything here is published and live.';
+    }
+  }
+
+  document.getElementById('publish-btn').addEventListener('click', async () => {
+    const designStatus = document.getElementById('design-status');
+    designStatus.textContent = 'Publishing…';
+    const res = await fetch('/api/business-design', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ businessId: Number(businessId), action: 'publish' }),
+    });
+    const result = await res.json();
+    if (result.ok) {
+      liveTemplateId = selectedTemplate;
+      hasUnpublishedChanges = false;
+      updateDesignStatus();
+      designStatus.textContent = 'Published! Your live page will update shortly.';
+    } else {
+      designStatus.textContent = result.error || 'Could not publish.';
+    }
+  });
+
+  document.getElementById('revert-btn').addEventListener('click', async () => {
+    if (!window.confirm('Discard your unpublished changes and go back to what is currently live?')) return;
+    await fetch('/api/business-design', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ businessId: Number(businessId), action: 'revert' }),
+    });
+    selectedTemplate = liveTemplateId;
+    hasUnpublishedChanges = false;
+    draftUpdatedAt = null;
+    document.querySelectorAll('.tpl-btn').forEach((btn) => btn.classList.toggle('active', btn.dataset.tpl === selectedTemplate));
+    updateDesignStatus();
+  });
+
+  async function init() {
+    if (!businessId) {
+      loading.textContent = 'No business specified.';
+      return;
+    }
+    document.getElementById('back-link').href = `/my-businesses/edit/?id=${businessId}`;
+    document.querySelectorAll('.upsell-link').forEach((a) => (a.href = `/my-businesses/upgrade/?id=${businessId}`));
+
+    const [updateRes, designRes] = await Promise.all([
+      fetch(`/api/update-business?id=${encodeURIComponent(businessId)}`),
+      fetch(`/api/business-design?businessId=${encodeURIComponent(businessId)}`),
+    ]);
+    if (updateRes.status === 401 || designRes.status === 401) {
+      window.location.href = '/login/';
+      return;
+    }
+    const data = await updateRes.json();
+    const design = await designRes.json();
+    if (!data.ok || !design.ok) {
+      loading.textContent = data.error || design.error || 'Could not load this business.';
+      return;
+    }
+    loading.hidden = true;
+    content.hidden = false;
+    document.getElementById('business-name-hl').textContent = data.business.name;
+
+    tier = design.tier;
+    canChooseTemplate = design.canChooseTemplate;
+    canUseBuilder = design.canUseBuilder;
+    selectedTemplate = design.templateId ?? 'classic';
+    liveTemplateId = design.liveTemplateId ?? 'classic';
+    hasUnpublishedChanges = !!design.hasUnpublishedChanges;
+    draftUpdatedAt = design.draftUpdatedAt;
+
+    if (tier >= 2) {
+      document.getElementById('photos-section').hidden = false;
+      await loadPhotos();
+    } else {
+      document.getElementById('upsell-photos').hidden = false;
+    }
+
+    if (canChooseTemplate) {
+      document.getElementById('template-picker').hidden = false;
+      document.getElementById('design-actions').hidden = false;
+      document.getElementById('design-status').hidden = false;
+      document.querySelectorAll('.tpl-btn').forEach((btn) => {
+        if (btn.dataset.tpl === selectedTemplate) btn.classList.add('active');
+        btn.addEventListener('click', () => {
+          selectedTemplate = btn.dataset.tpl;
+          document.querySelectorAll('.tpl-btn').forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          scheduleAutosave();
+        });
+      });
+      updateDesignStatus();
+    } else {
+      document.getElementById('upsell-template').hidden = false;
+    }
+
+    if (canUseBuilder) {
+      document.getElementById('edit-on-page-callout').hidden = false;
+      document.getElementById('edit-on-page-link').href = `/business/${data.business.slug}/`;
+    } else {
+      document.getElementById('upsell-blocks').hidden = false;
+    }
+  }
+
+  async function loadPhotos() {
+    const grid = document.getElementById('photo-grid');
+    const res = await fetch(`/api/business-photos?businessId=${encodeURIComponent(businessId)}`);
+    const data = await res.json();
+    if (!data.ok) return;
+    document.getElementById('photos-cap-label').textContent = `${data.photos.length} of ${data.cap} photos used`;
+    grid.innerHTML = '';
+    for (const photo of data.photos) {
+      const div = document.createElement('div');
+      div.className = 'photo-thumb';
+      div.innerHTML = `<img src="/media/${photo.r2_key}" alt="Uploaded photo — click to view full size" /><button type="button" data-id="${photo.id}">Remove</button>`;
+      div.querySelector('img').addEventListener('click', () => openPhotoModal(`/media/${photo.r2_key}`));
+      div.querySelector('button').addEventListener('click', async (e) => {
+        await fetch(`/api/business-photos?photoId=${e.target.getAttribute('data-id')}`, { method: 'DELETE' });
+        await loadPhotos();
+      });
+      grid.appendChild(div);
+    }
+  }
+
+  const photoModal = document.getElementById('photo-modal');
+  const photoModalImg = document.getElementById('photo-modal-img');
+  function openPhotoModal(src) {
+    photoModalImg.src = src;
+    photoModal.hidden = false;
+  }
+  function closePhotoModal() {
+    photoModal.hidden = true;
+    photoModalImg.src = '';
+  }
+  document.getElementById('photo-modal-close').addEventListener('click', closePhotoModal);
+  document.getElementById('photo-modal-backdrop').addEventListener('click', closePhotoModal);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !photoModal.hidden) closePhotoModal();
+  });
+
+  document.getElementById('photo-upload-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('photo-input');
+    const photoStatus = document.getElementById('photo-status');
+    if (!input.files?.[0]) return;
+    photoStatus.textContent = 'Uploading…';
+    const fd = new FormData();
+    fd.append('businessId', businessId);
+    fd.append('photo', input.files[0]);
+    const res = await fetch('/api/business-photos', { method: 'POST', body: fd });
+    const result = await res.json();
+    photoStatus.textContent = result.ok ? 'Uploaded.' : result.error || 'Could not upload.';
+    if (result.ok) {
+      input.value = '';
+      await loadPhotos();
+    }
+  });
+
+  init();
+</script>
+
+<style>
+  .back-link {
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+  }
+  .back-link:hover {
+    text-decoration: underline;
+  }
+  h1 {
+    margin: 1rem 0 1.5rem;
+    font-size: 1.5rem;
+    color: var(--navy);
+  }
+  h2 {
+    font-size: 1.05rem;
+    color: var(--navy);
+    margin: 0 0 0.5rem;
+  }
+  .muted {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+  }
+  .upsell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    border: 1px dashed var(--border);
+    margin-bottom: 1.5rem;
+  }
+  /* `.upsell` and `[hidden]` have equal specificity, and this rule is
+     declared later, so without this override `display: flex` above wins
+     and the hidden attribute is silently ignored. */
+  .upsell[hidden] {
+    display: none;
+  }
+  .upsell p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  .upsell-link {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .upsell-link:hover {
+    text-decoration: underline;
+  }
+  .callout {
+    padding: 1rem 1.1rem;
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+  .callout[hidden] {
+    display: none;
+  }
+  .callout p {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+  }
+  #photos-section, #template-picker {
+    margin-bottom: 2rem;
+  }
+  .option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+  .tpl-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+  }
+  .tpl-btn span {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+  .tpl-btn.active {
+    border-color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.08);
+  }
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+  }
+  /* .photo-thumb is built via document.createElement in loadPhotos(), so
+     it needs :global() or it silently matches nothing — Astro only
+     stamps its scoping attribute onto elements present in the static
+     template at build time. */
+  :global(.photo-thumb) {
+    position: relative;
+  }
+  :global(.photo-thumb img) {
+    width: 100%;
+    height: 90px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    cursor: zoom-in;
+  }
+  :global(.photo-thumb button) {
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    cursor: pointer;
+  }
+  #photo-upload-form {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  #design-actions {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 0.25rem;
+  }
+  #design-actions[hidden] {
+    display: none;
+  }
+  #design-status {
+    margin-top: 0.6rem;
+  }
+  .photo-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .photo-modal[hidden] {
+    display: none;
+  }
+  .photo-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+  }
+  .photo-modal-content {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+  }
+  .photo-modal-content img {
+    display: block;
+    max-width: 90vw;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    border-radius: var(--radius);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  }
+  .photo-modal-close {
+    position: absolute;
+    top: -0.9rem;
+    right: -0.9rem;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 999px;
+    border: none;
+    background: var(--bg-card);
+    color: var(--text);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  }
+</style>

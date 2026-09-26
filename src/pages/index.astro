@@ -2,7 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SearchBox from '../components/SearchBox.astro';
 import Icon from '../components/Icon.astro';
-import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory } from '../lib/data';
+import PromoBanner from '../components/PromoBanner.astro';
+import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory, topSpotSitewide, featuredSitewide } from '../lib/data';
 import { CATEGORY_GROUPS } from '../lib/categoryGroups';
 import site from '../site';
 
@@ -12,6 +13,10 @@ const groupCount = (group: (typeof CATEGORY_GROUPS)[number]) =>
     .reduce((sum, c) => sum + businessesInCategory(c.id).length, 0);
 
 const topSuburbs = [...suburbs].sort((a, b) => businessesInSuburb(b.id).length - businessesInSuburb(a.id).length).slice(0, 8);
+// Highest-visibility real estate on the site — capped so it never grows
+// into its own scroll-length section as more businesses subscribe.
+const topSpot = topSpotSitewide().slice(0, 3);
+const featured = featuredSitewide().slice(0, 6);
 
 const FEATURES = [
   { label: 'Find Businesses', path: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.5-4.5"/>' },
@@ -74,6 +79,16 @@ const jsonLd = [
     </svg>
     <span class="watermark" aria-hidden="true">© {site.siteName}</span>
   </section>
+
+  {(topSpot.length > 0 || featured.length > 0) && (
+    <section class="container" style="padding-top: 2.5rem;">
+      <div class="section-head">
+        <h2>Featured businesses</h2>
+      </div>
+      <PromoBanner businesses={topSpot} kind="top-spot" />
+      <PromoBanner businesses={featured} kind="featured" />
+    </section>
+  )}
 
   <section class="container" style="padding-top: 2.5rem; padding-bottom: 2.5rem;">
     <div class="section-head">

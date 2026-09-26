@@ -17,13 +17,21 @@ interface Props {
    *  really the same non-content form, which wastes crawl budget on
    *  thousands of near-duplicate URLs. */
   noindex?: boolean;
+  /** Verified Plus (R99) and up never load the ads script on their own
+   *  business page — see the Premium Listings plan. */
+  noAds?: boolean;
+  /** Extra Google Fonts a Premium business's custom-block styling actually
+   *  uses (see src/lib/blockRenderer.ts's FONT_STYLES) — loaded as a
+   *  second, separate <link> so every other page keeps requesting just the
+   *  one stable Nunito URL. */
+  extraFonts?: string;
   /** Renders `site.impactSiteVerification` as a meta tag when set — only
    *  ever passed `true` from the homepage, per Impact.com's own
    *  instructions that this tag is homepage-only, not site-wide. */
   impactVerification?: boolean;
 }
 
-const { title, description, canonical, titleOverride, noindex, impactVerification } = Astro.props;
+const { title, description, canonical, titleOverride, noindex, noAds, extraFonts, impactVerification } = Astro.props;
 const fullTitle = titleOverride ?? `${title} | ${site.siteName}`;
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
 const canonicalUrl = canonical ?? (siteUrl + Astro.url.pathname);
@@ -107,7 +115,7 @@ const themeCss = `:root {
     <!-- AdSense loader. Auto ads (if enabled) are controlled from the AdSense
          dashboard per-site; no <ins class="adsbygoogle"> units are placed in
          markup here. Only rendered once this site has a publisher ID. -->
-    {site.adsensePublisherId && (
+    {site.adsensePublisherId && !noAds && (
       <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${site.adsensePublisherId}`} crossorigin="anonymous"></script>
     )}
     <title>{fullTitle}</title>
@@ -134,6 +142,7 @@ const themeCss = `:root {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    {extraFonts && <link href={`https://fonts.googleapis.com/css2?${extraFonts}&display=swap`} rel="stylesheet" />}
 
     <!-- Square, multiple-of-48px icons — Google Search requires a square
          favicon to show one at all instead of a generic globe; logo-icon.png

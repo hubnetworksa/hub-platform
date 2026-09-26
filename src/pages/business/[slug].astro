@@ -2,8 +2,9 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls } from '../../lib/data';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, customBlocksFor, pageColorsFor, TIER_VERIFIED, TIER_VERIFIED_PLUS, TIER_FEATURED, TIER_PREMIUM } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
+import { renderCustomBlocksHtml } from '../../lib/blockRenderer';
 import { synonymsFor, locationSynonymsFor } from '../../lib/categorySynonyms';
 import { schemaTypeFor } from '../../lib/categorySchemaTypes';
 import Icon from '../../components/Icon.astro';
@@ -29,12 +30,59 @@ const SOURCE_LABELS: Record<string, string> = {
   // readable by automated fetch), not a form submission.
   'owner-provided-contact-details': 'Contact details confirmed directly with the site owner.',
 };
-// The actual URL (often the business's own website) stays internal for
-// provenance/compliance, but isn't given away as a free clickable link —
-// that's reserved for the future premium-listing feature. Shown as a
-// plain "Verified" label instead.
+// The actual URL (often the business's own website) only becomes a
+// clickable link once the owner is on a paid tier (Verified, R50, and up)
+// — see the Premium Listings plan. Below that it's still verified
+// internally for provenance/compliance, just shown as a plain label.
 const hasVerifiedUrlSource = sourceUrls.some((u) => /^https?:\/\//.test(u));
 const labelSources = sourceUrls.filter((u) => !/^https?:\/\//.test(u)).map((u) => SOURCE_LABELS[u] ?? u);
+const isPaidTier = business.subscription_tier >= TIER_VERIFIED && business.subscription_status === 'active';
+const showClickableWebsite = isPaidTier && !!business.website;
+const noAds = business.subscription_tier >= TIER_VERIFIED_PLUS && business.subscription_status === 'active';
+const photos = photosFor(business);
+// Template choice only takes effect at Featured and up — a lapsed/free
+// business always falls back to Classic regardless of what's stored.
+const canChooseTemplate = business.subscription_tier >= TIER_FEATURED && business.subscription_status === 'active';
+const template = canChooseTemplate ? business.template_id : 'classic';
+const isPremium = business.subscription_tier >= TIER_PREMIUM && business.subscription_status === 'active';
+// Premium businesses lose the automatic photo gallery entirely (guarded
+// out above) — their photos only appear where they place a Photo, Banner,
+// or Image+Text section. The page's fixed info (name, tags, description,
+// address, contact actions, trading hours) never moves and isn't
+// restyled — an owner can only append sections below it and set the
+// page's overall colors, edited in place on this very page (see the
+// edit-mode script below) — not a separate preview.
+const customBlocks = isPremium ? customBlocksFor(business) : [];
+const mainBlocks = customBlocks.filter((b) => b.zone !== 'left' && b.zone !== 'right' && b.zone !== 'bottom');
+const leftBlocks = customBlocks.filter((b) => b.zone === 'left');
+const rightBlocks = customBlocks.filter((b) => b.zone === 'right');
+const bottomBlocks = customBlocks.filter((b) => b.zone === 'bottom');
+const customBlocksHtml = renderCustomBlocksHtml(mainBlocks);
+const leftBlocksHtml = renderCustomBlocksHtml(leftBlocks);
+const rightBlocksHtml = renderCustomBlocksHtml(rightBlocks);
+const bottomBlocksHtml = renderCustomBlocksHtml(bottomBlocks);
+// Sidebars only exist in the markup at all once an owner has actually put
+// a section in one — otherwise the page is just the plain single centered
+// column it's always been, byte-for-byte.
+const hasSidebars = leftBlocks.length > 0 || rightBlocks.length > 0;
+
+// Owner-chosen page colors (Premium only) — applied as CSS custom property
+// overrides on this page's own content wrapper only, so the shared site
+// header/nav/footer (outside this wrapper, in BaseLayout) always stay the
+// site's own branding regardless of what an owner picks for their page.
+function hexToRgbTriple(hex: string): string {
+  const clean = hex.replace('#', '');
+  const full = clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean;
+  const n = parseInt(full, 16);
+  return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
+}
+
+const pageColors = isPremium ? pageColorsFor(business) : {};
+const pageColorVars = [
+  pageColors.primary ? `--accent:${pageColors.primary};--accent-rgb:${hexToRgbTriple(pageColors.primary)}` : '',
+  pageColors.secondary ? `--navy:${pageColors.secondary}` : '',
+  pageColors.background ? `--bg:${pageColors.background};--bg-card:${pageColors.background}` : '',
+].filter(Boolean).join(';');
 // Only rendered when a real link exists — see shoppingCenterFor.
 const center = shoppingCenterFor(business);
 
@@ -87,10 +135,18 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={business.name} description={business.description.slice(0, 155)} canonical={canonicalUrl}>
+<BaseLayout title={business.name} description={business.description.slice(0, 155)} canonical={canonicalUrl} noAds={noAds}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-  <section class="container" style="padding-top: 2rem; padding-bottom: 2rem; max-width: 720px;">
+  <div id="page-content" style={pageColorVars || null}>
+  <div id="page-sidebar-layout" class:list={['page-sidebar-layout', { 'has-sidebars': hasSidebars }]}>
+  {isPremium && (
+    <aside class="page-sidebar page-sidebar-left" id="sidebar-left-mount" hidden={leftBlocks.length === 0}>
+      <Fragment set:html={leftBlocksHtml} />
+    </aside>
+  )}
+  <div class="page-main-column">
+  <section class="container" style="padding-top: 2rem; padding-bottom: 0; max-width: 720px;">
     <Breadcrumbs
       items={[
         ...(suburb ? [{ label: suburb.name, href: `/suburb/${suburb.slug}/` }] : []),
@@ -98,9 +154,21 @@ const jsonLd = {
         { label: business.name },
       ]}
     />
+    {!isPremium && template === 'gallery' && photos.length > 0 && (
+      <div class="hero-gallery">
+        {photos.map((photo) => (
+          <img src={`/media/${photo.r2_key}`} alt={photo.caption ?? business.name} loading="lazy" width="700" height="360" />
+        ))}
+      </div>
+    )}
     <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">{business.name}</h1>
 
     <div class="tags">
+      {isPaidTier && (
+        <span class="badge tier-badge">
+          <Icon path={ICONS.check} size={13} /> Verified
+        </span>
+      )}
       {cats.map((c) => {
         const g = groupForCategory(c.slug);
         return (
@@ -113,6 +181,50 @@ const jsonLd = {
     </div>
 
     <p style="margin-top: 1.25rem;">{business.description}</p>
+
+    {!isPremium && template !== 'gallery' && photos.length > 0 && (
+      <div class:list={['photo-gallery', { carousel: photos.length > 5 }]}>
+        {photos.map((photo) => (
+          <img
+            src={`/media/${photo.r2_key}`}
+            alt={photo.caption ?? business.name}
+            loading="lazy"
+            width="320"
+            height="220"
+          />
+        ))}
+      </div>
+    )}
+  </section>
+
+  {isPremium && (
+    <section class="container" style="padding-top: 0.5rem; padding-bottom: 0.5rem; max-width: 720px;">
+      <div id="custom-blocks-mount">
+        <Fragment set:html={customBlocksHtml} />
+      </div>
+        <button type="button" id="edit-page-toggle" class="edit-page-toggle" hidden>
+          Edit this page
+        </button>
+        <div id="design-bar" class="design-bar" hidden>
+          <div class="design-bar-row">
+            <strong>Editing your page</strong>
+            <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
+            <span class="design-bar-hint">Your business name, description, address, contact buttons, and hours always stay exactly where they are — only the sections you add here can be dragged to reorder, placed beside each other, resized from any edge, or edited by clicking their text. Drag a section straight into a sidebar to move it there, or use its "Position" option to send it to a sidebar or below Trading Hours.</span>
+          </div>
+          <div class="design-bar-row">
+            <label>Primary <input type="color" id="color-primary" value="#2563eb" /></label>
+            <label>Secondary <input type="color" id="color-secondary" value="#0f172a" /></label>
+            <label>Background <input type="color" id="color-background" value="#ffffff" /></label>
+            <button type="button" id="colors-reset-btn" class="btn btn-outline btn-sm">Reset colors</button>
+            <span id="design-status" role="status"></span>
+            <button type="button" id="publish-btn" class="btn btn-primary btn-sm" hidden>Publish changes</button>
+            <button type="button" id="revert-btn" class="btn btn-outline btn-sm" hidden>Revert to published</button>
+          </div>
+        </div>
+    </section>
+  )}
+
+  <section class="container" style="padding-top: 0; padding-bottom: 2rem; max-width: 720px;">
     {center && (
       <a href={`/shopping-center/${center.slug}/`} class="located-at">
         <Icon path={ICONS.building} size={15} /> Located at {center.name}
@@ -121,6 +233,11 @@ const jsonLd = {
     {business.address && <p class="address">{business.address}{suburb && `, ${suburb.name}`}</p>}
 
     <div class="actions">
+      {showClickableWebsite && (
+        <a href={business.website!} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+          <Icon path={ICONS.pin} size={16} /> Visit website
+        </a>
+      )}
       {business.phone && (
         <a href={`tel:${business.phone}`} class="btn btn-outline">
           <Icon path={ICONS.phone} size={16} /> {business.phone}
@@ -157,6 +274,12 @@ const jsonLd = {
         <p class="hours-text hours-unavailable">Trading hours not available</p>
       )}
     </div>
+
+    {isPremium && (
+      <div id="bottom-blocks-mount" hidden={bottomBlocks.length === 0}>
+        <Fragment set:html={bottomBlocksHtml} />
+      </div>
+    )}
 
     {!business.owner_user_id && (
       <div class="claim-callout">
@@ -195,9 +318,602 @@ const jsonLd = {
       </a>
     </div>
   </section>
+  </div>
+  {isPremium && (
+    <aside class="page-sidebar page-sidebar-right" id="sidebar-right-mount" hidden={rightBlocks.length === 0}>
+      <Fragment set:html={rightBlocksHtml} />
+    </aside>
+  )}
+  </div>
+  </div>
 </BaseLayout>
 
+{isPremium && (
+  <script define:vars={{ businessId: business.id }}>
+    // NOTE: define:vars forces this whole script to stay inline,
+    // unprocessed by Astro/Vite — plain browser JS only, no TypeScript
+    // syntax, or it throws a real SyntaxError in browsers.
+    (async function () {
+      const toggleBtn = document.getElementById('edit-page-toggle');
+      if (!toggleBtn) return;
+
+      const designBar = document.getElementById('design-bar');
+      const mount = document.getElementById('custom-blocks-mount');
+      const pageContent = document.getElementById('page-content');
+      const addBlockBtn = document.getElementById('add-block-btn');
+      const publishBtn = document.getElementById('publish-btn');
+      const revertBtn = document.getElementById('revert-btn');
+      const designStatus = document.getElementById('design-status');
+      const colorsResetBtn = document.getElementById('colors-reset-btn');
+
+      const BLOCK_TITLES = {
+        banner: 'Banner', 'side-image': 'Image + Text', story: 'Our Story', specials: 'Specials & Promotions',
+        team: 'Team', gallery: 'Gallery', photo: 'Photo', testimonial: 'Testimonial', cta: 'Call to Action', divider: 'Divider',
+      };
+      const BLOCK_TYPE_OPTIONS = [
+        ['banner', 'Banner'], ['side-image', 'Image + Text'], ['story', 'Our Story'], ['specials', 'Specials & Promotions'],
+        ['team', 'Team'], ['gallery', 'Gallery'], ['photo', 'Photo'], ['testimonial', 'Testimonial'], ['cta', 'Call to Action'], ['divider', 'Divider'],
+      ];
+      const SIZED_TYPES = new Set(['banner', 'photo', 'side-image']);
+      const MIN_BLOCK_HEIGHT = 100;
+      const MAX_BLOCK_HEIGHT = 480;
+      const MIN_COL_SPAN = 3;
+      const MAX_COL_SPAN = 12;
+      const GRID_CELL_HEIGHT = 20;
+      const GRID_MARGIN = 8;
+
+      let blocks = [];
+      let liveBlocks = [];
+      let pageColors = {};
+      let livePageColors = {};
+      let hasUnpublishedChanges = false;
+      let draftUpdatedAt = null;
+      let photos = [];
+      let editing = false;
+      let zoneGrids = { main: null, left: null, right: null, bottom: null };
+      let gridStackLoading = null;
+
+      function escapeHtml(s) {
+        return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      }
+
+      function hexToRgbTriple(hex) {
+        const clean = hex.replace('#', '');
+        const full = clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean;
+        const n = parseInt(full, 16);
+        return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
+      }
+
+      function applyPageColorsToPage() {
+        const decls = [];
+        if (pageColors.primary) decls.push(`--accent:${pageColors.primary}`, `--accent-rgb:${hexToRgbTriple(pageColors.primary)}`);
+        if (pageColors.secondary) decls.push(`--navy:${pageColors.secondary}`);
+        if (pageColors.background) decls.push(`--bg:${pageColors.background}`, `--bg-card:${pageColors.background}`);
+        // #page-content is a plain wrapper div around all three of this
+        // page's <section>s (narrow reading column, wide sections area,
+        // narrow reading column again) — it carries no layout of its own,
+        // only these custom properties, which every section inherits.
+        pageContent.style.cssText = decls.join(';');
+      }
+
+      function loadGridStack() {
+        if (window.GridStack) return Promise.resolve();
+        if (gridStackLoading) return gridStackLoading;
+        gridStackLoading = new Promise((resolve, reject) => {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = 'https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.5.1/gridstack.min.css';
+          document.head.appendChild(link);
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.5.1/gridstack-all.min.js';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+        return gridStackLoading;
+      }
+
+      function photoPickerHtml(b) {
+        const options = photos.map((p) => `<option value="${p.r2_key}" ${b.imageKey === p.r2_key ? 'selected' : ''}>${p.r2_key.split('/').pop()}</option>`).join('');
+        return `<select class="block-image" title="Choose photo"><option value="">— No photo —</option>${options}</select>`;
+      }
+
+      const ZONE_OPTIONS = [
+        ['', 'Main content'],
+        ['left', 'Left sidebar'],
+        ['right', 'Right sidebar'],
+        ['bottom', 'Below hours'],
+      ];
+
+      function blockToolbarHtml(b, dragHandle) {
+        const sidePicker = b.type === 'side-image'
+          ? `<select class="block-side" title="Photo side">
+              <option value="left" ${b.side !== 'right' ? 'selected' : ''}>Photo left</option>
+              <option value="right" ${b.side === 'right' ? 'selected' : ''}>Photo right</option>
+            </select>`
+          : '';
+        const photoPicker = SIZED_TYPES.has(b.type) ? photoPickerHtml(b) : '';
+        // Dragging a section straight into a sidebar (or back into the
+        // main column) is the primary way to move it there — see
+        // acceptWidgets/resyncZonesFromDom below. This dropdown is just a
+        // fallback for anyone who'd rather pick a position than drag.
+        const zonePicker = `<select class="block-zone" title="Position">
+          ${ZONE_OPTIONS.map(([val, label]) => `<option value="${val}" ${(b.zone || '') === val ? 'selected' : ''}>${label}</option>`).join('')}
+        </select>`;
+        return `<div class="block-toolbar">
+          ${dragHandle ? '<span class="block-drag-handle" title="Drag to reorder">⠿</span>' : ''}
+          <select class="block-type" title="Section type">
+            ${BLOCK_TYPE_OPTIONS.map(([val, label]) => `<option value="${val}" ${b.type === val ? 'selected' : ''}>${label}</option>`).join('')}
+          </select>
+          ${sidePicker}
+          ${photoPicker}
+          ${zonePicker}
+          <button type="button" class="remove-block" title="Remove section" aria-label="Remove section">✕</button>
+        </div>`;
+      }
+
+      // The actual section markup — identical to
+      // src/lib/blockRenderer.ts's renderOneBlock plus the
+      // contenteditable fields this page's static build never needs
+      // (kept in sync by hand, same reason customize.astro's copy used
+      // to be) — shared by both the main-content GridStack canvas and a
+      // sidebar's plain list, since a section looks the same wherever
+      // it's placed.
+      function renderBlockContent(b) {
+        const title = escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More');
+        const body = escapeHtml(b.body || '');
+
+        switch (b.type) {
+          case 'banner':
+            return `
+              <div class="custom-block custom-block-banner">
+                ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one above</div>'}
+                <div class="banner-overlay">
+                  <h2 contenteditable="true" data-field="title">${title}</h2>
+                  <p contenteditable="true" data-field="body" data-placeholder="Optional short line (click to add)">${body}</p>
+                </div>
+              </div>`;
+          case 'side-image': {
+            const side = b.side === 'right' ? ' side-right' : '';
+            return `
+              <div class="custom-block custom-block-side-image${side}">
+                ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one above</div>'}
+                <div class="side-image-text">
+                  <h3 contenteditable="true" data-field="title">${title}</h3>
+                  <p contenteditable="true" data-field="body" data-multiline="true" data-placeholder="Section text">${body}</p>
+                </div>
+              </div>`;
+          }
+          case 'photo':
+            return `
+              <div class="custom-block custom-block-photo">
+                ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one above</div>'}
+                <p class="photo-caption" contenteditable="true" data-field="title" data-placeholder="Add a caption (optional)">${b.title ? title : ''}</p>
+              </div>`;
+          case 'divider':
+            return `<div class="custom-block custom-block-divider"><hr /></div>`;
+          case 'cta':
+            return `
+              <div class="custom-block custom-block-cta">
+                <p class="cta-text" contenteditable="true" data-field="title">${title}</p>
+                <span class="btn btn-primary cta-btn" contenteditable="true" data-field="body">${body || 'Get in touch'}</span>
+              </div>`;
+          case 'testimonial':
+            return `
+              <div class="custom-block custom-block-testimonial">
+                <p class="testimonial-quote">&ldquo;<span contenteditable="true" data-field="body" data-multiline="true" data-placeholder="Quote text">${body}</span>&rdquo;</p>
+                <p class="testimonial-author">— <span contenteditable="true" data-field="title" data-placeholder="Author name">${b.title ? escapeHtml(b.title) : ''}</span></p>
+              </div>`;
+          default:
+            return `
+              <div class="custom-block">
+                <h2 contenteditable="true" data-field="title">${title}</h2>
+                <p contenteditable="true" data-field="body" data-multiline="true" data-placeholder="Section text">${body}</p>
+              </div>`;
+        }
+      }
+
+      // One item's markup is identical in every zone — main and both
+      // sidebars are all the same 12-column grid, so width/resize work
+      // the same everywhere.
+      function renderZoneItem(b, i) {
+        const toolbar = blockToolbarHtml(b, true);
+        return `
+          <div class="grid-stack-item" data-i="${i}" gs-auto-position="true" gs-w="${b.colSpan || MAX_COL_SPAN}" gs-h="10" gs-min-w="${MIN_COL_SPAN}" gs-max-w="${MAX_COL_SPAN}">
+            <div class="grid-stack-item-content editable-block">
+              ${toolbar}
+              ${renderBlockContent(b)}
+            </div>
+          </div>`;
+      }
+
+      // Shared by the main canvas and both sidebars — the type/image/
+      // side/zone/remove controls work the same everywhere.
+      function wireBlockControls(root) {
+        root.querySelectorAll('[data-i]').forEach((item) => {
+          item.querySelector('.block-type')?.addEventListener('change', (e) => {
+            blocks[Number(item.dataset.i)].type = e.target.value;
+            renderBlocks();
+            scheduleAutosave();
+          });
+          item.querySelector('.block-image')?.addEventListener('change', (e) => {
+            blocks[Number(item.dataset.i)].imageKey = e.target.value || undefined;
+            renderBlocks();
+            scheduleAutosave();
+          });
+          item.querySelector('.block-side')?.addEventListener('change', (e) => {
+            blocks[Number(item.dataset.i)].side = e.target.value;
+            renderBlocks();
+            scheduleAutosave();
+          });
+          item.querySelector('.block-zone')?.addEventListener('change', (e) => {
+            const b = blocks[Number(item.dataset.i)];
+            if (e.target.value) b.zone = e.target.value;
+            else delete b.zone;
+            renderBlocks();
+            scheduleAutosave();
+          });
+          item.querySelector('.remove-block')?.addEventListener('click', () => {
+            blocks.splice(Number(item.dataset.i), 1);
+            renderBlocks();
+            scheduleAutosave();
+          });
+        });
+      }
+
+      // One GridStack canvas per zone — main and both sidebars all use
+      // the exact same 12-column mechanics (drag to reorder/place side
+      // by side, resize any edge). A sidebar's canvas is just narrower,
+      // so the same colSpan values pack tighter within it — two
+      // half-width (colSpan 6) sections sit side by side in a sidebar
+      // exactly the way they would in the main column, just at the
+      // sidebar's own width. disableOneColumnMode matters more here
+      // than in main: a sidebar is often narrower than GridStack's
+      // default one-column-mode breakpoint, and side-by-side placement
+      // is the whole point.
+      function initZoneGrid(zone, mountEl, isMain) {
+        const zoneBlocks = blocks.filter((b) => (isMain ? !b.zone : b.zone === zone));
+        // A sidebar's hide target is its <aside>; the bottom zone's mount
+        // element has no such wrapper, so it hides itself directly.
+        if (!isMain) (mountEl.closest('.page-sidebar') || mountEl).hidden = zoneBlocks.length === 0;
+        mountEl.innerHTML = `<div class="grid-stack" id="${zone}-blocks-grid">${zoneBlocks
+          .map((b) => renderZoneItem(b, blocks.indexOf(b)))
+          .join('')}</div>`;
+
+        const container = document.getElementById(`${zone}-blocks-grid`);
+        const grid = GridStack.init(
+          {
+            column: MAX_COL_SPAN,
+            float: false,
+            cellHeight: GRID_CELL_HEIGHT,
+            margin: GRID_MARGIN,
+            resizable: { handles: 'e, se, s, sw, w', autoHide: false },
+            draggable: { cancel: 'button, select, input, textarea, option, [contenteditable]' },
+            disableOneColumnMode: true,
+            // Lets a section be dragged straight out of this grid and
+            // into one of the other two (main/left/right), and accept
+            // one dragged in from them — GridStack's own built-in
+            // multi-grid drag support (see gridstack.js's own
+            // demo/two.html), not anything custom-built. The "Position"
+            // dropdown in each section's toolbar still works too, as a
+            // reliable fallback for anyone who'd rather not drag.
+            acceptWidgets: true,
+          },
+          container
+        );
+        zoneGrids[zone] = grid;
+
+        wireBlockControls(container);
+
+        // Give each row exactly the height it needs (or, if it's been
+        // dragged taller than that, exactly the height it was set to) —
+        // same fix as customize.astro's now-removed block editor used:
+        // measure, then set the row count to match, so nothing clips or
+        // leaves dead space below it.
+        container.querySelectorAll('.grid-stack-item').forEach((item) => {
+          const idx = Number(item.dataset.i);
+          const b = blocks[idx];
+          const contentEl = item.querySelector('.grid-stack-item-content');
+          const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
+          const toRows = (px) => Math.ceil((px + GRID_MARGIN * 2) / GRID_CELL_HEIGHT);
+          // GridStack's update() resets a node's width when minW/maxW are
+          // given without an explicit w alongside them — which then
+          // silently breaks two side-by-side sections' packing (the
+          // second one gets shoved onto its own row). Always pass the
+          // item's own current width back so this pass only ever changes
+          // height, never width.
+          const widthBounds = { w: item.gridstackNode.w, minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN };
+          if (b.heightPx) {
+            grid.update(item, { h: toRows(toolbarH + b.heightPx), minH: toRows(toolbarH + MIN_BLOCK_HEIGHT), maxH: toRows(toolbarH + MAX_BLOCK_HEIGHT), ...widthBounds });
+          } else {
+            grid.update(item, { h: toRows(contentEl.scrollHeight), ...widthBounds });
+          }
+        });
+
+        // 'added'/'removed' fire on the two grids involved the moment a
+        // section is dragged from one zone straight into another;
+        // 'change' fires for a plain reorder/resize within the same
+        // zone. All three route to the one shared resync below, which
+        // re-reads every zone's actual DOM order/membership from
+        // scratch rather than trying to patch just whichever grid fired —
+        // simpler and correct either way, since a cross-zone drag always
+        // changes two zones at once.
+        grid.on('added removed change', resyncZonesFromDom);
+      }
+
+      function resyncZonesFromDom() {
+        const containers = {
+          main: document.getElementById('main-blocks-grid'),
+          left: document.getElementById('left-blocks-grid'),
+          right: document.getElementById('right-blocks-grid'),
+          bottom: document.getElementById('bottom-blocks-grid'),
+        };
+        const ordered = [];
+        ['main', 'left', 'right', 'bottom'].forEach((zone) => {
+          const container = containers[zone];
+          if (!container) return;
+          const items = Array.from(container.querySelectorAll('.grid-stack-item')).sort((a, b) => {
+            const na = a.gridstackNode, nb = b.gridstackNode;
+            if (!na || !nb) return 0;
+            return na.y - nb.y || na.x - nb.x;
+          });
+          items.forEach((item) => ordered.push({ item, zone }));
+        });
+
+        blocks = ordered.map(({ item, zone }) => {
+          const b = blocks[Number(item.dataset.i)];
+          const node = item.gridstackNode;
+          if (!b || !node) return b;
+          if (zone === 'main') delete b.zone; else b.zone = zone;
+          // Every zone is the same 12-column grid, so a section crossing
+          // between them keeps whatever width it already had (clamped by
+          // nodeBoundFix, same as within a single zone) rather than
+          // needing any zone-specific override.
+          b.colSpan = node.w;
+          const contentEl = item.querySelector('.grid-stack-item-content');
+          const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
+          const naturalH = contentEl.scrollHeight;
+          const allocatedH = contentEl.clientHeight;
+          if (allocatedH > naturalH + 2) {
+            // More room than the content needs — the user dragged this
+            // taller on purpose, so remember exactly how much.
+            b.heightPx = Math.round(Math.min(MAX_BLOCK_HEIGHT, Math.max(MIN_BLOCK_HEIGHT, allocatedH - toolbarH)));
+          } else {
+            // Still auto-sized (or a width change made the content need
+            // more room than it currently has) — clear any stored height
+            // and grow the row to fit, never shrink under it.
+            delete b.heightPx;
+            const neededRows = Math.ceil((naturalH + GRID_MARGIN * 2) / GRID_CELL_HEIGHT);
+            if (node.h < neededRows) zoneGrids[zone]?.update(item, { h: neededRows });
+          }
+          return b;
+        }).filter(Boolean);
+        ordered.forEach(({ item }, newIndex) => { item.dataset.i = String(newIndex); });
+
+        document.getElementById('sidebar-left-mount').closest('.page-sidebar').hidden = !blocks.some((b) => b.zone === 'left');
+        document.getElementById('sidebar-right-mount').closest('.page-sidebar').hidden = !blocks.some((b) => b.zone === 'right');
+        document.getElementById('bottom-blocks-mount').hidden = !blocks.some((b) => b.zone === 'bottom');
+        document.getElementById('page-sidebar-layout').classList.toggle(
+          'has-sidebars',
+          blocks.some((b) => b.zone === 'left') || blocks.some((b) => b.zone === 'right')
+        );
+        scheduleAutosave();
+      }
+
+      function destroyZoneGrids() {
+        ['main', 'left', 'right', 'bottom'].forEach((zone) => {
+          if (zoneGrids[zone]) { zoneGrids[zone].destroy(false); zoneGrids[zone] = null; }
+        });
+      }
+
+      function renderBlocks() {
+        destroyZoneGrids();
+        initZoneGrid('main', mount, true);
+        initZoneGrid('left', document.getElementById('sidebar-left-mount'), false);
+        initZoneGrid('right', document.getElementById('sidebar-right-mount'), false);
+        initZoneGrid('bottom', document.getElementById('bottom-blocks-mount'), false);
+        document.getElementById('page-sidebar-layout').classList.toggle(
+          'has-sidebars',
+          blocks.some((b) => b.zone === 'left') || blocks.some((b) => b.zone === 'right')
+        );
+      }
+
+      // Attached once, on the element that contains the main GridStack
+      // canvas *and* both sidebar lists (#page-sidebar-layout), rather
+      // than per-container — a sidebar's own mount element is never
+      // destroyed/recreated the way the GridStack canvas is on every
+      // renderBlocks(), so attaching this inside renderBlocks() would
+      // otherwise stack up duplicate listeners on it every time. [data-i]
+      // identifies a block the same way in every container (see
+      // renderZoneItem), so one delegated pair of listeners covers all
+      // of them.
+      const layoutRoot = document.getElementById('page-sidebar-layout');
+      layoutRoot.addEventListener('input', (e) => {
+        const fieldEl = e.target.closest('[data-field]');
+        if (!fieldEl) return;
+        if (fieldEl.innerText.trim() === '') fieldEl.innerHTML = '';
+        const item = fieldEl.closest('[data-i]');
+        if (!item) return;
+        blocks[Number(item.dataset.i)][fieldEl.dataset.field] = fieldEl.innerText;
+        scheduleAutosave();
+      });
+      layoutRoot.addEventListener('keydown', (e) => {
+        const fieldEl = e.target.closest('[data-field]');
+        if (fieldEl && e.key === 'Enter' && fieldEl.dataset.multiline !== 'true') {
+          e.preventDefault();
+          fieldEl.blur();
+        }
+      });
+
+      let autosaveTimer;
+      function scheduleAutosave() {
+        hasUnpublishedChanges = true;
+        updateDesignStatus();
+        window.clearTimeout(autosaveTimer);
+        autosaveTimer = window.setTimeout(doAutosave, 900);
+      }
+
+      async function doAutosave() {
+        designStatus.textContent = 'Saving…';
+        const res = await fetch('/api/business-design', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId, action: 'autosave', blocks, pageColors }),
+        });
+        const result = await res.json();
+        if (result.ok) {
+          draftUpdatedAt = result.draftUpdatedAt;
+        } else {
+          designStatus.textContent = result.error || 'Could not save your draft.';
+          return;
+        }
+        updateDesignStatus();
+      }
+
+      function updateDesignStatus() {
+        publishBtn.hidden = !hasUnpublishedChanges;
+        revertBtn.hidden = !hasUnpublishedChanges;
+        designStatus.textContent = hasUnpublishedChanges
+          ? (draftUpdatedAt ? `Draft saved ${new Date(draftUpdatedAt).toLocaleTimeString()} — not published yet.` : 'Draft saved — not published yet.')
+          : 'Everything here is published and live.';
+      }
+
+      const res = await fetch(`/api/business-design?businessId=${businessId}`);
+      if (!res.ok) return;
+      const design = await res.json();
+      if (!design.ok || !design.canUseBuilder) return;
+
+      const photosRes = await fetch(`/api/business-photos?businessId=${businessId}`);
+      if (photosRes.ok) {
+        const photoData = await photosRes.json();
+        if (photoData.ok) photos = photoData.photos;
+      }
+
+      blocks = Array.isArray(design.blocks) ? design.blocks : [];
+      liveBlocks = Array.isArray(design.liveBlocks) ? design.liveBlocks : [];
+      pageColors = design.pageColors && typeof design.pageColors === 'object' ? { ...design.pageColors } : {};
+      livePageColors = design.livePageColors && typeof design.livePageColors === 'object' ? { ...design.livePageColors } : {};
+      hasUnpublishedChanges = !!design.hasUnpublishedChanges;
+      draftUpdatedAt = design.draftUpdatedAt;
+      ['primary', 'secondary', 'background'].forEach((key) => {
+        if (pageColors[key]) document.getElementById(`color-${key}`).value = pageColors[key];
+      });
+
+      toggleBtn.addEventListener('click', async () => {
+        editing = !editing;
+        toggleBtn.textContent = editing ? 'Exit edit mode' : 'Edit this page';
+        document.body.classList.toggle('page-edit-mode', editing);
+        if (editing) {
+          await loadGridStack();
+          designBar.hidden = false;
+          applyPageColorsToPage();
+          renderBlocks();
+          updateDesignStatus();
+        } else {
+          destroyZoneGrids();
+          designBar.hidden = true;
+        }
+      });
+
+      addBlockBtn.addEventListener('click', () => {
+        if (blocks.length >= 10) return;
+        blocks.push({ type: 'story', title: '', body: '' });
+        renderBlocks();
+        scheduleAutosave();
+      });
+
+      ['primary', 'secondary', 'background'].forEach((key) => {
+        document.getElementById(`color-${key}`).addEventListener('input', (e) => {
+          pageColors[key] = e.target.value;
+          applyPageColorsToPage();
+          scheduleAutosave();
+        });
+      });
+      colorsResetBtn.addEventListener('click', () => {
+        pageColors = {};
+        document.getElementById('color-primary').value = '#2563eb';
+        document.getElementById('color-secondary').value = '#0f172a';
+        document.getElementById('color-background').value = '#ffffff';
+        applyPageColorsToPage();
+        scheduleAutosave();
+      });
+
+      publishBtn.addEventListener('click', async () => {
+        designStatus.textContent = 'Publishing…';
+        const pubRes = await fetch('/api/business-design', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId, action: 'publish' }),
+        });
+        const result = await pubRes.json();
+        if (result.ok) {
+          liveBlocks = JSON.parse(JSON.stringify(blocks));
+          livePageColors = { ...pageColors };
+          hasUnpublishedChanges = false;
+          updateDesignStatus();
+          designStatus.textContent = 'Published! This page will update for visitors shortly.';
+        } else {
+          designStatus.textContent = result.error || 'Could not publish.';
+        }
+      });
+
+      revertBtn.addEventListener('click', async () => {
+        if (!window.confirm('Discard your unpublished changes and go back to what is currently live?')) return;
+        await fetch('/api/business-design', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId, action: 'revert' }),
+        });
+        blocks = JSON.parse(JSON.stringify(liveBlocks));
+        pageColors = { ...livePageColors };
+        hasUnpublishedChanges = false;
+        draftUpdatedAt = null;
+        ['primary', 'secondary', 'background'].forEach((key) => {
+          document.getElementById(`color-${key}`).value = pageColors[key] || (key === 'background' ? '#ffffff' : key === 'secondary' ? '#0f172a' : '#2563eb');
+        });
+        applyPageColorsToPage();
+        renderBlocks();
+        updateDesignStatus();
+      });
+
+      toggleBtn.hidden = false;
+    })();
+  </script>
+)}
+
 <style>
+  /* Inert (a plain block, no layout of its own) until an owner has
+     actually placed a section in a sidebar — see hasSidebars. A business
+     that never touches this looks exactly as it always has: the page's
+     three sections just stack normally, one after another. */
+  .page-sidebar-layout.has-sidebars {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 720px minmax(0, 1fr);
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  .page-sidebar-layout.has-sidebars .page-main-column {
+    grid-column: 2;
+  }
+  .page-sidebar {
+    min-width: 0;
+    padding-top: 2rem;
+  }
+  .page-sidebar[hidden] {
+    display: none;
+  }
+  @media (max-width: 1100px) {
+    .page-sidebar-layout.has-sidebars {
+      grid-template-columns: 1fr;
+      max-width: 720px;
+    }
+    .page-sidebar-layout.has-sidebars .page-main-column,
+    .page-sidebar-layout.has-sidebars .page-sidebar {
+      grid-column: 1;
+    }
+  }
   .tags {
     display: flex;
     flex-wrap: wrap;
@@ -217,6 +933,439 @@ const jsonLd = {
   .address {
     color: var(--text-muted);
     margin: 0.5rem 0 0;
+  }
+  .tier-badge {
+    background: rgba(26, 143, 94, 0.12);
+    color: #1a8f5e;
+  }
+  .photo-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+  .photo-gallery.carousel {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(160px, 220px);
+    grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 0.4rem;
+  }
+  .photo-gallery img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    scroll-snap-align: start;
+  }
+  .photo-gallery.carousel img {
+    height: 150px;
+  }
+  .hero-gallery {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(240px, 1fr);
+    gap: 0.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin-bottom: 0.5rem;
+  }
+  .hero-gallery img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    scroll-snap-align: start;
+  }
+  /* Sections an owner adds always stack in order, below the fixed page
+     layout above — no free positioning, matching how simple this needs to
+     stay for owners who just want their page to look good. Everything in
+     this block is :global() because in edit mode (see the script above)
+     these same elements get rebuilt at runtime via innerHTML — Astro only
+     stamps its data-astro-cid scoping attribute onto elements present in
+     the static template at build time, so a scoped selector here would
+     stop matching the moment a section is added, reordered, or edited. */
+  :global(#custom-blocks-mount .custom-blocks),
+  :global(#custom-blocks-mount .grid-stack),
+  :global(#bottom-blocks-mount .custom-blocks),
+  :global(#bottom-blocks-mount .grid-stack) {
+    margin-top: 1.75rem;
+  }
+  /* 12-column grid so two sections can sit side by side — a section's own
+     --col-span (set by dragging its side resize handle in edit mode)
+     decides how many of the 12 columns it takes up, defaulting to all 12
+     (full width) when unset. grid-auto-flow just packs sections left to
+     right in their stored order, wrapping to a new row when one doesn't
+     fit — no explicit row/position bookkeeping needed. Applies in both
+     sidebars and the below-hours zone too, at whichever width that zone's
+     own column renders — same mechanics as the main column, just
+     narrower for a sidebar. */
+  :global(#custom-blocks-mount .custom-blocks),
+  :global(#sidebar-left-mount .custom-blocks),
+  :global(#sidebar-right-mount .custom-blocks),
+  :global(#bottom-blocks-mount .custom-blocks) {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.25rem;
+  }
+  @media (max-width: 640px) {
+    :global(#custom-blocks-mount .custom-blocks),
+    :global(#sidebar-left-mount .custom-blocks),
+    :global(#sidebar-right-mount .custom-blocks),
+    :global(#bottom-blocks-mount .custom-blocks) {
+      grid-template-columns: 1fr;
+    }
+    :global(.custom-block) {
+      grid-column: 1 / -1 !important;
+    }
+  }
+  :global(.custom-block) {
+    grid-column: span var(--col-span, 12);
+    min-width: 140px;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+  }
+  /* Same floor inside the editor, where GridStack (not CSS Grid) is what
+     actually controls each section's width — belt-and-braces against a
+     section ever rendering pathologically narrow (text wrapping one
+     letter per line) if a resize handle gets dragged near MIN_COL_SPAN
+     on a narrower viewport than the editor was built for. */
+  :global(.grid-stack-item) {
+    min-width: 140px;
+  }
+  :global(.custom-block h2) {
+    margin: 0 0 0.4rem;
+    font-size: 1rem;
+    color: var(--navy);
+  }
+  :global(.custom-block p) {
+    margin: 0;
+    font-size: 0.9rem;
+    white-space: pre-line;
+  }
+  :global(.placeholder-text) {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  :global(.custom-block-banner) {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+    min-height: 220px;
+    display: flex;
+    align-items: flex-end;
+  }
+  :global(.custom-block-banner img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+  :global(.custom-block-banner .banner-overlay) {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 1.5rem;
+    background: linear-gradient(0deg, rgba(15, 23, 42, 0.65) 0%, rgba(15, 23, 42, 0) 100%);
+    color: #fff;
+  }
+  :global(.custom-block-banner .banner-overlay h2) {
+    margin: 0 0 0.35rem;
+    color: #fff;
+    font-size: 1.4rem;
+  }
+  :global(.custom-block-banner .banner-overlay p) {
+    margin: 0;
+    opacity: 0.95;
+  }
+  :global(.custom-block-side-image) {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  :global(.custom-block-side-image.side-right) {
+    flex-direction: row-reverse;
+  }
+  :global(.custom-block-side-image img) {
+    flex: 1 1 220px;
+    max-width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+  :global(.custom-block-side-image .side-image-text) {
+    flex: 1 1 220px;
+  }
+  :global(.custom-block-side-image .side-image-text h3) {
+    margin: 0 0 0.4rem;
+    color: var(--navy);
+  }
+  :global(.custom-block-side-image .side-image-text p) {
+    margin: 0;
+    color: var(--text-muted);
+    white-space: pre-line;
+  }
+  :global(.custom-block-photo) {
+    padding: 0;
+    overflow: hidden;
+  }
+  :global(.custom-block-photo img) {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+  :global(.photo-placeholder) {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+  :global(.photo-caption) {
+    margin: 0;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  :global(.custom-block-cta) {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  :global(.cta-text) {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  :global(.cta-btn) {
+    display: inline-block;
+  }
+  :global(.custom-block-testimonial) {
+    text-align: center;
+    font-style: italic;
+  }
+  :global(.testimonial-quote) {
+    margin: 0 0 0.5rem;
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+  :global(.testimonial-author) {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    font-style: normal;
+    color: var(--text-muted);
+  }
+  :global(.custom-block-divider) {
+    background: none;
+    border: none;
+    padding: 0.5rem 0;
+  }
+  :global(.custom-block-divider hr) {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+  /* --- Owner edit mode (business.id-scoped script above) --- */
+  .edit-page-toggle {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 100;
+    padding: 0.7rem 1.1rem;
+    border: none;
+    border-radius: 999px;
+    background: var(--navy);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  }
+  .design-bar {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    margin-bottom: 1.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  }
+  .design-bar-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 0.4rem;
+  }
+  .design-bar-row:last-child {
+    margin-bottom: 0;
+  }
+  .design-bar-row label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .design-bar-row input[type='color'] {
+    width: 1.8rem;
+    height: 1.8rem;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: none;
+    cursor: pointer;
+  }
+  .design-bar-hint {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  #design-status {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+  /* Everything below is :global() for the same reason as the
+     .custom-block rules above — built at runtime, never present at
+     Astro's build time. */
+  :global(.editable-block) {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  :global(.editable-block > .custom-block) {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+  :global(.editable-block .custom-block-photo img),
+  :global(.editable-block .custom-block-side-image img) {
+    height: 100%;
+  }
+  :global(.editable-block .custom-block-side-image) {
+    align-items: stretch;
+  }
+  :global(.block-toolbar) {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem;
+    margin-bottom: 0.5rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  :global(.block-toolbar select) {
+    font: inherit;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.4rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+  }
+  :global(.block-drag-handle) {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    cursor: grab;
+    user-select: none;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  :global(.block-drag-handle:active) {
+    cursor: grabbing;
+  }
+  :global(.remove-block) {
+    flex: 0 0 auto;
+    margin-left: auto;
+    width: 1.8rem;
+    height: 1.8rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  :global([contenteditable='true']) {
+    outline: 2px dashed transparent;
+    border-radius: 4px;
+    transition: outline-color 0.15s;
+  }
+  :global([contenteditable='true']:hover),
+  :global([contenteditable='true']:focus) {
+    outline-color: var(--accent);
+  }
+  :global([contenteditable='true']:empty::before) {
+    content: attr(data-placeholder);
+    color: var(--text-muted);
+    font-style: italic;
+    opacity: 0.8;
+  }
+  /* GridStack's own resize handles — hidden by default until hover
+     (.ui-resizable-handle{display:none!important} in its stylesheet) and,
+     for the plain 'e'/'w'/'s' handles used here, otherwise invisible even
+     when shown (only the diagonal corners get a default icon). autoHide
+     is off in the JS init; these give every item's width (e/w) and
+     height (s) handle a real, always-visible grip bar instead — every
+     item on the page, core info and added sections alike, can be resized
+     in both directions. */
+  :global(.grid-stack-item > .ui-resizable-s) {
+    height: 16px !important;
+    bottom: -8px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  :global(.grid-stack-item > .ui-resizable-s::after) {
+    content: '';
+    width: 48px;
+    height: 5px;
+    border-radius: 3px;
+    background: var(--accent);
+    opacity: 0.7;
+  }
+  :global(.grid-stack-item > .ui-resizable-e),
+  :global(.grid-stack-item > .ui-resizable-w) {
+    width: 16px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  :global(.grid-stack-item > .ui-resizable-e) {
+    right: -8px !important;
+  }
+  :global(.grid-stack-item > .ui-resizable-w) {
+    left: -8px !important;
+  }
+  :global(.grid-stack-item > .ui-resizable-e::after),
+  :global(.grid-stack-item > .ui-resizable-w::after) {
+    content: '';
+    width: 5px;
+    height: 48px;
+    border-radius: 3px;
+    background: var(--accent);
+    opacity: 0.7;
   }
   .located-at {
     display: inline-flex;

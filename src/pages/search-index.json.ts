@@ -20,6 +20,11 @@ export const GET: APIRoute = () => {
       // find it, even though that word appears nowhere in the business's
       // own name or formal category label. See src/lib/categorySynonyms.ts.
       k: cat ? [...synonymsFor(cat.slug), ...locationSynonymsFor(cat.name, site.cityLabel)].join(' ') : '',
+      // Featured (3) / Premium (4) get a small on-site search boost — see
+      // the Premium Listings plan. Only applied among rows that already
+      // matched the query; never lets an irrelevant result outrank a
+      // relevant free listing.
+      t: b.subscription_status === 'active' ? b.subscription_tier : 0,
     };
   });
   return new Response(JSON.stringify(index), {

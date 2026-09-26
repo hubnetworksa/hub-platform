@@ -3,7 +3,8 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import BusinessCard from '../../../components/BusinessCard.astro';
 import PageBanner from '../../../components/PageBanner.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
-import { categories, businessesInCategory, suburbFor, type Business } from '../../../lib/data';
+import PromoBanner from '../../../components/PromoBanner.astro';
+import { categories, businessesInCategory, suburbFor, topSpotInCategory, featuredInCategory, type Business } from '../../../lib/data';
 import { groupForCategory } from '../../../lib/categoryGroups';
 import { synonymsFor, locationSynonymsFor } from '../../../lib/categorySynonyms';
 import { collectionPageJsonLd } from '../../../lib/seo';
@@ -25,6 +26,8 @@ for (const business of businesses) {
 }
 const suburbGroups = [...bySuburb.entries()].sort((a, b) => b[1].businesses.length - a[1].businesses.length);
 const group = groupForCategory(category.slug);
+const topSpot = topSpotInCategory(category.id);
+const featured = featuredInCategory(category.id);
 const isEmpty = businesses.length === 0;
 
 // Sibling categories in the same group — only ones with real listings, so
@@ -69,6 +72,8 @@ const jsonLd = isEmpty
   </PageBanner>
 
   <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
+    <PromoBanner businesses={topSpot} kind="top-spot" />
+    <PromoBanner businesses={featured} kind="featured" />
     {isEmpty ? (
       <div class="empty-category">
         <p>No {category.name.toLowerCase()} listed yet — this page will fill in as new businesses are added.</p>

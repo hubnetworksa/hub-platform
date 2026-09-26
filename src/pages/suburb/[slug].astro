@@ -3,7 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import BusinessCard from '../../components/BusinessCard.astro';
 import PageBanner from '../../components/PageBanner.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { suburbs, businessesInSuburb, categoriesFor, type Business } from '../../lib/data';
+import PromoBanner from '../../components/PromoBanner.astro';
+import { suburbs, businessesInSuburb, categoriesFor, topSpotInSuburb, featuredInSuburb, type Business } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
 import { groupForSuburb, regionLabel } from '../../site-content';
 import { synonymsFor, suburbSynonymsFor } from '../../lib/categorySynonyms';
@@ -27,6 +28,8 @@ for (const business of businesses) {
   byCategory.get(key)!.businesses.push(business);
 }
 const categoryGroups = [...byCategory.entries()].sort((a, b) => a[1].name.localeCompare(b[1].name));
+const topSpot = topSpotInSuburb(suburb.id);
+const featured = featuredInSuburb(suburb.id);
 
 const keywords = [
   ...new Set(
@@ -103,6 +106,8 @@ const collectionJsonLd = businesses.length === 0
   </section>
 
   <section class="container" style="padding-bottom: 3rem;">
+    <PromoBanner businesses={topSpot} kind="top-spot" />
+    <PromoBanner businesses={featured} kind="featured" />
     {businesses.length === 0 ? (
       <p style="color: var(--text-muted);">No businesses listed in {suburb.name} yet.</p>
     ) : (

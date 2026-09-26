@@ -21,14 +21,31 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (!businessId) return json({ ok: false, error: 'Missing business.' }, 400);
 
   const business = await db
-    .prepare('SELECT id, name, address, phone, website, description, hours, owner_user_id FROM businesses WHERE id = ?')
+    .prepare('SELECT id, slug, name, address, phone, website, description, hours, owner_user_id, subscription_tier, subscription_status, subscription_expires_at, template_id, custom_blocks, suburb_id FROM businesses WHERE id = ?')
     .bind(businessId)
-    .first<{ id: number; name: string; address: string | null; phone: string | null; website: string | null; description: string; hours: string | null; owner_user_id: number | null }>();
+    .first<{ id: number; slug: string; name: string; address: string | null; phone: string | null; website: string | null; description: string; hours: string | null; owner_user_id: number | null; subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null; template_id: string; custom_blocks: string | null; suburb_id: number | null }>();
   if (!business || (business.owner_user_id !== user.id && !isAdminEmail(user.email))) return json({ ok: false, error: 'You do not own this business.' }, 403);
 
+  const categories = await db
+    .prepare('SELECT c.slug, c.name FROM business_categories bc JOIN categories c ON c.id = bc.category_id WHERE bc.business_id = ? ORDER BY bc.is_primary DESC')
+    .bind(businessId)
+    .all<{ slug: string; name: string }>();
+  const suburb = business.suburb_id
+    ? await db.prepare('SELECT slug, name FROM suburbs WHERE id = ?').bind(business.suburb_id).first<{ slug: string; name: string }>()
+    : null;
+
+  const tier = business.subscription_status === 'active' ? business.subscription_tier : 0;
   return json({
     ok: true,
-    business: { id: business.id, name: business.name, address: business.address, phone: business.phone, website: business.website, description: business.description, hours: business.hours },
+    business: {
+      id: business.id, slug: business.slug, name: business.name, address: business.address, phone: business.phone, website: business.website, description: business.description, hours: business.hours,
+      categories: categories.results,
+      suburb: suburb ?? null,
+      subscriptionTier: tier,
+      subscriptionExpiresAt: business.subscription_expires_at,
+      templateId: business.template_id,
+      customBlocks: business.custom_blocks ? JSON.parse(business.custom_blocks) : [],
+    },
   });
 };
 
@@ -47,7 +64,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const businessId = Number(body.businessId);
   if (!businessId) return json({ ok: false, error: 'Missing business.' }, 400);
 
-  const business = await db.prepare('SELECT owner_user_id FROM businesses WHERE id = ?').bind(businessId).first<{ owner_user_id: number | null }>();
+  const business = await db
+    .prepare('SELECT owner_user_id FROM businesses WHERE id = ?')
+    .bind(businessId)
+    .first<{ owner_user_id: number | null }>();
   if (!business || (business.owner_user_id !== user.id && !isAdminEmail(user.email))) return json({ ok: false, error: 'You do not own this business.' }, 403);
 
   const address = clean(body.address, 200);
@@ -56,8 +76,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const description = clean(body.description, 600);
   const hours = clean(body.hours, 400);
 
+  // Page design (template/blocks) has its own draft/publish flow now —
+  // see functions/api/business-design.ts. This endpoint is just the basic
+  // listing fields, always live-immediate, no draft concept.
   await db
-    .prepare('UPDATE businesses SET address = ?, phone = ?, website = ?, description = COALESCE(?, description), hours = ?, updated_at = datetime(\'now\') WHERE id = ?')
+    .prepare(
+      `UPDATE businesses SET address = ?, phone = ?, website = ?, description = COALESCE(?, description), hours = ?, updated_at = datetime('now')
+       WHERE id = ?`
+    )
     .bind(address, phone, website, description, hours, businessId)
     .run();
 
