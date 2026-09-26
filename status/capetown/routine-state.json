@@ -173,9 +173,11 @@
   ],
   "shopping_center_index": 0,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
+  "shopping_center_slugs_pending": [
+    "strand-square-strand"
+  ],
   "shopping_center_recheck_countdown": 10,
-  "new_mall_discovery_countdown": 65,
+  "new_mall_discovery_countdown": 64,
   "shopping_center_slugs": [
     "canal-walk-century-city",
     "imhoff-farm-kommetjie",
@@ -325,7 +327,8 @@
     "centre-point-shopping-centre-milnerton",
     "birkenhead-shopping-centre-melkbosstrand",
     "glencairn-shopping-centre-glencairn",
-    "circle-centre-somerset-west"
+    "circle-centre-somerset-west",
+    "strand-square-strand"
   ],
   "closed_check_last_slug": "craftart-emporium-simons-town",
   "closed_check_batch_size": 5
