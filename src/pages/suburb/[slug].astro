@@ -8,6 +8,7 @@ import { suburbs, businessesInSuburb, categoriesFor, topSpotInSuburb, featuredIn
 import { groupForCategory } from '../../lib/categoryGroups';
 import { groupForSuburb, regionLabel } from '../../site-content';
 import { synonymsFor, suburbSynonymsFor } from '../../lib/categorySynonyms';
+import { collectionPageJsonLd } from '../../lib/seo';
 import Icon from '../../components/Icon.astro';
 import site from '../../site';
 
@@ -49,10 +50,24 @@ const jsonLd = {
   ...(suburb.lat && suburb.lng ? { geo: { '@type': 'GeoCoordinates', latitude: suburb.lat, longitude: suburb.lng } } : {}),
   ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
 };
+
+// Place (above) describes the suburb itself; this describes the businesses
+// actually listed on this page — same collectionPageJsonLd() every other
+// collection-type page (category, section, shopping-center) already uses.
+// Both are emitted together, neither replaces the other.
+const collectionJsonLd = businesses.length === 0
+  ? null
+  : collectionPageJsonLd({
+      name: suburb.name,
+      description,
+      url: `https://${site.domain}/suburb/${suburb.slug}/`,
+      items: businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` })),
+    });
 ---
 
 <BaseLayout title={suburb.name} description={description}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  {collectionJsonLd && <script type="application/ld+json" set:html={JSON.stringify(collectionJsonLd)} />}
 
   <PageBanner title={suburb.name} description={`${businesses.length} businesses listed.`}>
     <Breadcrumbs

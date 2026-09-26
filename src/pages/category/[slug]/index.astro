@@ -41,10 +41,12 @@ const relatedCategories = (group?.categorySlugs ?? [])
 const synonyms = [...synonymsFor(category.slug), ...locationSynonymsFor(category.name, site.cityLabel)];
 const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0, 4).join(', ')}.` : '';
 
+const h1Title = `${category.name} in ${site.cityLabel}`;
+
 const jsonLd = isEmpty
   ? null
   : collectionPageJsonLd({
-      name: category.name,
+      name: h1Title,
       description: `${businesses.length} ${category.name} listed across ${site.cityLabel}, by suburb.`,
       url: `https://${site.domain}/category/${category.slug}/`,
       items: businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` })),
@@ -58,7 +60,7 @@ const jsonLd = isEmpty
 >
   {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
 
-  <PageBanner title={category.name} description={`${businesses.length} listed, by suburb.`} iconPath={group?.iconPath}>
+  <PageBanner title={h1Title} description={`${businesses.length} listed, by suburb.`} iconPath={group?.iconPath}>
     <Breadcrumbs
       slot="breadcrumbs"
       items={[

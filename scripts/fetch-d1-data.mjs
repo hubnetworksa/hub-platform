@@ -64,6 +64,15 @@ async function main() {
      FROM business_photos bp JOIN businesses b ON b.id = bp.business_id
      WHERE b.status = 'published' ORDER BY bp.business_id, bp.sort_order;`
   );
+  // Events (weekly discovery routine, see ROUTINE.events.<site>.md). No
+  // public page reads this yet -- fetched here so write-db-snapshot.mjs
+  // can give the routine its dedup state.
+  const events = query(
+    `SELECT id, slug, title, type, event_date, event_time, venue, suburb, address, price, ticket_url, host,
+            image_url, image_credit, organiser, organiser_note, doors, ages, parking, traders, lineup_json, tiers_json,
+            description, featured
+     FROM events ORDER BY event_date ASC;`
+  );
 
   await writeFile(`${OUT_DIR}/suburbs.json`, JSON.stringify(suburbs, null, 2));
   await writeFile(`${OUT_DIR}/categories.json`, JSON.stringify(categories, null, 2));
@@ -71,11 +80,12 @@ async function main() {
   await writeFile(`${OUT_DIR}/business-categories.json`, JSON.stringify(businessCategories, null, 2));
   await writeFile(`${OUT_DIR}/shopping-centers.json`, JSON.stringify(shoppingCenters, null, 2));
   await writeFile(`${OUT_DIR}/business-photos.json`, JSON.stringify(businessPhotos, null, 2));
+  await writeFile(`${OUT_DIR}/events.json`, JSON.stringify(events, null, 2));
 
   process.stderr.write(
     `[${SITE}] Fetched ${suburbs.length} suburbs, ${categories.length} categories, ` +
     `${businesses.length} businesses, ${businessCategories.length} business-category links, ` +
-    `${shoppingCenters.length} shopping centres, ${businessPhotos.length} business photos ` +
+    `${shoppingCenters.length} shopping centres, ${businessPhotos.length} business photos, ${events.length} events ` +
     `(${REMOTE ? 'remote' : 'local'}).\n`
   );
 }

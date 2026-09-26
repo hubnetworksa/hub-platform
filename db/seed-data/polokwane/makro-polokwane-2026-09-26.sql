@@ -16,9 +16,10 @@
 -- that's Makro's national customer-service line, not verified as this
 -- branch's own number, per the routine's chain cross-check rule.)
 --
--- Magna Via now has its own suburb row (owner request, see
--- db/migrations/polokwane/0036_seed_magna_via_suburb.sql) rather than
--- being folded into Bendor.
+-- Magna Via has its own suburb row (seeded independently on main by
+-- db/migrations/polokwane/0037_seed_industria_laboria_magna_via_suburbs.sql,
+-- since renamed to "Magna Via Industrial" by 0040) rather than being
+-- folded into Bendor.
 --
 -- No verified lat/lng found in either source — left NULL rather than
 -- guessed, consistent with other entries added this way (e.g. Food Lover's
