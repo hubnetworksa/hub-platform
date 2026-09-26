@@ -16,9 +16,9 @@
 -- that's Makro's national customer-service line, not verified as this
 -- branch's own number, per the routine's chain cross-check rule.)
 --
--- Magna Via is treated as part of Bendor elsewhere in this dataset (see
--- db/routine-updates/polokwane/2026-09-16T13-05-30.sql, Vertex Boreholes),
--- so this follows that precedent rather than adding a new suburb.
+-- Magna Via now has its own suburb row (owner request, see
+-- db/migrations/polokwane/0036_seed_magna_via_suburb.sql) rather than
+-- being folded into Bendor.
 --
 -- No verified lat/lng found in either source — left NULL rather than
 -- guessed, consistent with other entries added this way (e.g. Food Lover's
@@ -27,14 +27,14 @@
 INSERT OR IGNORE INTO businesses
   (slug, name, suburb_id, address, phone, website, email, description, lat, lng, source_urls, status, origin)
 VALUES (
-  'makro-polokwane-bendor', 'Makro Polokwane',
-  (SELECT id FROM suburbs WHERE slug = 'bendor'),
-  '1 Marmer St, Magna Via, Bendor, Polokwane, 0700', '015 101 100', 'https://www.makro.co.za/pages/store-finder', NULL,
+  'makro-polokwane-magna-via', 'Makro Polokwane',
+  (SELECT id FROM suburbs WHERE slug = 'magna-via'),
+  '1 Marmer St, Magna Via, Polokwane, 0700', '015 101 100', 'https://www.makro.co.za/pages/store-finder', NULL,
   'Makro Polokwane is a large-format wholesale and retail warehouse store in the Magna Via area of Polokwane, stocking groceries, liquor, electronics, homeware, DIY and bulk goods.',
   NULL, NULL,
   '["https://dir.alltrack.org/view/274458-1-makro", "https://www.waze.com/live-map/directions/makro-store-polokwane-marmer-st-1-magna-via,-polokwane?to=place.w.19334681.193150205.1885229"]',
   'published', 'agent_research'
 );
 INSERT OR IGNORE INTO business_categories (business_id, category_id, is_primary)
-VALUES ((SELECT id FROM businesses WHERE slug = 'makro-polokwane-bendor'),
+VALUES ((SELECT id FROM businesses WHERE slug = 'makro-polokwane-magna-via'),
         (SELECT id FROM categories WHERE slug = 'general-retail'), 1);
