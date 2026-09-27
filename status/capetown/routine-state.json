@@ -1,5 +1,5 @@
 {
-  "suburb_index": 17,
+  "suburb_index": 18,
   "suburbs_per_run": 3,
   "suburb_slugs": [
     "cape-town-cbd",
@@ -173,9 +173,9 @@
   ],
   "shopping_center_index": 0,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
-  "shopping_center_recheck_countdown": 6,
-  "new_mall_discovery_countdown": 58,
+  "shopping_center_slugs_pending": ["mojo-market-sea-point"],
+  "shopping_center_recheck_countdown": 5,
+  "new_mall_discovery_countdown": 57,
   "shopping_center_slugs": [
     "canal-walk-century-city",
     "imhoff-farm-kommetjie",
@@ -328,7 +328,8 @@
     "circle-centre-somerset-west",
     "strand-square-strand",
     "mountain-view-shopping-centre-gordons-bay",
-    "woodstock-quarter-woodstock"
+    "woodstock-quarter-woodstock",
+    "mojo-market-sea-point"
   ],
   "closed_check_last_slug": "dimensions-tent-and-structures-salt-river",
   "closed_check_batch_size": 5
