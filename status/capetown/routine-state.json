@@ -1,5 +1,5 @@
 {
-  "suburb_index": 55,
+  "suburb_index": 56,
   "suburbs_per_run": 3,
   "suburb_slugs": [
     "cape-town-cbd",
@@ -175,7 +175,9 @@
   "shopping_centers_per_run": 1,
   "shopping_center_slugs_pending": [
     "midville-centre-durbanville",
-    "graanendal-shopping-centre-durbanville"
+    "graanendal-shopping-centre-durbanville",
+    "kuilsriver-shopping-centre-kuils-river",
+    "access-park-kuils-river"
   ],
   "shopping_center_recheck_countdown": 21,
   "new_mall_discovery_countdown": 45,
@@ -337,7 +339,9 @@
     "bellville-mall-bellville",
     "middestad-mall-bellville",
     "midville-centre-durbanville",
-    "graanendal-shopping-centre-durbanville"
+    "graanendal-shopping-centre-durbanville",
+    "kuilsriver-shopping-centre-kuils-river",
+    "access-park-kuils-river"
   ],
   "closed_check_last_slug": "essential-health-pharmacy-clara-anna-durbanville",
   "closed_check_batch_size": 5
