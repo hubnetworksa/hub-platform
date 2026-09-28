@@ -1,5 +1,5 @@
 {
-  "suburb_index": 127,
+  "suburb_index": 128,
   "suburbs_per_run": 3,
   "suburb_slugs": [
     "cape-town-cbd",
@@ -173,7 +173,10 @@
   ],
   "shopping_center_index": 1,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
+  "shopping_center_slugs_pending": [
+    "eden-on-the-bay-mall-bloubergstrand",
+    "seaside-village-bloubergstrand"
+  ],
   "shopping_center_recheck_countdown": 4,
   "new_mall_discovery_countdown": 21,
   "shopping_center_slugs": [
@@ -339,7 +342,9 @@
     "access-park-kuils-river",
     "kenridge-centre-kenridge",
     "eerste-rivier-shopping-centre-eerste-river",
-    "thembokwezi-square-mandalay"
+    "thembokwezi-square-mandalay",
+    "eden-on-the-bay-mall-bloubergstrand",
+    "seaside-village-bloubergstrand"
   ],
   "closed_check_last_slug": "happy-rooster-muizenberg",
   "closed_check_batch_size": 5
