@@ -249,7 +249,7 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
             <div style="border:2px solid var(--border);border-radius:14px;background:#fff;overflow:hidden;min-width:0;display:flex;flex-direction:column">
               <a href={`/news/${homeNews[0].slug}/`} style="position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:158px;flex:1.35;padding:16px 18px;color:#fff;overflow:hidden;text-decoration:none">
                 <span style="position:absolute;inset:0;background:var(--navy);display:block">
-                  {homeNews[0].image_url && <img src={homeNews[0].image_url} alt="" style="width:100%;height:100%;object-fit:cover;display:block" />}
+                  <img src={homeNews[0].image_url ?? site.newsBannerImage ?? site.sectionBannerImage} alt="" style="width:100%;height:100%;object-fit:cover;display:block" />
                 </span>
                 <span style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(var(--navy-rgb),.44) 0%,rgba(var(--navy-rgb),.62) 38%,rgba(var(--navy-rgb),.82) 62%,rgba(var(--navy-rgb),.95) 100%);pointer-events:none"></span>
                 <span style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap">
