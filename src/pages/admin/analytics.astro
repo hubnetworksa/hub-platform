@@ -1,12 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdminShell from '../../components/AdminShell.astro';
-import site from '../../site';
 
 const tiles = [
-  { label: 'Profile views', note: 'last 30 days', accent: false },
-  { label: 'Phone clicks', note: 'tap-to-call on mobile', accent: false },
-  { label: 'Enquiries sent', note: 'paid plans only', accent: true },
+  { key: 'views', label: 'Profile views', note: 'business page opened' },
+  { key: 'phoneClicks', label: 'Phone clicks', note: 'tap-to-call' },
+  { key: 'websiteClicks', label: 'Website clicks', note: 'outbound to their site' },
+  { key: 'searchAppearances', label: 'Search appearances', note: 'shown in results' },
+  { key: 'enquiries', label: 'Enquiries sent', note: 'through listing forms', accent: true },
 ];
 ---
 
@@ -14,41 +15,96 @@ const tiles = [
   <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
   <div id="content" hidden>
-    <AdminShell active="analytics" title="Analytics" subtitle="Views, calls and enquiries per listing">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px">
+    <AdminShell active="analytics" title="Analytics" subtitle="Views, calls and enquiries per listing, last 30 days">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
         {tiles.map((t) => (
           <div style={`background:#fff;border:2px solid ${t.accent ? 'var(--accent)' : 'var(--border)'};border-radius:14px;padding:18px`}>
             <div style={`font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:${t.accent ? 'var(--accent)' : 'var(--muted)'}`}>{t.label}</div>
-            <div style="font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:8px;line-height:1">—</div>
+            <div id={`stat-${t.key}`} style="font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:8px;line-height:1">—</div>
             <div style="font-size:12.5px;font-weight:700;color:var(--accent-hover);margin-top:5px">{t.note}</div>
           </div>
         ))}
       </div>
+
       <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
         <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
-          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Per listing, last 30 days</h2>
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Top listings, last 30 days</h2>
         </div>
-        <div style="padding:40px 18px;text-align:center">
-          <div style="font-size:16px;font-weight:800;color:var(--navy)">Per-listing tracking isn't switched on yet</div>
-          <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin:5px auto 0;max-width:56ch;line-height:1.5">
-            Profile views, phone clicks and enquiries aren't recorded per listing, so there are no honest numbers to show here.
-            {site.googleAnalyticsId ? ' Site-wide traffic for this hub is measured in Google Analytics.' : ''}
-          </div>
-          {site.googleAnalyticsId && (
-            <a href="https://analytics.google.com/" target="_blank" rel="noopener" style="display:inline-block;margin-top:14px;padding:11px 15px;border:2px solid var(--navy);border-radius:9px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">Open Google Analytics</a>
-          )}
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:13.5px">
+            <thead>
+              <tr style="background:var(--bg-subtle);color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-align:left">
+                <th style="padding:10px 18px">Listing</th>
+                <th style="padding:10px 12px">Plan</th>
+                <th style="padding:10px 12px;text-align:right">Views</th>
+                <th style="padding:10px 12px;text-align:right">Phone</th>
+                <th style="padding:10px 12px;text-align:right">Website</th>
+                <th style="padding:10px 12px;text-align:right">Search</th>
+                <th style="padding:10px 18px;text-align:right">Enquiries</th>
+              </tr>
+            </thead>
+            <tbody id="top-list"></tbody>
+          </table>
+        </div>
+        <div id="top-empty" hidden style="padding:40px 18px;text-align:center">
+          <div style="font-size:16px;font-weight:800;color:var(--navy)">No activity recorded yet</div>
+          <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin:5px auto 0;max-width:52ch;line-height:1.5">Views, clicks and search appearances are counted as visitors use the site. Listings show up here once they have any in the last 30 days.</div>
         </div>
       </div>
+
+      <p style="margin:0;font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.5;max-width:72ch">
+        First-party numbers only: counted by this site itself, never a third party. Each view, click or search appearance is deduped per visitor per day, so a refresh or repeated search doesn't inflate a listing's totals. Enquiries are messages sent through a listing's enquiry form. All figures cover the last 30 days.
+      </p>
     </AdminShell>
   </div>
 </BaseLayout>
 
 <script>
-  import { requireAdmin, showContent } from '../../lib/admin-html';
+  import { esc, planPillStyle, TIER_NAMES, requireAdmin, showContent } from '../../lib/admin-html';
 
-  async function init() {
+  interface TopListing {
+    id: number;
+    name: string;
+    slug: string;
+    subscription_tier: number;
+    views: number;
+    phone_clicks: number;
+    website_clicks: number;
+    search_appearances: number;
+    enquiries: number;
+  }
+
+  const fmt = (n: number) => Number(n ?? 0).toLocaleString('en-US');
+
+  async function load() {
+    const res = await fetch('/api/admin/analytics');
+    const data = await res.json();
+    const totals = data.totals ?? {};
+    for (const key of ['views', 'phoneClicks', 'websiteClicks', 'searchAppearances', 'enquiries']) {
+      document.getElementById(`stat-${key}`)!.textContent = fmt(totals[key] ?? 0);
+    }
+
+    const rows: TopListing[] = data.topListings ?? [];
+    document.getElementById('top-empty')!.hidden = rows.length > 0;
+    document.getElementById('top-list')!.innerHTML = rows
+      .map((r) => {
+        const plan = TIER_NAMES[r.subscription_tier] ?? 'Basic';
+        return `<tr style="border-top:1px solid var(--border)">
+          <td style="padding:12px 18px;font-weight:800;color:var(--navy)"><a href="/business/${esc(r.slug)}/" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">${esc(r.name)}</a></td>
+          <td style="padding:12px"><span style="${planPillStyle(plan)}">${plan}</span></td>
+          <td style="padding:12px;text-align:right;font-weight:700;color:var(--navy)">${fmt(r.views)}</td>
+          <td style="padding:12px;text-align:right;font-weight:600">${fmt(r.phone_clicks)}</td>
+          <td style="padding:12px;text-align:right;font-weight:600">${fmt(r.website_clicks)}</td>
+          <td style="padding:12px;text-align:right;font-weight:600">${fmt(r.search_appearances)}</td>
+          <td style="padding:12px 18px;text-align:right;font-weight:700;color:var(--accent-hover)">${fmt(r.enquiries)}</td>
+        </tr>`;
+      })
+      .join('');
+  }
+
+  (async () => {
     if (!(await requireAdmin('/admin/analytics/'))) return;
     showContent();
-  }
-  init();
+    await load();
+  })();
 </script>

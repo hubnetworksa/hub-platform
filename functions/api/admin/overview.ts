@@ -35,20 +35,28 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     }>();
 
   const claims = await db
-    .prepare("SELECT bc.review_token, bc.contact_name, bc.contact_phone, bc.contact_email, bc.role_note, b.name AS business_name, u.email AS claimant_email FROM business_claims bc JOIN businesses b ON b.id = bc.business_id JOIN users u ON u.id = bc.user_id WHERE bc.status = 'pending' ORDER BY bc.created_at DESC")
-    .all<{ review_token: string; contact_name: string | null; contact_phone: string | null; contact_email: string | null; role_note: string | null; business_name: string; claimant_email: string }>();
+    .prepare("SELECT bc.id, bc.review_token, bc.contact_name, bc.contact_phone, bc.contact_email, bc.role_note, bc.created_at, b.name AS business_name, u.email AS claimant_email FROM business_claims bc JOIN businesses b ON b.id = bc.business_id JOIN users u ON u.id = bc.user_id WHERE bc.status = 'pending' ORDER BY bc.created_at DESC")
+    .all<{ id: number; review_token: string; contact_name: string | null; contact_phone: string | null; contact_email: string | null; role_note: string | null; created_at: string; business_name: string; claimant_email: string }>();
 
   const reports = await db
     .prepare("SELECT id, kind, business_slug, business_name, reason, relationship, requester_email, created_at FROM reports WHERE status = 'open' ORDER BY created_at DESC")
     .all<{ id: number; kind: string; business_slug: string; business_name: string; reason: string; relationship: string | null; requester_email: string | null; created_at: string }>();
 
-  const [businessCount, userCount, newThisWeek, planCounts] = await Promise.all([
+  const [businessCount, userCount, newThisWeek, planCounts, pendingEventClaims, pendingEventSubmissions, openEnquiries, pendingReviews] = await Promise.all([
     db.prepare("SELECT COUNT(*) AS n FROM businesses WHERE status = 'published'").first<{ n: number }>(),
     db.prepare('SELECT COUNT(*) AS n FROM users').first<{ n: number }>(),
     db.prepare("SELECT COUNT(*) AS n FROM businesses WHERE status = 'published' AND created_at >= datetime('now', '-7 days')").first<{ n: number }>(),
     db
       .prepare("SELECT subscription_tier AS tier, COUNT(*) AS n FROM businesses WHERE subscription_tier > 0 AND subscription_status = 'active' GROUP BY subscription_tier")
       .all<{ tier: number; n: number }>(),
+    db.prepare("SELECT COUNT(*) AS n FROM event_claims WHERE status = 'pending'").first<{ n: number }>(),
+    db.prepare("SELECT COUNT(*) AS n FROM event_submissions WHERE status = 'pending'").first<{ n: number }>(),
+    db.prepare("SELECT COUNT(*) AS n FROM messages WHERE status = 'open'").first<{ n: number }>(),
+    // The reviews migration may not be applied on every site yet.
+    db
+      .prepare("SELECT COUNT(*) AS n FROM reviews WHERE status = 'pending' OR flagged = 1")
+      .first<{ n: number }>()
+      .catch(() => null),
   ]);
 
   const featuredListings = planCounts.results.find((r) => r.tier === 2)?.n ?? 0;
@@ -106,6 +114,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       status: s.owner_confirm_token ? 'Awaiting owner confirmation' : s.admin_approved_at ? 'Approved' : 'Pending your approval',
     })),
     claims: claims.results.map((c) => ({
+      id: c.id,
       businessName: c.business_name,
       claimantEmail: c.claimant_email,
       reviewToken: c.review_token,
@@ -113,6 +122,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       contactPhone: c.contact_phone,
       contactEmail: c.contact_email,
       roleNote: c.role_note,
+      createdAt: c.created_at,
+      ageDays: ageInDays(c.created_at),
+      expired: ageInDays(c.created_at) > CLAIM_MAX_AGE_DAYS,
     })),
     reports: reports.results,
     stats: {
@@ -124,8 +136,13 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       pendingSubmissions: submissions.results.length,
       awaitingReview: awaiting.length,
       oldestAwaitingDays: oldestDays,
-      pendingClaims: claims.results.length,
+      pendingClaims: claims.results.length + (pendingEventClaims?.n ?? 0),
+      pendingBusinessClaims: claims.results.length,
+      pendingEventClaims: pendingEventClaims?.n ?? 0,
       openReports: reports.results.length,
+      pendingReviews: pendingReviews?.n ?? 0,
+      pendingEventSubmissions: pendingEventSubmissions?.n ?? 0,
+      openEnquiries: openEnquiries?.n ?? 0,
     },
     revenue: {
       tierRand: centsToRand(tierRevenueCents),
@@ -136,7 +153,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         { key: 'featured', label: 'Featured plans', cents: featuredCents },
         { key: 'verified', label: 'Verified plans', cents: verifiedCents },
         { key: 'category_suburb', label: 'Category & suburb sponsors', cents: categorySuburbCents },
-        { key: 'display', label: 'Display ads', cents: bannerCents },
+        { key: 'display', label: 'Homepage banner', cents: bannerCents },
         { key: 'centre', label: 'Shopping centre sponsors', cents: centreCents },
         { key: 'guide', label: 'Guide sponsors', cents: guideCents },
         { key: 'tourism', label: 'Things to do sponsors', cents: tourismCents },
@@ -148,6 +165,15 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     },
   });
 };
+
+// Same window functions/api/review-claim.ts enforces; older claims can only
+// be dismissed via /api/admin/claims.
+const CLAIM_MAX_AGE_DAYS = 14;
+
+function ageInDays(createdAt: string): number {
+  const ms = Date.parse(createdAt.includes('T') ? createdAt : createdAt.replace(' ', 'T') + 'Z');
+  return Number.isFinite(ms) ? (Date.now() - ms) / 86_400_000 : 0;
+}
 
 function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });

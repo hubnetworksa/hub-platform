@@ -8,6 +8,7 @@ import AdminShell from '../../components/AdminShell.astro';
 
   <div id="content" hidden>
     <AdminShell active="reports" title="Reports" subtitle="Reported listing issues and removal requests.">
+      <div id="action-error" hidden style="padding:12px 16px;border:2px solid var(--danger);border-radius:12px;background:#fff;font-size:13px;font-weight:700;color:var(--danger)"></div>
       <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
         <div id="reports-list"></div>
         <div id="reports-empty" hidden style="padding:40px 18px;text-align:center;">
@@ -20,10 +21,12 @@ import AdminShell from '../../components/AdminShell.astro';
 </BaseLayout>
 
 <script>
-  import { esc } from '../../lib/admin-html';
+  import { esc, postJson } from '../../lib/admin-html';
 
-  async function postJson(url: string, body: unknown): Promise<void> {
-    await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  function showError(message: string) {
+    const el = document.getElementById('action-error')!;
+    el.textContent = message;
+    el.hidden = !message;
   }
 
   function renderReport(r: {
@@ -75,7 +78,13 @@ import AdminShell from '../../components/AdminShell.astro';
     const btn = (e.target as HTMLElement).closest('button[data-resolve]') as HTMLButtonElement | null;
     if (!btn) return;
     btn.disabled = true;
-    await postJson('/api/admin/resolve-report', { reportId: Number(btn.dataset.resolve) });
+    showError('');
+    const result = await postJson('/api/admin/resolve-report', { reportId: Number(btn.dataset.resolve) });
+    if (!result.ok) {
+      showError(String(result.error || 'Could not resolve that report.'));
+      btn.disabled = false;
+      return;
+    }
     init();
   });
 

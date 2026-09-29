@@ -148,6 +148,7 @@ import Icon from '../../components/Icon.astro';
       cycleBtn.disabled = true;
       const result = await postJson('/api/admin/subscriptions', { businessId: id, tier: next });
       if (result.ok) row.subscription_tier = next;
+      else window.alert(String(result.error || 'Could not change that plan.'));
       render();
       return;
     }
@@ -158,7 +159,12 @@ import Icon from '../../components/Icon.astro';
       const row = rows.find((r) => r.id === id);
       if (!window.confirm(`Permanently delete "${row?.name ?? 'this business'}"? This can't be undone.`)) return;
       deleteBtn.disabled = true;
-      await postJson('/api/admin/delete-business', { businessId: id });
+      const result = await postJson('/api/admin/delete-business', { businessId: id });
+      if (!result.ok) {
+        window.alert(String(result.error || 'Could not delete that business.'));
+        deleteBtn.disabled = false;
+        return;
+      }
       load();
     }
   });

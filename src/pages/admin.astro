@@ -16,6 +16,7 @@ import AdminShell from '../components/AdminShell.astro';
             <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Waiting for approval</h2>
             <a href="/admin/submissions/" style="border:0;background:transparent;font-size:12.5px;font-weight:800;color:var(--accent);cursor:pointer;text-decoration:none">Open queue →</a>
           </div>
+          <div id="waiting-error" hidden style="padding:10px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--danger)"></div>
           <div id="waiting-list"></div>
         </div>
 
@@ -30,6 +31,7 @@ import AdminShell from '../components/AdminShell.astro';
       <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:center">
         <button id="rebuild-btn" type="button" style="padding:11px 15px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font-size:13.5px;font-weight:800;cursor:pointer">Rebuild &amp; deploy</button>
         <span id="health-row" style="display:flex;gap:0.75rem;"></span>
+        <span id="rebuild-msg" hidden style="font-size:13px;font-weight:700"></span>
       </div>
     </AdminShell>
   </div>
@@ -70,8 +72,19 @@ import AdminShell from '../components/AdminShell.astro';
     </a>`;
   }
 
-  async function postForm(url: string, params: Record<string, string>): Promise<void> {
-    await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(params) });
+  // /api/confirm-listing answers with a small HTML page whose <h1> is the
+  // outcome, and reports some failures ("Already handled", "Couldn't
+  // publish") with a 200 — so both the status and that heading are checked.
+  async function postForm(url: string, params: Record<string, string>): Promise<{ ok: boolean; message: string }> {
+    try {
+      const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(params) });
+      const text = await res.text();
+      const heading = (/<h1[^>]*>([^<]*)<\/h1>/i.exec(text)?.[1] ?? '').trim();
+      const failed = !res.ok || /expired|couldn|already|nothing to review/i.test(heading);
+      return { ok: !failed, message: heading || (res.ok ? '' : `Request failed (${res.status}).`) };
+    } catch {
+      return { ok: false, message: 'Network error.' };
+    }
   }
 
   async function init() {
@@ -107,8 +120,10 @@ import AdminShell from '../components/AdminShell.astro';
 
     const waiting: string[] = [];
     for (const sub of data.submissions.filter((x: { status: string }) => x.status === 'Pending your approval')) waiting.push(queueRow(sub));
-    if (s.pendingClaims > 0) waiting.push(linkRow(`${s.pendingClaims} pending claim${s.pendingClaims === 1 ? '' : 's'}`, 'Ownership claims awaiting review', '/admin/claims/'));
+    if (s.pendingClaims > 0) waiting.push(linkRow(`${s.pendingClaims} pending claim${s.pendingClaims === 1 ? '' : 's'}`, 'Business and event ownership claims awaiting review', '/admin/claims/'));
     if (s.openReports > 0) waiting.push(linkRow(`${s.openReports} open report${s.openReports === 1 ? '' : 's'}`, 'Reports & removal requests', '/admin/reports/'));
+    if (s.pendingReviews > 0) waiting.push(linkRow(`${s.pendingReviews} review${s.pendingReviews === 1 ? '' : 's'} to moderate`, 'Pending or flagged reviews', '/admin/reviews/'));
+    if (s.pendingEventSubmissions > 0) waiting.push(linkRow(`${s.pendingEventSubmissions} event submission${s.pendingEventSubmissions === 1 ? '' : 's'}`, 'Events submitted by the public', '/admin/events/'));
     document.getElementById('waiting-list')!.innerHTML = waiting.length > 0 ? waiting.join('') : `<div style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted)">Queue is clear.</div>`;
 
     document.getElementById('health-row')!.innerHTML = `
@@ -121,7 +136,15 @@ import AdminShell from '../components/AdminShell.astro';
     const btn = (e.target as HTMLElement).closest('button[data-action]') as HTMLButtonElement | null;
     if (!btn) return;
     btn.disabled = true;
-    await postForm('/api/confirm-listing', { token: btn.dataset.token!, action: btn.dataset.action! });
+    const errEl = document.getElementById('waiting-error')!;
+    errEl.hidden = true;
+    const result = await postForm('/api/confirm-listing', { token: btn.dataset.token!, action: btn.dataset.action! });
+    if (!result.ok) {
+      errEl.textContent = result.message || 'Could not update that submission.';
+      errEl.hidden = false;
+      btn.disabled = false;
+      return;
+    }
     init();
   });
 
@@ -131,9 +154,14 @@ import AdminShell from '../components/AdminShell.astro';
     const btn = e.currentTarget as HTMLButtonElement;
     btn.disabled = true;
     btn.textContent = 'Rebuilding…';
-    await postJson('/api/admin/rebuild', {});
+    const msg = document.getElementById('rebuild-msg')!;
+    msg.hidden = true;
+    const result = await postJson('/api/admin/rebuild', {});
     btn.textContent = 'Rebuild & deploy';
     btn.disabled = false;
+    msg.textContent = result.ok ? 'Deploy queued. Live in a few minutes.' : String(result.error || 'Could not queue a deploy.');
+    msg.style.color = result.ok ? 'var(--accent-hover)' : 'var(--danger)';
+    msg.hidden = false;
   });
 
   init();

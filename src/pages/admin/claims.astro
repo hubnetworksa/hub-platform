@@ -3,16 +3,32 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdminShell from '../../components/AdminShell.astro';
 ---
 
-<BaseLayout title="Pending Claims" description="Review business ownership claims." noindex={true}>
+<BaseLayout title="Pending Claims" description="Review business and event ownership claims." noindex={true}>
   <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
   <div id="content" hidden>
-    <AdminShell active="claims" title="Claims" subtitle="Business ownership claims awaiting review.">
+    <AdminShell active="claims" title="Claims" subtitle="Business and event ownership claims awaiting review.">
+      <div id="action-error" hidden style="padding:12px 16px;border:2px solid var(--danger);border-radius:12px;background:#fff;font-size:13px;font-weight:700;color:var(--danger)"></div>
+
       <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--border)">
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Business claims</h2>
+        </div>
         <div id="claims-list"></div>
         <div id="claims-empty" hidden style="padding:40px 18px;text-align:center;">
           <div style="font-size:16px;font-weight:800;color:var(--navy)">Nothing waiting</div>
-          <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin-top:5px">No claims waiting for review.</div>
+          <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin-top:5px">No business claims waiting for review.</div>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--border)">
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Event claims</h2>
+        </div>
+        <div id="event-claims-list"></div>
+        <div id="event-claims-empty" hidden style="padding:40px 18px;text-align:center;">
+          <div style="font-size:16px;font-weight:800;color:var(--navy)">Nothing waiting</div>
+          <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin-top:5px">No event claims waiting for review.</div>
         </div>
       </div>
     </AdminShell>
@@ -20,59 +36,146 @@ import AdminShell from '../../components/AdminShell.astro';
 </BaseLayout>
 
 <script>
-  import { esc } from '../../lib/admin-html';
+  import { esc, requireAdmin, showContent, postJson, timeAgo } from '../../lib/admin-html';
 
-  async function postForm(url: string, params: Record<string, string>): Promise<void> {
-    await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(params) });
+  interface BusinessClaim {
+    id: number;
+    businessName: string;
+    claimantEmail: string;
+    reviewToken: string;
+    contactName: string | null;
+    contactPhone: string | null;
+    contactEmail: string | null;
+    roleNote: string | null;
+    createdAt: string;
+    ageDays: number;
+    expired: boolean;
   }
 
-  function renderClaim(c: { businessName: string; claimantEmail: string; reviewToken: string; contactName: string | null; contactPhone: string | null; contactEmail: string | null; roleNote: string | null }): string {
+  interface EventClaim {
+    id: number;
+    eventTitle: string;
+    eventSlug: string | null;
+    claimantEmail: string;
+    contactName: string | null;
+    contactPhone: string | null;
+    contactEmail: string | null;
+    roleNote: string | null;
+    createdAt: string;
+  }
+
+  // /api/review-claim answers with a small HTML page whose <h1> is the
+  // outcome, and reports some failures ("Already handled", "This link has
+  // expired") with a 200 — so both the status and that heading are checked.
+  async function postForm(url: string, params: Record<string, string>): Promise<{ ok: boolean; message: string }> {
+    try {
+      const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(params) });
+      const text = await res.text();
+      const heading = (/<h1[^>]*>([^<]*)<\/h1>/i.exec(text)?.[1] ?? '').trim();
+      const failed = !res.ok || /expired|couldn|already|nothing to review/i.test(heading);
+      return { ok: !failed, message: heading || (res.ok ? '' : `Request failed (${res.status}).`) };
+    } catch {
+      return { ok: false, message: 'Network error.' };
+    }
+  }
+
+  function showError(message: string) {
+    const el = document.getElementById('action-error')!;
+    el.textContent = message;
+    el.hidden = !message;
+  }
+
+  const APPROVE = 'padding:10px 14px;border:0;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;cursor:pointer;';
+  const REJECT = 'padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--danger);font-size:13px;font-weight:800;cursor:pointer;';
+  const DISMISS = 'padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;cursor:pointer;';
+
+  function contactLine(c: { contactName: string | null; contactPhone: string | null; contactEmail: string | null; roleNote: string | null }): string {
+    return `${esc(c.contactName ?? 'Not specified')} · ${esc(c.contactPhone ?? 'Not specified')} · ${esc(c.contactEmail ?? 'Not specified')} · ${esc(c.roleNote ?? 'Not specified')}`;
+  }
+
+  function renderClaim(c: BusinessClaim): string {
+    const days = Math.floor(c.ageDays);
+    const expiredTag = c.expired
+      ? `<span style="padding:3px 9px;border-radius:999px;background:var(--bg-subtle);color:var(--danger);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase">Expired</span>`
+      : '';
+    const actions = c.expired
+      ? `<button data-kind="business" data-action="dismiss" data-id="${c.id}" style="${DISMISS}">Dismiss</button>`
+      : `<button data-kind="business" data-action="approve" data-token="${esc(c.reviewToken)}" style="${APPROVE}">Approve</button>
+         <button data-kind="business" data-action="reject" data-token="${esc(c.reviewToken)}" style="${REJECT}">Reject</button>`;
+    return `
+      <div style="padding:18px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;${c.expired ? 'opacity:.75' : ''}">
+        <div style="min-width:0;">
+          <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
+            <span style="font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.015em">${esc(c.businessName)}</span>
+            ${expiredTag}
+          </div>
+          <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:4px;">Account: ${esc(c.claimantEmail)} · Submitted ${esc(timeAgo(c.createdAt))}${c.expired ? ` (${days} days old — older than the 14-day review window, so it can only be dismissed; ask them to claim again)` : ''}</div>
+          <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);max-width:64ch;">${contactLine(c)}</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">${actions}</div>
+      </div>`;
+  }
+
+  function renderEventClaim(c: EventClaim): string {
+    const title = c.eventSlug
+      ? `<a href="/events/${esc(c.eventSlug)}/" target="_blank" rel="noopener" style="color:var(--navy);text-decoration:none">${esc(c.eventTitle)}</a>`
+      : esc(c.eventTitle);
     return `
       <div style="padding:18px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;">
         <div style="min-width:0;">
-          <span style="font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.015em">${esc(c.businessName)}</span>
-          <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:4px;">Account: ${esc(c.claimantEmail)}</div>
-          <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);max-width:64ch;">${esc(c.contactName ?? 'Not specified')} · ${esc(c.contactPhone ?? 'Not specified')} · ${esc(c.contactEmail ?? 'Not specified')} · ${esc(c.roleNote ?? 'Not specified')}</p>
+          <span style="font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.015em">${title}</span>
+          <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:4px;">Account: ${esc(c.claimantEmail)} · Submitted ${esc(timeAgo(c.createdAt))}</div>
+          <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);max-width:64ch;">${contactLine(c)}</p>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;">
-          <button data-action="approve" data-token="${esc(c.reviewToken)}" style="padding:10px 14px;border:0;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;cursor:pointer;">Approve</button>
-          <button data-action="reject" data-token="${esc(c.reviewToken)}" style="padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--danger);font-size:13px;font-weight:800;cursor:pointer;">Reject</button>
+          <button data-kind="event" data-action="approve" data-id="${c.id}" style="${APPROVE}">Approve</button>
+          <button data-kind="event" data-action="reject" data-id="${c.id}" style="${REJECT}">Reject</button>
         </div>
       </div>`;
   }
 
-  async function init() {
-    const me = await fetch('/api/me');
-    if (me.status === 401) {
-      window.location.href = '/login/?next=/admin/claims/';
-      return;
-    }
-    const meData = await me.json();
-    if (!meData.isAdmin) {
-      window.location.href = '/my-businesses/';
-      return;
-    }
+  async function load() {
+    const [overviewRes, eventRes] = await Promise.all([fetch('/api/admin/overview'), fetch('/api/admin/event-claims')]);
+    const overview = await overviewRes.json();
+    const eventData = eventRes.ok ? await eventRes.json() : { claims: [] };
 
-    const res = await fetch('/api/admin/overview');
-    const data = await res.json();
-    document.getElementById('loading')!.hidden = true;
-    document.getElementById('content')!.hidden = false;
+    const claims: BusinessClaim[] = overview.claims ?? [];
+    document.getElementById('claims-list')!.innerHTML = claims.map(renderClaim).join('');
+    document.getElementById('claims-empty')!.hidden = claims.length > 0;
 
-    const list = document.getElementById('claims-list')!;
-    if (data.claims.length === 0) {
-      document.getElementById('claims-empty')!.hidden = false;
-    } else {
-      list.innerHTML = data.claims.map(renderClaim).join('');
-    }
+    const eventClaims: EventClaim[] = eventData.claims ?? [];
+    document.getElementById('event-claims-list')!.innerHTML = eventClaims.map(renderEventClaim).join('');
+    document.getElementById('event-claims-empty')!.hidden = eventClaims.length > 0;
   }
 
   document.getElementById('content')!.addEventListener('click', async (e) => {
     const btn = (e.target as HTMLElement).closest('button[data-action]') as HTMLButtonElement | null;
     if (!btn) return;
+    const action = btn.dataset.action!;
+    if (action === 'dismiss' && !confirm('Dismiss this expired claim? The claimant can submit a new one.')) return;
     btn.disabled = true;
-    await postForm('/api/review-claim', { token: btn.dataset.token!, action: btn.dataset.action! });
-    init();
+    showError('');
+
+    let result: { ok: boolean; message?: string; error?: string };
+    if (btn.dataset.kind === 'event') {
+      result = await postJson('/api/admin/event-claims', { id: Number(btn.dataset.id), action });
+    } else if (action === 'dismiss') {
+      result = await postJson('/api/admin/claims', { id: Number(btn.dataset.id), action: 'dismiss' });
+    } else {
+      result = await postForm('/api/review-claim', { token: btn.dataset.token!, action });
+    }
+
+    if (!result.ok) {
+      showError(String(result.error || result.message || 'Could not update that claim.'));
+      btn.disabled = false;
+      return;
+    }
+    await load();
   });
 
-  init();
+  (async () => {
+    if (!(await requireAdmin('/admin/claims/'))) return;
+    showContent();
+    await load();
+  })();
 </script>

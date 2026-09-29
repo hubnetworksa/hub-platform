@@ -350,6 +350,9 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
         submissions: data.stats.awaitingReview,
         claims: data.stats.pendingClaims,
         reports: data.stats.openReports,
+        reviews: data.stats.pendingReviews,
+        events: data.stats.pendingEventSubmissions,
+        enquiries: data.stats.openEnquiries,
       };
       for (const [key, count] of Object.entries(counts)) {
         if (!count) continue;

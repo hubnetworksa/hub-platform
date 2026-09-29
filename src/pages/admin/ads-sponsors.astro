@@ -221,8 +221,7 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
   document.getElementById('sold-list')!.addEventListener('click', async (e) => {
     const btn = (e.target as HTMLElement).closest('button[data-clear]') as HTMLButtonElement | null;
     if (!btn) return;
-    if (!confirm('Clear this sponsorship slot? It becomes available for anyone to buy.')) return;
-    if (!window.confirm('Clear this slot? If it is a paid sponsorship, its PayFast billing is cancelled too.')) return;
+    if (!confirm('Clear this sponsorship slot? It becomes available for anyone to buy, and if it is a paid sponsorship its PayFast billing is cancelled too.')) return;
     btn.disabled = true;
     const cleared = await postJson('/api/admin/sponsorships', { action: 'clear', id: Number(btn.dataset.clear) });
     if (cleared.warning) window.alert(cleared.warning);

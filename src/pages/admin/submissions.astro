@@ -12,6 +12,7 @@ import AdminShell from '../../components/AdminShell.astro';
         <button id="bulk-approve" disabled style="padding:10px 14px;border:0;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;cursor:pointer;">Approve selected</button>
         <button id="bulk-reject" disabled style="padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--danger);font-size:13px;font-weight:800;cursor:pointer;">Reject selected</button>
       </div>
+      <div id="action-error" hidden style="padding:12px 16px;border:2px solid var(--danger);border-radius:12px;background:#fff;font-size:13px;font-weight:700;color:var(--danger)"></div>
       <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
         <div id="submissions-list"></div>
         <div id="submissions-empty" hidden style="padding:40px 18px;text-align:center;">
@@ -26,8 +27,25 @@ import AdminShell from '../../components/AdminShell.astro';
 <script>
   import { esc, TIER_NAMES, requireAdmin, showContent } from '../../lib/admin-html';
 
-  async function postForm(url: string, params: Record<string, string>): Promise<void> {
-    await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(params) });
+  // The review endpoint answers with a small HTML page whose <h1> is the
+  // outcome, and reports some failures ("Already handled", "This link has
+  // expired") with a 200 — so both the status and that heading are checked.
+  async function postForm(url: string, params: Record<string, string>): Promise<{ ok: boolean; message: string }> {
+    try {
+      const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(params) });
+      const text = await res.text();
+      const heading = (/<h1[^>]*>([^<]*)<\/h1>/i.exec(text)?.[1] ?? '').trim();
+      const failed = !res.ok || /expired|couldn|already|nothing to review/i.test(heading);
+      return { ok: !failed, message: heading || (res.ok ? '' : `Request failed (${res.status}).`) };
+    } catch {
+      return { ok: false, message: 'Network error.' };
+    }
+  }
+
+  function showError(message: string) {
+    const el = document.getElementById('action-error')!;
+    el.textContent = message;
+    el.hidden = !message;
   }
 
   interface Submission {
@@ -99,22 +117,31 @@ import AdminShell from '../../components/AdminShell.astro';
     if ((e.target as HTMLElement).classList.contains('submission-check')) updateBulkButtons();
   });
 
-  document.getElementById('bulk-approve')!.addEventListener('click', async () => {
+  async function bulk(action: 'approve' | 'reject') {
+    showError('');
     const tokens = [...document.querySelectorAll('.submission-check:checked')].map((el) => (el as HTMLElement).dataset.token!);
-    for (const token of tokens) await postForm('/api/confirm-listing', { token, action: 'approve' });
+    const failures: string[] = [];
+    for (const token of tokens) {
+      const result = await postForm('/api/confirm-listing', { token, action });
+      if (!result.ok) failures.push(result.message || 'Request failed.');
+    }
+    if (failures.length > 0) showError(`${failures.length} of ${tokens.length} could not be ${action === 'approve' ? 'approved' : 'rejected'}: ${[...new Set(failures)].join('; ')}`);
     init();
-  });
-  document.getElementById('bulk-reject')!.addEventListener('click', async () => {
-    const tokens = [...document.querySelectorAll('.submission-check:checked')].map((el) => (el as HTMLElement).dataset.token!);
-    for (const token of tokens) await postForm('/api/confirm-listing', { token, action: 'reject' });
-    init();
-  });
+  }
+  document.getElementById('bulk-approve')!.addEventListener('click', () => bulk('approve'));
+  document.getElementById('bulk-reject')!.addEventListener('click', () => bulk('reject'));
 
   document.getElementById('content')!.addEventListener('click', async (e) => {
     const btn = (e.target as HTMLElement).closest('button[data-action]') as HTMLButtonElement | null;
     if (!btn) return;
     btn.disabled = true;
-    await postForm('/api/confirm-listing', { token: btn.dataset.token!, action: btn.dataset.action! });
+    showError('');
+    const result = await postForm('/api/confirm-listing', { token: btn.dataset.token!, action: btn.dataset.action! });
+    if (!result.ok) {
+      showError(result.message || 'Could not update that submission.');
+      btn.disabled = false;
+      return;
+    }
     init();
   });
 
