@@ -62,6 +62,9 @@ export interface Site {
    *  Polokwane currently just reuse their existing bannerImage until they
    *  get an equivalent. */
   sectionBannerImage: string;
+  /** News section's own hero banner — falls back to sectionBannerImage on a
+   *  site where scripts/generate-news-banner-image.mjs hasn't run yet. */
+  newsBannerImage?: string;
   tagline: string;
   footerTagline: string;
   googleSiteVerification: string | null;
