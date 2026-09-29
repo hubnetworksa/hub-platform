@@ -107,8 +107,19 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const tierRevenueCents = featuredCents + verifiedCents;
   const sponsorshipRevenueCents = categorySuburbCents + bannerCents + centreCents + guideCents + tourismCents;
 
+  // Written once a day by .github/workflows/routine-health.yml (scripts/routines/health.mjs):
+  // when each scheduled routine last ran for this city, and whether that is late.
+  let routineHealth: { checkedAt: string; rows: { routine: string; city: string; lastRun: string | null; daysAgo: number | null; status: string }[] } | null = null;
+  try {
+    const row = await db.prepare("SELECT value FROM site_settings WHERE key = 'routine_health'").first<{ value: string }>();
+    if (row?.value) routineHealth = JSON.parse(row.value);
+  } catch {
+    routineHealth = null;
+  }
+
   return json({
     ok: true,
+    routineHealth,
     submissions: submissions.results.map((s) => ({
       ...s,
       status: s.owner_confirm_token ? 'Awaiting owner confirmation' : s.admin_approved_at ? 'Approved' : 'Pending your approval',

@@ -34,6 +34,14 @@ Append a dated section to `status/<city>/tourism-proposals.md` (create it if mis
 - **Example Attraction** (Heritage, Sea Point, R120, 2 hours): one-sentence blurb. Sources: https://…, https://…
 ```
 
+Before committing, run the check on your new section and fix anything it reports:
+
+```
+node scripts/routines/check-tourism.mjs --city <city> --online
+```
+
+It confirms the section has the three headings, at most 3 suggestions, each suggestion in the "(Category, area, price, time)" shape with an allowed category and at least 2 readable https sources on different sites, nothing already on the page, and a source for every stated change or closure. **Never push a proposal that fails.**
+
 Then append one line to `status/<city>/tourism-agent-log.jsonl`, commit only those two files, and push to `main`:
 
 ```json

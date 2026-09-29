@@ -1,0 +1,98 @@
+name: Routine health check
+
+# Once a day: works out when each scheduled routine last ran for each city
+# (scripts/routines/health.mjs, from the routines' own log files), saves that
+# to each site's database for the admin dashboard's routine health tile, and
+# raises an alert when anything is late:
+#   - opens (or updates) one GitHub issue labelled "routine-alert" listing the
+#     late routines, and closes it again once everything is back on time;
+#   - fails this workflow, which makes GitHub email the failure to the account
+#     that owns the schedule, so a stopped routine never goes unnoticed.
+
+on:
+  schedule:
+    - cron: "30 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Work out routine health
+        id: health
+        run: |
+          node scripts/routines/health.mjs
+          node scripts/routines/health.mjs --json > health.json || true
+          node -e "
+            const rows = require('./health.json');
+            const late = rows.filter((r) => r.status === 'late');
+            require('fs').appendFileSync(process.env.GITHUB_OUTPUT, 'late=' + late.length + '\n');
+          "
+
+      # One small row per site in site_settings ('routine_health'): that city's
+      # routines plus the all-city fuel routine. The admin overview reads it.
+      - name: Save health to each site's database
+        continue-on-error: true
+        run: |
+          for site in capetown pretoria polokwane; do
+            node -e "
+              const site = process.argv[1];
+              const rows = require('./health.json').filter((r) => r.city === site || r.city === 'all');
+              const value = JSON.stringify({ checkedAt: new Date().toISOString(), rows }).replace(/'/g, \"''\");
+              require('fs').writeFileSync('health-' + site + '.sql',
+                \"INSERT OR REPLACE INTO site_settings (key, value, updated_at) VALUES ('routine_health', '\" + value + \"', datetime('now'));\");
+            " "$site"
+            db=$(node -e "console.log(require('./sites/$site.json').dbName)")
+            npx wrangler d1 execute "$db" --config "wrangler.$site.jsonc" --remote --file="health-$site.sql"
+          done
+
+      - name: Open or update the alert issue
+        if: steps.health.outputs.late != '0'
+        run: |
+          gh label create routine-alert --color d73a4a --description "A scheduled routine is late" --force
+          node -e "
+            const rows = require('./health.json');
+            const late = rows.filter((r) => r.status === 'late');
+            const lines = late.map((r) => '- **' + r.routine + '** (' + r.city + '): last ran ' + (r.lastRun ?? 'never') + (r.daysAgo != null ? ' (' + r.daysAgo + ' days ago)' : ''));
+            require('fs').writeFileSync('alert.md', 'These scheduled routines have not run on time (checked ' + new Date().toISOString() + '):\n\n' + lines.join('\n') + '\n\nCheck the routine on claude.ai/code (Routines) and its latest run. This issue closes by itself once every routine is back on time.\n');
+          "
+          existing=$(gh issue list --label routine-alert --state open --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file alert.md
+          else
+            gh issue create --title "Routine alert: scheduled routines are late" --label routine-alert --body-file alert.md
+          fi
+
+      - name: Close the alert issue once everything is on time
+        if: steps.health.outputs.late == '0'
+        run: |
+          for n in $(gh issue list --label routine-alert --state open --json number --jq '.[].number'); do
+            gh issue close "$n" --comment "All routines are back on time as of $(date -u +%Y-%m-%dT%H:%MZ)."
+          done
+
+      # Failing here is what makes GitHub send the alert email.
+      - name: Fail when a routine is late
+        if: steps.health.outputs.late != '0'
+        run: |
+          echo "::error::${{ steps.health.outputs.late }} routine(s) are late. See the routine-alert issue."
+          exit 1

@@ -1,0 +1,58 @@
+name: Tidy expired content
+
+# Every night: removes events that finished more than 14 days ago (except
+# events an ownership claim or payment still points at) and news older than
+# 90 days, from all three live databases (scripts/tidy-expired.mjs). When
+# anything was removed it starts a production deploy so the pages disappear
+# from the sites and the sitemap too.
+
+on:
+  schedule:
+    - cron: "40 2 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Only list what would be removed"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  tidy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Remove expired events and old news
+        id: tidy
+        run: |
+          flag=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then flag="--dry-run"; fi
+          rebuild=0
+          for site in capetown pretoria polokwane; do
+            out=$(node scripts/tidy-expired.mjs --site "$site" $flag)
+            echo "$out"
+            if echo "$out" | grep -q "REBUILD_NEEDED=1"; then rebuild=1; fi
+          done
+          echo "rebuild=$rebuild" >> "$GITHUB_OUTPUT"
+
+      - name: Redeploy so removed pages disappear
+        if: steps.tidy.outputs.rebuild == '1'
+        run: gh workflow run deploy.yml --ref main
