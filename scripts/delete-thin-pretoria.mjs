@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // One-off, PRETORIA ONLY: permanently delete free, unclaimed business
-// listings that have no website, or whose content is thin (a one-line
-// description under 140 characters and no trading hours).
+// listings whose description is generic: a one-line description under 140
+// characters, with no trading hours to add anything. Having no website is
+// NOT a reason on its own; a listing with a real description stays.
 //
 // Never touched, whatever their content:
 //   - any paid listing (subscription_tier >= 1)
@@ -36,7 +37,7 @@ const PROTECTED = `
   AND NOT EXISTS (SELECT 1 FROM subscriptions x WHERE x.business_id = b.id)
   AND NOT EXISTS (SELECT 1 FROM business_photos x WHERE x.business_id = b.id)
   AND NOT EXISTS (SELECT 1 FROM reviews x WHERE x.business_id = b.id)`;
-const TARGET = `SELECT b.id FROM businesses b WHERE ${PROTECTED} AND (${NO_WEBSITE} OR ${THIN})`;
+const TARGET = `SELECT b.id FROM businesses b WHERE ${PROTECTED} AND ${THIN}`;
 
 function wrangler(args) {
   return execFileSync(process.execPath, [WRANGLER, ...args, '--config', CONFIG], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 28 });
@@ -56,13 +57,11 @@ wrangler(['d1', 'export', DB, '--remote', '--output', backup]);
 // 2. Counts.
 const [c] = query(`SELECT
   (SELECT count(*) FROM businesses) AS total,
-  (SELECT count(*) FROM businesses b WHERE ${PROTECTED} AND ${NO_WEBSITE}) AS no_website,
-  (SELECT count(*) FROM businesses b WHERE ${PROTECTED} AND ${THIN}) AS thin,
+  (SELECT count(*) FROM businesses b WHERE ${PROTECTED} AND ${THIN} AND ${NO_WEBSITE}) AS thin_no_website,
   (SELECT count(*) FROM (${TARGET})) AS to_delete`);
 console.log(`\nPretoria businesses:            ${c.total}`);
-console.log(`  free/unclaimed, no website:   ${c.no_website}`);
-console.log(`  free/unclaimed, thin content: ${c.thin}`);
-console.log(`  TO DELETE (either reason):    ${c.to_delete}`);
+console.log(`  TO DELETE (generic description): ${c.to_delete}`);
+console.log(`    of which also have no website:  ${c.thin_no_website}`);
 console.log(`  would remain:                 ${c.total - c.to_delete}`);
 console.log('\nSample of listings that would be deleted:');
 for (const r of query(`SELECT b.slug, b.name FROM businesses b WHERE b.id IN (${TARGET}) ORDER BY random() LIMIT 10`)) {
