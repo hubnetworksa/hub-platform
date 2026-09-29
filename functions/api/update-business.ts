@@ -105,6 +105,19 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .bind(business.slug)
     .first<{ n: number }>();
 
+  // Every review on this business, any status — this IS the owner's
+  // "oversight": they see a review the moment it's submitted (Pending),
+  // not only once an admin approves it. They can reply or flag it (see
+  // functions/api/review-reply.ts / flag-review.ts) but never remove it.
+  const reviews = await db
+    .prepare(
+      `SELECT id, rating, author_name, comment, status, flagged, owner_reply, owner_reply_at, created_at
+       FROM reviews WHERE business_id = ? ORDER BY created_at DESC LIMIT 50`
+    )
+    .bind(businessId)
+    .all<{ id: number; rating: number; author_name: string; comment: string; status: string; flagged: number; owner_reply: string | null; owner_reply_at: string | null; created_at: string }>();
+  const reviewsTotal = await db.prepare(`SELECT COUNT(*) AS n FROM reviews WHERE business_id = ?`).bind(businessId).first<{ n: number }>();
+
   return json({
     ok: true,
     business: {
@@ -127,6 +140,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     stats,
     enquiries: enquiries.results,
     enquiriesTotal: enquiriesTotal?.n ?? 0,
+    reviews: reviews.results,
+    reviewsTotal: reviewsTotal?.n ?? 0,
   });
 };
 

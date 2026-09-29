@@ -231,8 +231,13 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
                 <span style="color:var(--accent)"><Icon path={TAB_ICONS.reviews} size={17} /></span>
                 <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">What customers wrote</h3>
               </div>
-              <p style={emptyNote}>No reviews yet. Customer reviews aren't available on listings so far.</p>
+              <div id="reviews-list"></div>
+              <div id="reviews-empty" hidden style="padding:30px 18px;text-align:center">
+                <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--bg-subtle);color:var(--muted);margin-bottom:8px"><Icon path={TAB_ICONS.reviews} size={17} /></span>
+                <p style="font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No reviews yet. When a customer reviews you, it'll show up here — including before it's approved.</p>
+              </div>
             </div>
+            <p id="reviews-total-note" style="margin:10px 0 0;font-size:12px;font-weight:600;color:var(--muted)"></p>
           </section>
 
           <!-- Billing -->
@@ -347,6 +352,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   type Photo = { id: number; r2_key: string; caption: string | null };
   type Stats = { has_any: boolean; views: number; phone_clicks: number; website_clicks: number; search_appearances: number };
   type Enquiry = { id: number; name: string | null; contact: string; message: string; created_at: string };
+  type Review = { id: number; rating: number; author_name: string; comment: string; status: string; flagged: number; owner_reply: string | null; owner_reply_at: string | null; created_at: string };
   type Payment = { id: number; amount_cents: number; status: string; paid_at: string; invoice_number: string | null; tier: number; product_type: string | null; product_target: string | null };
   type Sponsorship = { product_type: string; product_target: string | null; current_period_end: string | null; status: string };
 
@@ -671,6 +677,108 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       total > enquiries.length ? `Showing the ${enquiries.length} most recent of ${total} enquiries.` : `${total} enquir${total === 1 ? 'y' : 'ies'} in total.`;
   }
 
+  // ---- Reviews ----
+  // Owner oversight, not control: every review shows here the moment it's
+  // submitted (with its real status), and the owner can reply or flag it
+  // for admin — never hide or delete it themselves. Only
+  // functions/api/admin/reviews.ts changes what's public.
+  const STATUS_PILL: Record<string, string> = {
+    pending: 'background:var(--bg-subtle);color:var(--muted)',
+    approved: 'background:rgba(26,143,94,.12);color:#1a8f5e',
+    rejected: 'background:var(--bg-subtle);color:var(--danger)',
+  };
+  const STATUS_LABEL: Record<string, string> = { pending: 'Pending review', approved: 'Live', rejected: 'Rejected' };
+
+  function starsHtml(rating: number): string {
+    return Array.from({ length: 5 }, (_, i) => `<svg width="13" height="13" viewBox="0 0 24 24" fill="${i < rating ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7Z"/></svg>`).join('');
+  }
+
+  function renderReviews(reviews: Review[], total: number) {
+    const list = document.getElementById('reviews-list')!;
+    const empty = document.getElementById('reviews-empty')!;
+    const totalNote = document.getElementById('reviews-total-note')!;
+    if (reviews.length === 0) {
+      empty.hidden = false;
+      totalNote.textContent = '';
+      return;
+    }
+    list.innerHTML = reviews
+      .map((r, i) => {
+        const border = i === reviews.length - 1 ? '' : 'border-bottom:1px solid var(--border);';
+        const replyBlock = r.owner_reply
+          ? `<div style="margin-top:8px;padding:9px 12px;border-left:3px solid var(--accent);background:var(--bg-subtle);border-radius:0 8px 8px 0"><div style="font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-hover)">Your reply</div><p style="margin:4px 0 0;font-size:13px;line-height:1.5;color:var(--text)">${esc(r.owner_reply)}</p></div>`
+          : r.status === 'approved'
+            ? `<div style="margin-top:8px;display:flex;gap:8px;align-items:flex-start">
+                <textarea data-reply-box="${r.id}" rows="2" placeholder="Reply to this review…" style="flex:1;padding:9px 11px;border:2px solid var(--border);border-radius:9px;font-size:13px;outline:none;resize:vertical;font-family:inherit"></textarea>
+                <button type="button" data-reply-send="${r.id}" style="padding:9px 13px;border:0;border-radius:9px;background:var(--navy);color:#fff;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap">Reply</button>
+              </div>`
+            : '';
+        const flagBtn = r.flagged
+          ? `<span style="font-size:11.5px;font-weight:700;color:var(--muted)">Reported to admin</span>`
+          : `<button type="button" data-flag-id="${r.id}" style="border:0;background:none;padding:0;font-size:11.5px;font-weight:700;color:var(--muted);text-decoration:underline;cursor:pointer">Report to admin</button>`;
+        return `<div style="padding:14px 18px;${border}display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <span style="display:flex;align-items:center;gap:8px">
+              <span style="color:var(--accent);display:flex;gap:1px">${starsHtml(r.rating)}</span>
+              <span style="font-size:14px;font-weight:800;color:var(--navy)">${esc(r.author_name)}</span>
+              <span style="padding:2px 8px;border-radius:999px;font-size:10px;font-weight:800;text-transform:uppercase;${STATUS_PILL[r.status] ?? ''}">${STATUS_LABEL[r.status] ?? r.status}</span>
+            </span>
+            <span style="font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap">${esc(shortDate(r.created_at))}</span>
+          </div>
+          <p style="margin:0;font-size:13.5px;line-height:1.5;color:var(--text)">${esc(r.comment)}</p>
+          ${replyBlock}
+          <div>${flagBtn}</div>
+        </div>`;
+      })
+      .join('');
+    totalNote.textContent =
+      total > reviews.length ? `Showing the ${reviews.length} most recent of ${total} reviews.` : `${total} review${total === 1 ? '' : 's'} in total.`;
+
+    list.querySelectorAll<HTMLButtonElement>('button[data-flag-id]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const reason = window.prompt('Why are you reporting this review to admin? (optional)') ?? '';
+        btn.disabled = true;
+        const res = await fetch('/api/flag-review', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reviewId: Number(btn.dataset.flagId), reason }),
+        });
+        const result = await res.json();
+        if (result.ok) {
+          const target = reviews.find((r) => r.id === Number(btn.dataset.flagId));
+          if (target) target.flagged = 1;
+          renderReviews(reviews, total);
+        } else {
+          btn.disabled = false;
+          alert(result.error || 'Could not report this review.');
+        }
+      });
+    });
+    list.querySelectorAll<HTMLButtonElement>('button[data-reply-send]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = Number(btn.dataset.replySend);
+        const box = list.querySelector<HTMLTextAreaElement>(`textarea[data-reply-box="${id}"]`)!;
+        const reply = box.value.trim();
+        if (!reply) return;
+        btn.disabled = true;
+        const res = await fetch('/api/review-reply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reviewId: id, reply }),
+        });
+        const result = await res.json();
+        if (result.ok) {
+          const target = reviews.find((r) => r.id === id);
+          if (target) target.owner_reply = reply;
+          renderReviews(reviews, total);
+        } else {
+          btn.disabled = false;
+          alert(result.error || 'Could not send your reply.');
+        }
+      });
+    });
+  }
+
   function renderPayments(payments: Payment[]) {
     const list = document.getElementById('payments-list')!;
     const empty = document.getElementById('payments-empty')!;
@@ -819,6 +927,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     renderPhotos(b, data.photos ?? []);
     renderStats(data.stats ?? { has_any: false, views: 0, phone_clicks: 0, website_clicks: 0, search_appearances: 0 }, data.enquiriesTotal ?? 0);
     renderEnquiries(data.enquiries ?? [], data.enquiriesTotal ?? 0);
+    renderReviews(data.reviews ?? [], data.reviewsTotal ?? 0);
 
     const fromHash = location.hash.replace('#', '');
     showTab(params.get('upgraded') || params.get('upgrade_cancelled') ? 'billing' : fromHash || 'overview');

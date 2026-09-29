@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminShell from '../../components/AdminShell.astro';
+---
+
+<BaseLayout title="Reviews" description="Moderate customer reviews before they go live, and anything an owner has flagged." noindex={true}>
+  <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
+
+  <div id="content" hidden>
+    <AdminShell active="reviews" title="Reviews" subtitle="New reviews waiting to go live, and anything an owner has flagged">
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div id="review-list"></div>
+        <div id="review-empty" hidden style="padding:40px 18px;text-align:center">
+          <div style="font-size:16px;font-weight:800;color:var(--navy)">Nothing to review</div>
+          <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin:5px auto 0;max-width:52ch;line-height:1.5">New reviews and anything an owner reports as fake or abusive show up here.</div>
+        </div>
+      </div>
+    </AdminShell>
+  </div>
+</BaseLayout>
+
+<script>
+  import { esc, requireAdmin, showContent, postJson, timeAgo } from '../../lib/admin-html';
+
+  interface ReviewRow {
+    id: number;
+    rating: number;
+    author_name: string;
+    comment: string;
+    status: 'pending' | 'approved' | 'rejected';
+    flagged: number;
+    flagged_reason: string | null;
+    created_at: string;
+    business_name: string;
+    business_slug: string;
+  }
+
+  function stars(rating: number): string {
+    return Array.from({ length: 5 }, (_, i) => `<svg width="13" height="13" viewBox="0 0 24 24" fill="${i < rating ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7Z"/></svg>`).join('');
+  }
+
+  async function load() {
+    const res = await fetch('/api/admin/reviews');
+    const data = await res.json();
+    const rows: ReviewRow[] = data.reviews ?? [];
+    const list = document.getElementById('review-list')!;
+    document.getElementById('review-empty')!.hidden = rows.length > 0;
+    list.innerHTML = rows
+      .map((r) => {
+        const flaggedNote = r.flagged
+          ? `<div style="margin-top:6px;font-size:12px;font-weight:800;color:var(--danger)">Reported by owner${r.flagged_reason ? `: ${esc(r.flagged_reason)}` : ''}</div>`
+          : '';
+        return `<div style="padding:16px 18px;border-bottom:1px solid var(--border);display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start">
+          <div style="flex:1;min-width:240px">
+            <div style="font-size:14.5px;font-weight:800;color:var(--navy)">
+              <a href="/business/${esc(r.business_slug)}/" target="_blank" style="color:inherit;text-decoration:none">${esc(r.business_name)}</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+              <span style="color:var(--accent);display:flex;gap:1px">${stars(r.rating)}</span>
+              <span style="font-size:12px;font-weight:700;color:var(--muted)">${esc(r.author_name)} · ${esc(timeAgo(r.created_at))}</span>
+            </div>
+            <p style="margin:8px 0 0;font-size:14px;line-height:1.55;color:var(--text);white-space:pre-wrap">${esc(r.comment)}</p>
+            ${flaggedNote}
+          </div>
+          <div style="display:flex;gap:7px">
+            <button data-act="approve" data-id="${r.id}" style="padding:8px 12px;border:2px solid var(--accent);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--accent-hover);cursor:pointer">Approve</button>
+            <button data-act="reject" data-id="${r.id}" style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--danger);cursor:pointer">Reject</button>
+          </div>
+        </div>`;
+      })
+      .join('');
+  }
+
+  document.getElementById('review-list')!.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-act]') as HTMLButtonElement | null;
+    if (!btn) return;
+    btn.disabled = true;
+    await postJson('/api/admin/reviews', { action: btn.dataset.act, id: Number(btn.dataset.id) });
+    load();
+  });
+
+  (async () => {
+    if (!(await requireAdmin('/admin/reviews/'))) return;
+    showContent();
+    await load();
+  })();
+</script>

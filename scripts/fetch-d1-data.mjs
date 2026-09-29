@@ -105,6 +105,20 @@ async function main() {
     process.stderr.write(`[${SITE}] fuel_prices table not available yet — building without fuel prices.\n`);
   }
 
+  // Only ever the public, moderated view: pending/rejected/flagged reviews
+  // stay owner/admin-only (served live via /api/update-business, not baked
+  // into the static build). author_name is a free-text name typed at
+  // submission time, never the reviewer's account email.
+  let reviews = [];
+  try {
+    reviews = query(
+      `SELECT id, business_id, rating, author_name, comment, owner_reply, owner_reply_at, created_at
+       FROM reviews WHERE status = 'approved' ORDER BY created_at DESC;`
+    );
+  } catch {
+    process.stderr.write(`[${SITE}] reviews table not available yet — building without reviews.\n`);
+  }
+
   await writeFile(`${OUT_DIR}/suburbs.json`, JSON.stringify(suburbs, null, 2));
   await writeFile(`${OUT_DIR}/categories.json`, JSON.stringify(categories, null, 2));
   await writeFile(`${OUT_DIR}/businesses.json`, JSON.stringify(businesses, null, 2));
@@ -116,11 +130,13 @@ async function main() {
   await writeFile(`${OUT_DIR}/events.json`, JSON.stringify(events, null, 2));
   await writeFile(`${OUT_DIR}/news.json`, JSON.stringify(news, null, 2));
   await writeFile(`${OUT_DIR}/fuel-prices.json`, JSON.stringify(fuelPrices, null, 2));
+  await writeFile(`${OUT_DIR}/reviews.json`, JSON.stringify(reviews, null, 2));
 
   process.stderr.write(
     `[${SITE}] Fetched ${suburbs.length} suburbs, ${categories.length} categories, ` +
     `${businesses.length} businesses, ${businessCategories.length} business-category links, ` +
-    `${shoppingCenters.length} shopping centres, ${events.length} events, ${news.length} news articles ` +
+    `${shoppingCenters.length} shopping centres, ${events.length} events, ${news.length} news articles, ` +
+    `${reviews.length} approved reviews ` +
     `(${REMOTE ? 'remote' : 'local'}).\n`
   );
 }

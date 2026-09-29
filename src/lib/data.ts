@@ -5,6 +5,7 @@ import businessCategoriesRaw from '../data/business-categories.json';
 import shoppingCentersRaw from '../data/shopping-centers.json';
 import businessPhotosRaw from '../data/business-photos.json';
 import sponsorshipsRaw from '../data/sponsorships.json';
+import reviewsRaw from '../data/reviews.json';
 import siteSettingsRaw from '../data/site-settings.json';
 import eventsRaw from '../data/events.json';
 import newsRaw from '../data/news.json';
@@ -111,6 +112,22 @@ export interface Sponsorship {
   current_period_end: string | null;
 }
 
+/** A publicly-visible review — only ever the 'approved' ones (see
+ *  scripts/fetch-d1-data.mjs's reviews query); pending/rejected/flagged
+ *  stay owner/admin-only, served live via /api/update-business instead of
+ *  baked into the static build. author_name is free text typed at
+ *  submission time, never the reviewer's account email. */
+export interface Review {
+  id: number;
+  business_id: number;
+  rating: number;
+  author_name: string;
+  comment: string;
+  owner_reply: string | null;
+  owner_reply_at: string | null;
+  created_at: string;
+}
+
 interface BusinessCategoryLink {
   business_id: number;
   category_id: number;
@@ -123,6 +140,7 @@ export const businesses = businessesRaw as Business[];
 export const shoppingCenters = shoppingCentersRaw as ShoppingCenter[];
 export const businessPhotos = businessPhotosRaw as BusinessPhoto[];
 export const sponsorships = sponsorshipsRaw as Sponsorship[];
+export const reviews = reviewsRaw as Review[];
 const businessCategories = businessCategoriesRaw as BusinessCategoryLink[];
 
 const suburbById = new Map(suburbs.map((s) => [s.id, s]));
@@ -161,6 +179,12 @@ for (const photo of businessPhotos) {
   photosByBusinessId.get(photo.business_id)!.push(photo);
 }
 
+const reviewsByBusinessId = new Map<number, Review[]>();
+for (const review of reviews) {
+  if (!reviewsByBusinessId.has(review.business_id)) reviewsByBusinessId.set(review.business_id, []);
+  reviewsByBusinessId.get(review.business_id)!.push(review);
+}
+
 export const suburbBySlug = (slug: string) => suburbs.find((s) => s.slug === slug);
 export const categoryBySlug = (slug: string) => categories.find((c) => c.slug === slug);
 export const businessBySlug = (slug: string) => businesses.find((b) => b.slug === slug);
@@ -190,6 +214,22 @@ export function businessesInSuburbAndCategory(suburbId: number, categoryId: numb
 // than assume a non-empty array means "show the gallery".
 export function photosFor(business: Business): BusinessPhoto[] {
   return photosByBusinessId.get(business.id) ?? [];
+}
+
+export function reviewsFor(business: Business): Review[] {
+  return reviewsByBusinessId.get(business.id) ?? [];
+}
+
+export function reviewCount(business: Business): number {
+  return reviewsFor(business).length;
+}
+
+/** One decimal place, or `null` when there are no approved reviews yet —
+ *  callers must check for null rather than treat it as a 0-star rating. */
+export function averageRating(business: Business): number | null {
+  const list = reviewsFor(business);
+  if (list.length === 0) return null;
+  return Math.round((list.reduce((sum, r) => sum + r.rating, 0) / list.length) * 10) / 10;
 }
 
 const sponsorshipByKey = new Map<string, Sponsorship>();
