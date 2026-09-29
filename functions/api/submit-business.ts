@@ -149,8 +149,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   });
 
   // No paid tier chosen — nothing more to do.
+  // The review URL carries the admin approval token and must only ever go
+  // to the admin email above — returning it here would let the submitter
+  // approve their own listing via /api/confirm-listing.
   if (chosenTier === 0 || !payfastConfigured(context.env)) {
-    return json({ ok: true, reviewUrl });
+    return json({ ok: true });
   }
 
   // Paid tier: build the PayFast checkout right here rather than a second
@@ -161,7 +164,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // business-submission.ts's insertApprovedBusiness) via the
   // "submission:<id>" branch of subscribe/notify.ts.
   const priceCents = await tierPriceCents(db, chosenTier);
-  if (!priceCents) return json({ ok: true, reviewUrl });
+  if (!priceCents) return json({ ok: true });
 
   const amount = centsToRand(priceCents);
   const mPaymentId = crypto.randomUUID();
@@ -198,7 +201,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const params = buildCheckoutParams(fields, signature);
   const redirectUrl = `https://${context.env.PAYFAST_HOST}/eng/process?${params.toString()}`;
 
-  return json({ ok: true, reviewUrl, redirectUrl });
+  return json({ ok: true, redirectUrl });
 };
 
 function json(data: unknown, status = 200): Response {

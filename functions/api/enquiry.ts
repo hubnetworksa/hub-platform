@@ -43,10 +43,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const db = context.env.DB;
   const business = await db
-    .prepare(`SELECT name, email FROM businesses WHERE slug = ? AND status = 'published' AND closed_at IS NULL`)
+    .prepare(`SELECT name, email, subscription_tier FROM businesses WHERE slug = ? AND status = 'published' AND closed_at IS NULL`)
     .bind(slug)
-    .first<{ name: string; email: string | null }>();
+    .first<{ name: string; email: string | null; subscription_tier: number }>();
   if (!business) return json({ ok: false, error: 'That listing could not be found.' }, 404);
+  // The enquiry form is a paid-plan perk (pricing page: Basic has "No photos
+  // or enquiry form"); the page doesn't render it for Basic, so enforce the
+  // same here rather than trusting that no one calls the API directly.
+  if ((business.subscription_tier ?? 0) < 1) {
+    return json({ ok: false, error: 'This listing does not accept enquiries through the site yet.' }, 403);
+  }
 
   const ipHash = await visitorHash(context.request, site.slug);
   if (await overMessageLimit(db, ipHash)) {
