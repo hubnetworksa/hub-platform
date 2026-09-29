@@ -185,7 +185,10 @@ const ICONS = {
       return;
     }
     const data = await res.json();
-    loading.hidden = true;
+    // loading carries its own inline style="display:flex", which beats the
+    // UA [hidden]{display:none} rule on specificity — .hidden alone is a
+    // silent no-op (same bug fixed in sponsor.astro's sp-target-wrap).
+    loading.style.display = 'none';
     content.hidden = false;
     document.getElementById('account-email')!.textContent = data.email;
     document.getElementById('account-initial')!.textContent = (String(data.email ?? '?')[0] ?? '?').toUpperCase();

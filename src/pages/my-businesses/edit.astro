@@ -789,7 +789,10 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       return;
     }
     const b: Business = data.business;
-    loading.hidden = true;
+    // loading carries its own inline style="display:flex", which beats the
+    // UA [hidden]{display:none} rule on specificity — .hidden alone is a
+    // silent no-op (same bug fixed in sponsor.astro's sp-target-wrap).
+    loading.style.display = 'none';
     dashboard.hidden = false;
 
     (document.getElementById('field-name') as HTMLInputElement).value = b.name;
