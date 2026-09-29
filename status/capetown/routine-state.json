@@ -1,5 +1,5 @@
 {
-  "suburb_index": 160,
+  "suburb_index": 161,
   "suburbs_per_run": 3,
   "suburb_slugs": [
     "cape-town-cbd",
@@ -173,7 +173,7 @@
   ],
   "shopping_center_index": 2,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
+  "shopping_center_slugs_pending": ["fountain-square-somerset-west", "the-sanctuary-shopping-centre-somerset-west"],
   "shopping_center_recheck_countdown": 21,
   "new_mall_discovery_countdown": 11,
   "shopping_center_slugs": [
@@ -343,7 +343,9 @@
     "eden-on-the-bay-mall-bloubergstrand",
     "seaside-village-bloubergstrand",
     "parklands-junction-parklands",
-    "noordhoek-garden-emporium-noordhoek"
+    "noordhoek-garden-emporium-noordhoek",
+    "fountain-square-somerset-west",
+    "the-sanctuary-shopping-centre-somerset-west"
   ],
   "closed_check_last_slug": "inn-hair-milnerton",
   "closed_check_batch_size": 5
