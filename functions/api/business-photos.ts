@@ -1,10 +1,12 @@
 import type { PagesFunction, D1Database, R2Bucket } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../_lib/auth';
 import { sniffImage } from '../_lib/images';
+import { requestRebuild } from '../_lib/deploy-hook';
 
 interface Env {
   DB: D1Database;
   MEDIA: R2Bucket;
+  GITHUB_DISPATCH_TOKEN?: string;
 }
 
 const MAX_FILE_BYTES = 8 * 1024 * 1024; // 8MB per photo
@@ -73,6 +75,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const sortOrder = existing?.n ?? 0;
   await db.prepare('INSERT INTO business_photos (business_id, r2_key, sort_order) VALUES (?, ?, ?)').bind(businessId, key, sortOrder).run();
 
+  await requestRebuild(context.env, 'business photo uploaded');
   return json({ ok: true, key });
 };
 
@@ -93,6 +96,7 @@ export const onRequestDelete: PagesFunction<Env> = async (context) => {
   await context.env.MEDIA.delete(photo.r2_key);
   await db.prepare('DELETE FROM business_photos WHERE id = ?').bind(photoId).run();
 
+  await requestRebuild(context.env, 'business photo removed');
   return json({ ok: true });
 };
 

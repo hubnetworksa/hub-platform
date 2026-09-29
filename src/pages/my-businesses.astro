@@ -85,7 +85,7 @@ const ICONS = {
 
   type Owned = {
     id: number; slug: string; name: string; subscription_tier: number;
-    subscription_status: string | null; subscription_expires_at: string | null;
+    subscription_status: string | null; subscription_expires_at: string | null; visible: number;
   };
 
   function esc(s: string): string {
@@ -135,7 +135,11 @@ const ICONS = {
 
   function ownedCard(b: Owned): string {
     const note = planNote(b);
+    const hiddenBanner = !b.visible
+      ? `<div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:9px;background:rgba(194,56,56,.1);color:var(--danger);font-size:12px;font-weight:800">Not showing on the site — open "Manage" for details</div>`
+      : '';
     return `<div class="mb-card">
+      ${hiddenBanner}
       <div style="display:flex;align-items:center;gap:12px;min-width:0">
         <span style="width:46px;height:46px;border-radius:12px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0">${esc(initialsOf(b.name))}</span>
         <div style="min-width:0">

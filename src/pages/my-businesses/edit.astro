@@ -41,6 +41,13 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     <div id="loading" style="color:var(--muted);padding:2rem 0;">Loading…</div>
 
     <div id="dashboard" hidden>
+      <div id="hidden-banner" hidden style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;margin-bottom:14px;border-radius:12px;background:rgba(194,56,56,.08);border:2px solid var(--danger)">
+        <span style="color:var(--danger);flex-shrink:0;font-size:18px;line-height:1">⚠</span>
+        <div style="min-width:0">
+          <div style="font-size:14px;font-weight:800;color:var(--danger)">This business isn't showing on the site right now</div>
+          <p id="hidden-reason-text" style="margin:3px 0 0;font-size:13px;font-weight:600;color:var(--text);line-height:1.5"></p>
+        </div>
+      </div>
       <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap;padding-bottom:16px;border-bottom:2px solid var(--navy)">
         <span id="biz-initials" style="width:46px;height:46px;border-radius:12px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800"></span>
         <div style="min-width:0">
@@ -108,6 +115,10 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
                     <input type="url" name="website" maxlength="200" class="owner-input" style={fieldInput} />
                   </label>
                 </div>
+                <label style={fieldLabel}>Business email
+                  <input type="email" name="email" maxlength="160" placeholder="hello@yourbusiness.co.za" class="owner-input" style={fieldInput} />
+                </label>
+                <p style="margin:-9px 0 0;font-size:12px;font-weight:600;color:var(--muted)">Customer enquiries from your listing go here. It's also where we send an ownership-claim link if someone else tries to claim this business — keep it current.</p>
                 <label style={fieldLabel}>Address
                   <input type="text" name="address" maxlength="200" class="owner-input" style={fieldInput} />
                 </label>
@@ -228,7 +239,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   .owner-nav { display: flex; flex-direction: row; }
   .owner-tab { display: flex; font-family: inherit; }
   .owner-tab.on { border-color: var(--navy) !important; background: var(--navy) !important; color: #fff !important; }
-  .owner-panel[hidden], #dashboard[hidden], #photos-locked[hidden], #photos-unlocked[hidden], #photos-empty[hidden], #photo-status[hidden], #payments-empty[hidden] { display: none !important; }
+  .owner-panel[hidden], #dashboard[hidden], #hidden-banner[hidden], #photos-locked[hidden], #photos-unlocked[hidden], #photos-empty[hidden], #photo-status[hidden], #payments-empty[hidden] { display: none !important; }
   @media (min-width: 760px) {
     .owner-shell { grid-template-columns: 210px minmax(0, 1fr); }
     .owner-nav { flex-direction: column; }
@@ -264,14 +275,26 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   };
 
   type Business = {
-    id: number; slug: string; name: string; created_at: string; suburb_name: string | null;
-    address: string | null; phone: string | null; website: string | null; description: string | null; hours: string | null;
+    id: number; slug: string; name: string; created_at: string; suburb_name: string | null; category_name: string | null;
+    address: string | null; phone: string | null; website: string | null; email: string | null; description: string | null; hours: string | null;
     subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null;
     social_instagram: string | null; social_facebook: string | null; social_linkedin: string | null; social_youtube: string | null;
+    visible: boolean; hidden_reason: 'admin_hidden' | 'marked_closed' | null;
   };
   type Photo = { id: number; r2_key: string; caption: string | null };
-  type Payment = { id: number; amount_cents: number; status: string; paid_at: string; invoice_number: string | null; tier: number; product_type: string | null };
+  type Payment = { id: number; amount_cents: number; status: string; paid_at: string; invoice_number: string | null; tier: number; product_type: string | null; product_target: string | null };
   type Sponsorship = { product_type: string; product_target: string | null; current_period_end: string | null; status: string };
+
+  // Shared by the Billing tab's sponsorship list and its payment history, so
+  // a payment for e.g. a suburb sponsorship reads the same way in both places.
+  const SPONSOR_TYPE_LABELS: Record<string, string> = {
+    category_sponsor: 'Category sponsor',
+    suburb_sponsor: 'Suburb sponsor',
+    homepage_banner: 'Homepage banner',
+    centre_sponsor: 'Shopping centre sponsor',
+    guide_sponsor: 'Guide sponsor',
+    tourism_sponsor: 'Things to do sponsor',
+  };
 
   function esc(s: string): string {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -337,8 +360,32 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     else chip.style.cssText += ';background:var(--bg-subtle);color:var(--muted);border:1px solid var(--border)';
     const created = parseDate(b.created_at);
     const since = created ? `Live since ${created.toLocaleDateString('en-ZA', { month: 'short', year: 'numeric' })}` : '';
-    document.getElementById('biz-meta')!.textContent = [since, b.suburb_name].filter(Boolean).join(' · ');
+    document.getElementById('biz-meta')!.textContent = [since, b.category_name, b.suburb_name].filter(Boolean).join(' · ');
     (document.getElementById('view-public') as HTMLAnchorElement).href = `/business/${b.slug}/`;
+  }
+
+  // ---- Visibility ----
+  // Two independent things can pull a listing off the public site without
+  // touching its plan at all: an admin hiding it, or the automated
+  // closed-business check flagging it. Either way the dashboard otherwise
+  // looks completely normal (plan, photos, everything editable) with no
+  // hint that none of it is actually showing anywhere — this banner is
+  // that hint. See update-business.ts's GET for how visible/hidden_reason
+  // are computed.
+  function renderVisibility(b: Business) {
+    const banner = document.getElementById('hidden-banner')!;
+    if (b.visible) {
+      banner.hidden = true;
+      return;
+    }
+    const reasonText =
+      b.hidden_reason === 'marked_closed'
+        ? "Our automated check flagged this business as possibly closed, so it's been taken off the site. If that's wrong, "
+        : "An admin has taken this listing off the site. If you think that's a mistake, ";
+    document.getElementById('hidden-reason-text')!.innerHTML =
+      esc(reasonText) + '<a href="/contact/" style="color:var(--danger);font-weight:800;text-decoration:underline">contact us</a> and we\'ll sort it out. ' +
+      (b.subscription_tier > 0 ? "You're still being charged for your plan while this is unresolved." : '');
+    banner.hidden = false;
   }
 
   // ---- Billing ----
@@ -436,13 +483,6 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     const priceLabel = main.dataset.priceTourismSponsor ?? '—';
 
     const mine = sponsorships.filter((s) => s.product_target || s.product_type === 'homepage_banner');
-    const TYPE_LABELS: Record<string, string> = {
-      category_sponsor: 'Category sponsor',
-      suburb_sponsor: 'Suburb sponsor',
-      homepage_banner: 'Homepage banner',
-      centre_sponsor: 'Shopping centre sponsor',
-      guide_sponsor: 'Guide sponsor',
-    };
     const mineBySlug = new Map(mine.map((s) => [s.product_target as string, s]));
     // Open to buy: not sponsored by anyone (per the build-time snapshot) and not already mine.
     const soldSlugs = new Set(sponsoredSlugs);
@@ -458,7 +498,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
         const expiry = longDate(s.current_period_end);
         const label = s.product_type === 'tourism_sponsor'
           ? pick?.name ?? s.product_target ?? ''
-          : `${TYPE_LABELS[s.product_type] ?? 'Sponsorship'}${s.product_target ? ` — ${s.product_target}` : ''}`;
+          : `${SPONSOR_TYPE_LABELS[s.product_type] ?? 'Sponsorship'}${s.product_target ? ` — ${s.product_target}` : ''}`;
         const when = s.status === 'cancelled' ? (expiry ? `cancelled · ends ${expiry}` : 'cancelled') : expiry ? `renews ${expiry}` : '';
         row.innerHTML = `<span style="font-size:14.5px;font-weight:800;color:var(--navy)">${esc(label)}</span><span style="font-size:12.5px;font-weight:700;color:var(--muted)">${esc(when)}</span>`;
         if (s.status === 'cancelled') {
@@ -526,7 +566,10 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     const pill = 'padding:4px 10px;border-radius:999px;background:rgba(var(--accent-rgb),.13);color:var(--accent-hover);font-size:11px;font-weight:800;text-transform:uppercase';
     list.innerHTML = payments
       .map((p, i) => {
-        const what = p.product_type && p.product_type !== 'tier' ? 'Sponsorship' : `${TIER_NAMES[p.tier] ?? 'Plan'} plan`;
+        const what =
+          p.product_type && p.product_type !== 'tier'
+            ? `${SPONSOR_TYPE_LABELS[p.product_type] ?? 'Sponsorship'}${p.product_target ? ` — ${p.product_target}` : ''}`
+            : `${TIER_NAMES[p.tier] ?? 'Plan'} plan`;
         const cents = p.amount_cents;
         const amount = `R${(cents / 100).toFixed(cents % 100 ? 2 : 0)}`;
         const paid = p.status === 'COMPLETE';
@@ -638,6 +681,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     (form.elements.namedItem('address') as HTMLInputElement).value = b.address ?? '';
     (form.elements.namedItem('phone') as HTMLInputElement).value = b.phone ?? '';
     (form.elements.namedItem('website') as HTMLInputElement).value = b.website ?? '';
+    (form.elements.namedItem('email') as HTMLInputElement).value = b.email ?? '';
     (form.elements.namedItem('description') as HTMLTextAreaElement).value = b.description ?? '';
     (form.elements.namedItem('hours') as HTMLTextAreaElement).value = b.hours ?? '';
 
@@ -650,6 +694,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     }
 
     renderHeader(b);
+    renderVisibility(b);
     renderPlan(b);
     renderSponsorships(data.sponsorships ?? []);
     renderPayments(data.payments ?? []);
