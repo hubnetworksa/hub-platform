@@ -121,11 +121,8 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
         <div style="padding:22px 18px;border-right:1px solid rgba(255,255,255,.14)">
           <StatTile value={suburbs.length.toLocaleString()} label="Suburbs covered" />
         </div>
-        <div style="padding:22px 18px;border-right:1px solid rgba(255,255,255,.14)">
-          <StatTile value={categories.length.toLocaleString()} label="Categories" />
-        </div>
         <div style="padding:22px 0 22px 18px">
-          <StatTile value="100%" label="Human reviewed" color="var(--grad-from)" />
+          <StatTile value={categories.length.toLocaleString()} label="Categories" />
         </div>
       </div>
     </section>
