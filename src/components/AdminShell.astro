@@ -322,6 +322,7 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
 </style>
 
 <script>
+  import { ADMIN_BADGE_CACHE_KEY } from '../lib/admin-html';
   // Every admin page already fetches /api/me itself to gate access — this
   // just also fills in the shell's "signed in as" footer + wires sign-out,
   // so it doesn't have to be duplicated in every page's own script.
@@ -341,8 +342,34 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
   // Nav badges — counts next to Listings/Approvals/Claims/Reports, matching
   // the mockup's sidebar badges. Every admin page loads this shell, so one
   // fetch here covers all of them rather than each page computing its own.
-  fetch('/api/admin/overview')
-    .then((r) => (r.ok ? r.json() : null))
+  // The counts are cached for a few minutes in sessionStorage: the overview
+  // query counts whole tables, and re-running it on every admin click was a
+  // real share of the daily D1 read allowance.
+  const BADGE_KEY = ADMIN_BADGE_CACHE_KEY;
+  const BADGE_TTL_MS = 5 * 60 * 1000;
+  function cachedOverview(): Promise<{ ok: boolean; stats: Record<string, number> } | null> {
+    try {
+      const hit = JSON.parse(sessionStorage.getItem(BADGE_KEY) || 'null');
+      if (hit && Date.now() - hit.at < BADGE_TTL_MS) return Promise.resolve(hit.data);
+    } catch {
+      /* storage blocked or corrupt: fall through to the network */
+    }
+    return fetch('/api/admin/overview')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.ok) {
+          try {
+            sessionStorage.setItem(BADGE_KEY, JSON.stringify({ at: Date.now(), data }));
+          } catch {
+            /* ignore */
+          }
+        }
+        return data;
+      });
+  }
+  // postJson() (src/lib/admin-html.ts) drops this cache after every admin
+  // action, so approving or resolving something shows fresh counts at once.
+  cachedOverview()
     .then((data) => {
       if (!data?.ok) return;
       const counts: Record<string, number> = {

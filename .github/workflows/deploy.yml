@@ -3,29 +3,99 @@ name: Deploy to Cloudflare Pages
 on:
   push:
     branches: [main]
+  # The research routines commit to main every hour. Deploying on each of
+  # those commits rebuilt all three sites (every build reads the whole
+  # database), which burned through D1's free daily read allowance. Routine
+  # commits are now picked up by this schedule instead, in batches, and only
+  # for the cities that actually have pending routine SQL.
+  schedule:
+    - cron: "20 */3 * * *"
   workflow_dispatch:
+    inputs:
+      sites:
+        description: "Cities to deploy: all, or a comma-separated list (capetown,pretoria,polokwane)"
+        required: false
+        default: "all"
 
 permissions:
   contents: write
   deployments: write
 
+# Queue rather than cancel: a cancelled run can stop halfway through
+# applying routine SQL, and a scheduled batch shouldn't be dropped just
+# because a code push landed at the same moment.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
+  # Decides which cities this run should build, so a change to one city
+  # never re-reads the other two cities' databases.
+  #   push:     code/shared changes -> all three cities.
+  #             routine-only changes (db/routine-updates/, status/,
+  #             ROUTINE.*.md) -> nothing now; the schedule applies them.
+  #   schedule: only cities with pending db/routine-updates/<city>/*.sql.
+  #   manual:   the cities named in the "sites" input (default all).
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      any: ${{ steps.plan.outputs.any }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Work out which cities to build
+        id: plan
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+          INPUT_SITES: ${{ github.event.inputs.sites }}
+        run: |
+          node - <<'JS'
+          const { execSync } = require('child_process');
+          const fs = require('fs');
+          const ALL = [
+            { site: 'polokwane', pages_project: 'polokwanehub' },
+            { site: 'pretoria', pages_project: 'pretoriahub' },
+            { site: 'capetown', pages_project: 'thecapetownhub' },
+          ];
+          const names = ALL.map((s) => s.site);
+          const { EVENT, BEFORE, AFTER, INPUT_SITES } = process.env;
+          const pending = (c) => {
+            try { return fs.readdirSync(`db/routine-updates/${c}`).some((f) => f.endsWith('.sql')); } catch { return false; }
+          };
+          let chosen;
+          if (EVENT === 'schedule') {
+            chosen = names.filter(pending);
+          } else if (EVENT === 'workflow_dispatch') {
+            const want = (INPUT_SITES || 'all').trim();
+            chosen = want === 'all' ? names : want.split(',').map((s) => s.trim()).filter((s) => names.includes(s));
+          } else {
+            let files = null;
+            if (BEFORE && !/^0+$/.test(BEFORE)) {
+              try { files = execSync(`git diff --name-only ${BEFORE} ${AFTER}`, { encoding: 'utf8' }).split(/\r?\n/).filter(Boolean); } catch { files = null; }
+            }
+            const routineOnly = (f) => f.startsWith('db/routine-updates/') || f.startsWith('status/') || /^ROUTINE\.[a-z]+\.md$/.test(f);
+            if (files === null) chosen = names; // unknown range (new branch, force push): be safe
+            else if (files.length > 0 && files.every(routineOnly)) chosen = [];
+            else chosen = names;
+          }
+          const matrix = { include: ALL.filter((s) => chosen.includes(s.site)) };
+          console.log(`Event: ${EVENT}. Building: ${chosen.join(', ') || 'nothing'}`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, 'matrix=' + JSON.stringify(matrix) + '\n' + 'any=' + (chosen.length > 0) + '\n');
+          JS
+
   deploy:
+    needs: plan
+    if: needs.plan.outputs.any == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - site: polokwane
-            pages_project: polokwanehub
-          - site: pretoria
-            pages_project: pretoriahub
-          - site: capetown
-            pages_project: thecapetownhub
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
     env:
       SITE: ${{ matrix.site }}
       # One shared pair for every site — they're all on the same

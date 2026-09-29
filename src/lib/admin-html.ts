@@ -62,7 +62,17 @@ export function showContent() {
   document.getElementById('content')!.hidden = false;
 }
 
+/** sessionStorage key for AdminShell's cached sidebar badge counts. */
+export const ADMIN_BADGE_CACHE_KEY = 'admin-badges-v1';
+
 export async function postJson(url: string, body: unknown): Promise<{ ok: boolean; error?: string; [k: string]: unknown }> {
+  // Any admin write can change a queue count, so the next page load should
+  // re-fetch the sidebar badges rather than show the cached ones.
+  try {
+    sessionStorage.removeItem(ADMIN_BADGE_CACHE_KEY);
+  } catch {
+    /* storage unavailable: the cache simply expires on its own */
+  }
   try {
     const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     return await res.json();

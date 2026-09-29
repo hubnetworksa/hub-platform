@@ -19,6 +19,20 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const site = JSON.parse(await readFile(path.join(ROOT, 'sites', `${SITE}.json`), 'utf8'));
 
 const DB_NAME = site.dbName;
+
+// Preview builds (deploy-ethan-preview.yml) restore src/data/ from a few
+// hours' cache instead of re-reading the whole live database on every push —
+// D1's free plan caps rows read per day across the whole account. The
+// workflow only sets this when the cache actually restored this site's data.
+if (process.env.USE_CACHED_D1_DATA === 'true') {
+  try {
+    await readFile(path.join(ROOT, 'src', 'data', 'businesses.json'), 'utf8');
+    console.log(`fetch-d1-data: using cached src/data for ${SITE} (USE_CACHED_D1_DATA=true), no D1 reads.`);
+    process.exit(0);
+  } catch {
+    console.log('fetch-d1-data: USE_CACHED_D1_DATA set but no cached data found, fetching from D1.');
+  }
+}
 const REMOTE = !process.argv.includes('--local');
 const OUT_DIR = path.join(ROOT, 'src', 'data');
 // Every site's D1 database is shared between its production build and its

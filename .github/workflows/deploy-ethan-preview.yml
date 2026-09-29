@@ -20,6 +20,11 @@ on:
   push:
     branches: [Ethan]
   workflow_dispatch:
+    inputs:
+      refresh_data:
+        description: "Re-read the live database instead of using the cached copy"
+        type: boolean
+        default: false
 
 concurrency:
   group: pages-ethan-preview
@@ -66,7 +71,44 @@ jobs:
       - name: Type-check the backend (Pages Functions)
         run: npm run typecheck:functions
 
+      # Reuse this city's database data for up to 6 hours instead of
+      # re-reading the whole live database on every preview push (D1's free
+      # plan caps rows read per day across the account). Run the workflow
+      # manually with "refresh_data" ticked to force a fresh read, e.g. right
+      # after changing data you want to see in the preview.
+      - name: Work out the data cache window
+        id: window
+        run: echo "bucket=$(date -u +%Y%m%d)-$(( $(date -u +%H) / 6 ))" >> "$GITHUB_OUTPUT"
+
+      - name: Restore cached database data
+        id: d1cache
+        if: github.event.inputs.refresh_data != 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: src/data
+          # Saved keys end in the run id, so match on the prefix; any copy
+          # from this 6-hour window will do.
+          key: d1-data-${{ matrix.site }}-${{ steps.window.outputs.bucket }}
+          restore-keys: d1-data-${{ matrix.site }}-${{ steps.window.outputs.bucket }}-
+
+      # Fetch and save the raw data BEFORE the build's demo-premium step
+      # rewrites src/data, so the cache always holds the real database copy.
+      - name: Fetch fresh database data
+        if: steps.d1cache.outputs.cache-matched-key == ''
+        run: npm run fetch-data
+
+      - name: Save database data to the cache
+        if: steps.d1cache.outputs.cache-matched-key == ''
+        uses: actions/cache/save@v4
+        with:
+          path: src/data
+          key: d1-data-${{ matrix.site }}-${{ steps.window.outputs.bucket }}-${{ github.run_id }}
+
       - name: Build with Astro
+        env:
+          # src/data is already in place (cache or the fetch above), so the
+          # prebuild fetch step skips its D1 reads.
+          USE_CACHED_D1_DATA: "true"
         run: npm run build
 
       # Same reason as deploy.yml: wrangler pages deploy only reads a
