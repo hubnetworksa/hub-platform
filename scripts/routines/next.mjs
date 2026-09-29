@@ -137,8 +137,9 @@ switch (routine) {
   }
 
   case 'news': {
-    const last = lastLogDate('news-agent-log.jsonl');
-    if (daysSince(last) * 24 < 20) notDue(`Runs daily (last run ${last}).`);
+    // No once-a-day gate (owner request 29 Sept 2026): news may run as often as it is
+    // started. Repeats are prevented by recentArticles below and check-news.mjs, which
+    // rejects any story whose slug or source URL is already published.
     const cutoff = new Date(Date.now() - 14 * 86_400_000).toISOString().slice(0, 10);
     due({ routine, city, area: cfg.newsArea, sources: cfg.newsSources, today, recentArticles: (snap.news ?? []).filter((n) => n.published_date >= cutoff), categories: ['Traffic', 'Utilities', 'Business', 'Sport', 'Tourism', 'Community'] });
     break;
