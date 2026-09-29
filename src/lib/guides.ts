@@ -99,6 +99,8 @@ const capetown: Guide[] = [
   },
   {
     slug: 'how-to-choose-an-electrician',
+    imageUrl: '/media/guides/how-to-choose-an-electrician.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'electricians',
     breadcrumbLabel: 'Electricians',
@@ -146,6 +148,8 @@ const capetown: Guide[] = [
   },
   {
     slug: 'how-to-choose-a-builder',
+    imageUrl: '/media/guides/how-to-choose-a-builder.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'building-construction',
     breadcrumbLabel: 'Building & Construction',
@@ -193,6 +197,8 @@ const capetown: Guide[] = [
   },
   {
     slug: 'how-to-choose-a-mechanic',
+    imageUrl: '/media/guides/how-to-choose-a-mechanic.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Motoring',
     categorySlug: 'automotive-repairs',
     breadcrumbLabel: 'Automotive & Repairs',
@@ -240,6 +246,8 @@ const capetown: Guide[] = [
   },
   {
     slug: 'how-to-choose-a-security-company',
+    imageUrl: '/media/guides/how-to-choose-a-security-company.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'security-services',
     breadcrumbLabel: 'Security Services',
@@ -287,6 +295,8 @@ const capetown: Guide[] = [
   },
   {
     slug: 'how-to-choose-a-locksmith',
+    imageUrl: '/media/guides/how-to-choose-a-locksmith.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'locksmiths',
     breadcrumbLabel: 'Locksmiths',
@@ -384,6 +394,8 @@ const pretoria: Guide[] = [
   },
   {
     slug: 'how-to-choose-an-electrician',
+    imageUrl: '/media/guides/how-to-choose-an-electrician.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'electricians',
     breadcrumbLabel: 'Electricians',
@@ -431,6 +443,8 @@ const pretoria: Guide[] = [
   },
   {
     slug: 'how-to-choose-a-builder',
+    imageUrl: '/media/guides/how-to-choose-a-builder.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'building-construction',
     breadcrumbLabel: 'Building & Construction',
@@ -478,6 +492,8 @@ const pretoria: Guide[] = [
   },
   {
     slug: 'how-to-choose-a-mechanic',
+    imageUrl: '/media/guides/how-to-choose-a-mechanic.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Motoring',
     categorySlug: 'automotive-repairs',
     breadcrumbLabel: 'Automotive & Repairs',
@@ -525,6 +541,8 @@ const pretoria: Guide[] = [
   },
   {
     slug: 'how-to-choose-a-security-company',
+    imageUrl: '/media/guides/how-to-choose-a-security-company.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'security-services',
     breadcrumbLabel: 'Security Services',
@@ -572,6 +590,8 @@ const pretoria: Guide[] = [
   },
   {
     slug: 'how-to-choose-a-locksmith',
+    imageUrl: '/media/guides/how-to-choose-a-locksmith.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'locksmiths',
     breadcrumbLabel: 'Locksmiths',
@@ -669,6 +689,8 @@ const polokwane: Guide[] = [
   },
   {
     slug: 'how-to-choose-an-electrician',
+    imageUrl: '/media/guides/how-to-choose-an-electrician.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'electricians',
     breadcrumbLabel: 'Electricians',
@@ -716,6 +738,8 @@ const polokwane: Guide[] = [
   },
   {
     slug: 'how-to-choose-a-builder',
+    imageUrl: '/media/guides/how-to-choose-a-builder.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'building-construction',
     breadcrumbLabel: 'Building & Construction',
@@ -763,6 +787,8 @@ const polokwane: Guide[] = [
   },
   {
     slug: 'how-to-choose-a-mechanic',
+    imageUrl: '/media/guides/how-to-choose-a-mechanic.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Motoring',
     categorySlug: 'automotive-repairs',
     breadcrumbLabel: 'Automotive & Repairs',
@@ -810,6 +836,8 @@ const polokwane: Guide[] = [
   },
   {
     slug: 'how-to-choose-a-security-company',
+    imageUrl: '/media/guides/how-to-choose-a-security-company.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'security-services',
     breadcrumbLabel: 'Security Services',
@@ -857,6 +885,8 @@ const polokwane: Guide[] = [
   },
   {
     slug: 'how-to-choose-a-locksmith',
+    imageUrl: '/media/guides/how-to-choose-a-locksmith.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'locksmiths',
     breadcrumbLabel: 'Locksmiths',
