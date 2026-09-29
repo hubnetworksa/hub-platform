@@ -26,15 +26,14 @@ const TABS = [
   ['billing', 'Billing'],
 ];
 
-// Profile views and phone/website clicks are real, first-party counts (see
-// functions/api/track-view.ts) over the last 30 days; enquiries are real
-// too (functions/api/enquiry.ts already saved every one, this dashboard
-// just never read them back). "Search appearances" has no tracking behind
-// it at all yet — the search page is a client-rendered index with nothing
-// to record a result impression against — so it stays an honest "No data
-// yet" rather than a fabricated figure. Every tile starts at this static
-// "—" and is filled in client-side once real data loads (see #stat-* ids
-// below and renderStats() in the script).
+// All four tiles are real, first-party counts, not mockup placeholders.
+// Profile views, phone/website clicks and search appearances come from
+// functions/api/track-view.ts (search.astro beacons once per real search,
+// naming every business shown in that page of results); enquiries were
+// already being saved by functions/api/enquiry.ts, this dashboard just
+// never read them back before. Every tile starts at this static "—" and is
+// filled in client-side once real data loads (see #stat-* ids below and
+// renderStats() in the script).
 const STATS: [id: string, label: string][] = [
   ['views', 'Profile views'],
   ['phone-clicks', 'Phone clicks'],
@@ -297,7 +296,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     visible: boolean; hidden_reason: 'admin_hidden' | 'marked_closed' | null;
   };
   type Photo = { id: number; r2_key: string; caption: string | null };
-  type Stats = { has_any: boolean; views: number; phone_clicks: number; website_clicks: number };
+  type Stats = { has_any: boolean; views: number; phone_clicks: number; website_clicks: number; search_appearances: number };
   type Enquiry = { id: number; name: string | null; contact: string; message: string; created_at: string };
   type Payment = { id: number; amount_cents: number; status: string; paid_at: string; invoice_number: string | null; tier: number; product_type: string | null; product_target: string | null };
   type Sponsorship = { product_type: string; product_target: string | null; current_period_end: string | null; status: string };
@@ -585,12 +584,13 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     if (stats.has_any) {
       setStat('views', String(stats.views), 'Last 30 days');
       setStat('phone-clicks', String(stats.phone_clicks), 'Last 30 days');
+      setStat('search', String(stats.search_appearances), 'Last 30 days');
     } else {
       setStat('views', null, 'No data yet');
       setStat('phone-clicks', null, 'No data yet');
+      setStat('search', null, 'No data yet');
     }
     setStat('enquiries', enquiriesTotal > 0 ? String(enquiriesTotal) : null, enquiriesTotal > 0 ? 'All time' : 'No data yet');
-    // Search appearances: genuinely untracked — see the STATS comment above.
   }
 
   // ---- Enquiries ----
@@ -762,7 +762,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     renderSponsorships(data.sponsorships ?? []);
     renderPayments(data.payments ?? []);
     renderPhotos(b, data.photos ?? []);
-    renderStats(data.stats ?? { has_any: false, views: 0, phone_clicks: 0, website_clicks: 0 }, data.enquiriesTotal ?? 0);
+    renderStats(data.stats ?? { has_any: false, views: 0, phone_clicks: 0, website_clicks: 0, search_appearances: 0 }, data.enquiriesTotal ?? 0);
     renderEnquiries(data.enquiries ?? [], data.enquiriesTotal ?? 0);
 
     const fromHash = location.hash.replace('#', '');

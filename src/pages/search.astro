@@ -524,6 +524,21 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
 
     const topCategory = results.find((r) => r.c)?.c ?? '';
     renderSponsorSlot(topCategory);
+
+    // Real numbers behind the owner dashboard's "Search appearances" tile
+    // (see functions/api/track-view.ts) — one beacon per real search,
+    // naming every business actually shown on this page of results, not
+    // one request per row. Only sent for a search that means something
+    // (a typed term or a suburb), so idly loading /search/ with nothing
+    // typed doesn't count as every listed business "appearing".
+    if (q || suburbSlug) {
+      const shown = [...(featured ? [featured] : []), ...rest].map((r) => r.s);
+      try {
+        navigator.sendBeacon('/api/track-view', new Blob([JSON.stringify({ event: 'search_appearance', businessSlugs: shown })], { type: 'application/json' }));
+      } catch {
+        // A missed appearance count is never worth surfacing an error over.
+      }
+    }
   }
 
   form.addEventListener('submit', (e) => {

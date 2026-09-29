@@ -87,6 +87,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     views: statsByEvent.view ?? 0,
     phone_clicks: statsByEvent.phone_click ?? 0,
     website_clicks: statsByEvent.website_click ?? 0,
+    search_appearances: statsByEvent.search_appearance ?? 0,
   };
 
   // Real enquiries sent through this business's own page (see
