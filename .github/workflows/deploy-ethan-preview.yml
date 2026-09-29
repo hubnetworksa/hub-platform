@@ -43,6 +43,10 @@ jobs:
       # Preview only: fake Featured/Verified listings, sponsors and featured events so every
       # premium spot can be seen. Never set in deploy.yml, so production is unaffected.
       DEMO_PREMIUM: "true"
+      # Preview only: show is_test=1 businesses (see scripts/fetch-d1-data.mjs) so a test
+      # listing created to check a feature is actually visible somewhere. Never set in
+      # deploy.yml — production always filters them out, even though the DB is shared.
+      INCLUDE_TEST_DATA: "true"
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
