@@ -55,6 +55,14 @@ INSERT OR IGNORE INTO events (
 - `organiser`, `organiser_note`, `doors`, `ages`, `parking`, `traders` are optional: fill what you genuinely found, leave `NULL` for the rest.
 - `verification_json` is the JSON array of your 3 or more non-resale source URLs: the audit trail. Do not pad it with resale URLs.
 
+## The check: every time, before you push
+
+```
+node scripts/routines/check-events.mjs db/routine-updates/<city>/<your file>.sql --city <city> --online
+```
+
+This gate confirms the file only inserts events, every required field is present and well formed, the date is in the future, the slug follows the rule, the event is not already on the site, and there are at least 3 non-resale verification sources on 3 different sites. With `--online` it also reads each source and needs at least 3 of them to mention the event and its date. It prints `ok` or `FAIL` for each event and exits non-zero on any failure. Fix or delete every failing event and re-run. **Never push a file that fails.**
+
 ## Logging and committing
 
 Append one line to `status/<city>/events-agent-log.jsonl` every run, even a quiet one, then commit the SQL file (only if at least one event cleared the bar) with the log line and push to `main`:

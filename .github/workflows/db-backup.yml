@@ -1,0 +1,59 @@
+name: Weekly database backup
+
+# Every Sunday: exports each site's full live D1 database (schema and data)
+# with `wrangler d1 export` and keeps it as a private, compressed GitHub
+# Actions artifact for 90 days (about 13 weekly copies per site). To restore,
+# download the artifact from the run's page, gunzip it, and review the SQL
+# before applying any of it.
+
+on:
+  schedule:
+    - cron: "15 1 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        site: [capetown, pretoria, polokwane]
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Export the database
+        id: export
+        run: |
+          db=$(node -e "console.log(require('./sites/${{ matrix.site }}.json').dbName)")
+          stamp=$(date -u +%Y-%m-%d)
+          file="${{ matrix.site }}-$stamp.sql"
+          npx wrangler d1 export "$db" --config "wrangler.${{ matrix.site }}.jsonc" --remote --output "$file"
+          test -s "$file"
+          gzip -9 "$file"
+          ls -la "$file.gz"
+          echo "file=$file.gz" >> "$GITHUB_OUTPUT"
+          echo "stamp=$stamp" >> "$GITHUB_OUTPUT"
+
+      - name: Keep the backup for 90 days
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ matrix.site }}-${{ steps.export.outputs.stamp }}
+          path: ${{ steps.export.outputs.file }}
+          retention-days: 90
+          if-no-files-found: error
