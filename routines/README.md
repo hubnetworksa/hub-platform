@@ -60,6 +60,6 @@ node scripts/fuel-due.mjs --date 2026-10-07
 
 - A validator for events (like `validate.mjs`) and for tourism proposals.
 - A small GitHub Action that runs `fuel-due.mjs` first and only starts the fuel agent when due.
-- A GitHub Action step that runs `generate-event-images.mjs` for each city right after an events deploy, so this stops being a manual step once the routine itself is scheduled.
+- Done 29 Sept 2026: every production deploy now runs `generate-event-images.mjs` for each city (step "Generate AI posters for events without an image" in deploy.yml).
 - Batched daily apply-and-deploy of routine SQL, and lighter build reads, so routine commits do not each trigger a full three-city deploy (see `ROUTINES-PLAN.md`, phase 0).
 - The database backup routine, the data health report and the expired-content tidy-up (script-only routines listed in the plan).
