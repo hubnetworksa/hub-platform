@@ -167,6 +167,18 @@ jobs:
             echo "Push attempt $i failed, retrying..."; sleep $((RANDOM % 5 + 1))
           done
 
+      # Give every event that has no image yet an AI-generated poster
+      # (Cloudflare Workers AI, FLUX schnell) and store it in this site's R2
+      # bucket. Only touches events with image_url IS NULL, so a real photo is
+      # never replaced, and it runs after the routine SQL above so events added
+      # in this deploy get their poster in this same build. Capped per run;
+      # well inside the free daily AI allowance. continue-on-error: a failure
+      # here (e.g. the API token lacks the Workers AI permission) must never
+      # stop the site from deploying.
+      - name: Generate AI posters for events without an image
+        continue-on-error: true
+        run: node scripts/generate-event-images.mjs --site ${{ matrix.site }} --limit 20
+
       - name: Build with Astro
         run: npm run build
 
