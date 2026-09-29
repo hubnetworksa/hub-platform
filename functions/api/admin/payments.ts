@@ -1,6 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
-import { TIER_NAMES, sponsorPriceCents, tierPriceCents, sponsorProductLabel, type SponsorProductType } from '../../_lib/pricing';
+import { TIER_NAMES, sponsorPriceCents, tierPriceCents, sponsorProductLabel, parseBillingPeriod, type SponsorProductType } from '../../_lib/pricing';
 
 interface Env {
   DB: D1Database;
@@ -18,28 +18,28 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const paid = await db
     .prepare(
-      `SELECT p.id, p.pf_payment_id, p.amount_cents, p.status, p.paid_at, p.invoice_number, s.tier, s.product_type, s.product_target, b.name AS business_name
+      `SELECT p.id, p.pf_payment_id, p.amount_cents, p.status, p.paid_at, p.invoice_number, s.tier, s.product_type, s.product_target, s.billing_period, b.name AS business_name
        FROM payments p
        JOIN subscriptions s ON s.id = p.subscription_id
        JOIN businesses b ON b.id = s.business_id
        ORDER BY p.paid_at DESC, p.id DESC LIMIT 200`
     )
-    .all<{ id: number; pf_payment_id: string | null; amount_cents: number; status: string; paid_at: string; invoice_number: string | null; tier: number; product_type: string; product_target: string | null; business_name: string }>();
+    .all<{ id: number; pf_payment_id: string | null; amount_cents: number; status: string; paid_at: string; invoice_number: string | null; tier: number; product_type: string; product_target: string | null; billing_period: string | null; business_name: string }>();
 
   const overdueSubs = await db
     .prepare(
-      `SELECT s.id, s.tier, s.product_type, s.product_target, s.current_period_end, b.name AS business_name
+      `SELECT s.id, s.tier, s.product_type, s.product_target, s.billing_period, s.current_period_end, b.name AS business_name
        FROM subscriptions s JOIN businesses b ON b.id = s.business_id
        WHERE s.status = 'active' AND s.m_payment_id NOT LIKE 'admin-comp-%'
          AND s.current_period_end IS NOT NULL AND s.current_period_end <= datetime('now')
        ORDER BY s.current_period_end DESC`
     )
-    .all<{ id: number; tier: number; product_type: string; product_target: string | null; current_period_end: string; business_name: string }>();
+    .all<{ id: number; tier: number; product_type: string; product_target: string | null; billing_period: string | null; current_period_end: string; business_name: string }>();
 
-  const label = (productType: string, tier: number, target: string | null): string =>
-    productType === 'tier'
+  const label = (productType: string, tier: number, target: string | null, billingPeriod: string | null): string =>
+    (productType === 'tier'
       ? `${TIER_NAMES[tier] ?? 'Plan'} plan`
-      : sponsorProductLabel(productType as SponsorProductType, target);
+      : sponsorProductLabel(productType as SponsorProductType, target)) + (billingPeriod === 'yearly' ? ' (yearly)' : '');
 
   const rows: { id: string; paymentId: number | null; invoiceNumber: string | null; reference: string | null; client: string; product: string; amountCents: number; date: string; status: string; method: string }[] = paid.results.map((p) => ({
     id: `PF-${p.id}`,
@@ -47,7 +47,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     invoiceNumber: p.invoice_number,
     reference: p.pf_payment_id,
     client: p.business_name,
-    product: label(p.product_type, p.tier, p.product_target),
+    product: label(p.product_type, p.tier, p.product_target, p.billing_period),
     amountCents: p.amount_cents,
     date: p.paid_at,
     status: p.status === 'COMPLETE' ? 'Paid' : p.status,
@@ -55,17 +55,19 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   }));
 
   for (const o of overdueSubs.results) {
+    // The renewal that didn't arrive is one billing period's charge.
+    const period = parseBillingPeriod(o.billing_period);
     const cents =
       o.product_type === 'tier'
-        ? (await tierPriceCents(db, o.tier)) ?? 0
-        : (await sponsorPriceCents(db, o.product_type as SponsorProductType)) ?? 0;
+        ? (await tierPriceCents(db, o.tier, period)) ?? 0
+        : (await sponsorPriceCents(db, o.product_type as SponsorProductType, period)) ?? 0;
     rows.push({
       id: `SUB-${o.id}`,
       paymentId: null,
       invoiceNumber: null,
       reference: null,
       client: o.business_name,
-      product: label(o.product_type, o.tier, o.product_target),
+      product: label(o.product_type, o.tier, o.product_target, o.billing_period),
       amountCents: cents,
       date: o.current_period_end,
       status: 'Overdue',

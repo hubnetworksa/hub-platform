@@ -27,6 +27,8 @@ export interface Draft {
   phone: string;
   email: string;
   tier: number;
+  /** Billing period for a paid tier — monthly unless the owner switched to yearly. */
+  billing: 'monthly' | 'yearly';
   company_url: string; // honeypot — always empty for real users
   loadedAt: number;
   // step 2
@@ -42,6 +44,9 @@ export interface FlowPlanData {
   name: string;
   price: string;
   amount: string;
+  yearlyPrice: string;
+  yearlyAmount: string;
+  yearlyNote: string;
   note: string;
   summary: string;
 }
@@ -49,6 +54,7 @@ export interface FlowPlanData {
 export interface SubmitResult {
   name: string;
   tier: number;
+  billing?: 'monthly' | 'yearly';
   redirectUrl: string;
 }
 
@@ -61,6 +67,7 @@ export function emptyDraft(): Draft {
     phone: '',
     email: '',
     tier: 0,
+    billing: 'monthly',
     company_url: '',
     loadedAt: Date.now(),
     street: '',

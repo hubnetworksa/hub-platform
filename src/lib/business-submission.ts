@@ -1,6 +1,6 @@
 import type { D1Database } from '@cloudflare/workers-types';
 import { slugify } from './slug';
-import { tierPriceCents } from '../../functions/_lib/pricing';
+import { tierPriceCents, parseBillingPeriod, periodInterval } from '../../functions/_lib/pricing';
 import { issueInvoice, type InvoicingEnv } from '../../functions/_lib/invoicing';
 
 // Shared between submit-business.ts (holds the pending row + emails the
@@ -36,6 +36,10 @@ export interface ApprovedListing {
    *  chosen-but-never-paid tier silently publishes at Basic instead of
    *  blocking the listing. */
   chosenTier?: number;
+  /** Billing period chosen with that tier at signup (pending_submissions.
+   *  chosen_billing_period) — 'yearly' or 'monthly'; anything else (or
+   *  missing) is monthly. Sets how far the first paid period runs. */
+  billingPeriod?: string | null;
   paidMPaymentId?: string | null;
   /** Trading hours as free text ("Mon–Fri 08:00–17:00, Sat Closed"), from the listing form. */
   hours?: string | null;
@@ -157,20 +161,22 @@ async function applyChosenTier(db: D1Database, businessId: number, listing: Appr
   const tier = listing.chosenTier ?? 0;
   if (tier <= 0 || !listing.paidMPaymentId) return;
 
-  const priceCents = await tierPriceCents(db, tier);
+  const billingPeriod = parseBillingPeriod(listing.billingPeriod);
+  const interval = periodInterval(billingPeriod);
+  const priceCents = await tierPriceCents(db, tier, billingPeriod);
   if (!priceCents) return;
 
   const sub = await db
     .prepare(
-      `INSERT INTO subscriptions (business_id, tier, product_type, m_payment_id, payfast_token, status, started_at, current_period_end)
-       VALUES (?, ?, 'tier', ?, ?, 'active', datetime('now'), datetime('now', '+1 month'))`
+      `INSERT INTO subscriptions (business_id, tier, product_type, m_payment_id, payfast_token, status, started_at, current_period_end, billing_period)
+       VALUES (?, ?, 'tier', ?, ?, 'active', datetime('now'), datetime('now', ?), ?)`
     )
-    .bind(businessId, tier, listing.paidMPaymentId, listing.payfastToken ?? null)
+    .bind(businessId, tier, listing.paidMPaymentId, listing.payfastToken ?? null, interval, billingPeriod)
     .run();
 
   await db
-    .prepare(`UPDATE businesses SET subscription_tier = ?, subscription_status = 'active', subscription_expires_at = datetime('now', '+1 month') WHERE id = ?`)
-    .bind(tier, businessId)
+    .prepare(`UPDATE businesses SET subscription_tier = ?, subscription_status = 'active', subscription_expires_at = datetime('now', ?) WHERE id = ?`)
+    .bind(tier, interval, businessId)
     .run();
 
   // Backfill the reconciliation record now that a subscription_id exists

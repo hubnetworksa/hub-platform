@@ -57,10 +57,10 @@ import AdminShell from '../../components/AdminShell.astro';
     } else {
       list.innerHTML = data.subscriptions
         .map(
-          (s: { name: string; tierName: string; subscription_status: string; priceRand: string }) =>
+          (s: { name: string; tierName: string; subscription_status: string; priceRand: string; billingPeriod?: string }) =>
             `<div class="admin-row" style="padding:14px 18px;border-bottom:1px solid var(--border);">
               <div style="font-size:14.5px;font-weight:800;color:var(--navy);">${esc(s.name)}</div>
-              <div style="font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;">${esc(s.tierName)} — ${esc(s.subscription_status)} — R${esc(s.priceRand)}/mo</div>
+              <div style="font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;">${esc(s.tierName)} — ${esc(s.subscription_status)} — ${s.billingPeriod === 'yearly' ? `R${esc(s.priceRand)}/yr (billed yearly)` : `R${esc(s.priceRand)}/mo`}</div>
             </div>`
         )
         .join('');
@@ -79,14 +79,19 @@ import AdminShell from '../../components/AdminShell.astro';
     return Number.isInteger(rand) ? String(rand) : rand.toFixed(2);
   }
 
-  function priceCard(key: string, label: string, cents: number | undefined, accent: boolean, note?: string): string {
+  // A yearly key is the monthly key with `_yearly` before `_cents` (see
+  // functions/_lib/pricing.ts). Unset or 0 means "monthly × 10".
+  const yearlyKeyOf = (key: string) => key.replace(/_cents$/, '_yearly_cents');
+
+  function priceCard(key: string, label: string, cents: number | undefined, accent: boolean, note?: string, placeholder = 'Not set'): string {
+    const unit = key === 'price_event_feature_cents' ? 'event' : key.endsWith('_yearly_cents') ? 'year' : 'month';
     return `
       <div style="background:#fff;border:2px solid ${accent ? 'var(--accent)' : 'var(--border)'};border-radius:14px;padding:20px">
         <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:${accent ? 'var(--accent)' : 'var(--muted)'}">${esc(label)}</div>
         <div style="display:flex;align-items:baseline;gap:6px;margin-top:10px">
           <span style="font-size:22px;font-weight:800;color:var(--navy)">R</span>
-          <input type="number" min="0" step="0.01" value="${cents === undefined ? '' : randValue(cents)}" placeholder="Not set" data-key="${key}" class="price-input" style="width:120px;padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:22px;font-weight:800;color:var(--navy);outline:none;background:#fff" />
-          <span style="font-size:13px;font-weight:700;color:var(--muted)">/ ${key === 'price_event_feature_cents' ? 'event' : 'month'}</span>
+          <input type="number" min="0" step="0.01" value="${cents === undefined || (unit === 'year' && !cents) ? '' : randValue(cents)}" placeholder="${esc(placeholder)}" data-key="${key}" class="price-input" style="width:120px;padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-size:22px;font-weight:800;color:var(--navy);outline:none;background:#fff" />
+          <span style="font-size:13px;font-weight:700;color:var(--muted)">/ ${unit}</span>
         </div>
         <p data-note="${key}" style="margin:12px 0 0;font-size:13px;line-height:1.5;color:var(--muted);font-weight:600">${note ?? 'Saves as soon as you change it.'}</p>
       </div>`;
@@ -98,11 +103,29 @@ import AdminShell from '../../components/AdminShell.astro';
     const settingsByKey = new Map<string, string>(data.settings.map((s: { key: string; value: string }) => [s.key, s.value]));
     const cents = (key: string): number | undefined => (settingsByKey.has(key) ? Number(settingsByKey.get(key)) : undefined);
 
+    // Each plan / sponsor spot gets its yearly card right after the monthly
+    // one. Left blank (or 0) it charges monthly × 10 — two months free.
+    const yearlyCard = (key: string, label: string, accent: boolean): string => {
+      const monthly = cents(key) ?? 0;
+      const fallback = monthly * 10;
+      return priceCard(
+        yearlyKeyOf(key),
+        `${label} (yearly)`,
+        cents(yearlyKeyOf(key)),
+        accent,
+        `Leave blank or 0 to charge monthly × 10${fallback ? ` (R${randValue(fallback)})` : ''} — two months free.`,
+        fallback ? randValue(fallback) : 'Not set'
+      );
+    };
+
     document.getElementById('price-cards')!.innerHTML =
       TIER_KEYS.map(({ key, label, accent }) => {
         const count = tierCounts[label.replace(' plan', '')] ?? 0;
-        return priceCard(key, label, cents(key), accent, `${count} business${count === 1 ? '' : 'es'} on this plan.`);
-      }).join('') + Object.entries(OTHER_KEYS).map(([key, label]) => priceCard(key, label, cents(key), false)).join('');
+        return priceCard(key, label, cents(key), accent, `${count} business${count === 1 ? '' : 'es'} on this plan.`) + yearlyCard(key, label, accent);
+      }).join('') +
+      Object.entries(OTHER_KEYS)
+        .map(([key, label]) => priceCard(key, label, cents(key), false) + (key === 'price_event_feature_cents' ? '' : yearlyCard(key, label, false)))
+        .join('');
   }
 
   // The mockup's inputs save on change (no Save button).
@@ -112,8 +135,10 @@ import AdminShell from '../../components/AdminShell.astro';
     const key = input.dataset.key!;
     const note = document.querySelector<HTMLElement>(`[data-note="${key}"]`)!;
     const previous = note.textContent;
-    const cents = Math.round(Number(input.value) * 100);
-    if (!Number.isFinite(cents) || cents < 0 || input.value === '') {
+    // Clearing a yearly price saves 0, which falls back to monthly × 10.
+    const isYearly = key.endsWith('_yearly_cents');
+    const cents = Math.round(Number(input.value || (isYearly ? '0' : '')) * 100);
+    if (!Number.isFinite(cents) || cents < 0 || (input.value === '' && !isYearly)) {
       note.textContent = 'Enter an amount in rand.';
       return;
     }

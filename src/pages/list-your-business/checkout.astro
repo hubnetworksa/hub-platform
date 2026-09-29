@@ -142,10 +142,12 @@ const payMethods = [
     if (!result || !plan || !/^https:\/\//i.test(result.redirectUrl)) {
       window.location.replace('/list-your-business/');
     } else {
-      $('sum-plan').textContent = `${plan.name} plan — monthly`;
-      $('sum-price').textContent = plan.amount;
-      $('sum-total').textContent = plan.amount;
-      $('pay-btn').textContent = `Pay ${plan.amount} with PayFast`;
+      const yearly = result.billing === 'yearly';
+      const amount = yearly ? plan.yearlyAmount : plan.amount;
+      $('sum-plan').textContent = `${plan.name} plan — ${yearly ? 'yearly' : 'monthly'}`;
+      $('sum-price').textContent = amount;
+      $('sum-total').textContent = amount;
+      $('pay-btn').textContent = `Pay ${amount} with PayFast`;
       $('co-pay').hidden = false;
 
       const form = $('pay-form') as HTMLFormElement;

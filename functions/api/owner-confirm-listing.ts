@@ -31,6 +31,7 @@ interface PendingRow {
   description: string;
   submitted_by_user_id: number | null;
   chosen_tier: number;
+  chosen_billing_period: string | null;
   m_payment_id: string | null;
   payment_status: string | null;
   payfast_token: string | null;
@@ -52,7 +53,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const row = await db
     .prepare(
       `SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description,
-              submitted_by_user_id, chosen_tier, m_payment_id, payment_status, payfast_token, hours, shopping_center_slug
+              submitted_by_user_id, chosen_tier, chosen_billing_period, m_payment_id, payment_status, payfast_token, hours, shopping_center_slug
        FROM pending_submissions WHERE owner_confirm_token = ?`
     )
     .bind(token)
@@ -99,6 +100,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     description: row.description,
     ownerUserId: row.submitted_by_user_id,
     chosenTier: row.chosen_tier,
+    billingPeriod: row.chosen_billing_period,
     paidMPaymentId: row.payment_status === 'paid' ? row.m_payment_id : null,
       payfastToken: row.payfast_token,
     hours: row.hours,

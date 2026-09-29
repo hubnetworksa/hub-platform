@@ -165,7 +165,8 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
   $('pv-phone').textContent = draft.phone || 'Not provided';
   $('pv-address').textContent = address || 'Not provided';
   $('pv-hours').textContent = hours || 'Not provided';
-  $('plan-title').textContent = paid ? `${plan.name} — ${plan.amount}/month` : `${plan.name} — Free`;
+  const yearly = paid && draft.billing === 'yearly';
+  $('plan-title').textContent = !paid ? `${plan.name} — Free` : yearly ? `${plan.name} — ${plan.yearlyAmount}/year, billed yearly` : `${plan.name} — ${plan.amount}/month`;
   $('plan-note').textContent = plan.summary;
   $('go-btn').textContent = paid ? 'Continue to payment' : 'Send to review';
 
@@ -195,6 +196,7 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
           hours,
           centre: draft.centre,
           chosenTier: draft.tier,
+          billing: yearly ? 'yearly' : 'monthly',
           company_url: draft.company_url,
           loadedAt: draft.loadedAt,
         }),
@@ -213,7 +215,7 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
       if (paid && result.redirectUrl) {
         // Hand off to the checkout summary; its "Pay with PayFast" button
         // uses the server-signed redirect URL kept in sessionStorage.
-        saveResult({ name: draft.name, tier: draft.tier, redirectUrl: result.redirectUrl });
+        saveResult({ name: draft.name, tier: draft.tier, billing: yearly ? 'yearly' : 'monthly', redirectUrl: result.redirectUrl });
         status.textContent = 'Saved — taking you to checkout…';
         window.setTimeout(() => {
           window.location.href = '/list-your-business/checkout/';

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import BillingToggle from '../../components/BillingToggle.astro';
 import { categories, suburbs, shoppingCenters, priceRand } from '../../lib/data';
 import { guidesFor } from '../../lib/guides';
 import { TOURISM } from '../../site-content/tourism';
@@ -70,9 +71,10 @@ const FIELD = 'padding:12px;border:2px solid var(--border);border-radius:10px;fo
         Sponsoring business
         <select id="sp-business" style={FIELD}></select>
       </label>
-      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--border)">
+      <div style="padding-top:6px;border-top:1px solid var(--border)"><BillingToggle note="2 months free" /></div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap">
         <span id="sp-price" style="font-size:22px;font-weight:800;color:var(--navy);letter-spacing:-.02em"></span>
-        <span style="font-size:12.5px;font-weight:700;color:var(--muted)">Billed monthly by PayFast · cancel any time from Billing</span>
+        <span id="sp-billing-note" style="font-size:12.5px;font-weight:700;color:var(--muted)">Billed monthly by PayFast · cancel any time from Billing</span>
       </div>
       <p id="sp-availability" role="status" style="margin:0;font-size:13.5px;font-weight:700;color:var(--muted)"></p>
       <button id="sp-buy" type="submit" disabled style="padding:14px 18px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer">Continue to secure payment</button>
@@ -94,6 +96,8 @@ const FIELD = 'padding:12px;border:2px solid var(--border);border-radius:10px;fo
 </BaseLayout>
 
 <script>
+  import { currentBilling, onBillingChange, setBilling } from '../../lib/billing-toggle';
+
   type Target = { slug: string; name: string };
   type Product = { label: string; what: string; price: string; targets: Target[] };
   const products: Record<string, Product> = JSON.parse(document.getElementById('sp-products')!.textContent || '{}');
@@ -107,6 +111,24 @@ const FIELD = 'padding:12px;border:2px solid var(--border);border-radius:10px;fo
   const bizSel = $<HTMLSelectElement>('sp-business');
   const buy = $<HTMLButtonElement>('sp-buy');
   const availability = $('sp-availability');
+
+  // Monthly and yearly price for the selected spot (cents), from /api/sponsor-slot.
+  let slotPrices: { monthly: number; yearly: number } | null = null;
+  const rand = (cents: number) => `R${(cents / 100).toFixed(2)}`;
+  function renderPrice() {
+    const yearly = currentBilling() === 'yearly';
+    $('sp-billing-note').textContent = `Billed ${yearly ? 'yearly' : 'monthly'} by PayFast · cancel any time from Billing`;
+    if (slotPrices) {
+      $('sp-price').textContent = yearly
+        ? `${rand(slotPrices.yearly)} / year (≈ R${Math.round(slotPrices.yearly / 1200)}/mo)`
+        : `${rand(slotPrices.monthly)} / month`;
+    } else if (product && product.price !== '—') {
+      $('sp-price').textContent = yearly ? '' : `${product.price} / month`;
+    }
+  }
+  onBillingChange(renderPrice);
+  // Arriving from the pricing page with its switch on Yearly.
+  if (params.get('billing') === 'yearly') setBilling('yearly');
 
   function esc(s: string): string {
     return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
@@ -134,7 +156,8 @@ const FIELD = 'padding:12px;border:2px solid var(--border);border-radius:10px;fo
       } else if (!data.priceCents) {
         availability.textContent = 'This spot is not priced yet. Please contact us.';
       } else {
-        $('sp-price').textContent = `R${(data.priceCents / 100).toFixed(2)} / month`;
+        slotPrices = { monthly: data.priceCents, yearly: data.yearlyPriceCents || data.priceCents * 10 };
+        renderPrice();
         availability.textContent = 'Available.';
         buy.disabled = false;
       }
@@ -147,7 +170,7 @@ const FIELD = 'padding:12px;border:2px solid var(--border);border-radius:10px;fo
     if (!product) return fail('Unknown sponsorship. Go back to the pricing page and pick a spot.');
     $('sp-title').textContent = `Sponsor: ${product.label}`;
     $('sp-what').textContent = product.what;
-    $('sp-price').textContent = product.price === '—' ? '' : `${product.price} / month`;
+    renderPrice();
 
     const res = await fetch('/api/my-businesses');
     if (res.status === 401) {
@@ -191,6 +214,7 @@ const FIELD = 'padding:12px;border:2px solid var(--border);border-radius:10px;fo
           businessId: Number(bizSel.value),
           productType: type,
           productTarget: product.targets.length ? targetSel.value : null,
+          billing: currentBilling(),
         }),
       });
       const result = await res.json();

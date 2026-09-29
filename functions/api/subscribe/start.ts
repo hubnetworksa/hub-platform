@@ -11,6 +11,7 @@ import {
   sponsorProductLabel,
   tierPriceCents,
   centsToRand,
+  parseBillingPeriod,
   type SponsorProductType,
 } from '../../_lib/pricing';
 
@@ -53,6 +54,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   const isSponsorPurchase = typeof body.productType === 'string' && body.productType !== 'tier';
+  // Optional; anything but 'yearly' (including no field at all) is monthly.
+  const billingPeriod = parseBillingPeriod(body.billing);
+  const yearly = billingPeriod === 'yearly';
 
   let amountCents: number | null;
   let itemName: string;
@@ -71,7 +75,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (await isSlotTaken(db, productType, productTarget)) {
       return json({ ok: false, error: 'That spot is already sold — check back later.' }, 409);
     }
-    amountCents = await sponsorPriceCents(db, productType);
+    amountCents = await sponsorPriceCents(db, productType, billingPeriod);
     itemName = sponsorProductLabel(productType, productTarget);
     tier = 0;
   } else {
@@ -84,7 +88,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (current?.subscription_status === 'active' && current.subscription_tier >= tier) {
       return json({ ok: false, error: 'You already have this plan or a higher one. To move down, cancel and choose again once it ends.' }, 400);
     }
-    amountCents = await tierPriceCents(db, tier);
+    amountCents = await tierPriceCents(db, tier, billingPeriod);
     itemName = `${TIER_NAMES[tier] ?? 'Listing'} listing`;
     productType = 'tier';
     productTarget = null;
@@ -96,24 +100,26 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const amount = centsToRand(amountCents);
   // Clicking "Upgrade" twice, or coming back after abandoning PayFast,
   // reuses the same unpaid checkout instead of piling up pending rows —
-  // and a late ITN for the first attempt still finds its row.
+  // and a late ITN for the first attempt still finds its row. Only a row on
+  // the same billing period is reused: its ITN is checked against that
+  // period's price, so switching monthly <-> yearly needs a fresh row.
   const open = await db
     .prepare(
       `SELECT m_payment_id FROM subscriptions
-       WHERE business_id = ? AND status = 'pending' AND product_type = ? AND product_target IS ? AND tier = ?
+       WHERE business_id = ? AND status = 'pending' AND product_type = ? AND product_target IS ? AND tier = ? AND billing_period = ?
        ORDER BY id DESC LIMIT 1`
     )
-    .bind(businessId, productType, productTarget, tier)
+    .bind(businessId, productType, productTarget, tier, billingPeriod)
     .first<{ m_payment_id: string }>();
   const mPaymentId = open?.m_payment_id ?? crypto.randomUUID();
 
   if (!open) {
     await db
       .prepare(
-        `INSERT INTO subscriptions (business_id, tier, product_type, product_target, m_payment_id, status)
-         VALUES (?, ?, ?, ?, ?, 'pending')`
+        `INSERT INTO subscriptions (business_id, tier, product_type, product_target, m_payment_id, status, billing_period)
+         VALUES (?, ?, ?, ?, ?, 'pending', ?)`
       )
-      .bind(businessId, tier, productType, productTarget, mPaymentId)
+      .bind(businessId, tier, productType, productTarget, mPaymentId, billingPeriod)
       .run();
   }
 
@@ -129,14 +135,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     m_payment_id: mPaymentId,
     amount,
     item_name: `${site.siteName} — ${itemName}`,
-    item_description: `Monthly subscription for "${business.name}" on ${site.siteName}`,
+    item_description: `${yearly ? 'Yearly' : 'Monthly'} subscription for "${business.name}" on ${site.siteName}`,
     custom_str1: `business:${businessId}`,
     custom_str2: productType,
     custom_str3: productTarget ?? '',
     custom_int1: String(tier),
     subscription_type: '1',
     recurring_amount: amount,
-    frequency: '3', // PayFast: 3 = monthly
+    frequency: yearly ? '6' : '3', // PayFast: 3 = monthly, 6 = annual
     cycles: '0', // 0 = until cancelled
   };
 

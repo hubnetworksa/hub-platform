@@ -7,6 +7,8 @@ import {
   isSponsorProductType,
   eventFeaturePriceCents,
   isSlotTaken,
+  parseBillingPeriod,
+  periodInterval,
 } from '../../_lib/pricing';
 import { issueInvoice, issueEventInvoice } from '../../_lib/invoicing';
 import { requestRebuild } from '../../_lib/deploy-hook';
@@ -189,10 +191,13 @@ async function handleBusinessPayment(
   // downgrades a paying customer after month one. A true replay of an ITN
   // we've already handled is recognised by its pf_payment_id instead.
   const subscription = await db
-    .prepare('SELECT id, business_id, tier, product_type, product_target, status FROM subscriptions WHERE m_payment_id = ?')
+    .prepare('SELECT id, business_id, tier, product_type, product_target, status, billing_period FROM subscriptions WHERE m_payment_id = ?')
     .bind(mPaymentId)
-    .first<{ id: number; business_id: number; tier: number; product_type: string; product_target: string | null; status: string }>();
+    .first<SubscriptionRow>();
   if (!subscription) return new Response('Unknown payment', { status: 400 });
+  const billingPeriod = parseBillingPeriod(subscription.billing_period);
+  // One paid period: PayFast bills a yearly row annually (frequency 6).
+  const interval = periodInterval(billingPeriod);
 
   // custom_str1 and m_payment_id must agree about whose payment this is —
   // otherwise a valid ITN for business A could be replayed with custom_str1
@@ -212,7 +217,8 @@ async function handleBusinessPayment(
   // float tolerance for rounding, per PayFast's own documented approach).
   // A renewal is charged the recurring_amount fixed at checkout, so it's
   // checked against what this subscription last paid — not today's rate
-  // card, which an admin may have changed since.
+  // card, which an admin may have changed since. A first payment is checked
+  // against the current price for the row's own billing period.
   const lastPaid = isRenewal
     ? await db
         .prepare('SELECT amount_cents FROM payments WHERE subscription_id = ? ORDER BY id DESC LIMIT 1')
@@ -222,8 +228,8 @@ async function handleBusinessPayment(
   const expectedCents =
     lastPaid?.amount_cents ??
     (subscription.product_type === 'tier' || !isSponsorProductType(subscription.product_type)
-      ? await tierPriceCents(db, subscription.tier)
-      : await sponsorPriceCents(db, subscription.product_type));
+      ? await tierPriceCents(db, subscription.tier, billingPeriod)
+      : await sponsorPriceCents(db, subscription.product_type, billingPeriod));
   if (!expectedCents || Math.abs(postedAmount - expectedCents / 100) > 0.05) {
     return new Response('Amount mismatch', { status: 400 });
   }
@@ -268,10 +274,10 @@ async function handleBusinessPayment(
   const activated = await db
     .prepare(
       `UPDATE subscriptions SET status = 'active', payfast_token = ?, started_at = COALESCE(started_at, datetime('now')),
-              current_period_end = datetime('now', '+1 month')
+              current_period_end = datetime('now', ?)
        WHERE id = ? AND status = 'pending'`
     )
-    .bind(posted.token ?? null, subscription.id)
+    .bind(posted.token ?? null, interval, subscription.id)
     .run();
   if (activated.meta.changes !== 1) return new Response('OK', { status: 200 }); // concurrent duplicate
 
@@ -281,9 +287,9 @@ async function handleBusinessPayment(
     await db
       .prepare(
         `UPDATE businesses SET subscription_tier = ?, subscription_status = 'active',
-                subscription_expires_at = datetime('now', '+1 month') WHERE id = ?`
+                subscription_expires_at = datetime('now', ?) WHERE id = ?`
       )
-      .bind(subscription.tier, businessId)
+      .bind(subscription.tier, interval, businessId)
       .run();
 
     // An upgrade (or re-subscribe) replaces any earlier tier plan. That one
@@ -332,15 +338,25 @@ async function handleBusinessPayment(
   return new Response('OK', { status: 200 });
 }
 
-// A monthly charge on a subscription that's already live: push the paid
-// period out a month from the end of what's already paid (a charge that
-// lands a little late, inside the expiry sweep's 3-day grace, keeps the
-// original billing date), or from now if it had fully lapsed — record
-// the payment, and invoice it.
+interface SubscriptionRow {
+  id: number;
+  business_id: number;
+  tier: number;
+  product_type: string;
+  product_target: string | null;
+  status: string;
+  billing_period: string | null;
+}
+
+// A recurring charge on a subscription that's already live: push the paid
+// period out one billing period (a month, or a year for a yearly row) from
+// the end of what's already paid (a charge that lands a little late, inside
+// the expiry sweep's 3-day grace, keeps the original billing date), or from
+// now if it had fully lapsed — record the payment, and invoice it.
 async function recordRenewal(
   env: Env,
   db: D1Database,
-  subscription: { id: number; business_id: number; tier: number; product_type: string; product_target: string | null; status: string },
+  subscription: SubscriptionRow,
   businessName: string | null,
   posted: Record<string, string>,
   postedAmount: number,
@@ -363,14 +379,14 @@ async function recordRenewal(
     return new Response('OK', { status: 200 });
   }
 
-  const extended = `datetime(CASE WHEN datetime(current_period_end) > datetime('now', '-3 days') THEN current_period_end ELSE 'now' END, '+1 month')`;
+  const extended = `datetime(CASE WHEN datetime(current_period_end) > datetime('now', '-3 days') THEN current_period_end ELSE 'now' END, ?)`;
   await db
     .prepare(
       `UPDATE subscriptions SET current_period_end = ${extended}, payfast_token = COALESCE(payfast_token, ?),
          status = CASE WHEN status = 'expired' THEN 'active' ELSE status END
        WHERE id = ?`
     )
-    .bind(posted.token ?? null, subscription.id)
+    .bind(periodInterval(subscription.billing_period), posted.token ?? null, subscription.id)
     .run();
 
   if (subscription.product_type === 'tier') {
@@ -404,9 +420,9 @@ async function handleSubmissionPayment(
 ): Promise<Response> {
   const mPaymentId = posted.m_payment_id;
   const submission = await db
-    .prepare('SELECT id, name, chosen_tier, m_payment_id, payment_status FROM pending_submissions WHERE id = ? AND m_payment_id = ?')
+    .prepare('SELECT id, name, chosen_tier, chosen_billing_period, m_payment_id, payment_status FROM pending_submissions WHERE id = ? AND m_payment_id = ?')
     .bind(submissionId, mPaymentId)
-    .first<{ id: number; name: string; chosen_tier: number; m_payment_id: string | null; payment_status: string | null }>();
+    .first<{ id: number; name: string; chosen_tier: number; chosen_billing_period: string | null; m_payment_id: string | null; payment_status: string | null }>();
   if (!submission || submission.payment_status === 'paid') {
     // Renewal ITNs repeat the original checkout's custom_str1, so month two
     // of a tier bought at signup still arrives as "submission:<id>" — long
@@ -418,7 +434,7 @@ async function handleSubmissionPayment(
     return new Response('Unknown submission payment', { status: 400 });
   }
 
-  const expectedCents = await tierPriceCents(db, submission.chosen_tier);
+  const expectedCents = await tierPriceCents(db, submission.chosen_tier, parseBillingPeriod(submission.chosen_billing_period));
   if (!expectedCents || Math.abs(postedAmount - expectedCents / 100) > 0.05) {
     return new Response('Amount mismatch', { status: 400 });
   }

@@ -18,10 +18,16 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const db = context.env.DB;
   const valid = await isValidSponsorTarget(db, context.env.SITE, productType, target);
-  if (!valid) return json({ ok: true, valid: false, taken: false, priceCents: null });
+  if (!valid) return json({ ok: true, valid: false, taken: false, priceCents: null, yearlyPriceCents: null });
 
-  const [taken, priceCents] = await Promise.all([isSlotTaken(db, productType, target), sponsorPriceCents(db, productType)]);
-  return json({ ok: true, valid: true, taken, priceCents });
+  // priceCents is the monthly price (unchanged); yearlyPriceCents is the
+  // yearly one, already falling back to monthly × 10 when not set.
+  const [taken, priceCents, yearlyPriceCents] = await Promise.all([
+    isSlotTaken(db, productType, target),
+    sponsorPriceCents(db, productType),
+    sponsorPriceCents(db, productType, 'yearly'),
+  ]);
+  return json({ ok: true, valid: true, taken, priceCents, yearlyPriceCents });
 };
 
 function json(data: unknown, status = 200): Response {

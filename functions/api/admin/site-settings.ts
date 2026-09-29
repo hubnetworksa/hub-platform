@@ -19,6 +19,15 @@ const PRICE_KEYS = [
   'price_sponsor_guide_cents',
   'price_sponsor_tourism_cents',
   'price_event_feature_cents',
+  // Yearly prices (see pricing.ts's BillingPeriod). Unset or 0 = monthly × 10.
+  'price_verified_yearly_cents',
+  'price_featured_yearly_cents',
+  'price_sponsor_category_yearly_cents',
+  'price_sponsor_suburb_yearly_cents',
+  'price_sponsor_banner_yearly_cents',
+  'price_sponsor_centre_yearly_cents',
+  'price_sponsor_guide_yearly_cents',
+  'price_sponsor_tourism_yearly_cents',
 ];
 
 // Text overrides for the "Site settings" admin tab. Applied to the public

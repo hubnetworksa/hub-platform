@@ -1,13 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import FlowProgress from '../components/FlowProgress.astro';
-import { categories, suburbs, businesses } from '../lib/data';
+import BillingToggle from '../components/BillingToggle.astro';
+import { categories, suburbs, businesses, yearlyToggleNote } from '../lib/data';
 import { getFlowPlans } from '../lib/list-flow-plans';
 import site from '../site';
 
 const sortedCategories = [...categories].sort((a, b) => a.name.localeCompare(b.name));
 const sortedSuburbs = [...suburbs].sort((a, b) => a.name.localeCompare(b.name));
 const plans = getFlowPlans();
+const billingNote = yearlyToggleNote(['price_verified_cents', 'price_featured_cents']);
 ---
 
 <BaseLayout
@@ -63,11 +65,13 @@ const plans = getFlowPlans();
 
           <div style="border:2px solid var(--navy);border-radius:14px;overflow:hidden;margin-top:4px">
             <div style="background:var(--navy);padding:12px 16px;font-size:13px;font-weight:800;color:#fff;letter-spacing:.01em">Choose how you appear</div>
+            <div style="padding:12px 16px;border-bottom:2px solid var(--border);background:#fff"><BillingToggle note={billingNote} /></div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:2px;background:var(--border)">
               {plans.map((p) => (
                 <button type="button" class="plan-btn" data-tier={p.tier} aria-pressed="false" style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left;padding:16px;border:0;cursor:pointer;background:#fff;color:var(--navy);box-shadow:none;font:inherit">
                   <span style="font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">{p.name}</span>
-                  <span style="font-size:22px;font-weight:800;letter-spacing:-.02em">{p.price}</span>
+                  <span style="font-size:22px;font-weight:800;letter-spacing:-.02em"><span data-period="monthly">{p.price}</span><span data-period="yearly" hidden>{p.yearlyPrice}</span></span>
+                  {p.yearlyNote && <span data-period="yearly" hidden style="font-size:12px;font-weight:800;color:var(--accent-hover)">{p.yearlyNote}</span>}
                   <span style="font-size:12.5px;font-weight:600;line-height:1.4">{p.note}</span>
                 </button>
               ))}
@@ -143,6 +147,7 @@ const plans = getFlowPlans();
 
 <script>
   import { loadDraft, saveDraft, readPlans } from '../lib/list-flow-client';
+  import { currentBilling, onBillingChange, setBilling } from '../lib/billing-toggle';
 
   const root = document.getElementById('flow-root') as HTMLElement;
   const form = document.getElementById('step1-form') as HTMLFormElement;
@@ -159,6 +164,11 @@ const plans = getFlowPlans();
   // Keep the load time for the server's minimum-time-on-form check.
   let draft = saveDraft({ loadedAt: loadDraft().loadedAt });
   let tier = plans.some((p) => p.tier === draft.tier) ? draft.tier : 0;
+  // Monthly unless this draft already chose yearly, or the owner arrived
+  // from the pricing page with its switch on Yearly (?billing=yearly).
+  let billing: 'monthly' | 'yearly' = draft.billing === 'yearly' || q.get('billing') === 'yearly' ? 'yearly' : 'monthly';
+  if (billing === 'yearly') setBilling('yearly');
+  onBillingChange((period) => (billing = period));
 
   const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
   for (const name of ['name', 'category', 'suburb', 'description', 'phone', 'email']) {
@@ -207,6 +217,7 @@ const plans = getFlowPlans();
       email: v('email'),
       company_url: field('company_url').value,
       tier,
+      billing: tier > 0 ? currentBilling() : 'monthly',
     });
     window.location.href = '/list-your-business/contact/';
   });

@@ -10,7 +10,7 @@ import siteSettingsRaw from '../data/site-settings.json';
 import eventsRaw from '../data/events.json';
 import newsRaw from '../data/news.json';
 import fuelRaw from '../data/fuel-prices.json';
-import { centsToRand } from '../../functions/_lib/pricing';
+import { centsToRand, monthlyAndYearly } from '../../functions/_lib/pricing';
 
 export interface Suburb {
   id: number;
@@ -251,6 +251,43 @@ const siteSettings = new Map((siteSettingsRaw as { key: string; value: string }[
 export function priceRand(key: string): string {
   const cents = Number(siteSettings.get(key));
   return Number.isFinite(cents) && cents > 0 ? `R${centsToRand(cents)}` : '—';
+}
+
+// Yearly billing (functions/_lib/pricing.ts's BillingPeriod). Every helper
+// takes the MONTHLY key ("price_featured_cents") and reads its yearly twin
+// from the same snapshot, falling back to monthly × 10 — two months free —
+// exactly as checkout does when the yearly key is unset or 0.
+const settingsObject = Object.fromEntries(siteSettings);
+
+/** Formatted Rand price per year for a monthly price key, or a dash if not configured. */
+export function yearlyPriceRand(monthlyKey: string): string {
+  const { yearly } = monthlyAndYearly(settingsObject, monthlyKey);
+  return yearly > 0 ? `R${centsToRand(yearly)}` : '—';
+}
+
+/** The yearly price spread over 12 months, in whole rand ("R124"), or a dash. */
+export function yearlyPerMonthRand(monthlyKey: string): string {
+  const { yearly } = monthlyAndYearly(settingsObject, monthlyKey);
+  return yearly > 0 ? `R${Math.round(yearly / 1200)}` : '—';
+}
+
+/** "2 months free" when yearly is monthly × 10, otherwise the actual saving
+ *  over 12 monthly payments ("Save R298"), or '' if yearly saves nothing. */
+export function yearlySavingLabel(monthlyKey: string): string {
+  const { monthly, yearly } = monthlyAndYearly(settingsObject, monthlyKey);
+  if (!monthly || !yearly) return '';
+  if (yearly === monthly * 10) return '2 months free';
+  const saving = monthly * 12 - yearly;
+  return saving > 0 ? `Save R${centsToRand(saving).replace(/\.00$/, '')}` : '';
+}
+
+/** One note for a Monthly / Yearly switch covering several prices: their
+ *  shared saving label ("2 months free"), "pay less per month" if they
+ *  differ, or '' if yearly saves nothing on any of them. */
+export function yearlyToggleNote(monthlyKeys: string[]): string {
+  const labels = [...new Set(monthlyKeys.map(yearlySavingLabel).filter(Boolean))];
+  if (labels.length === 0) return '';
+  return labels.length === 1 ? labels[0] : 'pay less per month';
 }
 
 /** A business's saved website as a usable https link, or null. Some rows were saved

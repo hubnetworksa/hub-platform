@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
-import { priceRand, sponsorships } from '../../lib/data';
+import BillingToggle from '../../components/BillingToggle.astro';
+import { priceRand, yearlyPriceRand, sponsorships } from '../../lib/data';
 import { TOURISM } from '../../site-content/tourism';
 import site from '../../site';
 
@@ -27,6 +28,10 @@ const SECTION_ICONS = {
 const priceVerified = priceRand('price_verified_cents').replace(/\.00$/, '');
 const priceFeatured = priceRand('price_featured_cents').replace(/\.00$/, '');
 const priceTourismSponsor = priceRand('price_sponsor_tourism_cents').replace(/\.00$/, '');
+// Yearly twins (monthly × 10 unless a yearly price is set), for the Monthly / Yearly switch.
+const priceVerifiedYearly = yearlyPriceRand('price_verified_cents').replace(/\.00$/, '');
+const priceFeaturedYearly = yearlyPriceRand('price_featured_cents').replace(/\.00$/, '');
+const priceTourismSponsorYearly = yearlyPriceRand('price_sponsor_tourism_cents').replace(/\.00$/, '');
 
 // One sponsor slot per attraction (not a single citywide slot) — more
 // attractions get added over time, so this list just grows with them.
@@ -69,7 +74,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 ---
 
 <BaseLayout title="Manage business" description="Manage your business listing, plan and photos." noindex={true}>
-  <main style="max-width:1200px;margin:0 auto;padding:clamp(20px,3vw,36px) 20px 60px" data-price-verified={priceVerified} data-price-featured={priceFeatured} data-price-tourism-sponsor={priceTourismSponsor} id="owner-main">
+  <main style="max-width:1200px;margin:0 auto;padding:clamp(20px,3vw,36px) 20px 60px" data-price-verified={priceVerified} data-price-featured={priceFeatured} data-price-tourism-sponsor={priceTourismSponsor} data-price-verified-yearly={priceVerifiedYearly} data-price-featured-yearly={priceFeaturedYearly} data-price-tourism-sponsor-yearly={priceTourismSponsorYearly} id="owner-main">
     <div id="loading" style="display:flex;align-items:center;gap:10px;color:var(--muted);font-weight:700;font-size:14px;padding:3rem 0;"><span class="spinner"></span>Loading…</div>
 
     <div id="dashboard" hidden>
@@ -257,6 +262,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
                 <div id="plan-buttons" style="display:flex;gap:9px;margin-left:auto;flex-wrap:wrap"></div>
               </div>
             </div>
+            <div style="margin-top:12px"><BillingToggle note="2 months free" /></div>
             <p id="plan-status" role="status" style="margin:10px 0 0;font-size:13px;font-weight:700;color:var(--muted)"></p>
             <p style="margin:8px 0 0;font-size:13px;font-weight:600;color:var(--muted)"><a href="/pricing/" style="color:var(--accent-hover);font-weight:800">Compare plans</a></p>
 
@@ -333,6 +339,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 </style>
 
 <script>
+  import { currentBilling, onBillingChange } from '../../lib/billing-toggle';
   const params = new URLSearchParams(window.location.search);
   const businessId = params.get('id');
   const main = document.getElementById('owner-main')!;
@@ -343,6 +350,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 
   const TIER_NAMES: Record<number, string> = { 0: 'Basic', 1: 'Verified', 2: 'Featured' };
   const TIER_PRICE: Record<number, string> = { 1: main.dataset.priceVerified ?? '—', 2: main.dataset.priceFeatured ?? '—' };
+  const TIER_PRICE_YEARLY: Record<number, string> = { 1: main.dataset.priceVerifiedYearly ?? '—', 2: main.dataset.priceFeaturedYearly ?? '—' };
   const FEATURED_TIER = 2;
   const PHOTO_CAPS: Record<number, number> = { 1: 4, 2: 10 };
 
@@ -358,6 +366,8 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     id: number; slug: string; name: string; created_at: string; suburb_name: string | null; category_name: string | null;
     address: string | null; phone: string | null; website: string | null; email: string | null; description: string | null; hours: string | null;
     subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null;
+    /** 'yearly' or 'monthly' — the billing period of the current tier plan. */
+    billing_period?: string | null;
     social_instagram: string | null; social_facebook: string | null; social_linkedin: string | null; social_youtube: string | null;
     visible: boolean; hidden_reason: 'admin_hidden' | 'marked_closed' | null;
   };
@@ -488,7 +498,16 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     return btn;
   }
 
+  // Re-rendered when the Monthly / Yearly switch changes, so the upgrade
+  // buttons always show (and check out at) the chosen period's price.
+  let planBusiness: Business | null = null;
+  onBillingChange(() => {
+    if (planBusiness) renderPlan(planBusiness);
+    renderTourismPriceNote();
+  });
+
   function renderPlan(business: Business) {
+    planBusiness = business;
     const nameEl = document.getElementById('plan-name')!;
     const current = document.getElementById('plan-current')!;
     const buttons = document.getElementById('plan-buttons')!;
@@ -501,7 +520,9 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     if (complimentary) {
       current.textContent = 'Complimentary — no charge';
     } else if (tier > 0) {
-      const price = TIER_PRICE[tier] && TIER_PRICE[tier] !== '—' ? `${TIER_PRICE[tier]}/month` : null;
+      const yearlyPlan = business.billing_period === 'yearly';
+      const each = yearlyPlan ? TIER_PRICE_YEARLY[tier] : TIER_PRICE[tier];
+      const price = each && each !== '—' ? `${each}/${yearlyPlan ? 'year · billed yearly' : 'month'}` : null;
       const tail = business.subscription_status === 'cancelled'
         ? `cancelled${expiry ? ` · active until ${expiry}` : ''}`
         : expiry ? `renews ${expiry}` : null;
@@ -514,13 +535,15 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     for (const t of [1, 2]) {
       if (t === tier && business.subscription_status === 'active') continue;
       if (t < tier && business.subscription_status === 'active') continue; // no downgrade via checkout — cancel instead
-      const btn = planButton(`Upgrade to ${TIER_NAMES[t]}`);
+      const yearlyChoice = currentBilling() === 'yearly';
+      const upgradePrice = yearlyChoice ? TIER_PRICE_YEARLY[t] : TIER_PRICE[t];
+      const btn = planButton(`Upgrade to ${TIER_NAMES[t]}${upgradePrice && upgradePrice !== '—' ? ` · ${upgradePrice}/${yearlyChoice ? 'yr' : 'mo'}` : ''}`);
       btn.addEventListener('click', async () => {
         planStatus.textContent = 'Starting checkout…';
         const res = await fetch('/api/subscribe/start', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ businessId: Number(businessId), tier: t }),
+          body: JSON.stringify({ businessId: Number(businessId), tier: t, billing: currentBilling() }),
         });
         const result = await res.json();
         if (result.ok) window.location.href = result.redirectUrl;
@@ -638,6 +661,14 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     });
   }
 
+  function renderTourismPriceNote() {
+    const statusEl = document.getElementById('tourism-sponsor-status');
+    if (!statusEl || params.get('upgraded') || params.get('upgrade_cancelled')) return;
+    const yearly = currentBilling() === 'yearly';
+    const label = (yearly ? main.dataset.priceTourismSponsorYearly : main.dataset.priceTourismSponsor) ?? '—';
+    statusEl.textContent = `${label} / ${yearly ? 'year' : 'month'} per attraction.`;
+  }
+
   function renderTourismPicker(sponsorships: Sponsorship[]) {
     const pickerEl = document.getElementById('tourism-sponsor-picker');
     const selectEl = document.getElementById('tourism-sponsor-select') as HTMLSelectElement | null;
@@ -647,7 +678,6 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     if (!pickerEl || !selectEl || !buyBtn || !allTakenEl || !statusEl) return; // no tourism picks at build time — card not rendered
 
     const { picks, sponsoredSlugs } = tourismPicksData();
-    const priceLabel = main.dataset.priceTourismSponsor ?? '—';
 
     const mineBySlug = new Map(mySponsorships(sponsorships).map((s) => [s.product_target as string, s]));
     // Open to buy: not sponsored by anyone (per the build-time snapshot) and not already mine.
@@ -665,7 +695,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
         const res = await fetch('/api/subscribe/start', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ businessId: Number(businessId), productType: 'tourism_sponsor', productTarget: target }),
+          body: JSON.stringify({ businessId: Number(businessId), productType: 'tourism_sponsor', productTarget: target, billing: currentBilling() }),
         });
         const result = await res.json();
         if (result.ok) window.location.href = result.redirectUrl;
@@ -673,7 +703,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       };
     }
 
-    statusEl.textContent = `${priceLabel} / month per attraction.`;
+    renderTourismPriceNote();
     if (params.get('upgraded')) statusEl.textContent = 'Thanks — your payment is being confirmed (refresh in a minute). The sponsorship shows on the public page within about 15 minutes.';
     else if (params.get('upgrade_cancelled')) statusEl.textContent = 'Checkout cancelled — you have not been charged.';
   }

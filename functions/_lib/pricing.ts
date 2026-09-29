@@ -39,8 +39,8 @@ export function sponsorProductLabel(productType: SponsorProductType, target: str
   }
 }
 
-const TIER_SETTING_KEYS: Record<number, string> = { 1: 'price_verified_cents', 2: 'price_featured_cents' };
-const SPONSOR_SETTING_KEYS: Record<SponsorProductType, string> = {
+export const TIER_SETTING_KEYS: Record<number, string> = { 1: 'price_verified_cents', 2: 'price_featured_cents' };
+export const SPONSOR_SETTING_KEYS: Record<SponsorProductType, string> = {
   category_sponsor: 'price_sponsor_category_cents',
   suburb_sponsor: 'price_sponsor_suburb_cents',
   homepage_banner: 'price_sponsor_banner_cents',
@@ -56,15 +56,60 @@ async function settingCents(db: D1Database, key: string): Promise<number | null>
   return Number.isFinite(n) ? n : null;
 }
 
-/** Cents for a paid tier (1=Verified, 2=Featured). `null` for an unknown/free tier. */
-export async function tierPriceCents(db: D1Database, tier: number): Promise<number | null> {
-  const key = TIER_SETTING_KEYS[tier];
-  return key ? settingCents(db, key) : null;
+// Plans and sponsor spots can be paid monthly or yearly. A yearly price is
+// its own site_settings key (the monthly key with `_yearly` before
+// `_cents`); until an admin sets one, yearly is monthly × 10 — two months
+// free. Events stay one-off/monthly and have no yearly price.
+export type BillingPeriod = 'monthly' | 'yearly';
+
+export const YEARLY_FALLBACK_MONTHS = 10;
+
+/** Anything other than the literal 'yearly' is monthly, so a request (or
+ *  row) that predates yearly billing behaves exactly as before. */
+export function parseBillingPeriod(v: unknown): BillingPeriod {
+  return v === 'yearly' ? 'yearly' : 'monthly';
 }
 
-/** Cents for a sponsorship product. `null` if not configured. */
-export async function sponsorPriceCents(db: D1Database, productType: SponsorProductType): Promise<number | null> {
-  return settingCents(db, SPONSOR_SETTING_KEYS[productType]);
+/** SQLite datetime() modifier for one paid period. */
+export function periodInterval(period: BillingPeriod | string | null | undefined): '+1 year' | '+1 month' {
+  return period === 'yearly' ? '+1 year' : '+1 month';
+}
+
+export function yearlyKey(monthlyKey: string): string {
+  return monthlyKey.replace(/_cents$/, '_yearly_cents');
+}
+
+async function periodCents(db: D1Database, monthlyKey: string, period: BillingPeriod): Promise<number | null> {
+  const monthly = await settingCents(db, monthlyKey);
+  if (period === 'monthly') return monthly;
+  const yearly = await settingCents(db, yearlyKey(monthlyKey));
+  if (yearly) return yearly;
+  return monthly ? monthly * YEARLY_FALLBACK_MONTHS : monthly;
+}
+
+/** Cents for a paid tier (1=Verified, 2=Featured) for one billing period.
+ *  `null` for an unknown/free tier. */
+export async function tierPriceCents(db: D1Database, tier: number, period: BillingPeriod = 'monthly'): Promise<number | null> {
+  const key = TIER_SETTING_KEYS[tier];
+  return key ? periodCents(db, key, period) : null;
+}
+
+/** Cents for a sponsorship product for one billing period. `null` if not configured. */
+export async function sponsorPriceCents(
+  db: D1Database,
+  productType: SponsorProductType,
+  period: BillingPeriod = 'monthly'
+): Promise<number | null> {
+  return periodCents(db, SPONSOR_SETTING_KEYS[productType], period);
+}
+
+/** Monthly and yearly cents for one monthly price key, from an already-loaded
+ *  site_settings map (allPrices(), or a static page's build-time snapshot).
+ *  Yearly falls back to monthly × 10 when its key is unset or 0. */
+export function monthlyAndYearly(prices: Record<string, number | string | undefined>, monthlyKey: string): { monthly: number; yearly: number } {
+  const monthly = Number(prices[monthlyKey]) || 0;
+  const yearly = Number(prices[yearlyKey(monthlyKey)]) || monthly * YEARLY_FALLBACK_MONTHS;
+  return { monthly, yearly };
 }
 
 /** Cents to feature an event (a one-off purchase, not a recurring plan). `null` if not configured. */

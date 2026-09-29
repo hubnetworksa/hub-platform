@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SponsorSlot from '../components/SponsorSlot.astro';
+import BillingToggle from '../components/BillingToggle.astro';
 import { sponsorHref } from '../lib/sponsor-link';
-import { priceRand, categories, suburbs, sponsorFor } from '../lib/data';
+import { priceRand, yearlyPriceRand, yearlyPerMonthRand, yearlySavingLabel, yearlyToggleNote, categories, suburbs, sponsorFor } from '../lib/data';
 import { guidesFor } from '../lib/guides';
 import { TOURISM } from '../site-content/tourism';
 import site from '../site';
@@ -10,17 +11,23 @@ import site from '../site';
 const tourismPickCount = TOURISM[site.slug]?.picks.length ?? 0;
 
 const SPOTS = [
-  { productType: 'category_sponsor' as const, name: 'Category sponsor', price: priceRand('price_sponsor_category_cents'), blurb: `Your card above every listing in one of ${categories.length} categories, city-wide.` },
-  { productType: 'suburb_sponsor' as const, name: 'Suburb sponsor', price: priceRand('price_sponsor_suburb_cents'), blurb: `Own the top slot on one of ${suburbs.length} suburb pages.` },
-  { productType: 'homepage_banner' as const, name: 'Homepage banner', price: priceRand('price_sponsor_banner_cents'), blurb: 'A single full-width placement under the hero. One advertiser at a time.' },
-  { productType: 'centre_sponsor' as const, name: 'Centre sponsorship', price: priceRand('price_sponsor_centre_cents'), blurb: 'Brand a whole shopping-centre page and its store list.' },
+  { productType: 'category_sponsor' as const, name: 'Category sponsor', key: 'price_sponsor_category_cents', blurb: `Your card above every listing in one of ${categories.length} categories, city-wide.` },
+  { productType: 'suburb_sponsor' as const, name: 'Suburb sponsor', key: 'price_sponsor_suburb_cents', blurb: `Own the top slot on one of ${suburbs.length} suburb pages.` },
+  { productType: 'homepage_banner' as const, name: 'Homepage banner', key: 'price_sponsor_banner_cents', blurb: 'A single full-width placement under the hero. One advertiser at a time.' },
+  { productType: 'centre_sponsor' as const, name: 'Centre sponsorship', key: 'price_sponsor_centre_cents', blurb: 'Brand a whole shopping-centre page and its store list.' },
   ...(guidesFor(site.slug).length > 0
-    ? [{ productType: 'guide_sponsor' as const, name: 'Guide sponsorship', price: priceRand('price_sponsor_guide_cents'), blurb: `One business per buyer's guide — currently ${guidesFor(site.slug).length} guide${guidesFor(site.slug).length === 1 ? '' : 's'} live.` }]
+    ? [{ productType: 'guide_sponsor' as const, name: 'Guide sponsorship', key: 'price_sponsor_guide_cents', blurb: `One business per buyer's guide — currently ${guidesFor(site.slug).length} guide${guidesFor(site.slug).length === 1 ? '' : 's'} live.` }]
     : []),
   ...(site.features.tourism && tourismPickCount > 0
-    ? [{ productType: 'tourism_sponsor' as const, name: 'Things to do sponsor', price: priceRand('price_sponsor_tourism_cents'), blurb: `One business per attraction page — currently ${tourismPickCount} attraction${tourismPickCount === 1 ? '' : 's'} live, and more added over time.` }]
+    ? [{ productType: 'tourism_sponsor' as const, name: 'Things to do sponsor', key: 'price_sponsor_tourism_cents', blurb: `One business per attraction page — currently ${tourismPickCount} attraction${tourismPickCount === 1 ? '' : 's'} live, and more added over time.` }]
     : []),
-];
+].map((spot) => ({ ...spot, price: priceRand(spot.key), yearlyPrice: yearlyPriceRand(spot.key), yearlyPerMonth: yearlyPerMonthRand(spot.key), saving: yearlySavingLabel(spot.key) }));
+
+// Monthly / Yearly (BillingToggle): yearly is its own price, or monthly × 10.
+const planNote = yearlyToggleNote(['price_verified_cents', 'price_featured_cents']);
+const spotNote = yearlyToggleNote(SPOTS.map((s) => s.key));
+// "≈ R124/mo · 2 months free" under a yearly plan price.
+const yearlyLine = (key: string) => [`≈ ${yearlyPerMonthRand(key)}/mo`, yearlySavingLabel(key)].filter(Boolean).join(' · ');
 // No Google ads anywhere a paid listing or sponsor is shown (see
 // BaseLayout's noAds): this page shows one if this is true.
 const showsPaid = !!sponsorFor('homepage_banner');
@@ -35,11 +42,12 @@ const showsPaid = !!sponsorFor('homepage_banner');
       <div style="max-width:1200px;margin:0 auto;padding:clamp(34px,5vw,60px) 20px">
         <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--grad-from)">Plans for owners</span>
         <h1 style="margin:12px 0 12px;color:#fff;font-size:clamp(30px,5vw,52px);letter-spacing:-.03em;line-height:1.04;max-width:24ch">Free to be listed. Paid to be chosen.</h1>
-        <p style="margin:0;color:rgba(255,255,255,.84);font-size:16.5px;line-height:1.55;max-width:54ch">Month to month, no contract, and every plan is reviewed by a human before it goes live.</p>
+        <p style="margin:0;color:rgba(255,255,255,.84);font-size:16.5px;line-height:1.55;max-width:54ch">Pay monthly or yearly, no contract, and every plan is reviewed by a human before it goes live.</p>
       </div>
     </section>
 
     <section style="max-width:1200px;margin:0 auto;padding:clamp(26px,4vw,44px) 20px 0">
+      <div style="margin-bottom:16px"><BillingToggle note={planNote} /></div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px">
         <article style="border:2px solid var(--border);border-radius:16px;background:#fff;padding:24px;display:flex;flex-direction:column;gap:14px">
           <div>
@@ -62,7 +70,8 @@ const showsPaid = !!sponsorFor('homepage_banner');
         <article style="border:2px solid var(--navy);border-radius:16px;background:#fff;padding:24px;display:flex;flex-direction:column;gap:14px">
           <div>
             <div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Verified</div>
-            <div style="font-size:40px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1.05;margin-top:8px">{priceRand('price_verified_cents')}<span style="font-size:15px;font-weight:700;color:var(--muted)"> / month</span></div>
+            <div style="font-size:40px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1.05;margin-top:8px"><span data-period="monthly">{priceRand('price_verified_cents')}<span style="font-size:15px;font-weight:700;color:var(--muted)"> / month</span></span><span data-period="yearly" hidden>{yearlyPriceRand('price_verified_cents')}<span style="font-size:15px;font-weight:700;color:var(--muted)"> / year</span></span></div>
+            <div data-period="yearly" hidden style="font-size:12.5px;font-weight:800;color:var(--accent-hover);margin-top:4px">{yearlyLine('price_verified_cents')}</div>
             <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin-top:4px">Look legitimate at a glance</div>
           </div>
           <div style="height:2px;background:var(--border)"></div>
@@ -75,7 +84,7 @@ const showsPaid = !!sponsorFor('homepage_banner');
             <li style="display:flex;gap:9px"><span style="color:var(--accent);font-weight:800">✓</span>Enquiry form on your profile</li>
             <li style="display:flex;gap:9px"><span style="color:var(--accent);font-weight:800">✓</span>Plus website-click &amp; enquiry stats</li>
           </ul>
-          <a href="/list-your-business/" style="margin-top:auto;padding:13px 16px;border-radius:10px;background:var(--navy);color:#fff;font-size:14px;font-weight:800;text-decoration:none;text-align:center">Get verified</a>
+          <a href="/list-your-business/" data-billing-link style="margin-top:auto;padding:13px 16px;border-radius:10px;background:var(--navy);color:#fff;font-size:14px;font-weight:800;text-decoration:none;text-align:center">Get verified</a>
         </article>
 
         <article style="border:2px solid var(--accent);border-radius:16px;background:#fff;padding:0;display:flex;flex-direction:column;overflow:hidden">
@@ -83,7 +92,8 @@ const showsPaid = !!sponsorFor('homepage_banner');
           <div style="padding:24px;display:flex;flex-direction:column;gap:14px;flex:1">
             <div>
               <div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Featured</div>
-              <div style="font-size:40px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1.05;margin-top:8px">{priceRand('price_featured_cents')}<span style="font-size:15px;font-weight:700;color:var(--muted)"> / month</span></div>
+              <div style="font-size:40px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1.05;margin-top:8px"><span data-period="monthly">{priceRand('price_featured_cents')}<span style="font-size:15px;font-weight:700;color:var(--muted)"> / month</span></span><span data-period="yearly" hidden>{yearlyPriceRand('price_featured_cents')}<span style="font-size:15px;font-weight:700;color:var(--muted)"> / year</span></span></div>
+              <div data-period="yearly" hidden style="font-size:12.5px;font-weight:800;color:var(--accent-hover);margin-top:4px">{yearlyLine('price_featured_cents')}</div>
               <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin-top:4px">Sit above your competitors</div>
             </div>
             <div style="height:2px;background:var(--border)"></div>
@@ -94,27 +104,29 @@ const showsPaid = !!sponsorFor('homepage_banner');
               <li style="display:flex;gap:9px"><span style="color:var(--accent);font-weight:800">✓</span>Up to 10 photos and a gallery</li>
               <li style="display:flex;gap:9px"><span style="color:var(--accent);font-weight:800">✓</span>Links to your Instagram, Facebook, LinkedIn and YouTube pages</li>
             </ul>
-            <a href="/list-your-business/" style="margin-top:auto;padding:13px 16px;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;text-decoration:none;text-align:center">Feature my business</a>
+            <a href="/list-your-business/" data-billing-link style="margin-top:auto;padding:13px 16px;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;text-decoration:none;text-align:center">Feature my business</a>
           </div>
         </article>
       </div>
     </section>
 
     <section style="max-width:1200px;margin:0 auto;padding:clamp(32px,4vw,52px) 20px 0">
-      <div style="border-bottom:2px solid var(--navy);padding-bottom:12px">
+      <div style="border-bottom:2px solid var(--navy);padding-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
         <h2 style="margin:0;font-size:clamp(20px,2.8vw,28px);letter-spacing:-.025em;color:var(--navy)">Exclusive spots, sold one at a time</h2>
+        <BillingToggle note={spotNote} />
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:2px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-top:18px">
         {SPOTS.map((spot) => (
           <div style="background:#fff;padding:20px">
             <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)">{spot.name}</div>
-            <div style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.025em;margin-top:8px">{spot.price} <span style="font-size:14px;font-weight:700;color:var(--muted)">/ mo</span></div>
+            <div style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.025em;margin-top:8px"><span data-period="monthly">{spot.price} <span style="font-size:14px;font-weight:700;color:var(--muted)">/ mo</span></span><span data-period="yearly" hidden>{spot.yearlyPrice} <span style="font-size:14px;font-weight:700;color:var(--muted)">/ year</span></span></div>
+            <div data-period="yearly" hidden style="font-size:12.5px;font-weight:800;color:var(--accent-hover);margin-top:4px">{[`≈ ${spot.yearlyPerMonth}/mo`, spot.saving].filter(Boolean).join(' · ')}</div>
             <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text)">{spot.blurb}</p>
-            <a href={sponsorHref(spot.productType)} style="display:inline-block;margin-top:12px;font-size:13.5px;font-weight:800;color:var(--accent);text-decoration:none">Choose a spot →</a>
+            <a href={sponsorHref(spot.productType)} data-billing-link style="display:inline-block;margin-top:12px;font-size:13.5px;font-weight:800;color:var(--accent);text-decoration:none">Choose a spot →</a>
           </div>
         ))}
       </div>
-      <p style="margin:16px 0 0;font-size:12.5px;color:var(--muted);font-weight:600">Prices in ZAR. Plans and sponsor spots bill monthly and can be cancelled any time; prices may change with notice.</p>
+      <p style="margin:16px 0 0;font-size:12.5px;color:var(--muted);font-weight:600">Prices in ZAR. Plans and sponsor spots bill monthly or yearly and can be cancelled any time; prices may change with notice.</p>
 
       <div style="margin-top:18px;max-width:420px;">
         <SponsorSlot
@@ -153,3 +165,18 @@ const showsPaid = !!sponsorFor('homepage_banner');
     </section>
   </main>
 </BaseLayout>
+
+<script>
+  import { onBillingChange } from '../lib/billing-toggle';
+
+  // Carry the chosen period into the signup flow and the sponsor checkout,
+  // which both start on Monthly unless told otherwise.
+  onBillingChange((period) => {
+    document.querySelectorAll<HTMLAnchorElement>('a[data-billing-link]').forEach((a) => {
+      const url = new URL(a.href, window.location.origin);
+      if (period === 'yearly') url.searchParams.set('billing', 'yearly');
+      else url.searchParams.delete('billing');
+      a.href = url.pathname + url.search;
+    });
+  });
+</script>

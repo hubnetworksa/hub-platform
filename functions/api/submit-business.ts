@@ -3,7 +3,7 @@ import { getSite } from '../_lib/site';
 import { rateLimited } from '../_lib/messages';
 import { getSessionUser } from '../_lib/auth';
 import { signFields, buildCheckoutParams, payfastConfigured, type PayfastEnv } from '../_lib/payfast';
-import { TIER_NAMES, tierPriceCents, centsToRand } from '../_lib/pricing';
+import { TIER_NAMES, tierPriceCents, centsToRand, parseBillingPeriod } from '../_lib/pricing';
 import { sendEmail } from '../_lib/send-email';
 import { escapeHtml } from '../../src/lib/business-submission';
 
@@ -98,6 +98,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // a payfast misconfiguration just falls back to a free (tier 0)
   // submission rather than blocking the listing itself.
   const chosenTier = [0, 1, 2].includes(Number(body.chosenTier)) ? Number(body.chosenTier) : 0;
+  // Monthly unless the plan picker asked for yearly (a free listing has no
+  // billing period, so it always stays the default).
+  const billingPeriod = chosenTier === 0 ? 'monthly' : parseBillingPeriod(body.billing);
+  const yearly = billingPeriod === 'yearly';
 
   // Trading hours (free text, "Mon–Fri 08:00–17:00, Sat Closed") and the
   // shopping centre (its slug) from the form. Both are kept on the pending row
@@ -112,10 +116,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const insert = await db
     .prepare(
       `INSERT INTO pending_submissions
-        (token, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id, chosen_tier, hours, shopping_center_slug)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        (token, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id, chosen_tier, hours, shopping_center_slug, chosen_billing_period)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
-    .bind(token, name, categorySlug, suburbSlug, address, phone, email, website, description, sessionUser?.id ?? null, chosenTier, hours, centre?.slug ?? null)
+    .bind(token, name, categorySlug, suburbSlug, address, phone, email, website, description, sessionUser?.id ?? null, chosenTier, hours, centre?.slug ?? null, billingPeriod)
     .run();
   const submissionId = insert.meta.last_row_id;
 
@@ -133,7 +137,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     ...(website ? [`Website: ${website}`] : []),
     ...(hours ? [`Trading hours: ${hours}`] : []),
     ...(description ? [`Description: ${description}`] : []),
-    `Plan chosen: ${TIER_NAMES[chosenTier]}`,
+    `Plan chosen: ${TIER_NAMES[chosenTier]}${yearly ? ' (billed yearly)' : ''}`,
     ...(sessionUser ? [`Submitted by account: ${sessionUser.email}`] : []),
   ];
   await sendEmail(context.env, {
@@ -163,7 +167,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // tier is actually applied once the listing is approved+confirmed (see
   // business-submission.ts's insertApprovedBusiness) via the
   // "submission:<id>" branch of subscribe/notify.ts.
-  const priceCents = await tierPriceCents(db, chosenTier);
+  const priceCents = await tierPriceCents(db, chosenTier, billingPeriod);
   if (!priceCents) return json({ ok: true });
 
   const amount = centsToRand(priceCents);
@@ -188,13 +192,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     m_payment_id: mPaymentId,
     amount,
     item_name: `${site.siteName} — ${TIER_NAMES[chosenTier]} listing`,
-    item_description: `Monthly subscription for "${name}" on ${site.siteName} (applies once your listing is approved)`,
+    item_description: `${yearly ? 'Yearly' : 'Monthly'} subscription for "${name}" on ${site.siteName} (applies once your listing is approved)`,
     custom_str1: `submission:${submissionId}`,
     custom_str2: 'tier',
     custom_int1: String(chosenTier),
     subscription_type: '1',
     recurring_amount: amount,
-    frequency: '3',
+    frequency: yearly ? '6' : '3', // PayFast: 3 = monthly, 6 = annual
     cycles: '0',
   };
   const signature = await signFields(fields, context.env.PAYFAST_PASSPHRASE!);

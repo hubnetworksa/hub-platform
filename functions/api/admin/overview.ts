@@ -1,6 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
-import { tierPriceCents, sponsorPriceCents, centsToRand } from '../../_lib/pricing';
+import { tierPriceCents, sponsorPriceCents, centsToRand, isSponsorProductType, type BillingPeriod } from '../../_lib/pricing';
 
 interface Env {
   DB: D1Database;
@@ -74,14 +74,26 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   // it also counts sponsorship rows, which don't touch that column at all.
   // Admin comps (m_payment_id 'admin-comp-…') and rows past their paid
   // period bring in no money, so they are left out of revenue.
+  // Monthly rows count at today's monthly price, as before. A yearly row is
+  // a monthly figure too: what it pays per year (its last payment, else the
+  // current yearly price) spread over 12 months.
   const activeSubs = await db
     .prepare(
       `SELECT tier, product_type, COUNT(*) AS n FROM subscriptions
-       WHERE status = 'active' AND m_payment_id NOT LIKE 'admin-comp-%'
+       WHERE status = 'active' AND m_payment_id NOT LIKE 'admin-comp-%' AND billing_period != 'yearly'
          AND (current_period_end IS NULL OR current_period_end > datetime('now'))
        GROUP BY tier, product_type`
     )
     .all<{ tier: number; product_type: string; n: number }>();
+  const yearlySubs = await db
+    .prepare(
+      `SELECT s.tier, s.product_type,
+              (SELECT p.amount_cents FROM payments p WHERE p.subscription_id = s.id ORDER BY p.id DESC LIMIT 1) AS last_paid_cents
+       FROM subscriptions s
+       WHERE s.status = 'active' AND s.m_payment_id NOT LIKE 'admin-comp-%' AND s.billing_period = 'yearly'
+         AND (s.current_period_end IS NULL OR s.current_period_end > datetime('now'))`
+    )
+    .all<{ tier: number; product_type: string; last_paid_cents: number | null }>();
 
   let featuredCents = 0;
   let verifiedCents = 0;
@@ -90,19 +102,28 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   let centreCents = 0;
   let guideCents = 0;
   let tourismCents = 0;
+  const add = (tier: number, productType: string, cents: number) => {
+    if (productType === 'tier') {
+      if (tier === 2) featuredCents += cents;
+      else if (tier === 1) verifiedCents += cents;
+    } else if (productType === 'category_sponsor' || productType === 'suburb_sponsor') categorySuburbCents += cents;
+    else if (productType === 'homepage_banner') bannerCents += cents;
+    else if (productType === 'centre_sponsor') centreCents += cents;
+    else if (productType === 'guide_sponsor') guideCents += cents;
+    else if (productType === 'tourism_sponsor') tourismCents += cents;
+  };
+  const priceFor = async (tier: number, productType: string, period: BillingPeriod): Promise<number> =>
+    (productType === 'tier'
+      ? await tierPriceCents(db, tier, period)
+      : isSponsorProductType(productType)
+        ? await sponsorPriceCents(db, productType, period)
+        : null) ?? 0;
   for (const row of activeSubs.results) {
-    if (row.product_type === 'tier') {
-      const each = (await tierPriceCents(db, row.tier)) ?? 0;
-      if (row.tier === 2) featuredCents += each * row.n;
-      else if (row.tier === 1) verifiedCents += each * row.n;
-    } else {
-      const each = (await sponsorPriceCents(db, row.product_type as Parameters<typeof sponsorPriceCents>[1])) ?? 0;
-      if (row.product_type === 'category_sponsor' || row.product_type === 'suburb_sponsor') categorySuburbCents += each * row.n;
-      else if (row.product_type === 'homepage_banner') bannerCents += each * row.n;
-      else if (row.product_type === 'centre_sponsor') centreCents += each * row.n;
-      else if (row.product_type === 'guide_sponsor') guideCents += each * row.n;
-      else if (row.product_type === 'tourism_sponsor') tourismCents += each * row.n;
-    }
+    add(row.tier, row.product_type, (await priceFor(row.tier, row.product_type, 'monthly')) * row.n);
+  }
+  for (const row of yearlySubs.results) {
+    const perYear = row.last_paid_cents ?? (await priceFor(row.tier, row.product_type, 'yearly'));
+    add(row.tier, row.product_type, Math.round(perYear / 12));
   }
   const tierRevenueCents = featuredCents + verifiedCents;
   const sponsorshipRevenueCents = categorySuburbCents + bannerCents + centreCents + guideCents + tourismCents;
