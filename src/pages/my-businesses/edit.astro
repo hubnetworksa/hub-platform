@@ -1,8 +1,27 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
 import { priceRand, sponsorships } from '../../lib/data';
 import { TOURISM } from '../../site-content/tourism';
 import site from '../../site';
+
+// One icon per tab and per card-section header, so the sidebar and the
+// section headers read at a glance instead of as plain text — same
+// stroke-icon language already used across the rest of the site
+// (Icon.astro), not a new visual system.
+const TAB_ICONS: Record<string, string> = {
+  overview: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+  listing: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  enquiries: '<path d="M4 12h4l2 3h4l2-3h4"/><path d="M5.5 5h13l2.5 7v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7l2.5-7Z"/>',
+  reviews: '<path d="m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7Z"/>',
+  billing: '<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/><path d="M6 15h4"/>',
+};
+const SECTION_ICONS = {
+  photos: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="m21 16-5-4-4 3-3-2-4 3"/>',
+  search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.5-4.5"/>',
+  tourism: '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>',
+  payments: '<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/><path d="M6 15h4"/>',
+};
 
 const priceVerified = priceRand('price_verified_cents').replace(/\.00$/, '');
 const priceFeatured = priceRand('price_featured_cents').replace(/\.00$/, '');
@@ -34,11 +53,11 @@ const TABS = [
 // never read them back before. Every tile starts at this static "—" and is
 // filled in client-side once real data loads (see #stat-* ids below and
 // renderStats() in the script).
-const STATS: [id: string, label: string][] = [
-  ['views', 'Profile views'],
-  ['phone-clicks', 'Phone clicks'],
-  ['enquiries', 'Enquiries'],
-  ['search', 'Search appearances'],
+const STATS: [id: string, label: string, icon: string][] = [
+  ['views', 'Profile views', '<path d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7Z"/><circle cx="12" cy="12" r="3"/>'],
+  ['phone-clicks', 'Phone clicks', '<path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z"/>'],
+  ['enquiries', 'Enquiries', '<path d="M4 12h4l2 3h4l2-3h4"/><path d="M5.5 5h13l2.5 7v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7l2.5-7Z"/>'],
+  ['search', 'Search appearances', '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.5-4.5"/>'],
 ];
 
 const fieldLabel = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)';
@@ -49,22 +68,22 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 
 <BaseLayout title="Manage business" description="Manage your business listing, plan and photos." noindex={true}>
   <main style="max-width:1200px;margin:0 auto;padding:clamp(20px,3vw,36px) 20px 60px" data-price-verified={priceVerified} data-price-featured={priceFeatured} data-price-tourism-sponsor={priceTourismSponsor} id="owner-main">
-    <div id="loading" style="color:var(--muted);padding:2rem 0;">Loading…</div>
+    <div id="loading" style="display:flex;align-items:center;gap:10px;color:var(--muted);font-weight:700;font-size:14px;padding:3rem 0;"><span class="spinner"></span>Loading…</div>
 
     <div id="dashboard" hidden>
-      <div id="hidden-banner" hidden style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;margin-bottom:14px;border-radius:12px;background:rgba(194,56,56,.08);border:2px solid var(--danger)">
+      <div id="hidden-banner" hidden style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;margin-bottom:14px;border-radius:var(--radius-lg);background:rgba(194,56,56,.08);border:2px solid var(--danger)">
         <span style="color:var(--danger);flex-shrink:0;font-size:18px;line-height:1">⚠</span>
         <div style="min-width:0">
           <div style="font-size:14px;font-weight:800;color:var(--danger)">This business isn't showing on the site right now</div>
           <p id="hidden-reason-text" style="margin:3px 0 0;font-size:13px;font-weight:600;color:var(--text);line-height:1.5"></p>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap;padding-bottom:16px;border-bottom:2px solid var(--navy)">
-        <span id="biz-initials" style="width:46px;height:46px;border-radius:12px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800"></span>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 22px;background:#fff;border:2px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow)">
+        <span id="biz-initials" style="width:50px;height:50px;border-radius:13px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0"></span>
         <div style="min-width:0">
           <h1 id="business-name" style="margin:0;font-size:clamp(20px,3vw,27px);letter-spacing:-.025em;color:var(--navy)"></h1>
-          <div style="display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap">
-            <span id="biz-plan-chip" style="padding:3px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase"></span>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap">
+            <span id="biz-plan-chip" style="padding:4px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase"></span>
             <span id="biz-meta" style="font-size:12.5px;font-weight:700;color:var(--muted)"></span>
           </div>
         </div>
@@ -77,7 +96,8 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       <div class="owner-shell" style="gap:22px;margin-top:20px">
         <aside class="owner-nav" style="gap:8px;overflow-x:auto;padding-bottom:4px" role="tablist">
           {TABS.map(([key, label]) => (
-            <button type="button" role="tab" class="owner-tab" data-tab={key} style="align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border-radius:10px;cursor:pointer;white-space:nowrap;font-size:13.5px;font-weight:800;text-align:left;border:2px solid var(--border);background:#fff;color:var(--navy)">
+            <button type="button" role="tab" class="owner-tab" data-tab={key} style="align-items:center;gap:10px;padding:11px 14px;border-radius:10px;cursor:pointer;white-space:nowrap;font-size:13.5px;font-weight:800;text-align:left;border:2px solid var(--border);background:#fff;color:var(--navy)">
+              <Icon path={TAB_ICONS[key]} size={16} />
               <span>{label}</span>
             </button>
           ))}
@@ -92,20 +112,24 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
           <!-- Overview -->
           <section class="owner-panel" data-panel="overview">
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
-              {STATS.map(([id, label]) => (
-                <div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:18px">
+              {STATS.map(([id, label, icon]) => (
+                <div class="owner-stat-tile" style="background:#fff;border:2px solid var(--border);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow)">
+                  <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;background:rgba(var(--accent-rgb),.1);color:var(--accent-hover);margin-bottom:10px">
+                    <Icon path={icon} size={16} />
+                  </span>
                   <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">{label}</div>
-                  <div id={`stat-${id}-value`} style="font-size:28px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:8px;line-height:1">—</div>
+                  <div id={`stat-${id}-value`} style="font-size:28px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px;line-height:1">—</div>
                   <div id={`stat-${id}-note`} style="font-size:12.5px;font-weight:700;color:var(--muted);margin-top:5px">No data yet</div>
                 </div>
               ))}
             </div>
             <p style="margin:10px 0 0;font-size:12px;font-weight:600;color:var(--muted)">Profile views and clicks are counted from real visitors to your page, over the last 30 days.</p>
-            <div style={`${cardBox};margin-top:14px`}>
-              <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
+            <div style={`${cardBox};margin-top:14px;box-shadow:var(--shadow)`}>
+              <div class="owner-section-head" style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px">
+                <span style="color:var(--accent)"><Icon path={SECTION_ICONS.search} size={17} /></span>
                 <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">What people searched to find you</h3>
               </div>
-              <p style={emptyNote}>No search data yet — we don't track listing searches so far.</p>
+              <p style={emptyNote}>We don't yet break down which words people searched — only how often your listing appeared (see "Search appearances" above).</p>
             </div>
           </section>
 
@@ -159,8 +183,11 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
                 </div>
               </form>
 
-              <div style="border:2px solid var(--border);border-radius:14px;overflow:hidden">
-                <div style="padding:13px 16px;border-bottom:2px solid var(--border);font-size:13px;font-weight:800;color:var(--navy)">Photos <span id="photos-count" style="font-weight:600;color:var(--muted)"></span></div>
+              <div style="border:2px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)">
+                <div class="owner-section-head" style="padding:13px 16px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;color:var(--navy)">
+                  <span style="color:var(--accent)"><Icon path={SECTION_ICONS.photos} size={17} /></span>
+                  Photos <span id="photos-count" style="font-weight:600;color:var(--muted)"></span>
+                </div>
                 <div id="photos-locked" hidden style="padding:18px 16px;font-size:13.5px;font-weight:600;color:var(--muted);line-height:1.55">
                   Photos come with a paid plan: up to 4 on Verified, up to 10 on Featured. <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a> to add photos.
                 </div>
@@ -183,24 +210,37 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 
           <!-- Enquiries -->
           <section class="owner-panel" data-panel="enquiries" hidden>
-            <div style={cardBox}>
+            <div style={`${cardBox};box-shadow:var(--shadow)`}>
+              <div class="owner-section-head" style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px">
+                <span style="color:var(--accent)"><Icon path={TAB_ICONS.enquiries} size={17} /></span>
+                <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Messages from customers</h3>
+              </div>
               <div id="enquiries-list"></div>
-              <p id="enquiries-empty" hidden style={emptyNote}>No enquiries yet. When someone sends one from your page, it'll show up here.</p>
+              <div id="enquiries-empty" hidden style="padding:30px 18px;text-align:center">
+                <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--bg-subtle);color:var(--muted);margin-bottom:8px"><Icon path={TAB_ICONS.enquiries} size={17} /></span>
+                <p style="font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No enquiries yet. When someone sends one from your page, it'll show up here.</p>
+              </div>
             </div>
             <p id="enquiries-total-note" style="margin:10px 0 0;font-size:12px;font-weight:600;color:var(--muted)"></p>
           </section>
 
           <!-- Reviews -->
           <section class="owner-panel" data-panel="reviews" hidden>
-            <div style={cardBox}>
+            <div style={`${cardBox};box-shadow:var(--shadow)`}>
+              <div class="owner-section-head" style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px">
+                <span style="color:var(--accent)"><Icon path={TAB_ICONS.reviews} size={17} /></span>
+                <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">What customers wrote</h3>
+              </div>
               <p style={emptyNote}>No reviews yet. Customer reviews aren't available on listings so far.</p>
             </div>
           </section>
 
           <!-- Billing -->
           <section class="owner-panel" data-panel="billing" hidden>
-            <div style="border:2px solid var(--accent);border-radius:16px;overflow:hidden;background:#fff">
-              <div style="background:var(--accent);padding:8px 20px;font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--contrast)">Current plan</div>
+            <div style="border:2px solid var(--accent);border-radius:var(--radius-lg);overflow:hidden;background:#fff;box-shadow:var(--shadow-lift)">
+              <div style="background:var(--accent);padding:9px 20px;font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--contrast);display:flex;align-items:center;gap:7px">
+                <Icon path={TAB_ICONS.billing} size={13} /> Current plan
+              </div>
               <div style="padding:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
                 <div>
                   <div id="plan-name" style="font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1"></div>
@@ -213,10 +253,13 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
             <p style="margin:8px 0 0;font-size:13px;font-weight:600;color:var(--muted)"><a href="/pricing/" style="color:var(--accent-hover);font-weight:800">Compare plans</a></p>
 
             {site.features.tourism && tourismPicks.length > 0 && (
-              <div style={`${cardBox};margin-top:14px`}>
-                <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
-                  <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Things to do sponsorships</h3>
-                  <p style="margin:4px 0 0;font-size:12.5px;font-weight:600;color:var(--muted)">{priceTourismSponsor} / month per attraction — one sponsor per attraction page, and more attractions get added over time.</p>
+              <div style={`${cardBox};margin-top:14px;box-shadow:var(--shadow)`}>
+                <div class="owner-section-head" style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px">
+                  <span style="color:var(--accent)"><Icon path={SECTION_ICONS.tourism} size={17} /></span>
+                  <div>
+                    <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Things to do sponsorships</h3>
+                    <p style="margin:4px 0 0;font-size:12.5px;font-weight:600;color:var(--muted)">{priceTourismSponsor} / month per attraction — one sponsor per attraction page, and more attractions get added over time.</p>
+                  </div>
                 </div>
                 <div id="tourism-sponsor-list"></div>
                 <p id="tourism-sponsor-empty" hidden style={emptyNote}>Not sponsoring any attractions yet.</p>
@@ -229,8 +272,9 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
               </div>
             )}
 
-            <div style={`${cardBox};margin-top:14px`}>
-              <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
+            <div style={`${cardBox};margin-top:14px;box-shadow:var(--shadow)`}>
+              <div class="owner-section-head" style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px">
+                <span style="color:var(--accent)"><Icon path={SECTION_ICONS.payments} size={17} /></span>
                 <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Payment history</h3>
               </div>
               <div id="payments-list"></div>
@@ -261,9 +305,14 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   .owner-input:focus { border-color: var(--accent) !important; }
   .owner-btn-primary:hover { background: var(--accent-hover) !important; }
   .owner-btn-ghost:hover { border-color: var(--accent) !important; }
-  .owner-photo { position: relative; aspect-ratio: 4/3; border-radius: 10px; overflow: hidden; background: var(--bg-subtle); }
+  .owner-photo { position: relative; aspect-ratio: 4/3; border-radius: 10px; overflow: hidden; background: var(--bg-subtle); box-shadow: var(--shadow); transition: transform .15s ease; }
+  .owner-photo:hover { transform: translateY(-2px); }
   .owner-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .owner-photo button { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; line-height: 1; font-size: 15px; }
+  .owner-stat-tile { transition: transform .15s ease, box-shadow .15s ease; }
+  .owner-stat-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+  .spinner { width: 16px; height: 16px; flex-shrink: 0; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: mb-spin 0.7s linear infinite; }
+  @keyframes mb-spin { to { transform: rotate(360deg); } }
 </style>
 
 <script>
@@ -606,12 +655,15 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     list.innerHTML = enquiries
       .map((e, i) => {
         const border = i === enquiries.length - 1 ? '' : 'border-bottom:1px solid var(--border);';
-        return `<div style="padding:14px 18px;${border}display:flex;flex-direction:column;gap:5px">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-            <span style="font-size:14px;font-weight:800;color:var(--navy)">${esc(e.name || 'Someone')} <span style="font-weight:600;color:var(--muted);font-size:12.5px">· ${esc(e.contact)}</span></span>
-            <span style="font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap">${esc(shortDate(e.created_at))}</span>
+        return `<div style="padding:14px 18px;${border}display:flex;gap:12px">
+          <span style="width:34px;height:34px;border-radius:50%;background:var(--bg-subtle);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">${esc(initialsOf(e.name || '?'))}</span>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+              <span style="font-size:14px;font-weight:800;color:var(--navy)">${esc(e.name || 'Someone')} <span style="font-weight:600;color:var(--muted);font-size:12.5px">· ${esc(e.contact)}</span></span>
+              <span style="font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap">${esc(shortDate(e.created_at))}</span>
+            </div>
+            <p style="margin:0;font-size:13.5px;line-height:1.5;color:var(--text)">${esc(e.message).replace(/\n/g, '<br>')}</p>
           </div>
-          <p style="margin:0;font-size:13.5px;line-height:1.5;color:var(--text)">${esc(e.message).replace(/\n/g, '<br>')}</p>
         </div>`;
       })
       .join('');

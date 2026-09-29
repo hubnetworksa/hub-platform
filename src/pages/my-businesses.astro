@@ -9,16 +9,17 @@ const ICONS = {
   badge: '<path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4Z"/><path d="m9.5 12 1.8 1.8L15 10"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
   calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/>',
+  inbox: '<path d="M4 12h4l2 3h4l2-3h4"/><path d="M5.5 5h13l2.5 7v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7l2.5-7Z"/>',
 };
 ---
 
 <BaseLayout title="My Businesses" description={`Manage the businesses linked to your ${site.siteName} account.`} noindex={true}>
   <main style="max-width:1200px;margin:0 auto;padding:clamp(20px,3vw,36px) 20px 60px">
-    <div id="loading" style="color:var(--muted);padding:2rem 0;">Loading…</div>
+    <div id="loading" style="display:flex;align-items:center;gap:10px;color:var(--muted);font-weight:700;font-size:14px;padding:3rem 0;"><span class="spinner"></span>Loading…</div>
 
     <div id="content" hidden>
-      <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap;padding-bottom:16px;border-bottom:2px solid var(--navy)">
-        <span id="account-initial" style="width:46px;height:46px;border-radius:12px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800"></span>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:20px 22px;background:#fff;border:2px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow)">
+        <span id="account-initial" style="width:50px;height:50px;border-radius:13px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0"></span>
         <div style="min-width:0">
           <h1 style="margin:0;font-size:clamp(20px,3vw,27px);letter-spacing:-.025em;color:var(--navy)">My businesses</h1>
           <div style="margin-top:4px"><span id="account-email" style="font-size:12.5px;font-weight:700;color:var(--muted);overflow-wrap:anywhere"></span></div>
@@ -26,14 +27,17 @@ const ICONS = {
         <button id="logout-btn" type="button" class="mb-ghost" style="margin-left:auto;padding:11px 15px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-weight:800;color:var(--navy);background:#fff;cursor:pointer;font-family:inherit">Log out</button>
       </div>
 
-      <div style="margin:20px 0 16px">
+      <div style="margin:24px 0 16px">
         <h2 style="margin:0;font-size:20px;letter-spacing:-.025em;color:var(--navy)">Your businesses</h2>
         <p style="margin:3px 0 0;font-size:13.5px;font-weight:600;color:var(--muted)">Pick a business to edit its listing, photos and plan</p>
       </div>
 
-      <div id="owned-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px"></div>
-      <div id="owned-empty" hidden style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
-        <p style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">You don't own any businesses yet.</p>
+      <div id="owned-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px"></div>
+      <div id="owned-empty" hidden style="background:#fff;border:2px dashed var(--border);border-radius:var(--radius-lg);overflow:hidden">
+        <div style="padding:34px 18px;text-align:center">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:var(--bg-subtle);color:var(--muted);margin-bottom:10px"><Icon path={ICONS.building} size={20} /></span>
+          <p style="font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">You don't own any businesses yet.</p>
+        </div>
       </div>
 
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
@@ -48,22 +52,28 @@ const ICONS = {
         </a>
       </div>
 
-      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden;margin-top:14px">
+      <div style="background:#fff;border:2px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:16px;box-shadow:var(--shadow)">
         <div style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px;">
           <span style="color:var(--accent)"><Icon path={ICONS.clock} size={17} /></span>
           <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Pending submissions</h3>
         </div>
         <div id="pending-list"></div>
-        <p id="pending-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No pending submissions.</p>
+        <div id="pending-empty" hidden style="padding:26px 18px;text-align:center">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--bg-subtle);color:var(--muted);margin-bottom:8px"><Icon path={ICONS.clock} size={17} /></span>
+          <p style="font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No pending submissions.</p>
+        </div>
       </div>
 
-      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden;margin-top:14px">
+      <div style="background:#fff;border:2px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:16px;box-shadow:var(--shadow)">
         <div style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px;">
           <span style="color:var(--accent)"><Icon path={ICONS.badge} size={17} /></span>
           <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Your claims</h3>
         </div>
         <div id="claims-list"></div>
-        <p id="claims-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">You haven't claimed any businesses.</p>
+        <div id="claims-empty" hidden style="padding:26px 18px;text-align:center">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--bg-subtle);color:var(--muted);margin-bottom:8px"><Icon path={ICONS.badge} size={17} /></span>
+          <p style="font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">You haven't claimed any businesses.</p>
+        </div>
       </div>
     </div>
   </main>
@@ -73,8 +83,11 @@ const ICONS = {
   #content[hidden], #owned-empty[hidden], #pending-empty[hidden], #claims-empty[hidden] { display: none !important; }
   .mb-primary:hover { background: var(--accent-hover) !important; }
   .mb-ghost:hover { border-color: var(--accent) !important; }
-  .mb-card { background: #fff; border: 2px solid var(--border); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
-  .mb-card:hover { border-color: var(--accent); }
+  .mb-card { background: #fff; border: 2px solid var(--border); border-radius: var(--radius-lg); padding: 18px; display: flex; flex-direction: column; gap: 14px; box-shadow: var(--shadow); transition: box-shadow 0.15s, border-color 0.15s, transform 0.15s; overflow: hidden; }
+  .mb-card:hover { border-color: var(--accent); box-shadow: var(--shadow-lift); transform: translateY(-2px); }
+  .mb-row:hover { background: var(--bg-subtle); }
+  .spinner { width: 16px; height: 16px; flex-shrink: 0; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: mb-spin 0.7s linear infinite; }
+  @keyframes mb-spin { to { transform: rotate(360deg); } }
 </style>
 
 <script>
@@ -106,7 +119,7 @@ const ICONS = {
         : tier === 1
           ? 'background:var(--navy);color:#fff'
           : 'background:var(--bg-subtle);color:var(--muted);border:1px solid var(--border)';
-    return `<span style="padding:3px 9px;border-radius:999px;${style};font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">${name}</span>`;
+    return `<span style="padding:4px 9px;border-radius:999px;${style};font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">${name}</span>`;
   }
 
   function pendingTone(status: string): 'pending' | 'good' | 'bad' {
@@ -135,10 +148,14 @@ const ICONS = {
 
   function ownedCard(b: Owned): string {
     const note = planNote(b);
+    const stripeColor = b.subscription_tier >= 2 ? 'var(--accent)' : b.subscription_tier === 1 ? 'var(--navy)' : 'var(--border)';
     const hiddenBanner = !b.visible
       ? `<div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:9px;background:rgba(194,56,56,.1);color:var(--danger);font-size:12px;font-weight:800">Not showing on the site — open "Manage" for details</div>`
       : '';
-    return `<div class="mb-card">
+    // A left accent stripe (accent = Featured, navy = Verified, plain
+    // border = Basic) — same colour language as planChip(), so which plan
+    // a business is on reads at a glance even before scanning the badge.
+    return `<div class="mb-card" style="border-left:4px solid ${stripeColor}">
       ${hiddenBanner}
       <div style="display:flex;align-items:center;gap:12px;min-width:0">
         <span style="width:46px;height:46px;border-radius:12px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0">${esc(initialsOf(b.name))}</span>
@@ -147,7 +164,7 @@ const ICONS = {
           <div style="display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap">${planChip(b.subscription_tier)}${note ? `<span style="font-size:12.5px;font-weight:700;color:var(--muted)">${esc(note)}</span>` : ''}</div>
         </div>
       </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:2px">
         <a href="/my-businesses/edit/?id=${b.id}" class="mb-primary" style="padding:10px 15px;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap">Manage</a>
         <a href="/business/${esc(b.slug)}/" class="mb-ghost" style="padding:10px 15px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap">View public page</a>
       </div>
@@ -155,7 +172,7 @@ const ICONS = {
   }
 
   function row(name: string, right: string, last: boolean): string {
-    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;${last ? '' : 'border-bottom:1px solid var(--border);'}">
+    return `<div class="mb-row" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;${last ? '' : 'border-bottom:1px solid var(--border);'}">
       <span style="font-size:14.5px;font-weight:800;color:var(--navy);min-width:0;overflow-wrap:anywhere">${esc(name)}</span>
       ${right}
     </div>`;
