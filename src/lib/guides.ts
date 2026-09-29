@@ -873,7 +873,7 @@ const polokwane: Guide[] = [
         heading: '1. Get the full price on the phone, not on arrival',
         tocLabel: '1. Price on the phone',
         paragraphs: [
-          'Ask for the call-out fee, whether it includes travel from where they are based, and the likely total for your specific lock type, before anyone leaves for your address. A locksmith who refuses to give any figure over the phone, or who quotes a low call-out and a high "on-site assessment," is the pattern behind most complaints — a genuine travel surcharge for a late-night, out-of-town call-out is not the same thing, as long as it's quoted upfront.',
+          "Ask for the call-out fee, whether it includes travel from where they are based, and the likely total for your specific lock type, before anyone leaves for your address. A locksmith who refuses to give any figure over the phone, or who quotes a low call-out and a high \"on-site assessment,\" is the pattern behind most complaints — a genuine travel surcharge for a late-night, out-of-town call-out is not the same thing, as long as it's quoted upfront.",
         ],
       },
       {
