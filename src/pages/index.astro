@@ -9,6 +9,7 @@ import { sponsorFor, eventsSorted, eventDateParts } from '../lib/data';
 import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory, suburbFor, categoriesFor, FEATURED_TIER, newsSorted, newsDateShort, latestFuel, fuelPeriodLabel } from '../lib/data';
 import { CATEGORY_GROUPS } from '../lib/categoryGroups';
 import site from '../site';
+import AdUnit from '../components/AdUnit.astro';
 
 const groupCount = (group: (typeof CATEGORY_GROUPS)[number]) =>
   categories
@@ -186,14 +187,11 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
       </div>
     </section>
 
-    <section style="max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,44px) 20px 0">
-      {adsEnabled && !showsPaid && (
-      <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);min-height:118px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;padding:20px">
-        <span style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
-        <span style="font-size:14px;font-weight:700;color:var(--muted)">AdSense in-content unit — 970×90 desktop / 320×100 mobile</span>
-      </div>
-      )}
-    </section>
+    {adsEnabled && !showsPaid && site.adsensePublisherId && site.adsenseSlots?.homeInContent && (
+      <section style="max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,44px) 20px 0">
+        <AdUnit placement="homeInContent" />
+      </section>
+    )}
 
     {(cityCoords || homeNews.length > 0 || fuel) && (
       <section id="today" hidden={homeNews.length === 0 && !fuel} data-lat={cityCoords?.[0]} data-lon={cityCoords?.[1]} style="max-width:1200px;margin:0 auto;padding:clamp(30px,4.5vw,50px) 20px 0">

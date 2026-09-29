@@ -1,6 +1,7 @@
 ---
 import { adsEnabled } from '../../lib/site-overrides';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdUnit from '../../components/AdUnit.astro';
 import { eventsSorted, eventTypeCounts, eventDateParts, priceRand } from '../../lib/data';
 import site from '../../site';
 
@@ -137,12 +138,7 @@ const showsPaid = sorted.some((e) => !!e.featured);
               ))}
             </div>
           </div>
-          {adsEnabled && !showsPaid && (
-          <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);min-height:250px;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:18px">
-            <span style="font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
-            <span style="font-size:13.5px;font-weight:700;color:var(--muted)">300×250 — event sponsors</span>
-          </div>
-          )}
+          {adsEnabled && !showsPaid && <AdUnit placement="eventsSidebar" />}
         </aside>
       </div>
     </section>

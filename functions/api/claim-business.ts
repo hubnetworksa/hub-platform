@@ -31,10 +31,10 @@ interface ClaimBody {
   details?: ClaimDetails;
 }
 
-// How the claimant wants to be verified. There is no SMS/OTP, phone-call or
-// document-upload infrastructure: every claim is reviewed by a person, so
-// "email" and "phone" only tell the reviewer HOW to verify (compare the email
-// domain / call the number on file). Document upload is not available.
+// How the claimant wants to be verified. There is no SMS/OTP or automated
+// phone-call infrastructure: every claim is reviewed by a person, so "email"
+// and "phone" only tell the reviewer HOW to verify (compare the email domain
+// / call the number on file). Anything else is simply left unlabelled.
 const VERIFY_LABELS: Record<string, string> = {
   email: 'Work email (reviewer checks the email domain against the business)',
   phone: 'Phone call (reviewer calls the number on file)',
@@ -84,9 +84,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!contactEmail || !contactEmail.includes('@')) return json({ ok: false, error: 'Please enter a valid email address.' }, 400);
 
   const verifyMethod = clean(body.verifyMethod, 20);
-  if (verifyMethod === 'docs') {
-    return json({ ok: false, error: "Document upload isn't available yet. Please choose work email or a phone call." }, 400);
-  }
   // `confirmed` is only sent by the current claim form; older clients omit it.
   if (body.confirmed === false) {
     return json({ ok: false, error: 'Please confirm you are authorised to manage this business.' }, 400);

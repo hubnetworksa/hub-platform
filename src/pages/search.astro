@@ -25,6 +25,9 @@ const searchMeta = {
       return [c.name, { cs: c.slug, ...(sp ? { n: sp.business_name, s: sp.business_slug } : {}) }];
     })
   ),
+  // The in-feed AdSense unit after the fifth result: a real unit only when
+  // this site names a slot ID for it (sites/<city>.json → adsenseSlots).
+  ad: { c: site.adsensePublisherId, s: site.adsenseSlots?.searchInFeed ?? null },
 };
 const searchMetaJson = JSON.stringify(searchMeta).replace(/</g, '\\u003c');
 
@@ -154,6 +157,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     cats: { n: string; s: string; c: number; k: string }[];
     subs: { n: string; s: string; c: number; g: string }[];
     sp?: Record<string, { cs: string; n?: string; s?: string }>;
+    ad?: { c: string | null; s: string | null };
   }
 
   const searchMeta: Meta = JSON.parse(document.getElementById('search-meta')?.textContent || '{"cats":[],"subs":[]}');
@@ -513,14 +517,25 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     }
     const featured = results.find((r) => r.t >= 2);
     const rest = results.filter((r) => r !== featured).slice(0, 40);
-    const adSlot = `
-      <div style="border:2px dashed var(--border);border-radius:14px;background:var(--bg-subtle);padding:18px">
-        <span style="display:block;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
-        <span style="display:block;margin-top:4px;font-size:13.5px;font-weight:700;color:var(--muted)">In-feed unit after the fifth result</span>
-      </div>`;
+    // A real AdSense in-feed unit after the fifth result — only when this
+    // site has a publisher ID and names a slot for it; otherwise nothing at
+    // all (never a placeholder box).
+    const ad = searchMeta.ad;
+    const attr = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    const adSlot = ad?.c && ad?.s
+      ? `<div class="ad-unit" style="min-width:0">
+        <span style="display:block;margin-bottom:6px;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="${attr(ad.c)}" data-ad-slot="${attr(ad.s)}" data-ad-format="fluid" data-full-width-responsive="true"></ins>
+      </div>`
+      : '';
     const rows = rest.map((r) => renderRow(r, false));
-    if (rows.length > 5 && document.body.dataset.ads !== '0') rows.splice(5, 0, adSlot);
+    const showAd = adSlot !== '' && rows.length > 5 && document.body.dataset.ads !== '0';
+    if (showAd) rows.splice(5, 0, adSlot);
     list.innerHTML = (featured ? renderRow(featured, true) : '') + rows.join('');
+    if (showAd) {
+      const w = window as unknown as { adsbygoogle?: unknown[] };
+      (w.adsbygoogle = w.adsbygoogle || []).push({});
+    }
 
     const topCategory = results.find((r) => r.c)?.c ?? '';
     renderSponsorSlot(topCategory);

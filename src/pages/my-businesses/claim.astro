@@ -15,11 +15,10 @@ const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const METHODS = [
   { key: 'email', name: 'Work email', note: 'Matching your business domain', speed: 'Reviewed by hand' },
   { key: 'phone', name: 'Phone call', note: 'We call the number on file', speed: 'We call you' },
-  { key: 'docs', name: 'Upload documents', note: 'CIPC registration or a utility bill', speed: 'Not available yet' },
 ];
 
-const pick = (active: boolean, disabled: boolean) =>
-  `display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left;padding:15px;border:0;cursor:${disabled ? 'not-allowed' : 'pointer'};background:${active ? 'var(--bg-subtle)' : '#fff'};color:${active ? 'var(--accent-hover)' : 'var(--navy)'};box-shadow:${active ? 'inset 0 0 0 2px var(--accent)' : 'none'}${disabled ? ';opacity:.55' : ''}`;
+const pick = (active: boolean) =>
+  `display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left;padding:15px;border:0;cursor:pointer;background:${active ? 'var(--bg-subtle)' : '#fff'};color:${active ? 'var(--accent-hover)' : 'var(--navy)'};box-shadow:${active ? 'inset 0 0 0 2px var(--accent)' : 'none'}`;
 
 const INPUT = 'padding:13px;border:2px solid var(--border);border-radius:11px;font-size:14.5px;outline:none;background:#fff;color:var(--text)';
 const INPUT2 = 'padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)';
@@ -66,7 +65,7 @@ const TIME = 'padding:9px 11px;border:2px solid var(--border);border-radius:9px;
             <h2 style="margin:0 0 12px;font-size:13px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">How do you want to verify?</h2>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:2px;background:var(--border);border:2px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:12px">
               {METHODS.map((m) => (
-                <button type="button" class="cl-method" data-method={m.key} data-disabled={m.key === 'docs' ? '1' : undefined} aria-pressed={m.key === 'email' ? 'true' : 'false'} style={pick(m.key === 'email', m.key === 'docs')}>
+                <button type="button" class="cl-method" data-method={m.key} aria-pressed={m.key === 'email' ? 'true' : 'false'} style={pick(m.key === 'email')}>
                   <span style="font-size:13.5px;font-weight:800;letter-spacing:-.005em">{m.name}</span>
                   <span style="font-size:12.5px;font-weight:600;line-height:1.45">{m.note}</span>
                   <span style="font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.75">{m.speed}</span>
@@ -350,12 +349,7 @@ const TIME = 'padding:9px 11px;border:2px solid var(--border);border-radius:9px;
   }
   document.querySelectorAll<HTMLButtonElement>('.cl-method').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const m = btn.dataset.method;
-      if (m === 'docs') {
-        methodNote.textContent = "Document upload isn't available yet. Please choose work email or a phone call and we'll take it from there.";
-        return;
-      }
-      method = m === 'phone' ? 'phone' : 'email';
+      method = btn.dataset.method === 'phone' ? 'phone' : 'email';
       applyMethodStyles();
       setMethodNote();
     });

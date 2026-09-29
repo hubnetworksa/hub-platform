@@ -28,6 +28,20 @@ export interface SiteFeatures {
   tourism: boolean;
 }
 
+/** Every place the site can show a Google AdSense display unit. Each one
+ *  renders nothing unless sites/<city>.json names an ad-unit slot ID for it
+ *  (see AdUnit.astro), so an unset placement is invisible — never a dashed
+ *  placeholder box on the public site. */
+export type AdPlacement =
+  | 'businessSidebar'
+  | 'businessInContent'
+  | 'homeInContent'
+  | 'searchInFeed'
+  | 'suburbSidebar'
+  | 'eventsSidebar'
+  | 'eventSidebar'
+  | 'tourismSidebar';
+
 export interface Site {
   slug: string;
   siteName: string;
@@ -76,7 +90,7 @@ export interface Site {
   adsensePublisherId: string | null;
   /** AdSense ad-unit slot IDs (the numeric data-ad-slot from the AdSense
    *  dashboard) per placement. null = no manual unit there. */
-  adsenseSlots?: { businessSidebar?: string | null; businessInContent?: string | null };
+  adsenseSlots?: Partial<Record<AdPlacement, string | null>>;
   features: SiteFeatures;
   theme: SiteTheme;
 }

@@ -19,11 +19,6 @@ const PRICE_KEYS = [
   'price_sponsor_guide_cents',
   'price_sponsor_tourism_cents',
   'price_event_feature_cents',
-  // Rate-card entries for the two display-ad placements that don't have a
-  // sponsorship product of their own (the homepage in-content and suburb
-  // sidebar placements reuse price_sponsor_banner_cents / _suburb_cents).
-  'price_ad_search_cents',
-  'price_ad_profile_cents',
 ];
 
 // Text overrides for the "Site settings" admin tab. Applied to the public

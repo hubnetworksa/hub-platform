@@ -17,6 +17,8 @@ const slotData = {
   guides: guidesFor(site.slug).map((g) => ({ slug: g.slug, name: g.title })),
   tourism: (TOURISM[site.slug]?.picks ?? []).filter((p) => p.slug).map((p) => ({ slug: p.slug as string, name: p.name })),
   adsEnabledAtBuild: adsEnabled,
+  // What the display-ad placements can actually show on this city's site.
+  adsense: { publisherId: !!site.adsensePublisherId, slots: site.adsenseSlots ?? {} },
 };
 const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
 ---
@@ -25,14 +27,14 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
   <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
   <div id="content" hidden>
-    <AdminShell active="ads" title="Ads & sponsors" subtitle="Placements, rates and sold inventory">
+    <AdminShell active="ads" title="Ads & sponsors" subtitle="Display ads, sponsor spots and sold inventory">
       <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
         <div style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Ad placements</h2>
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Display ads (Google AdSense)</h2>
           <button id="ads-toggle" type="button"></button>
         </div>
         <div id="ad-slots"></div>
-        <p id="ads-note" style="margin:0;padding:12px 18px;font-size:12.5px;font-weight:600;color:var(--muted)">Switching display ads on or off, and changing a rate, reaches the public pages on the next <strong>Rebuild &amp; deploy</strong>. Rates are edited under <a href="/admin/plans-pricing/" style="color:var(--accent);font-weight:800;text-decoration:none">Plans &amp; pricing</a>.</p>
+        <p id="ads-note" style="margin:0;padding:12px 18px;font-size:12.5px;line-height:1.55;font-weight:600;color:var(--muted)">These are Google AdSense units, not spots sold here, and they only appear on pages that aren't already carrying a paid listing or sponsor. Switching them on or off reaches the public pages on the next <strong>Rebuild &amp; deploy</strong>. Ad-unit IDs live in <code>sites/{site.slug}.json</code> (adsenseSlots) and need a code deploy; without one, Google's Auto ads can still fill a page once the publisher ID is set. Sponsor rates are edited under <a href="/admin/plans-pricing/" style="color:var(--accent);font-weight:800;text-decoration:none">Plans &amp; pricing</a>.</p>
       </div>
 
       <div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:18px">
@@ -83,7 +85,7 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
 </BaseLayout>
 
 <script>
-  import { esc, randFromCents, requireAdmin, showContent, postJson, fmtDate } from '../../lib/admin-html';
+  import { esc, requireAdmin, showContent, postJson, fmtDate } from '../../lib/admin-html';
 
   interface SlotData {
     categories: { slug: string; name: string; count: number }[];
@@ -92,6 +94,7 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
     guides: { slug: string; name: string }[];
     tourism: { slug: string; name: string }[];
     adsEnabledAtBuild: boolean;
+    adsense?: { publisherId: boolean; slots: Record<string, string | null | undefined> };
   }
   interface Sold {
     id: number; product_type: string; product_target: string | null; business_name: string; current_period_end: string | null; comped: number;
@@ -121,11 +124,6 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
     return target ?? '';
   }
 
-  function rate(key: string): string {
-    const cents = settings.has(key) ? Number(settings.get(key)) : NaN;
-    return Number.isFinite(cents) && cents > 0 ? `${randFromCents(cents)}/mo` : 'Rate not set';
-  }
-
   function stateStyle(on: boolean): string {
     return `padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;${on ? 'background:rgba(var(--accent-rgb),.13);color:var(--accent-hover)' : 'background:var(--bg-subtle);color:var(--muted)'}`;
   }
@@ -135,23 +133,34 @@ const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');
     toggle.textContent = adsOn ? 'Display ads ON' : 'Display ads OFF';
     toggle.setAttribute('style', `padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-size:13px;font-weight:800;background:${adsOn ? 'var(--accent)' : 'var(--bg-subtle)'};color:${adsOn ? 'var(--contrast)' : 'var(--muted)'}`);
 
+    // One row per real placement in the code (src/site.ts AdPlacement). The
+    // state is what a visitor would actually get: a configured unit, Google
+    // Auto ads only, or nothing because the publisher ID isn't set.
     const placements = [
-      { name: 'Homepage in-content', detail: '970×90 desktop · 320×100 mobile', rate: rate('price_sponsor_banner_cents') },
-      { name: 'Search in-feed', detail: 'After the fifth result', rate: rate('price_ad_search_cents') },
-      { name: 'Suburb sidebar', detail: `300×250 · ${slots.suburbs.length.toLocaleString('en-US')} pages`, rate: rate('price_sponsor_suburb_cents') },
-      { name: 'Profile sidebar', detail: '300×250 · every business page', rate: rate('price_ad_profile_cents') },
+      { key: 'homeInContent', name: 'Homepage in-content', detail: 'Under the hero, when no banner sponsor is live' },
+      { key: 'searchInFeed', name: 'Search in-feed', detail: 'After the fifth result' },
+      { key: 'suburbSidebar', name: 'Suburb sidebar', detail: `${slots.suburbs.length.toLocaleString('en-US')} suburb pages, when no suburb sponsor is live` },
+      { key: 'businessInContent', name: 'Business page in-content', detail: 'Free listings only' },
+      { key: 'businessSidebar', name: 'Business page sidebar', detail: 'Free listings only' },
+      { key: 'eventsSidebar', name: 'Events list sidebar', detail: 'When no featured event is live' },
+      { key: 'eventSidebar', name: 'Event page sidebar', detail: 'Non-featured events only' },
+      { key: 'tourismSidebar', name: 'Things to do sidebar', detail: 'When no tourism sponsor is live' },
     ];
+    const hasPublisher = !!slots.adsense?.publisherId;
     document.getElementById('ad-slots')!.innerHTML = placements
-      .map(
-        (a) => `<div class="admin-row" style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      .map((a) => {
+        const unit = slots.adsense?.slots?.[a.key] || '';
+        const live = adsOn && hasPublisher && unit !== '';
+        const state = !adsOn ? 'Paused' : !hasPublisher ? 'No publisher ID' : unit ? 'Live' : 'Auto ads only';
+        return `<div class="admin-row" style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
         <div style="min-width:0;flex:1">
           <div style="font-size:14.5px;font-weight:800;color:var(--navy)">${esc(a.name)}</div>
           <div style="font-size:12.5px;font-weight:600;color:var(--muted)">${esc(a.detail)}</div>
         </div>
-        <span style="${stateStyle(adsOn)}">${adsOn ? 'Live' : 'Paused'}</span>
-        <span style="font-size:13.5px;font-weight:800;color:var(--navy);min-width:88px;text-align:right">${esc(a.rate)}</span>
-      </div>`
-      )
+        <span style="${stateStyle(live)}">${esc(state)}</span>
+        <span style="font-size:12.5px;font-weight:700;color:var(--muted);min-width:110px;text-align:right">${unit ? `Unit ${esc(unit)}` : 'No unit ID'}</span>
+      </div>`;
+      })
       .join('');
   }
 
