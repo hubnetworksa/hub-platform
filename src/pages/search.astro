@@ -238,7 +238,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     if (pinned) {
       const meta = [r.c, r.sb, r.a].filter(Boolean).join(' · ');
       const actions = [
-        r.p ? `<a href="tel:${escapeHtml(r.p)}" style="padding:10px 14px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:800;text-decoration:none">${escapeHtml(r.p)}</a>` : '',
+        r.p ? `<a href="tel:${escapeHtml(r.p)}" data-track="phone_click" data-track-slug="${escapeHtml(r.s)}" style="padding:10px 14px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:800;text-decoration:none">${escapeHtml(r.p)}</a>` : '',
         r.w ? `<a href="${escapeHtml(r.w)}" target="_blank" rel="noopener noreferrer" style="padding:10px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">Website</a>` : '',
         `<a href="/business/${r.s}/#enquiry-form" style="padding:10px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">Send enquiry</a>`,
       ].join('');
@@ -533,13 +533,26 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     // typed doesn't count as every listed business "appearing".
     if (q || suburbSlug) {
       const shown = [...(featured ? [featured] : []), ...rest].map((r) => r.s);
+      const query = q.toLowerCase().replace(/\s+/g, ' ').slice(0, 80);
       try {
-        navigator.sendBeacon('/api/track-view', new Blob([JSON.stringify({ event: 'search_appearance', businessSlugs: shown })], { type: 'application/json' }));
+        navigator.sendBeacon('/api/track-view', new Blob([JSON.stringify({ event: 'search_appearance', businessSlugs: shown, ...(query ? { query } : {}) })], { type: 'application/json' }));
       } catch {
         // A missed appearance count is never worth surfacing an error over.
       }
     }
   }
+
+  // Phone clicks straight from a result card count too — otherwise the
+  // owner's "Phone clicks" tile only sees calls started from the profile page.
+  list.addEventListener('click', (e) => {
+    const el = (e.target as HTMLElement).closest<HTMLElement>('[data-track]');
+    if (!el?.dataset.trackSlug) return;
+    try {
+      navigator.sendBeacon('/api/track-view', new Blob([JSON.stringify({ businessSlug: el.dataset.trackSlug, event: el.dataset.track })], { type: 'application/json' }));
+    } catch {
+      // A missed click count is never worth surfacing an error over.
+    }
+  });
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();

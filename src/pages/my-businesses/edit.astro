@@ -20,6 +20,7 @@ const SECTION_ICONS = {
   photos: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="m21 16-5-4-4 3-3-2-4 3"/>',
   search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.5-4.5"/>',
   tourism: '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>',
+  sponsorships: '<path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6l-5 4H4a1 1 0 0 0-1 1Z"/><path d="M15 9a3 3 0 0 1 0 6"/><path d="M17.5 6.5a7 7 0 0 1 0 11"/>',
   payments: '<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/><path d="M6 15h4"/>',
 };
 
@@ -45,7 +46,7 @@ const TABS = [
   ['billing', 'Billing'],
 ];
 
-// All four tiles are real, first-party counts, not mockup placeholders.
+// All five tiles are real, first-party counts, not mockup placeholders.
 // Profile views, phone/website clicks and search appearances come from
 // functions/api/track-view.ts (search.astro beacons once per real search,
 // naming every business shown in that page of results); enquiries were
@@ -56,6 +57,7 @@ const TABS = [
 const STATS: [id: string, label: string, icon: string][] = [
   ['views', 'Profile views', '<path d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7Z"/><circle cx="12" cy="12" r="3"/>'],
   ['phone-clicks', 'Phone clicks', '<path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z"/>'],
+  ['website-clicks', 'Website clicks', '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/>'],
   ['enquiries', 'Enquiries', '<path d="M4 12h4l2 3h4l2-3h4"/><path d="M5.5 5h13l2.5 7v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7l2.5-7Z"/>'],
   ['search', 'Search appearances', '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.5-4.5"/>'],
 ];
@@ -129,7 +131,8 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
                 <span style="color:var(--accent)"><Icon path={SECTION_ICONS.search} size={17} /></span>
                 <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">What people searched to find you</h3>
               </div>
-              <p style={emptyNote}>We don't yet break down which words people searched — only how often your listing appeared (see "Search appearances" above).</p>
+              <div id="search-terms-list"></div>
+              <p id="search-terms-empty" hidden style={emptyNote}>No search terms recorded yet — this fills in as people find you through search.</p>
             </div>
           </section>
 
@@ -257,6 +260,16 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
             <p id="plan-status" role="status" style="margin:10px 0 0;font-size:13px;font-weight:700;color:var(--muted)"></p>
             <p style="margin:8px 0 0;font-size:13px;font-weight:600;color:var(--muted)"><a href="/pricing/" style="color:var(--accent-hover);font-weight:800">Compare plans</a></p>
 
+            <div style={`${cardBox};margin-top:14px;box-shadow:var(--shadow)`}>
+              <div class="owner-section-head" style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px">
+                <span style="color:var(--accent)"><Icon path={SECTION_ICONS.sponsorships} size={17} /></span>
+                <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Your sponsorships</h3>
+              </div>
+              <div id="sponsorships-list"></div>
+              <p id="sponsorships-empty" hidden style={emptyNote}>You don't sponsor any spots yet. <a href="/pricing/" style="color:var(--accent-hover);font-weight:800">See sponsorship options</a></p>
+              <p id="sponsorships-status" role="status" hidden style="margin:0;padding:12px 18px 14px;font-size:13px;font-weight:700;color:var(--muted)"></p>
+            </div>
+
             {site.features.tourism && tourismPicks.length > 0 && (
               <div style={`${cardBox};margin-top:14px;box-shadow:var(--shadow)`}>
                 <div class="owner-section-head" style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px">
@@ -266,9 +279,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
                     <p style="margin:4px 0 0;font-size:12.5px;font-weight:600;color:var(--muted)">{priceTourismSponsor} / month per attraction — one sponsor per attraction page, and more attractions get added over time.</p>
                   </div>
                 </div>
-                <div id="tourism-sponsor-list"></div>
-                <p id="tourism-sponsor-empty" hidden style={emptyNote}>Not sponsoring any attractions yet.</p>
-                <div id="tourism-sponsor-picker" style="padding:16px 18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--border)">
+                <div id="tourism-sponsor-picker" class="tourism-sponsor-picker" style="padding:16px 18px;align-items:center;gap:10px;flex-wrap:wrap">
                   <select id="tourism-sponsor-select" style="padding:11px 13px;border:2px solid var(--border);border-radius:9px;font-size:13.5px;outline:none;background:#fff;color:var(--text);flex:1;min-width:200px"></select>
                   <button id="tourism-sponsor-buy" type="button" style="padding:11px 16px;border:2px solid var(--navy);border-radius:9px;background:#fff;color:var(--navy);font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap">Sponsor this attraction</button>
                 </div>
@@ -302,7 +313,8 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   .owner-nav { display: flex; flex-direction: row; }
   .owner-tab { display: flex; font-family: inherit; }
   .owner-tab.on { border-color: var(--navy) !important; background: var(--navy) !important; color: #fff !important; }
-  .owner-panel[hidden], #dashboard[hidden], #hidden-banner[hidden], #photos-locked[hidden], #photos-unlocked[hidden], #photos-empty[hidden], #photo-status[hidden], #payments-empty[hidden] { display: none !important; }
+  .owner-panel[hidden], #dashboard[hidden], #hidden-banner[hidden], #photos-locked[hidden], #photos-unlocked[hidden], #photos-empty[hidden], #photo-status[hidden], #payments-empty[hidden], #search-terms-empty[hidden], #sponsorships-empty[hidden], #sponsorships-status[hidden], #tourism-sponsor-picker[hidden], #tourism-sponsor-all-taken[hidden] { display: none !important; }
+  .tourism-sponsor-picker { display: flex; }
   @media (min-width: 760px) {
     .owner-shell { grid-template-columns: 210px minmax(0, 1fr); }
     .owner-nav { flex-direction: column; }
@@ -351,6 +363,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   };
   type Photo = { id: number; r2_key: string; caption: string | null };
   type Stats = { has_any: boolean; views: number; phone_clicks: number; website_clicks: number; search_appearances: number };
+  type SearchTerm = { query: string; n: number };
   type Enquiry = { id: number; name: string | null; contact: string; message: string; created_at: string };
   type Review = { id: number; rating: number; author_name: string; comment: string; status: string; flagged: number; owner_reply: string | null; owner_reply_at: string | null; created_at: string };
   type Payment = { id: number; amount_cents: number; status: string; paid_at: string; invoice_number: string | null; tier: number; product_type: string | null; product_target: string | null };
@@ -387,6 +400,13 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   function initialsOf(name: string): string {
     const words = name.split(/\s+/).filter((w) => /[A-Za-z0-9]/.test(w[0] ?? ''));
     return ((words[0]?.[0] ?? '') + (words[1]?.[0] ?? '')).toUpperCase() || '?';
+  }
+  // An admin-comped plan is stored as an active subscription expiring ~100
+  // years out with no PayFast row behind it (admin/listings.ts) — nothing
+  // renews, nothing is charged, and /api/subscribe/cancel has nothing to cancel.
+  function isComplimentary(expiresAt: string | null): boolean {
+    const d = parseDate(expiresAt);
+    return !!d && d.getTime() - Date.now() > 50 * 365.25 * 86400000;
   }
 
   // ---- Tabs ----
@@ -477,7 +497,10 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     const tier = business.subscription_tier;
     nameEl.textContent = TIER_NAMES[tier] ?? 'Basic';
     const expiry = longDate(business.subscription_expires_at);
-    if (tier > 0) {
+    const complimentary = tier > 0 && isComplimentary(business.subscription_expires_at);
+    if (complimentary) {
+      current.textContent = 'Complimentary — no charge';
+    } else if (tier > 0) {
       const price = TIER_PRICE[tier] && TIER_PRICE[tier] !== '—' ? `${TIER_PRICE[tier]}/month` : null;
       const tail = business.subscription_status === 'cancelled'
         ? `cancelled${expiry ? ` · active until ${expiry}` : ''}`
@@ -505,7 +528,12 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       });
       buttons.appendChild(btn);
     }
-    if (tier > 0 && business.subscription_status === 'active') {
+    if (complimentary) {
+      const note = document.createElement('span');
+      note.textContent = 'Managed by the site admin';
+      note.style.cssText = 'align-self:center;font-size:12.5px;font-weight:700;color:var(--muted)';
+      buttons.appendChild(note);
+    } else if (tier > 0 && business.subscription_status === 'active') {
       const cancelBtn = planButton('Cancel');
       cancelBtn.style.borderColor = 'var(--border)';
       cancelBtn.style.color = 'var(--danger)';
@@ -539,69 +567,92 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   // the same subscribe/start.ts path as a tier upgrade — unlike an event
   // feature, which is a once-off payment. ----
   interface TourismPick { slug: string; name: string }
+  function tourismPicksData(): { picks: TourismPick[]; sponsoredSlugs: string[] } {
+    const dataEl = document.getElementById('tourism-picks-data');
+    return dataEl ? JSON.parse(dataEl.textContent || '{}') : { picks: [], sponsoredSlugs: [] };
+  }
+  function mySponsorships(sponsorships: Sponsorship[]): Sponsorship[] {
+    return sponsorships.filter((s) => s.product_target || s.product_type === 'homepage_banner');
+  }
+
   function renderSponsorships(sponsorships: Sponsorship[]) {
-    const listEl = document.getElementById('tourism-sponsor-list');
-    const emptyEl = document.getElementById('tourism-sponsor-empty');
+    renderSponsorshipList(sponsorships);
+    renderTourismPicker(sponsorships);
+  }
+
+  // Every sponsorship this business holds (category, suburb, banner, centre,
+  // guide, attraction), each with its own cancel — this card always renders,
+  // unlike the tourism picker below, which only exists on cities with picks.
+  function renderSponsorshipList(sponsorships: Sponsorship[]) {
+    const listEl = document.getElementById('sponsorships-list')!;
+    const emptyEl = document.getElementById('sponsorships-empty')!;
+    const statusEl = document.getElementById('sponsorships-status')!;
+    const { picks } = tourismPicksData();
+    const mine = mySponsorships(sponsorships);
+
+    function setStatus(msg: string) {
+      statusEl.textContent = msg;
+      statusEl.hidden = !msg;
+    }
+
+    listEl.innerHTML = '';
+    emptyEl.hidden = mine.length > 0;
+    mine.forEach((s, i) => {
+      const pick = picks.find((p) => p.slug === s.product_target);
+      const row = document.createElement('div');
+      row.style.cssText = `display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;${i === mine.length - 1 ? '' : 'border-bottom:1px solid var(--border)'}`;
+      const expiry = longDate(s.current_period_end);
+      const label = s.product_type === 'tourism_sponsor'
+        ? pick?.name ?? s.product_target ?? ''
+        : `${SPONSOR_TYPE_LABELS[s.product_type] ?? 'Sponsorship'}${s.product_target ? ` — ${s.product_target}` : ''}`;
+      const when = s.status === 'cancelled' ? (expiry ? `cancelled · ends ${expiry}` : 'cancelled') : expiry ? `renews ${expiry}` : '';
+      row.innerHTML = `<span style="font-size:14.5px;font-weight:800;color:var(--navy)">${esc(label)}</span><span style="font-size:12.5px;font-weight:700;color:var(--muted)">${esc(when)}</span>`;
+      if (s.status === 'cancelled') {
+        listEl.appendChild(row);
+        return;
+      }
+      const cancelBtn = planButton('Cancel');
+      cancelBtn.style.borderColor = 'var(--border)';
+      cancelBtn.style.color = 'var(--danger)';
+      cancelBtn.style.padding = '8px 13px';
+      cancelBtn.style.fontSize = '12.5px';
+      cancelBtn.addEventListener('click', async () => {
+        if (!confirm(`Cancel sponsoring "${label}"? You keep the slot until the paid period ends.`)) return;
+        setStatus('Cancelling…');
+        const res = await fetch('/api/subscribe/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId: Number(businessId), productType: s.product_type, productTarget: s.product_target }),
+        });
+        const result = await res.json();
+        if (result.ok) {
+          s.status = 'cancelled';
+          renderSponsorships(sponsorships);
+          setStatus('Cancelled — you keep the slot until the current period ends.');
+        } else {
+          setStatus(result.error || 'Could not cancel.');
+        }
+      });
+      row.appendChild(cancelBtn);
+      listEl.appendChild(row);
+    });
+  }
+
+  function renderTourismPicker(sponsorships: Sponsorship[]) {
     const pickerEl = document.getElementById('tourism-sponsor-picker');
     const selectEl = document.getElementById('tourism-sponsor-select') as HTMLSelectElement | null;
     const buyBtn = document.getElementById('tourism-sponsor-buy') as HTMLButtonElement | null;
     const allTakenEl = document.getElementById('tourism-sponsor-all-taken');
     const statusEl = document.getElementById('tourism-sponsor-status');
-    if (!listEl || !emptyEl || !pickerEl || !selectEl || !buyBtn || !allTakenEl || !statusEl) return; // no tourism picks at build time — card not rendered
+    if (!pickerEl || !selectEl || !buyBtn || !allTakenEl || !statusEl) return; // no tourism picks at build time — card not rendered
 
-    const dataEl = document.getElementById('tourism-picks-data');
-    const { picks, sponsoredSlugs }: { picks: TourismPick[]; sponsoredSlugs: string[] } = dataEl ? JSON.parse(dataEl.textContent || '{}') : { picks: [], sponsoredSlugs: [] };
+    const { picks, sponsoredSlugs } = tourismPicksData();
     const priceLabel = main.dataset.priceTourismSponsor ?? '—';
 
-    const mine = sponsorships.filter((s) => s.product_target || s.product_type === 'homepage_banner');
-    const mineBySlug = new Map(mine.map((s) => [s.product_target as string, s]));
+    const mineBySlug = new Map(mySponsorships(sponsorships).map((s) => [s.product_target as string, s]));
     // Open to buy: not sponsored by anyone (per the build-time snapshot) and not already mine.
     const soldSlugs = new Set(sponsoredSlugs);
     const open = picks.filter((p) => !soldSlugs.has(p.slug) && !mineBySlug.has(p.slug));
-
-    listEl.innerHTML = '';
-    emptyEl.hidden = mine.length > 0;
-    if (mine.length > 0) {
-      for (const s of mine) {
-        const pick = picks.find((p) => p.slug === s.product_target);
-        const row = document.createElement('div');
-        row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--border)';
-        const expiry = longDate(s.current_period_end);
-        const label = s.product_type === 'tourism_sponsor'
-          ? pick?.name ?? s.product_target ?? ''
-          : `${SPONSOR_TYPE_LABELS[s.product_type] ?? 'Sponsorship'}${s.product_target ? ` — ${s.product_target}` : ''}`;
-        const when = s.status === 'cancelled' ? (expiry ? `cancelled · ends ${expiry}` : 'cancelled') : expiry ? `renews ${expiry}` : '';
-        row.innerHTML = `<span style="font-size:14.5px;font-weight:800;color:var(--navy)">${esc(label)}</span><span style="font-size:12.5px;font-weight:700;color:var(--muted)">${esc(when)}</span>`;
-        if (s.status === 'cancelled') {
-          listEl.appendChild(row);
-          continue;
-        }
-        const cancelBtn = planButton('Cancel');
-        cancelBtn.style.borderColor = 'var(--border)';
-        cancelBtn.style.color = 'var(--danger)';
-        cancelBtn.style.padding = '8px 13px';
-        cancelBtn.style.fontSize = '12.5px';
-        cancelBtn.addEventListener('click', async () => {
-          if (!confirm(`Cancel sponsoring "${label}"? You keep the slot until the paid period ends.`)) return;
-          statusEl.textContent = 'Cancelling…';
-          const res = await fetch('/api/subscribe/cancel', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ businessId: Number(businessId), productType: s.product_type, productTarget: s.product_target }),
-          });
-          const result = await res.json();
-          if (result.ok) {
-            s.status = 'cancelled';
-            renderSponsorships(sponsorships);
-            document.getElementById('tourism-sponsor-status')!.textContent = 'Cancelled — you keep the slot until the current period ends.';
-          } else {
-            statusEl.textContent = result.error || 'Could not cancel.';
-          }
-        });
-        row.appendChild(cancelBtn);
-        listEl.appendChild(row);
-      }
-    }
 
     pickerEl.hidden = open.length === 0;
     allTakenEl.hidden = open.length > 0;
@@ -635,17 +686,43 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     if (value !== null) valueEl.textContent = value;
     noteEl.textContent = note;
   }
-  function renderStats(stats: Stats, enquiriesTotal: number) {
+  function renderStats(stats: Stats, enquiriesRecent: number, enquiriesTotal: number) {
     if (stats.has_any) {
       setStat('views', String(stats.views), 'Last 30 days');
       setStat('phone-clicks', String(stats.phone_clicks), 'Last 30 days');
+      setStat('website-clicks', String(stats.website_clicks), 'Last 30 days');
       setStat('search', String(stats.search_appearances), 'Last 30 days');
     } else {
       setStat('views', null, 'No data yet');
       setStat('phone-clicks', null, 'No data yet');
+      setStat('website-clicks', null, 'No data yet');
       setStat('search', null, 'No data yet');
     }
-    setStat('enquiries', enquiriesTotal > 0 ? String(enquiriesTotal) : null, enquiriesTotal > 0 ? 'All time' : 'No data yet');
+    setStat('enquiries', enquiriesTotal > 0 ? String(enquiriesRecent) : null, enquiriesTotal > 0 ? 'Last 30 days' : 'No data yet');
+  }
+
+  // The words behind the "Search appearances" tile, over the same 30 days
+  // (see update-business.ts's searchTerms). Bars are relative to the top term.
+  function renderSearchTerms(terms: SearchTerm[]) {
+    const list = document.getElementById('search-terms-list')!;
+    const empty = document.getElementById('search-terms-empty')!;
+    empty.hidden = terms.length > 0;
+    if (terms.length === 0) {
+      list.innerHTML = '';
+      return;
+    }
+    const max = Math.max(...terms.map((t) => t.n), 1);
+    list.innerHTML = terms
+      .map((t, i) => {
+        const border = i === terms.length - 1 ? '' : 'border-bottom:1px solid var(--border);';
+        const pct = Math.max(4, Math.round((t.n / max) * 100));
+        return `<div style="padding:11px 18px;${border}display:flex;align-items:center;gap:12px">
+          <span style="flex:1;min-width:0;font-size:14px;font-weight:700;color:var(--navy);overflow-wrap:anywhere">${esc(t.query)}</span>
+          <span style="width:110px;height:6px;border-radius:999px;background:var(--bg-subtle);overflow:hidden;flex-shrink:0" aria-hidden="true"><span style="display:block;height:100%;width:${pct}%;border-radius:999px;background:var(--accent)"></span></span>
+          <span style="min-width:3ch;text-align:right;font-size:13px;font-weight:800;color:var(--muted)">${t.n}</span>
+        </div>`;
+      })
+      .join('');
   }
 
   // ---- Enquiries ----
@@ -925,7 +1002,8 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     renderSponsorships(data.sponsorships ?? []);
     renderPayments(data.payments ?? []);
     renderPhotos(b, data.photos ?? []);
-    renderStats(data.stats ?? { has_any: false, views: 0, phone_clicks: 0, website_clicks: 0, search_appearances: 0 }, data.enquiriesTotal ?? 0);
+    renderStats(data.stats ?? { has_any: false, views: 0, phone_clicks: 0, website_clicks: 0, search_appearances: 0 }, data.enquiriesRecent ?? 0, data.enquiriesTotal ?? 0);
+    renderSearchTerms(data.searchTerms ?? []);
     renderEnquiries(data.enquiries ?? [], data.enquiriesTotal ?? 0);
     renderReviews(data.reviews ?? [], data.reviewsTotal ?? 0);
 

@@ -104,6 +104,28 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .prepare(`SELECT COUNT(*) AS n FROM messages WHERE kind = 'enquiry' AND business_slug = ?`)
     .bind(business.slug)
     .first<{ n: number }>();
+  const enquiriesRecent = await db
+    .prepare(`SELECT COUNT(*) AS n FROM messages WHERE kind = 'enquiry' AND business_slug = ? AND created_at > datetime('now', '-30 days')`)
+    .bind(business.slug)
+    .first<{ n: number }>();
+
+  // The actual words behind the "Search appearances" count (see the
+  // search_terms migration and track-view.ts). Tolerates a database the
+  // migration hasn't reached yet — the rest of the dashboard must still load.
+  let searchTerms: { query: string; n: number }[] = [];
+  try {
+    const terms = await db
+      .prepare(
+        `SELECT query, COUNT(*) AS n FROM business_stats
+         WHERE business_id = ? AND event = 'search_appearance' AND query IS NOT NULL AND created_at > datetime('now', '-30 days')
+         GROUP BY query ORDER BY n DESC LIMIT 8`
+      )
+      .bind(businessId)
+      .all<{ query: string; n: number }>();
+    searchTerms = terms.results;
+  } catch {
+    searchTerms = [];
+  }
 
   // Every review on this business, any status — this IS the owner's
   // "oversight": they see a review the moment it's submitted (Pending),
@@ -140,6 +162,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     stats,
     enquiries: enquiries.results,
     enquiriesTotal: enquiriesTotal?.n ?? 0,
+    enquiriesRecent: enquiriesRecent?.n ?? 0,
+    searchTerms,
     reviews: reviews.results,
     reviewsTotal: reviewsTotal?.n ?? 0,
   });

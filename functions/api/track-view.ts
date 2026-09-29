@@ -27,7 +27,7 @@ const MAX_BATCH = 50;
 // is going to make decisions from. Never counts against a business that
 // isn't actually live (closed/hidden listings don't need traffic numbers,
 // and this must not become a way to probe which slugs exist).
-async function recordOnce(db: D1Database, businessId: number, event: string, ipHash: string): Promise<void> {
+async function recordOnce(db: D1Database, businessId: number, event: string, ipHash: string, query: string | null = null): Promise<void> {
   const seenToday = await db
     .prepare(
       `SELECT 1 FROM business_stats WHERE business_id = ? AND event = ? AND ip_hash = ? AND created_at > datetime('now', '-1 day') LIMIT 1`
@@ -35,8 +35,24 @@ async function recordOnce(db: D1Database, businessId: number, event: string, ipH
     .bind(businessId, event, ipHash)
     .first();
   if (!seenToday) {
-    await db.prepare('INSERT INTO business_stats (business_id, event, ip_hash) VALUES (?, ?, ?)').bind(businessId, event, ipHash).run();
+    try {
+      await db.prepare('INSERT INTO business_stats (business_id, event, ip_hash, query) VALUES (?, ?, ?, ?)').bind(businessId, event, ipHash, query).run();
+    } catch (err) {
+      // The `query` column arrives with the search_terms migration; until it
+      // is applied on a given city's database, keep counting views/clicks
+      // rather than losing every event over one optional field.
+      if (!(err instanceof Error && /no such column/i.test(err.message))) throw err;
+      await db.prepare('INSERT INTO business_stats (business_id, event, ip_hash) VALUES (?, ?, ?)').bind(businessId, event, ipHash).run();
+    }
   }
+}
+
+// Same normalisation search.astro applies before sending, so the owner
+// dashboard's term list groups "Plumber  " and "plumber" as one term.
+function cleanQuery(v: unknown): string | null {
+  if (typeof v !== 'string') return null;
+  const q = v.trim().toLowerCase().replace(/\s+/g, ' ').slice(0, 80);
+  return q || null;
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -60,6 +76,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       ? [...new Set(body.businessSlugs.filter((s): s is string => typeof s === 'string' && s.length > 0 && s.length <= 160))].slice(0, MAX_BATCH)
       : [];
     if (slugs.length === 0) return new Response(null, { status: 204 });
+    const query = cleanQuery(body.query);
 
     const placeholders = slugs.map(() => '?').join(',');
     const rows = await db
@@ -67,7 +84,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       .bind(...slugs)
       .all<{ id: number }>();
     for (const row of rows.results) {
-      await recordOnce(db, row.id, event, ipHash);
+      await recordOnce(db, row.id, event, ipHash, query);
     }
     return new Response(null, { status: 204 });
   }

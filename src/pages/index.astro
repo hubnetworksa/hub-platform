@@ -157,7 +157,7 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
                   <p style="margin:0;font-size:14px;line-height:1.55;color:var(--text)">{b.description}</p>
                   <div style="display:flex;gap:8px;margin-top:auto;padding-top:6px">
                     <a href={`/business/${b.slug}/`} style="flex:1;padding:10px 12px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:800;text-decoration:none;text-align:center">View profile</a>
-                    {b.phone && <a href={`tel:${b.phone}`} style="padding:10px 12px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">{b.phone}</a>}
+                    {b.phone && <a href={`tel:${b.phone}`} data-track="phone_click" data-track-slug={b.slug} style="padding:10px 12px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">{b.phone}</a>}
                   </div>
                 </div>
               </article>
@@ -391,6 +391,18 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
     while (picks.size < 3) picks.add(Math.floor(Math.random() * rotating.length));
     rotating.forEach((el, i) => (el.hidden = !picks.has(i)));
   }
+
+  // Phone clicks from a Featured card count towards the owner's "Phone
+  // clicks" tile (see functions/api/track-view.ts), same as on the profile page.
+  document.getElementById('home-featured-grid')?.addEventListener('click', (e) => {
+    const el = (e.target as HTMLElement).closest<HTMLElement>('[data-track]');
+    if (!el?.dataset.trackSlug) return;
+    try {
+      navigator.sendBeacon('/api/track-view', new Blob([JSON.stringify({ businessSlug: el.dataset.trackSlug, event: el.dataset.track })], { type: 'application/json' }));
+    } catch {
+      // A missed click count is never worth surfacing an error over.
+    }
+  });
 </script>
 
 <style>

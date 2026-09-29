@@ -141,6 +141,9 @@ const ICONS = {
   function planNote(b: Owned): string {
     if (b.subscription_tier <= 0) return 'Free plan';
     const d = b.subscription_expires_at ? new Date(b.subscription_expires_at.includes('T') ? b.subscription_expires_at : b.subscription_expires_at.replace(' ', 'T') + 'Z') : null;
+    // An admin-comped plan is stored as an active subscription expiring ~100
+    // years out (admin/listings.ts) — no PayFast row, nothing renews.
+    if (d && !isNaN(d.getTime()) && d.getTime() - Date.now() > 50 * 365.25 * 86400000) return 'Complimentary — no charge';
     const date = d && !isNaN(d.getTime()) ? d.toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric' }) : null;
     if (b.subscription_status === 'cancelled') return `Cancelled${date ? ` · active until ${date}` : ''}`;
     return date ? `Renews ${date}` : '';

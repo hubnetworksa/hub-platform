@@ -5,6 +5,12 @@ interface Env {
   DB: D1Database;
 }
 
+const SUBMISSION_STATUS_LABELS: Record<string, string> = {
+  pending: 'Pending admin approval',
+  approved: 'Approved',
+  rejected: 'Rejected',
+};
+
 // Mirrors functions/api/my-businesses.ts — events submitted or claimed while
 // signed in show up here once the account has an owned/pending/claimed row.
 export const onRequestGet: PagesFunction<Env> = async (context) => {
@@ -33,7 +39,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     email: user.email,
     owned: owned.results,
     claims: claims.results,
-    pending: pending.results.map((row) => ({ name: row.title, status: 'Pending admin approval' })),
+    pending: pending.results.map((row) => ({ name: row.title, status: SUBMISSION_STATUS_LABELS[row.status] ?? row.status })),
   });
 };
 
