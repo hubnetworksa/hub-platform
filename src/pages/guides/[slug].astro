@@ -1,16 +1,16 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { GUIDES, type Guide } from '../../lib/guides';
+import { guidesFor, type Guide } from '../../lib/guides';
 import { categoryBySlug, businessesInCategory, suburbFor, sponsorFor, priceRand, FEATURED_TIER, isPaidListing } from '../../lib/data';
 import site from '../../site';
 
 export function getStaticPaths() {
-  return GUIDES.map((guide) => ({ params: { slug: guide.slug }, props: { guide } }));
+  return guidesFor(site.slug).map((guide) => ({ params: { slug: guide.slug }, props: { guide } }));
 }
 
 const { guide } = Astro.props as { guide: Guide };
-const title = guide.title(site.cityLabel);
+const title = guide.title;
 const url = `https://${site.domain}/guides/${guide.slug}/`;
 const byline = `Updated ${guide.updatedLabel} · ${guide.readTime} read · by the ${site.siteName} editorial team`;
 
@@ -38,10 +38,12 @@ const listed = [...inCategory]
   }));
 
 const sponsorPrice = priceRand('price_sponsor_guide_cents');
-const otherGuides = GUIDES.filter((g) => g.slug !== guide.slug).map((g) => ({
-  href: `/guides/${g.slug}/`,
-  title: g.title(site.cityLabel),
-}));
+const otherGuides = guidesFor(site.slug)
+  .filter((g) => g.slug !== guide.slug)
+  .map((g) => ({
+    href: `/guides/${g.slug}/`,
+    title: g.title,
+  }));
 
 const articleJsonLd = {
   '@context': 'https://schema.org',
@@ -52,7 +54,7 @@ const articleJsonLd = {
   mainEntityOfPage: url,
   dateModified: guide.updatedIso,
   inLanguage: 'en-ZA',
-  image: `https://${site.domain}${site.sectionBannerImage}`,
+  image: `https://${site.domain}${guide.imageUrl ?? site.sectionBannerImage}`,
   author: { '@type': 'Organization', name: site.siteName, url: `https://${site.domain}/` },
   publisher: { '@type': 'Organization', name: site.siteName, url: `https://${site.domain}/` },
   articleSection: guide.categoryLabel,
@@ -81,7 +83,10 @@ const showsPaid = !!guideSponsor || inCategory.some((b) => isPaidListing(b) && l
           <h1 style="margin:14px 0 12px;font-size:clamp(28px,4.6vw,44px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);max-width:20ch">{title}</h1>
           <p style="margin:0 0 6px;font-size:13.5px;font-weight:700;color:var(--muted)">{byline}</p>
           <div style="position:relative;height:clamp(200px,28vw,320px);border:2px solid var(--navy);border-radius:16px;overflow:hidden;background:var(--bg-subtle);margin:18px 0 22px">
-            <img src={site.sectionBannerImage} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 45%" />
+            <img src={guide.imageUrl ?? site.sectionBannerImage} alt="" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 45%" />
+            {guide.imageCredit && (
+              <span style="position:absolute;right:8px;bottom:8px;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:600">{guide.imageCredit}</span>
+            )}
           </div>
           <p style="margin:0 0 18px;font-size:17px;line-height:1.65;color:var(--text);max-width:66ch">{guide.intro}</p>
 

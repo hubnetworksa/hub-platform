@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdminShell from '../../components/AdminShell.astro';
 import { categories, suburbs, shoppingCenters, businessesInCategory, businessesInSuburb } from '../../lib/data';
 import { adsEnabled } from '../../lib/site-overrides';
-import { GUIDES } from '../../lib/guides';
+import { guidesFor } from '../../lib/guides';
 import { TOURISM } from '../../site-content/tourism';
 import site from '../../site';
 
@@ -14,7 +14,7 @@ const slotData = {
   categories: categories.map((c) => ({ slug: c.slug, name: c.name, count: businessesInCategory(c.id).length })),
   suburbs: suburbs.map((s) => ({ slug: s.slug, name: s.name, count: businessesInSuburb(s.id).length })),
   centres: shoppingCenters.map((c) => ({ slug: c.slug, name: c.name })),
-  guides: GUIDES.map((g) => ({ slug: g.slug, name: g.title(site.cityLabel) })),
+  guides: guidesFor(site.slug).map((g) => ({ slug: g.slug, name: g.title })),
   tourism: (TOURISM[site.slug]?.picks ?? []).filter((p) => p.slug).map((p) => ({ slug: p.slug as string, name: p.name })),
   adsEnabledAtBuild: adsEnabled,
 };

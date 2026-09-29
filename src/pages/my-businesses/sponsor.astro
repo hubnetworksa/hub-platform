@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { categories, suburbs, shoppingCenters, priceRand } from '../../lib/data';
-import { GUIDES } from '../../lib/guides';
+import { guidesFor } from '../../lib/guides';
 import { TOURISM } from '../../site-content/tourism';
 import site from '../../site';
 
@@ -39,7 +39,7 @@ const products = {
     label: 'Guide sponsor',
     what: "Your business named as the sponsor of that buyer's guide.",
     price: priceRand('price_sponsor_guide_cents'),
-    targets: GUIDES.map((g) => ({ slug: g.slug, name: g.title(site.cityLabel) })),
+    targets: guidesFor(site.slug).map((g) => ({ slug: g.slug, name: g.title })),
   },
   tourism_sponsor: {
     label: 'Things to do sponsor',

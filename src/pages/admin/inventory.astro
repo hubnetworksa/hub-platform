@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdminShell from '../../components/AdminShell.astro';
 import { categories, suburbs, shoppingCenters, businessesInCategory, businessesInSuburb, businessesInShoppingCenter } from '../../lib/data';
-import { GUIDES } from '../../lib/guides';
+import { guidesFor } from '../../lib/guides';
 import { TOURISM } from '../../site-content/tourism';
 import site from '../../site';
 
@@ -15,7 +15,7 @@ const slotData = {
   categories: categories.map((c) => ({ slug: c.slug, name: c.name, count: businessesInCategory(c.id).length })),
   suburbs: suburbs.map((s) => ({ slug: s.slug, name: s.name, count: businessesInSuburb(s.id).length })),
   centres: shoppingCenters.map((c) => ({ slug: c.slug, name: c.name, count: businessesInShoppingCenter(c.id).length })),
-  guides: GUIDES.map((g) => ({ slug: g.slug, name: g.title(site.cityLabel), count: 0 })),
+  guides: guidesFor(site.slug).map((g) => ({ slug: g.slug, name: g.title, count: 0 })),
   tourism: (TOURISM[site.slug]?.picks ?? []).filter((p) => p.slug).map((p) => ({ slug: p.slug as string, name: p.name, count: 0 })),
 };
 const slotJson = JSON.stringify(slotData).replace(/</g, '\\u003c');

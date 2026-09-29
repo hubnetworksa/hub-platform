@@ -1,5 +1,5 @@
 import type { D1Database } from '@cloudflare/workers-types';
-import { GUIDES } from '../../src/lib/guides';
+import { guidesFor } from '../../src/lib/guides';
 import { TOURISM } from '../../src/site-content/tourism';
 import type { SponsorProductType } from './pricing';
 
@@ -22,7 +22,7 @@ export async function isValidSponsorTarget(
     case 'centre_sponsor':
       return !!(await db.prepare('SELECT 1 FROM shopping_centers WHERE slug = ?').bind(target).first());
     case 'guide_sponsor':
-      return GUIDES.some((g) => g.slug === target);
+      return guidesFor(siteSlug).some((g) => g.slug === target);
     case 'tourism_sponsor':
       return (TOURISM[siteSlug]?.picks ?? []).some((p) => p.slug === target);
   }
