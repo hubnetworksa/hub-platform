@@ -19,6 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      # One database at a time: an export briefly holds its database, and
+      # parallel exports have come back without a download link.
+      max-parallel: 1
       matrix:
         site: [capetown, pretoria, polokwane]
     env:
@@ -43,7 +46,13 @@ jobs:
           db=$(node -e "console.log(require('./sites/${{ matrix.site }}.json').dbName)")
           stamp=$(date -u +%Y-%m-%d)
           file="${{ matrix.site }}-$stamp.sql"
-          npx wrangler d1 export "$db" --config "wrangler.${{ matrix.site }}.jsonc" --remote --output "$file"
+          # Cloudflare occasionally finishes an export without returning its
+          # download link; try up to 3 times before giving up.
+          for attempt in 1 2 3; do
+            rm -f "$file"
+            if npx wrangler d1 export "$db" --config "wrangler.${{ matrix.site }}.jsonc" --remote --output "$file" && test -s "$file"; then break; fi
+            echo "Export attempt $attempt failed, retrying in 60s..."; sleep 60
+          done
           test -s "$file"
           gzip -9 "$file"
           ls -la "$file.gz"

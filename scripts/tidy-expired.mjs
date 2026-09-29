@@ -28,8 +28,19 @@ if (!SITES[site]) {
 }
 const WRANGLER = path.join(process.cwd(), 'node_modules', 'wrangler', 'bin', 'wrangler.js');
 function d1(sql) {
-  const out = execFileSync(process.execPath, [WRANGLER, 'd1', 'execute', SITES[site], '--config', `wrangler.${site}.jsonc`, '--remote', '--json', '--command', sql], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
-  return JSON.parse(out.slice(out.indexOf('[')));
+  // D1 sometimes answers with a transient "internal error" (code 7500), e.g. while an export
+  // of the same database is running; retry a few times before failing the run.
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const out = execFileSync(process.execPath, [WRANGLER, 'd1', 'execute', SITES[site], '--config', `wrangler.${site}.jsonc`, '--remote', '--json', '--command', sql], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'] });
+      return JSON.parse(out.slice(out.indexOf('[')));
+    } catch (err) {
+      const text = String(err.stdout ?? '') + String(err.stderr ?? '');
+      if (attempt >= 4 || !/internal error|7500|timed out|ECONNRESET/i.test(text)) throw err;
+      console.log(`  D1 busy (attempt ${attempt}), retrying in 20s...`);
+      execFileSync(process.execPath, ['-e', 'setTimeout(() => {}, 20000)']);
+    }
+  }
 }
 const rows = (sql) => d1(sql)[0]?.results ?? [];
 const tableExists = (t) => rows(`SELECT count(*) AS n FROM sqlite_master WHERE type = 'table' AND name = '${t}'`)[0]?.n > 0;
