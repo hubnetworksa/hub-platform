@@ -4,6 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { NOINDEX_PATH_PREFIXES } from './scripts/noindex-paths.mjs';
+import { isThinListing } from './scripts/thin-listings.mjs';
 
 const slug = process.env.SITE;
 if (!slug) {
@@ -38,6 +39,31 @@ function emptyCategorySlugs() {
 
 const EMPTY_CATEGORIES = emptyCategorySlugs();
 
+// Business pages that carry `noindex` for being thin (see
+// scripts/thin-listings.mjs) must stay out of the sitemap too, for the same
+// reason as the empty categories above.
+function thinBusinessSlugs() {
+  try {
+    /** @type {{ id: number, slug: string }[]} */
+    const businesses = JSON.parse(readFileSync('src/data/businesses.json', 'utf8'));
+    /** @type {{ business_id: number }[]} */
+    let reviews = [];
+    try {
+      reviews = JSON.parse(readFileSync('src/data/reviews.json', 'utf8'));
+    } catch {
+      reviews = [];
+    }
+    /** @type {Map<number, number>} */
+    const reviewCounts = new Map();
+    for (const r of reviews) reviewCounts.set(r.business_id, (reviewCounts.get(r.business_id) ?? 0) + 1);
+    return new Set(businesses.filter((b) => isThinListing(b, reviewCounts.get(b.id) ?? 0)).map((b) => b.slug));
+  } catch {
+    return new Set();
+  }
+}
+
+const THIN_BUSINESSES = thinBusinessSlugs();
+
 // https://astro.build/config
 export default defineConfig({
   site: `https://${site.domain}`,
@@ -49,6 +75,8 @@ export default defineConfig({
         if (path === '/tourism/' && !site.features?.tourism) return false;
         const match = path.match(/^\/category\/([^/]+)\/?$/);
         if (match && EMPTY_CATEGORIES.has(match[1])) return false;
+        const biz = path.match(/^\/business\/([^/]+)\/?$/);
+        if (biz && THIN_BUSINESSES.has(biz[1])) return false;
         return true;
       },
     }),
