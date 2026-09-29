@@ -30,13 +30,17 @@ const CONFIRM = process.argv.includes('--confirm');
 
 const NO_WEBSITE = `(b.website IS NULL OR trim(b.website) = '')`;
 const THIN = `(length(trim(coalesce(b.description, ''))) < 140 AND (b.hours IS NULL OR trim(b.hours) = ''))`;
+// The reviews table only exists once the reviews migration has run on this
+// database; before that there are no reviews to protect.
+const HAS_REVIEWS = query(`SELECT count(*) AS n FROM sqlite_master WHERE type = 'table' AND name = 'reviews'`)[0].n > 0;
+const REVIEWS_GUARD = HAS_REVIEWS ? 'AND NOT EXISTS (SELECT 1 FROM reviews x WHERE x.business_id = b.id)' : '';
 const PROTECTED = `
   coalesce(b.subscription_tier, 0) = 0
   AND b.owner_user_id IS NULL
   AND NOT EXISTS (SELECT 1 FROM business_claims x WHERE x.business_id = b.id)
   AND NOT EXISTS (SELECT 1 FROM subscriptions x WHERE x.business_id = b.id)
   AND NOT EXISTS (SELECT 1 FROM business_photos x WHERE x.business_id = b.id)
-  AND NOT EXISTS (SELECT 1 FROM reviews x WHERE x.business_id = b.id)`;
+  ${REVIEWS_GUARD}`;
 const TARGET = `SELECT b.id FROM businesses b WHERE ${PROTECTED} AND ${THIN}`;
 
 function wrangler(args) {
