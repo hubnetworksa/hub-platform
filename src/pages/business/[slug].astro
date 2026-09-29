@@ -9,7 +9,6 @@ import { synonymsFor, locationSynonymsFor } from '../../lib/categorySynonyms';
 import { schemaTypeFor } from '../../lib/categorySchemaTypes';
 import Icon from '../../components/Icon.astro';
 import site from '../../site';
-import { isThinListing } from '../../../scripts/thin-listings.mjs';
 
 export function getStaticPaths() {
   return businesses.map((business) => ({ params: { slug: business.slug }, props: { business } }));
@@ -79,9 +78,6 @@ function shortDate(iso: string): string {
 // No Google ads when this business pays, or when a paid business is shown
 // in the "similar" list on this page.
 const showsPaid = isPaying || similar.some(isPaidListing);
-// One-line, unclaimed free listings stay on the site but out of Google's
-// index (and the sitemap) — see scripts/thin-listings.mjs.
-const thin = isThinListing(business, numReviews);
 
 const keywords = [
   ...new Set(cats.flatMap((c) => [...synonymsFor(c.slug), ...locationSynonymsFor(c.name, site.cityLabel)])),
@@ -109,7 +105,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
   : null;
 ---
 
-<BaseLayout title={pageTitle} description={metaDescription} canonical={canonicalUrl} noAds={showsPaid} noindex={thin}>
+<BaseLayout title={pageTitle} description={metaDescription} canonical={canonicalUrl} noAds={showsPaid}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <main style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
