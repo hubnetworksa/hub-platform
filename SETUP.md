@@ -102,7 +102,7 @@ whatever's on the `dev` branch's code.
 
 ## 4. The research routine (Claude account) — per site
 
-Each site has its own runbook (`ROUTINE.polokwane.md`, `ROUTINE.pretoria.md`
+Pretoria now runs the split routines in `routines/` (see `routines/README.md`). The other sites still have their own runbook (`ROUTINE.polokwane.md`
 — `ROUTINE.capetown.md` is a placeholder until Cape Town has real suburb
 data) and needs its own scheduled cloud agent pointed at this repo. Each
 only needs repo read/write access — no Cloudflare credentials (it proposes

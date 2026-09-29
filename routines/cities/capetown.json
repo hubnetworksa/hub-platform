@@ -1,0 +1,18 @@
+{
+  "city": "capetown",
+  "siteName": "TheCapeTownHub",
+  "cityLabel": "Cape Town",
+  "domain": "thecapetownhub.com",
+  "area": "the City of Cape Town metro",
+  "newsArea": "the City of Cape Town metro and the Western Cape",
+  "fuelRegion": "coastal",
+  "categoryNotes": [
+    "This site has no dedicated banks-atms category: file bank branches and ATMs under financial-investment-services."
+  ],
+  "newsSources": "City of Cape Town (capetown.gov.za media releases), SANRAL, Table Mountain Aerial Cableway, Western Cape Government, Cape Town Etc, GroundUp, Daily Maverick, News24, IOL/Cape Argus, EWN Cape Town, Cape Town Tourism, WP Cricket / Western Province Rugby / DHL Stormers",
+  "eventsArea": "the City of Cape Town metro",
+  "discovery": { "suburbsPerRun": 3, "maintenanceEveryDays": 7, "maxRecordsPerFile": 10 },
+  "centres": { "recheckDays": 30, "newMallEveryDays": 30, "maxRecordsPerFile": 10 },
+  "enrichment": { "batch": 20, "emailBatch": 30, "maxRecordsPerFile": 10 },
+  "closedCheck": { "batch": 5, "everyDays": 7 }
+}
