@@ -1,6 +1,6 @@
 # Routines (rewritten, dev branch)
 
-These are the rewritten routines described in `ROUTINES-PLAN.md`. **Pretoria is live on them** (cut over 29 September 2026): its old `ROUTINE.pretoria.md` and `ROUTINE.events.pretoria.md` runbooks were removed and its scheduled agents now run these runbooks. Cape Town and Polokwane still run their older `ROUTINE.<city>.md` runbooks until they are cut over the same way. The news and fuel routines need the news and fuel tables and scripts that are still on the `Ethan` branch, so they are not scheduled yet.
+These are the rewritten routines described in `ROUTINES-PLAN.md`. **Pretoria is live on them** (cut over 29 September 2026): its old `ROUTINE.pretoria.md` and `ROUTINE.events.pretoria.md` runbooks were removed and its scheduled agents now run these runbooks. Cape Town and Polokwane still run their older `ROUTINE.<city>.md` runbooks until they are cut over the same way. The news and fuel tables already exist in all three live databases, so Pretoria news and the all-city fuel routine are scheduled too; the pages that show news and fuel are still on the `Ethan` branch.
 
 ## What is here
 

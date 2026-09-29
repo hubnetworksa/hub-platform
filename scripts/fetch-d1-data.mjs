@@ -74,6 +74,27 @@ async function main() {
      FROM events ORDER BY event_date ASC;`
   );
 
+  // News and fuel prices, written by the daily news and monthly fuel
+  // routines (routines/news.md, routines/fuel.md). No page on this branch
+  // shows them yet; they are fetched so write-db-snapshot.mjs can give those
+  // routines their dedup state. Tolerant of a database without the tables.
+  let news = [];
+  try {
+    news = query('SELECT slug, title, published_date, source_url FROM news ORDER BY published_date DESC, id DESC;');
+  } catch {
+    process.stderr.write(`[${SITE}] news table not available, snapshot will have no news.
+`);
+  }
+  let fuelPrices = [];
+  try {
+    fuelPrices = query('SELECT period, region, grade, price_cents, change_cents, source_url FROM fuel_prices ORDER BY period DESC, grade;');
+  } catch {
+    process.stderr.write(`[${SITE}] fuel_prices table not available, snapshot will have no fuel prices.
+`);
+  }
+
+  await writeFile(`${OUT_DIR}/news.json`, JSON.stringify(news, null, 2));
+  await writeFile(`${OUT_DIR}/fuel-prices.json`, JSON.stringify(fuelPrices, null, 2));
   await writeFile(`${OUT_DIR}/suburbs.json`, JSON.stringify(suburbs, null, 2));
   await writeFile(`${OUT_DIR}/categories.json`, JSON.stringify(categories, null, 2));
   await writeFile(`${OUT_DIR}/businesses.json`, JSON.stringify(businesses, null, 2));
