@@ -1,5 +1,5 @@
 {
-  "suburb_index": 26,
+  "suburb_index": 27,
   "suburbs_per_run": 3,
   "suburb_slugs": [
     "cape-town-cbd",
@@ -173,7 +173,9 @@
   ],
   "shopping_center_index": 2,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
+  "shopping_center_slugs_pending": [
+    "rondebosch-village-shopping-centre-rondebosch"
+  ],
   "shopping_center_recheck_countdown": 11,
   "new_mall_discovery_countdown": 168,
   "shopping_center_slugs": [
@@ -346,7 +348,8 @@
     "noordhoek-garden-emporium-noordhoek",
     "fountain-square-somerset-west",
     "the-sanctuary-shopping-centre-somerset-west",
-    "flamingo-square-table-view"
+    "flamingo-square-table-view",
+    "rondebosch-village-shopping-centre-rondebosch"
   ],
   "closed_check_last_slug": "kfc-wetton-lansdowne",
   "closed_check_batch_size": 5
