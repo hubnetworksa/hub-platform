@@ -52,6 +52,8 @@ const UPDATED_ISO = '2026-09';
 const capetown: Guide[] = [
   {
     slug: 'how-to-choose-a-plumber',
+    imageUrl: '/media/guides/how-to-choose-a-plumber.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'plumbers',
     breadcrumbLabel: 'Plumbers',
@@ -347,6 +349,8 @@ const capetown: Guide[] = [
 const pretoria: Guide[] = [
   {
     slug: 'how-to-choose-a-plumber',
+    imageUrl: '/media/guides/how-to-choose-a-plumber.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'plumbers',
     breadcrumbLabel: 'Plumbers',
@@ -642,6 +646,8 @@ const pretoria: Guide[] = [
 const polokwane: Guide[] = [
   {
     slug: 'how-to-choose-a-plumber',
+    imageUrl: '/media/guides/how-to-choose-a-plumber.jpg',
+    imageCredit: 'AI-generated image',
     categoryLabel: 'Home & Trade',
     categorySlug: 'plumbers',
     breadcrumbLabel: 'Plumbers',

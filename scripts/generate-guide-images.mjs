@@ -64,6 +64,7 @@ function apiToken() {
 // illustration throughout, matching the event-image style already live on
 // the site, so the two AI-image sets look like one consistent system.
 const PROMPTS = {
+  'how-to-choose-a-plumber': 'A plumber in overalls kneeling to fix a household geyser with a wrench and pipes, warm indoor lighting, flat illustration style, vibrant colours, no readable text, no logos',
   'how-to-choose-an-electrician': 'An electrician in overalls carefully working on an open household distribution board with wires and switches, warm indoor lighting, flat illustration style, vibrant colours, no readable text, no logos',
   'how-to-choose-a-builder': 'A builder in a hard hat reviewing house renovation plans on a clipboard at a construction site with scaffolding, daytime, flat illustration style, no readable text, no logos',
   'how-to-choose-a-mechanic': 'A mechanic in overalls working under the raised bonnet of a car in a bright workshop with tools on a wall, flat illustration style, no readable text, no logos',
