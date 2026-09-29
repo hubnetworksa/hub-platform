@@ -169,7 +169,11 @@ const FIELD = 'padding:12px;border:2px solid var(--border);border-radius:10px;fo
       if (wanted && product.targets.some((t) => t.slug === wanted)) targetSel.value = wanted;
       targetSel.addEventListener('change', checkSlot);
     } else {
-      $('sp-target-wrap').hidden = true;
+      // sp-target-wrap carries its own inline `style="display:flex"`, which
+      // beats the UA [hidden]{display:none} rule on specificity — setting
+      // .hidden here is a silent no-op, leaving an empty <select> visible
+      // for single-slot products like the homepage banner.
+      $('sp-target-wrap').style.display = 'none';
     }
     form.hidden = false;
     await checkSlot();
