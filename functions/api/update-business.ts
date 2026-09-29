@@ -71,6 +71,39 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .bind(businessId)
     .all<{ product_type: string; product_target: string | null; current_period_end: string | null; status: string }>();
 
+  // Real page-view/click counts (see functions/api/track-view.ts and the
+  // business_stats migration) over the last 30 days. has_any distinguishes
+  // "genuinely zero traffic in the window" from "tracking only just went
+  // live for this business" — the Overview tab shows "No data yet" only
+  // for the latter, never a fabricated number for either.
+  const statsRows = await db
+    .prepare(`SELECT event, COUNT(*) AS n FROM business_stats WHERE business_id = ? AND created_at > datetime('now', '-30 days') GROUP BY event`)
+    .bind(businessId)
+    .all<{ event: string; n: number }>();
+  const hasAnyStats = await db.prepare('SELECT 1 FROM business_stats WHERE business_id = ? LIMIT 1').bind(businessId).first();
+  const statsByEvent = Object.fromEntries(statsRows.results.map((r) => [r.event, r.n]));
+  const stats = {
+    has_any: !!hasAnyStats,
+    views: statsByEvent.view ?? 0,
+    phone_clicks: statsByEvent.phone_click ?? 0,
+    website_clicks: statsByEvent.website_click ?? 0,
+  };
+
+  // Real enquiries sent through this business's own page (see
+  // functions/api/enquiry.ts, which already saves every one — the owner
+  // dashboard just never read them back before now). Read-only: resolving
+  // or deleting a message stays an admin-only action in admin/messages.ts.
+  const enquiries = await db
+    .prepare(
+      `SELECT id, name, contact, message, created_at FROM messages WHERE kind = 'enquiry' AND business_slug = ? ORDER BY created_at DESC LIMIT 50`
+    )
+    .bind(business.slug)
+    .all<{ id: number; name: string | null; contact: string; message: string; created_at: string }>();
+  const enquiriesTotal = await db
+    .prepare(`SELECT COUNT(*) AS n FROM messages WHERE kind = 'enquiry' AND business_slug = ?`)
+    .bind(business.slug)
+    .first<{ n: number }>();
+
   return json({
     ok: true,
     business: {
@@ -90,6 +123,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     photos: photos.results,
     payments: payments.results,
     sponsorships: sponsorships.results,
+    stats,
+    enquiries: enquiries.results,
+    enquiriesTotal: enquiriesTotal?.n ?? 0,
   });
 };
 
