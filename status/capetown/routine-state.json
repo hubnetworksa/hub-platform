@@ -1,5 +1,5 @@
 {
-  "suburb_index": 79,
+  "suburb_index": 80,
   "suburbs_per_run": 3,
   "suburb_slugs": [
     "cape-town-cbd",
@@ -173,7 +173,9 @@
   ],
   "shopping_center_index": 2,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
+  "shopping_center_slugs_pending": [
+    "maxi-centre-eerste-river"
+  ],
   "shopping_center_recheck_countdown": 7,
   "new_mall_discovery_countdown": 156,
   "shopping_center_slugs": [
@@ -359,7 +361,8 @@
     "northgate-estate-ysterplaat",
     "viking-place-convenience-centre-thornton",
     "sanbury-square-eerste-river",
-    "mitchells-plain-town-centre-mitchells-plain"
+    "mitchells-plain-town-centre-mitchells-plain",
+    "maxi-centre-eerste-river"
   ],
   "closed_check_last_slug": "lavis-hardware-bishop-lavis",
   "closed_check_batch_size": 5
