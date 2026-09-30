@@ -37,8 +37,11 @@ const featuredBusinesses = withoutSponsors(businesses.filter((b) => b.subscripti
 
 // Paying to feature an event promises a spot on the homepage as well as the
 // top of /events/ — this is that spot. Featured upcoming events only; the
-// strip doesn't render at all when there are none.
-const featuredEvents = eventsSorted().filter((e) => e.featured).slice(0, 3);
+// banner doesn't render at all when there are none.
+// Capped at 8 — every featured event rotates through the banner (not just a
+// slice), but a dot-indicator row stays sane even if dozens ever get
+// featured at once.
+const featuredEvents = eventsSorted().filter((e) => e.featured).slice(0, 8);
 
 // WebSite + Organization structured data — Google's documented way to hint
 // the bold "sitename" shown in search results (otherwise it falls back to
@@ -195,6 +198,47 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
       </section>
     )}
 
+    {featuredEvents.length > 0 && (
+      <section style="max-width:1200px;margin:0 auto;padding:clamp(34px,5vw,56px) 20px 0">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;flex-wrap:wrap">
+          <h2 style="margin:0;font-size:clamp(22px,3vw,30px);letter-spacing:-.025em;color:var(--navy)">Featured events</h2>
+          <a href="/events/" style="font-size:13.5px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">All events →</a>
+        </div>
+        <div id="home-events-carousel" style="position:relative;margin-top:18px;border:2px solid var(--border);border-radius:14px;background:#fff;overflow:hidden">
+          <div id="home-events-track" style="display:flex;transition:transform .5s ease">
+            {featuredEvents.map((e, i) => {
+              const { month, day, weekday } = eventDateParts(e);
+              return (
+                <a href={`/events/${e.slug}/`} class="home-event-slide" aria-hidden={i === 0 ? 'false' : 'true'} tabindex={i === 0 ? 0 : -1} style="flex:0 0 100%;display:flex;gap:20px;align-items:center;padding:clamp(20px,4vw,36px);text-decoration:none;min-width:0">
+                  <span style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding:14px 18px;border-radius:12px;background:var(--accent);color:var(--contrast)">
+                    <span style="font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.85">{month}</span>
+                    <span style="font-size:36px;font-weight:800;line-height:1">{day}</span>
+                    <span style="font-size:12px;font-weight:700;opacity:.85">{weekday}</span>
+                  </span>
+                  <span style="min-width:0;display:flex;flex-direction:column;gap:6px">
+                    <span style="font-size:clamp(18px,2.4vw,24px);font-weight:800;color:var(--navy);letter-spacing:-.015em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{e.title}</span>
+                    {(e.venue || e.suburb) && <span style="font-size:14px;font-weight:700;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{[e.venue, e.suburb].filter(Boolean).join(' · ')}</span>}
+                    <span style="font-size:15px;font-weight:800;color:var(--accent-hover)">{e.price}</span>
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+          {featuredEvents.length > 1 && (
+            <>
+              <button type="button" id="home-events-prev" aria-label="Previous featured event" style="position:absolute;top:50%;left:10px;transform:translateY(-50%);width:36px;height:36px;border-radius:999px;border:2px solid var(--border);background:#fff;color:var(--navy);font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0">‹</button>
+              <button type="button" id="home-events-next" aria-label="Next featured event" style="position:absolute;top:50%;right:10px;transform:translateY(-50%);width:36px;height:36px;border-radius:999px;border:2px solid var(--border);background:#fff;color:var(--navy);font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0">›</button>
+              <div style="display:flex;justify-content:center;gap:7px;padding:0 0 14px">
+                {featuredEvents.map((_, i) => (
+                  <button type="button" class="home-events-dot" data-dot-index={i} aria-label={`Go to featured event ${i + 1}`} aria-current={i === 0 ? 'true' : 'false'} style="width:8px;height:8px;border-radius:999px;border:none;padding:0;background:var(--border);cursor:pointer"></button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+    )}
+
     {(cityCoords || homeNews.length > 0 || fuel) && (
       <section id="today" hidden={homeNews.length === 0 && !fuel} data-lat={cityCoords?.[0]} data-lon={cityCoords?.[1]} style="max-width:1200px;margin:0 auto;padding:clamp(30px,4.5vw,50px) 20px 0">
         <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;flex-wrap:wrap">
@@ -267,34 +311,6 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
               ))}
             </div>
           )}
-        </div>
-      </section>
-    )}
-
-    {featuredEvents.length > 0 && (
-      <section style="max-width:1200px;margin:0 auto;padding:clamp(34px,5vw,56px) 20px 0">
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;flex-wrap:wrap">
-          <h2 style="margin:0;font-size:clamp(22px,3vw,30px);letter-spacing:-.025em;color:var(--navy)">Featured events</h2>
-          <a href="/events/" style="font-size:13.5px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">All events →</a>
-        </div>
-        <div class="home-events-grid" style="display:grid;gap:14px;margin-top:18px">
-          {featuredEvents.map((e) => {
-            const { month, day, weekday } = eventDateParts(e);
-            return (
-              <a href={`/events/${e.slug}/`} class="home-featured-card" data-event-date={e.event_date} style="display:flex;gap:14px;align-items:center;padding:14px;border:2px solid var(--border);border-radius:14px;background:#fff;text-decoration:none;min-width:0">
-                <span style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;padding:9px 12px;border-radius:10px;background:var(--accent);color:var(--contrast)">
-                  <span style="font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.85">{month}</span>
-                  <span style="font-size:24px;font-weight:800;line-height:1">{day}</span>
-                  <span style="font-size:10px;font-weight:700;opacity:.85">{weekday}</span>
-                </span>
-                <span style="min-width:0;display:flex;flex-direction:column;gap:3px">
-                  <span style="font-size:15.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{e.title}</span>
-                  {(e.venue || e.suburb) && <span style="font-size:12.5px;font-weight:700;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{[e.venue, e.suburb].filter(Boolean).join(' · ')}</span>}
-                  <span style="font-size:13px;font-weight:800;color:var(--accent-hover)">{e.price}</span>
-                </span>
-              </a>
-            );
-          })}
         </div>
       </section>
     )}
@@ -401,6 +417,70 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
   });
 </script>
 
+<script>
+  // Featured events banner — rotates automatically through every slide,
+  // pausing on hover/keyboard focus and respecting prefers-reduced-motion.
+  // With 0 or 1 featured events the prev/next/dot controls simply aren't in
+  // the markup (see the Astro guard around them), and this script is a
+  // harmless no-op in that case.
+  const eventsCarousel = document.getElementById('home-events-carousel');
+  const eventsTrack = document.getElementById('home-events-track');
+  if (eventsCarousel && eventsTrack) {
+    const slides = [...eventsTrack.querySelectorAll<HTMLAnchorElement>('.home-event-slide')];
+    const dots = [...eventsCarousel.querySelectorAll<HTMLButtonElement>('.home-events-dot')];
+    const prevBtn = document.getElementById('home-events-prev');
+    const nextBtn = document.getElementById('home-events-next');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let index = 0;
+    let timer: ReturnType<typeof setInterval> | null = null;
+
+    const show = (next: number) => {
+      index = (next + slides.length) % slides.length;
+      eventsTrack.style.transform = `translateX(-${index * 100}%)`;
+      slides.forEach((s, i) => {
+        const active = i === index;
+        s.setAttribute('aria-hidden', active ? 'false' : 'true');
+        s.tabIndex = active ? 0 : -1;
+      });
+      dots.forEach((d, i) => d.setAttribute('aria-current', i === index ? 'true' : 'false'));
+    };
+
+    const stop = () => {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
+    const start = () => {
+      if (reduceMotion || slides.length < 2) return;
+      stop();
+      timer = setInterval(() => show(index + 1), 5000); // 5s for now — easy to revisit
+    };
+
+    if (slides.length > 1) {
+      prevBtn?.addEventListener('click', () => {
+        show(index - 1);
+        start();
+      });
+      nextBtn?.addEventListener('click', () => {
+        show(index + 1);
+        start();
+      });
+      dots.forEach((d) => {
+        d.addEventListener('click', () => {
+          show(Number(d.dataset.dotIndex));
+          start();
+        });
+      });
+      eventsCarousel.addEventListener('mouseenter', stop);
+      eventsCarousel.addEventListener('mouseleave', start);
+      eventsCarousel.addEventListener('focusin', stop);
+      eventsCarousel.addEventListener('focusout', start);
+      start();
+    }
+  }
+</script>
+
 <style>
   .home-featured-card[hidden] {
     display: none !important;
@@ -409,13 +489,13 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
   #today-left[hidden] {
     display: none !important;
   }
-  .home-events-grid {
-    grid-template-columns: minmax(0, 1fr);
+  .home-events-dot[aria-current='true'] {
+    background: var(--accent);
   }
-  @media (min-width: 760px) {
-    .home-events-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
+  #home-events-prev:hover,
+  #home-events-next:hover {
+    border-color: var(--accent);
+    color: var(--accent);
   }
   @media (min-width: 760px) {
     .today-row:has(#today-left:not([hidden])) {
