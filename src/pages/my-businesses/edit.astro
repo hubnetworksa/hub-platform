@@ -183,11 +183,16 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
                   <textarea name="hours" maxlength="400" rows="3" placeholder="e.g. Mon-Fri 8am-5pm" class="owner-input" style={`${fieldInput};resize:vertical`}></textarea>
                 </label>
                 <div style="border-top:2px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:15px">
-                  <div style="font-size:13px;font-weight:800;color:var(--navy)">Social pages <span id="social-note" style="font-weight:600;color:var(--muted)"></span></div>
+                  <!-- Always shown so a Basic / Verified owner sees exactly what Featured adds; the
+                       inputs are disabled (and so left out of the saved form) until the plan allows it.
+                       The pill has an inline display, so the script toggles style.display, not `hidden`. -->
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:800;color:var(--navy)">Social pages
+                    <span id="social-note" style="display:none;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:var(--navy);color:#fff;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.02em"><Icon path={SECTION_ICONS.lock} size={12} /> Featured plan</span>
+                  </div>
                   <p id="social-locked" hidden style="margin:0;font-size:13.5px;font-weight:600;color:var(--muted);line-height:1.55">
                     Linking your Instagram, Facebook, LinkedIn and YouTube pages is a Featured-plan perk. <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a> to add them.
                   </p>
-                  <div id="social-fields" hidden class="social-fields">
+                  <div id="social-fields" class="social-fields">
                     <label style={fieldLabel}>Instagram
                       <input type="url" name="social_instagram" maxlength="200" placeholder="https://instagram.com/yourbusiness" class="owner-input" style={fieldInput} />
                     </label>
@@ -1048,11 +1053,18 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     (form.elements.namedItem('hours') as HTMLTextAreaElement).value = b.hours ?? '';
 
     const socialOn = (b.subscription_status === 'active' || b.subscription_status === 'cancelled') && b.subscription_tier >= FEATURED_TIER;
-    document.getElementById('social-fields')!.hidden = !socialOn;
+    // The four fields stay visible on every plan; below Featured they are locked
+    // (disabled inputs are skipped by FormData, so nothing social is submitted and
+    // update-business.ts ignores the links for non-Featured listings anyway).
     document.getElementById('social-locked')!.hidden = socialOn;
-    document.getElementById('social-note')!.textContent = socialOn ? '' : '— a Featured plan perk';
+    document.getElementById('social-note')!.style.display = socialOn ? 'none' : 'inline-flex';
     for (const k of ['instagram', 'facebook', 'linkedin', 'youtube'] as const) {
-      (form.elements.namedItem('social_' + k) as HTMLInputElement).value = b[('social_' + k) as 'social_instagram'] ?? '';
+      const input = form.elements.namedItem('social_' + k) as HTMLInputElement;
+      input.value = b[('social_' + k) as 'social_instagram'] ?? '';
+      input.disabled = !socialOn;
+      input.style.background = socialOn ? '#fff' : 'var(--bg-subtle)';
+      input.style.color = socialOn ? 'var(--text)' : 'var(--muted)';
+      input.style.cursor = socialOn ? '' : 'not-allowed';
     }
 
     renderHeader(b);
