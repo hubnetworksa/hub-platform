@@ -78,7 +78,7 @@ jobs:
       # after changing data you want to see in the preview.
       - name: Work out the data cache window
         id: window
-        run: echo "bucket=$(date -u +%Y%m%d)-$(( $(date -u +%H) / 6 ))" >> "$GITHUB_OUTPUT"
+        run: echo "bucket=$(date -u +%Y%m%d)-$(( 10#$(date -u +%H) / 6 ))" >> "$GITHUB_OUTPUT"
 
       - name: Restore cached database data
         id: d1cache
