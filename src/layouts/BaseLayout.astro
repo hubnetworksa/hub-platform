@@ -176,6 +176,22 @@ const themeCss = `:root {
     <link rel="manifest" href="/manifest.webmanifest" />
 
     <style set:html={themeCss}></style>
+    <style>
+      /* #dashboard-nav-link is the desktop header's logged-in button — same
+         [hidden] story as #admin-nav-link in global.css: its inline
+         display:none is overridden at desktop width below, so the [hidden]
+         toggle from the /api/me script needs an explicit !important rule
+         to win back over that. Below 950px it stays display:none and the
+         mobile menu's #dashboard-mob-link takes over. */
+      #dashboard-nav-link[hidden] {
+        display: none !important;
+      }
+      @media (min-width: 950px) {
+        #dashboard-nav-link {
+          display: inline-flex !important;
+        }
+      }
+    </style>
   </head>
   <body data-city-label={cityLabel} data-ads={adsEnabled && !noAds ? '1' : '0'}>
     <a href="#main-content" class="skip-link">Skip to content</a>
@@ -192,7 +208,7 @@ const themeCss = `:root {
             <span id="wx-chip-label"></span>
           </span>
           <a href="/advertise/" style="color:rgba(255,255,255,.78)">Advertise</a>
-          <a href="/my-businesses/" style="color:rgba(255,255,255,.78)">Business log in</a>
+          <a href="/my-businesses/" id="topbar-login-link" style="color:rgba(255,255,255,.78)">Business log in</a>
         </span>
       </div>
     </div>
@@ -218,6 +234,10 @@ const themeCss = `:root {
         <div style="display:flex;align-items:center;gap:10px;margin-left:auto">
           <a href="/pricing/" id="pricing-link" style="display:none;padding:10px 14px;font-size:13px;font-weight:800;color:var(--navy);border:2px solid var(--border);border-radius:10px">Pricing</a>
           <a href="/admin/" id="admin-nav-link" hidden style="display:none;padding:10px 14px;font-size:13px;font-weight:800;color:var(--navy);border:2px solid var(--border);border-radius:10px">Admin</a>
+          <a href="/my-businesses/" id="dashboard-nav-link" hidden style="display:none;align-items:center;gap:7px;padding:10px 14px;font-size:13px;font-weight:800;background:var(--navy);color:#fff;border:2px solid var(--navy);border-radius:10px;white-space:nowrap">
+            <Icon path={ICONS.building} size={15} strokeWidth={2.2} />
+            <span>Business dashboard</span>
+          </a>
           <button type="button" id="nav-toggle" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle menu" style="display:none;align-items:center;justify-content:center;width:42px;height:42px;border:2px solid var(--border);border-radius:10px;background:#fff;cursor:pointer;color:var(--navy);flex-shrink:0">
             <Icon path={ICONS.menu} size={20} strokeWidth={2.2} />
           </button>
@@ -236,7 +256,8 @@ const themeCss = `:root {
         <a href="/pricing/" class="nav-mob-link">Plans &amp; pricing</a>
         <a href="/about/" class="nav-mob-link">About</a>
         <a href="/guides/" class="nav-mob-link">Guides</a>
-        <a href="/my-businesses/" style="padding:13px 6px;font-size:15.5px;font-weight:800;color:var(--muted)">Business log in</a>
+        <a href="/my-businesses/" id="mobile-login-link" style="padding:13px 6px;font-size:15.5px;font-weight:800;color:var(--muted)">Business log in</a>
+        <a href="/my-businesses/" id="dashboard-mob-link" hidden style="margin-top:10px;padding:13px 16px;font-size:15px;font-weight:800;text-align:center;background:var(--navy);color:#fff;border-radius:10px">Business dashboard</a>
       </div>
     </header>
 
@@ -348,13 +369,25 @@ const themeCss = `:root {
     </script>
 
     <script>
-      // Reveals the Admin Dashboard nav link only for the one admin
-      // account — everyone else never sees it, since the site is static
-      // and can't know login state at build time.
+      // The site is static and can't know login state at build time, so
+      // one /api/me call (401 when logged out) drives the header's
+      // logged-in state: the "Business log in" links swap for a
+      // "Business dashboard" button (desktop action row + mobile menu),
+      // and the Admin link is revealed only for the one admin account.
+      // Logged out, nothing changes.
       fetch('/api/me')
         .then((r) => (r.ok ? r.json() : null))
         .then((data) => {
-          if (data?.isAdmin) document.getElementById('admin-nav-link')!.hidden = false;
+          if (!data?.ok) return;
+          for (const id of ['dashboard-nav-link', 'dashboard-mob-link']) {
+            const el = document.getElementById(id);
+            if (el) el.hidden = false;
+          }
+          for (const id of ['topbar-login-link', 'mobile-login-link']) {
+            const el = document.getElementById(id);
+            if (el) el.hidden = true;
+          }
+          if (data.isAdmin) document.getElementById('admin-nav-link')!.hidden = false;
         })
         .catch(() => {});
     </script>
