@@ -62,7 +62,7 @@ const FIELD = 'padding:12px;border:2px solid var(--border);border-radius:10px;fo
 
     <p id="sp-loading" style="color:var(--muted)">Checking your account…</p>
 
-    <form id="sp-form" hidden style={`${BOX};display:flex;flex-direction:column;gap:16px`}>
+    <form id="sp-form" hidden style={BOX}>
       <label id="sp-target-wrap" style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:800;color:var(--navy)">
         Which spot
         <select id="sp-target" style={FIELD}></select>
@@ -231,3 +231,19 @@ const FIELD = 'padding:12px;border:2px solid var(--border);border-radius:10px;fo
 
   init().catch(() => fail('Something went wrong loading this page. Please refresh.'));
 </script>
+
+<style is:global>
+  /* #sp-form used to carry an inline `display:flex`, which beats the UA
+     [hidden]{display:none} rule on specificity — the form stayed visible
+     even while `hidden` was set. Give it its flex layout here instead, and
+     an explicit !important [hidden] override so hidden always wins, same
+     pattern as #admin-nav-link/#mobile-menu in global.css. */
+  #sp-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  #sp-form[hidden] {
+    display: none !important;
+  }
+</style>
