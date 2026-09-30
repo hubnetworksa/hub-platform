@@ -1,5 +1,5 @@
 {
-  "suburb_index": 48,
+  "suburb_index": 49,
   "suburbs_per_run": 3,
   "suburb_slugs": [
     "cape-town-cbd",
@@ -173,7 +173,9 @@
   ],
   "shopping_center_index": 2,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
+  "shopping_center_slugs_pending": [
+    "de-ville-centre-durbanville"
+  ],
   "shopping_center_recheck_countdown": 8,
   "new_mall_discovery_countdown": 162,
   "shopping_center_slugs": [
@@ -350,7 +352,8 @@
     "rondebosch-village-shopping-centre-rondebosch",
     "chelsea-courtyard-wynberg",
     "high-constantia-centre-constantia",
-    "richmond-centre-plumstead"
+    "richmond-centre-plumstead",
+    "de-ville-centre-durbanville"
   ],
   "closed_check_last_slug": "kleinskys-constantia",
   "closed_check_batch_size": 5
