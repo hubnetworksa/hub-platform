@@ -1,5 +1,5 @@
 {
-  "suburb_index": 62,
+  "suburb_index": 63,
   "suburbs_per_run": 3,
   "suburb_slugs": [
     "cape-town-cbd",
@@ -173,9 +173,11 @@
   ],
   "shopping_center_index": 2,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
-  "shopping_center_recheck_countdown": 8,
-  "new_mall_discovery_countdown": 159,
+  "shopping_center_slugs_pending": [
+    "10th-avenue-shopping-centre-maitland"
+  ],
+  "shopping_center_recheck_countdown": 7,
+  "new_mall_discovery_countdown": 158,
   "shopping_center_slugs": [
     "prospur-shopping-centre-plumstead",
     "canal-walk-century-city",
@@ -354,7 +356,8 @@
     "de-ville-centre-durbanville",
     "fairbridge-mall-brackenfell",
     "langverwacht-plein-kuils-river",
-    "brackenfell-corner-brackenfell"
+    "brackenfell-corner-brackenfell",
+    "10th-avenue-shopping-centre-maitland"
   ],
   "closed_check_last_slug": "kwikspar-kromboom-rondebosch-east",
   "closed_check_batch_size": 5
