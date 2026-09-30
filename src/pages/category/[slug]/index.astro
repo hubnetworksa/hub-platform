@@ -89,15 +89,17 @@ const showsPaid = businesses.some(isPaidListing) || !!categorySponsor;
     </section>
 
     <section style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
-      <div style="max-width:420px;margin-bottom:22px">
-        <SponsorSlot
-          productType="category_sponsor"
-          target={category.slug}
-          title={`Own ${category.name}`}
-          openBody={`One business sponsors ${category.name.toLowerCase()} in ${site.cityLabel}. The slot is open.`}
-          ctaLabel="Sponsor this category"
-        />
-      </div>
+      {!categorySponsor && (
+        <div style="max-width:420px;margin-bottom:22px">
+          <SponsorSlot
+            productType="category_sponsor"
+            target={category.slug}
+            title={`Own ${category.name}`}
+            openBody={`One business sponsors ${category.name.toLowerCase()} in ${site.cityLabel}. The slot is open.`}
+            ctaLabel="Sponsor this category"
+          />
+        </div>
+      )}
       <SponsorBanner productType="category_sponsor" target={category.slug} context={`${category.name} in ${site.cityLabel}`} />
       {featuredInCategory.length > 0 && (
         <div style="margin-bottom:28px">

@@ -79,6 +79,10 @@ const collectionJsonLd = businesses.length === 0
 // No Google ads anywhere a paid listing or sponsor is shown (see
 // BaseLayout's noAds): this page shows one if this is true.
 const showsPaid = businesses.some(isPaidListing) || !!suburbSponsor;
+// SponsorSlot renders nothing once suburbSponsor is sold, so the sidebar can
+// end up with none of: the ad unit, the open-slot box, or nearby suburbs.
+// Drop the whole aside (and its grid column) rather than leave it empty.
+const asideHasContent = (adsEnabled && !showsPaid) || !suburbSponsor || nearbySuburbs.length > 0;
 ---
 
 <BaseLayout noAds={showsPaid} title={suburb.name} description={description}>
@@ -110,7 +114,7 @@ const showsPaid = businesses.some(isPaidListing) || !!suburbSponsor;
         </div>
       )}
 
-      <div id="suburb-shell" style="display:grid;grid-template-columns:1fr;gap:22px;margin-top:22px">
+      <div id="suburb-shell" style="display:grid;grid-template-columns:1fr;gap:22px;margin-top:22px" class:list={{ 'has-aside': asideHasContent }}>
         <div>
           <SponsorBanner productType="suburb_sponsor" target={suburb.slug} context={suburb.name} />
           {featuredHere.length > 0 && (
@@ -166,26 +170,28 @@ const showsPaid = businesses.some(isPaidListing) || !!suburbSponsor;
           )}
         </div>
 
-        <aside style="display:flex;flex-direction:column;gap:14px">
-          {adsEnabled && !showsPaid && <AdUnit placement="suburbSidebar" />}
-          <SponsorSlot
-            productType="suburb_sponsor"
-            target={suburb.slug}
-            title={`Own ${suburb.name}`}
-            openBody={`One business sponsors ${suburb.name}: shown at the top of this page and above ${suburb.name} listings in every category. The slot is open.`}
-            ctaLabel="Sponsor this suburb"
-          />
-          {nearbySuburbs.length > 0 && (
-            <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
-              <h3 style="margin:0 0 8px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Nearby suburbs</h3>
-              <div style="display:flex;flex-wrap:wrap;gap:6px">
-                {nearbySuburbs.map((s) => (
-                  <a href={`/suburb/${s.slug}/`} style="padding:7px 11px;border-radius:999px;background:#fff;border:1.5px solid var(--border);font-size:12.5px;font-weight:700;color:var(--navy);text-decoration:none">{s.name}</a>
-                ))}
+        {asideHasContent && (
+          <aside style="display:flex;flex-direction:column;gap:14px">
+            {adsEnabled && !showsPaid && <AdUnit placement="suburbSidebar" />}
+            <SponsorSlot
+              productType="suburb_sponsor"
+              target={suburb.slug}
+              title={`Own ${suburb.name}`}
+              openBody={`One business sponsors ${suburb.name}: shown at the top of this page and above ${suburb.name} listings in every category. The slot is open.`}
+              ctaLabel="Sponsor this suburb"
+            />
+            {nearbySuburbs.length > 0 && (
+              <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
+                <h3 style="margin:0 0 8px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Nearby suburbs</h3>
+                <div style="display:flex;flex-wrap:wrap;gap:6px">
+                  {nearbySuburbs.map((s) => (
+                    <a href={`/suburb/${s.slug}/`} style="padding:7px 11px;border-radius:999px;background:#fff;border:1.5px solid var(--border);font-size:12.5px;font-weight:700;color:var(--navy);text-decoration:none">{s.name}</a>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
-        </aside>
+            )}
+          </aside>
+        )}
       </div>
     </section>
   </main>
@@ -193,7 +199,7 @@ const showsPaid = businesses.some(isPaidListing) || !!suburbSponsor;
 
 <style>
   @media (min-width: 950px) {
-    #suburb-shell {
+    #suburb-shell.has-aside {
       grid-template-columns: minmax(0, 1fr) 320px;
     }
   }

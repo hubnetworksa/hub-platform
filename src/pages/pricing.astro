@@ -128,14 +128,16 @@ const showsPaid = !!sponsorFor('homepage_banner');
       </div>
       <p style="margin:16px 0 0;font-size:12.5px;color:var(--muted);font-weight:600">Prices in ZAR. Plans and sponsor spots bill monthly or yearly and can be cancelled any time; prices may change with notice.</p>
 
-      <div style="margin-top:18px;max-width:420px;">
-        <SponsorSlot
-          productType="homepage_banner"
-          title="Homepage banner"
-          openBody="The single sponsor slot on the homepage — one advertiser at a time."
-          ctaLabel="Sponsor the homepage"
-        />
-      </div>
+      {!showsPaid && (
+        <div style="margin-top:18px;max-width:420px;">
+          <SponsorSlot
+            productType="homepage_banner"
+            title="Homepage banner"
+            openBody="The single sponsor slot on the homepage — one advertiser at a time."
+            ctaLabel="Sponsor the homepage"
+          />
+        </div>
+      )}
       {site.features.tourism && tourismPickCount > 0 && (
         <p style="margin:14px 0 0;font-size:13px;font-weight:600;color:var(--muted)">
           Things to do sponsor slots are sold per attraction — <a href={sponsorHref('tourism_sponsor')} style="color:var(--accent-hover);font-weight:800">pick an attraction to sponsor</a>, or browse <a href="/tourism/" style="color:var(--accent-hover);font-weight:800">Things to do</a>.

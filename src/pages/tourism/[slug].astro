@@ -140,15 +140,17 @@ const showsPaid = !!sponsorFor('tourism_sponsor', attraction.slug);
       </ul>
     )}
 
-    <div style="margin-top: 2rem; max-width: 420px;">
-      <SponsorSlot
-        productType="tourism_sponsor"
-        target={attraction.slug}
-        title="Sponsor this page"
-        openBody="Put your business here as the sponsor of this attraction's page — one advertiser at a time, month to month."
-        ctaLabel="Sponsor this page"
-      />
-    </div>
+    {!showsPaid && (
+      <div style="margin-top: 2rem; max-width: 420px;">
+        <SponsorSlot
+          productType="tourism_sponsor"
+          target={attraction.slug}
+          title="Sponsor this page"
+          openBody="Put your business here as the sponsor of this attraction's page — one advertiser at a time, month to month."
+          ctaLabel="Sponsor this page"
+        />
+      </div>
+    )}
 
     <p style="margin-top: 1.25rem;">
       <a href="/tourism/">← All {site.cityLabel} attractions</a>
