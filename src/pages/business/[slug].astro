@@ -2,9 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, customBlocksFor, pageColorsFor, TIER_VERIFIED, TIER_VERIFIED_PLUS, TIER_FEATURED, TIER_PREMIUM } from '../../lib/data';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor } from '../../lib/data';
 import { groupForCategory } from '../../lib/categoryGroups';
-import { renderCustomBlocksHtml } from '../../lib/blockRenderer';
 import { synonymsFor, locationSynonymsFor } from '../../lib/categorySynonyms';
 import { schemaTypeFor } from '../../lib/categorySchemaTypes';
 import Icon from '../../components/Icon.astro';
@@ -30,59 +29,14 @@ const SOURCE_LABELS: Record<string, string> = {
   // readable by automated fetch), not a form submission.
   'owner-provided-contact-details': 'Contact details confirmed directly with the site owner.',
 };
-// The actual URL (often the business's own website) only becomes a
-// clickable link once the owner is on a paid tier (Verified, R50, and up)
-// — see the Premium Listings plan. Below that it's still verified
-// internally for provenance/compliance, just shown as a plain label.
+// Source URLs are verified internally for provenance/compliance and shown
+// as a plain label, never as a clickable link.
 const hasVerifiedUrlSource = sourceUrls.some((u) => /^https?:\/\//.test(u));
 const labelSources = sourceUrls.filter((u) => !/^https?:\/\//.test(u)).map((u) => SOURCE_LABELS[u] ?? u);
-const isPaidTier = business.subscription_tier >= TIER_VERIFIED && business.subscription_status === 'active';
-const showClickableWebsite = isPaidTier && !!business.website;
-const noAds = business.subscription_tier >= TIER_VERIFIED_PLUS && business.subscription_status === 'active';
 const photos = photosFor(business);
-// Template choice only takes effect at Featured and up — a lapsed/free
-// business always falls back to Classic regardless of what's stored.
-const canChooseTemplate = business.subscription_tier >= TIER_FEATURED && business.subscription_status === 'active';
-const template = canChooseTemplate ? business.template_id : 'classic';
-const isPremium = business.subscription_tier >= TIER_PREMIUM && business.subscription_status === 'active';
-// Premium businesses lose the automatic photo gallery entirely (guarded
-// out above) — their photos only appear where they place a Photo, Banner,
-// or Image+Text section. The page's fixed info (name, tags, description,
-// address, contact actions, trading hours) never moves and isn't
-// restyled — an owner can only append sections below it and set the
-// page's overall colors, edited in place on this very page (see the
-// edit-mode script below) — not a separate preview.
-const customBlocks = isPremium ? customBlocksFor(business) : [];
-const mainBlocks = customBlocks.filter((b) => b.zone !== 'left' && b.zone !== 'right' && b.zone !== 'bottom');
-const leftBlocks = customBlocks.filter((b) => b.zone === 'left');
-const rightBlocks = customBlocks.filter((b) => b.zone === 'right');
-const bottomBlocks = customBlocks.filter((b) => b.zone === 'bottom');
-const customBlocksHtml = renderCustomBlocksHtml(mainBlocks);
-const leftBlocksHtml = renderCustomBlocksHtml(leftBlocks);
-const rightBlocksHtml = renderCustomBlocksHtml(rightBlocks);
-const bottomBlocksHtml = renderCustomBlocksHtml(bottomBlocks);
-// Sidebars only exist in the markup at all once an owner has actually put
-// a section in one — otherwise the page is just the plain single centered
-// column it's always been, byte-for-byte.
-const hasSidebars = leftBlocks.length > 0 || rightBlocks.length > 0;
-
-// Owner-chosen page colors (Premium only) — applied as CSS custom property
-// overrides on this page's own content wrapper only, so the shared site
-// header/nav/footer (outside this wrapper, in BaseLayout) always stay the
-// site's own branding regardless of what an owner picks for their page.
-function hexToRgbTriple(hex: string): string {
-  const clean = hex.replace('#', '');
-  const full = clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean;
-  const n = parseInt(full, 16);
-  return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
-}
-
-const pageColors = isPremium ? pageColorsFor(business) : {};
-const pageColorVars = [
-  pageColors.primary ? `--accent:${pageColors.primary};--accent-rgb:${hexToRgbTriple(pageColors.primary)}` : '',
-  pageColors.secondary ? `--navy:${pageColors.secondary}` : '',
-  pageColors.background ? `--bg:${pageColors.background};--bg-card:${pageColors.background}` : '',
-].filter(Boolean).join(';');
+// Premium page customisation is switched off on production: the owner
+// edit-mode script below is never rendered for any business.
+const isPremium = false;
 // Only rendered when a real link exists — see shoppingCenterFor.
 const center = shoppingCenterFor(business);
 
@@ -135,17 +89,9 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={business.name} description={business.description.slice(0, 155)} canonical={canonicalUrl} noAds={noAds}>
+<BaseLayout title={business.name} description={business.description.slice(0, 155)} canonical={canonicalUrl}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-  <div id="page-content" style={pageColorVars || null}>
-  <div id="page-sidebar-layout" class:list={['page-sidebar-layout', { 'has-sidebars': hasSidebars }]}>
-  {isPremium && (
-    <aside class="page-sidebar page-sidebar-left" id="sidebar-left-mount" hidden={leftBlocks.length === 0}>
-      <Fragment set:html={leftBlocksHtml} />
-    </aside>
-  )}
-  <div class="page-main-column">
   <section class="container" style="padding-top: 2rem; padding-bottom: 0; max-width: 720px;">
     <Breadcrumbs
       items={[
@@ -154,21 +100,9 @@ const jsonLd = {
         { label: business.name },
       ]}
     />
-    {!isPremium && template === 'gallery' && photos.length > 0 && (
-      <div class="hero-gallery">
-        {photos.map((photo) => (
-          <img src={`/media/${photo.r2_key}`} alt={photo.caption ?? business.name} loading="lazy" width="700" height="360" />
-        ))}
-      </div>
-    )}
     <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">{business.name}</h1>
 
     <div class="tags">
-      {isPaidTier && (
-        <span class="badge tier-badge">
-          <Icon path={ICONS.check} size={13} /> Verified
-        </span>
-      )}
       {cats.map((c) => {
         const g = groupForCategory(c.slug);
         return (
@@ -182,7 +116,7 @@ const jsonLd = {
 
     <p style="margin-top: 1.25rem;">{business.description}</p>
 
-    {!isPremium && template !== 'gallery' && photos.length > 0 && (
+    {photos.length > 0 && (
       <div class:list={['photo-gallery', { carousel: photos.length > 5 }]}>
         {photos.map((photo) => (
           <img
@@ -197,33 +131,6 @@ const jsonLd = {
     )}
   </section>
 
-  {isPremium && (
-    <section class="container" style="padding-top: 0.5rem; padding-bottom: 0.5rem; max-width: 720px;">
-      <div id="custom-blocks-mount">
-        <Fragment set:html={customBlocksHtml} />
-      </div>
-        <button type="button" id="edit-page-toggle" class="edit-page-toggle" hidden>
-          Edit this page
-        </button>
-        <div id="design-bar" class="design-bar" hidden>
-          <div class="design-bar-row">
-            <strong>Editing your page</strong>
-            <button type="button" id="add-block-btn" class="btn btn-outline btn-sm">+ Add section</button>
-            <span class="design-bar-hint">Your business name, description, address, contact buttons, and hours always stay exactly where they are — only the sections you add here can be dragged to reorder, placed beside each other, resized from any edge, or edited by clicking their text. Drag a section straight into a sidebar to move it there, or use its "Position" option to send it to a sidebar or below Trading Hours.</span>
-          </div>
-          <div class="design-bar-row">
-            <label>Primary <input type="color" id="color-primary" value="#2563eb" /></label>
-            <label>Secondary <input type="color" id="color-secondary" value="#0f172a" /></label>
-            <label>Background <input type="color" id="color-background" value="#ffffff" /></label>
-            <button type="button" id="colors-reset-btn" class="btn btn-outline btn-sm">Reset colors</button>
-            <span id="design-status" role="status"></span>
-            <button type="button" id="publish-btn" class="btn btn-primary btn-sm" hidden>Publish changes</button>
-            <button type="button" id="revert-btn" class="btn btn-outline btn-sm" hidden>Revert to published</button>
-          </div>
-        </div>
-    </section>
-  )}
-
   <section class="container" style="padding-top: 0; padding-bottom: 2rem; max-width: 720px;">
     {center && (
       <a href={`/shopping-center/${center.slug}/`} class="located-at">
@@ -233,11 +140,6 @@ const jsonLd = {
     {business.address && <p class="address">{business.address}{suburb && `, ${suburb.name}`}</p>}
 
     <div class="actions">
-      {showClickableWebsite && (
-        <a href={business.website!} target="_blank" rel="noopener noreferrer" class="btn btn-outline">
-          <Icon path={ICONS.pin} size={16} /> Visit website
-        </a>
-      )}
       {business.phone && (
         <a href={`tel:${business.phone}`} class="btn btn-outline">
           <Icon path={ICONS.phone} size={16} /> {business.phone}
@@ -274,12 +176,6 @@ const jsonLd = {
         <p class="hours-text hours-unavailable">Trading hours not available</p>
       )}
     </div>
-
-    {isPremium && (
-      <div id="bottom-blocks-mount" hidden={bottomBlocks.length === 0}>
-        <Fragment set:html={bottomBlocksHtml} />
-      </div>
-    )}
 
     {!business.owner_user_id && (
       <div class="claim-callout">
@@ -318,14 +214,6 @@ const jsonLd = {
       </a>
     </div>
   </section>
-  </div>
-  {isPremium && (
-    <aside class="page-sidebar page-sidebar-right" id="sidebar-right-mount" hidden={rightBlocks.length === 0}>
-      <Fragment set:html={rightBlocksHtml} />
-    </aside>
-  )}
-  </div>
-  </div>
 </BaseLayout>
 
 {isPremium && (
@@ -934,10 +822,6 @@ const jsonLd = {
     color: var(--text-muted);
     margin: 0.5rem 0 0;
   }
-  .tier-badge {
-    background: rgba(26, 143, 94, 0.12);
-    color: #1a8f5e;
-  }
   .photo-gallery {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -962,410 +846,6 @@ const jsonLd = {
   }
   .photo-gallery.carousel img {
     height: 150px;
-  }
-  .hero-gallery {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(240px, 1fr);
-    gap: 0.5rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    margin-bottom: 0.5rem;
-  }
-  .hero-gallery img {
-    width: 100%;
-    height: 280px;
-    object-fit: cover;
-    border-radius: var(--radius-lg);
-    scroll-snap-align: start;
-  }
-  /* Sections an owner adds always stack in order, below the fixed page
-     layout above — no free positioning, matching how simple this needs to
-     stay for owners who just want their page to look good. Everything in
-     this block is :global() because in edit mode (see the script above)
-     these same elements get rebuilt at runtime via innerHTML — Astro only
-     stamps its data-astro-cid scoping attribute onto elements present in
-     the static template at build time, so a scoped selector here would
-     stop matching the moment a section is added, reordered, or edited. */
-  :global(#custom-blocks-mount .custom-blocks),
-  :global(#custom-blocks-mount .grid-stack),
-  :global(#bottom-blocks-mount .custom-blocks),
-  :global(#bottom-blocks-mount .grid-stack) {
-    margin-top: 1.75rem;
-  }
-  /* 12-column grid so two sections can sit side by side — a section's own
-     --col-span (set by dragging its side resize handle in edit mode)
-     decides how many of the 12 columns it takes up, defaulting to all 12
-     (full width) when unset. grid-auto-flow just packs sections left to
-     right in their stored order, wrapping to a new row when one doesn't
-     fit — no explicit row/position bookkeeping needed. Applies in both
-     sidebars and the below-hours zone too, at whichever width that zone's
-     own column renders — same mechanics as the main column, just
-     narrower for a sidebar. */
-  :global(#custom-blocks-mount .custom-blocks),
-  :global(#sidebar-left-mount .custom-blocks),
-  :global(#sidebar-right-mount .custom-blocks),
-  :global(#bottom-blocks-mount .custom-blocks) {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 1.25rem;
-  }
-  @media (max-width: 640px) {
-    :global(#custom-blocks-mount .custom-blocks),
-    :global(#sidebar-left-mount .custom-blocks),
-    :global(#sidebar-right-mount .custom-blocks),
-    :global(#bottom-blocks-mount .custom-blocks) {
-      grid-template-columns: 1fr;
-    }
-    :global(.custom-block) {
-      grid-column: 1 / -1 !important;
-    }
-  }
-  :global(.custom-block) {
-    grid-column: span var(--col-span, 12);
-    min-width: 140px;
-    padding: 1rem 1.1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
-  }
-  /* Same floor inside the editor, where GridStack (not CSS Grid) is what
-     actually controls each section's width — belt-and-braces against a
-     section ever rendering pathologically narrow (text wrapping one
-     letter per line) if a resize handle gets dragged near MIN_COL_SPAN
-     on a narrower viewport than the editor was built for. */
-  :global(.grid-stack-item) {
-    min-width: 140px;
-  }
-  :global(.custom-block h2) {
-    margin: 0 0 0.4rem;
-    font-size: 1rem;
-    color: var(--navy);
-  }
-  :global(.custom-block p) {
-    margin: 0;
-    font-size: 0.9rem;
-    white-space: pre-line;
-  }
-  :global(.placeholder-text) {
-    color: var(--text-muted);
-    font-style: italic;
-  }
-  :global(.custom-block-banner) {
-    position: relative;
-    padding: 0;
-    overflow: hidden;
-    min-height: 220px;
-    display: flex;
-    align-items: flex-end;
-  }
-  :global(.custom-block-banner img) {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 0;
-  }
-  :global(.custom-block-banner .banner-overlay) {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    padding: 1.5rem;
-    background: linear-gradient(0deg, rgba(15, 23, 42, 0.65) 0%, rgba(15, 23, 42, 0) 100%);
-    color: #fff;
-  }
-  :global(.custom-block-banner .banner-overlay h2) {
-    margin: 0 0 0.35rem;
-    color: #fff;
-    font-size: 1.4rem;
-  }
-  :global(.custom-block-banner .banner-overlay p) {
-    margin: 0;
-    opacity: 0.95;
-  }
-  :global(.custom-block-side-image) {
-    display: flex;
-    gap: 1.25rem;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  :global(.custom-block-side-image.side-right) {
-    flex-direction: row-reverse;
-  }
-  :global(.custom-block-side-image img) {
-    flex: 1 1 220px;
-    max-width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: var(--radius);
-  }
-  :global(.custom-block-side-image .side-image-text) {
-    flex: 1 1 220px;
-  }
-  :global(.custom-block-side-image .side-image-text h3) {
-    margin: 0 0 0.4rem;
-    color: var(--navy);
-  }
-  :global(.custom-block-side-image .side-image-text p) {
-    margin: 0;
-    color: var(--text-muted);
-    white-space: pre-line;
-  }
-  :global(.custom-block-photo) {
-    padding: 0;
-    overflow: hidden;
-  }
-  :global(.custom-block-photo img) {
-    width: 100%;
-    height: 220px;
-    object-fit: cover;
-    display: block;
-  }
-  :global(.photo-placeholder) {
-    padding: 2rem 1rem;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-  }
-  :global(.photo-caption) {
-    margin: 0;
-    padding: 0.6rem 0.9rem;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-  }
-  :global(.custom-block-cta) {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  :global(.cta-text) {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--navy);
-  }
-  :global(.cta-btn) {
-    display: inline-block;
-  }
-  :global(.custom-block-testimonial) {
-    text-align: center;
-    font-style: italic;
-  }
-  :global(.testimonial-quote) {
-    margin: 0 0 0.5rem;
-    font-size: 1.05rem;
-    color: var(--text);
-  }
-  :global(.testimonial-author) {
-    margin: 0;
-    font-size: 0.85rem;
-    font-weight: 600;
-    font-style: normal;
-    color: var(--text-muted);
-  }
-  :global(.custom-block-divider) {
-    background: none;
-    border: none;
-    padding: 0.5rem 0;
-  }
-  :global(.custom-block-divider hr) {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 0;
-  }
-  /* --- Owner edit mode (business.id-scoped script above) --- */
-  .edit-page-toggle {
-    position: fixed;
-    right: 1.25rem;
-    bottom: 1.25rem;
-    z-index: 100;
-    padding: 0.7rem 1.1rem;
-    border: none;
-    border-radius: 999px;
-    background: var(--navy);
-    color: #fff;
-    font-weight: 600;
-    font-size: 0.88rem;
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
-  }
-  .design-bar {
-    position: sticky;
-    top: 0;
-    z-index: 90;
-    margin-bottom: 1.5rem;
-    padding: 0.75rem 1rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  }
-  .design-bar-row {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-bottom: 0.4rem;
-  }
-  .design-bar-row:last-child {
-    margin-bottom: 0;
-  }
-  .design-bar-row label {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.82rem;
-    font-weight: 600;
-  }
-  .design-bar-row input[type='color'] {
-    width: 1.8rem;
-    height: 1.8rem;
-    padding: 0;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: none;
-    cursor: pointer;
-  }
-  .design-bar-hint {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-  }
-  #design-status {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-  }
-  /* Everything below is :global() for the same reason as the
-     .custom-block rules above — built at runtime, never present at
-     Astro's build time. */
-  :global(.editable-block) {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    box-sizing: border-box;
-  }
-  :global(.editable-block > .custom-block) {
-    flex: 1 1 auto;
-    min-height: 0;
-  }
-  :global(.editable-block .custom-block-photo img),
-  :global(.editable-block .custom-block-side-image img) {
-    height: 100%;
-  }
-  :global(.editable-block .custom-block-side-image) {
-    align-items: stretch;
-  }
-  :global(.block-toolbar) {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.4rem;
-    margin-bottom: 0.5rem;
-    background: var(--bg-subtle);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-  }
-  :global(.block-toolbar select) {
-    font: inherit;
-    font-size: 0.8rem;
-    padding: 0.3rem 0.4rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text);
-  }
-  :global(.block-drag-handle) {
-    flex: 0 0 auto;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 1.8rem;
-    height: 1.8rem;
-    cursor: grab;
-    user-select: none;
-    color: var(--text-muted);
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-  }
-  :global(.block-drag-handle:active) {
-    cursor: grabbing;
-  }
-  :global(.remove-block) {
-    flex: 0 0 auto;
-    margin-left: auto;
-    width: 1.8rem;
-    height: 1.8rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
-    color: var(--text-muted);
-    cursor: pointer;
-  }
-  :global([contenteditable='true']) {
-    outline: 2px dashed transparent;
-    border-radius: 4px;
-    transition: outline-color 0.15s;
-  }
-  :global([contenteditable='true']:hover),
-  :global([contenteditable='true']:focus) {
-    outline-color: var(--accent);
-  }
-  :global([contenteditable='true']:empty::before) {
-    content: attr(data-placeholder);
-    color: var(--text-muted);
-    font-style: italic;
-    opacity: 0.8;
-  }
-  /* GridStack's own resize handles — hidden by default until hover
-     (.ui-resizable-handle{display:none!important} in its stylesheet) and,
-     for the plain 'e'/'w'/'s' handles used here, otherwise invisible even
-     when shown (only the diagonal corners get a default icon). autoHide
-     is off in the JS init; these give every item's width (e/w) and
-     height (s) handle a real, always-visible grip bar instead — every
-     item on the page, core info and added sections alike, can be resized
-     in both directions. */
-  :global(.grid-stack-item > .ui-resizable-s) {
-    height: 16px !important;
-    bottom: -8px !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-  }
-  :global(.grid-stack-item > .ui-resizable-s::after) {
-    content: '';
-    width: 48px;
-    height: 5px;
-    border-radius: 3px;
-    background: var(--accent);
-    opacity: 0.7;
-  }
-  :global(.grid-stack-item > .ui-resizable-e),
-  :global(.grid-stack-item > .ui-resizable-w) {
-    width: 16px !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-  }
-  :global(.grid-stack-item > .ui-resizable-e) {
-    right: -8px !important;
-  }
-  :global(.grid-stack-item > .ui-resizable-w) {
-    left: -8px !important;
-  }
-  :global(.grid-stack-item > .ui-resizable-e::after),
-  :global(.grid-stack-item > .ui-resizable-w::after) {
-    content: '';
-    width: 5px;
-    height: 48px;
-    border-radius: 3px;
-    background: var(--accent);
-    opacity: 0.7;
   }
   .located-at {
     display: inline-flex;
