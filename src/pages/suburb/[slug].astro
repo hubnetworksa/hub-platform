@@ -6,7 +6,7 @@ import SponsorSlot from '../../components/SponsorSlot.astro';
 import AdUnit from '../../components/AdUnit.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Icon from '../../components/Icon.astro';
-import { suburbs, businessesInSuburb, businessesInSuburbAndCategory, categoriesFor, categoryBySlug, FEATURED_TIER, type Business, isPaidListing, sponsorFor, averageRating, reviewCount } from '../../lib/data';
+import { suburbs, businessesInSuburb, businessesInSuburbAndCategory, categoriesFor, categoryBySlug, FEATURED_TIER, type Business, isPaidListing, sponsorFor, withoutSponsors, averageRating, reviewCount } from '../../lib/data';
 import { groupForSuburb } from '../../site-content';
 import { CATEGORY_GROUPS } from '../../lib/categoryGroups';
 import { synonymsFor, suburbSynonymsFor } from '../../lib/categorySynonyms';
@@ -19,7 +19,10 @@ export function getStaticPaths() {
 
 const { suburb } = Astro.props;
 const businesses = [...businessesInSuburb(suburb.id)].sort((a, b) => a.name.localeCompare(b.name));
-const featuredHere = businesses.filter((b) => b.subscription_tier >= FEATURED_TIER);
+// Sponsor card wins: the suburb sponsor's banner sits right above this
+// strip, so that business is left out of "Featured in this suburb".
+const suburbSponsor = sponsorFor('suburb_sponsor', suburb.slug);
+const featuredHere = withoutSponsors(businesses.filter((b) => b.subscription_tier >= FEATURED_TIER), suburbSponsor);
 
 const myGroup = groupForSuburb(suburb.slug);
 const nearbySuburbs = myGroup
@@ -75,7 +78,7 @@ const collectionJsonLd = businesses.length === 0
     });
 // No Google ads anywhere a paid listing or sponsor is shown (see
 // BaseLayout's noAds): this page shows one if this is true.
-const showsPaid = businesses.some(isPaidListing) || !!sponsorFor('suburb_sponsor', suburb.slug);
+const showsPaid = businesses.some(isPaidListing) || !!suburbSponsor;
 ---
 
 <BaseLayout noAds={showsPaid} title={suburb.name} description={description}>

@@ -2,8 +2,10 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { logActivity } from '../../_lib/activity-log';
 import { triggerRebuild, rebuildTarget } from '../../_lib/deploy-hook';
+import { clearBusinessSponsorSlots } from '../../_lib/sponsorships';
+import type { PayfastEnv } from '../../_lib/payfast';
 
-interface Env {
+interface Env extends PayfastEnv {
   DB: D1Database;
   GITHUB_DISPATCH_TOKEN?: string;
 }
@@ -31,6 +33,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   await db.prepare('DELETE FROM business_categories WHERE business_id = ?').bind(businessId).run();
   await db.prepare('DELETE FROM businesses WHERE id = ?').bind(businessId).run();
+
+  // Its sponsor spots must not stay sold (and billed) to a business that no
+  // longer exists: cancel them on PayFast and free the slots — see
+  // _lib/sponsorships.ts. Done after the DELETE so a delete that fails
+  // (e.g. a foreign key still pointing at the row) doesn't leave a business
+  // that's still live with its billing cancelled. The subscriptions rows
+  // themselves are kept as billing history, as they always were.
+  await clearBusinessSponsorSlots(context.env, db, businessId, business.name, `cleared — business deleted by admin (${user.email})`);
 
   await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
 

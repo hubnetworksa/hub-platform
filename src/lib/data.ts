@@ -245,6 +245,24 @@ export function sponsorFor(productType: Sponsorship['product_type'], target?: st
   return sponsorshipByKey.get(`${productType}:${target ?? ''}`);
 }
 
+/** Every live sponsorship this business holds, of any product type. A
+ *  business that sponsors anything is a paying customer, so its own page
+ *  never carries Google ads (see business/[slug].astro's showsPaid). */
+export function sponsorshipsHeldBy(business: { id: number }): Sponsorship[] {
+  return sponsorships.filter((s) => s.business_id === business.id);
+}
+
+/** Sponsor-card-wins rule. A business whose sponsor card a page renders
+ *  is left out of that page's OTHER paid placements (the Featured strip,
+ *  a pinned search result, "Featured in this suburb"...) so it never
+ *  appears twice as a paid spot on one page. It still appears once in
+ *  the ordinary list, like any listing. Pass every sponsorship whose
+ *  card the page shows; open (undefined) slots are ignored. */
+export function withoutSponsors<T extends { id: number }>(list: T[], ...sponsors: (Sponsorship | undefined)[]): T[] {
+  const ids = new Set(sponsors.filter((s): s is Sponsorship => !!s).map((s) => s.business_id));
+  return ids.size === 0 ? list : list.filter((b) => !ids.has(b.id));
+}
+
 const siteSettings = new Map((siteSettingsRaw as { key: string; value: string }[]).map((r) => [r.key, r.value]));
 
 /** Formatted Rand price for a site_settings key (e.g. "price_featured_cents"), or a dash if not yet configured. */

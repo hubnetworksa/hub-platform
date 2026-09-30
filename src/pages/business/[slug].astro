@@ -4,7 +4,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
 import PlanBadge from '../../components/PlanBadge.astro';
 import AdUnit from '../../components/AdUnit.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, websiteUrl, isPaidListing, reviewsFor, averageRating, reviewCount } from '../../lib/data';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, websiteUrl, isPaidListing, sponsorshipsHeldBy, reviewsFor, averageRating, reviewCount } from '../../lib/data';
 import { synonymsFor, locationSynonymsFor } from '../../lib/categorySynonyms';
 import { schemaTypeFor } from '../../lib/categorySchemaTypes';
 import Icon from '../../components/Icon.astro';
@@ -74,9 +74,12 @@ const numReviews = reviewCount(business);
 function shortDate(iso: string): string {
   return new Date(iso).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' });
 }
-// No Google ads when this business pays, or when a paid business is shown
-// in the "similar" list on this page.
-const showsPaid = isPaying || similar.some(isPaidListing);
+// No Google ads when this business pays — a plan OR any live sponsorship
+// (a Basic listing that sponsors a category/suburb/centre/guide/banner is
+// still a paying customer) — or when a paid business is shown in the
+// "similar" list on this page. Both AdUnit placements below use this same
+// gate, as does BaseLayout's noAds (which also drops the AdSense loader).
+const showsPaid = isPaying || sponsorshipsHeldBy(business).length > 0 || similar.some(isPaidListing);
 
 const keywords = [
   ...new Set(cats.flatMap((c) => [...synonymsFor(c.slug), ...locationSynonymsFor(c.name, site.cityLabel)])),

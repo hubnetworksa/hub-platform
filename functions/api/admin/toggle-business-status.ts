@@ -2,8 +2,10 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { triggerRebuild, rebuildTarget } from '../../_lib/deploy-hook';
 import { logActivity } from '../../_lib/activity-log';
+import { clearBusinessSponsorSlots } from '../../_lib/sponsorships';
+import type { PayfastEnv } from '../../_lib/payfast';
 
-interface Env {
+interface Env extends PayfastEnv {
   DB: D1Database;
   GITHUB_DISPATCH_TOKEN?: string;
 }
@@ -36,6 +38,15 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .bind(makePublic ? 'published' : 'rejected', businessId)
     .run();
   await logActivity(db, makePublic ? 'business_published' : 'business_hidden', business?.name ?? null, `By admin (${user.email}).`);
+
+  // A hidden business can't keep the exclusive sponsor spots it holds — the
+  // static build only renders published businesses, so the spot would show
+  // nobody while still being "sold" and blocking every other buyer. Its
+  // PayFast billing is cancelled and the rows go to 'cleared' (see
+  // _lib/sponsorships.ts). One-way: publishing it again does NOT bring the
+  // spots back — they have to be bought (or comped) afresh. The tier plan
+  // is untouched; it's the business's own listing, not a shared spot.
+  if (!makePublic) await clearBusinessSponsorSlots(context.env, db, businessId, business?.name ?? null, `cleared — business hidden by admin (${user.email})`);
 
   await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
 

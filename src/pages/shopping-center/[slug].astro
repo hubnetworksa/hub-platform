@@ -4,7 +4,7 @@ import BusinessCard from '../../components/BusinessCard.astro';
 import SponsorBanner from '../../components/SponsorBanner.astro';
 import StatTile from '../../components/StatTile.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { shoppingCenters, suburbs, businessesInShoppingCenter, categoriesFor, FEATURED_TIER, sponsorFor, priceRand, isPaidListing } from '../../lib/data';
+import { shoppingCenters, suburbs, businessesInShoppingCenter, categoriesFor, FEATURED_TIER, sponsorFor, withoutSponsors, priceRand, isPaidListing } from '../../lib/data';
 import { collectionPageJsonLd } from '../../lib/seo';
 import { synonymsFor } from '../../lib/categorySynonyms';
 import site from '../../site';
@@ -42,12 +42,15 @@ const tenantsJsonLd = collectionPageJsonLd({
   items: businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` })),
 });
 
+const centreSponsor = sponsorFor('centre_sponsor', center.slug);
 const featuredStores = businesses.filter((b) => b.subscription_tier >= FEATURED_TIER);
-const pinned = featuredStores[0];
+// Sponsor card wins: the centre sponsor's banner is at the top of the page,
+// so it is never also the pinned store (it still sits in the ordinary
+// paid-first list below, once, like any tenant).
+const pinned = withoutSponsors(featuredStores, centreSponsor)[0];
 // Paid stores first (Featured, then Verified), then alphabetical.
 const rest = businesses.filter((b) => b !== pinned).sort((a, b) => (b.subscription_tier ?? 0) - (a.subscription_tier ?? 0) || a.name.localeCompare(b.name));
 const heroSrc = site.sectionBannerImage;
-const centreSponsor = sponsorFor('centre_sponsor', center.slug);
 import { sponsorHref } from '../../lib/sponsor-link';
 // No Google ads anywhere a paid listing or sponsor is shown (see
 // BaseLayout's noAds): this page shows one if this is true.

@@ -43,9 +43,15 @@ const jsonLd = collectionPageJsonLd({
   items: businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` })),
   keywords: synonyms,
 });
+const suburbSponsor = sponsorFor('suburb_sponsor', suburb.slug);
+const categorySponsor = sponsorFor('category_sponsor', category.slug);
+// One business holding both slots gets ONE banner (naming both), never two
+// back to back. The card list below is the ordinary listing, so a sponsor
+// still appears there once like any business.
+const sameSponsor = !!suburbSponsor && !!categorySponsor && suburbSponsor.business_id === categorySponsor.business_id;
 // No Google ads anywhere a paid listing or sponsor is shown (see
 // BaseLayout's noAds): this page shows one if this is true.
-const showsPaid = businesses.some(isPaidListing) || !!sponsorFor('category_sponsor', category.slug) || !!sponsorFor('suburb_sponsor', suburb.slug);
+const showsPaid = businesses.some(isPaidListing) || !!categorySponsor || !!suburbSponsor;
 ---
 
 <BaseLayout noAds={showsPaid}
@@ -76,8 +82,14 @@ const showsPaid = businesses.some(isPaidListing) || !!sponsorFor('category_spons
     <section style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
       <a href={`/suburb/${suburb.slug}/`} style="display:inline-block;padding:9px 14px;border:2px solid var(--border);border-radius:9px;font-size:13px;font-weight:800;color:var(--navy);text-decoration:none">See all businesses in {suburb.name} →</a>
       <div style="margin-top:18px">
-        <SponsorBanner productType="suburb_sponsor" target={suburb.slug} context={suburb.name} />
-        <SponsorBanner productType="category_sponsor" target={category.slug} context={`${category.name} in ${site.cityLabel}`} />
+        {sameSponsor ? (
+          <SponsorBanner productType="suburb_sponsor" target={suburb.slug} context={`${category.name} and ${suburb.name}`} />
+        ) : (
+          <>
+            <SponsorBanner productType="suburb_sponsor" target={suburb.slug} context={suburb.name} />
+            <SponsorBanner productType="category_sponsor" target={category.slug} context={`${category.name} in ${site.cityLabel}`} />
+          </>
+        )}
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px">
         {businesses.map((business) => <BusinessCard business={business} showSuburb={false} />)}

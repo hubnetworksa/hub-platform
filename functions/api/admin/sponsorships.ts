@@ -1,9 +1,9 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { isSlotTaken, isSponsorProductType } from '../../_lib/pricing';
-import { cancelPayfastSubscription, payfastConfigured, type PayfastEnv } from '../../_lib/payfast';
+import type { PayfastEnv } from '../../_lib/payfast';
+import { clearSponsorSubscription } from '../../_lib/sponsorships';
 import { requestRebuild } from '../../_lib/deploy-hook';
-import { logActivity } from '../../_lib/activity-log';
 
 interface Env extends PayfastEnv {
   DB: D1Database;
@@ -58,14 +58,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       .bind(id)
       .first<{ id: number; status: string; payfast_token: string | null; product_type: string; product_target: string | null }>();
     if (!sub) return json({ ok: false, error: 'Sponsorship not found.' }, 404);
-    // Clearing a slot someone is paying for has to stop their billing too.
-    let warning: string | null = null;
-    if (sub.status === 'active' && sub.payfast_token && payfastConfigured(context.env)) {
-      const r = await cancelPayfastSubscription(context.env, sub.payfast_token).catch(() => ({ ok: false, status: 0 }));
-      if (!r.ok) warning = `PayFast refused the cancel (HTTP ${r.status}) — cancel it in the PayFast dashboard.`;
-    }
-    await db.prepare(`UPDATE subscriptions SET status = 'expired', current_period_end = datetime('now') WHERE id = ?`).bind(id).run();
-    await logActivity(db, 'sponsorship_cleared', null, `${sub.product_type} (${sub.product_target ?? 'n/a'}) cleared by admin.${warning ? ' ' + warning : ''}`);
+    // Shared with the hide/delete-business paths; marks the row 'cleared'
+    // (terminal — a late renewal ITN can't revive it the way it could an
+    // 'expired' row) after stopping PayFast billing.
+    const warning = await clearSponsorSubscription(context.env, db, sub, null, 'cleared by admin');
     await requestRebuild(context.env, 'sponsorship cleared');
     return json({ ok: true, warning });
   }

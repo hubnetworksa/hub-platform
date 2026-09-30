@@ -5,7 +5,7 @@ import SearchBox from '../components/SearchBox.astro';
 import Icon from '../components/Icon.astro';
 import StatTile from '../components/StatTile.astro';
 import PlanBadge from '../components/PlanBadge.astro';
-import { sponsorFor, eventsSorted, eventDateParts } from '../lib/data';
+import { sponsorFor, withoutSponsors, eventsSorted, eventDateParts } from '../lib/data';
 import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory, suburbFor, categoriesFor, FEATURED_TIER, newsSorted, newsDateShort, latestFuel, fuelPeriodLabel } from '../lib/data';
 import { CATEGORY_GROUPS } from '../lib/categoryGroups';
 import site from '../site';
@@ -30,7 +30,10 @@ const popularCategories = [...categories].sort((a, b) => businessesInCategory(b.
 // Every Featured business is rendered (capped for page weight) and the
 // browser shows a random three per visit, so it really is a rotation and
 // no Featured customer is permanently stuck below the fold.
-const featuredBusinesses = businesses.filter((b) => b.subscription_tier >= FEATURED_TIER).slice(0, 24);
+// Sponsor card wins: the homepage-banner sponsor already has its own strip
+// under the hero, so it is left out of the Featured rotation here.
+const bannerSponsor = sponsorFor('homepage_banner');
+const featuredBusinesses = withoutSponsors(businesses.filter((b) => b.subscription_tier >= FEATURED_TIER), bannerSponsor).slice(0, 24);
 
 // Paying to feature an event promises a spot on the homepage as well as the
 // top of /events/ — this is that spot. Featured upcoming events only; the
@@ -51,7 +54,6 @@ const CITY_COORDS: Record<string, [number, number]> = {
 };
 const cityCoords = CITY_COORDS[site.slug];
 const homeNews = newsSorted().slice(0, 4);
-const bannerSponsor = sponsorFor('homepage_banner');
 const fuel = latestFuel(site.slug);
 const rand = (cents: number) => `R${(cents / 100).toFixed(2)}`;
 

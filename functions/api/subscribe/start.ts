@@ -5,6 +5,7 @@ import { isValidSponsorTarget } from '../../_lib/sponsor-targets';
 import { signFields, buildCheckoutParams, payfastConfigured, type PayfastEnv } from '../../_lib/payfast';
 import {
   TIER_NAMES,
+  SLOT_HELD_SQL,
   isSlotTaken,
   isSponsorProductType,
   sponsorPriceCents,
@@ -72,7 +73,23 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if (!(await isValidSponsorTarget(db, context.env.SITE, productType, productTarget))) {
       return json({ ok: false, error: 'That sponsorship spot does not exist.' }, 400);
     }
-    if (await isSlotTaken(db, productType, productTarget)) {
+    // A business that already holds this spot may switch it between monthly
+    // and yearly: that's a fresh checkout for the same slot, and notify.ts
+    // cancels the old row when the new one is paid. Its own row therefore
+    // mustn't count as "sold" — but only for a period switch; the same
+    // period again would just be paying twice for one spot.
+    const own = await db
+      .prepare(
+        `SELECT billing_period FROM subscriptions
+         WHERE business_id = ? AND product_type = ? AND product_target IS ? AND ${SLOT_HELD_SQL}
+         ORDER BY id DESC LIMIT 1`
+      )
+      .bind(businessId, productType, productTarget)
+      .first<{ billing_period: string | null }>();
+    if (own && parseBillingPeriod(own.billing_period) === billingPeriod) {
+      return json({ ok: false, error: 'You already sponsor this spot on this billing period.' }, 400);
+    }
+    if (await isSlotTaken(db, productType, productTarget, undefined, own ? businessId : undefined)) {
       return json({ ok: false, error: 'That spot is already sold — check back later.' }, 409);
     }
     amountCents = await sponsorPriceCents(db, productType, billingPeriod);
@@ -86,7 +103,17 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       .bind(businessId)
       .first<{ subscription_tier: number; subscription_status: string | null }>();
     if (current?.subscription_status === 'active' && current.subscription_tier >= tier) {
-      return json({ ok: false, error: 'You already have this plan or a higher one. To move down, cancel and choose again once it ends.' }, 400);
+      // Same plan on the other billing period is allowed: it's a fresh
+      // checkout whose activation replaces (cancels) the current row — see
+      // notify.ts. A comped plan has no live row, so it still gets refused.
+      const live = await db
+        .prepare(`SELECT billing_period FROM subscriptions WHERE business_id = ? AND product_type = 'tier' AND status = 'active' ORDER BY id DESC LIMIT 1`)
+        .bind(businessId)
+        .first<{ billing_period: string | null }>();
+      const periodSwitch = current.subscription_tier === tier && !!live && parseBillingPeriod(live.billing_period) !== billingPeriod;
+      if (!periodSwitch) {
+        return json({ ok: false, error: 'You already have this plan or a higher one. To move down, cancel and choose again once it ends.' }, 400);
+      }
     }
     amountCents = await tierPriceCents(db, tier, billingPeriod);
     itemName = `${TIER_NAMES[tier] ?? 'Listing'} listing`;

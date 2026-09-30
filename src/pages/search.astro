@@ -515,7 +515,12 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
       renderSponsorSlot('');
       return;
     }
-    const featured = results.find((r) => r.t >= 2);
+    // Sponsor card wins: the sponsored-category box beside the results is
+    // rendered for the top result's category, so that sponsor is never also
+    // the pinned Featured result (it stays in the ordinary rows once).
+    const topCategory = results.find((r) => r.c)?.c ?? '';
+    const sponsorSlug = topCategory ? searchMeta.sp?.[topCategory]?.s : undefined;
+    const featured = results.find((r) => r.t >= 2 && r.s !== sponsorSlug);
     const rest = results.filter((r) => r !== featured).slice(0, 40);
     // A real AdSense in-feed unit after the fifth result — only when this
     // site has a publisher ID and names a slot for it; otherwise nothing at
@@ -537,7 +542,6 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
       (w.adsbygoogle = w.adsbygoogle || []).push({});
     }
 
-    const topCategory = results.find((r) => r.c)?.c ?? '';
     renderSponsorSlot(topCategory);
 
     // Real numbers behind the owner dashboard's "Search appearances" tile

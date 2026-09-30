@@ -242,43 +242,49 @@ async function handleBusinessPayment(
   // pays — start.ts's isSlotTaken check can only see what's been bought so
   // far. Whoever's ITN lands second must not overwrite the first: don't
   // activate, flag it loudly, and still answer 200 so PayFast stops
-  // retrying (the money is theirs, so a refund is owed by hand).
+  // retrying (the money is theirs, so a refund is owed by hand). The
+  // business's own rows for this slot are excluded: a monthly<->yearly
+  // switch of a spot it already holds is replaced just below, not refused.
   if (subscription.product_type !== 'tier' && isSponsorProductType(subscription.product_type)) {
-    if (await isSlotTaken(db, subscription.product_type, subscription.product_target, subscription.id)) {
-      const label = `${subscription.product_type} (${subscription.product_target ?? 'n/a'})`;
-      await logActivity(
-        db,
-        'sponsorship_slot_conflict',
-        business?.name ?? null,
-        `Paid for ${label} but the slot was already sold — payment ${mPaymentId} needs a refund.`
-      );
-      const site = getSite(env.SITE);
-      await sendEmail(env, {
-        from: `${site.siteName} <${site.contactEmail}>`,
-        to: site.contactEmail,
-        subject: `Refund owed — ${label} was already sold`,
-        text:
-          `${business?.name ?? `Business #${businessId}`} paid for ${label}, but that slot was already taken by the time PayFast confirmed the payment.\n\n` +
-          `The sponsorship has NOT been activated. Refund this payment manually in the PayFast dashboard.\n\n` +
-          `m_payment_id: ${mPaymentId}\npf_payment_id: ${posted.pf_payment_id ?? 'n/a'}\nAmount: R${postedAmount.toFixed(2)}\n`,
-      });
-      return new Response('OK', { status: 200 });
+    if (await isSlotTaken(db, subscription.product_type, subscription.product_target, subscription.id, businessId)) {
+      return refuseTakenSlot(env, db, subscription, business?.name ?? null, posted, postedAmount);
     }
   }
+
+  // An upgrade, re-subscribe or monthly<->yearly switch replaces any earlier
+  // row of the same product this business holds — the older tier plan, or
+  // its own older row for this same sponsor spot. That one is only stopped
+  // now, once the new one is actually paid — cancelling at checkout would
+  // leave an owner who abandons PayFast with no plan at all. Without this
+  // PayFast keeps billing both rows every period. It has to happen BEFORE
+  // the activation below: the database allows only one active row per
+  // sponsor spot (idx_subscriptions_one_active_slot), so activating first
+  // would collide with the business's own old row.
+  await cancelReplacedRows(env, db, subscription, business?.name ?? null);
 
   // current_period_end is written in SQLite's own datetime() format so
   // every row is comparable without reformatting (admin comps already write
   // it this way; see pricing.ts's SLOT_HELD_SQL). The `status = 'pending'`
   // guard makes this the point where two simultaneous ITNs for the same
   // payment resolve — only one can win.
-  const activated = await db
-    .prepare(
-      `UPDATE subscriptions SET status = 'active', payfast_token = ?, started_at = COALESCE(started_at, datetime('now')),
-              current_period_end = datetime('now', ?)
-       WHERE id = ? AND status = 'pending'`
-    )
-    .bind(posted.token ?? null, interval, subscription.id)
-    .run();
+  let activated;
+  try {
+    activated = await db
+      .prepare(
+        `UPDATE subscriptions SET status = 'active', payfast_token = ?, started_at = COALESCE(started_at, datetime('now')),
+                current_period_end = datetime('now', ?)
+         WHERE id = ? AND status = 'pending'`
+      )
+      .bind(posted.token ?? null, interval, subscription.id)
+      .run();
+  } catch (err) {
+    // The unique index is the last line of defence for a race the
+    // isSlotTaken check above can't see (two ITNs for one spot in the same
+    // instant, a comp landing between the check and this UPDATE). Same
+    // outcome as the check catching it: not activated, refund flagged, 200.
+    if (!isUniqueViolation(err)) throw err;
+    return refuseTakenSlot(env, db, subscription, business?.name ?? null, posted, postedAmount);
+  }
   if (activated.meta.changes !== 1) return new Response('OK', { status: 200 }); // concurrent duplicate
 
   // Only a tier purchase changes the business's own badge/perks — a
@@ -291,30 +297,6 @@ async function handleBusinessPayment(
       )
       .bind(subscription.tier, interval, businessId)
       .run();
-
-    // An upgrade (or re-subscribe) replaces any earlier tier plan. That one
-    // is only stopped now, once the new one is actually paid — cancelling at
-    // checkout would leave an owner who abandons PayFast with no plan at all.
-    // Without this PayFast keeps billing both plans every month.
-    const older = await db
-      .prepare(
-        `SELECT id, payfast_token, status FROM subscriptions
-         WHERE business_id = ? AND product_type = 'tier' AND id != ? AND status IN ('active', 'cancelled')`
-      )
-      .bind(businessId, subscription.id)
-      .all<{ id: number; payfast_token: string | null; status: string }>();
-    for (const old of older.results) {
-      let note = 'replaced by a new plan';
-      if (old.status === 'active' && old.payfast_token && payfastConfigured(env)) {
-        const r = await cancelPayfastSubscription(env, old.payfast_token).catch(() => ({ ok: false, status: 0 }));
-        if (!r.ok) note = `replaced by a new plan, but PayFast refused the cancel (HTTP ${r.status}) — cancel token ${old.payfast_token} by hand`;
-      }
-      await db
-        .prepare(`UPDATE subscriptions SET status = 'cancelled', cancelled_at = COALESCE(cancelled_at, datetime('now')), current_period_end = datetime('now') WHERE id = ?`)
-        .bind(old.id)
-        .run();
-      await logActivity(db, 'subscription_replaced', business?.name ?? null, `Old tier subscription #${old.id} ${note}.`);
-    }
   }
 
   // OR IGNORE against the unique index on pf_payment_id: a retried ITN that
@@ -348,6 +330,72 @@ interface SubscriptionRow {
   billing_period: string | null;
 }
 
+// D1 surfaces SQLite's constraint errors as an Error whose message contains
+// the SQLite text ("D1_ERROR: UNIQUE constraint failed: subscriptions...").
+function isUniqueViolation(err: unknown): boolean {
+  return /UNIQUE constraint failed/i.test(err instanceof Error ? err.message : String(err));
+}
+
+// The "slot already sold" outcome for a first payment: nothing activated,
+// admin told exactly which payment to refund, 200 so PayFast stops retrying.
+async function refuseTakenSlot(
+  env: Env,
+  db: D1Database,
+  subscription: SubscriptionRow,
+  businessName: string | null,
+  posted: Record<string, string>,
+  postedAmount: number
+): Promise<Response> {
+  const mPaymentId = posted.m_payment_id;
+  const label = `${subscription.product_type} (${subscription.product_target ?? 'n/a'})`;
+  await logActivity(
+    db,
+    'sponsorship_slot_conflict',
+    businessName,
+    `Paid for ${label} but the slot was already sold — payment ${mPaymentId} needs a refund.`
+  );
+  const site = getSite(env.SITE);
+  await sendEmail(env, {
+    from: `${site.siteName} <${site.contactEmail}>`,
+    to: site.contactEmail,
+    subject: `Refund owed — ${label} was already sold`,
+    text:
+      `${businessName ?? `Business #${subscription.business_id}`} paid for ${label}, but that slot was already taken by the time PayFast confirmed the payment.\n\n` +
+      `The sponsorship has NOT been activated. Refund this payment manually in the PayFast dashboard.\n\n` +
+      `m_payment_id: ${mPaymentId}\npf_payment_id: ${posted.pf_payment_id ?? 'n/a'}\nAmount: R${postedAmount.toFixed(2)}\n`,
+  });
+  return new Response('OK', { status: 200 });
+}
+
+// Cancels (PayFast + status) every other live row this business holds for
+// the same product — same product_type AND same product_target, so a tier
+// upgrade replaces the old tier plan and a period switch of one sponsor
+// spot replaces that spot's old row, but a business's other spots are left
+// alone. 'cancelled' rows still running out their paid period are cut short
+// too: the new row takes over the slot from now.
+async function cancelReplacedRows(env: Env, db: D1Database, subscription: SubscriptionRow, businessName: string | null): Promise<void> {
+  const older = await db
+    .prepare(
+      `SELECT id, payfast_token, status FROM subscriptions
+       WHERE business_id = ? AND product_type = ? AND product_target IS ? AND id != ? AND status IN ('active', 'cancelled')`
+    )
+    .bind(subscription.business_id, subscription.product_type, subscription.product_target, subscription.id)
+    .all<{ id: number; payfast_token: string | null; status: string }>();
+  const what = subscription.product_type === 'tier' ? 'plan' : 'sponsorship';
+  for (const old of older.results) {
+    let note = `replaced by a new ${what}`;
+    if (old.status === 'active' && old.payfast_token && payfastConfigured(env)) {
+      const r = await cancelPayfastSubscription(env, old.payfast_token).catch(() => ({ ok: false, status: 0 }));
+      if (!r.ok) note = `replaced by a new ${what}, but PayFast refused the cancel (HTTP ${r.status}) — cancel token ${old.payfast_token} by hand`;
+    }
+    await db
+      .prepare(`UPDATE subscriptions SET status = 'cancelled', cancelled_at = COALESCE(cancelled_at, datetime('now')), current_period_end = datetime('now') WHERE id = ?`)
+      .bind(old.id)
+      .run();
+    await logActivity(db, 'subscription_replaced', businessName, `Old ${subscription.product_type} subscription #${old.id} ${note}.`);
+  }
+}
+
 // A recurring charge on a subscription that's already live: push the paid
 // period out one billing period (a month, or a year for a yearly row) from
 // the end of what's already paid (a charge that lands a little late, inside
@@ -368,6 +416,17 @@ async function recordRenewal(
     .run();
   if (paymentInsert.meta.changes !== 1) return new Response('OK', { status: 200 }); // concurrent duplicate
 
+  // A row an admin cleared, or whose business was hidden/deleted, is gone
+  // for good (see _lib/sponsorships.ts): its PayFast billing was cancelled,
+  // so a charge still arriving means that cancel failed. It must not come
+  // back — the spot may well be someone else's now — so the money is owed
+  // back instead. (An 'expired' row is different: that's a lapsed card
+  // coming good, and is revived below.)
+  if (subscription.status === 'cleared') {
+    await logActivity(db, 'renewal_refund_needed', businessName, `Renewal charge for a ${subscription.product_type} slot that was cleared — its PayFast billing should have been cancelled; cancel it and refund pf_payment_id ${posted.pf_payment_id ?? '?'} by hand.`);
+    return new Response('OK', { status: 200 });
+  }
+
   // A charge that lands after the expiry sweep already lapsed the row (late
   // ITN, or PayFast retrying a failed card) is still money received, so the
   // subscription comes back — unless it's an exclusive slot someone else
@@ -380,14 +439,23 @@ async function recordRenewal(
   }
 
   const extended = `datetime(CASE WHEN datetime(current_period_end) > datetime('now', '-3 days') THEN current_period_end ELSE 'now' END, ?)`;
-  await db
-    .prepare(
-      `UPDATE subscriptions SET current_period_end = ${extended}, payfast_token = COALESCE(payfast_token, ?),
-         status = CASE WHEN status = 'expired' THEN 'active' ELSE status END
-       WHERE id = ?`
-    )
-    .bind(periodInterval(subscription.billing_period), posted.token ?? null, subscription.id)
-    .run();
+  try {
+    await db
+      .prepare(
+        `UPDATE subscriptions SET current_period_end = ${extended}, payfast_token = COALESCE(payfast_token, ?),
+           status = CASE WHEN status = 'expired' THEN 'active' ELSE status END
+         WHERE id = ?`
+      )
+      .bind(periodInterval(subscription.billing_period), posted.token ?? null, subscription.id)
+      .run();
+  } catch (err) {
+    // Reviving an expired sponsor row can lose the same race as a first
+    // activation: the isSlotTaken check passed, but another row for the spot
+    // went active before this UPDATE and the unique index refused it.
+    if (!isUniqueViolation(err)) throw err;
+    await logActivity(db, 'renewal_refund_needed', businessName, `Renewal charge for a lapsed ${subscription.product_type} slot that is now held by someone else — refund pf_payment_id ${posted.pf_payment_id ?? '?'} by hand.`);
+    return new Response('OK', { status: 200 });
+  }
 
   if (subscription.product_type === 'tier') {
     await db

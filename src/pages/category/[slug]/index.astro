@@ -4,7 +4,7 @@ import BusinessCard from '../../../components/BusinessCard.astro';
 import SponsorBanner from '../../../components/SponsorBanner.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import SponsorSlot from '../../../components/SponsorSlot.astro';
-import { categories, businessesInCategory, suburbFor, type Business, byPlanThenName, FEATURED_TIER, isPaidListing, sponsorFor } from '../../../lib/data';
+import { categories, businessesInCategory, suburbFor, type Business, byPlanThenName, FEATURED_TIER, isPaidListing, sponsorFor, withoutSponsors } from '../../../lib/data';
 import { groupForCategory } from '../../../lib/categoryGroups';
 import { synonymsFor, locationSynonymsFor } from '../../../lib/categorySynonyms';
 import { collectionPageJsonLd } from '../../../lib/seo';
@@ -28,7 +28,11 @@ for (const g of bySuburb.values()) g.businesses.sort(byPlanThenName);
 const suburbGroups = [...bySuburb.values()].sort((a, b) => b.businesses.length - a.businesses.length);
 // "Top of your category page" for the Featured plan: every Featured
 // business in this category, above the suburb-by-suburb list.
-const featuredInCategory = businesses.filter((b) => b.subscription_tier >= FEATURED_TIER).sort(byPlanThenName);
+// Sponsor card wins: the category sponsor's banner is already at the top,
+// so that business is left out of the Featured strip here (it still shows
+// once in its suburb group below, like any listing).
+const categorySponsor = sponsorFor('category_sponsor', category.slug);
+const featuredInCategory = withoutSponsors(businesses.filter((b) => b.subscription_tier >= FEATURED_TIER), categorySponsor).sort(byPlanThenName);
 const group = groupForCategory(category.slug);
 const isEmpty = businesses.length === 0;
 
@@ -55,7 +59,7 @@ const jsonLd = isEmpty
     });
 // No Google ads anywhere a paid listing or sponsor is shown (see
 // BaseLayout's noAds): this page shows one if this is true.
-const showsPaid = businesses.some(isPaidListing) || !!sponsorFor('category_sponsor', category.slug);
+const showsPaid = businesses.some(isPaidListing) || !!categorySponsor;
 ---
 
 <BaseLayout noAds={showsPaid}

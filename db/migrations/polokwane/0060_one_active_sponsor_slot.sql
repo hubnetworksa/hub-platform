@@ -1,0 +1,32 @@
+-- Exclusive sponsor spots are "sold one at a time", but until now that was
+-- only enforced in application code (pricing.ts's isSlotTaken, checked at
+-- checkout and again just before activation). Two ITNs for the same spot
+-- landing at the same moment can both pass that check and both activate —
+-- and a comp/clear/renewal that races a purchase has the same hole. This
+-- partial unique index makes the database itself refuse a second ACTIVE
+-- row for the same product_type + product_target; notify.ts catches the
+-- constraint failure and routes it down its existing "slot already sold →
+-- refund" path.
+--
+-- COALESCE(product_target, '') because homepage_banner and tourism_sponsor
+-- rows carry a NULL target, and NULLs are never equal to each other in a
+-- unique index — without it two active banners would slip through.
+-- Tier plans (product_type = 'tier') are not exclusive and are excluded.
+-- Only status = 'active' is covered: pending checkouts, cancelled rows still
+-- running out their paid period, expired rows and the new terminal
+-- 'cleared' status (see below) can pile up freely, as they always could.
+--
+-- subscriptions.status now also has a terminal value, 'cleared': set when
+-- an admin clears a sponsor spot (admin/sponsorships.ts) or a business
+-- holding one is hidden or deleted (functions/_lib/sponsorships.ts). Unlike
+-- 'expired' it is never revived by a late renewal ITN — notify.ts refuses
+-- and flags the charge for a refund instead.
+--
+-- This CREATE fails if the table already holds two active rows for one spot
+-- — check for duplicates before applying to a live database:
+--   SELECT product_type, COALESCE(product_target, ''), COUNT(*) FROM subscriptions
+--   WHERE status = 'active' AND product_type != 'tier'
+--   GROUP BY 1, 2 HAVING COUNT(*) > 1;
+CREATE UNIQUE INDEX idx_subscriptions_one_active_slot
+  ON subscriptions(product_type, COALESCE(product_target, ''))
+  WHERE status = 'active' AND product_type != 'tier';

@@ -136,22 +136,36 @@ export async function allPrices(db: D1Database): Promise<Record<string, number>>
 // passes). current_period_end exists in both ISO ("…T…Z", written by
 // notify.ts) and SQLite ("YYYY-MM-DD HH:MM:SS", written by admin comps)
 // formats, so every comparison has to go through datetime().
+//
+// subscriptions.status values: 'pending' (checkout started, unpaid),
+// 'active', 'cancelled' (billing stopped, paid period still running),
+// 'expired' (period over — a late renewal charge revives it) and 'cleared'
+// (admin took the spot away, or the business was hidden/deleted — terminal,
+// never revived; see _lib/sponsorships.ts). Only the first two hold a slot.
+// The database backs this up: a partial unique index
+// (idx_subscriptions_one_active_slot) allows at most one 'active' row per
+// sponsor spot, so a race that slips past this check fails loudly there.
 export const SLOT_HELD_SQL = `(status = 'active' OR (status = 'cancelled' AND current_period_end IS NOT NULL AND datetime(current_period_end) > datetime('now')))`;
 
 /** "Sold one at a time" — true if a live subscription already holds this
  *  exact slot. `excludeSubscriptionId` skips one row (the caller's own
- *  subscription, when re-checking just before activating it). */
+ *  subscription, when re-checking just before activating it).
+ *  `excludeBusinessId` skips every row of one business: an owner switching
+ *  the same spot between monthly and yearly is buying a slot they already
+ *  hold, and their old row is cancelled when the new one activates (see
+ *  notify.ts) — it must not count as "taken" by someone else. */
 export async function isSlotTaken(
   db: D1Database,
   productType: SponsorProductType,
   productTarget: string | null,
-  excludeSubscriptionId?: number
+  excludeSubscriptionId?: number,
+  excludeBusinessId?: number
 ): Promise<boolean> {
   const row = await db
     .prepare(
-      `SELECT 1 FROM subscriptions WHERE product_type = ? AND product_target IS ? AND ${SLOT_HELD_SQL} AND id != ? LIMIT 1`
+      `SELECT 1 FROM subscriptions WHERE product_type = ? AND product_target IS ? AND ${SLOT_HELD_SQL} AND id != ? AND business_id != ? LIMIT 1`
     )
-    .bind(productType, productTarget, excludeSubscriptionId ?? -1)
+    .bind(productType, productTarget, excludeSubscriptionId ?? -1, excludeBusinessId ?? -1)
     .first();
   return !!row;
 }
