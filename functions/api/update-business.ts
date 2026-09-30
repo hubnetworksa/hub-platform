@@ -74,24 +74,35 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .bind(businessId)
     .all<{ product_type: string; product_target: string | null; current_period_end: string | null; status: string; billing_period: string }>();
 
+  // Dashboard stats are a paid-plan feature (owner decision 2026-09-30): a
+  // free (Basic) listing gets `stats: null` and no search terms, and the
+  // dashboard shows the tiles locked with an upgrade prompt. A cancelled
+  // plan keeps its stats until the paid period runs out, like every other
+  // perk. Enforced here, not just hidden client-side, so the numbers never
+  // leave the server for a free listing.
+  const statsUnlocked = (business.subscription_status === 'active' || business.subscription_status === 'cancelled') && business.subscription_tier >= 1;
+
   // Real page-view/click counts (see functions/api/track-view.ts and the
   // business_stats migration) over the last 30 days. has_any distinguishes
   // "genuinely zero traffic in the window" from "tracking only just went
   // live for this business" — the Overview tab shows "No data yet" only
   // for the latter, never a fabricated number for either.
-  const statsRows = await db
-    .prepare(`SELECT event, COUNT(*) AS n FROM business_stats WHERE business_id = ? AND created_at > datetime('now', '-30 days') GROUP BY event`)
-    .bind(businessId)
-    .all<{ event: string; n: number }>();
-  const hasAnyStats = await db.prepare('SELECT 1 FROM business_stats WHERE business_id = ? LIMIT 1').bind(businessId).first();
-  const statsByEvent = Object.fromEntries(statsRows.results.map((r) => [r.event, r.n]));
-  const stats = {
-    has_any: !!hasAnyStats,
-    views: statsByEvent.view ?? 0,
-    phone_clicks: statsByEvent.phone_click ?? 0,
-    website_clicks: statsByEvent.website_click ?? 0,
-    search_appearances: statsByEvent.search_appearance ?? 0,
-  };
+  let stats: { has_any: boolean; views: number; phone_clicks: number; website_clicks: number; search_appearances: number } | null = null;
+  if (statsUnlocked) {
+    const statsRows = await db
+      .prepare(`SELECT event, COUNT(*) AS n FROM business_stats WHERE business_id = ? AND created_at > datetime('now', '-30 days') GROUP BY event`)
+      .bind(businessId)
+      .all<{ event: string; n: number }>();
+    const hasAnyStats = await db.prepare('SELECT 1 FROM business_stats WHERE business_id = ? LIMIT 1').bind(businessId).first();
+    const statsByEvent = Object.fromEntries(statsRows.results.map((r) => [r.event, r.n]));
+    stats = {
+      has_any: !!hasAnyStats,
+      views: statsByEvent.view ?? 0,
+      phone_clicks: statsByEvent.phone_click ?? 0,
+      website_clicks: statsByEvent.website_click ?? 0,
+      search_appearances: statsByEvent.search_appearance ?? 0,
+    };
+  }
 
   // Real enquiries sent through this business's own page (see
   // functions/api/enquiry.ts, which already saves every one — the owner
@@ -116,7 +127,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   // search_terms migration and track-view.ts). Tolerates a database the
   // migration hasn't reached yet — the rest of the dashboard must still load.
   let searchTerms: { query: string; n: number }[] = [];
-  try {
+  if (statsUnlocked) try {
     const terms = await db
       .prepare(
         `SELECT query, COUNT(*) AS n FROM business_stats
@@ -165,6 +176,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     payments: payments.results,
     sponsorships: sponsorships.results,
     stats,
+    statsLocked: !statsUnlocked,
     enquiries: enquiries.results,
     enquiriesTotal: enquiriesTotal?.n ?? 0,
     enquiriesRecent: enquiriesRecent?.n ?? 0,

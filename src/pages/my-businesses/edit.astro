@@ -23,6 +23,7 @@ const SECTION_ICONS = {
   tourism: '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>',
   sponsorships: '<path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6l-5 4H4a1 1 0 0 0-1 1Z"/><path d="M15 9a3 3 0 0 1 0 6"/><path d="M17.5 6.5a7 7 0 0 1 0 11"/>',
   payments: '<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/><path d="M6 15h4"/>',
+  lock: '<rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>',
 };
 
 const priceVerified = priceRand('price_verified_cents').replace(/\.00$/, '');
@@ -118,7 +119,18 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 
           <!-- Overview -->
           <section class="owner-panel" data-panel="overview">
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+            <!-- Shown instead of numbers on a free (Basic) listing: the stats exist, a paid plan unlocks them. -->
+            <div id="stats-locked" hidden style="margin-bottom:14px;border:2px solid var(--navy);border-radius:var(--radius-lg);background:var(--bg-subtle);padding:18px 20px;box-shadow:var(--shadow)">
+              <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+                <span style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--navy);color:#fff;flex-shrink:0"><Icon path={SECTION_ICONS.lock} size={17} /></span>
+                <div style="flex:1;min-width:220px">
+                  <h3 style="margin:0 0 4px;font-size:16px;letter-spacing:-.015em;color:var(--navy)">Stats are a paid-plan feature</h3>
+                  <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text)">See how many people view your page, call you, click through to your website, send enquiries and appear in search — plus the exact words they searched. Included with Verified (from {priceVerified}/month) and Featured.</p>
+                </div>
+                <a href="#billing" data-goto="billing" style="align-self:center;padding:11px 16px;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none;white-space:nowrap">Upgrade to unlock</a>
+              </div>
+            </div>
+            <div id="stats-tiles" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
               {STATS.map(([id, label, icon]) => (
                 <div class="owner-stat-tile" style="background:#fff;border:2px solid var(--border);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow)">
                   <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;background:rgba(var(--accent-rgb),.1);color:var(--accent-hover);margin-bottom:10px">
@@ -138,6 +150,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
               </div>
               <div id="search-terms-list"></div>
               <p id="search-terms-empty" hidden style={emptyNote}>No search terms recorded yet — this fills in as people find you through search.</p>
+              <p id="search-terms-locked" hidden style={emptyNote}>The words people searched to find you show here on a paid plan. <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a>.</p>
             </div>
           </section>
 
@@ -716,7 +729,18 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     if (value !== null) valueEl.textContent = value;
     noteEl.textContent = note;
   }
-  function renderStats(stats: Stats, enquiriesRecent: number, enquiriesTotal: number) {
+  function renderStats(stats: Stats | null, enquiriesRecent: number, enquiriesTotal: number) {
+    // null = free (Basic) listing: the server sends no numbers at all (see
+    // update-business.ts's statsUnlocked). Keep every tile visible so the
+    // owner can see what a paid plan unlocks, just without values.
+    const locked = stats === null;
+    document.getElementById('stats-locked')!.hidden = !locked;
+    document.getElementById('stats-tiles')!.style.opacity = locked ? '.55' : '';
+    document.getElementById('search-terms-locked')!.hidden = !locked;
+    if (locked) {
+      for (const id of ['views', 'phone-clicks', 'website-clicks', 'search', 'enquiries']) setStat(id, '—', 'Paid plans only');
+      return;
+    }
     if (stats.has_any) {
       setStat('views', String(stats.views), 'Last 30 days');
       setStat('phone-clicks', String(stats.phone_clicks), 'Last 30 days');
@@ -733,9 +757,14 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 
   // The words behind the "Search appearances" tile, over the same 30 days
   // (see update-business.ts's searchTerms). Bars are relative to the top term.
-  function renderSearchTerms(terms: SearchTerm[]) {
+  function renderSearchTerms(terms: SearchTerm[], locked = false) {
     const list = document.getElementById('search-terms-list')!;
     const empty = document.getElementById('search-terms-empty')!;
+    if (locked) {
+      list.innerHTML = '';
+      empty.hidden = true;
+      return;
+    }
     empty.hidden = terms.length > 0;
     if (terms.length === 0) {
       list.innerHTML = '';
@@ -1032,8 +1061,9 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     renderSponsorships(data.sponsorships ?? []);
     renderPayments(data.payments ?? []);
     renderPhotos(b, data.photos ?? []);
-    renderStats(data.stats ?? { has_any: false, views: 0, phone_clicks: 0, website_clicks: 0, search_appearances: 0 }, data.enquiriesRecent ?? 0, data.enquiriesTotal ?? 0);
-    renderSearchTerms(data.searchTerms ?? []);
+    const statsLocked = data.statsLocked === true || data.stats === null;
+    renderStats(statsLocked ? null : (data.stats ?? { has_any: false, views: 0, phone_clicks: 0, website_clicks: 0, search_appearances: 0 }), data.enquiriesRecent ?? 0, data.enquiriesTotal ?? 0);
+    renderSearchTerms(data.searchTerms ?? [], statsLocked);
     renderEnquiries(data.enquiries ?? [], data.enquiriesTotal ?? 0);
     renderReviews(data.reviews ?? [], data.reviewsTotal ?? 0);
 
