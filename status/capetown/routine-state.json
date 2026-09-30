@@ -1,5 +1,5 @@
 {
-  "suburb_index": 56,
+  "suburb_index": 57,
   "suburbs_per_run": 3,
   "suburb_slugs": [
     "cape-town-cbd",
@@ -173,7 +173,9 @@
   ],
   "shopping_center_index": 2,
   "shopping_centers_per_run": 1,
-  "shopping_center_slugs_pending": [],
+  "shopping_center_slugs_pending": [
+    "brackenfell-corner-brackenfell"
+  ],
   "shopping_center_recheck_countdown": 8,
   "new_mall_discovery_countdown": 159,
   "shopping_center_slugs": [
@@ -353,7 +355,8 @@
     "richmond-centre-plumstead",
     "de-ville-centre-durbanville",
     "fairbridge-mall-brackenfell",
-    "langverwacht-plein-kuils-river"
+    "langverwacht-plein-kuils-river",
+    "brackenfell-corner-brackenfell"
   ],
   "closed_check_last_slug": "korean-kitchen-claremont",
   "closed_check_batch_size": 5
