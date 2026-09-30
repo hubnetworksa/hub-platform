@@ -77,23 +77,49 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   // Monthly rows count at today's monthly price, as before. A yearly row is
   // a monthly figure too: what it pays per year (its last payment, else the
   // current yearly price) spread over 12 months.
-  const activeSubs = await db
-    .prepare(
-      `SELECT tier, product_type, COUNT(*) AS n FROM subscriptions
-       WHERE status = 'active' AND m_payment_id NOT LIKE 'admin-comp-%' AND billing_period != 'yearly'
-         AND (current_period_end IS NULL OR current_period_end > datetime('now'))
-       GROUP BY tier, product_type`
-    )
-    .all<{ tier: number; product_type: string; n: number }>();
-  const yearlySubs = await db
-    .prepare(
-      `SELECT s.tier, s.product_type,
-              (SELECT p.amount_cents FROM payments p WHERE p.subscription_id = s.id ORDER BY p.id DESC LIMIT 1) AS last_paid_cents
-       FROM subscriptions s
-       WHERE s.status = 'active' AND s.m_payment_id NOT LIKE 'admin-comp-%' AND s.billing_period = 'yearly'
-         AND (s.current_period_end IS NULL OR s.current_period_end > datetime('now'))`
-    )
-    .all<{ tier: number; product_type: string; last_paid_cents: number | null }>();
+  type SubRow = { tier: number; product_type: string; n: number };
+  type YearlyRow = { tier: number; product_type: string; last_paid_cents: number | null };
+  let activeSubs: SubRow[];
+  let yearlySubs: YearlyRow[];
+  try {
+    activeSubs = (
+      await db
+        .prepare(
+          `SELECT tier, product_type, COUNT(*) AS n FROM subscriptions
+           WHERE status = 'active' AND m_payment_id NOT LIKE 'admin-comp-%' AND billing_period != 'yearly'
+             AND (current_period_end IS NULL OR current_period_end > datetime('now'))
+           GROUP BY tier, product_type`
+        )
+        .all<SubRow>()
+    ).results;
+    yearlySubs = (
+      await db
+        .prepare(
+          `SELECT s.tier, s.product_type,
+                  (SELECT p.amount_cents FROM payments p WHERE p.subscription_id = s.id ORDER BY p.id DESC LIMIT 1) AS last_paid_cents
+           FROM subscriptions s
+           WHERE s.status = 'active' AND s.m_payment_id NOT LIKE 'admin-comp-%' AND s.billing_period = 'yearly'
+             AND (s.current_period_end IS NULL OR s.current_period_end > datetime('now'))`
+        )
+        .all<YearlyRow>()
+    ).results;
+  } catch (err) {
+    // billing_period arrives with the yearly-billing migration; until it is
+    // applied on a given city's database (the preview deploy never runs
+    // migrations), every subscription is monthly — count them as before.
+    if (!(err instanceof Error && /no such column/i.test(err.message))) throw err;
+    activeSubs = (
+      await db
+        .prepare(
+          `SELECT tier, product_type, COUNT(*) AS n FROM subscriptions
+           WHERE status = 'active' AND m_payment_id NOT LIKE 'admin-comp-%'
+             AND (current_period_end IS NULL OR current_period_end > datetime('now'))
+           GROUP BY tier, product_type`
+        )
+        .all<SubRow>()
+    ).results;
+    yearlySubs = [];
+  }
 
   let featuredCents = 0;
   let verifiedCents = 0;
@@ -118,10 +144,10 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       : isSponsorProductType(productType)
         ? await sponsorPriceCents(db, productType, period)
         : null) ?? 0;
-  for (const row of activeSubs.results) {
+  for (const row of activeSubs) {
     add(row.tier, row.product_type, (await priceFor(row.tier, row.product_type, 'monthly')) * row.n);
   }
-  for (const row of yearlySubs.results) {
+  for (const row of yearlySubs) {
     const perYear = row.last_paid_cents ?? (await priceFor(row.tier, row.product_type, 'yearly'));
     add(row.tier, row.product_type, Math.round(perYear / 12));
   }
