@@ -2,7 +2,7 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSite } from '../_lib/site';
 import { rateLimited } from '../_lib/messages';
 import { getSessionUser } from '../_lib/auth';
-import { signFields, buildCheckoutParams, payfastConfigured, type PayfastEnv } from '../_lib/payfast';
+import { signFields, buildCheckoutParams, payfastConfigured, checkoutFrequency, type PayfastEnv } from '../_lib/payfast';
 import { TIER_NAMES, tierPriceCents, centsToRand, parseBillingPeriod } from '../_lib/pricing';
 import { sendEmail } from '../_lib/send-email';
 import { escapeHtml } from '../../src/lib/business-submission';
@@ -198,7 +198,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     custom_int1: String(chosenTier),
     subscription_type: '1',
     recurring_amount: amount,
-    frequency: yearly ? '6' : '3', // PayFast: 3 = monthly, 6 = annual
+    // 3 = monthly, 6 = annual — or a sandbox-only PAYFAST_TEST_FREQUENCY
+    // override for renewal testing (see checkoutFrequency).
+    frequency: checkoutFrequency(context.env, billingPeriod),
     cycles: '0',
   };
   const signature = await signFields(fields, context.env.PAYFAST_PASSPHRASE!);

@@ -10,6 +10,12 @@ PAYFAST_MERCHANT_ID=10000100
 PAYFAST_MERCHANT_KEY=46f0cd694581a
 PAYFAST_PASSPHRASE=jt7NOE43FZPn
 PAYFAST_HOST=sandbox.payfast.co.za
+# Optional, SANDBOX ONLY (ignored unless PAYFAST_HOST is exactly
+# sandbox.payfast.co.za): override the subscription billing frequency sent
+# to PayFast so renewals can be tested without waiting a month. Codes:
+# 1 = daily, 2 = weekly, 3 = monthly, 4 = quarterly, 5 = biannual, 6 = annual.
+# See checkoutFrequency() in functions/_lib/payfast.ts.
+#PAYFAST_TEST_FREQUENCY=1
 
 # Already-existing secrets this Function set also needs locally to test
 # the full flow end to end (login, email, rebuild trigger) — leave blank

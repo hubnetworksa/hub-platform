@@ -14,15 +14,52 @@
 // `wrangler pages secret put`) before ever pointing PAYFAST_HOST at
 // production.
 
+import type { BillingPeriod } from './pricing';
+
 export interface PayfastEnv {
   PAYFAST_MERCHANT_ID?: string;
   PAYFAST_MERCHANT_KEY?: string;
   PAYFAST_PASSPHRASE?: string;
   PAYFAST_HOST?: string; // e.g. sandbox.payfast.co.za
+  PAYFAST_TEST_FREQUENCY?: string; // sandbox-only override, see checkoutFrequency()
 }
 
 export function payfastConfigured(env: PayfastEnv): boolean {
   return !!(env.PAYFAST_MERCHANT_ID && env.PAYFAST_MERCHANT_KEY && env.PAYFAST_PASSPHRASE && env.PAYFAST_HOST);
+}
+
+export const PAYFAST_SANDBOX_HOST = 'sandbox.payfast.co.za';
+
+// PayFast's subscription `frequency` codes (their documented set):
+// 1 = daily, 2 = weekly, 3 = monthly, 4 = quarterly, 5 = biannual, 6 = annual.
+const PAYFAST_FREQUENCIES = ['1', '2', '3', '4', '5', '6'] as const;
+export type PayfastFrequency = (typeof PAYFAST_FREQUENCIES)[number];
+
+// The `frequency` code both subscription checkouts (subscribe/start.ts and
+// submit-business.ts) send to PayFast for a billing period: monthly = 3,
+// yearly = 6.
+//
+// Sandbox renewal testing: a real renewal ITN only arrives after a month
+// (or a year), which makes notify.ts's renewal branch — the part that
+// extends the paid period and keeps a paying customer from being
+// downgraded by the expiry sweep — effectively untestable. Setting
+// PAYFAST_TEST_FREQUENCY=1 (daily) in .dev.vars / the preview environment
+// makes the sandbox bill the subscription every day so renewals can be
+// watched arriving. The override is honoured ONLY when PAYFAST_HOST is
+// exactly the sandbox host, so a stray setting on the live host can never
+// make production bill a customer daily; anything but one of the six
+// documented codes is ignored too.
+//
+// notify.ts's bookkeeping deliberately does NOT know about this: it still
+// adds one full paid period (+1 month / +1 year, per the subscription
+// row's billing_period) on every renewal. An early daily renewal is just a
+// renewal that arrived early and extends the period as a normal one would,
+// which is exactly the code path being tested.
+export function checkoutFrequency(env: PayfastEnv, period: BillingPeriod): PayfastFrequency {
+  const real: PayfastFrequency = period === 'yearly' ? '6' : '3';
+  if ((env.PAYFAST_HOST ?? '').trim().toLowerCase() !== PAYFAST_SANDBOX_HOST) return real;
+  const override = (env.PAYFAST_TEST_FREQUENCY ?? '').trim();
+  return (PAYFAST_FREQUENCIES as readonly string[]).includes(override) ? (override as PayfastFrequency) : real;
 }
 
 // The fixed field order the signature is computed over — same order for
