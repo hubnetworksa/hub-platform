@@ -40,8 +40,8 @@ const eventLd = {
   ...(hasTicketLink(e.ticket_url) ? { offers: { '@type': 'Offer', url: e.ticket_url, priceCurrency: 'ZAR', availability: 'https://schema.org/InStock' } } : {}),
 };
 const eventLdJson = JSON.stringify(eventLd).replace(/</g, '\\u003c');
-// No Google ads anywhere a paid listing or sponsor is shown (see
-// BaseLayout's noAds): this page shows one if this is true.
+// No Google ads anywhere a paid listing or sponsor is shown (BaseLayout's
+// noAds pauses AdSense ad requests): this page shows one if this is true.
 const showsPaid = !!e.featured;
 ---
 

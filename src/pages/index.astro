@@ -75,8 +75,8 @@ const jsonLd = [
     logo: `https://${site.domain}/logo-icon.png`,
   },
 ];
-// No Google ads anywhere a paid listing or sponsor is shown (see
-// BaseLayout's noAds): this page shows one if this is true.
+// No Google ads anywhere a paid listing or sponsor is shown (BaseLayout's
+// noAds pauses AdSense ad requests): this page shows one if this is true.
 const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEvents.length > 0;
 ---
 
