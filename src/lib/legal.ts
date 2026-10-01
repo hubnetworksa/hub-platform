@@ -343,10 +343,10 @@ export function legalDocs(site: LegalSite): LegalDoc[] {
           ],
         },
         {
-          heading: 'Cooling-off and refunds',
+          heading: 'Refunds',
           paragraphs: [
-            '<strong>Seven-day cooling-off (ECTA section 44).</strong> You may cancel any new plan, sponsorship spot or featured-event purchase within 7 days of paying for it, for any reason and without penalty, by emailing us from the account’s email address. We refund the full amount within 30 days to the payment method you used, even though the plan went live immediately. The cooling-off right applies to the first payment for a plan, not to each monthly or yearly renewal.',
-            '<strong>Other refunds.</strong> After the cooling-off period, a monthly plan is not refunded for the remainder of a month you have cancelled in; a yearly plan is refunded as set out above for consumers, and otherwise runs to the end of the paid year. If <em>we</em> remove a listing or sponsorship (for example because the business has closed, or we withdraw a product), we refund the unused part of what you paid, pro-rated by whole months. We do not refund a plan on a listing we remove because the owner broke the Listing rules or the law. If something we sold does not work as described, tell us: your rights under sections 55 and 56 of the CPA to a service of good quality, and a repair, replacement or refund if it is not, are not affected by anything here.',
+            '<strong>Plans start immediately.</strong> Your plan is activated immediately after payment, and by paying you ask us to start providing it straight away. Because the service begins with your consent before the end of the seven-day period, the cooling-off right in section 44 of the Electronic Communications and Transactions Act does not apply to plan and sponsorship purchases (section 42(2) of that Act). The rules above on cancelling a monthly plan (no refund for the month already paid) and a yearly plan (your rights under section 14 of the Consumer Protection Act) still apply.',
+            '<strong>Other refunds.</strong> A monthly plan is not refunded for the remainder of a month you have cancelled in; a yearly plan is refunded as set out above for consumers, and otherwise runs to the end of the paid year. If <em>we</em> remove a listing or sponsorship (for example because the business has closed, or we withdraw a product), we refund the unused part of what you paid, pro-rated by whole months. We do not refund a plan on a listing we remove because the owner broke the Listing rules or the law. If something we sold does not work as described, tell us: your rights under sections 55 and 56 of the CPA to a service of good quality, and a repair, replacement or refund if it is not, are not affected by anything here.',
             'Refunds are made through PayFast to the original card or account. If we fail to give you any of the information this page is meant to give you, section 43(3) of ECTA lets you cancel the purchase within 14 days of receiving it.',
           ],
         },
@@ -432,7 +432,7 @@ export function legalDocs(site: LegalSite): LegalDoc[] {
         {
           heading: 'Removal',
           paragraphs: [
-            'We remove listings on request from the owner, when a business closes, or when a listing breaks these rules. Any unused part of a paid plan is refunded pro-rata by whole months when we remove a listing — but not when it was removed for breaking these rules or the law. See “Cooling-off and refunds” in the Terms of use.',
+            'We remove listings on request from the owner, when a business closes, or when a listing breaks these rules. Any unused part of a paid plan is refunded pro-rata by whole months when we remove a listing — but not when it was removed for breaking these rules or the law. See “Refunds” in the Terms of use.',
           ],
         },
       ],
