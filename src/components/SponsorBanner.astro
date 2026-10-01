@@ -17,8 +17,9 @@ const sponsor = sponsorFor(productType, target);
 const business = sponsor ? businesses.find((b) => b.id === sponsor.business_id) : undefined;
 const meta = business ? [categoriesFor(business)[0]?.name, suburbFor(business)?.name].filter(Boolean).join(' · ') : '';
 const blurb = business?.description ? business.description.slice(0, 160) + (business.description.length > 160 ? '…' : '') : '';
-// The sponsor's logo (Verified/Featured perk) sits left of the name; without
-// one the card is exactly as before.
+// The sponsor's logo (Verified/Featured perk) is a left column with the
+// pill, name, meta and blurb all beside it; without one the card is exactly
+// as before.
 const hasLogo = !!business && !!logoFor(business);
 const IdWrap = hasLogo ? 'span' : Fragment;
 const IdText = hasLogo ? 'span' : Fragment;
@@ -30,17 +31,17 @@ const IdText = hasLogo ? 'span' : Fragment;
     class="sponsor-banner"
     style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px 18px;margin-bottom:22px;border:2px solid var(--accent);border-radius:14px;background:#fff;color:var(--navy);text-decoration:none"
   >
-    <span style="display:flex;flex-direction:column;gap:5px;min-width:0;flex:1 1 280px">
+    <IdWrap {...(hasLogo ? { class: 'biz-split', style: 'min-width:0;flex:1 1 280px' } : {})}>
+    {business && <BusinessLogo business={business} size="card" />}
+    <span style="display:flex;flex-direction:column;gap:5px;min-width:0;flex:1 1 280px;overflow-wrap:break-word">
       <span style="align-self:flex-start;padding:3px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase">Sponsor · {context}</span>
-      <IdWrap {...(hasLogo ? { class: 'biz-id', style: 'margin:3px 0 2px' } : {})}>
-      {business && <BusinessLogo business={business} size="md" />}
-      <IdText {...(hasLogo ? { class: 'biz-id-text', style: 'gap:3px' } : {})}>
+      <IdText {...(hasLogo ? { style: 'display:flex;flex-direction:column;gap:3px;margin:2px 0 1px' } : {})}>
       <span style="font-size:18px;font-weight:800;letter-spacing:-.02em">{sponsor.business_name}</span>
       {meta && <span style="font-size:12.5px;font-weight:700;color:var(--muted)">{meta}</span>}
       </IdText>
-      </IdWrap>
       {blurb && <span style="font-size:13.5px;line-height:1.5;color:var(--text)">{blurb}</span>}
     </span>
+    </IdWrap>
     <span style="font-size:13.5px;font-weight:800;color:var(--accent-hover);white-space:nowrap">View listing →</span>
   </a>
 )}

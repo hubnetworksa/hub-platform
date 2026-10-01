@@ -33,6 +33,7 @@ const numReviews = reviewCount(business);
 const hasLogo = !!logoFor(business);
 const RowId = hasLogo ? 'span' : Fragment;
 const CardId = hasLogo ? 'div' : Fragment;
+const CardBody = hasLogo ? 'div' : Fragment;
 ---
 
 {variant === 'row' ? (
@@ -67,10 +68,10 @@ const CardId = hasLogo ? 'div' : Fragment;
         )}
       </div>
     )}
-    <CardId {...(hasLogo ? { class: 'biz-id', style: 'margin:2px 0' } : {})}>
-    <BusinessLogo business={business} size="md" />
+    <CardId {...(hasLogo ? { class: 'biz-split', style: 'margin-top:2px' } : {})}>
+    <BusinessLogo business={business} size="card" />
+    <CardBody {...(hasLogo ? { class: 'biz-split-body' } : {})}>
     <h3 style="margin:0;font-size:16.5px;letter-spacing:-.015em;color:var(--navy)">{business.name}</h3>
-    </CardId>
     {(primary || meta) && <p style="margin:0;font-size:13px;font-weight:600;color:var(--muted)">{[primary?.name, meta].filter(Boolean).join(' · ')}</p>}
     <a
       href={`/business/${business.slug}/`}
@@ -82,6 +83,8 @@ const CardId = hasLogo ? 'div' : Fragment;
     >
       View profile →
     </a>
+    </CardBody>
+    </CardId>
   </article>
 )}
 

@@ -99,6 +99,7 @@ const logoUrl = logo ? siteUrl + logo : null;
 // Only wraps the name/badges block when there's a logo to sit beside it.
 const HeadWrap = logo ? 'div' : Fragment;
 const HeadText = logo ? 'div' : Fragment;
+const HeadRest = logo ? 'div' : Fragment;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -134,7 +135,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
 
     <div id="profile-shell" style="display:grid;grid-template-columns:1fr;gap:24px;margin-top:16px">
       <div>
-        <div style="border:2px solid var(--navy);border-radius:var(--radius-lg);overflow:hidden;background:#fff;box-shadow:var(--shadow)">
+        <div class="biz-profile-card" style="border:2px solid var(--navy);border-radius:var(--radius-lg);background:#fff;box-shadow:var(--shadow)">
           {isFeatured && (
             <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;background:var(--navy);flex-wrap:wrap">
               <PlanBadge tier={business.subscription_tier} label="Featured listing" />
@@ -148,7 +149,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
           )}
           <div style="padding:clamp(18px,3vw,28px)">
             <HeadWrap {...(logo ? { class: 'biz-head' } : {})}>
-            <BusinessLogo business={business} size="lg" eager />
+            <BusinessLogo business={business} size="xl" eager />
             <HeadText {...(logo ? { class: 'biz-head-text' } : {})}>
             <h1 style="margin:0 0 10px;font-size:clamp(26px,4vw,40px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);overflow-wrap:break-word">{business.name}</h1>
             <div id="open-row" hidden data-hours={business.hours ?? ''} style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
@@ -171,7 +172,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
               {suburb && <span style="padding:6px 11px;border-radius:999px;border:1.5px solid var(--border);color:var(--muted);font-size:12.5px;font-weight:700">{suburb.name}</span>}
             </div>
             </HeadText>
-            </HeadWrap>
+            <HeadRest {...(logo ? { class: 'biz-head-rest' } : {})}>
             <p style="margin:0 0 20px;font-size:16px;line-height:1.62;max-width:62ch">{business.description}</p>
             {center && (
               <p style="margin:0 0 16px;">
@@ -226,6 +227,8 @@ const mapsUrl = (business.address || (business.lat && business.lng))
               </div>
             </div>
             <ListReturn />
+            </HeadRest>
+            </HeadWrap>
           </div>
         </div>
 
@@ -337,7 +340,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
                 return (
                 <a href={`/business/${b.slug}/`} class="similar-business-card" style="border:2px solid var(--border);border-radius:var(--radius-lg);padding:16px;background:#fff;display:flex;flex-direction:column;gap:5px;text-decoration:none;box-shadow:var(--shadow)">
                   <IdWrap {...(hasLogo ? { class: 'biz-id' } : {})}>
-                  <BusinessLogo business={b} size="md" />
+                  <BusinessLogo business={b} size="card" />
                   <IdText {...(hasLogo ? { class: 'biz-id-text', style: 'gap:5px' } : {})}>
                   <span style="font-size:15.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em">{b.name}</span>
                   <span style="font-size:12.5px;font-weight:600;color:var(--muted)">{cats[0]?.name}{suburbFor(b) ? ` · ${suburbFor(b)!.name}` : ''}</span>

@@ -149,9 +149,11 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
         <div id="home-featured-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px">
           {featuredBusinesses.map((b, i) => {
             const suburb = suburbFor(b);
-            // With a logo, the name sits beside it.
+            // With a logo, the logo is a left column and the name, meta,
+            // description and buttons all sit beside it.
             const hasLogo = !!logoFor(b);
             const IdWrap = hasLogo ? 'div' : Fragment;
+            const IdBody = hasLogo ? 'div' : Fragment;
             return (
               <article class="home-featured-card" data-rotate hidden={i >= 3} style="border:2px solid var(--border);border-radius:14px;background:#fff;overflow:hidden;display:flex;flex-direction:column">
                 <div style="height:6px;background:var(--accent)"></div>
@@ -163,18 +165,20 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
                       Verified
                     </span>
                   </div>
-                  <IdWrap {...(hasLogo ? { class: 'biz-id', style: 'gap:14px' } : {})}>
-                  <BusinessLogo business={b} size="md" />
+                  <IdWrap {...(hasLogo ? { class: 'biz-split', style: 'flex:1' } : {})}>
+                  <BusinessLogo business={b} size="card" />
+                  <IdBody {...(hasLogo ? { class: 'biz-split-body', style: 'gap:10px' } : {})}>
                   <h3 style="margin:0;font-size:19px;line-height:1.2;letter-spacing:-.02em;color:var(--navy)">{b.name}</h3>
-                  </IdWrap>
                   {(categoriesFor(b)[0] || suburb) && (
                     <p style="margin:0;font-size:13.5px;color:var(--muted);font-weight:600">{[categoriesFor(b)[0]?.name, suburb?.name].filter(Boolean).join(' · ')}</p>
                   )}
                   <p style="margin:0;font-size:14px;line-height:1.55;color:var(--text)">{b.description}</p>
-                  <div style="display:flex;gap:8px;margin-top:auto;padding-top:6px">
-                    <a href={`/business/${b.slug}/`} style="flex:1;padding:10px 12px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:800;text-decoration:none;text-align:center">View profile</a>
-                    {b.phone && <a href={phoneHref(b.phone)} data-track="phone_click" data-track-slug={b.slug} style="padding:10px 12px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">{formatPhoneZA(b.phone)}</a>}
+                  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:6px">
+                    <a href={`/business/${b.slug}/`} style="flex:1;padding:10px 12px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:800;text-decoration:none;text-align:center;white-space:nowrap">View profile</a>
+                    {b.phone && <a href={phoneHref(b.phone)} data-track="phone_click" data-track-slug={b.slug} style="padding:10px 12px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap">{formatPhoneZA(b.phone)}</a>}
                   </div>
+                  </IdBody>
+                  </IdWrap>
                 </div>
               </article>
             );
