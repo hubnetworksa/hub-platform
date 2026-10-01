@@ -52,24 +52,7 @@ const jsonLd = collectionPageJsonLd({
       </div>
     </section>
 
-    {busiest.length > 0 && (
-      <section style="max-width:1200px;margin:0 auto;padding:clamp(22px,3.5vw,38px) 20px 0">
-        <div style="border-bottom:2px solid var(--navy);padding-bottom:12px">
-          <h2 style="margin:0;font-size:clamp(19px,2.6vw,25px);letter-spacing:-.025em;color:var(--navy)">Busiest suburbs</h2>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px">
-          {busiest.map((t) => (
-            <a href={`/suburb/${t.slug}/`} class="dir-top" style="border:2px solid var(--border);border-radius:14px;background:#fff;padding:18px;cursor:pointer;display:flex;flex-direction:column;gap:6px;text-decoration:none">
-              <span style="font-size:17.5px;font-weight:800;color:var(--navy);letter-spacing:-.02em">{t.name}</span>
-              <span style="font-size:24px;font-weight:800;color:var(--accent);letter-spacing:-.025em;line-height:1">{fmt(t.count)}</span>
-              <span style="font-size:12.5px;font-weight:700;color:var(--muted);line-height:1.4">{t.count === 1 ? 'listed business' : 'listed businesses'} · {t.region}</span>
-            </a>
-          ))}
-        </div>
-      </section>
-    )}
-
-    <section style="max-width:1200px;margin:0 auto;padding:clamp(26px,4vw,42px) 20px 0">
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(22px,3.5vw,38px) 20px 0">
       <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;flex-wrap:wrap">
         <h2 style="margin:0;font-size:clamp(19px,2.6vw,25px);letter-spacing:-.025em;color:var(--navy)">Browse by region</h2>
       </div>
@@ -113,6 +96,23 @@ const jsonLd = collectionPageJsonLd({
       </div>
       <p id="dir-empty" hidden style="margin:18px 0 0;font-size:14px;font-weight:700;color:var(--muted)">No suburb matches that search.</p>
     </section>
+
+    {busiest.length > 0 && (
+      <section style="max-width:1200px;margin:0 auto;padding:clamp(26px,4vw,42px) 20px 0">
+        <div style="border-bottom:2px solid var(--navy);padding-bottom:12px">
+          <h2 style="margin:0;font-size:clamp(19px,2.6vw,25px);letter-spacing:-.025em;color:var(--navy)">Busiest suburbs</h2>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:16px">
+          {busiest.map((t) => (
+            <a href={`/suburb/${t.slug}/`} class="dir-top" style="border:2px solid var(--border);border-radius:14px;background:#fff;padding:18px;cursor:pointer;display:flex;flex-direction:column;gap:6px;text-decoration:none">
+              <span style="font-size:17.5px;font-weight:800;color:var(--navy);letter-spacing:-.02em">{t.name}</span>
+              <span style="font-size:24px;font-weight:800;color:var(--accent);letter-spacing:-.025em;line-height:1">{fmt(t.count)}</span>
+              <span style="font-size:12.5px;font-weight:700;color:var(--muted);line-height:1.4">{t.count === 1 ? 'listed business' : 'listed businesses'} · {t.region}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
 
     <section style="margin-top:clamp(36px,5vw,56px);background:var(--accent)">
       <div style="max-width:1200px;margin:0 auto;padding:clamp(30px,4.5vw,52px) 20px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:20px">
