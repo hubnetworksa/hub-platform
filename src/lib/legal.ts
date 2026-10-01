@@ -245,7 +245,7 @@ export function legalDocs(site: LegalSite): LegalDoc[] {
         {
           heading: 'Emails we send, and how to stop them',
           paragraphs: [
-            '<strong>Service emails</strong> are the emails your account or request needs and are not marketing: confirming a listing, claim or event; a password reset; an enquiry forwarded to your business; a payment confirmation and invoice; a renewal, cancellation or expiry notice; a reply to something you reported; or a notice that we have changed these terms. You receive these for as long as you have an account or an open request.',
+            '<strong>Service emails</strong> are the emails your account or request needs and are not marketing: confirming a listing, claim or event; a password reset; an enquiry forwarded to your business; a payment confirmation; a renewal, cancellation or expiry notice; a reply to something you reported; or a notice that we have changed these terms. You receive these for as long as you have an account or an open request.',
             `<strong>Service announcements.</strong> Occasionally (a few times a year at most) we email account holders about ${site.siteName} itself — for example when we launch a new feature. Section 69 of POPIA lets us send these to our own customers about our own similar services, and you can stop them at any time: every announcement carries an “Unsubscribe from updates” link that takes effect immediately, or you can email us. Opting out never affects the service emails about your own account or billing.`,
             'We do not send marketing by SMS or telephone, we do not send marketing to visitors who only sent an enquiry or a report, and we never pass your details to anyone else for their marketing.',
           ],
@@ -330,7 +330,7 @@ export function legalDocs(site: LegalSite): LegalDoc[] {
             '<strong>Payment method and security.</strong> Payments are made by card or instant EFT through PayFast, a South African payment provider, on PayFast’s own secure, encrypted pages. Your card number is entered on PayFast’s page and never passes through or is stored on our systems. PayFast then confirms the payment to us by a signed notification that we verify before anything is activated.',
             '<strong>Before you pay</strong> you see a summary of the business, the plan or spot, the billing period and the exact amount, and you can go back and change any of it or abandon the order; nothing is charged until you confirm on PayFast’s page.',
             '<strong>When it goes live.</strong> A plan or sponsorship spot switches on automatically as soon as PayFast confirms the payment — usually within a minute of paying — and the change shows on the public website within about 15 to 25 minutes, when the site next rebuilds. A featured event goes live when we approve the event, which we aim to do within 24 hours. If a payment is confirmed but nothing has switched on within an hour, email us and we will fix it or refund you.',
-            '<strong>Your records.</strong> We email a numbered PDF invoice for every payment, and every invoice can be downloaded again from the Billing section of your dashboard for as long as you have an account.',
+            '<strong>Your records.</strong> We issue a numbered PDF invoice for every payment. Invoices are not emailed to you: each one is available to download from the Billing section of your dashboard for as long as you have an account.',
           ],
         },
         {
@@ -343,10 +343,10 @@ export function legalDocs(site: LegalSite): LegalDoc[] {
           ],
         },
         {
-          heading: 'Cooling-off and refunds',
+          heading: 'Refunds',
           paragraphs: [
-            '<strong>Seven-day cooling-off (ECTA section 44).</strong> You may cancel any new plan, sponsorship spot or featured-event purchase within 7 days of paying for it, for any reason and without penalty, by emailing us from the account’s email address. We refund the full amount within 30 days to the payment method you used, even though the plan went live immediately. The cooling-off right applies to the first payment for a plan, not to each monthly or yearly renewal.',
-            '<strong>Other refunds.</strong> After the cooling-off period, a monthly plan is not refunded for the remainder of a month you have cancelled in; a yearly plan is refunded as set out above for consumers, and otherwise runs to the end of the paid year. If <em>we</em> remove a listing or sponsorship (for example because the business has closed, or we withdraw a product), we refund the unused part of what you paid, pro-rated by whole months. We do not refund a plan on a listing we remove because the owner broke the Listing rules or the law. If something we sold does not work as described, tell us: your rights under sections 55 and 56 of the CPA to a service of good quality, and a repair, replacement or refund if it is not, are not affected by anything here.',
+            '<strong>Plans start immediately.</strong> Your plan is activated immediately after payment, and by paying you ask us to start providing it straight away. Because the service begins with your consent before the end of the seven-day period, the cooling-off right in section 44 of the Electronic Communications and Transactions Act does not apply to plan and sponsorship purchases (section 42(2) of that Act). The rules above on cancelling a monthly plan (no refund for the month already paid) and a yearly plan (your rights under section 14 of the Consumer Protection Act) still apply.',
+            '<strong>Other refunds.</strong> A monthly plan is not refunded for the remainder of a month you have cancelled in; a yearly plan is refunded as set out above for consumers, and otherwise runs to the end of the paid year. If <em>we</em> remove a listing or sponsorship (for example because the business has closed, or we withdraw a product), we refund the unused part of what you paid, pro-rated by whole months. We do not refund a plan on a listing we remove because the owner broke the Listing rules or the law. If something we sold does not work as described, tell us: your rights under sections 55 and 56 of the CPA to a service of good quality, and a repair, replacement or refund if it is not, are not affected by anything here.',
             'Refunds are made through PayFast to the original card or account. If we fail to give you any of the information this page is meant to give you, section 43(3) of ECTA lets you cancel the purchase within 14 days of receiving it.',
           ],
         },
@@ -432,7 +432,7 @@ export function legalDocs(site: LegalSite): LegalDoc[] {
         {
           heading: 'Removal',
           paragraphs: [
-            'We remove listings on request from the owner, when a business closes, or when a listing breaks these rules. Any unused part of a paid plan is refunded pro-rata by whole months when we remove a listing — but not when it was removed for breaking these rules or the law. See “Cooling-off and refunds” in the Terms of use.',
+            'We remove listings on request from the owner, when a business closes, or when a listing breaks these rules. Any unused part of a paid plan is refunded pro-rata by whole months when we remove a listing — but not when it was removed for breaking these rules or the law. See “Refunds” in the Terms of use.',
           ],
         },
       ],

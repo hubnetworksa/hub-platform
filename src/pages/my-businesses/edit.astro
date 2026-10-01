@@ -282,6 +282,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
             </div>
             <div style="margin-top:12px"><BillingToggle note="2 months free" /></div>
             <p id="plan-status" role="status" style="margin:10px 0 0;font-size:13px;font-weight:700;color:var(--muted)"></p>
+            <p style="margin:8px 0 0;font-size:13px;font-weight:600;color:var(--muted)">By paying you agree to the <a href="/terms/" style="color:var(--accent-hover);font-weight:800">Terms</a> and ask us to activate your plan immediately.</p>
             <p style="margin:8px 0 0;font-size:13px;font-weight:600;color:var(--muted)"><a href="/pricing/" style="color:var(--accent-hover);font-weight:800">Compare plans</a></p>
 
             <div style={`${cardBox};margin-top:14px;box-shadow:var(--shadow)`}>
@@ -306,6 +307,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
                 <div id="tourism-sponsor-picker" class="tourism-sponsor-picker" style="padding:16px 18px;align-items:center;gap:10px;flex-wrap:wrap">
                   <select id="tourism-sponsor-select" style="padding:11px 13px;border:2px solid var(--border);border-radius:9px;font-size:13.5px;outline:none;background:#fff;color:var(--text);flex:1;min-width:200px"></select>
                   <button id="tourism-sponsor-buy" type="button" style="padding:11px 16px;border:2px solid var(--navy);border-radius:9px;background:#fff;color:var(--navy);font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap">Sponsor this attraction</button>
+                  <p style="flex-basis:100%;margin:0;font-size:12.5px;font-weight:600;color:var(--muted)">By paying you agree to the <a href="/terms/" style="color:var(--accent-hover);font-weight:800">Terms</a> and ask us to activate your sponsorship immediately.</p>
                 </div>
                 <p id="tourism-sponsor-all-taken" hidden style={emptyNote}>Every attraction is currently sponsored — check back later.</p>
                 <p id="tourism-sponsor-status" role="status" style="margin:0;padding:0 18px 14px;font-size:13px;font-weight:700;color:var(--muted)"></p>
