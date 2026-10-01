@@ -166,7 +166,7 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
                       Verified
                     </span>
                   </div>
-                  <IdWrap {...(hasLogo ? { class: 'biz-split', style: 'flex:1' } : {})}>
+                  <IdWrap {...(hasLogo ? { class: 'biz-split biz-split--stack-phone', style: 'flex:1' } : {})}>
                   <BusinessLogo business={b} size="card" />
                   <IdBody {...(hasLogo ? { class: 'biz-split-body', style: 'gap:10px' } : {})}>
                   <h3 style="margin:0;font-size:19px;line-height:1.2;letter-spacing:-.02em;color:var(--navy)">{b.name}</h3>

@@ -143,7 +143,7 @@ const asideHasContent = (adsEnabled && !showsPaid) || !suburbSponsor || nearbySu
                     <IdBody {...(hasLogo ? { class: 'biz-split-body' } : {})}>
                     <h3 style="margin:0;font-size:17px;letter-spacing:-.015em;color:var(--navy)">{b.name}</h3>
                     <p style="margin:0;font-size:13px;font-weight:600;color:var(--muted)">{[categoriesFor(b)[0]?.name, suburb.name].filter(Boolean).join(' · ')}</p>
-                    <a href={`/business/${b.slug}/`} style="align-self:flex-start;margin-top:4px;font-size:13px;font-weight:800;color:var(--accent);text-decoration:none">View profile →</a>
+                    <a href={`/business/${b.slug}/`} class={hasLogo ? 'biz-split-end' : undefined} style="align-self:flex-start;margin-top:4px;font-size:13px;font-weight:800;color:var(--accent);text-decoration:none">View profile →</a>
                     </IdBody>
                     </IdWrap>
                   </article>

@@ -9,9 +9,11 @@ interface Props {
   business: Pick<Business, 'name' | 'logo_key' | 'subscription_tier' | 'subscription_status'>;
   /** Tile HEIGHT per size (the width follows the logo's shape up to a
    *  max-width, see .biz-logo in global.css): xl 150px (business page header;
-   *  96px on phones), pin 72px (pinned Featured card), card 64px (cards,
-   *  strips, sponsor banner), row 56px (search rows), lg 88px, md 52px,
-   *  sm 36px (dense rows). */
+   *  96px on phones), lg 88px, md 52px, sm 40px (dense rows). pin/card/row
+   *  are for a card's logo column (.biz-split): there the tile stretches to
+   *  the height of the content beside it and its width follows the logo's
+   *  ratio (see .biz-split > .biz-logo); the heights here (72/64/56px) only
+   *  apply outside one. */
   size?: 'xl' | 'pin' | 'card' | 'row' | 'lg' | 'md' | 'sm';
   /** Above-the-fold (business page header): load straight away. */
   eager?: boolean;
@@ -20,7 +22,7 @@ interface Props {
 const { business, size = 'md', eager = false } = Astro.props;
 const src = logoFor(business);
 // width/height only reserve a square until the image loads; CSS sizes it.
-const PX = { xl: 150, pin: 72, card: 64, row: 56, lg: 88, md: 52, sm: 36 } as const;
+const PX = { xl: 150, pin: 72, card: 64, row: 56, lg: 88, md: 52, sm: 40 } as const;
 const px = PX[size];
 ---
 

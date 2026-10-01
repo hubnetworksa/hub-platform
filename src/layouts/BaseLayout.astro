@@ -176,6 +176,15 @@ const themeCss = `:root {
         })();</script>
       </Fragment>
     )}
+    {/* Business logo tiles (.biz-logo, global.css) size their width from the
+        logo's shape: on load, record the image's natural ratio as --logo-ar.
+        A capture listener catches every logo, including the ones search.astro
+        renders later; the scan covers any that loaded before this ran. */}
+    <script is:inline>(function(){
+      function ar(i){var t=i.parentElement;if(t&&t.classList.contains('biz-logo')&&i.naturalWidth&&i.naturalHeight)t.style.setProperty('--logo-ar',(i.naturalWidth/i.naturalHeight).toFixed(3));}
+      document.addEventListener('load',function(e){var i=e.target;if(i&&i.tagName==='IMG')ar(i);},true);
+      document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('.biz-logo img').forEach(function(i){if(i.complete)ar(i);});});
+    })();</script>
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}

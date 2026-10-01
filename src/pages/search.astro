@@ -455,7 +455,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
             ${planBadge(r.t)}
             <span style="font-size:11px;font-weight:700;color:var(--muted)">Sponsored placement</span>
           </div>
-          ${pinnedLogo ? `<div class="biz-split" style="margin-top:14px">${pinnedLogo}<div class="biz-split-body" style="gap:0">` : ''}
+          ${pinnedLogo ? `<div class="biz-split biz-split--stack-phone" style="margin-top:14px">${pinnedLogo}<div class="biz-split-body" style="gap:0">` : ''}
           <h2 style="margin:${pinnedLogo ? '0 0 4px' : '12px 0 6px'};font-size:21px;letter-spacing:-.02em;color:var(--navy)"><a href="/business/${r.s}/" style="color:var(--navy)">${escapeHtml(r.n)}</a></h2>
           <p style="margin:0 0 ${badge ? '8px' : '0'};font-size:13.5px;font-weight:700;color:var(--muted)">${escapeHtml(meta)}</p>
           ${badge ? `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">${badge}</div>` : ''}
@@ -471,7 +471,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
         ${rowLogo ? `<div class="biz-split">${rowLogo}<div class="biz-split-body" style="gap:0">` : ''}
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
           <h2 style="margin:0;font-size:18px;letter-spacing:-.015em;color:var(--navy)"><a href="/business/${r.s}/" style="color:var(--navy)">${escapeHtml(r.n)}</a></h2>
-          ${r.c ? `<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:var(--bg-subtle);color:var(--accent-hover);font-size:11px;font-weight:800;white-space:nowrap">${escapeHtml(r.c)}</span>` : ''}
+          ${r.c ? `<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:var(--bg-subtle);color:var(--accent-hover);font-size:11px;font-weight:800;${rowLogo ? 'max-width:100%' : 'white-space:nowrap'}">${escapeHtml(r.c)}</span>` : ''}
         </div>
         <p style="margin:8px 0 0;font-size:13.5px;font-weight:600;color:var(--muted)">${escapeHtml(meta)}${planBadge(r.t) ? ' &nbsp;' + planBadge(r.t) : ''}</p>
         ${badgeRow}

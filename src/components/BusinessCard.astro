@@ -75,7 +75,7 @@ const CardBody = hasLogo ? 'div' : Fragment;
     {(primary || meta) && <p style="margin:0;font-size:13px;font-weight:600;color:var(--muted)">{[primary?.name, meta].filter(Boolean).join(' · ')}</p>}
     <a
       href={`/business/${business.slug}/`}
-      class="business-card-link"
+      class:list={['business-card-link', hasLogo && 'biz-split-end']}
       data-list-kind={listContext?.kind}
       data-list-slug={listContext?.slug}
       data-list-name={listContext?.name}
