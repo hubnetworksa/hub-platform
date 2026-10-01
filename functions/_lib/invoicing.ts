@@ -1,6 +1,8 @@
 // Issues a real invoice for a completed payment: a numbered, branded PDF,
-// stored in R2 (so the owner and the admin can always redownload it) and
-// emailed to the business owner with a copy to the site's own inbox.
+// stored in R2 (so the owner and the admin can always redownload it) with a
+// copy emailed to the site's own inbox for bookkeeping. The customer is NOT
+// emailed: their invoice is available under Billing in their dashboard
+// (served by functions/api/invoice.ts).
 //
 // Called right after a `payments` row is inserted, from the two places a
 // payment can complete: functions/api/subscribe/notify.ts (an existing
@@ -62,7 +64,9 @@ const fmtShort = (iso: string | null): string =>
   iso ? new Date(iso.includes('T') ? iso : iso.replace(' ', 'T') + 'Z').toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
 
 /**
- * Builds and stores the invoice for a payment, and emails it. Safe to call
+ * Builds and stores the invoice for a payment, and emails a copy to the
+ * site's own inbox (never to the customer — they download it from the
+ * Billing tab of their dashboard). Safe to call
  * more than once for the same payment (a PayFast ITN can be resent): it
  * does nothing if that payment already has an invoice_number. Never throws
  * — a failure here must not break the payment webhook or the listing
@@ -137,22 +141,12 @@ export async function issueInvoice(env: InvoicingEnv, paymentId: number): Promis
 
     const attachments = [{ filename: `${invoiceNumber}.pdf`, content: toBase64(pdfBytes), contentType: 'application/pdf' }];
     const amountRand = `R${(payment.amount_cents / 100).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    const dashboardUrl = `https://${site.domain}/my-businesses/edit/?id=${payment.business_id}#billing`;
 
-    if (payment.owner_email) {
-      await sendEmail(env, {
-        from: `${site.siteName} <${site.contactEmail}>`,
-        to: payment.owner_email,
-        subject: `Your ${site.siteName} invoice ${invoiceNumber}`,
-        text: `Thanks for your payment.\n\nInvoice: ${invoiceNumber}\nFor: ${description} — ${payment.business_name}\nAmount: ${amountRand}\n\nThe invoice is attached as a PDF, and you can download it again any time from your dashboard: ${dashboardUrl}`,
-        html: `<div style="font-family:sans-serif;max-width:520px"><h2>Thanks for your payment</h2><p>Invoice <strong>${invoiceNumber}</strong> for ${description} — ${payment.business_name}.</p><p>Amount paid: <strong>${amountRand}</strong></p><p>The invoice is attached as a PDF. You can download it again any time from <a href="${dashboardUrl}">your dashboard</a>.</p></div>`,
-        attachments,
-      });
-    }
-
-    // A copy for the site's own records — the admin Invoices tab also lists and
-    // can redownload every invoice from R2, but a copy in the inbox is the
-    // simplest "save it to mine" the owner asked for, and needs no extra UI.
+    // The only email sent: a copy for the site's own records. The customer is
+    // not emailed — they download the invoice from the Billing tab of their
+    // dashboard. The admin Invoices tab also lists and can redownload every
+    // invoice from R2, but a copy in the inbox is the simplest "save it to
+    // mine" the owner asked for, and needs no extra UI.
     await sendEmail(env, {
       from: `${site.siteName} <${site.contactEmail}>`,
       to: site.contactEmail,
@@ -232,19 +226,8 @@ export async function issueEventInvoice(env: InvoicingEnv, eventPaymentId: numbe
 
     const attachments = [{ filename: `${invoiceNumber}.pdf`, content: toBase64(pdfBytes), contentType: 'application/pdf' }];
     const amountRand = `R${(payment.amount_cents / 100).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    const dashboardUrl = `https://${site.domain}/my-events/edit/?id=${payment.event_id}`;
 
-    if (payment.owner_email) {
-      await sendEmail(env, {
-        from: `${site.siteName} <${site.contactEmail}>`,
-        to: payment.owner_email,
-        subject: `Your ${site.siteName} invoice ${invoiceNumber}`,
-        text: `Thanks for your payment.\n\nInvoice: ${invoiceNumber}\nFor: Featured event — ${payment.event_title}\nAmount: ${amountRand}\n\nThe invoice is attached as a PDF, and you can download it again any time from your dashboard: ${dashboardUrl}`,
-        html: `<div style="font-family:sans-serif;max-width:520px"><h2>Thanks for your payment</h2><p>Invoice <strong>${invoiceNumber}</strong> for featuring "${payment.event_title}".</p><p>Amount paid: <strong>${amountRand}</strong></p><p>The invoice is attached as a PDF. You can download it again any time from <a href="${dashboardUrl}">your dashboard</a>.</p></div>`,
-        attachments,
-      });
-    }
-
+    // Internal copy only — the customer is not emailed (see issueInvoice).
     await sendEmail(env, {
       from: `${site.siteName} <${site.contactEmail}>`,
       to: site.contactEmail,

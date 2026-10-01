@@ -245,7 +245,7 @@ export function legalDocs(site: LegalSite): LegalDoc[] {
         {
           heading: 'Emails we send, and how to stop them',
           paragraphs: [
-            '<strong>Service emails</strong> are the emails your account or request needs and are not marketing: confirming a listing, claim or event; a password reset; an enquiry forwarded to your business; a payment confirmation and invoice; a renewal, cancellation or expiry notice; a reply to something you reported; or a notice that we have changed these terms. You receive these for as long as you have an account or an open request.',
+            '<strong>Service emails</strong> are the emails your account or request needs and are not marketing: confirming a listing, claim or event; a password reset; an enquiry forwarded to your business; a payment confirmation; a renewal, cancellation or expiry notice; a reply to something you reported; or a notice that we have changed these terms. You receive these for as long as you have an account or an open request.',
             `<strong>Service announcements.</strong> Occasionally (a few times a year at most) we email account holders about ${site.siteName} itself — for example when we launch a new feature. Section 69 of POPIA lets us send these to our own customers about our own similar services, and you can stop them at any time: every announcement carries an “Unsubscribe from updates” link that takes effect immediately, or you can email us. Opting out never affects the service emails about your own account or billing.`,
             'We do not send marketing by SMS or telephone, we do not send marketing to visitors who only sent an enquiry or a report, and we never pass your details to anyone else for their marketing.',
           ],
@@ -330,7 +330,7 @@ export function legalDocs(site: LegalSite): LegalDoc[] {
             '<strong>Payment method and security.</strong> Payments are made by card or instant EFT through PayFast, a South African payment provider, on PayFast’s own secure, encrypted pages. Your card number is entered on PayFast’s page and never passes through or is stored on our systems. PayFast then confirms the payment to us by a signed notification that we verify before anything is activated.',
             '<strong>Before you pay</strong> you see a summary of the business, the plan or spot, the billing period and the exact amount, and you can go back and change any of it or abandon the order; nothing is charged until you confirm on PayFast’s page.',
             '<strong>When it goes live.</strong> A plan or sponsorship spot switches on automatically as soon as PayFast confirms the payment — usually within a minute of paying — and the change shows on the public website within about 15 to 25 minutes, when the site next rebuilds. A featured event goes live when we approve the event, which we aim to do within 24 hours. If a payment is confirmed but nothing has switched on within an hour, email us and we will fix it or refund you.',
-            '<strong>Your records.</strong> We email a numbered PDF invoice for every payment, and every invoice can be downloaded again from the Billing section of your dashboard for as long as you have an account.',
+            '<strong>Your records.</strong> We issue a numbered PDF invoice for every payment. Invoices are not emailed to you: each one is available to download from the Billing section of your dashboard for as long as you have an account.',
           ],
         },
         {

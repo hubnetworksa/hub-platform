@@ -301,7 +301,7 @@ async function handleBusinessPayment(
 
   // OR IGNORE against the unique index on pf_payment_id: a retried ITN that
   // somehow gets past the guards above still can't produce a second payment
-  // row — or a second invoice emailed to the owner.
+  // row — or a second invoice issued for the same payment.
   const paymentInsert = await db
     .prepare('INSERT OR IGNORE INTO payments (subscription_id, pf_payment_id, amount_cents, status, raw_itn) VALUES (?, ?, ?, ?, ?)')
     .bind(subscription.id, posted.pf_payment_id ?? null, Math.round(postedAmount * 100), posted.payment_status, raw)
