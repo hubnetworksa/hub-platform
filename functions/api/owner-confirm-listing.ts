@@ -29,6 +29,7 @@ interface PendingRow {
   email: string | null;
   website: string | null;
   description: string;
+  short_description: string | null;
   submitted_by_user_id: number | null;
   chosen_tier: number;
   chosen_billing_period: string | null;
@@ -52,7 +53,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const row = await db
     .prepare(
-      `SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description,
+      `SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description, short_description,
               submitted_by_user_id, chosen_tier, chosen_billing_period, m_payment_id, payment_status, payfast_token, hours, shopping_center_slug
        FROM pending_submissions WHERE owner_confirm_token = ?`
     )
@@ -98,6 +99,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     website: row.website,
     email: row.email,
     description: row.description,
+    shortDescription: row.short_description,
     ownerUserId: row.submitted_by_user_id,
     chosenTier: row.chosen_tier,
     billingPeriod: row.chosen_billing_period,

@@ -3,9 +3,8 @@
 // listings ("your card above every listing" on the pricing page). Renders
 // nothing while the slot is open; the sidebar SponsorSlot carries the buy
 // button in that case.
-import { sponsorFor, businesses, categoriesFor, suburbFor, logoFor, type Sponsorship } from '../lib/data';
+import { sponsorFor, businesses, categoriesFor, suburbFor, logoFor, cardBlurbFor, type Sponsorship } from '../lib/data';
 import BusinessLogo from './BusinessLogo.astro';
-import { plainLine } from '../lib/rich-text';
 
 interface Props {
   productType: Sponsorship['product_type'];
@@ -17,8 +16,8 @@ const { productType, target, context } = Astro.props;
 const sponsor = sponsorFor(productType, target);
 const business = sponsor ? businesses.find((b) => b.id === sponsor.business_id) : undefined;
 const meta = business ? [categoriesFor(business)[0]?.name, suburbFor(business)?.name].filter(Boolean).join(' · ') : '';
-const plainDesc = plainLine(business?.description);
-const blurb = plainDesc ? plainDesc.slice(0, 160) + (plainDesc.length > 160 ? '…' : '') : '';
+// Short description, or the full one clamped to 3 lines (2 on phones).
+const blurb = business ? cardBlurbFor(business) : '';
 // The sponsor's logo (Verified/Featured perk) is a left column with the
 // pill, name, meta and blurb all beside it; without one the card is exactly
 // as before.
@@ -41,7 +40,7 @@ const IdText = hasLogo ? 'span' : Fragment;
       <span style="font-size:18px;font-weight:800;letter-spacing:-.02em">{sponsor.business_name}</span>
       {meta && <span style="font-size:12.5px;font-weight:700;color:var(--muted)">{meta}</span>}
       </IdText>
-      {blurb && <span style="font-size:13.5px;line-height:1.5;color:var(--text)">{blurb}</span>}
+      {blurb && <span class="desc-clamp" style="font-size:13.5px;line-height:1.5;color:var(--text)" set:html={blurb} />}
     </span>
     </IdWrap>
     <span style="font-size:13.5px;font-weight:800;color:var(--accent-hover);white-space:nowrap">View listing →</span>

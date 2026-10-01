@@ -20,6 +20,7 @@ interface PendingRow {
   email: string | null;
   website: string | null;
   description: string;
+  short_description: string | null;
   chosen_tier: number | null;
   payment_status: string | null;
 }
@@ -33,7 +34,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const site = getSite(context.env.SITE);
   const token = new URL(context.request.url).searchParams.get('token') ?? '';
   const row = await context.env.DB.prepare(
-    'SELECT token, name, category_slug, suburb_slug, address, phone, email, website, description, chosen_tier, payment_status FROM pending_submissions WHERE token = ?'
+    'SELECT token, name, category_slug, suburb_slug, address, phone, email, website, description, short_description, chosen_tier, payment_status FROM pending_submissions WHERE token = ?'
   )
     .bind(token)
     .first<PendingRow>();
@@ -75,6 +76,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     <h1>New business listing submitted</h1>
     ${planNote}${mergeNote}
     <table class="data">${rowsHtml}</table>
+    ${row.short_description ? `<p><strong>Short description</strong><br>${escapeHtml(plainLine(row.short_description))}</p>` : ''}
     <p><strong>Description</strong><br>${escapeHtml(plainLine(row.description))}</p>
     <form method="POST" action="/api/confirm-listing" style="display:inline">
       <input type="hidden" name="token" value="${escapeHtml(token)}" />

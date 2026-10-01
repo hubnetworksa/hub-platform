@@ -10,7 +10,7 @@ import siteSettingsRaw from '../data/site-settings.json';
 import eventsRaw from '../data/events.json';
 import newsRaw from '../data/news.json';
 import fuelRaw from '../data/fuel-prices.json';
-import { canFormatDescription, renderRichText, plainHtml } from './rich-text';
+import { canFormatDescription, renderRichText, plainHtml, renderInline, plainLine } from './rich-text';
 import { centsToRand, monthlyAndYearly } from '../../functions/_lib/pricing';
 
 export interface Suburb {
@@ -56,6 +56,10 @@ export interface Business {
   website: string | null;
   email: string | null;
   description: string;
+  /** Owner-written one-paragraph summary (<= 160 visible chars, bold/italic
+   *  only) for cards, Featured blocks, search and meta. Optional: without
+   *  it those places use the description, clamped. See cardBlurbFor. */
+  short_description?: string | null;
   lat: number | null;
   lng: number | null;
   source_urls: string;
@@ -108,6 +112,50 @@ export function logoFor(b: { logo_key?: string | null; subscription_tier: number
  *  Snippets (cards, search index, meta, JSON-LD) always use plainLine. */
 export function descriptionHtmlFor(b: { description?: string | null; subscription_tier: number; subscription_status: string | null }): string {
   return canFormatDescription(b) ? renderRichText(b.description) : plainHtml(b.description);
+}
+
+type Describable = { description?: string | null; short_description?: string | null; subscription_tier: number; subscription_status: string | null };
+
+/** Longest fallback blurb carried in the HTML / search index — the cards
+ *  clamp it to 3 lines (2 on phones) anyway. */
+const FALLBACK_BLURB_CHARS = 260;
+
+function clip(s: string, n: number): string {
+  if (s.length <= n) return s;
+  const cut = s.slice(0, n);
+  const sp = cut.lastIndexOf(' ');
+  return `${(sp > n * 0.6 ? cut.slice(0, sp) : cut).replace(/[\s,.;:–—-]+$/, '')}…`;
+}
+
+/** One plain line summing the business up: the short description if the
+ *  owner wrote one, else the full description as a line. For meta
+ *  descriptions, og, JSON-LD and the search index. */
+export function summaryFor(b: Describable): string {
+  return plainLine(b.short_description) || plainLine(b.description);
+}
+
+/** Safe inline HTML for a card / Featured block / sponsor banner blurb, or ''
+ *  when there's nothing to show. The short description (formatted under the
+ *  same paid-plan rule as the full one), else the full description as plain
+ *  text, cut to a few lines' worth. Render it in an element with class
+ *  "desc-clamp" (global.css) so it never runs past 3 lines (2 on phones).
+ *  shortOnly: places that never showed a description before (grid cards,
+ *  search rows) only show one the owner wrote for that purpose. */
+export function cardBlurbFor(b: Describable, opts: { shortOnly?: boolean } = {}): string {
+  const short = b.short_description?.trim();
+  if (short) return canFormatDescription(b) ? renderInline(short) : escapeHtmlText(plainLine(short));
+  if (opts.shortOnly) return '';
+  return escapeHtmlText(clip(plainLine(b.description), FALLBACK_BLURB_CHARS));
+}
+
+/** Plain-text version of cardBlurbFor (search index; client-side cards
+ *  escape it themselves). */
+export function cardBlurbTextFor(b: Describable): string {
+  return plainLine(b.short_description) || clip(plainLine(b.description), FALLBACK_BLURB_CHARS);
+}
+
+function escapeHtmlText(s: string): string {
+  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 }
 
 /** Listing order everywhere a plan should count: Featured, then Verified,

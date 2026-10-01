@@ -6,12 +6,11 @@ import Icon from '../components/Icon.astro';
 import StatTile from '../components/StatTile.astro';
 import PlanBadge from '../components/PlanBadge.astro';
 import BusinessLogo from '../components/BusinessLogo.astro';
-import { sponsorFor, withoutSponsors, eventsSorted, eventDateParts, logoFor } from '../lib/data';
+import { sponsorFor, withoutSponsors, eventsSorted, eventDateParts, logoFor, cardBlurbFor } from '../lib/data';
 import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory, suburbFor, categoriesFor, FEATURED_TIER, newsSorted, newsDateShort, latestFuel, fuelPeriodLabel } from '../lib/data';
 import { CATEGORY_GROUPS } from '../lib/categoryGroups';
 import site from '../site';
 import { formatPhoneZA, phoneHref } from '../lib/phone';
-import { plainLine } from '../lib/rich-text';
 import AdUnit from '../components/AdUnit.astro';
 
 const groupCount = (group: (typeof CATEGORY_GROUPS)[number]) =>
@@ -173,7 +172,7 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
                   {(categoriesFor(b)[0] || suburb) && (
                     <p style="margin:0;font-size:13.5px;color:var(--muted);font-weight:600">{[categoriesFor(b)[0]?.name, suburb?.name].filter(Boolean).join(' · ')}</p>
                   )}
-                  <p style="margin:0;font-size:14px;line-height:1.55;color:var(--text)">{plainLine(b.description)}</p>
+                  {cardBlurbFor(b) && <p class="desc-clamp" style="margin:0;font-size:14px;line-height:1.55;color:var(--text)" set:html={cardBlurbFor(b)} />}
                   <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:6px">
                     <a href={`/business/${b.slug}/`} style="flex:1;padding:10px 12px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:800;text-decoration:none;text-align:center;white-space:nowrap">View profile</a>
                     {b.phone && <a href={phoneHref(b.phone)} data-track="phone_click" data-track-slug={b.slug} style="padding:10px 12px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap">{formatPhoneZA(b.phone)}</a>}

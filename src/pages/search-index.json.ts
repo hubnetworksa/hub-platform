@@ -39,6 +39,9 @@ export const GET: APIRoute = () => {
       a: b.address ?? '',
       // Markers stripped — the formatted version is only on the business page.
       d: plainLine(b.description),
+      // The owner's short description (cards, search rows), only when written —
+      // at most 160 characters, and absent for nearly every row.
+      ...(b.short_description ? { sd: plainLine(b.short_description) } : {}),
       // Logo URL — only on paid listings that have one (see logoFor), so
       // the key is simply absent for nearly every row.
       ...(logo ? { l: logo } : {}),

@@ -7,7 +7,7 @@ import { TIER_NAMES, tierPriceCents, centsToRand, parseBillingPeriod } from '../
 import { sendEmail } from '../_lib/send-email';
 import { escapeHtml } from '../../src/lib/business-submission';
 import { formatPhoneZA } from '../../src/lib/phone';
-import { plainLine } from '../../src/lib/rich-text';
+import { plainLine, descriptionLimitError, toSingleParagraph, LONG_DESC_MAX, RAW_SLACK } from '../../src/lib/rich-text';
 
 interface Env extends PayfastEnv {
   DB: D1Database;
@@ -33,7 +33,9 @@ const MAX_LEN: Record<string, number> = {
   phone: 30,
   email: 120,
   website: 200,
-  description: 600,
+  // Raw cap only (markers included); the real limit is descriptionLimitError's
+  // visible-character count, checked with a clear message below.
+  description: LONG_DESC_MAX * RAW_SLACK + 40,
   hours: 300,
   centre: 120,
 };
@@ -80,7 +82,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const phone = formatPhoneZA(clean(body.phone, 'phone')) || null;
   const email = clean(body.email, 'email');
   const website = clean(body.website, 'website');
+  // Over a description limit is a clear 400 (it used to be dropped silently
+  // for the generic fallback line). Short is optional, one paragraph.
+  for (const [field, kind] of [['description', 'long'], ['short_description', 'short']] as const) {
+    const raw = typeof body[field] === 'string' ? (body[field] as string).trim() : '';
+    const error = descriptionLimitError(kind === 'short' ? toSingleParagraph(raw) : raw, kind);
+    if (error) return json({ ok: false, error }, 400);
+  }
   const description = clean(body.description, 'description') ?? `${name} is a business in ${suburbSlug.replace(/-/g, ' ')}, part of the Greater ${site.cityLabel} area.`;
+  const shortRaw = typeof body.short_description === 'string' ? toSingleParagraph(body.short_description) : '';
+  const shortDescription = shortRaw && !/<[a-z]/i.test(shortRaw) ? shortRaw : null;
 
   const db = context.env.DB;
 
@@ -118,10 +129,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const insert = await db
     .prepare(
       `INSERT INTO pending_submissions
-        (token, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id, chosen_tier, hours, shopping_center_slug, chosen_billing_period)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        (token, name, category_slug, suburb_slug, address, phone, email, website, description, short_description, submitted_by_user_id, chosen_tier, hours, shopping_center_slug, chosen_billing_period)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
-    .bind(token, name, categorySlug, suburbSlug, address, phone, email, website, description, sessionUser?.id ?? null, chosenTier, hours, centre?.slug ?? null, billingPeriod)
+    .bind(token, name, categorySlug, suburbSlug, address, phone, email, website, description, shortDescription, sessionUser?.id ?? null, chosenTier, hours, centre?.slug ?? null, billingPeriod)
     .run();
   const submissionId = insert.meta.last_row_id;
 
@@ -138,6 +149,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     ...(email ? [`Email: ${email}`] : []),
     ...(website ? [`Website: ${website}`] : []),
     ...(hours ? [`Trading hours: ${hours}`] : []),
+    ...(shortDescription ? [`Short description: ${plainLine(shortDescription)}`] : []),
     ...(description ? [`Description: ${plainLine(description)}`] : []),
     `Plan chosen: ${TIER_NAMES[chosenTier]}${yearly ? ' (billed yearly)' : ''}`,
     ...(sessionUser ? [`Submitted by account: ${sessionUser.email}`] : []),

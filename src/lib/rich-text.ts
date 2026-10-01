@@ -5,6 +5,12 @@
 // Supported, and nothing else:
 //   **bold**   *italic*   "- item" / "* item" bullets   "1. item" numbers
 //   blank line = new paragraph, single newline = <br>
+//   ***both*** (bold + italic)
+//   \*  a literal star that never starts or ends formatting, and a line
+//       starting "\- ", "\* ", "\• " or "\1. " is a plain paragraph line, not
+//       a list item. The WYSIWYG editor (rich-text-editor.ts) writes these
+//       escapes only when the text would otherwise render differently from
+//       what the owner typed, so ordinary stars ("5 * 3", "4*") stay as-is.
 //
 // Safety: renderRichText escapes ALL HTML first, then only ever emits the
 // fixed, attribute-free tags <p> <strong> <em> <ul> <ol> <li> <br>. Nothing
@@ -20,18 +26,30 @@ function esc(s: string): string {
 
 const BULLET = /^\s*[-*•]\s+(.*)$/;
 const NUMBER = /^\s*\d{1,3}[.)]\s+(.*)$/;
+// A paragraph line that only looks like a list item: "\- not a bullet".
+const BLOCK_ESC = /^(\s*)\\(?=(?:[-*•]|\d{1,3}[.)])\s)/;
+const TRIPLE = /\*\*\*(?=[^\s*])([^\n]*?[^\s*])\*\*\*/g;
 const BOLD = /\*\*(?=\S)([^\n]*?\S)\*\*/g;
 const ITALIC = /(^|[^*\w])\*(?=[^\s*])([^*\n]*?[^\s*])\*(?![*\w])/g;
 
+// "\*" is held out of the marker regexes as a private-use placeholder and
+// put back as a plain "*" afterwards.
+const STAR = '';
+const hideStars = (s: string) => s.replace(//g, '').replace(/\\\*/g, STAR);
+const showStars = (s: string) => s.replace(//g, '*');
+
 /** Inline markers on one line of ALREADY-ESCAPED text. */
 function inline(escaped: string): string {
-  return escaped
-    .replace(BOLD, '<strong>$1</strong>')
-    .replace(ITALIC, '$1<em>$2</em>');
+  return showStars(
+    hideStars(escaped)
+      .replace(TRIPLE, '<strong><em>$1</em></strong>')
+      .replace(BOLD, '<strong>$1</strong>')
+      .replace(ITALIC, '$1<em>$2</em>')
+  );
 }
 
 function stripInline(s: string): string {
-  return s.replace(BOLD, '$1').replace(ITALIC, '$1$2');
+  return showStars(hideStars(s).replace(TRIPLE, '$1').replace(BOLD, '$1').replace(ITALIC, '$1$2'));
 }
 
 type Block = { kind: 'p' | 'ul' | 'ol'; lines: string[] };
@@ -41,6 +59,11 @@ function blocks(text: string): Block[] {
   let cur: Block | null = null;
   for (const raw of text.replace(/\r\n?/g, '\n').split('\n')) {
     if (!raw.trim()) { cur = null; continue; }
+    if (BLOCK_ESC.test(raw)) {
+      if (!cur || cur.kind !== 'p') { cur = { kind: 'p', lines: [] }; out.push(cur); }
+      cur.lines.push(raw.replace(BLOCK_ESC, '$1').trim());
+      continue;
+    }
     const b = BULLET.exec(raw);
     const n = b ? null : NUMBER.exec(raw);
     const kind: Block['kind'] = b ? 'ul' : n ? 'ol' : 'p';
@@ -100,6 +123,53 @@ export function plainLine(text: string | null | undefined): string {
     .join(' ')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+// --- Short + long business descriptions -------------------------------------
+// Limits count VISIBLE characters (plainText: markers don't count, a line
+// break counts one, a paragraph break two), the same on the server
+// (update-business, submit-business, admin listings) and in the editor's
+// counter. The long cap is the 600 the description column always had (it
+// used to count the raw text, markers included); the short one is new.
+
+/** Short description: cards, Featured blocks, search, meta. One paragraph. */
+export const SHORT_DESC_MAX = 160;
+/** Full description: the business page. */
+export const LONG_DESC_MAX = 600;
+/** Raw stored length allowed on top of the visible cap, for the markers. */
+export const RAW_SLACK = 2;
+
+export function visibleLength(text: string | null | undefined): number {
+  return plainText(text).length;
+}
+
+/** The short description as stored: a single paragraph with no list items
+ *  (line breaks become spaces; a list-looking start is escaped). */
+export function toSingleParagraph(text: string | null | undefined): string {
+  if (!text) return '';
+  const one = text.replace(/\s*[\r\n]+\s*/g, ' ').replace(/[ \t]+/g, ' ').trim();
+  return BULLET.test(one) || NUMBER.test(one) ? `\\${one}` : one;
+}
+
+/** Safe inline HTML (only <strong>/<em>) for a one-paragraph text such as the
+ *  short description — for cards, where a <p> wrapper isn't wanted. */
+export function renderInline(text: string | null | undefined): string {
+  if (!text) return '';
+  return blocks(text)
+    .flatMap((b) => b.lines)
+    .map((l) => inline(esc(l)))
+    .join(' ');
+}
+
+/** Error message when a description is over its limit, else null. */
+export function descriptionLimitError(text: string | null | undefined, kind: 'short' | 'long'): string | null {
+  if (!text) return null;
+  const max = kind === 'short' ? SHORT_DESC_MAX : LONG_DESC_MAX;
+  const label = kind === 'short' ? 'short description' : 'full description';
+  const n = visibleLength(text);
+  if (n > max) return `Your ${label} is ${n} characters; the limit is ${max}. Please shorten it.`;
+  if (text.length > max * RAW_SLACK + 40) return `Your ${label} has too much formatting for its length. Please simplify it.`;
+  return null;
 }
 
 /** The one "paid plan is live" rule: Verified/Featured (tier >= 1) and either

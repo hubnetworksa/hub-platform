@@ -208,8 +208,8 @@ for (const s of stmts) {
   const bare = s.replace(/'(?:[^']|'')*'/g, "''");
   const setPart = /^UPDATE\s+businesses\s+SET\s+([\s\S]*?)(?:\s+WHERE\b[\s\S]*)?$/i.exec(bare)?.[1] ?? '';
   const setCols = splitTop(setPart).map((a) => a.split('=')[0].trim().toLowerCase());
-  if (setCols.some((c) => c === 'description' || c === 'description_enriched_at')) {
-    err(`Routines may never change an existing business's description or description_enriched_at (descriptions belong to the owner or an admin). Remove this UPDATE; a new business gets its description in its INSERT only: ${head}…`);
+  if (setCols.some((c) => c === 'description' || c === 'short_description' || c === 'description_enriched_at')) {
+    err(`Routines may never change an existing business's description, short_description or description_enriched_at (descriptions belong to the owner or an admin). Remove this UPDATE; a new business gets its description in its INSERT only: ${head}…`);
     continue;
   }
   // Owned, owner-submitted or paid listings belong to their owner (snapshot `owner_managed`).

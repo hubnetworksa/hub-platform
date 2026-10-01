@@ -4,6 +4,7 @@ import { SOCIAL_KINDS, SOCIAL_LABELS, normalizeSocial } from '../_lib/social';
 import { requestRebuild } from '../_lib/deploy-hook';
 import { looksLikeEmail } from '../_lib/messages';
 import { formatPhoneZA } from '../../src/lib/phone';
+import { descriptionLimitError, toSingleParagraph } from '../../src/lib/rich-text';
 
 interface Env {
   DB: D1Database;
@@ -27,7 +28,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const business = await db
     .prepare(
-      `SELECT b.id, b.slug, b.name, b.address, b.phone, b.website, b.email, b.description, b.hours, b.owner_user_id,
+      `SELECT b.id, b.slug, b.name, b.address, b.phone, b.website, b.email, b.description, b.short_description, b.hours, b.owner_user_id,
               b.subscription_tier, b.subscription_status, b.subscription_expires_at, b.created_at,
               b.social_instagram, b.social_facebook, b.social_linkedin, b.social_youtube, b.logo_key,
               b.status, b.closed_at, s.name AS suburb_name,
@@ -39,7 +40,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     )
     .bind(businessId)
     .first<{
-      id: number; slug: string; name: string; address: string | null; phone: string | null; website: string | null; email: string | null; description: string; hours: string | null; owner_user_id: number | null;
+      id: number; slug: string; name: string; address: string | null; phone: string | null; website: string | null; email: string | null; description: string; short_description: string | null; hours: string | null; owner_user_id: number | null;
       subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null; created_at: string; suburb_name: string | null;
       social_instagram: string | null; social_facebook: string | null; social_linkedin: string | null; social_youtube: string | null; logo_key: string | null;
       status: string; closed_at: string | null; category_name: string | null; billing_period: string | null;
@@ -159,7 +160,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     ok: true,
     business: {
       id: business.id, slug: business.slug, created_at: business.created_at, suburb_name: business.suburb_name, category_name: business.category_name,
-      name: business.name, address: business.address, phone: business.phone, website: business.website, email: business.email, description: business.description, hours: business.hours,
+      name: business.name, address: business.address, phone: business.phone, website: business.website, email: business.email, description: business.description, short_description: business.short_description, hours: business.hours,
       subscription_tier: business.subscription_tier, subscription_status: business.subscription_status, subscription_expires_at: business.subscription_expires_at,
       // The live tier subscription's billing period ('monthly' | 'yearly'), for the Billing card.
       billing_period: business.billing_period ?? 'monthly',
@@ -210,7 +211,17 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const address = clean(body.address, 200);
   const phone = formatPhoneZA(clean(body.phone, 30)) || null;
   const website = clean(body.website, 200);
-  const description = clean(body.description, 600);
+  // Limits count visible characters (markers excluded) — see rich-text.ts.
+  // Over the limit is a clear 400 now, not a silent cut mid-sentence.
+  const description = typeof body.description === 'string' ? body.description.trim() || null : null;
+  const longError = descriptionLimitError(description, 'long');
+  if (longError) return json({ ok: false, error: longError }, 400);
+  // Optional. Only touched when the form sends it (older clients don't);
+  // sent empty, it's cleared.
+  const hasShort = typeof body.short_description === 'string';
+  const shortDescription = hasShort ? toSingleParagraph(body.short_description as string) || null : null;
+  const shortError = descriptionLimitError(shortDescription, 'short');
+  if (shortError) return json({ ok: false, error: shortError }, 400);
   const hours = clean(body.hours, 400);
   const email = clean(body.email, 160);
   if (email && !looksLikeEmail(email)) {
@@ -239,6 +250,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .prepare('UPDATE businesses SET address = ?, phone = ?, website = ?, email = ?, description = COALESCE(?, description), hours = ?, updated_at = datetime(\'now\') WHERE id = ?')
     .bind(address, phone, website, email, description, hours, businessId)
     .run();
+  if (hasShort) {
+    await db.prepare('UPDATE businesses SET short_description = ? WHERE id = ?').bind(shortDescription, businessId).run();
+  }
 
   // Every field just saved (and the social links above, when applicable) is
   // shown on the public page — without this the owner sees "Saved." but the

@@ -147,6 +147,10 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
         Description
         <textarea name="description" rows="3" style={`${fieldStyle};resize:vertical`}></textarea>
       </label>
+      <label style={labelStyle}>
+        Short description <span style="font-weight:600;color:var(--muted)">(optional, cards and search, 160 characters)</span>
+        <textarea name="short_description" rows="2" maxlength="400" style={`${fieldStyle};resize:vertical`}></textarea>
+      </label>
       <p id="listing-error" role="alert" hidden style="margin:0;font-size:13px;font-weight:700;color:var(--danger)"></p>
       <div style="display:flex;gap:9px;flex-wrap:wrap;padding-top:4px">
         <button id="listing-save" type="submit" class="admin-modal-save" style="padding:13px 20px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;cursor:pointer">Save listing</button>
@@ -475,6 +479,7 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
         field('phone').value = l.phone ?? '';
         field('plan').value = String(l.subscription_tier ?? 0);
         field('description').value = l.description ?? '';
+        field('short_description').value = l.short_description ?? '';
         editingStatus = l.status;
         editingName = l.name;
         setVisibilityLabel();
@@ -523,6 +528,7 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
           phone: field('phone').value,
           plan: Number(field('plan').value),
           description: field('description').value,
+          short_description: field('short_description').value,
         }),
       });
       const data = await res.json();

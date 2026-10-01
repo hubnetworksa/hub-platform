@@ -5,6 +5,7 @@ import BillingToggle from '../components/BillingToggle.astro';
 import { categories, suburbs, businesses, yearlyToggleNote } from '../lib/data';
 import { getFlowPlans } from '../lib/list-flow-plans';
 import site from '../site';
+import { SHORT_DESC_MAX, LONG_DESC_MAX, RAW_SLACK } from '../lib/rich-text';
 
 const sortedCategories = [...categories].sort((a, b) => a.name.localeCompare(b.name));
 const sortedSuburbs = [...suburbs].sort((a, b) => a.name.localeCompare(b.name));
@@ -49,8 +50,14 @@ const billingNote = yearlyToggleNote(['price_verified_cents', 'price_featured_ce
             </label>
           </div>
           <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
-            What do you do?
-            <textarea name="description" class="fld" maxlength="600" rows="4" placeholder="A sentence or two customers would search for." style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;font-family:inherit;color:var(--text);outline:none;background:#fff;resize:vertical"></textarea>
+            Short description (shown on cards and in search)
+            <span class="rte-hint">One or two sentences that sum you up: what you do and where. Optional.</span>
+            <textarea name="short_description" class="fld" maxlength={SHORT_DESC_MAX * RAW_SLACK} rows="2" placeholder="e.g. Family plumbers in Bendor: leaks, geysers and blocked drains, same day." style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;font-family:inherit;color:var(--text);outline:none;background:#fff;resize:vertical"></textarea>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+            Full description (shown on your business page)
+            <span class="rte-hint">What customers should know: services, brands, areas you cover.</span>
+            <textarea name="description" class="fld" maxlength={LONG_DESC_MAX * RAW_SLACK} rows="4" placeholder="What you do, who you serve and what makes you different." style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;font-family:inherit;color:var(--text);outline:none;background:#fff;resize:vertical"></textarea>
             <span id="desc-locked" hidden style="font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.5">Bold, italic and lists come with the Verified and Featured plans — choose one below to format your description.</span>
           </label>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px">
@@ -85,6 +92,7 @@ const billingNote = yearlyToggleNote(['price_verified_cents', 'price_featured_ce
             <input type="text" name="company_url" tabindex="-1" autocomplete="off" />
           </label>
 
+          <p id="desc-error" role="alert" hidden style="margin:0;font-size:13.5px;font-weight:700;color:#b42318"></p>
           <button type="submit" class="btn-primary" style="align-self:flex-start;padding:15px 24px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer">Continue to contact details</button>
         </form>
       </div>
@@ -146,6 +154,7 @@ const billingNote = yearlyToggleNote(['price_verified_cents', 'price_featured_ce
   import { loadDraft, saveDraft, readPlans } from '../lib/list-flow-client';
   import { currentBilling, onBillingChange, setBilling } from '../lib/billing-toggle';
   import { attachRichTextEditor } from '../lib/rich-text-editor';
+  import { SHORT_DESC_MAX, LONG_DESC_MAX, descriptionLimitError } from '../lib/rich-text';
 
   const root = document.getElementById('flow-root') as HTMLElement;
   const form = document.getElementById('step1-form') as HTMLFormElement;
@@ -169,17 +178,24 @@ const billingNote = yearlyToggleNote(['price_verified_cents', 'price_featured_ce
   onBillingChange((period) => (billing = period));
 
   const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-  for (const name of ['name', 'category', 'suburb', 'description', 'phone', 'email']) {
+  for (const name of ['name', 'category', 'suburb', 'short_description', 'description', 'phone', 'email']) {
     const v = (draft as unknown as Record<string, string>)[name] ?? '';
     if (v) field(name).value = v;
   }
 
   // Formatting is a paid-plan perk: the toolbar unlocks as soon as Verified
   // or Featured is picked below (a Basic listing's text still saves as-is).
+  const shortEditor = attachRichTextEditor(field('short_description') as HTMLTextAreaElement, {
+    locked: tier < 1,
+    lockLabel: 'Verified plan',
+    maxChars: SHORT_DESC_MAX,
+    singleParagraph: true,
+  });
   const descEditor = attachRichTextEditor(field('description') as HTMLTextAreaElement, {
     locked: tier < 1,
     lockLabel: 'Verified plan',
     lockNote: document.getElementById('desc-locked'),
+    maxChars: LONG_DESC_MAX,
   });
 
   function paintPlans() {
@@ -189,6 +205,7 @@ const billingNote = yearlyToggleNote(['price_verified_cents', 'price_featured_ce
       b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     descEditor.setLocked(tier < 1);
+    shortEditor.setLocked(tier < 1);
   }
   planBtns.forEach((b) =>
     b.addEventListener('click', () => {
@@ -215,10 +232,17 @@ const billingNote = yearlyToggleNote(['price_verified_cents', 'price_featured_ce
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const v = (name: string) => field(name).value.trim();
+    // Same limits (visible characters) the server checks.
+    const descError = document.getElementById('desc-error')!;
+    const tooLong = descriptionLimitError(v('short_description'), 'short') || descriptionLimitError(v('description'), 'long');
+    descError.textContent = tooLong ?? '';
+    descError.hidden = !tooLong;
+    if (tooLong) return;
     draft = saveDraft({
       name: v('name'),
       category: field('category').value,
       suburb: field('suburb').value,
+      short_description: v('short_description'),
       description: v('description'),
       phone: v('phone'),
       email: v('email'),

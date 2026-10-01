@@ -5,6 +5,7 @@ import BillingToggle from '../../components/BillingToggle.astro';
 import { priceRand, yearlyPriceRand, sponsorships } from '../../lib/data';
 import { TOURISM } from '../../site-content/tourism';
 import site from '../../site';
+import { SHORT_DESC_MAX, LONG_DESC_MAX, RAW_SLACK } from '../../lib/rich-text';
 
 // One icon per tab and per card-section header, so the sidebar and the
 // section headers read at a glance instead of as plain text — same
@@ -162,8 +163,13 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
                 <label style={fieldLabel}>Business name
                   <input type="text" name="name" id="field-name" disabled class="owner-input" style={`${fieldInput};background:var(--bg-subtle);color:var(--muted)`} />
                 </label>
-                <label style={fieldLabel}>Description
-                  <textarea name="description" id="field-description" maxlength="600" rows="4" class="owner-input" style={`${fieldInput};resize:vertical`}></textarea>
+                <label style={fieldLabel}>Short description (shown on cards and in search)
+                  <span class="rte-hint">One or two sentences that sum you up: what you do and where.</span>
+                  <textarea name="short_description" id="field-short-description" maxlength={SHORT_DESC_MAX * RAW_SLACK} rows="2" placeholder="e.g. Optical laboratory in Polokwane CBD, making lenses for optometrists across Limpopo." class="owner-input" style={`${fieldInput};resize:vertical`}></textarea>
+                </label>
+                <label style={fieldLabel}>Full description (shown on your business page)
+                  <span class="rte-hint">Everything a customer should know: services, brands, areas you cover.</span>
+                  <textarea name="description" id="field-description" maxlength={LONG_DESC_MAX * RAW_SLACK} rows="4" class="owner-input" style={`${fieldInput};resize:vertical`}></textarea>
                   <span id="desc-locked" hidden style="font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.5"><span id="desc-locked-text">Bold, italic and lists come with the Verified and Featured plans.</span> <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a>.</span>
                 </label>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px">
@@ -419,7 +425,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 <script>
   import { currentBilling, onBillingChange } from '../../lib/billing-toggle';
   import { attachRichTextEditor } from '../../lib/rich-text-editor';
-  import { canFormatDescription } from '../../lib/rich-text';
+  import { canFormatDescription, SHORT_DESC_MAX, LONG_DESC_MAX } from '../../lib/rich-text';
   const params = new URLSearchParams(window.location.search);
   const businessId = params.get('id');
   const main = document.getElementById('owner-main')!;
@@ -428,10 +434,18 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   const form = document.getElementById('edit-form') as HTMLFormElement;
   const formStatus = document.getElementById('form-status')!;
   // Formatting toolbar: locked until the listing's plan is known (and on Basic).
+  // Short (cards, search: one paragraph, bold/italic) and full (business page).
+  const shortEditor = attachRichTextEditor(document.getElementById('field-short-description') as HTMLTextAreaElement, {
+    locked: true,
+    lockLabel: 'Verified plan',
+    maxChars: SHORT_DESC_MAX,
+    singleParagraph: true,
+  });
   const descEditor = attachRichTextEditor(document.getElementById('field-description') as HTMLTextAreaElement, {
     locked: true,
     lockLabel: 'Verified plan',
     lockNote: document.getElementById('desc-locked'),
+    maxChars: LONG_DESC_MAX,
   });
   document.getElementById('desc-locked')!.hidden = true;
 
@@ -451,7 +465,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 
   type Business = {
     id: number; slug: string; name: string; created_at: string; suburb_name: string | null; category_name: string | null;
-    address: string | null; phone: string | null; website: string | null; email: string | null; description: string | null; hours: string | null;
+    address: string | null; phone: string | null; website: string | null; email: string | null; description: string | null; short_description?: string | null; hours: string | null;
     subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null;
     /** 'yearly' or 'monthly' — the billing period of the current tier plan. */
     billing_period?: string | null;
@@ -1298,14 +1312,17 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     (form.elements.namedItem('website') as HTMLInputElement).value = b.website ?? '';
     (form.elements.namedItem('email') as HTMLInputElement).value = b.email ?? '';
     (form.elements.namedItem('description') as HTMLTextAreaElement).value = b.description ?? '';
-    // Basic or lapsed: the toolbar locks, the textarea stays a plain box. The
-    // stored text (markers and all) is loaded and saved back untouched, so a
-    // lapsed listing's formatting isn't lost — it just shows as plain text
-    // on the site until the plan is live again.
+    (form.elements.namedItem('short_description') as HTMLTextAreaElement).value = b.short_description ?? '';
+    // Basic or lapsed: the toolbar locks and the box shows plain text, as the
+    // site does. The stored text (markers and all) is saved back untouched
+    // unless the owner edits the description, so a lapsed listing's
+    // formatting isn't lost just by saving another field.
     const descLocked = !canFormatDescription(b);
     descEditor.setLocked(descLocked);
+    shortEditor.setLocked(descLocked);
     descEditor.refresh();
-    const hasMarkers = /\*\S|^\s*(?:[-*•]|\d{1,3}[.)])\s/m.test(b.description ?? '');
+    shortEditor.refresh();
+    const hasMarkers = /\*\S|^\s*(?:[-*•]|\d{1,3}[.)])\s/m.test([b.description ?? '', b.short_description ?? ''].join('\n'));
     document.getElementById('desc-locked-text')!.textContent = descLocked && hasMarkers
       ? "Your formatting is saved, but shows as plain text until your listing is on Verified or Featured again."
       : 'Bold, italic and lists come with the Verified and Featured plans.';

@@ -4,6 +4,7 @@ import { logActivity } from '../../_lib/activity-log';
 import { triggerRebuild, rebuildTarget } from '../../_lib/deploy-hook';
 import { generateUniqueSlug, insertApprovedBusiness } from '../../../src/lib/business-submission';
 import { formatPhoneZA } from '../../../src/lib/phone';
+import { descriptionLimitError, toSingleParagraph } from '../../../src/lib/rich-text';
 
 interface Env {
   DB: D1Database;
@@ -29,7 +30,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (id) {
     const row = await db
       .prepare(
-        `SELECT b.id, b.slug, b.name, b.status, b.phone, b.description, b.subscription_tier, b.owner_user_id,
+        `SELECT b.id, b.slug, b.name, b.status, b.phone, b.description, b.short_description, b.subscription_tier, b.owner_user_id,
                 s.slug AS suburb_slug, s.name AS suburb_name, u.email AS owner_email,
                 (SELECT c.slug FROM business_categories bc JOIN categories c ON c.id = bc.category_id WHERE bc.business_id = b.id AND bc.is_primary = 1 LIMIT 1) AS category_slug,
                 (SELECT c.name FROM business_categories bc JOIN categories c ON c.id = bc.category_id WHERE bc.business_id = b.id AND bc.is_primary = 1 LIMIT 1) AS category_name
@@ -132,13 +133,20 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const categoryInput = clean(body.category, 120);
   const suburbInput = clean(body.suburb, 120);
   const phone = formatPhoneZA(clean(body.phone, 30)) || null;
-  const description = clean(body.description, 600);
+  // Limits on visible characters (rich-text.ts); over is a 400, not a cut.
+  const description = typeof body.description === 'string' ? body.description.trim() || null : null;
+  const longError = descriptionLimitError(description, 'long');
+  if (longError) return json({ ok: false, error: longError }, 400);
+  const hasShort = typeof body.short_description === 'string';
+  const shortDescription = hasShort ? toSingleParagraph(body.short_description as string) || null : null;
+  const shortError = descriptionLimitError(shortDescription, 'short');
+  if (shortError) return json({ ok: false, error: shortError }, 400);
   const tier = parsePlan(body.plan) ?? 0;
 
   if (!name) return json({ ok: false, error: 'Add the business name.' }, 400);
   if (!categoryInput) return json({ ok: false, error: 'Pick a category.' }, 400);
   if (!suburbInput) return json({ ok: false, error: 'Pick a suburb.' }, 400);
-  if (!description) return json({ ok: false, error: 'Add a short description.' }, 400);
+  if (!description) return json({ ok: false, error: 'Add a description.' }, 400);
 
   // The modal's Category / Suburb are free-typing inputs (with suggestions),
   // so resolve whatever was typed against the real rows — by name or slug.
@@ -161,6 +169,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       .prepare(`UPDATE businesses SET name = ?, suburb_id = ?, phone = ?, description = ?, updated_at = datetime('now') WHERE id = ?`)
       .bind(name, suburb.id, phone, description, id)
       .run();
+    if (hasShort) await db.prepare('UPDATE businesses SET short_description = ? WHERE id = ?').bind(shortDescription, id).run();
     await db.prepare('DELETE FROM business_categories WHERE business_id = ? AND is_primary = 1').bind(id).run();
     // A business can also carry non-primary categories; INSERT OR REPLACE so
     // picking one of those as the new primary doesn't hit the composite PK.
@@ -196,6 +205,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     website: null,
     email: null,
     description,
+    shortDescription,
     ownerUserId: null,
   });
 

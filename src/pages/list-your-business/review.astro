@@ -40,6 +40,7 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
             <div style="padding:20px">
               <h2 id="pv-name" style="margin:0 0 8px;font-size:23px;letter-spacing:-.025em;color:var(--navy);overflow-wrap:anywhere"></h2>
               <p id="pv-meta" style="margin:0 0 12px;font-size:13.5px;font-weight:700;color:var(--muted)"></p>
+              <p id="pv-short" hidden style="margin:0 0 12px;padding:10px 12px;border-radius:10px;background:var(--bg-subtle);font-size:14px;line-height:1.5;color:var(--text);overflow-wrap:anywhere"><span style="display:block;margin-bottom:3px;font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">On cards and in search</span><span id="pv-short-text"></span></p>
               <div id="pv-desc" class="rich-text" style="margin:0 0 16px;font-size:15px;line-height:1.6;color:var(--text);overflow-wrap:anywhere"></div>
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:2px;background:var(--border);border:1px solid var(--border);border-radius:11px;overflow:hidden">
                 <div style="background:#fff;padding:12px 14px"><div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Phone</div><div id="pv-phone" style="font-size:14px;font-weight:700;margin-top:4px;overflow-wrap:anywhere"></div></div>
@@ -132,7 +133,7 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
     readPlans,
     readMap,
   } from '../../lib/list-flow-client';
-  import { renderRichText, plainText } from '../../lib/rich-text';
+  import { renderRichText, renderInline, plainText, plainLine } from '../../lib/rich-text';
 
   const root = document.getElementById('flow-root') as HTMLElement;
   const $ = (id: string) => document.getElementById(id) as HTMLElement;
@@ -170,6 +171,12 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
     pvDesc.style.whiteSpace = 'pre-line';
     pvDesc.textContent = plainText(description);
   }
+  if (draft.short_description) {
+    $('pv-short').hidden = false;
+    const t = $('pv-short-text');
+    if (paid) t.innerHTML = renderInline(draft.short_description); // safe: escapes everything
+    else t.textContent = plainLine(draft.short_description);
+  }
   $('pv-phone').textContent = draft.phone || 'Not provided';
   $('pv-address').textContent = address || 'Not provided';
   $('pv-hours').textContent = hours || 'Not provided';
@@ -196,6 +203,7 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
           name: draft.name,
           category: draft.category,
           suburb: draft.suburb,
+          short_description: draft.short_description,
           description: draft.description,
           phone: draft.phone,
           email: draft.email,

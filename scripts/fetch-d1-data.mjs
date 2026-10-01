@@ -65,16 +65,24 @@ async function main() {
   const suburbs = query('SELECT id, slug, name, region, bio, landmarks, lat, lng, image_key FROM suburbs ORDER BY name;');
   const categories = query('SELECT id, slug, name FROM categories ORDER BY name;');
   // logo_key arrived with the business-logo migration; a database that
-  // hasn't had it applied yet just builds without logos.
+  // hasn't had it applied yet just builds without logos. Same for
+  // short_description: without it the cards fall back to the description.
   const businessesSql = (extra) =>
     `SELECT id, slug, name, suburb_id, address, phone, website, email, description, lat, lng, source_urls, shopping_center_id, description_enriched_at, hours, origin, owner_user_id, subscription_tier, subscription_status, subscription_expires_at, social_instagram, social_facebook, social_linkedin, social_youtube${extra}
      FROM businesses WHERE status = 'published' AND closed_at IS NULL${INCLUDE_TEST_DATA ? '' : ' AND is_test = 0'} ORDER BY name;`;
+  // short_description (the business-short-description migration) is optional
+  // the same way: each missing column is dropped from the query in turn.
   let businesses;
-  try {
-    businesses = query(businessesSql(', logo_key'));
-  } catch {
-    process.stderr.write(`[${SITE}] businesses.logo_key not available yet — building without logos.\n`);
-    businesses = query(businessesSql(''));
+  const optional = [', logo_key', ', short_description'];
+  for (;;) {
+    try {
+      businesses = query(businessesSql(optional.join('')));
+      break;
+    } catch (e) {
+      if (!optional.length) throw e;
+      const dropped = optional.pop();
+      process.stderr.write(`[${SITE}] businesses.${dropped.slice(2)} not available yet — building without it.\n`);
+    }
   }
   const businessCategories = query('SELECT business_id, category_id, is_primary FROM business_categories;');
   const shoppingCenters = query('SELECT id, slug, name, suburb_id, address, lat, lng, type, description FROM shopping_centers ORDER BY name;');

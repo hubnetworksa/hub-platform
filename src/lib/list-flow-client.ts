@@ -23,6 +23,8 @@ export interface Draft {
   name: string;
   category: string;
   suburb: string;
+  /** Optional one-paragraph summary for cards and search. */
+  short_description: string;
   description: string;
   phone: string;
   email: string;
@@ -63,6 +65,7 @@ export function emptyDraft(): Draft {
     name: '',
     category: '',
     suburb: '',
+    short_description: '',
     description: '',
     phone: '',
     email: '',

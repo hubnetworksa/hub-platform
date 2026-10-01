@@ -27,6 +27,8 @@ export interface ApprovedListing {
   website: string | null;
   email: string | null;
   description: string;
+  /** Optional short description (cards, search) — see rich-text.ts. */
+  shortDescription?: string | null;
   /** The submitter's account id, if they were logged in — lets the
    *  published business show up under their "My Businesses" dashboard. */
   ownerUserId?: number | null;
@@ -103,12 +105,13 @@ export async function insertApprovedBusiness(db: D1Database, listing: ApprovedLi
               website = COALESCE(NULLIF(website, ''), ?),
               email = COALESCE(NULLIF(email, ''), ?),
               description = COALESCE(NULLIF(description, ''), ?),
+              short_description = COALESCE(NULLIF(short_description, ''), ?),
               hours = COALESCE(NULLIF(hours, ''), ?),
               shopping_center_id = COALESCE(shopping_center_id, ?),
               status = 'published'
           WHERE id = ?`
       )
-      .bind(listing.address, listing.phone, listing.website, listing.email, listing.description, listing.hours ?? null, listing.shoppingCenterId ?? null, existing.id)
+      .bind(listing.address, listing.phone, listing.website, listing.email, listing.description, listing.shortDescription ?? null, listing.hours ?? null, listing.shoppingCenterId ?? null, existing.id)
       .run();
 
     await db
@@ -123,8 +126,8 @@ export async function insertApprovedBusiness(db: D1Database, listing: ApprovedLi
     const insert = await db
       .prepare(
         `INSERT INTO businesses
-          (slug, name, suburb_id, address, phone, website, email, description, source_urls, hours, shopping_center_id, status, origin, owner_user_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', 'owner_submitted', ?)`
+          (slug, name, suburb_id, address, phone, website, email, description, short_description, source_urls, hours, shopping_center_id, status, origin, owner_user_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', 'owner_submitted', ?)`
       )
       .bind(
         listing.slug,
@@ -135,6 +138,7 @@ export async function insertApprovedBusiness(db: D1Database, listing: ApprovedLi
         listing.website,
         listing.email,
         listing.description,
+        listing.shortDescription ?? null,
         JSON.stringify(['owner-submitted']),
         listing.hours ?? null,
         listing.shoppingCenterId ?? null,
