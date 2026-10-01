@@ -10,6 +10,11 @@ import AdminShell from '../components/AdminShell.astro';
     <AdminShell active="dashboard" title="Dashboard" subtitle="Everything happening on this hub today">
       <div id="stats-strip" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px"></div>
 
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">App installs</h2>
+        <div id="app-installs-strip" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px"></div>
+      </div>
+
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px">
         <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
           <div style="padding:14px 18px;border-bottom:2px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px">
@@ -111,6 +116,20 @@ import AdminShell from '../components/AdminShell.astro';
       statTile(paid.toLocaleString('en-US'), 'Paid listings', `${s.featuredListings} featured · ${s.verifiedListings} verified`),
       statTile(s.awaitingReview, 'Awaiting review', s.awaitingReview === 0 ? 'queue is clear' : oldest === null ? '' : oldest <= 0 ? 'oldest today' : `oldest ${oldest} day${oldest === 1 ? '' : 's'}`),
       statTile(randFromCents(data.revenue.totalCents), 'Monthly recurring', 'across all products'),
+    ].join('');
+
+    // Installed-app counter (anonymous device ids, see /api/app-event) — this city only.
+    const ai = (data.appInstalls ?? { totalInstalls: 0, installsLast30: 0, activeUsers30: 0, byPlatform: {} }) as { totalInstalls: number; installsLast30: number; activeUsers30: number; byPlatform: Record<string, number> };
+    const PLATFORM_LABELS: Record<string, string> = { android: 'Android', ios: 'iPhone', desktop: 'Desktop', other: 'Other' };
+    const split = Object.entries(ai.byPlatform)
+      .filter(([, n]) => n > 0)
+      .sort((a, b) => b[1] - a[1])
+      .map(([k, n]) => `${esc(PLATFORM_LABELS[k] ?? k)} ${n.toLocaleString('en-US')}`)
+      .join(' · ');
+    document.getElementById('app-installs-strip')!.innerHTML = [
+      statTile(ai.totalInstalls.toLocaleString('en-US'), 'Total installs', split || 'none yet'),
+      statTile(ai.installsLast30.toLocaleString('en-US'), 'Installed in last 30 days'),
+      statTile(ai.activeUsers30.toLocaleString('en-US'), 'Active app users', 'opened the app in the last 30 days'),
     ].join('');
 
     const rows: { label: string; cents: number }[] = data.revenue.rows;

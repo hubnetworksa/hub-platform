@@ -164,9 +164,12 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     routineHealth = null;
   }
 
+  const appInstalls = await appInstallStats(db);
+
   return json({
     ok: true,
     routineHealth,
+    appInstalls,
     submissions: submissions.results.map((s) => ({
       ...s,
       status: s.owner_confirm_token ? 'Awaiting owner confirmation' : s.admin_approved_at ? 'Approved' : 'Pending your approval',
@@ -223,6 +226,28 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     },
   });
 };
+
+// Installed-app counter (functions/api/app-event.ts). The app_events table
+// arrives with the app_installs migration; until it is applied on a given
+// city's database (the preview deploy never runs migrations) report zeros.
+type AppInstallStats = { totalInstalls: number; installsLast30: number; activeUsers30: number; byPlatform: Record<string, number> };
+async function appInstallStats(db: D1Database): Promise<AppInstallStats> {
+  const empty: AppInstallStats = { totalInstalls: 0, installsLast30: 0, activeUsers30: 0, byPlatform: { android: 0, ios: 0, desktop: 0, other: 0 } };
+  try {
+    const [total, last30, active, platforms] = await Promise.all([
+      db.prepare("SELECT COUNT(*) AS n FROM app_events WHERE event = 'install'").first<{ n: number }>(),
+      db.prepare("SELECT COUNT(*) AS n FROM app_events WHERE event = 'install' AND created_at >= datetime('now', '-30 days')").first<{ n: number }>(),
+      db.prepare("SELECT COUNT(DISTINCT device_id) AS n FROM app_events WHERE event = 'open' AND created_at >= datetime('now', '-30 days')").first<{ n: number }>(),
+      db.prepare("SELECT COALESCE(platform, 'other') AS platform, COUNT(*) AS n FROM app_events WHERE event = 'install' GROUP BY COALESCE(platform, 'other')").all<{ platform: string; n: number }>(),
+    ]);
+    const byPlatform = { ...empty.byPlatform };
+    for (const r of platforms.results) byPlatform[r.platform] = (byPlatform[r.platform] ?? 0) + r.n;
+    return { totalInstalls: total?.n ?? 0, installsLast30: last30?.n ?? 0, activeUsers30: active?.n ?? 0, byPlatform };
+  } catch (err) {
+    if (!(err instanceof Error && /no such table/i.test(err.message))) throw err;
+    return empty;
+  }
+}
 
 // Same window functions/api/review-claim.ts enforces; older claims can only
 // be dismissed via /api/admin/claims.
