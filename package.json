@@ -24,7 +24,10 @@
     "db:migrate:remote": "node scripts/db-migrate.mjs --remote",
     "typecheck:functions": "npx --yes -p typescript@5 tsc -p tsconfig.functions.json",
     "check:links": "node scripts/check-links.mjs",
-    "check:smoke": "node scripts/smoke-test.mjs"
+    "check:smoke": "node scripts/smoke-test.mjs",
+    "check:launch": "node scripts/launch-test.mjs",
+    "check:rowcounts": "node scripts/db-rowcounts.mjs",
+    "check:all": "bash scripts/launch-check.sh"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",
@@ -34,6 +37,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260831.1",
     "cross-env": "^10.1.0",
+    "playwright": "^1.63.0",
     "wrangler": "^4.105.0"
   }
 }
