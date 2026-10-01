@@ -52,8 +52,8 @@ export function getFlowPlans(): FlowPlan[] {
       yearlyPrice: `${verifiedYearly}/yr`,
       yearlyAmount: verifiedYearly,
       yearlyNote: yearlyNote('price_verified_cents'),
-      note: 'Badge, website link, photos, enquiries',
-      summary: 'Badge, website link, photos, enquiries, stats',
+      note: 'Badge, logo, website link, photos, enquiries',
+      summary: 'Badge, logo, website link, photos, enquiries, stats',
     },
     {
       tier: 2,

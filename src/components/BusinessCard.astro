@@ -1,7 +1,8 @@
 ---
 // Two variants matching the mockup: 'card' (grid card — Centre/Results
 // screens) and 'row' (A-Z list row — Suburb screen).
-import { suburbFor, categoriesFor, shoppingCenterFor, FEATURED_TIER, averageRating, reviewCount, type Business } from '../lib/data';
+import { suburbFor, categoriesFor, shoppingCenterFor, FEATURED_TIER, averageRating, reviewCount, logoFor, type Business } from '../lib/data';
+import BusinessLogo from './BusinessLogo.astro';
 
 interface Props {
   business: Business;
@@ -27,6 +28,11 @@ const isFeatured = business.subscription_tier >= FEATURED_TIER;
 const meta = metaOverride ?? [showSuburb && suburb ? suburb.name : null, center ? `at ${center.name}` : business.address].filter(Boolean).join(' · ');
 const rating = averageRating(business);
 const numReviews = reviewCount(business);
+// Logo (Verified/Featured perk): the name block is only wrapped when there's
+// one, so a card without a logo renders exactly as before.
+const hasLogo = !!logoFor(business);
+const RowId = hasLogo ? 'span' : Fragment;
+const CardId = hasLogo ? 'div' : Fragment;
 ---
 
 {variant === 'row' ? (
@@ -38,10 +44,13 @@ const numReviews = reviewCount(business);
     data-list-name={listContext?.name}
     style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 18px;border-bottom:1px solid var(--border);color:var(--navy);text-decoration:none"
   >
+    <RowId {...(hasLogo ? { class: 'biz-id', style: 'flex:1 1 auto' } : {})}>
+    <BusinessLogo business={business} size="sm" />
     <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
       <span style="font-size:15.5px;font-weight:800;letter-spacing:-.01em">{business.name}</span>
       {meta && <span style="font-size:12.5px;font-weight:600;color:var(--muted)">{meta}</span>}
     </span>
+    </RowId>
     {primary && <span style="font-size:11.5px;font-weight:800;color:var(--accent-hover);white-space:nowrap;flex-shrink:0">{primary.name}</span>}
     {numReviews > 0 && <span style="font-size:11.5px;font-weight:700;color:var(--muted);white-space:nowrap;flex-shrink:0">★ {rating}</span>}
   </a>
@@ -58,7 +67,10 @@ const numReviews = reviewCount(business);
         )}
       </div>
     )}
+    <CardId {...(hasLogo ? { class: 'biz-id', style: 'margin:2px 0' } : {})}>
+    <BusinessLogo business={business} size="md" />
     <h3 style="margin:0;font-size:16.5px;letter-spacing:-.015em;color:var(--navy)">{business.name}</h3>
+    </CardId>
     {(primary || meta) && <p style="margin:0;font-size:13px;font-weight:600;color:var(--muted)">{[primary?.name, meta].filter(Boolean).join(' · ')}</p>}
     <a
       href={`/business/${business.slug}/`}

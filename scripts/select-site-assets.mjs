@@ -35,6 +35,16 @@ for (const file of files) {
   await copyFile(path.join(assetsDir, file), path.join(publicDir, file));
 }
 
+// PREVIEW ONLY: the sample logos scripts/apply-demo-premium.mjs points its
+// fake paid businesses at. Production never sets DEMO_PREMIUM, so these
+// never reach a production build.
+if (process.env.DEMO_PREMIUM === 'true') {
+  const demoDir = path.join(ROOT, 'assets', 'demo');
+  for (const file of await readdir(demoDir)) {
+    await copyFile(path.join(demoDir, file), path.join(publicDir, file));
+  }
+}
+
 await writeFile(
   path.join(publicDir, 'ads.txt'),
   site.adsensePublisherId

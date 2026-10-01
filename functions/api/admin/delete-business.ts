@@ -48,7 +48,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const businessId = Number(body.businessId);
   if (!businessId) return json({ ok: false, error: 'Missing business.' }, 400);
 
-  const business = await db.prepare('SELECT name FROM businesses WHERE id = ?').bind(businessId).first<{ name: string }>();
+  const business = await db.prepare('SELECT name, logo_key FROM businesses WHERE id = ?').bind(businessId).first<{ name: string; logo_key: string | null }>();
   if (!business) return json({ ok: false, error: 'Business not found.' }, 404);
 
   // Paid invoices are accounting records and are never deleted — not the
@@ -77,6 +77,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   ]);
   const r2Keys = new Set<string>();
   for (const p of photos.results) if (p.r2_key) r2Keys.add(p.r2_key);
+  if (business.logo_key) r2Keys.add(business.logo_key);
   for (const c of claims.results) for (const key of parseDocumentKeys(c.document_keys)) r2Keys.add(key);
 
   // Log before deleting — the name wouldn't be recoverable afterward.

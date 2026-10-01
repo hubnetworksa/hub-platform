@@ -29,7 +29,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .prepare(
       `SELECT b.id, b.slug, b.name, b.address, b.phone, b.website, b.email, b.description, b.hours, b.owner_user_id,
               b.subscription_tier, b.subscription_status, b.subscription_expires_at, b.created_at,
-              b.social_instagram, b.social_facebook, b.social_linkedin, b.social_youtube,
+              b.social_instagram, b.social_facebook, b.social_linkedin, b.social_youtube, b.logo_key,
               b.status, b.closed_at, s.name AS suburb_name,
               (SELECT ts.billing_period FROM subscriptions ts
                WHERE ts.business_id = b.id AND ts.product_type = 'tier' AND ts.status IN ('active', 'cancelled')
@@ -41,7 +41,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .first<{
       id: number; slug: string; name: string; address: string | null; phone: string | null; website: string | null; email: string | null; description: string; hours: string | null; owner_user_id: number | null;
       subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null; created_at: string; suburb_name: string | null;
-      social_instagram: string | null; social_facebook: string | null; social_linkedin: string | null; social_youtube: string | null;
+      social_instagram: string | null; social_facebook: string | null; social_linkedin: string | null; social_youtube: string | null; logo_key: string | null;
       status: string; closed_at: string | null; category_name: string | null; billing_period: string | null;
     }>();
   if (!business || (business.owner_user_id !== user.id && !isAdminEmail(user.email))) return json({ ok: false, error: 'You do not own this business.' }, 403);
@@ -164,6 +164,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       // The live tier subscription's billing period ('monthly' | 'yearly'), for the Billing card.
       billing_period: business.billing_period ?? 'monthly',
       social_instagram: business.social_instagram, social_facebook: business.social_facebook, social_linkedin: business.social_linkedin, social_youtube: business.social_youtube,
+      // Logo (Verified/Featured perk) — the dashboard's Logo card previews it.
+      logo_key: business.logo_key,
       // Whether the business currently shows on the public site at all —
       // an admin can hide a listing (status != 'published') and the
       // automated closed-business check can flag one as closed

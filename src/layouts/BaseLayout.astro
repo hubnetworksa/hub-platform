@@ -26,6 +26,9 @@ interface Props {
   /** Share image for this page (an event poster, an attraction photo).
    *  Root-relative or absolute. Pages without one share the logo. */
   ogImage?: string | null;
+  /** The share image is a square logo, not a wide photo: use the small
+   *  Twitter card so it isn't cropped to 2:1. */
+  ogImageSquare?: boolean;
   /** og:type — 'article' for news/guides, 'website' otherwise. */
   ogType?: 'website' | 'article';
   /** No ads may show on this page: ad requests are paused (Google's
@@ -36,7 +39,7 @@ interface Props {
   noAds?: boolean;
 }
 
-const { title, description, canonical, titleOverride, noindex, impactVerification, ogImage, ogType = 'website', noAds: noAdsProp = false } = Astro.props;
+const { title, description, canonical, titleOverride, noindex, impactVerification, ogImage, ogImageSquare = false, ogType = 'website', noAds: noAdsProp = false } = Astro.props;
 // Account, admin and other noindex utility pages are ad-free too (an owner's
 // dashboard shows their own paid listing).
 const noAds = noAdsProp || Boolean(noindex);
@@ -169,7 +172,7 @@ const themeCss = `:root {
     <meta property="og:image" content={shareImage} />
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:card" content={ogImage && !ogImageSquare ? 'summary_large_image' : 'summary'} />
     <meta name="twitter:image" content={shareImage} />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />

@@ -207,3 +207,75 @@ main {
 #wx-chip{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.82)}
 #wx-chip[hidden]{display:none}
 @media(max-width:759px){#wx-chip{display:none}}
+
+/* Business logo tile (Verified/Featured perk) — rendered by
+   src/components/BusinessLogo.astro and by search.astro's client-side
+   renderRow(), so both share these rules. White tile with a hairline so any
+   logo (transparent PNG, white-background JPG, wide wordmark) sits the same;
+   object-fit:contain never crops or stretches. Fixed sizes, so no layout
+   shift while the image loads. */
+.biz-logo {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.biz-logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.biz-logo--lg { width: 88px; height: 88px; padding: 9px; border-radius: 12px; }
+.biz-logo--md { width: 52px; height: 52px; padding: 5px; border-radius: 12px; }
+.biz-logo--sm { width: 36px; height: 36px; padding: 3px; border-radius: 8px; }
+/* Logo + name block: the logo beside a column of name/meta lines. */
+.biz-id {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.biz-id > :not(.biz-logo) {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+.biz-id-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+/* On phones a name/meta column often wraps to several lines: pin the logo to
+   the top line instead of floating it in the middle. */
+@media (max-width: 760px) {
+  .biz-id:has(> .biz-id-text) {
+    align-items: flex-start;
+  }
+}
+/* Business page header: logo beside the name and badges; stacked on phones. */
+.biz-head {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+.biz-head-text {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.biz-head-text > :last-child {
+  margin-bottom: 0 !important;
+}
+@media (max-width: 760px) {
+  .biz-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .biz-head .biz-logo--lg { width: 72px; height: 72px; padding: 7px; }
+}

@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { businesses, suburbFor, categoriesFor, websiteUrl } from '../lib/data';
+import { businesses, suburbFor, categoriesFor, websiteUrl, logoFor } from '../lib/data';
 import { groupForCategory } from '../lib/categoryGroups';
 import { synonymsFor, locationSynonymsFor } from '../lib/categorySynonyms';
 import { formatPhoneZA } from '../lib/phone';
@@ -9,6 +9,7 @@ export const GET: APIRoute = () => {
   const index = businesses.map((b) => {
     const cat = categoriesFor(b)[0];
     const suburb = suburbFor(b);
+    const logo = logoFor(b);
     return {
       n: b.name,
       s: b.slug,
@@ -36,6 +37,9 @@ export const GET: APIRoute = () => {
       w: websiteUrl(b.website) ?? '',
       a: b.address ?? '',
       d: b.description ?? '',
+      // Logo URL — only on paid listings that have one (see logoFor), so
+      // the key is simply absent for nearly every row.
+      ...(logo ? { l: logo } : {}),
     };
   });
   return new Response(JSON.stringify(index), {

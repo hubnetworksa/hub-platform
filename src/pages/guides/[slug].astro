@@ -2,7 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { guidesFor, type Guide } from '../../lib/guides';
-import { categoryBySlug, businessesInCategory, suburbFor, sponsorFor, priceRand, FEATURED_TIER, isPaidListing, byPlanThenName } from '../../lib/data';
+import { categoryBySlug, businessesInCategory, suburbFor, sponsorFor, priceRand, FEATURED_TIER, isPaidListing, byPlanThenName, logoFor } from '../../lib/data';
+import BusinessLogo from '../../components/BusinessLogo.astro';
 import site from '../../site';
 
 export function getStaticPaths() {
@@ -36,6 +37,8 @@ const listed = [...inCategory]
     name: b.name,
     suburb: suburbFor(b)?.name,
     featured: b.subscription_tier >= FEATURED_TIER,
+    business: b,
+    hasLogo: !!logoFor(b),
   }));
 
 const sponsorPrice = priceRand('price_sponsor_guide_cents');
@@ -108,15 +111,25 @@ const showsPaid = !!guideSponsor || inCategory.some((b) => isPaidListing(b) && l
               {listed.length > 0 ? (
                 <>
                   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:12px;margin-top:16px">
-                    {listed.map((b) => (
+                    {listed.map((b) => {
+                      // With a logo, the name and suburb sit in a column beside it.
+                      const IdWrap = b.hasLogo ? 'span' : Fragment;
+                      const IdText = b.hasLogo ? 'span' : Fragment;
+                      return (
                       <a href={`/business/${b.slug}/`} class="guide-biz" style={`border:2px solid ${b.featured ? 'var(--accent)' : 'var(--border)'};border-radius:14px;padding:16px;background:#fff;display:flex;flex-direction:column;gap:7px;text-decoration:none`}>
                         {b.featured && (
                           <span style="align-self:flex-start;padding:4px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Featured</span>
                         )}
+                        <IdWrap {...(b.hasLogo ? { class: 'biz-id', style: 'gap:10px' } : {})}>
+                        <BusinessLogo business={b.business} size="sm" />
+                        <IdText {...(b.hasLogo ? { class: 'biz-id-text', style: 'gap:3px' } : {})}>
                         <span style="font-size:16.5px;font-weight:800;color:var(--navy);letter-spacing:-.015em">{b.name}</span>
                         {b.suburb && <span style="font-size:12.5px;font-weight:600;color:var(--muted)">{b.suburb}</span>}
+                        </IdText>
+                        </IdWrap>
                       </a>
-                    ))}
+                      );
+                    })}
                   </div>
                   <a href={`/category/${category.slug}/`} style="display:inline-block;margin-top:16px;font-size:14px;font-weight:800;color:var(--accent);text-decoration:none">See all {inCategory.length} {categoryName.toLowerCase()} →</a>
                 </>

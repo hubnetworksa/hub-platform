@@ -116,6 +116,7 @@ function makeFakeBusiness({ name, slugBase, donor, categoryId, suburbId, shoppin
     social_facebook: null,
     social_linkedin: null,
     social_youtube: null,
+    logo_key: null,
   };
   fakeBusinesses.push(business);
   const catId = categoryId ?? primaryCategoryId(donor);
@@ -149,6 +150,14 @@ const DEMO_SOCIALS = {
   social_youtube: 'https://www.youtube.com/@YouTube',
 };
 
+// Sample logos (assets/demo/, copied into public/ by select-site-assets.mjs
+// only when DEMO_PREMIUM is set). A logo_key starting with "/" is used as a
+// site path by logoFor() in src/lib/data.ts instead of a /media/ R2 key. One
+// square mark and one wide wordmark, so both shapes can be checked in every
+// logo spot.
+const DEMO_LOGO_SQUARE = '/demo-logo.png';
+const DEMO_LOGO_WIDE = '/demo-logo-wide.png';
+
 let featuredCount = 0;
 let verifiedCount = 0;
 for (const s of suburbs) {
@@ -165,6 +174,7 @@ for (const s of suburbs) {
   featured.subscription_tier = 2;
   featured.subscription_status = 'active';
   featured.subscription_expires_at = expires;
+  featured.logo_key = DEMO_LOGO_SQUARE;
   Object.assign(featured, DEMO_SOCIALS);
   featuredCount++;
 
@@ -178,6 +188,7 @@ for (const s of suburbs) {
   verified.subscription_tier = 1;
   verified.subscription_status = 'active';
   verified.subscription_expires_at = expires;
+  verified.logo_key = DEMO_LOGO_WIDE;
   verifiedCount++;
 }
 
@@ -185,7 +196,13 @@ for (const s of suburbs) {
 
 const sponsorships = [];
 let nextSponsorshipId = 9000;
-const addSponsor = (product_type, product_target, business) =>
+// Logos come with the Verified plan, so a demo sponsor is shown as also
+// holding Verified — that's what lets its sponsor card carry a logo.
+const addSponsor = (product_type, product_target, business) => {
+  business.subscription_tier = 1;
+  business.subscription_status = 'active';
+  business.subscription_expires_at = expires;
+  business.logo_key = DEMO_LOGO_SQUARE;
   sponsorships.push({
     id: nextSponsorshipId++,
     product_type,
@@ -195,6 +212,7 @@ const addSponsor = (product_type, product_target, business) =>
     business_slug: business.slug,
     current_period_end: expires,
   });
+};
 
 // Category sponsors: every category in the snapshot, not just the busiest.
 let categorySponsorCount = 0;

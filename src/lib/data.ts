@@ -70,6 +70,8 @@ export interface Business {
   social_facebook?: string | null;
   social_linkedin?: string | null;
   social_youtube?: string | null;
+  /** Verified/Featured perk: R2 key of the uploaded logo (see logoFor). */
+  logo_key?: string | null;
 }
 
 /** The Featured tier's numeric value — gates the Photos gallery and
@@ -83,6 +85,19 @@ export const FEATURED_TIER = 2;
  *  Google ads — see BaseLayout's noAds. */
 export function isPaidListing(b: { subscription_tier: number }): boolean {
   return (b.subscription_tier ?? 0) >= 1;
+}
+
+/** Public URL of a business's logo, or null when there's none to show. Only
+ *  while a Verified/Featured plan is paid up (active, or cancelled but still
+ *  paid-through) — the same rule functions/api/business-logo.ts uploads
+ *  under. A lapsed plan's logo_key stays in D1/R2 for when they renew; the
+ *  next build just stops showing it. A key starting with "/" is already a
+ *  site path (the preview's demo placeholder) and is used as is. */
+export function logoFor(b: { logo_key?: string | null; subscription_tier: number; subscription_status: string | null }): string | null {
+  if (!b.logo_key) return null;
+  if ((b.subscription_tier ?? 0) < 1) return null;
+  if (b.subscription_status !== 'active' && b.subscription_status !== 'cancelled') return null;
+  return b.logo_key.startsWith('/') ? b.logo_key : `/media/${b.logo_key}`;
 }
 
 /** Listing order everywhere a plan should count: Featured, then Verified,

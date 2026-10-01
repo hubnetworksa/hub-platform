@@ -153,7 +153,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
   // BaseLayout.astro) rather than an Astro define:vars binding here.
   const cityLabel = document.body.dataset.cityLabel ?? '';
 
-  interface Row { n: string; s: string; sb: string; sbs: string; c: string; g: string; k: string; t: number; h: boolean; hr: string; p: string; w: string; a: string; d: string }
+  interface Row { n: string; s: string; sb: string; sbs: string; c: string; g: string; k: string; t: number; h: boolean; hr: string; p: string; w: string; a: string; d: string; l?: string }
   interface Meta {
     cats: { n: string; s: string; c: number; k: string }[];
     subs: { n: string; s: string; c: number; g: string }[];
@@ -237,11 +237,20 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     return `<span style="${style}">${st.open ? 'Open now' : 'Closed'}</span>`;
   }
 
+  // Same tile as src/components/BusinessLogo.astro (.biz-logo in global.css).
+  // r.l is only ever a site-relative path from the build (see logoFor).
+  function logoTile(r: Row, size: 'md' | 'sm'): string {
+    if (!r.l || !r.l.startsWith('/')) return '';
+    const px = size === 'md' ? 52 : 36;
+    return `<span class="biz-logo biz-logo--${size}"><img src="${escapeHtml(r.l)}" alt="${escapeHtml(r.n)} logo" width="${px}" height="${px}" loading="lazy" decoding="async"></span>`;
+  }
+
   function renderRow(r: Row, pinned: boolean): string {
     const badge = openBadge(r);
     const badgeRow = badge ? `<div style="display:flex;align-items:center;gap:8px;margin-top:7px;flex-wrap:wrap">${badge}</div>` : '';
     if (pinned) {
       const meta = [r.c, r.sb, r.a].filter(Boolean).join(' · ');
+      const pinnedLogo = logoTile(r, 'md');
       const actions = [
         r.p ? `<a href="${escapeHtml(phoneHref(r.p))}" data-track="phone_click" data-track-slug="${escapeHtml(r.s)}" style="padding:10px 14px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:800;text-decoration:none">${escapeHtml(r.p)}</a>` : '',
         r.w ? `<a href="${escapeHtml(r.w)}" target="_blank" rel="noopener noreferrer" style="padding:10px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">Website</a>` : '',
@@ -253,21 +262,26 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
             ${planBadge(r.t)}
             <span style="font-size:11px;font-weight:700;color:var(--muted)">Sponsored placement</span>
           </div>
-          <h2 style="margin:12px 0 6px;font-size:21px;letter-spacing:-.02em;color:var(--navy)"><a href="/business/${r.s}/" style="color:var(--navy)">${escapeHtml(r.n)}</a></h2>
-          <p style="margin:0 0 ${badge ? '8px' : '0'};font-size:13.5px;font-weight:700;color:var(--muted)">${escapeHtml(meta)}</p>
+          ${pinnedLogo ? `<div class="biz-id" style="margin:14px 0 ${badge ? '8px' : '0'}">${pinnedLogo}<div class="biz-id-text">` : ''}
+          <h2 style="margin:${pinnedLogo ? '0' : '12px 0 6px'};font-size:21px;letter-spacing:-.02em;color:var(--navy)"><a href="/business/${r.s}/" style="color:var(--navy)">${escapeHtml(r.n)}</a></h2>
+          <p style="margin:0 0 ${badge && !pinnedLogo ? '8px' : '0'};font-size:13.5px;font-weight:700;color:var(--muted)">${escapeHtml(meta)}</p>
+          ${pinnedLogo ? '</div></div>' : ''}
           ${badge ? `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">${badge}</div>` : ''}
           ${r.d ? `<p style="margin:${badge ? '0' : '10px'} 0 0;font-size:14.5px;line-height:1.55;color:var(--text)">${escapeHtml(r.d)}</p>` : ''}
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">${actions}</div>
         </article>`;
     }
     const meta = [r.c, r.sb].filter(Boolean).join(' · ');
+    const rowLogo = logoTile(r, 'sm');
     return `
       <article class="search-result-row" style="border:2px solid var(--border);border-radius:14px;background:#fff;padding:16px 18px">
+        ${rowLogo ? `<div class="biz-id">${rowLogo}<div class="biz-id-text" style="gap:0">` : ''}
         <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
           <h2 style="margin:0;font-size:18px;letter-spacing:-.015em;color:var(--navy)"><a href="/business/${r.s}/" style="color:var(--navy)">${escapeHtml(r.n)}</a></h2>
           ${r.c ? `<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:var(--bg-subtle);color:var(--accent-hover);font-size:11px;font-weight:800;white-space:nowrap">${escapeHtml(r.c)}</span>` : ''}
         </div>
         <p style="margin:8px 0 0;font-size:13.5px;font-weight:600;color:var(--muted)">${escapeHtml(meta)}${planBadge(r.t) ? ' &nbsp;' + planBadge(r.t) : ''}</p>
+        ${rowLogo ? '</div></div>' : ''}
         ${badgeRow}
       </article>`;
   }

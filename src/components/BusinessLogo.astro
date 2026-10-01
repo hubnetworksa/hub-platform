@@ -1,0 +1,27 @@
+---
+// The one place a business logo's markup lives (styles: .biz-logo in
+// global.css, shared with search.astro's client-side rows). Renders nothing
+// when there's no logo to show — a free listing, a paid listing without a
+// logo, or a lapsed plan (see logoFor) — so those layouts are unchanged.
+import { logoFor, type Business } from '../lib/data';
+
+interface Props {
+  business: Pick<Business, 'name' | 'logo_key' | 'subscription_tier' | 'subscription_status'>;
+  /** lg 88px (business page header), md 52px (cards, strips, sponsor
+   *  cards), sm 36px (dense rows). */
+  size?: 'lg' | 'md' | 'sm';
+  /** Above-the-fold (business page header): load straight away. */
+  eager?: boolean;
+}
+
+const { business, size = 'md', eager = false } = Astro.props;
+const src = logoFor(business);
+const PX = { lg: 88, md: 52, sm: 36 } as const;
+const px = PX[size];
+---
+
+{src && (
+  <span class={`biz-logo biz-logo--${size}`}>
+    <img src={src} alt={`${business.name} logo`} width={px} height={px} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+  </span>
+)}

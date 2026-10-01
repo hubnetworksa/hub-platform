@@ -4,10 +4,11 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
 import PlanBadge from '../../components/PlanBadge.astro';
 import AdUnit from '../../components/AdUnit.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, websiteUrl, isPaidListing, sponsorshipsHeldBy, reviewsFor, averageRating, reviewCount } from '../../lib/data';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, websiteUrl, isPaidListing, sponsorshipsHeldBy, reviewsFor, averageRating, reviewCount, logoFor } from '../../lib/data';
 import { synonymsFor, locationSynonymsFor } from '../../lib/categorySynonyms';
 import { schemaTypeFor } from '../../lib/categorySchemaTypes';
 import Icon from '../../components/Icon.astro';
+import BusinessLogo from '../../components/BusinessLogo.astro';
 import site from '../../site';
 import { formatPhoneZA, phoneHref, phoneInternationalZA } from '../../lib/phone';
 
@@ -91,12 +92,21 @@ const schemaType = cats[0] ? schemaTypeFor(cats[0].slug) : 'LocalBusiness';
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
 const canonicalUrl = siteUrl + Astro.url.pathname;
 
+// Verified/Featured perk (see logoFor): null for everyone else, so free
+// listings render exactly as before.
+const logo = logoFor(business);
+const logoUrl = logo ? siteUrl + logo : null;
+// Only wraps the name/badges block when there's a logo to sit beside it.
+const HeadWrap = logo ? 'div' : Fragment;
+const HeadText = logo ? 'div' : Fragment;
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': schemaType,
   name: business.name,
   description: business.description,
   url: canonicalUrl,
+  ...(logoUrl ? { logo: logoUrl, image: logoUrl } : {}),
   ...(business.address ? { address: { '@type': 'PostalAddress', streetAddress: business.address, addressLocality: suburb?.name, addressRegion: site.province, addressCountry: 'ZA' } } : {}),
   ...(business.phone ? { telephone: phoneInternationalZA(business.phone) } : {}),
   ...(business.lat && business.lng ? { geo: { '@type': 'GeoCoordinates', latitude: business.lat, longitude: business.lng } } : {}),
@@ -108,7 +118,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
   : null;
 ---
 
-<BaseLayout title={pageTitle} description={metaDescription} canonical={canonicalUrl} noAds={showsPaid}>
+<BaseLayout title={pageTitle} description={metaDescription} canonical={canonicalUrl} noAds={showsPaid} ogImage={logo} ogImageSquare={!!logo}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <main style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
@@ -137,6 +147,9 @@ const mapsUrl = (business.address || (business.lat && business.lng))
             </div>
           )}
           <div style="padding:clamp(18px,3vw,28px)">
+            <HeadWrap {...(logo ? { class: 'biz-head' } : {})}>
+            <BusinessLogo business={business} size="lg" eager />
+            <HeadText {...(logo ? { class: 'biz-head-text' } : {})}>
             <h1 style="margin:0 0 10px;font-size:clamp(26px,4vw,40px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);overflow-wrap:break-word">{business.name}</h1>
             <div id="open-row" hidden data-hours={business.hours ?? ''} style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
               <span id="open-status" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--accent-hover)">
@@ -157,6 +170,8 @@ const mapsUrl = (business.address || (business.lat && business.lng))
               ))}
               {suburb && <span style="padding:6px 11px;border-radius:999px;border:1.5px solid var(--border);color:var(--muted);font-size:12.5px;font-weight:700">{suburb.name}</span>}
             </div>
+            </HeadText>
+            </HeadWrap>
             <p style="margin:0 0 20px;font-size:16px;line-height:1.62;max-width:62ch">{business.description}</p>
             {center && (
               <p style="margin:0 0 16px;">
@@ -314,12 +329,23 @@ const mapsUrl = (business.address || (business.lat && business.lng))
               <h2 style="margin:0;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Similar suppliers nearby</h2>
             </div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:14px">
-              {similar.map((b) => (
+              {similar.map((b) => {
+                // With a logo, the name and meta sit in a column beside it.
+                const hasLogo = !!logoFor(b);
+                const IdWrap = hasLogo ? 'span' : Fragment;
+                const IdText = hasLogo ? 'span' : Fragment;
+                return (
                 <a href={`/business/${b.slug}/`} class="similar-business-card" style="border:2px solid var(--border);border-radius:var(--radius-lg);padding:16px;background:#fff;display:flex;flex-direction:column;gap:5px;text-decoration:none;box-shadow:var(--shadow)">
+                  <IdWrap {...(hasLogo ? { class: 'biz-id' } : {})}>
+                  <BusinessLogo business={b} size="md" />
+                  <IdText {...(hasLogo ? { class: 'biz-id-text', style: 'gap:5px' } : {})}>
                   <span style="font-size:15.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em">{b.name}</span>
                   <span style="font-size:12.5px;font-weight:600;color:var(--muted)">{cats[0]?.name}{suburbFor(b) ? ` · ${suburbFor(b)!.name}` : ''}</span>
+                  </IdText>
+                  </IdWrap>
                 </a>
-              ))}
+                );
+              })}
             </div>
           </>
         )}

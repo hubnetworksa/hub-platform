@@ -24,6 +24,7 @@ const SECTION_ICONS = {
   sponsorships: '<path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6l-5 4H4a1 1 0 0 0-1 1Z"/><path d="M15 9a3 3 0 0 1 0 6"/><path d="M17.5 6.5a7 7 0 0 1 0 11"/>',
   payments: '<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/><path d="M6 15h4"/>',
   lock: '<rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>',
+  logo: '<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="10" r="3.2"/><path d="M6.5 18.5c1.2-2.3 3.2-3.5 5.5-3.5s4.3 1.2 5.5 3.5"/>',
 };
 
 const priceVerified = priceRand('price_verified_cents').replace(/\.00$/, '');
@@ -209,6 +210,50 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
                 </div>
               </form>
 
+              <!-- Logo: shown on every plan so a Basic owner sees what Verified adds; the
+                   buttons are disabled until the plan allows it (removing always works). -->
+              <div id="logo-card" style="border:2px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)">
+                <div class="owner-section-head" style="padding:13px 16px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:13px;font-weight:800;color:var(--navy)">
+                  <span style="color:var(--accent)"><Icon path={SECTION_ICONS.logo} size={17} /></span>
+                  Logo
+                  <span id="logo-lock" class="logo-lock" hidden><Icon path={SECTION_ICONS.lock} size={12} /> Verified plan</span>
+                </div>
+                <div class="logo-body">
+                  <div class="logo-previews">
+                    <span class="biz-logo biz-logo--lg">
+                      <img id="logo-preview-lg" alt="Your logo" width="88" height="88" hidden />
+                      <span id="logo-empty-lg" class="logo-empty"><Icon path={SECTION_ICONS.logo} size={26} /></span>
+                    </span>
+                    <div class="logo-row-preview">
+                      <span class="logo-row-label">In search results</span>
+                      <div class="biz-id" style="gap:10px">
+                        <span class="biz-logo biz-logo--sm">
+                          <img id="logo-preview-sm" alt="" width="36" height="36" hidden />
+                          <span id="logo-empty-sm" class="logo-empty"><Icon path={SECTION_ICONS.logo} size={15} /></span>
+                        </span>
+                        <span class="biz-id-text" style="gap:2px">
+                          <span id="logo-row-name" style="font-size:14.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+                          <span id="logo-row-meta" style="font-size:12px;font-weight:600;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="flex:1 1 240px;min-width:0;display:flex;flex-direction:column;gap:10px">
+                    <p style="margin:0;font-size:13.5px;font-weight:600;color:var(--text);line-height:1.55">Your logo shows on your listing, in search results and on every card your business appears on.</p>
+                    <p style="margin:0;font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.55">Square works best, at least 256×256. A PNG with a transparent background looks cleanest. PNG, JPG or WEBP.</p>
+                    <p id="logo-locked" hidden style="margin:0;font-size:13px;font-weight:600;color:var(--muted);line-height:1.55">
+                      Logos come with the Verified and Featured plans. <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a> to add yours.
+                    </p>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                      <input id="logo-file" type="file" accept="image/png,image/jpeg,image/webp" class="logo-file" tabindex="-1" aria-hidden="true" />
+                      <button type="button" id="logo-upload" class="owner-btn-ghost logo-btn">Upload logo</button>
+                      <button type="button" id="logo-remove" class="owner-btn-ghost logo-btn logo-btn-quiet" hidden>Remove</button>
+                    </div>
+                    <p id="logo-status" role="status" hidden style="margin:0;font-size:13px;font-weight:600;color:var(--muted);line-height:1.5"></p>
+                  </div>
+                </div>
+              </div>
+
               <div style="border:2px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)">
                 <div class="owner-section-head" style="padding:13px 16px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;color:var(--navy)">
                   <span style="color:var(--accent)"><Icon path={SECTION_ICONS.photos} size={17} /></span>
@@ -341,6 +386,18 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   .owner-tab.on { border-color: var(--navy) !important; background: var(--navy) !important; color: #fff !important; }
   .owner-panel[hidden], #dashboard[hidden], #hidden-banner[hidden], #photos-locked[hidden], #photos-unlocked[hidden], #photos-empty[hidden], #photo-status[hidden], #payments-empty[hidden], #search-terms-empty[hidden], #sponsorships-empty[hidden], #sponsorships-status[hidden], #tourism-sponsor-picker[hidden], #tourism-sponsor-all-taken[hidden] { display: none !important; }
   .tourism-sponsor-picker { display: flex; }
+  /* Logo card. Display lives in these rules, never inline, so [hidden] wins. */
+  .logo-lock { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; background: var(--navy); color: #fff; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; }
+  .logo-body { padding: 16px; display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+  .logo-previews { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; min-width: 0; }
+  .logo-row-preview { display: flex; flex-direction: column; gap: 7px; flex: 1 1 200px; max-width: 260px; min-width: 0; padding: 10px 12px; border: 2px solid var(--border); border-radius: 12px; background: #fff; }
+  .logo-row-label { font-size: 10.5px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .logo-empty { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; border-radius: 6px; background: var(--bg-subtle); color: var(--muted); }
+  .logo-file { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .logo-btn { padding: 9px 14px; border: 2px solid var(--border); border-radius: 9px; background: #fff; color: var(--navy); font-family: inherit; font-size: 12.5px; font-weight: 800; cursor: pointer; }
+  .logo-btn-quiet { color: var(--muted); }
+  .logo-btn:disabled { background: var(--bg-subtle); color: var(--muted); cursor: not-allowed; }
+  #logo-lock[hidden], #logo-locked[hidden], #logo-status[hidden], #logo-remove[hidden], #logo-preview-lg[hidden], #logo-preview-sm[hidden], #logo-empty-lg[hidden], #logo-empty-sm[hidden] { display: none !important; }
   @media (min-width: 760px) {
     .owner-shell { grid-template-columns: 210px minmax(0, 1fr); }
     .owner-nav { flex-direction: column; }
@@ -389,6 +446,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     /** 'yearly' or 'monthly' — the billing period of the current tier plan. */
     billing_period?: string | null;
     social_instagram: string | null; social_facebook: string | null; social_linkedin: string | null; social_youtube: string | null;
+    logo_key?: string | null;
     visible: boolean; hidden_reason: 'admin_hidden' | 'marked_closed' | null;
   };
   type Photo = { id: number; r2_key: string; caption: string | null };
@@ -1024,6 +1082,134 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     });
   }
 
+  // ---- Logo ----
+  // Scales the picked image to fit 512x512 (never upscaled), keeping
+  // transparency, and re-encodes it as WebP, so every stored logo is small
+  // whatever the owner picks. The server still checks the actual bytes.
+  const LOGO_MAX_PX = 512;
+  const LOGO_MAX_BYTES = 2 * 1024 * 1024;
+  async function prepareLogo(file: File): Promise<Blob> {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = new Image();
+      img.src = url;
+      await img.decode();
+      const w = img.naturalWidth;
+      const h = img.naturalHeight;
+      if (!w || !h) throw new Error('empty');
+      const scale = Math.min(1, LOGO_MAX_PX / w, LOGO_MAX_PX / h);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(w * scale));
+      canvas.height = Math.max(1, Math.round(h * scale));
+      const ctx = canvas.getContext('2d')!;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/webp', 0.9));
+      if (!blob) throw new Error('encode');
+      // Already small and not resized: keep the original if re-encoding didn't help.
+      return scale === 1 && file.size <= blob.size ? file : blob;
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  function renderLogo(business: Business) {
+    const unlocked = (business.subscription_status === 'active' || business.subscription_status === 'cancelled') && business.subscription_tier >= 1;
+    const lg = document.getElementById('logo-preview-lg') as HTMLImageElement;
+    const sm = document.getElementById('logo-preview-sm') as HTMLImageElement;
+    const emptyLg = document.getElementById('logo-empty-lg')!;
+    const emptySm = document.getElementById('logo-empty-sm')!;
+    const fileInput = document.getElementById('logo-file') as HTMLInputElement;
+    const uploadBtn = document.getElementById('logo-upload') as HTMLButtonElement;
+    const removeBtn = document.getElementById('logo-remove') as HTMLButtonElement;
+    const status = document.getElementById('logo-status')!;
+    document.getElementById('logo-row-name')!.textContent = business.name;
+    document.getElementById('logo-row-meta')!.textContent = [business.category_name, business.suburb_name].filter(Boolean).join(' · ');
+    document.getElementById('logo-lock')!.hidden = unlocked;
+    document.getElementById('logo-locked')!.hidden = unlocked;
+    uploadBtn.disabled = !unlocked;
+    fileInput.disabled = !unlocked;
+    let key = business.logo_key ?? null;
+
+    function setStatus(msg: string) {
+      status.textContent = msg;
+      status.hidden = !msg;
+    }
+    function show() {
+      const src = key ? `/media/${key}` : '';
+      for (const [img, empty] of [[lg, emptyLg], [sm, emptySm]] as const) {
+        if (src) img.src = src;
+        else img.removeAttribute('src');
+        img.hidden = !src;
+        empty.hidden = !!src;
+      }
+      lg.alt = `${business.name} logo`;
+      uploadBtn.textContent = key ? 'Replace logo' : 'Upload logo';
+      removeBtn.hidden = !key;
+    }
+    show();
+    // A lapsed plan keeps the logo for when they renew; say why it isn't showing.
+    if (key && !unlocked) setStatus("Your logo is saved but hidden from your listing until you're back on Verified or Featured.");
+
+    uploadBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', async () => {
+      const file = fileInput.files?.[0];
+      fileInput.value = '';
+      if (!file) return;
+      if (!/^image\/(png|jpeg|webp)$/.test(file.type)) {
+        setStatus('Please choose a PNG, JPG or WEBP image.');
+        return;
+      }
+      uploadBtn.disabled = true;
+      removeBtn.disabled = true;
+      setStatus('Uploading…');
+      try {
+        let blob: Blob;
+        try {
+          blob = await prepareLogo(file);
+        } catch {
+          setStatus("Couldn't read that image — try a PNG or JPG.");
+          return;
+        }
+        if (blob.size > LOGO_MAX_BYTES) {
+          setStatus('Logo must be under 2MB.');
+          return;
+        }
+        const ext = blob.type === 'image/webp' ? 'webp' : blob.type === 'image/png' ? 'png' : 'jpg';
+        const fd = new FormData();
+        fd.append('businessId', String(businessId));
+        fd.append('logo', blob, `logo.${ext}`);
+        const res = await fetch('/api/business-logo', { method: 'POST', body: fd });
+        const result = await res.json().catch(() => ({ ok: false }));
+        if (result.ok) {
+          key = result.key;
+          show();
+          setStatus('Saved. Your logo appears on your public listing after the next site update, usually within 25 minutes.');
+        } else {
+          setStatus(result.error || 'Could not upload logo.');
+        }
+      } finally {
+        uploadBtn.disabled = !unlocked;
+        removeBtn.disabled = false;
+      }
+    });
+
+    removeBtn.addEventListener('click', async () => {
+      if (!confirm('Remove your logo?')) return;
+      removeBtn.disabled = true;
+      const res = await fetch(`/api/business-logo?businessId=${encodeURIComponent(String(businessId))}`, { method: 'DELETE' });
+      const result = await res.json().catch(() => ({ ok: false }));
+      removeBtn.disabled = false;
+      if (result.ok) {
+        key = null;
+        show();
+        setStatus('Logo removed. It disappears from your public listing after the next site update.');
+      } else {
+        setStatus(result.error || 'Could not remove logo.');
+      }
+    });
+  }
+
   async function init() {
     if (!businessId) {
       loading.textContent = 'No business specified.';
@@ -1075,6 +1261,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     renderSponsorships(data.sponsorships ?? []);
     renderPayments(data.payments ?? []);
     renderPhotos(b, data.photos ?? []);
+    renderLogo(b);
     const statsLocked = data.statsLocked === true || data.stats === null;
     renderStats(statsLocked ? null : (data.stats ?? { has_any: false, views: 0, phone_clicks: 0, website_clicks: 0, search_appearances: 0 }), data.enquiriesRecent ?? 0, data.enquiriesTotal ?? 0);
     renderSearchTerms(data.searchTerms ?? [], statsLocked);
