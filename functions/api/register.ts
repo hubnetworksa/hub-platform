@@ -1,5 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
-import { hashPassword, createSession, sessionCookie } from '../_lib/auth';
+import { hashPassword, rotateSession, sessionCookie, isAdminEmail } from '../_lib/auth';
+import { rateLimited } from '../_lib/messages';
 import { sendEmail } from '../_lib/send-email';
 import { getSite } from '../_lib/site';
 
@@ -22,14 +23,27 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const password = typeof body.password === 'string' ? body.password : '';
   if (!email || !email.includes('@')) return json({ ok: false, error: 'Enter a valid email address.' }, 400);
   if (password.length < 8) return json({ ok: false, error: 'Password must be at least 8 characters.' }, 400);
+  // The admin account (hubnetworksa@gmail.com, and admin@admin.com when the
+  // preview's demo flag is on) must never be created via password sign-up —
+  // admin access is granted purely by matching that literal address, so
+  // anyone who registered it first would become admin. Real sign-in for
+  // that address is Google OAuth only (see
+  // functions/api/auth/google/callback.ts), which verifies the email with
+  // Google before trusting it.
+  if (isAdminEmail(email)) {
+    return json({ ok: false, error: "That email address can't be used to create an account. Please sign in with Google instead." }, 400);
+  }
 
   const db = context.env.DB;
+  if (await rateLimited(db, context.request, site.slug, 'register', 5)) {
+    return json({ ok: false, error: 'Too many sign-ups from your connection. Please try again in an hour.' }, 429);
+  }
   const existing = await db.prepare('SELECT 1 FROM users WHERE email = ?').bind(email).first();
   if (existing) return json({ ok: false, error: 'An account with that email already exists.' }, 400);
 
   const passwordHash = await hashPassword(password);
   const insert = await db.prepare('INSERT INTO users (email, password_hash) VALUES (?, ?)').bind(email, passwordHash).run();
-  const token = await createSession(db, insert.meta.last_row_id);
+  const token = await rotateSession(db, context.request, insert.meta.last_row_id as number);
 
   await sendEmail(context.env, {
     from: `${site.siteName} <${site.contactEmail}>`,

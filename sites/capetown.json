@@ -12,7 +12,9 @@
   "r2Bucket": "thecapetownhub-media",
   "r2MediaPrefix": "thecapetownhub-media",
   "contactEmail": "hello@thecapetownhub.com",
-  "bannerImage": "/hero-banner.png",
+  "bannerImage": "/hero-banner.webp",
+  "sectionBannerImage": "/section-banner.webp",
+  "newsBannerImage": "/media/banners/news.jpg",
   "tagline": "Your trusted directory of businesses in Cape Town and surrounding areas.",
   "footerTagline": "Cape Town's local business directory.",
   "googleSiteVerification": null,
@@ -20,8 +22,9 @@
   "impactSiteVerification": null,
   "googleAnalyticsId": "G-JWEXFEXXW4",
   "adsensePublisherId": "ca-pub-7239595592067933",
+  "adsenseSlots": { "businessSidebar": "6610385154", "businessInContent": "7021448692", "homeInContent": "9428120183", "searchInFeed": null, "suburbSidebar": "6801956849", "eventsSidebar": "3656918753", "eventSidebar": "3186145464", "tourismSidebar": "4312273303" },
   "features": {
-    "tourism": false
+    "tourism": true
   },
   "theme": {
     "bg": "#ffffff",
@@ -43,5 +46,10 @@
     "brandRowFg": "var(--navy)",
     "brandRowAccent": "var(--accent)",
     "brandRowMuted": "var(--text-muted)"
+  },
+  "invoicing": {
+    "registeredAddress": null,
+    "vatNumber": null,
+    "registrationNumber": null
   }
 }

@@ -5,8 +5,19 @@
 export const NOINDEX_PATH_PREFIXES = [
   '/admin/',
   '/my-businesses/',
+  '/my-events/',
   '/login/',
   '/register/',
+  '/forgot-password/',
+  '/reset-password/',
+  '/search/',
   '/report-listing/',
   '/request-removal/',
+  '/list-your-business/contact/',
+  '/list-your-business/review/',
+  '/list-your-business/checkout/',
+  // Kept in the codebase and still reachable by direct URL, but no longer
+  // linked from anywhere on the site — drop it from the sitemap/robots
+  // allow-list too since it's now an unlisted page.
+  '/suburb/map/',
 ];

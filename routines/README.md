@@ -1,6 +1,6 @@
 # Routines (rewritten, dev branch)
 
-These are the rewritten routines described in `ROUTINES-PLAN.md`. **Pretoria is live on them** (cut over 29 September 2026): its old `ROUTINE.pretoria.md` and `ROUTINE.events.pretoria.md` runbooks were removed and its scheduled agents now run these runbooks. Cape Town and Polokwane still run their older `ROUTINE.<city>.md` runbooks until they are cut over the same way. The news and fuel tables already exist in all three live databases, so Pretoria news and the all-city fuel routine are scheduled too; the pages that show news and fuel are still on the `Ethan` branch.
+These are the rewritten routines described in `ROUTINES-PLAN.md`. They live on the `Ethan` branch only and **nothing is scheduled yet**: the older `ROUTINE.<city>.md` runbooks at the repo root remain the live ones until the cut-over below. Nothing here has been pushed to `main`.
 
 ## What is here
 
@@ -56,20 +56,10 @@ node scripts/fuel-due.mjs --date 2026-10-07
 5. Leave the old `ROUTINE.<city>.md` schedules running until each new routine has had two clean runs, then switch the old ones off.
 6. Add the health check (`health.mjs`) to a weekly GitHub Action and to the admin overview.
 
-## Scheduled GitHub Actions around the routines
-
-| Workflow | When (UTC) | What it does |
-|---|---|---|
-| `routine-health.yml` | Daily 07:30 | Runs `health.mjs`, saves the result to each site's `site_settings` (`routine_health`) for the admin tile, and when a routine is late opens a `routine-alert` issue and fails, so GitHub emails the alert. Closes the issue once all are on time. |
-| `db-backup.yml` | Sundays 01:15 | Exports all three databases and keeps each as a private artifact for 90 days. |
-| `tidy-expired.yml` | Daily 02:40 | Removes events that ended over 14 days ago (unless a claim or payment points at them) and news older than 90 days, then redeploys if anything was removed. |
-
-Checks: `scripts/routines/check-events.mjs` (events) and `scripts/routines/check-tourism.mjs` (tourism proposals), alongside `validate.mjs` and `check-news.mjs`.
-
 ## Still to build
 
-- Done 29 Sept 2026: validators for events (`check-events.mjs`) and tourism proposals (`check-tourism.mjs`).
-- A fuel start guard: a GitHub Action that runs `fuel-due.mjs` first and only starts the fuel agent when due. Needs a webhook trigger on the fuel routine (claude.ai/code), which can only be created from the routine owner's account. Until then the routine starts Wednesday to Friday and stops at Step 0 within seconds.
-- Done 29 Sept 2026: every production deploy now runs `generate-event-images.mjs` for each city (step "Generate AI posters for events without an image" in deploy.yml).
+- A validator for events (like `validate.mjs`) and for tourism proposals.
+- A small GitHub Action that runs `fuel-due.mjs` first and only starts the fuel agent when due.
+- A GitHub Action step that runs `generate-event-images.mjs` for each city right after an events deploy, so this stops being a manual step once the routine itself is scheduled.
 - Batched daily apply-and-deploy of routine SQL, and lighter build reads, so routine commits do not each trigger a full three-city deploy (see `ROUTINES-PLAN.md`, phase 0).
-- Done 29 Sept 2026: weekly database backup (`db-backup.yml`) and expired-content tidy-up (`tidy-expired.yml`). Still to do: the data health report.
+- The database backup routine, the data health report and the expired-content tidy-up (script-only routines listed in the plan).

@@ -1,16 +1,22 @@
-import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
-import { generateUniqueSlug, insertApprovedBusiness } from '../../src/lib/business-submission';
+import type { PagesFunction, D1Database, R2Bucket } from '@cloudflare/workers-types';
+import { generateUniqueSlug, insertApprovedBusiness, shoppingCenterIdForSlug } from '../../src/lib/business-submission';
 import { getSite } from '../_lib/site';
-import { triggerRebuild } from '../_lib/deploy-hook';
+import { triggerRebuild, rebuildTarget } from '../_lib/deploy-hook';
 import { sendEmail } from '../_lib/send-email';
 import { ownerConfirmEmailHtml } from '../_lib/email-template';
 import { logActivity } from '../_lib/activity-log';
+import { closePaidSubmission } from '../_lib/paid-submission';
 
 interface Env {
   DB: D1Database;
+  MEDIA: R2Bucket;
   SITE: string;
   GITHUB_DISPATCH_TOKEN?: string;
   RESEND_API_KEY?: string;
+  PAYFAST_MERCHANT_ID?: string;
+  PAYFAST_MERCHANT_KEY?: string;
+  PAYFAST_PASSPHRASE?: string;
+  PAYFAST_HOST?: string;
 }
 
 interface PendingRow {
@@ -24,6 +30,13 @@ interface PendingRow {
   website: string | null;
   description: string;
   submitted_by_user_id: number | null;
+  chosen_tier: number;
+  chosen_billing_period: string | null;
+  m_payment_id: string | null;
+  payment_status: string | null;
+  payfast_token: string | null;
+  hours: string | null;
+  shopping_center_slug: string | null;
 }
 
 // This is the ADMIN's approve/reject step (reached from the emailed review
@@ -40,7 +53,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const db = context.env.DB;
 
   const row = await db
-    .prepare('SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id FROM pending_submissions WHERE token = ?')
+    .prepare(
+      `SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description,
+              submitted_by_user_id, chosen_tier, chosen_billing_period, m_payment_id, payment_status, payfast_token, hours, shopping_center_slug
+       FROM pending_submissions WHERE token = ?`
+    )
     .bind(token)
     .first<PendingRow>();
 
@@ -51,6 +68,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (action !== 'approve') {
     await db.prepare('DELETE FROM pending_submissions WHERE id = ?').bind(row.id).run();
     await logActivity(db, 'submission_rejected', row.name, 'Rejected by admin.');
+    await closePaidSubmission(context.env, db, site, row, 'rejected by admin');
     return html(site, `<h1>Rejected</h1><p>"${escapeHtml(row.name)}" was not published.</p>`);
   }
 
@@ -79,8 +97,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       email: row.email,
       description: row.description,
       ownerUserId: row.submitted_by_user_id,
-    });
-    await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+      chosenTier: row.chosen_tier,
+      billingPeriod: row.chosen_billing_period,
+      paidMPaymentId: row.payment_status === 'paid' ? row.m_payment_id : null,
+      payfastToken: row.payfast_token,
+      hours: row.hours,
+      shoppingCenterId: await shoppingCenterIdForSlug(db, row.shopping_center_slug),
+    }, { DB: db, MEDIA: context.env.MEDIA, RESEND_API_KEY: context.env.RESEND_API_KEY, SITE: context.env.SITE });
+    await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
     await logActivity(db, 'submission_approved', row.name, 'No email on file — published immediately.');
 
     return html(site, `<h1>Published!</h1><p>No contact email was given on this submission, so it published immediately: <a href="https://${site.domain}/business/${slug}/">view listing</a></p>`);
@@ -131,29 +155,19 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     html: ownerHtml,
   });
 
-  // TEMP: a separate copy while trusting the flow on the first few real
-  // approvals — remove once confirmed reliable (user request, 2026-09-09).
-  await sendEmail(context.env, {
-    from: `${site.siteName} <${site.contactEmail}>`,
-    to: 'ethanmglindeque@gmail.com',
-    subject: `[monitor copy] ${subject}`,
-    text: bodyText,
-    html: ownerHtml,
-  });
-
   if (emailResult.sent) {
     await logActivity(db, 'submission_approved', row.name, `Awaiting owner confirmation — emailed ${row.email}.`);
     return html(site, `<h1>Approved — awaiting owner confirmation</h1><p>"${escapeHtml(row.name)}" won't publish yet. An email has been sent to <strong>${escapeHtml(row.email)}</strong> asking them to confirm the details before it goes live.</p>`);
   }
 
-  // No RESEND_API_KEY configured for this site yet — fall back to opening
-  // the admin's own mail client instead of hard-failing.
-  const mailtoOwner = `mailto:${encodeURIComponent(row.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+  // The email could not be sent (no RESEND_API_KEY for this site, or Resend
+  // refused it). Nothing opens the admin's mail app — the message is shown here
+  // instead so it can be copied and sent another way.
   return html(site, `
-    <h1>Approved — awaiting owner confirmation</h1>
-    <p>"${escapeHtml(row.name)}" won't publish yet. An email is opening now, pre-filled to <strong>${escapeHtml(row.email)}</strong>, asking them to confirm the details before it goes live.</p>
-    <p>If it didn't open, <a href="${mailtoOwner}">click here to send it</a>.</p>
-    <script>window.location.href = ${JSON.stringify(mailtoOwner)};</script>
+    <h1>Approved — but the email could not be sent</h1>
+    <p>"${escapeHtml(row.name)}" won't publish until the owner confirms, but the confirmation email to <strong>${escapeHtml(row.email)}</strong> was not delivered (email sending is not set up or failed for this site). Send the message below to them another way:</p>
+    <p><strong>Subject:</strong> ${escapeHtml(subject)}</p>
+    <pre style="white-space:pre-wrap;background:#f4f4f4;padding:12px;border-radius:8px">${escapeHtml(bodyText)}</pre>
   `);
 };
 

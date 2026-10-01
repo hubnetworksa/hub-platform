@@ -27,5 +27,18 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     url.hostname = site.domain;
     return Response.redirect(url.toString(), 301);
   }
-  return context.next();
+  const res = await context.next();
+  // public/_headers only covers static assets; Function responses (the
+  // emailed confirm/review pages, APIs, /media/) get the same baseline here.
+  const out = new Response(res.body, res);
+  for (const [k, v] of Object.entries(SECURITY_HEADERS)) {
+    if (!out.headers.has(k)) out.headers.set(k, v);
+  }
+  return out;
+};
+
+const SECURITY_HEADERS: Record<string, string> = {
+  'X-Frame-Options': 'SAMEORIGIN',
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
 };

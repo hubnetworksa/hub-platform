@@ -1,0 +1,20 @@
+---
+interface Props {
+  value: string;
+  label: string;
+  /** Matches the mockup's two stat-tile contexts: 'navy' (white number,
+   *  translucent-white label, used in a bordered row on a navy band) or
+   *  'light' (navy number, muted label, used in a border-collapse grid
+   *  of white cells). */
+  variant?: 'navy' | 'light';
+  /** One-off accent color for the number (e.g. the mockup's "100%" tile
+   *  uses var(--grad-from) instead of the row's usual white/navy). */
+  color?: string;
+}
+const { value, label, variant = 'navy', color, compact = false } = Astro.props;
+const numberColor = color ?? (variant === 'navy' ? '#fff' : 'var(--navy)');
+const labelColor = variant === 'navy' ? 'rgba(255,255,255,.6)' : 'var(--muted)';
+---
+
+<div style={`font-size:${compact ? '24px' : 'clamp(24px,3.4vw,34px)'};font-weight:800;color:${numberColor};letter-spacing:-.02em;${compact ? '' : 'line-height:1'}`}>{value}</div>
+<div style={`font-size:${compact ? '11px' : '11.5px'};font-weight:${compact ? '800' : '700'};letter-spacing:.12em;text-transform:uppercase;color:${labelColor};margin-top:${compact ? '4px' : '6px'}`}>{label}</div>

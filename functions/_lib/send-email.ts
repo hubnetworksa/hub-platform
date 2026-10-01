@@ -5,7 +5,8 @@
 // domain there so it can send `from` its own hello@<domain> address (see
 // sites/<slug>.json's contactEmail). Returns { sent: false } rather than
 // throwing when the key isn't set yet, so a site without Resend configured
-// can fall back to the mailto: approach instead of hard-failing.
+// keeps working: callers save the data first and treat the email as a
+// best-effort notification on top.
 export interface SendEmailOptions {
   from: string;
   to: string;
@@ -14,6 +15,10 @@ export interface SendEmailOptions {
   /** Optional rich version — Resend sends this when present, with `text`
    *  kept as the fallback for clients that don't render HTML. */
   html?: string;
+  /** Where the recipient's "Reply" goes — e.g. the visitor who filled in a form. */
+  replyTo?: string;
+  /** Files to attach (e.g. a generated invoice PDF). Resend wants base64 content. */
+  attachments?: { filename: string; content: string; contentType?: string }[];
 }
 
 export async function sendEmail(
@@ -35,6 +40,10 @@ export async function sendEmail(
         subject: opts.subject,
         text: opts.text,
         ...(opts.html ? { html: opts.html } : {}),
+        ...(opts.replyTo ? { reply_to: opts.replyTo } : {}),
+        ...(opts.attachments?.length
+          ? { attachments: opts.attachments.map((a) => ({ filename: a.filename, content: a.content, ...(a.contentType ? { content_type: a.contentType } : {}) })) }
+          : {}),
       }),
     });
 

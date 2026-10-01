@@ -1,16 +1,22 @@
-import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
-import { generateUniqueSlug, insertApprovedBusiness } from '../../src/lib/business-submission';
+import type { PagesFunction, D1Database, R2Bucket } from '@cloudflare/workers-types';
+import { generateUniqueSlug, insertApprovedBusiness, shoppingCenterIdForSlug } from '../../src/lib/business-submission';
 import { getSite, type Site } from '../_lib/site';
-import { triggerRebuild } from '../_lib/deploy-hook';
+import { triggerRebuild, rebuildTarget } from '../_lib/deploy-hook';
 import { sendEmail } from '../_lib/send-email';
 import { listingLiveEmailHtml } from '../_lib/email-template';
 import { logActivity } from '../_lib/activity-log';
+import { closePaidSubmission } from '../_lib/paid-submission';
 
 interface Env {
   DB: D1Database;
+  MEDIA: R2Bucket;
   SITE: string;
   GITHUB_DISPATCH_TOKEN?: string;
   RESEND_API_KEY?: string;
+  PAYFAST_MERCHANT_ID?: string;
+  PAYFAST_MERCHANT_KEY?: string;
+  PAYFAST_PASSPHRASE?: string;
+  PAYFAST_HOST?: string;
 }
 
 interface PendingRow {
@@ -24,6 +30,13 @@ interface PendingRow {
   website: string | null;
   description: string;
   submitted_by_user_id: number | null;
+  chosen_tier: number;
+  chosen_billing_period: string | null;
+  m_payment_id: string | null;
+  payment_status: string | null;
+  payfast_token: string | null;
+  hours: string | null;
+  shopping_center_slug: string | null;
 }
 
 // The business owner's confirm/dispute step, reached from the email sent
@@ -39,7 +52,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const row = await db
     .prepare(
-      `SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id
+      `SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description,
+              submitted_by_user_id, chosen_tier, chosen_billing_period, m_payment_id, payment_status, payfast_token, hours, shopping_center_slug
        FROM pending_submissions WHERE owner_confirm_token = ?`
     )
     .bind(token)
@@ -54,23 +68,24 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   if (action !== 'confirm') {
     await logActivity(db, 'owner_disputed', row.name, reason ? `Reason given: ${reason}` : 'No reason given.');
+    await closePaidSubmission(context.env, db, site, row, 'disputed by the owner');
     await notifyAdmin(context.env, site, {
       outcome: 'disputed',
       businessName: row.name,
       detail: reason ? `Reason given: ${reason}` : 'No reason given.',
     });
-    return html(site, `<h1>Thanks for letting us know</h1><p>"${escapeHtml(row.name)}" won't be published. If you'd like to submit corrected details, or have any questions, email us at <a href="mailto:${site.contactEmail}">${site.contactEmail}</a>.</p>`);
+    return html(site, `<h1>Thanks for letting us know</h1><p>"${escapeHtml(row.name)}" won't be published. If you'd like to submit corrected details, or have any questions, get in touch through <a href="https://${site.domain}/contact/">our contact form</a>.</p>`);
   }
 
   const category = await db.prepare('SELECT id FROM categories WHERE slug = ?').bind(row.category_slug).first<{ id: number }>();
   const suburb = await db.prepare('SELECT id FROM suburbs WHERE slug = ?').bind(row.suburb_slug).first<{ id: number }>();
   if (!category || !suburb) {
-    return html(site, `<h1>Couldn't publish</h1><p>The category or suburb on this submission no longer exists — please contact us at <a href="mailto:${site.contactEmail}">${site.contactEmail}</a>.</p>`);
+    return html(site, `<h1>Couldn't publish</h1><p>The category or suburb on this submission no longer exists — please contact us through <a href="https://${site.domain}/contact/">our contact form</a>.</p>`);
   }
 
   const slug = await generateUniqueSlug(db, row.name, row.suburb_slug);
   if (!slug) {
-    return html(site, `<h1>Couldn't publish</h1><p>Ran out of unique slug attempts for "${escapeHtml(row.name)}" — please contact us at <a href="mailto:${site.contactEmail}">${site.contactEmail}</a>.</p>`);
+    return html(site, `<h1>Couldn't publish</h1><p>Ran out of unique slug attempts for "${escapeHtml(row.name)}" — please contact us through <a href="https://${site.domain}/contact/">our contact form</a>.</p>`);
   }
 
   await insertApprovedBusiness(db, {
@@ -84,8 +99,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     email: row.email,
     description: row.description,
     ownerUserId: row.submitted_by_user_id,
-  });
-  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+    chosenTier: row.chosen_tier,
+    billingPeriod: row.chosen_billing_period,
+    paidMPaymentId: row.payment_status === 'paid' ? row.m_payment_id : null,
+      payfastToken: row.payfast_token,
+    hours: row.hours,
+    shoppingCenterId: await shoppingCenterIdForSlug(db, row.shopping_center_slug),
+  }, { DB: db, MEDIA: context.env.MEDIA, RESEND_API_KEY: context.env.RESEND_API_KEY, SITE: context.env.SITE });
+  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
   const listingUrl = `https://${site.domain}/business/${slug}/`;
   await logActivity(db, 'owner_confirmed', row.name, `Published: ${listingUrl}`);
   await notifyAdmin(context.env, site, {
@@ -119,10 +140,6 @@ async function notifyAdmin(
   const from = `${site.siteName} <${site.contactEmail}>`;
 
   await sendEmail(env, { from, to: site.contactEmail, subject, text });
-
-  // TEMP: a separate copy while trusting the flow on the first few real
-  // approvals — remove once confirmed reliable (user request, 2026-09-09).
-  await sendEmail(env, { from, to: 'ethanmglindeque@gmail.com', subject: `[monitor copy] ${subject}`, text });
 }
 
 function escapeHtml(s: string): string {

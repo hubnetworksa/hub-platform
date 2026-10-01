@@ -8,10 +8,16 @@ interface Env extends PayfastEnv {
 }
 
 // Actually calls PayFast's own Subscriptions API to stop future billing —
-// not just a local status flip. The business keeps its current tier until
-// subscription_expires_at (the period already paid for); a daily sweep
-// (functions/api/admin/process-expired-subscriptions.ts) downgrades it to
-// Free once that date passes.
+// not just a local status flip. The business keeps its current tier (or
+// sponsorship slot) until subscription_expires_at/current_period_end (the
+// period already paid for); a daily sweep
+// (functions/api/admin/process-expired-subscriptions.ts) downgrades/frees
+// it once that date passes.
+//
+// A business can hold more than one active subscription at once now (a
+// tier plus any sponsorship slots it's bought), so the caller must say
+// which one — defaults to the tier subscription, since that's the only
+// one the current UI (my-businesses) exposes a Cancel button for.
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const db = context.env.DB;
   const user = await getSessionUser(context.request, db);
@@ -26,6 +32,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
   const businessId = Number(body.businessId);
   if (!businessId) return json({ ok: false, error: 'Missing business.' }, 400);
+  const productType = typeof body.productType === 'string' && body.productType ? body.productType : 'tier';
+  const productTarget = typeof body.productTarget === 'string' && body.productTarget ? body.productTarget : null;
 
   const business = await db.prepare('SELECT id, name, owner_user_id FROM businesses WHERE id = ?').bind(businessId).first<{ id: number; name: string; owner_user_id: number | null }>();
   if (!business || (business.owner_user_id !== user.id && !isAdminEmail(user.email))) {
@@ -33,9 +41,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   const subscription = await db
-    .prepare(`SELECT id, payfast_token FROM subscriptions WHERE business_id = ? AND status = 'active' ORDER BY id DESC LIMIT 1`)
-    .bind(businessId)
-    .first<{ id: number; payfast_token: string | null }>();
+    .prepare(
+      `SELECT id, tier, product_type, payfast_token FROM subscriptions
+       WHERE business_id = ? AND product_type = ? AND product_target IS ? AND status = 'active'
+       ORDER BY id DESC LIMIT 1`
+    )
+    .bind(businessId, productType, productTarget)
+    .first<{ id: number; tier: number; product_type: string; payfast_token: string | null }>();
   if (!subscription || !subscription.payfast_token) {
     return json({ ok: false, error: 'No active subscription found to cancel.' }, 400);
   }
@@ -46,8 +58,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   await db.prepare(`UPDATE subscriptions SET status = 'cancelled', cancelled_at = datetime('now') WHERE id = ?`).bind(subscription.id).run();
-  await db.prepare(`UPDATE businesses SET subscription_status = 'cancelled' WHERE id = ?`).bind(businessId).run();
-  await logActivity(db, 'subscription_cancelled', business.name, 'Owner cancelled via PayFast — stays on current tier until the paid period ends.');
+  if (subscription.product_type === 'tier') {
+    await db.prepare(`UPDATE businesses SET subscription_status = 'cancelled' WHERE id = ?`).bind(businessId).run();
+  }
+  await logActivity(db, 'subscription_cancelled', business.name, `${subscription.product_type} cancelled via PayFast — stays active until the paid period ends.`);
 
   return json({ ok: true });
 };

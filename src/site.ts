@@ -28,6 +28,20 @@ export interface SiteFeatures {
   tourism: boolean;
 }
 
+/** Every place the site can show a Google AdSense display unit. Each one
+ *  renders nothing unless sites/<city>.json names an ad-unit slot ID for it
+ *  (see AdUnit.astro), so an unset placement is invisible — never a dashed
+ *  placeholder box on the public site. */
+export type AdPlacement =
+  | 'businessSidebar'
+  | 'businessInContent'
+  | 'homeInContent'
+  | 'searchInFeed'
+  | 'suburbSidebar'
+  | 'eventsSidebar'
+  | 'eventSidebar'
+  | 'tourismSidebar';
+
 export interface Site {
   slug: string;
   siteName: string;
@@ -53,6 +67,18 @@ export interface Site {
   r2MediaPrefix: string;
   contactEmail: string;
   bannerImage: string;
+  /** Used by every non-homepage hero banner (suburb/category/events/
+   *  shopping-centre — anywhere index.astro isn't) — kept separate from
+   *  `bannerImage` since a photo chosen to work well behind the homepage's
+   *  taller hero doesn't necessarily crop well in these shorter, more
+   *  letterboxed sections. Cape Town's is a wide panoramic shot chosen
+   *  specifically to survive an aggressive object-fit:cover crop; Pretoria/
+   *  Polokwane currently just reuse their existing bannerImage until they
+   *  get an equivalent. */
+  sectionBannerImage: string;
+  /** News section's own hero banner — falls back to sectionBannerImage on a
+   *  site where scripts/generate-news-banner-image.mjs hasn't run yet. */
+  newsBannerImage?: string;
   tagline: string;
   footerTagline: string;
   googleSiteVerification: string | null;
@@ -62,6 +88,9 @@ export interface Site {
   impactSiteVerification: string | null;
   googleAnalyticsId: string | null;
   adsensePublisherId: string | null;
+  /** AdSense ad-unit slot IDs (the numeric data-ad-slot from the AdSense
+   *  dashboard) per placement. null = no manual unit there. */
+  adsenseSlots?: Partial<Record<AdPlacement, string | null>>;
   features: SiteFeatures;
   theme: SiteTheme;
 }

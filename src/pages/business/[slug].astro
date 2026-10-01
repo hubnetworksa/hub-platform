@@ -2,8 +2,9 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor } from '../../lib/data';
-import { groupForCategory } from '../../lib/categoryGroups';
+import PlanBadge from '../../components/PlanBadge.astro';
+import AdUnit from '../../components/AdUnit.astro';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, websiteUrl, isPaidListing, sponsorshipsHeldBy, reviewsFor, averageRating, reviewCount } from '../../lib/data';
 import { synonymsFor, locationSynonymsFor } from '../../lib/categorySynonyms';
 import { schemaTypeFor } from '../../lib/categorySchemaTypes';
 import Icon from '../../components/Icon.astro';
@@ -16,63 +17,76 @@ export function getStaticPaths() {
 const { business } = Astro.props;
 const suburb = suburbFor(business);
 const cats = categoriesFor(business);
+
+// "Name – Category in Suburb" gives every listing a distinct, descriptive
+// title (bare names collide across cities and say nothing to a searcher),
+// and a listing with no description still gets a real meta description.
+const pageTitle = [business.name, cats[0] && suburb ? `${cats[0].name} in ${suburb.name}` : suburb?.name].filter(Boolean).join(' – ');
+const metaDescription = (
+  business.description?.trim() ||
+  `${business.name}${cats[0] ? `, ${cats[0].name.toLowerCase()}` : ''}${suburb ? ` in ${suburb.name}` : ''}. Address, phone, hours and directions.`
+).slice(0, 155);
 const sourceUrls = parseSourceUrls(business);
 const isOsmSourced = sourceUrls.some((u) => u.includes('openstreetmap.org'));
-// Non-URL provenance markers (see db/seed-data, functions/api/submit-business.ts)
-// get a human-readable label instead of showing the raw internal string.
 const SOURCE_LABELS: Record<string, string> = {
   'owner-submitted': 'Submitted by the business owner.',
   'scraped:google-places-no-website': 'Compiled from a publicly available Google Maps listing.',
-  // Distinct from 'owner-submitted' — that's this business's own owner
-  // using the self-listing form; this is the site owner relaying a phone
-  // number/address they had directly (e.g. from a Facebook page not
-  // readable by automated fetch), not a form submission.
   'owner-provided-contact-details': 'Contact details confirmed directly with the site owner.',
 };
-// Source URLs are verified internally for provenance/compliance and shown
-// as a plain label, never as a clickable link.
-const hasVerifiedUrlSource = sourceUrls.some((u) => /^https?:\/\//.test(u));
 const labelSources = sourceUrls.filter((u) => !/^https?:\/\//.test(u)).map((u) => SOURCE_LABELS[u] ?? u);
-const photos = photosFor(business);
-// Premium page customisation is switched off on production: the owner
-// edit-mode script below is never rendered for any business.
-const isPremium = false;
-// Only rendered when a real link exists — see shoppingCenterFor.
 const center = shoppingCenterFor(business);
-
-const ICONS = {
-  phone: '<path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z"/>',
-  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/>',
-  pin: '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>',
-  flag: '<path d="M5 21V4"/><path d="M5 4h13l-3 4 3 4H5"/>',
-  building: '<path d="M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6"/>',
-  trash: '<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
-  check: '<circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5"/>',
-  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
-  badge: '<path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4Z"/><path d="m9.5 12 1.8 1.8L15 10"/>',
+const isFeatured = business.subscription_tier >= FEATURED_TIER;
+// Ads run only on free (Basic) listings. Any paid plan makes the page
+// ad-free: no units and no AdSense script, so Auto ads can't appear either.
+const isPaying = business.subscription_tier >= 1;
+// Featured-plan perk: links to the business's own social pages (https only).
+const SOCIAL_ICONS: Record<string, string> = {
+  instagram: "<rect x='3' y='3' width='18' height='18' rx='5'/><circle cx='12' cy='12' r='4'/><circle cx='17.3' cy='6.7' r='.6'/>",
+  facebook: "<path d='M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8.5c0-.3.2-.5.5-.5Z'/>",
+  linkedin: "<rect x='3' y='3' width='18' height='18' rx='3'/><path d='M8 10v6M8 7.5v.01M12 16v-6M12 12.5c0-1.4 1-2.5 2.3-2.5S16.5 11 16.5 12.5V16'/>",
+  youtube: "<rect x='2.5' y='5.5' width='19' height='13' rx='4'/><path d='m10 9.5 5 2.5-5 2.5v-5Z'/>",
 };
+const socials = isFeatured
+  ? ([
+      ['instagram', 'Instagram', business.social_instagram],
+      ['facebook', 'Facebook', business.social_facebook],
+      ['linkedin', 'LinkedIn', business.social_linkedin],
+      ['youtube', 'YouTube', business.social_youtube],
+    ] as const)
+      .filter(([, , url]) => !!url && url.startsWith('https://'))
+      .map(([kind, label, url]) => ({ kind, label, url: url as string }))
+  : [];
+// Featured-tier perk — see functions/api/business-photos.ts. Photos stay
+// in R2/business_photos through a downgrade (never deleted), but the
+// gallery only renders while the business is CURRENTLY Featured.
+// Verified shows up to 4 photos, Featured up to 10 (the pricing page's
+// promise). A downgrade hides the extras; nothing is deleted.
+const PHOTO_CAP_BY_TIER: Record<number, number> = { 1: 4, 2: 10 };
+const photos = photosFor(business).slice(0, PHOTO_CAP_BY_TIER[business.subscription_tier] ?? 0);
 
-// Union of every listed category's informal/trade-jargon synonyms (e.g.
-// "junk removal" for Rubbish & Rubble Removal) — see categorySynonyms.ts.
-// Schema.org's `keywords` is free-text and doesn't drive Google ranking
-// directly, but costs nothing to include and helps other consumers of
-// this structured data (AI answer engines, other search tools) match the
-// business against terms that never appear in its own name/description.
+const similar = cats[0]
+  ? businessesInCategory(cats[0].id).filter((b) => b.id !== business.id).slice(0, 4)
+  : [];
+
+const businessReviews = reviewsFor(business);
+const avgRating = averageRating(business);
+const numReviews = reviewCount(business);
+function shortDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+// No Google ads when this business pays — a plan OR any live sponsorship
+// (a Basic listing that sponsors a category/suburb/centre/guide/banner is
+// still a paying customer) — or when a paid business is shown in the
+// "similar" list on this page. Both AdUnit placements below use this same
+// gate, as does BaseLayout's noAds (which also drops the AdSense loader).
+const showsPaid = isPaying || sponsorshipsHeldBy(business).length > 0 || similar.some(isPaidListing);
+
 const keywords = [
   ...new Set(cats.flatMap((c) => [...synonymsFor(c.slug), ...locationSynonymsFor(c.name, site.cityLabel)])),
 ];
 
-// cats[0] is already treated as "the" category elsewhere on this page
-// (the breadcrumb) and in search-index.json.ts — same convention here:
-// note categoriesFor() doesn't actually sort by the business_categories
-// table's own is_primary flag, it's just insertion order, but in
-// practice the routine always writes the primary category first.
 const schemaType = cats[0] ? schemaTypeFor(cats[0].slug) : 'LocalBusiness';
 
-// Same formula BaseLayout falls back to internally when no `canonical` prop
-// is given — computed here instead and passed down explicitly so the
-// LocalBusiness `url` below and the page's own <link rel="canonical"> can
-// never drift apart into two different values for the same page.
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
 const canonicalUrl = siteUrl + Astro.url.pathname;
 
@@ -87,872 +101,633 @@ const jsonLd = {
   ...(business.lat && business.lng ? { geo: { '@type': 'GeoCoordinates', latitude: business.lat, longitude: business.lng } } : {}),
   ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
 };
+
+const mapsUrl = (business.address || (business.lat && business.lng))
+  ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${business.name}${suburb ? `, ${suburb.name}` : ''}`)}`
+  : null;
 ---
 
-<BaseLayout title={business.name} description={business.description.slice(0, 155)} canonical={canonicalUrl}>
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+<BaseLayout title={pageTitle} description={metaDescription} canonical={canonicalUrl} noAds={showsPaid}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
-  <section class="container" style="padding-top: 2rem; padding-bottom: 0; max-width: 720px;">
+  <main style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
     <Breadcrumbs
+      variant="plain"
       items={[
+        { label: 'Home', href: '/' },
         ...(suburb ? [{ label: suburb.name, href: `/suburb/${suburb.slug}/` }] : []),
         ...(cats[0] ? [{ label: cats[0].name, href: `/category/${cats[0].slug}/` }] : []),
         { label: business.name },
       ]}
     />
-    <h1 style="margin: 1rem 0 0.75rem; overflow-wrap: break-word;">{business.name}</h1>
 
-    <div class="tags">
-      {cats.map((c) => {
-        const g = groupForCategory(c.slug);
-        return (
-          <a class="badge" href={`/category/${c.slug}/`}>
-            {g && <Icon path={g.iconPath} size={13} />}
-            {c.name}
-          </a>
-        );
-      })}
-    </div>
-
-    <p style="margin-top: 1.25rem;">{business.description}</p>
-
-    {photos.length > 0 && (
-      <div class:list={['photo-gallery', { carousel: photos.length > 5 }]}>
-        {photos.map((photo) => (
-          <img
-            src={`/media/${photo.r2_key}`}
-            alt={photo.caption ?? business.name}
-            loading="lazy"
-            width="320"
-            height="220"
-          />
-        ))}
-      </div>
-    )}
-  </section>
-
-  <section class="container" style="padding-top: 0; padding-bottom: 2rem; max-width: 720px;">
-    {center && (
-      <a href={`/shopping-center/${center.slug}/`} class="located-at">
-        <Icon path={ICONS.building} size={15} /> Located at {center.name}
-      </a>
-    )}
-    {business.address && <p class="address">{business.address}{suburb && `, ${suburb.name}`}</p>}
-
-    <div class="actions">
-      {business.phone && (
-        <a href={`tel:${business.phone}`} class="btn btn-outline">
-          <Icon path={ICONS.phone} size={16} /> {business.phone}
-        </a>
-      )}
-      {business.email && (
-        <a href={`mailto:${business.email}`} class="btn btn-outline">
-          <Icon path={ICONS.mail} size={16} /> Email
-        </a>
-      )}
-      {(business.address || (business.lat && business.lng)) && (
-        <a
-          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-            `${business.name}${suburb ? `, ${suburb.name}` : ''}`
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn btn-outline"
-        >
-          <Icon path={ICONS.pin} size={16} /> View on Google Maps
-        </a>
-      )}
-    </div>
-
-    <ListReturn />
-
-    <div class="hours-section">
-      <h2 class="hours-heading">
-        <Icon path={ICONS.clock} size={17} /> Trading Hours
-      </h2>
-      {business.hours ? (
-        <p class="hours-text">{business.hours}</p>
-      ) : (
-        <p class="hours-text hours-unavailable">Trading hours not available</p>
-      )}
-    </div>
-
-    {!business.owner_user_id && (
-      <div class="claim-callout">
-        <p>
-          <Icon path={ICONS.badge} size={16} /> Is this your business?
-        </p>
-        <a href={`/my-businesses/claim/?businessId=${business.id}&name=${encodeURIComponent(business.name)}`} class="btn btn-outline">
-          Claim it
-        </a>
-      </div>
-    )}
-
-    {sourceUrls.length > 0 && (
-      <p class="source-note">
-        {isOsmSourced ? (
-          <>Sourced from OpenStreetMap ({sourceUrls.map((u, i) => <>{i > 0 && ', '}<a href={u} target="_blank" rel="noopener noreferrer">record</a></>)}), ODbL-licensed.</>
-        ) : (
-          <span class="source-line">
-            {hasVerifiedUrlSource && (
-              <span class="verified-badge">
-                <Icon path={ICONS.check} size={13} /> Verified
+    <div id="profile-shell" style="display:grid;grid-template-columns:1fr;gap:24px;margin-top:16px">
+      <div>
+        <div style="border:2px solid var(--navy);border-radius:var(--radius-lg);overflow:hidden;background:#fff;box-shadow:var(--shadow)">
+          {isFeatured && (
+            <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;background:var(--navy);flex-wrap:wrap">
+              <PlanBadge tier={business.subscription_tier} label="Featured listing" />
+              {business.owner_user_id != null && (
+                <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:800;color:var(--grad-from)">
+                  <Icon path="<path d='M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4Z'/><path d='m9.5 12 1.8 1.8L15 10'/>" size={14} />
+                  Owner verified
+                </span>
+              )}
+            </div>
+          )}
+          <div style="padding:clamp(18px,3vw,28px)">
+            <h1 style="margin:0 0 10px;font-size:clamp(26px,4vw,40px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);overflow-wrap:break-word">{business.name}</h1>
+            <div id="open-row" hidden data-hours={business.hours ?? ''} style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+              <span id="open-status" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--accent-hover)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg>
+                <span id="open-status-text"></span>
               </span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+              {!isFeatured && <PlanBadge tier={business.subscription_tier} />}
+              {numReviews > 0 && (
+                <a href="#reviews" style="display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:999px;background:var(--bg-subtle);color:var(--navy);font-size:12.5px;font-weight:800;text-decoration:none">
+                  <Icon path="<path d='m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7Z' fill='currentColor'/>" size={13} />
+                  {avgRating} <span style="color:var(--muted);font-weight:700">({numReviews})</span>
+                </a>
+              )}
+              {cats.map((c) => (
+                <a href={`/category/${c.slug}/`} style="padding:6px 11px;border-radius:999px;background:var(--bg-subtle);color:var(--accent-hover);font-size:12.5px;font-weight:800;text-decoration:none">{c.name}</a>
+              ))}
+              {suburb && <span style="padding:6px 11px;border-radius:999px;border:1.5px solid var(--border);color:var(--muted);font-size:12.5px;font-weight:700">{suburb.name}</span>}
+            </div>
+            <p style="margin:0 0 20px;font-size:16px;line-height:1.62;max-width:62ch">{business.description}</p>
+            {center && (
+              <p style="margin:0 0 16px;">
+                <a href={`/shopping-center/${center.slug}/`} style="display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-weight:700;font-size:14px;text-decoration:none">
+                  <Icon path="<path d='M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6'/>" size={15} />
+                  Located at {center.name}
+                </a>
+              </p>
             )}
-            {labelSources.length > 0 && <span>{labelSources.join(' ')}</span>}
-          </span>
-        )}
-      </p>
-    )}
 
-    <div class="listing-meta-links">
-      <a href={`/report-listing/?slug=${business.slug}&name=${encodeURIComponent(business.name)}`}>
-        <Icon path={ICONS.flag} size={13} /> Report this listing
-      </a>
-      <a href={`/request-removal/?slug=${business.slug}&name=${encodeURIComponent(business.name)}`}>
-        <Icon path={ICONS.trash} size={13} /> Request data removal
-      </a>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px">
+              {business.phone && (
+                <a href={`tel:${business.phone}`} data-track="phone_click" style="display:flex;align-items:center;gap:9px;padding:14px 16px;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;text-decoration:none">
+                  <Icon path="<path d='M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z'/>" size={17} />
+                  {business.phone}
+                </a>
+              )}
+              {isPaying && websiteUrl(business.website) && (
+                <a href={websiteUrl(business.website)!} target="_blank" rel="noopener noreferrer" data-track="website_click" style="display:flex;align-items:center;gap:9px;padding:14px 16px;border-radius:11px;border:2px solid var(--navy);color:var(--navy);font-size:14.5px;font-weight:800;text-decoration:none">
+                  <Icon path="<circle cx='12' cy='12' r='9'/><path d='M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18'/>" size={17} />
+                  Website
+                </a>
+              )}
+              {mapsUrl && (
+                <a href={mapsUrl} target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:9px;padding:14px 16px;border-radius:11px;border:2px solid var(--border);color:var(--navy);font-size:14.5px;font-weight:800;text-decoration:none">
+                  <Icon path="<path d='M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z'/><circle cx='12' cy='10' r='2.5'/>" size={17} />
+                  Directions
+                </a>
+              )}
+            </div>
+            {socials.length > 0 && (
+              <div style="display:flex;flex-wrap:wrap;gap:8px;margin:-8px 0 20px">
+                {socials.map((so) => (
+                  <a href={so.url} target="_blank" rel="noopener noreferrer nofollow" aria-label={`${business.name} on ${so.label}`} style="display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">
+                    <Icon path={SOCIAL_ICONS[so.kind]} size={16} />
+                    {so.label}
+                  </a>
+                ))}
+              </div>
+            )}
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:2px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+              {business.address && (
+                <div style="background:#fff;padding:14px 16px">
+                  <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Address</div>
+                  <div style="font-size:14px;font-weight:600;margin-top:5px;line-height:1.45">{business.address}{suburb && `, ${suburb.name}`}</div>
+                </div>
+              )}
+              <div style="background:#fff;padding:14px 16px">
+                <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Trading hours</div>
+                <div style="font-size:14px;font-weight:600;margin-top:5px;line-height:1.45;white-space:pre-line">{business.hours ?? 'Not available'}</div>
+              </div>
+            </div>
+            <ListReturn />
+          </div>
+        </div>
+
+        {!showsPaid && <div style="margin-top:22px"><AdUnit placement="businessInContent" /></div>}
+
+        {photos.length > 0 && (
+          <>
+            <div style="margin-top:26px;border-bottom:2px solid var(--navy);padding-bottom:10px;display:flex;align-items:center;gap:9px">
+              <span style="color:var(--accent)"><Icon path="<rect x='3' y='5' width='18' height='14' rx='2'/><circle cx='8.5' cy='10.5' r='1.5'/><path d='m21 16-5-4-4 3-3-2-4 3'/>" size={17} /></span>
+              <h2 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.015em;color:var(--navy)">Gallery</h2>
+            </div>
+            <div class="business-photo-grid">
+              {photos.map((p, i) => (
+                <button type="button" class="business-photo" data-photo-index={i} aria-label={`View photo ${i + 1} of ${photos.length} full screen`}>
+                  <img src={`/media/${p.r2_key}`} alt={p.caption ?? business.name} loading="lazy" />
+                </button>
+              ))}
+            </div>
+
+            <div id="lightbox" class="lightbox" hidden>
+              <button type="button" id="lightbox-close" class="lightbox-btn lightbox-close" aria-label="Close">
+                <Icon path="<path d='M18 6 6 18M6 6l12 12'/>" size={22} />
+              </button>
+              {photos.length > 1 && (
+                <>
+                  <button type="button" id="lightbox-prev" class="lightbox-btn lightbox-nav lightbox-prev" aria-label="Previous photo">
+                    <Icon path="<path d='m15 18-6-6 6-6'/>" size={24} />
+                  </button>
+                  <button type="button" id="lightbox-next" class="lightbox-btn lightbox-nav lightbox-next" aria-label="Next photo">
+                    <Icon path="<path d='m9 18 6-6-6-6'/>" size={24} />
+                  </button>
+                </>
+              )}
+              <img id="lightbox-img" src="" alt="" />
+              {photos.length > 1 && <div id="lightbox-count" class="lightbox-count"></div>}
+            </div>
+          </>
+        )}
+
+        <div id="reviews" style="margin-top:26px;border-bottom:2px solid var(--navy);padding-bottom:10px;display:flex;align-items:center;gap:9px;scroll-margin-top:20px">
+          <span style="color:var(--accent)"><Icon path="<path d='m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7Z'/>" size={17} /></span>
+          <h2 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.015em;color:var(--navy)">Ratings &amp; reviews</h2>
+        </div>
+
+        {numReviews > 0 ? (
+          <div style="display:flex;align-items:baseline;gap:10px;margin-top:14px">
+            <span style="font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-.03em">{avgRating}</span>
+            <span style="font-size:13.5px;font-weight:700;color:var(--muted)">out of 5 · {numReviews} review{numReviews === 1 ? '' : 's'}</span>
+          </div>
+        ) : (
+          <p style="margin:14px 0 0;font-size:13.5px;color:var(--muted);font-weight:600">No reviews yet — be the first to share your experience.</p>
+        )}
+
+        {businessReviews.length > 0 && (
+          <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px">
+            {businessReviews.map((r) => (
+              <div style="border:2px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;background:#fff">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                  <span style="display:flex;align-items:center;gap:8px">
+                    <span style="color:var(--accent);display:flex;gap:1px">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <Icon path={`<path d='m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7Z' ${n <= r.rating ? "fill='currentColor'" : ''}/>`} size={14} />
+                      ))}
+                    </span>
+                    <span style="font-size:13.5px;font-weight:800;color:var(--navy)">{r.author_name}</span>
+                  </span>
+                  <span style="font-size:12px;font-weight:700;color:var(--muted)">{shortDate(r.created_at)}</span>
+                </div>
+                <p style="margin:8px 0 0;font-size:14px;line-height:1.55;color:var(--text)">{r.comment}</p>
+                {r.owner_reply && (
+                  <div style="margin:12px 0 0 16px;padding:10px 14px;border-left:3px solid var(--accent);background:var(--bg-subtle);border-radius:0 8px 8px 0">
+                    <div style="font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-hover)">Reply from the owner</div>
+                    <p style="margin:4px 0 0;font-size:13.5px;line-height:1.5;color:var(--text)">{r.owner_reply}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div id="review-form-shell" style="margin-top:16px">
+          <p id="review-loading" style="font-size:13px;color:var(--muted);font-weight:600">Checking your account…</p>
+          <div id="review-logged-out" hidden style="border:2px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;background:var(--bg-subtle)">
+            <p style="margin:0 0 10px;font-size:13.5px;font-weight:700;color:var(--navy)">Log in to write a review.</p>
+            <a id="review-login-link" href="/login/" style="display:inline-block;padding:10px 16px;border-radius:9px;background:var(--navy);color:#fff;font-size:13.5px;font-weight:800;text-decoration:none">Log in</a>
+          </div>
+          <form id="review-form" hidden style="border:2px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;background:#fff">
+            <input type="text" name="company_url" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0" />
+            <div style="font-size:13.5px;font-weight:800;color:var(--navy)">Write a review</div>
+            <div id="review-star-picker" style="display:flex;gap:4px;color:var(--accent)"></div>
+            <input type="text" name="authorName" placeholder="Your name" required maxlength="80" style="padding:12px 13px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)" />
+            <textarea name="comment" rows="3" placeholder="Share your experience with this business" required style="padding:12px 13px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text);resize:vertical"></textarea>
+            <button type="submit" style="align-self:flex-start;padding:12px 18px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;cursor:pointer">Submit review</button>
+            <p id="review-status" style="margin:0;font-size:11.5px;color:var(--muted);font-weight:600">Reviews are checked before they go live.</p>
+          </form>
+        </div>
+
+        {!isPaying && similar.length > 0 && (
+          <>
+            <div style="margin-top:26px;border-bottom:2px solid var(--navy);padding-bottom:10px">
+              <h2 style="margin:0;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Similar suppliers nearby</h2>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:14px">
+              {similar.map((b) => (
+                <a href={`/business/${b.slug}/`} class="similar-business-card" style="border:2px solid var(--border);border-radius:var(--radius-lg);padding:16px;background:#fff;display:flex;flex-direction:column;gap:5px;text-decoration:none;box-shadow:var(--shadow)">
+                  <span style="font-size:15.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em">{b.name}</span>
+                  <span style="font-size:12.5px;font-weight:600;color:var(--muted)">{cats[0]?.name}{suburbFor(b) ? ` · ${suburbFor(b)!.name}` : ''}</span>
+                </a>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* No green "Verified" pill for source-checked listings: "Verified" is the name of a
+            paid plan, so the pill made free listings look like paying ones. The plan badge
+            (PlanBadge) is the only "Verified" label a listing shows. */}
+        {(isOsmSourced || labelSources.length > 0) && (
+          <p style="margin-top:1.5rem;font-size:0.78rem;color:var(--muted);overflow-wrap:break-word;">
+            {isOsmSourced ? (
+              <>Sourced from OpenStreetMap ({sourceUrls.map((u, i) => <>{i > 0 && ', '}<a href={u} target="_blank" rel="noopener noreferrer">record</a></>)}), ODbL-licensed.</>
+            ) : (
+              <span>{labelSources.join(' ')}</span>
+            )}
+          </p>
+        )}
+
+        <div style="display:flex;flex-wrap:wrap;gap:1.25rem;margin-top:2rem;padding-top:1rem;border-top:1px solid var(--border);">
+          <a href={`/report-listing/?slug=${business.slug}&name=${encodeURIComponent(business.name)}`} style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.78rem;color:var(--muted);text-decoration:none;">
+            <Icon path="<path d='M5 21V4'/><path d='M5 4h13l-3 4 3 4H5'/>" size={13} /> Report this listing
+          </a>
+          <a href={`/request-removal/?slug=${business.slug}&name=${encodeURIComponent(business.name)}`} style="display:inline-flex;align-items:center;gap:0.35rem;font-size:0.78rem;color:var(--muted);text-decoration:none;">
+            <Icon path="<path d='M3 6h18'/><path d='M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'/><path d='M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6'/>" size={13} /> Request data removal
+          </a>
+        </div>
+      </div>
+
+      <aside style="display:flex;flex-direction:column;gap:14px">
+        {isPaying ? (
+          <div style="border:2px solid var(--navy);border-radius:var(--radius-lg);overflow:hidden;background:#fff;box-shadow:var(--shadow)">
+            <div style="background:var(--navy);padding:14px 18px;font-size:15px;font-weight:800;color:#fff;letter-spacing:-.01em;display:flex;align-items:center;gap:9px">
+              <Icon path="<path d='M4 12h4l2 3h4l2-3h4'/><path d='M5.5 5h13l2.5 7v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7l2.5-7Z'/>" size={16} />
+              Send an enquiry
+            </div>
+            <form id="enquiry-form" style="padding:16px;display:flex;flex-direction:column;gap:10px">
+              <input type="text" name="company_url" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0" />
+              <input type="text" name="name" placeholder="Your name" required style="padding:12px 13px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)" />
+              <input type="text" name="contact" placeholder="Phone or email" required style="padding:12px 13px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)" />
+              <textarea name="message" rows="3" placeholder="What do you need a quote on?" required style="padding:12px 13px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text);resize:vertical"></textarea>
+              <button type="submit" style="padding:13px 16px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;cursor:pointer">Send enquiry</button>
+              <p id="enquiry-status" style="margin:0;font-size:11.5px;color:var(--muted);font-weight:600">Enquiries go straight to the owner.</p>
+            </form>
+          </div>
+        ) : (
+          <div style="border:2px solid var(--border);border-radius:var(--radius-lg);padding:18px;background:var(--bg-subtle);box-shadow:var(--shadow)">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;background:var(--navy);color:#fff;flex-shrink:0"><Icon path="<path d='M4 12h4l2 3h4l2-3h4'/><path d='M5.5 5h13l2.5 7v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7l2.5-7Z'/>" size={15} /></span>
+              <h3 style="margin:0;font-size:16px;letter-spacing:-.015em;color:var(--navy)">Get enquiries from this page</h3>
+            </div>
+            <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Verified and Featured listings get a direct enquiry form here, sent straight to the owner — this business doesn't have one yet.</p>
+            <a href="/pricing/" style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none;text-align:center">See plans</a>
+          </div>
+        )}
+        {!business.owner_user_id && (
+          <div style="border:2px solid var(--navy);border-radius:var(--radius-lg);padding:18px;background:#fff;box-shadow:var(--shadow)">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;background:var(--bg-subtle);color:var(--accent);flex-shrink:0"><Icon path="<path d='M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4Z'/><path d='m9.5 12 1.8 1.8L15 10'/>" size={15} /></span>
+              <h3 style="margin:0;font-size:16px;letter-spacing:-.015em;color:var(--navy)">Is this your business?</h3>
+            </div>
+            <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Claim it free to edit your details and hours, see how many people view your page, and unlock a website link, photos and an enquiry form.</p>
+            <a href={`/my-businesses/claim/?businessId=${business.id}&name=${encodeURIComponent(business.name)}`} style="display:block;padding:11px 14px;border-radius:9px;background:var(--navy);color:#fff;font-size:13.5px;font-weight:800;text-decoration:none;text-align:center">Claim this listing — it's free</a>
+          </div>
+        )}
+        {!showsPaid && <AdUnit placement="businessSidebar" />}
+      </aside>
     </div>
-  </section>
+  </main>
 </BaseLayout>
 
-{isPremium && (
-  <script define:vars={{ businessId: business.id }}>
-    // NOTE: define:vars forces this whole script to stay inline,
-    // unprocessed by Astro/Vite — plain browser JS only, no TypeScript
-    // syntax, or it throws a real SyntaxError in browsers.
-    (async function () {
-      const toggleBtn = document.getElementById('edit-page-toggle');
-      if (!toggleBtn) return;
+<style>
+  @media (min-width: 950px) {
+    #profile-shell {
+      grid-template-columns: minmax(0, 1fr) 320px;
+    }
+  }
+  .similar-business-card:hover {
+    border-color: var(--navy);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+  }
+  .similar-business-card {
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  /* aspect-ratio + object-fit directly on a grid-item <img> with no
+     explicit width doesn't stretch to fill the column — a replaced
+     element with an aspect-ratio and no specified size treats
+     justify-self:stretch as start instead, so each photo only rendered
+     at its intrinsic size in the corner of its cell. Sizing the ratio on
+     the wrapping <span> and letting the <img> fill it with object-fit
+     avoids that grid quirk entirely. */
+  .business-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .business-photo {
+    display: block;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg-subtle);
+    box-shadow: var(--shadow);
+    transition: transform .15s ease;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+  }
+  .business-photo:hover {
+    transform: translateY(-2px);
+  }
+  .business-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(10, 15, 26, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(16px, 5vw, 60px);
+  }
+  .lightbox[hidden] {
+    display: none !important;
+  }
+  .lightbox img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+  .lightbox-btn {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    cursor: pointer;
+    transition: background .15s ease;
+  }
+  .lightbox-btn:hover {
+    background: rgba(255, 255, 255, 0.26);
+  }
+  .lightbox-close {
+    top: clamp(10px, 3vw, 22px);
+    right: clamp(10px, 3vw, 22px);
+    width: 42px;
+    height: 42px;
+  }
+  .lightbox-nav {
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+  }
+  .lightbox-prev {
+    left: clamp(6px, 2vw, 20px);
+  }
+  .lightbox-next {
+    right: clamp(6px, 2vw, 20px);
+  }
+  .lightbox-count {
+    position: absolute;
+    bottom: clamp(10px, 3vw, 22px);
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .02em;
+  }
+  @media (max-width: 640px) {
+    .lightbox-nav {
+      width: 40px;
+      height: 40px;
+    }
+  }
+  /* Inline display:flex on the row beats the [hidden] attribute. */
+  #open-row[hidden] {
+    display: none !important;
+  }
+</style>
 
-      const designBar = document.getElementById('design-bar');
-      const mount = document.getElementById('custom-blocks-mount');
-      const pageContent = document.getElementById('page-content');
-      const addBlockBtn = document.getElementById('add-block-btn');
-      const publishBtn = document.getElementById('publish-btn');
-      const revertBtn = document.getElementById('revert-btn');
-      const designStatus = document.getElementById('design-status');
-      const colorsResetBtn = document.getElementById('colors-reset-btn');
+<script>
+  // "Open now · closes 17:00" — the current time only exists in the
+  // browser, so this is filled in client-side from the listing's own hours
+  // text. Shown only when that text parses cleanly (src/lib/openNow.ts);
+  // otherwise the row stays hidden rather than guessing.
+  import { openStatus } from '../../lib/openNow';
 
-      const BLOCK_TITLES = {
-        banner: 'Banner', 'side-image': 'Image + Text', story: 'Our Story', specials: 'Specials & Promotions',
-        team: 'Team', gallery: 'Gallery', photo: 'Photo', testimonial: 'Testimonial', cta: 'Call to Action', divider: 'Divider',
-      };
-      const BLOCK_TYPE_OPTIONS = [
-        ['banner', 'Banner'], ['side-image', 'Image + Text'], ['story', 'Our Story'], ['specials', 'Specials & Promotions'],
-        ['team', 'Team'], ['gallery', 'Gallery'], ['photo', 'Photo'], ['testimonial', 'Testimonial'], ['cta', 'Call to Action'], ['divider', 'Divider'],
-      ];
-      const SIZED_TYPES = new Set(['banner', 'photo', 'side-image']);
-      const MIN_BLOCK_HEIGHT = 100;
-      const MAX_BLOCK_HEIGHT = 480;
-      const MIN_COL_SPAN = 3;
-      const MAX_COL_SPAN = 12;
-      const GRID_CELL_HEIGHT = 20;
-      const GRID_MARGIN = 8;
-
-      let blocks = [];
-      let liveBlocks = [];
-      let pageColors = {};
-      let livePageColors = {};
-      let hasUnpublishedChanges = false;
-      let draftUpdatedAt = null;
-      let photos = [];
-      let editing = false;
-      let zoneGrids = { main: null, left: null, right: null, bottom: null };
-      let gridStackLoading = null;
-
-      function escapeHtml(s) {
-        return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const row = document.getElementById('open-row');
+  if (row) {
+    const st = openStatus(row.dataset.hours);
+    if (st) {
+      const text = document.getElementById('open-status-text')!;
+      const badge = document.getElementById('open-status')!;
+      if (st.open) {
+        text.textContent = st.closesAt ? `Open now · closes ${st.closesAt}` : 'Open now';
+      } else {
+        text.textContent = st.opensAt ? `Closed now · opens ${st.opensAt}` : 'Closed now';
+        badge.style.color = 'var(--muted)';
       }
+      row.hidden = false;
+    }
+  }
+</script>
 
-      function hexToRgbTriple(hex) {
-        const clean = hex.replace('#', '');
-        const full = clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean;
-        const n = parseInt(full, 16);
-        return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
-      }
+<script>
+  // Full-screen photo viewer for the Gallery section — click a thumbnail,
+  // flip through with the arrow buttons, arrow keys, or Escape to close.
+  const photoButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.business-photo'));
+  if (photoButtons.length > 0) {
+    const lightbox = document.getElementById('lightbox')!;
+    const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
+    const closeBtn = document.getElementById('lightbox-close')!;
+    const prevBtn = document.getElementById('lightbox-prev');
+    const nextBtn = document.getElementById('lightbox-next');
+    const countEl = document.getElementById('lightbox-count');
+    const urls = photoButtons.map((b) => b.querySelector('img')!.src);
+    let current = 0;
 
-      function applyPageColorsToPage() {
-        const decls = [];
-        if (pageColors.primary) decls.push(`--accent:${pageColors.primary}`, `--accent-rgb:${hexToRgbTriple(pageColors.primary)}`);
-        if (pageColors.secondary) decls.push(`--navy:${pageColors.secondary}`);
-        if (pageColors.background) decls.push(`--bg:${pageColors.background}`, `--bg-card:${pageColors.background}`);
-        // #page-content is a plain wrapper div around all three of this
-        // page's <section>s (narrow reading column, wide sections area,
-        // narrow reading column again) — it carries no layout of its own,
-        // only these custom properties, which every section inherits.
-        pageContent.style.cssText = decls.join(';');
-      }
+    function show(index: number) {
+      current = (index + urls.length) % urls.length;
+      lightboxImg.src = urls[current];
+      lightboxImg.alt = photoButtons[current].querySelector('img')!.alt;
+      if (countEl) countEl.textContent = `${current + 1} / ${urls.length}`;
+    }
+    function open(index: number) {
+      show(index);
+      lightbox.hidden = false;
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      lightbox.hidden = true;
+      document.body.style.overflow = '';
+    }
+    photoButtons.forEach((btn, i) => btn.addEventListener('click', () => open(i)));
+    closeBtn.addEventListener('click', close);
+    prevBtn?.addEventListener('click', () => show(current - 1));
+    nextBtn?.addEventListener('click', () => show(current + 1));
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) close();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (lightbox.hidden) return;
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') show(current - 1);
+      else if (e.key === 'ArrowRight') show(current + 1);
+    });
+  }
+</script>
 
-      function loadGridStack() {
-        if (window.GridStack) return Promise.resolve();
-        if (gridStackLoading) return gridStackLoading;
-        gridStackLoading = new Promise((resolve, reject) => {
-          const link = document.createElement('link');
-          link.rel = 'stylesheet';
-          link.href = 'https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.5.1/gridstack.min.css';
-          document.head.appendChild(link);
-          const script = document.createElement('script');
-          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/9.5.1/gridstack-all.min.js';
-          script.onload = resolve;
-          script.onerror = reject;
-          document.head.appendChild(script);
-        });
-        return gridStackLoading;
-      }
+<script define:vars={{ businessSlug: business.slug }}>
+  // Sent by the website itself: the server saves the enquiry and emails it to
+  // the business (or to us if no address is on file), so the business's email
+  // is never placed in this page and the visitor's own email app is never opened.
+  // Basic (free-plan) listings don't render this form at all (see
+  // isPaying in the frontmatter) — guard against its absence rather than
+  // assume every business page has one.
 
-      function photoPickerHtml(b) {
-        const options = photos.map((p) => `<option value="${p.r2_key}" ${b.imageKey === p.r2_key ? 'selected' : ''}>${p.r2_key.split('/').pop()}</option>`).join('');
-        return `<select class="block-image" title="Choose photo"><option value="">— No photo —</option>${options}</select>`;
-      }
+  // Real numbers behind the owner dashboard's "Profile views" / "Phone
+  // clicks" / "Website clicks" tiles (see functions/api/track-view.ts).
+  // sendBeacon fires and forgets — it never delays or blocks the actual
+  // phone call / site visit the visitor is making, and still completes
+  // even if the click immediately navigates away.
+  function track(event) {
+    try {
+      navigator.sendBeacon('/api/track-view', new Blob([JSON.stringify({ businessSlug, event })], { type: 'application/json' }));
+    } catch {
+      // sendBeacon isn't universally supported (very old browsers); a
+      // missed view/click count is never worth surfacing an error over.
+    }
+  }
+  track('view');
+  document.addEventListener('click', (e) => {
+    const el = e.target.closest('[data-track]');
+    if (el) track(el.dataset.track);
+  });
 
-      const ZONE_OPTIONS = [
-        ['', 'Main content'],
-        ['left', 'Left sidebar'],
-        ['right', 'Right sidebar'],
-        ['bottom', 'Below hours'],
-      ];
-
-      function blockToolbarHtml(b, dragHandle) {
-        const sidePicker = b.type === 'side-image'
-          ? `<select class="block-side" title="Photo side">
-              <option value="left" ${b.side !== 'right' ? 'selected' : ''}>Photo left</option>
-              <option value="right" ${b.side === 'right' ? 'selected' : ''}>Photo right</option>
-            </select>`
-          : '';
-        const photoPicker = SIZED_TYPES.has(b.type) ? photoPickerHtml(b) : '';
-        // Dragging a section straight into a sidebar (or back into the
-        // main column) is the primary way to move it there — see
-        // acceptWidgets/resyncZonesFromDom below. This dropdown is just a
-        // fallback for anyone who'd rather pick a position than drag.
-        const zonePicker = `<select class="block-zone" title="Position">
-          ${ZONE_OPTIONS.map(([val, label]) => `<option value="${val}" ${(b.zone || '') === val ? 'selected' : ''}>${label}</option>`).join('')}
-        </select>`;
-        return `<div class="block-toolbar">
-          ${dragHandle ? '<span class="block-drag-handle" title="Drag to reorder">⠿</span>' : ''}
-          <select class="block-type" title="Section type">
-            ${BLOCK_TYPE_OPTIONS.map(([val, label]) => `<option value="${val}" ${b.type === val ? 'selected' : ''}>${label}</option>`).join('')}
-          </select>
-          ${sidePicker}
-          ${photoPicker}
-          ${zonePicker}
-          <button type="button" class="remove-block" title="Remove section" aria-label="Remove section">✕</button>
-        </div>`;
-      }
-
-      // The actual section markup — identical to
-      // src/lib/blockRenderer.ts's renderOneBlock plus the
-      // contenteditable fields this page's static build never needs
-      // (kept in sync by hand, same reason customize.astro's copy used
-      // to be) — shared by both the main-content GridStack canvas and a
-      // sidebar's plain list, since a section looks the same wherever
-      // it's placed.
-      function renderBlockContent(b) {
-        const title = escapeHtml(b.title || BLOCK_TITLES[b.type] || 'More');
-        const body = escapeHtml(b.body || '');
-
-        switch (b.type) {
-          case 'banner':
-            return `
-              <div class="custom-block custom-block-banner">
-                ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one above</div>'}
-                <div class="banner-overlay">
-                  <h2 contenteditable="true" data-field="title">${title}</h2>
-                  <p contenteditable="true" data-field="body" data-placeholder="Optional short line (click to add)">${body}</p>
-                </div>
-              </div>`;
-          case 'side-image': {
-            const side = b.side === 'right' ? ' side-right' : '';
-            return `
-              <div class="custom-block custom-block-side-image${side}">
-                ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one above</div>'}
-                <div class="side-image-text">
-                  <h3 contenteditable="true" data-field="title">${title}</h3>
-                  <p contenteditable="true" data-field="body" data-multiline="true" data-placeholder="Section text">${body}</p>
-                </div>
-              </div>`;
-          }
-          case 'photo':
-            return `
-              <div class="custom-block custom-block-photo">
-                ${b.imageKey ? `<img src="/media/${b.imageKey}" alt="${title}" loading="lazy" />` : '<div class="photo-placeholder">No photo chosen — pick one above</div>'}
-                <p class="photo-caption" contenteditable="true" data-field="title" data-placeholder="Add a caption (optional)">${b.title ? title : ''}</p>
-              </div>`;
-          case 'divider':
-            return `<div class="custom-block custom-block-divider"><hr /></div>`;
-          case 'cta':
-            return `
-              <div class="custom-block custom-block-cta">
-                <p class="cta-text" contenteditable="true" data-field="title">${title}</p>
-                <span class="btn btn-primary cta-btn" contenteditable="true" data-field="body">${body || 'Get in touch'}</span>
-              </div>`;
-          case 'testimonial':
-            return `
-              <div class="custom-block custom-block-testimonial">
-                <p class="testimonial-quote">&ldquo;<span contenteditable="true" data-field="body" data-multiline="true" data-placeholder="Quote text">${body}</span>&rdquo;</p>
-                <p class="testimonial-author">— <span contenteditable="true" data-field="title" data-placeholder="Author name">${b.title ? escapeHtml(b.title) : ''}</span></p>
-              </div>`;
-          default:
-            return `
-              <div class="custom-block">
-                <h2 contenteditable="true" data-field="title">${title}</h2>
-                <p contenteditable="true" data-field="body" data-multiline="true" data-placeholder="Section text">${body}</p>
-              </div>`;
-        }
-      }
-
-      // One item's markup is identical in every zone — main and both
-      // sidebars are all the same 12-column grid, so width/resize work
-      // the same everywhere.
-      function renderZoneItem(b, i) {
-        const toolbar = blockToolbarHtml(b, true);
-        return `
-          <div class="grid-stack-item" data-i="${i}" gs-auto-position="true" gs-w="${b.colSpan || MAX_COL_SPAN}" gs-h="10" gs-min-w="${MIN_COL_SPAN}" gs-max-w="${MAX_COL_SPAN}">
-            <div class="grid-stack-item-content editable-block">
-              ${toolbar}
-              ${renderBlockContent(b)}
-            </div>
-          </div>`;
-      }
-
-      // Shared by the main canvas and both sidebars — the type/image/
-      // side/zone/remove controls work the same everywhere.
-      function wireBlockControls(root) {
-        root.querySelectorAll('[data-i]').forEach((item) => {
-          item.querySelector('.block-type')?.addEventListener('change', (e) => {
-            blocks[Number(item.dataset.i)].type = e.target.value;
-            renderBlocks();
-            scheduleAutosave();
-          });
-          item.querySelector('.block-image')?.addEventListener('change', (e) => {
-            blocks[Number(item.dataset.i)].imageKey = e.target.value || undefined;
-            renderBlocks();
-            scheduleAutosave();
-          });
-          item.querySelector('.block-side')?.addEventListener('change', (e) => {
-            blocks[Number(item.dataset.i)].side = e.target.value;
-            renderBlocks();
-            scheduleAutosave();
-          });
-          item.querySelector('.block-zone')?.addEventListener('change', (e) => {
-            const b = blocks[Number(item.dataset.i)];
-            if (e.target.value) b.zone = e.target.value;
-            else delete b.zone;
-            renderBlocks();
-            scheduleAutosave();
-          });
-          item.querySelector('.remove-block')?.addEventListener('click', () => {
-            blocks.splice(Number(item.dataset.i), 1);
-            renderBlocks();
-            scheduleAutosave();
-          });
-        });
-      }
-
-      // One GridStack canvas per zone — main and both sidebars all use
-      // the exact same 12-column mechanics (drag to reorder/place side
-      // by side, resize any edge). A sidebar's canvas is just narrower,
-      // so the same colSpan values pack tighter within it — two
-      // half-width (colSpan 6) sections sit side by side in a sidebar
-      // exactly the way they would in the main column, just at the
-      // sidebar's own width. disableOneColumnMode matters more here
-      // than in main: a sidebar is often narrower than GridStack's
-      // default one-column-mode breakpoint, and side-by-side placement
-      // is the whole point.
-      function initZoneGrid(zone, mountEl, isMain) {
-        const zoneBlocks = blocks.filter((b) => (isMain ? !b.zone : b.zone === zone));
-        // A sidebar's hide target is its <aside>; the bottom zone's mount
-        // element has no such wrapper, so it hides itself directly.
-        if (!isMain) (mountEl.closest('.page-sidebar') || mountEl).hidden = zoneBlocks.length === 0;
-        mountEl.innerHTML = `<div class="grid-stack" id="${zone}-blocks-grid">${zoneBlocks
-          .map((b) => renderZoneItem(b, blocks.indexOf(b)))
-          .join('')}</div>`;
-
-        const container = document.getElementById(`${zone}-blocks-grid`);
-        const grid = GridStack.init(
-          {
-            column: MAX_COL_SPAN,
-            float: false,
-            cellHeight: GRID_CELL_HEIGHT,
-            margin: GRID_MARGIN,
-            resizable: { handles: 'e, se, s, sw, w', autoHide: false },
-            draggable: { cancel: 'button, select, input, textarea, option, [contenteditable]' },
-            disableOneColumnMode: true,
-            // Lets a section be dragged straight out of this grid and
-            // into one of the other two (main/left/right), and accept
-            // one dragged in from them — GridStack's own built-in
-            // multi-grid drag support (see gridstack.js's own
-            // demo/two.html), not anything custom-built. The "Position"
-            // dropdown in each section's toolbar still works too, as a
-            // reliable fallback for anyone who'd rather not drag.
-            acceptWidgets: true,
-          },
-          container
-        );
-        zoneGrids[zone] = grid;
-
-        wireBlockControls(container);
-
-        // Give each row exactly the height it needs (or, if it's been
-        // dragged taller than that, exactly the height it was set to) —
-        // same fix as customize.astro's now-removed block editor used:
-        // measure, then set the row count to match, so nothing clips or
-        // leaves dead space below it.
-        container.querySelectorAll('.grid-stack-item').forEach((item) => {
-          const idx = Number(item.dataset.i);
-          const b = blocks[idx];
-          const contentEl = item.querySelector('.grid-stack-item-content');
-          const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
-          const toRows = (px) => Math.ceil((px + GRID_MARGIN * 2) / GRID_CELL_HEIGHT);
-          // GridStack's update() resets a node's width when minW/maxW are
-          // given without an explicit w alongside them — which then
-          // silently breaks two side-by-side sections' packing (the
-          // second one gets shoved onto its own row). Always pass the
-          // item's own current width back so this pass only ever changes
-          // height, never width.
-          const widthBounds = { w: item.gridstackNode.w, minW: MIN_COL_SPAN, maxW: MAX_COL_SPAN };
-          if (b.heightPx) {
-            grid.update(item, { h: toRows(toolbarH + b.heightPx), minH: toRows(toolbarH + MIN_BLOCK_HEIGHT), maxH: toRows(toolbarH + MAX_BLOCK_HEIGHT), ...widthBounds });
-          } else {
-            grid.update(item, { h: toRows(contentEl.scrollHeight), ...widthBounds });
-          }
-        });
-
-        // 'added'/'removed' fire on the two grids involved the moment a
-        // section is dragged from one zone straight into another;
-        // 'change' fires for a plain reorder/resize within the same
-        // zone. All three route to the one shared resync below, which
-        // re-reads every zone's actual DOM order/membership from
-        // scratch rather than trying to patch just whichever grid fired —
-        // simpler and correct either way, since a cross-zone drag always
-        // changes two zones at once.
-        grid.on('added removed change', resyncZonesFromDom);
-      }
-
-      function resyncZonesFromDom() {
-        const containers = {
-          main: document.getElementById('main-blocks-grid'),
-          left: document.getElementById('left-blocks-grid'),
-          right: document.getElementById('right-blocks-grid'),
-          bottom: document.getElementById('bottom-blocks-grid'),
-        };
-        const ordered = [];
-        ['main', 'left', 'right', 'bottom'].forEach((zone) => {
-          const container = containers[zone];
-          if (!container) return;
-          const items = Array.from(container.querySelectorAll('.grid-stack-item')).sort((a, b) => {
-            const na = a.gridstackNode, nb = b.gridstackNode;
-            if (!na || !nb) return 0;
-            return na.y - nb.y || na.x - nb.x;
-          });
-          items.forEach((item) => ordered.push({ item, zone }));
-        });
-
-        blocks = ordered.map(({ item, zone }) => {
-          const b = blocks[Number(item.dataset.i)];
-          const node = item.gridstackNode;
-          if (!b || !node) return b;
-          if (zone === 'main') delete b.zone; else b.zone = zone;
-          // Every zone is the same 12-column grid, so a section crossing
-          // between them keeps whatever width it already had (clamped by
-          // nodeBoundFix, same as within a single zone) rather than
-          // needing any zone-specific override.
-          b.colSpan = node.w;
-          const contentEl = item.querySelector('.grid-stack-item-content');
-          const toolbarH = item.querySelector('.block-toolbar').scrollHeight;
-          const naturalH = contentEl.scrollHeight;
-          const allocatedH = contentEl.clientHeight;
-          if (allocatedH > naturalH + 2) {
-            // More room than the content needs — the user dragged this
-            // taller on purpose, so remember exactly how much.
-            b.heightPx = Math.round(Math.min(MAX_BLOCK_HEIGHT, Math.max(MIN_BLOCK_HEIGHT, allocatedH - toolbarH)));
-          } else {
-            // Still auto-sized (or a width change made the content need
-            // more room than it currently has) — clear any stored height
-            // and grow the row to fit, never shrink under it.
-            delete b.heightPx;
-            const neededRows = Math.ceil((naturalH + GRID_MARGIN * 2) / GRID_CELL_HEIGHT);
-            if (node.h < neededRows) zoneGrids[zone]?.update(item, { h: neededRows });
-          }
-          return b;
-        }).filter(Boolean);
-        ordered.forEach(({ item }, newIndex) => { item.dataset.i = String(newIndex); });
-
-        document.getElementById('sidebar-left-mount').closest('.page-sidebar').hidden = !blocks.some((b) => b.zone === 'left');
-        document.getElementById('sidebar-right-mount').closest('.page-sidebar').hidden = !blocks.some((b) => b.zone === 'right');
-        document.getElementById('bottom-blocks-mount').hidden = !blocks.some((b) => b.zone === 'bottom');
-        document.getElementById('page-sidebar-layout').classList.toggle(
-          'has-sidebars',
-          blocks.some((b) => b.zone === 'left') || blocks.some((b) => b.zone === 'right')
-        );
-        scheduleAutosave();
-      }
-
-      function destroyZoneGrids() {
-        ['main', 'left', 'right', 'bottom'].forEach((zone) => {
-          if (zoneGrids[zone]) { zoneGrids[zone].destroy(false); zoneGrids[zone] = null; }
-        });
-      }
-
-      function renderBlocks() {
-        destroyZoneGrids();
-        initZoneGrid('main', mount, true);
-        initZoneGrid('left', document.getElementById('sidebar-left-mount'), false);
-        initZoneGrid('right', document.getElementById('sidebar-right-mount'), false);
-        initZoneGrid('bottom', document.getElementById('bottom-blocks-mount'), false);
-        document.getElementById('page-sidebar-layout').classList.toggle(
-          'has-sidebars',
-          blocks.some((b) => b.zone === 'left') || blocks.some((b) => b.zone === 'right')
-        );
-      }
-
-      // Attached once, on the element that contains the main GridStack
-      // canvas *and* both sidebar lists (#page-sidebar-layout), rather
-      // than per-container — a sidebar's own mount element is never
-      // destroyed/recreated the way the GridStack canvas is on every
-      // renderBlocks(), so attaching this inside renderBlocks() would
-      // otherwise stack up duplicate listeners on it every time. [data-i]
-      // identifies a block the same way in every container (see
-      // renderZoneItem), so one delegated pair of listeners covers all
-      // of them.
-      const layoutRoot = document.getElementById('page-sidebar-layout');
-      layoutRoot.addEventListener('input', (e) => {
-        const fieldEl = e.target.closest('[data-field]');
-        if (!fieldEl) return;
-        if (fieldEl.innerText.trim() === '') fieldEl.innerHTML = '';
-        const item = fieldEl.closest('[data-i]');
-        if (!item) return;
-        blocks[Number(item.dataset.i)][fieldEl.dataset.field] = fieldEl.innerText;
-        scheduleAutosave();
-      });
-      layoutRoot.addEventListener('keydown', (e) => {
-        const fieldEl = e.target.closest('[data-field]');
-        if (fieldEl && e.key === 'Enter' && fieldEl.dataset.multiline !== 'true') {
-          e.preventDefault();
-          fieldEl.blur();
-        }
-      });
-
-      let autosaveTimer;
-      function scheduleAutosave() {
-        hasUnpublishedChanges = true;
-        updateDesignStatus();
-        window.clearTimeout(autosaveTimer);
-        autosaveTimer = window.setTimeout(doAutosave, 900);
-      }
-
-      async function doAutosave() {
-        designStatus.textContent = 'Saving…';
-        const res = await fetch('/api/business-design', {
+  const form = document.getElementById('enquiry-form');
+  const status = document.getElementById('enquiry-status');
+  if (form && status) {
+    const loadedAt = Date.now();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(form).entries());
+      const btn = form.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      status.textContent = 'Sending…';
+      try {
+        const res = await fetch('/api/enquiry', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ businessId, action: 'autosave', blocks, pageColors }),
+          body: JSON.stringify({
+            businessSlug,
+            name: data.name,
+            contact: data.contact,
+            message: data.message,
+            company_url: data.company_url || '',
+            loadedAt,
+          }),
         });
         const result = await res.json();
         if (result.ok) {
-          draftUpdatedAt = result.draftUpdatedAt;
+          form.reset();
+          status.textContent = 'Thank you — your enquiry has been sent.';
         } else {
-          designStatus.textContent = result.error || 'Could not save your draft.';
-          return;
+          status.textContent = result.error || 'Something went wrong — please try again.';
         }
-        updateDesignStatus();
+      } catch {
+        status.textContent = 'Something went wrong — please try again.';
       }
+      btn.disabled = false;
+    });
+  }
 
-      function updateDesignStatus() {
-        publishBtn.hidden = !hasUnpublishedChanges;
-        revertBtn.hidden = !hasUnpublishedChanges;
-        designStatus.textContent = hasUnpublishedChanges
-          ? (draftUpdatedAt ? `Draft saved ${new Date(draftUpdatedAt).toLocaleTimeString()} — not published yet.` : 'Draft saved — not published yet.')
-          : 'Everything here is published and live.';
+  // Write-a-review: login state can't be known at static build time, so this
+  // checks the existing /api/me session endpoint client-side and swaps
+  // between the "log in" CTA and the actual form.
+  (async () => {
+    const loading = document.getElementById('review-loading');
+    const loggedOut = document.getElementById('review-logged-out');
+    const reviewForm = document.getElementById('review-form');
+    if (!loading || !loggedOut || !reviewForm) return;
+
+    let me;
+    try {
+      const res = await fetch('/api/me');
+      me = res.ok ? await res.json() : null;
+    } catch {
+      me = null;
+    }
+    loading.hidden = true;
+
+    if (!me || !me.ok) {
+      document.getElementById('review-login-link').href = `/login/?next=${encodeURIComponent(window.location.pathname)}`;
+      loggedOut.hidden = false;
+      return;
+    }
+
+    reviewForm.hidden = false;
+    // The form has no display set inline so [hidden] works correctly by
+    // default (same fix as the loading-screen and sponsor-dropdown bugs
+    // elsewhere on this site) — the flex layout is only applied once it's
+    // actually shown.
+    reviewForm.style.cssText += ';display:flex;flex-direction:column;gap:10px';
+    const picker = document.getElementById('review-star-picker');
+    let rating = 0;
+    const stars = [1, 2, 3, 4, 5].map((n) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('aria-label', `${n} star${n === 1 ? '' : 's'}`);
+      b.style.cssText = 'border:0;background:none;padding:2px;cursor:pointer;color:inherit;line-height:0';
+      b.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7Z"/></svg>`;
+      b.addEventListener('click', () => {
+        rating = n;
+        stars.forEach((s, i) => (s.querySelector('path').setAttribute('fill', i < rating ? 'currentColor' : 'none')));
+      });
+      picker.appendChild(b);
+      return b;
+    });
+
+    const reviewStatus = document.getElementById('review-status');
+    const loadedAt = Date.now();
+    reviewForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!rating) {
+        reviewStatus.textContent = 'Please choose a star rating.';
+        return;
       }
-
-      const res = await fetch(`/api/business-design?businessId=${businessId}`);
-      if (!res.ok) return;
-      const design = await res.json();
-      if (!design.ok || !design.canUseBuilder) return;
-
-      const photosRes = await fetch(`/api/business-photos?businessId=${businessId}`);
-      if (photosRes.ok) {
-        const photoData = await photosRes.json();
-        if (photoData.ok) photos = photoData.photos;
-      }
-
-      blocks = Array.isArray(design.blocks) ? design.blocks : [];
-      liveBlocks = Array.isArray(design.liveBlocks) ? design.liveBlocks : [];
-      pageColors = design.pageColors && typeof design.pageColors === 'object' ? { ...design.pageColors } : {};
-      livePageColors = design.livePageColors && typeof design.livePageColors === 'object' ? { ...design.livePageColors } : {};
-      hasUnpublishedChanges = !!design.hasUnpublishedChanges;
-      draftUpdatedAt = design.draftUpdatedAt;
-      ['primary', 'secondary', 'background'].forEach((key) => {
-        if (pageColors[key]) document.getElementById(`color-${key}`).value = pageColors[key];
-      });
-
-      toggleBtn.addEventListener('click', async () => {
-        editing = !editing;
-        toggleBtn.textContent = editing ? 'Exit edit mode' : 'Edit this page';
-        document.body.classList.toggle('page-edit-mode', editing);
-        if (editing) {
-          await loadGridStack();
-          designBar.hidden = false;
-          applyPageColorsToPage();
-          renderBlocks();
-          updateDesignStatus();
-        } else {
-          destroyZoneGrids();
-          designBar.hidden = true;
-        }
-      });
-
-      addBlockBtn.addEventListener('click', () => {
-        if (blocks.length >= 10) return;
-        blocks.push({ type: 'story', title: '', body: '' });
-        renderBlocks();
-        scheduleAutosave();
-      });
-
-      ['primary', 'secondary', 'background'].forEach((key) => {
-        document.getElementById(`color-${key}`).addEventListener('input', (e) => {
-          pageColors[key] = e.target.value;
-          applyPageColorsToPage();
-          scheduleAutosave();
-        });
-      });
-      colorsResetBtn.addEventListener('click', () => {
-        pageColors = {};
-        document.getElementById('color-primary').value = '#2563eb';
-        document.getElementById('color-secondary').value = '#0f172a';
-        document.getElementById('color-background').value = '#ffffff';
-        applyPageColorsToPage();
-        scheduleAutosave();
-      });
-
-      publishBtn.addEventListener('click', async () => {
-        designStatus.textContent = 'Publishing…';
-        const pubRes = await fetch('/api/business-design', {
+      const data = Object.fromEntries(new FormData(reviewForm).entries());
+      const btn = reviewForm.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      reviewStatus.textContent = 'Sending…';
+      try {
+        const res = await fetch('/api/review', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ businessId, action: 'publish' }),
+          body: JSON.stringify({
+            businessSlug,
+            rating,
+            authorName: data.authorName,
+            comment: data.comment,
+            company_url: data.company_url || '',
+            loadedAt,
+          }),
         });
-        const result = await pubRes.json();
+        const result = await res.json();
         if (result.ok) {
-          liveBlocks = JSON.parse(JSON.stringify(blocks));
-          livePageColors = { ...pageColors };
-          hasUnpublishedChanges = false;
-          updateDesignStatus();
-          designStatus.textContent = 'Published! This page will update for visitors shortly.';
+          reviewForm.reset();
+          rating = 0;
+          stars.forEach((s) => s.querySelector('path').setAttribute('fill', 'none'));
+          reviewStatus.textContent = 'Thanks — your review is awaiting approval.';
         } else {
-          designStatus.textContent = result.error || 'Could not publish.';
+          reviewStatus.textContent = result.error || 'Something went wrong — please try again.';
         }
-      });
-
-      revertBtn.addEventListener('click', async () => {
-        if (!window.confirm('Discard your unpublished changes and go back to what is currently live?')) return;
-        await fetch('/api/business-design', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ businessId, action: 'revert' }),
-        });
-        blocks = JSON.parse(JSON.stringify(liveBlocks));
-        pageColors = { ...livePageColors };
-        hasUnpublishedChanges = false;
-        draftUpdatedAt = null;
-        ['primary', 'secondary', 'background'].forEach((key) => {
-          document.getElementById(`color-${key}`).value = pageColors[key] || (key === 'background' ? '#ffffff' : key === 'secondary' ? '#0f172a' : '#2563eb');
-        });
-        applyPageColorsToPage();
-        renderBlocks();
-        updateDesignStatus();
-      });
-
-      toggleBtn.hidden = false;
-    })();
-  </script>
-)}
-
-<style>
-  /* Inert (a plain block, no layout of its own) until an owner has
-     actually placed a section in a sidebar — see hasSidebars. A business
-     that never touches this looks exactly as it always has: the page's
-     three sections just stack normally, one after another. */
-  .page-sidebar-layout.has-sidebars {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 720px minmax(0, 1fr);
-    gap: 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
-    align-items: start;
-  }
-  .page-sidebar-layout.has-sidebars .page-main-column {
-    grid-column: 2;
-  }
-  .page-sidebar {
-    min-width: 0;
-    padding-top: 2rem;
-  }
-  .page-sidebar[hidden] {
-    display: none;
-  }
-  @media (max-width: 1100px) {
-    .page-sidebar-layout.has-sidebars {
-      grid-template-columns: 1fr;
-      max-width: 720px;
-    }
-    .page-sidebar-layout.has-sidebars .page-main-column,
-    .page-sidebar-layout.has-sidebars .page-sidebar {
-      grid-column: 1;
-    }
-  }
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.78rem;
-    color: var(--accent);
-    background: rgba(var(--accent-rgb), 0.1);
-    padding: 0.2rem 0.6rem;
-    border-radius: 999px;
-    text-decoration: none;
-  }
-  .address {
-    color: var(--text-muted);
-    margin: 0.5rem 0 0;
-  }
-  .photo-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 0.5rem;
-    margin-top: 1.25rem;
-  }
-  .photo-gallery.carousel {
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(160px, 220px);
-    grid-template-columns: none;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding-bottom: 0.4rem;
-  }
-  .photo-gallery img {
-    width: 100%;
-    height: 130px;
-    object-fit: cover;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    scroll-snap-align: start;
-  }
-  .photo-gallery.carousel img {
-    height: 150px;
-  }
-  .located-at {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin-top: 0.6rem;
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 0.92rem;
-    text-decoration: none;
-  }
-  .located-at:hover {
-    text-decoration: underline;
-  }
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    margin-top: 1.5rem;
-  }
-  .hours-section {
-    margin-top: 1.5rem;
-    padding: 0.9rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
-  }
-  .hours-heading {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin: 0;
-    font-size: 0.95rem;
-    color: var(--navy);
-  }
-  .hours-text {
-    margin: 0.5rem 0 0;
-    font-size: 0.9rem;
-    color: var(--text);
-    white-space: pre-line;
-  }
-  .hours-unavailable {
-    color: var(--text-muted);
-    font-style: italic;
-  }
-  .claim-callout {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: 1.5rem;
-    padding: 0.9rem 1rem;
-    border: 1px dashed var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-subtle);
-  }
-  .claim-callout p {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin: 0;
-    font-weight: 600;
-    color: var(--navy);
-    font-size: 0.92rem;
-  }
-  .source-note {
-    margin-top: 1.5rem;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    overflow-wrap: break-word;
-  }
-  .source-line {
-    display: inline-flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  .verified-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-weight: 700;
-    font-size: 0.76rem;
-    letter-spacing: 0.01em;
-    color: #1a8f5e;
-    background: rgba(26, 143, 94, 0.12);
-    padding: 0.25rem 0.65rem;
-    border-radius: 999px;
-  }
-  .listing-meta-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--border);
-  }
-  .listing-meta-links a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    text-decoration: none;
-  }
-  .listing-meta-links a:hover {
-    color: var(--text);
-    text-decoration: underline;
-  }
-</style>
+      } catch {
+        reviewStatus.textContent = 'Something went wrong — please try again.';
+      }
+      btn.disabled = false;
+    });
+  })();
+</script>

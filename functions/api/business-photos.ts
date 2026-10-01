@@ -1,15 +1,19 @@
 import type { PagesFunction, D1Database, R2Bucket } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../_lib/auth';
+import { sniffImage } from '../_lib/images';
+import { requestRebuild } from '../_lib/deploy-hook';
 
 interface Env {
   DB: D1Database;
   MEDIA: R2Bucket;
+  GITHUB_DISPATCH_TOKEN?: string;
 }
 
 const MAX_FILE_BYTES = 8 * 1024 * 1024; // 8MB per photo
-// Photo caps by tier — see the Premium Listings plan. Tier 0/1 get none;
-// enforced here at upload time, not just hidden in the UI.
-const TIER_PHOTO_CAP: Record<number, number> = { 0: 0, 1: 0, 2: 5, 3: 15, 4: 30 };
+// Photo caps by tier (0=Basic, 1=Verified, 2=Featured) — see the Premium
+// pricing page: Verified up to 4, Featured up to 10. Enforced here at
+// upload time, and the public page shows no more than the current cap.
+const TIER_PHOTO_CAP: Record<number, number> = { 0: 0, 1: 4, 2: 10 };
 
 async function ownedBusiness(db: D1Database, businessId: number, userId: number, isAdmin: boolean) {
   const business = await db
@@ -34,7 +38,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .bind(businessId)
     .all();
 
-  const tier = business.subscription_status === 'active' ? business.subscription_tier : 0;
+  // Cancelled still means paid-through: the expiry sweep drops the tier once that period ends.
+  const tier = business.subscription_status === 'active' || business.subscription_status === 'cancelled' ? business.subscription_tier : 0;
   return json({ ok: true, photos: photos.results, cap: TIER_PHOTO_CAP[tier] ?? 0 });
 };
 
@@ -48,9 +53,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const business = businessId && (await ownedBusiness(db, businessId, user.id, isAdminEmail(user.email)));
   if (!business) return json({ ok: false, error: 'You do not own this business.' }, 403);
 
-  const tier = business.subscription_status === 'active' ? business.subscription_tier : 0;
+  // Cancelled still means paid-through: the expiry sweep drops the tier once that period ends.
+  const tier = business.subscription_status === 'active' || business.subscription_status === 'cancelled' ? business.subscription_tier : 0;
   const cap = TIER_PHOTO_CAP[tier] ?? 0;
-  if (cap === 0) return json({ ok: false, error: 'Photos require a paid Verified Plus tier or higher.' }, 403);
+  if (cap === 0) return json({ ok: false, error: 'Photos come with the Verified and Featured plans — upgrade to add photos.' }, 403);
 
   const existing = await db.prepare('SELECT COUNT(*) as n FROM business_photos WHERE business_id = ?').bind(businessId).first<{ n: number }>();
   if ((existing?.n ?? 0) >= cap) return json({ ok: false, error: `Your tier allows up to ${cap} photos — remove one first.` }, 400);
@@ -58,14 +64,18 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const file = form.get('photo');
   if (!(file instanceof File) || file.size === 0) return json({ ok: false, error: 'Choose a photo to upload.' }, 400);
   if (file.size > MAX_FILE_BYTES) return json({ ok: false, error: 'Photo must be under 8MB.' }, 400);
-  if (!file.type.startsWith('image/')) return json({ ok: false, error: 'File must be an image.' }, 400);
+  const bytes = await file.arrayBuffer();
+  const kind = sniffImage(bytes);
+  if (!kind) return json({ ok: false, error: 'Please upload a JPG, PNG or WEBP photo.' }, 400);
 
-  const key = `business-photos/${businessId}/${crypto.randomUUID()}-${file.name}`;
-  await context.env.MEDIA.put(key, await file.arrayBuffer(), { httpMetadata: { contentType: file.type } });
+  // Never the uploader's own filename in the key: it ends up in a public URL.
+  const key = `business-photos/${businessId}/${crypto.randomUUID()}.${kind.ext}`;
+  await context.env.MEDIA.put(key, bytes, { httpMetadata: { contentType: kind.contentType } });
 
   const sortOrder = existing?.n ?? 0;
   await db.prepare('INSERT INTO business_photos (business_id, r2_key, sort_order) VALUES (?, ?, ?)').bind(businessId, key, sortOrder).run();
 
+  await requestRebuild(context.env, 'business photo uploaded');
   return json({ ok: true, key });
 };
 
@@ -86,6 +96,7 @@ export const onRequestDelete: PagesFunction<Env> = async (context) => {
   await context.env.MEDIA.delete(photo.r2_key);
   await db.prepare('DELETE FROM business_photos WHERE id = ?').bind(photoId).run();
 
+  await requestRebuild(context.env, 'business photo removed');
   return json({ ok: true });
 };
 

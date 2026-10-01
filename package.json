@@ -10,7 +10,7 @@
     "fetch-data": "node scripts/fetch-d1-data.mjs",
     "predev": "npm run fetch-data && npm run select-assets",
     "dev": "astro dev",
-    "prebuild": "npm run fetch-data && npm run select-assets",
+    "prebuild": "npm run fetch-data && node scripts/apply-demo-premium.mjs && npm run select-assets",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -21,15 +21,23 @@
     "build:pretoria": "cross-env SITE=pretoria npm run build",
     "build:capetown": "cross-env SITE=capetown npm run build",
     "db:migrate:local": "node scripts/db-migrate.mjs --local",
-    "db:migrate:remote": "node scripts/db-migrate.mjs --remote"
+    "db:migrate:remote": "node scripts/db-migrate.mjs --remote",
+    "typecheck:functions": "npx --yes -p typescript@5 tsc -p tsconfig.functions.json",
+    "check:links": "node scripts/check-links.mjs",
+    "check:smoke": "node scripts/smoke-test.mjs",
+    "check:launch": "node scripts/launch-test.mjs",
+    "check:rowcounts": "node scripts/db-rowcounts.mjs",
+    "check:all": "bash scripts/launch-check.sh"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",
-    "astro": "^7.2.4"
+    "astro": "^7.2.4",
+    "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260831.1",
     "cross-env": "^10.1.0",
+    "playwright": "^1.63.0",
     "wrangler": "^4.105.0"
   }
 }

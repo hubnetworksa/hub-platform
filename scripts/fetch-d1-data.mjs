@@ -19,15 +19,29 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const site = JSON.parse(await readFile(path.join(ROOT, 'sites', `${SITE}.json`), 'utf8'));
 
 const DB_NAME = site.dbName;
+
+// Preview builds (deploy-ethan-preview.yml) restore src/data/ from a few
+// hours' cache instead of re-reading the whole live database on every push —
+// D1's free plan caps rows read per day across the whole account. The
+// workflow only sets this when the cache actually restored this site's data.
+if (process.env.USE_CACHED_D1_DATA === 'true') {
+  try {
+    await readFile(path.join(ROOT, 'src', 'data', 'businesses.json'), 'utf8');
+    console.log(`fetch-d1-data: using cached src/data for ${SITE} (USE_CACHED_D1_DATA=true), no D1 reads.`);
+    process.exit(0);
+  } catch {
+    console.log('fetch-d1-data: USE_CACHED_D1_DATA set but no cached data found, fetching from D1.');
+  }
+}
 const REMOTE = !process.argv.includes('--local');
 const OUT_DIR = path.join(ROOT, 'src', 'data');
 // Every site's D1 database is shared between its production build and its
-// hosted dev preview — a test business used to verify the (dev-only) page
-// builder is a real row in the same database production reads from. Its
-// `status` alone can't tell "show on dev" apart from "show on production",
-// since both builds run this identical query. is_test does: only the dev
-// preview's deploy workflow sets INCLUDE_TEST_DATA=true, so a test business
-// never reaches a production build regardless of its status.
+// hosted dev preview — a test business used to verify a dev-only feature is
+// a real row in the same database production reads from. Its `status`
+// alone can't tell "show on dev" apart from "show on production," since
+// both builds run this identical query. is_test does: only the dev
+// preview's deploy workflow sets INCLUDE_TEST_DATA=true, so a test
+// business never reaches a production build regardless of its status.
 const INCLUDE_TEST_DATA = process.env.INCLUDE_TEST_DATA === 'true';
 // --file mode uploads the file and only returns execution stats, not row
 // data, so SELECTs have to go through --command instead. Invoking
@@ -51,62 +65,92 @@ async function main() {
   const suburbs = query('SELECT id, slug, name, region, bio, landmarks, lat, lng, image_key FROM suburbs ORDER BY name;');
   const categories = query('SELECT id, slug, name FROM categories ORDER BY name;');
   const businesses = query(
-    `SELECT id, slug, name, suburb_id, address, phone, website, email, description, lat, lng, source_urls, shopping_center_id, description_enriched_at, hours, owner_user_id, subscription_tier, subscription_status, subscription_expires_at, template_id, custom_blocks, page_colors, page_html, page_css
+    `SELECT id, slug, name, suburb_id, address, phone, website, email, description, lat, lng, source_urls, shopping_center_id, description_enriched_at, hours, owner_user_id, subscription_tier, subscription_status, subscription_expires_at, social_instagram, social_facebook, social_linkedin, social_youtube
      FROM businesses WHERE status = 'published' AND closed_at IS NULL${INCLUDE_TEST_DATA ? '' : ' AND is_test = 0'} ORDER BY name;`
   );
   const businessCategories = query('SELECT business_id, category_id, is_primary FROM business_categories;');
   const shoppingCenters = query('SELECT id, slug, name, suburb_id, address, lat, lng, type, description FROM shopping_centers ORDER BY name;');
-  // Only pulled for published businesses' photos — an unpublished/rejected
-  // business's photos (if any got uploaded before publish) never leak into
-  // the static build.
-  const businessPhotos = query(
-    `SELECT bp.id, bp.business_id, bp.r2_key, bp.sort_order, bp.caption
-     FROM business_photos bp JOIN businesses b ON b.id = bp.business_id
-     WHERE b.status = 'published' ORDER BY bp.business_id, bp.sort_order;`
+  // Only Featured-tier businesses' photos are ever rendered (see
+  // business/[slug].astro), but it's simplest to just pull everyone's and
+  // let the page decide — a downgraded business's photos stay in this
+  // file too, harmless since the page gates on current tier, not on
+  // whether a photos array is present.
+  const businessPhotos = query('SELECT id, business_id, r2_key, sort_order, caption FROM business_photos ORDER BY business_id, sort_order;');
+  // Active exclusive sponsorship slots (category/suburb/homepage banner/
+  // shopping-centre) — a build-time snapshot, same pattern as everything
+  // else here: changes only take effect on the next admin-triggered
+  // rebuild, not live. See functions/_lib/pricing.ts for product types.
+  // Admin-editable prices (see functions/_lib/pricing.ts) — the public
+  // Pricing page and the plan picker on list-your-business.astro both
+  // read from this snapshot rather than hardcoding a price.
+  const siteSettings = query('SELECT key, value FROM site_settings;');
+  const sponsorships = query(
+    `SELECT s.id, s.product_type, s.product_target, s.business_id, b.name AS business_name, b.slug AS business_slug, s.current_period_end
+     FROM subscriptions s JOIN businesses b ON b.id = s.business_id
+     WHERE s.product_type != 'tier' AND b.status = 'published' AND b.closed_at IS NULL
+       AND (s.status = 'active' OR (s.status = 'cancelled' AND s.current_period_end IS NOT NULL AND datetime(s.current_period_end) > datetime('now')));`
   );
-  // Events (weekly discovery routine, see ROUTINE.events.<site>.md). No
-  // public page reads this yet -- fetched here so write-db-snapshot.mjs
-  // can give the routine its dedup state.
+  // Events (mockup's new "Events" screen) — admin-added plus whatever the
+  // weekly discovery agent has auto-published since the last rebuild.
   const events = query(
     `SELECT id, slug, title, type, event_date, event_time, venue, suburb, address, price, ticket_url, host,
             image_url, image_credit, organiser, organiser_note, doors, ages, parking, traders, lineup_json, tiers_json,
-            description, featured
+            description, featured, event_owner_user_id
      FROM events ORDER BY event_date ASC;`
   );
 
-  // News and fuel prices, written by the daily news and monthly fuel
-  // routines (routines/news.md, routines/fuel.md). No page on this branch
-  // shows them yet; they are fetched so write-db-snapshot.mjs can give those
-  // routines their dedup state. Tolerant of a database without the tables.
+  // Local news (daily news agent + admin). Tolerant of a database that
+  // hasn't had the news migration applied yet — the site just has no news.
   let news = [];
   try {
-    news = query('SELECT slug, title, published_date, source_url FROM news ORDER BY published_date DESC, id DESC;');
+    news = query(
+      `SELECT id, slug, title, category, published_date, source_name, source_url, summary, body, image_url, image_credit, verification_json
+       FROM news ORDER BY published_date DESC, id DESC;`
+    );
   } catch {
-    process.stderr.write(`[${SITE}] news table not available, snapshot will have no news.
+    process.stderr.write(`[${SITE}] news table not available yet — building without news.
 `);
   }
+
   let fuelPrices = [];
   try {
     fuelPrices = query('SELECT period, region, grade, price_cents, change_cents, source_url FROM fuel_prices ORDER BY period DESC, grade;');
   } catch {
-    process.stderr.write(`[${SITE}] fuel_prices table not available, snapshot will have no fuel prices.
-`);
+    process.stderr.write(`[${SITE}] fuel_prices table not available yet — building without fuel prices.\n`);
   }
 
-  await writeFile(`${OUT_DIR}/news.json`, JSON.stringify(news, null, 2));
-  await writeFile(`${OUT_DIR}/fuel-prices.json`, JSON.stringify(fuelPrices, null, 2));
+  // Only ever the public, moderated view: pending/rejected/flagged reviews
+  // stay owner/admin-only (served live via /api/update-business, not baked
+  // into the static build). author_name is a free-text name typed at
+  // submission time, never the reviewer's account email.
+  let reviews = [];
+  try {
+    reviews = query(
+      `SELECT id, business_id, rating, author_name, comment, owner_reply, owner_reply_at, created_at
+       FROM reviews WHERE status = 'approved' ORDER BY created_at DESC;`
+    );
+  } catch {
+    process.stderr.write(`[${SITE}] reviews table not available yet — building without reviews.\n`);
+  }
+
   await writeFile(`${OUT_DIR}/suburbs.json`, JSON.stringify(suburbs, null, 2));
   await writeFile(`${OUT_DIR}/categories.json`, JSON.stringify(categories, null, 2));
   await writeFile(`${OUT_DIR}/businesses.json`, JSON.stringify(businesses, null, 2));
   await writeFile(`${OUT_DIR}/business-categories.json`, JSON.stringify(businessCategories, null, 2));
   await writeFile(`${OUT_DIR}/shopping-centers.json`, JSON.stringify(shoppingCenters, null, 2));
   await writeFile(`${OUT_DIR}/business-photos.json`, JSON.stringify(businessPhotos, null, 2));
+  await writeFile(`${OUT_DIR}/sponsorships.json`, JSON.stringify(sponsorships, null, 2));
+  await writeFile(`${OUT_DIR}/site-settings.json`, JSON.stringify(siteSettings, null, 2));
   await writeFile(`${OUT_DIR}/events.json`, JSON.stringify(events, null, 2));
+  await writeFile(`${OUT_DIR}/news.json`, JSON.stringify(news, null, 2));
+  await writeFile(`${OUT_DIR}/fuel-prices.json`, JSON.stringify(fuelPrices, null, 2));
+  await writeFile(`${OUT_DIR}/reviews.json`, JSON.stringify(reviews, null, 2));
 
   process.stderr.write(
     `[${SITE}] Fetched ${suburbs.length} suburbs, ${categories.length} categories, ` +
     `${businesses.length} businesses, ${businessCategories.length} business-category links, ` +
-    `${shoppingCenters.length} shopping centres, ${businessPhotos.length} business photos, ${events.length} events ` +
+    `${shoppingCenters.length} shopping centres, ${events.length} events, ${news.length} news articles, ` +
+    `${reviews.length} approved reviews ` +
     `(${REMOTE ? 'remote' : 'local'}).\n`
   );
 }

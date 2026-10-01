@@ -1,0 +1,171 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import site from '../site';
+
+const ICONS = {
+  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  badge: '<path d="M12 2 4 6v6c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-4Z"/><path d="m9.5 12 1.8 1.8L15 10"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+};
+---
+
+<BaseLayout title="My Events" description={`Manage the events linked to your ${site.siteName} account.`} noindex={true}>
+  <main style="max-width:1200px;margin:0 auto;padding:clamp(20px,3vw,36px) 20px 60px">
+    <div id="loading" style="color:var(--muted);padding:2rem 0;">Loading…</div>
+
+    <div id="content" hidden>
+      <div style="display:flex;align-items:center;gap:13px;flex-wrap:wrap;padding-bottom:16px;border-bottom:2px solid var(--navy)">
+        <span id="account-initial" style="width:46px;height:46px;border-radius:12px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800"></span>
+        <div style="min-width:0">
+          <h1 style="margin:0;font-size:clamp(20px,3vw,27px);letter-spacing:-.025em;color:var(--navy)">My events</h1>
+          <div style="margin-top:4px"><span id="account-email" style="font-size:12.5px;font-weight:700;color:var(--muted);overflow-wrap:anywhere"></span></div>
+        </div>
+        <button id="logout-btn" type="button" class="mb-ghost" style="margin-left:auto;padding:11px 15px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-weight:800;color:var(--navy);background:#fff;cursor:pointer;font-family:inherit">Log out</button>
+      </div>
+
+      <div style="margin:20px 0 16px">
+        <h2 style="margin:0;font-size:20px;letter-spacing:-.025em;color:var(--navy)">Your events</h2>
+        <p style="margin:3px 0 0;font-size:13.5px;font-weight:600;color:var(--muted)">Pick an event to edit its details or feature it</p>
+      </div>
+
+      <div id="owned-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px"></div>
+      <div id="owned-empty" hidden style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <p style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">You don't manage any events yet.</p>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <a href="/events/add/" class="mb-primary" style="flex:1 1 200px;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 16px;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;text-decoration:none;">
+          <Icon path={ICONS.plus} size={16} /> Add your event
+        </a>
+        <a href="/my-events/claim/" class="mb-ghost" style="flex:1 1 200px;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 16px;border-radius:11px;border:2px solid var(--navy);color:var(--navy);font-size:14px;font-weight:800;text-decoration:none;">
+          <Icon path={ICONS.badge} size={16} /> Claim an event
+        </a>
+      </div>
+
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden;margin-top:14px">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px;">
+          <span style="color:var(--accent)"><Icon path={ICONS.clock} size={17} /></span>
+          <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Pending submissions</h3>
+        </div>
+        <div id="pending-list"></div>
+        <p id="pending-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No pending submissions.</p>
+      </div>
+
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden;margin-top:14px">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px;">
+          <span style="color:var(--accent)"><Icon path={ICONS.badge} size={17} /></span>
+          <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Your claims</h3>
+        </div>
+        <div id="claims-list"></div>
+        <p id="claims-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">You haven't claimed any events.</p>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style is:global>
+  #content[hidden], #owned-empty[hidden], #pending-empty[hidden], #claims-empty[hidden] { display: none !important; }
+  .mb-primary:hover { background: var(--accent-hover) !important; }
+  .mb-ghost:hover { border-color: var(--accent) !important; }
+  .mb-card { background: #fff; border: 2px solid var(--border); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .mb-card:hover { border-color: var(--accent); }
+</style>
+
+<script>
+  const loading = document.getElementById('loading')!;
+  const content = document.getElementById('content')!;
+
+  type Owned = { id: number; slug: string; title: string; event_date: string; featured: number };
+
+  function esc(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function statusBadge(text: string, tone: 'pending' | 'good' | 'bad'): string {
+    const colors = { pending: ['#9c5f00', 'rgba(156,95,0,.12)'], good: ['#1a8f5e', 'rgba(26,143,94,.12)'], bad: ['var(--danger)', 'rgba(194,56,56,.1)'] };
+    const [color, bg] = colors[tone];
+    return `<span style="font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;white-space:nowrap;color:${color};background:${bg};">${esc(text)}</span>`;
+  }
+
+  function featuredChip(featured: number): string {
+    return featured
+      ? `<span style="padding:3px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Featured</span>`
+      : `<span style="padding:3px 9px;border-radius:999px;background:var(--bg-subtle);color:var(--muted);border:1px solid var(--border);font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Not featured</span>`;
+  }
+
+  function claimTone(status: string): 'pending' | 'good' | 'bad' {
+    if (status === 'approved') return 'good';
+    if (status === 'rejected') return 'bad';
+    return 'pending';
+  }
+
+  function dateLabel(d: string): string {
+    const dt = new Date(d.includes('T') ? d : `${d}T00:00:00Z`);
+    return isNaN(dt.getTime()) ? d : dt.toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+  }
+
+  function ownedCard(e: Owned): string {
+    return `<div class="mb-card">
+      <div style="min-width:0">
+        <div style="font-size:15.5px;font-weight:800;color:var(--navy);letter-spacing:-.015em;overflow-wrap:anywhere">${esc(e.title)}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap">${featuredChip(e.featured)}<span style="font-size:12.5px;font-weight:700;color:var(--muted)">${esc(dateLabel(e.event_date))}</span></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a href="/my-events/edit/?id=${e.id}" class="mb-primary" style="padding:10px 15px;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap">Manage</a>
+        <a href="/events/${esc(e.slug)}/" class="mb-ghost" style="padding:10px 15px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap">View public page</a>
+      </div>
+    </div>`;
+  }
+
+  function row(name: string, right: string, last: boolean): string {
+    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;${last ? '' : 'border-bottom:1px solid var(--border);'}">
+      <span style="font-size:14.5px;font-weight:800;color:var(--navy);min-width:0;overflow-wrap:anywhere">${esc(name)}</span>
+      ${right}
+    </div>`;
+  }
+
+  async function init() {
+    const res = await fetch('/api/my-events');
+    if (res.status === 401) {
+      window.location.href = '/login/?next=/my-events/';
+      return;
+    }
+    const data = await res.json();
+    loading.hidden = true;
+    content.hidden = false;
+    document.getElementById('account-email')!.textContent = data.email;
+    document.getElementById('account-initial')!.textContent = (String(data.email ?? '?')[0] ?? '?').toUpperCase();
+
+    const ownedList = document.getElementById('owned-list')!;
+    if (data.owned.length === 0) {
+      document.getElementById('owned-empty')!.hidden = false;
+    } else {
+      ownedList.innerHTML = (data.owned as Owned[]).map(ownedCard).join('');
+    }
+
+    const pendingList = document.getElementById('pending-list')!;
+    if (data.pending.length === 0) {
+      document.getElementById('pending-empty')!.hidden = false;
+    } else {
+      const items = data.pending as { name: string; status: string }[];
+      pendingList.innerHTML = items.map((p, i) => row(p.name, statusBadge(p.status, 'pending'), i === items.length - 1)).join('');
+    }
+
+    const claimsList = document.getElementById('claims-list')!;
+    if (data.claims.length === 0) {
+      document.getElementById('claims-empty')!.hidden = false;
+    } else {
+      const items = data.claims as { event_title: string; status: string }[];
+      claimsList.innerHTML = items.map((c, i) => row(c.event_title, statusBadge(c.status, claimTone(c.status)), i === items.length - 1)).join('');
+    }
+  }
+
+  document.getElementById('logout-btn')!.addEventListener('click', async () => {
+    await fetch('/api/logout', { method: 'POST' });
+    window.location.href = '/';
+  });
+
+  init();
+</script>

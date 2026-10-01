@@ -1,19 +1,32 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { getSite } from '../../_lib/site';
-import { signFields, payfastConfigured, type PayfastEnv } from '../../_lib/payfast';
+import { isValidSponsorTarget } from '../../_lib/sponsor-targets';
+import { signFields, buildCheckoutParams, payfastConfigured, checkoutFrequency, type PayfastEnv } from '../../_lib/payfast';
+import {
+  TIER_NAMES,
+  SLOT_HELD_SQL,
+  isSlotTaken,
+  isSponsorProductType,
+  sponsorPriceCents,
+  sponsorProductLabel,
+  tierPriceCents,
+  centsToRand,
+  parseBillingPeriod,
+  type SponsorProductType,
+} from '../../_lib/pricing';
 
 interface Env extends PayfastEnv {
   DB: D1Database;
   SITE: string;
 }
 
-// Rand amounts per tier — see the Premium Listings plan's ladder. Kept
-// server-side only; never trust a client-supplied amount for what PayFast
-// actually charges.
-const TIER_PRICES: Record<number, number> = { 1: 50, 2: 99, 3: 199, 4: 299 };
-const TIER_NAMES: Record<number, string> = { 1: 'Verified', 2: 'Verified Plus', 3: 'Featured', 4: 'Premium' };
-
+// Checkout for an EXISTING, owned business — either a tier upgrade
+// ({businessId, tier}) or an exclusive sponsorship purchase ({businessId,
+// productType, productTarget?}). A new (not-yet-approved) submission's
+// tier checkout is a separate, session-less flow started inline from
+// functions/api/submit-business.ts instead — see that file and
+// functions/api/subscribe/notify.ts's submission-scoped branch.
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const db = context.env.DB;
   const user = await getSessionUser(context.request, db);
@@ -31,22 +44,111 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   const businessId = Number(body.businessId);
-  const tier = Number(body.tier);
-  if (!businessId || !TIER_PRICES[tier]) return json({ ok: false, error: 'Choose a valid tier.' }, 400);
+  if (!businessId) return json({ ok: false, error: 'Missing business.' }, 400);
 
-  const business = await db.prepare('SELECT id, name, owner_user_id FROM businesses WHERE id = ?').bind(businessId).first<{ id: number; name: string; owner_user_id: number | null }>();
+  const business = await db
+    .prepare('SELECT id, name, owner_user_id FROM businesses WHERE id = ?')
+    .bind(businessId)
+    .first<{ id: number; name: string; owner_user_id: number | null }>();
   if (!business || (business.owner_user_id !== user.id && !isAdminEmail(user.email))) {
     return json({ ok: false, error: 'You do not own this business.' }, 403);
   }
 
-  const site = getSite(context.env.SITE);
-  const amount = TIER_PRICES[tier].toFixed(2);
-  const mPaymentId = crypto.randomUUID();
+  const isSponsorPurchase = typeof body.productType === 'string' && body.productType !== 'tier';
+  // Optional; anything but 'yearly' (including no field at all) is monthly.
+  const billingPeriod = parseBillingPeriod(body.billing);
+  const yearly = billingPeriod === 'yearly';
 
-  await db
-    .prepare('INSERT INTO subscriptions (business_id, tier, m_payment_id, status) VALUES (?, ?, ?, ?)')
-    .bind(businessId, tier, mPaymentId, 'pending')
-    .run();
+  let amountCents: number | null;
+  let itemName: string;
+  let productType: 'tier' | SponsorProductType;
+  let productTarget: string | null;
+  let tier: number;
+
+  if (isSponsorPurchase) {
+    if (!isSponsorProductType(body.productType)) return json({ ok: false, error: 'Unknown sponsorship product.' }, 400);
+    productType = body.productType;
+    productTarget = typeof body.productTarget === 'string' && body.productTarget ? body.productTarget : null;
+    if (productType === 'homepage_banner') productTarget = null;
+    if (!(await isValidSponsorTarget(db, context.env.SITE, productType, productTarget))) {
+      return json({ ok: false, error: 'That sponsorship spot does not exist.' }, 400);
+    }
+    // A business that already holds this spot may switch it between monthly
+    // and yearly: that's a fresh checkout for the same slot, and notify.ts
+    // cancels the old row when the new one is paid. Its own row therefore
+    // mustn't count as "sold" — but only for a period switch; the same
+    // period again would just be paying twice for one spot.
+    const own = await db
+      .prepare(
+        `SELECT billing_period FROM subscriptions
+         WHERE business_id = ? AND product_type = ? AND product_target IS ? AND ${SLOT_HELD_SQL}
+         ORDER BY id DESC LIMIT 1`
+      )
+      .bind(businessId, productType, productTarget)
+      .first<{ billing_period: string | null }>();
+    if (own && parseBillingPeriod(own.billing_period) === billingPeriod) {
+      return json({ ok: false, error: 'You already sponsor this spot on this billing period.' }, 400);
+    }
+    if (await isSlotTaken(db, productType, productTarget, undefined, own ? businessId : undefined)) {
+      return json({ ok: false, error: 'That spot is already sold — check back later.' }, 409);
+    }
+    amountCents = await sponsorPriceCents(db, productType, billingPeriod);
+    itemName = sponsorProductLabel(productType, productTarget);
+    tier = 0;
+  } else {
+    tier = Number(body.tier);
+    if (!tier) return json({ ok: false, error: 'Choose a valid tier.' }, 400);
+    const current = await db
+      .prepare('SELECT subscription_tier, subscription_status FROM businesses WHERE id = ?')
+      .bind(businessId)
+      .first<{ subscription_tier: number; subscription_status: string | null }>();
+    if (current?.subscription_status === 'active' && current.subscription_tier >= tier) {
+      // Same plan on the other billing period is allowed: it's a fresh
+      // checkout whose activation replaces (cancels) the current row — see
+      // notify.ts. A comped plan has no live row, so it still gets refused.
+      const live = await db
+        .prepare(`SELECT billing_period FROM subscriptions WHERE business_id = ? AND product_type = 'tier' AND status = 'active' ORDER BY id DESC LIMIT 1`)
+        .bind(businessId)
+        .first<{ billing_period: string | null }>();
+      const periodSwitch = current.subscription_tier === tier && !!live && parseBillingPeriod(live.billing_period) !== billingPeriod;
+      if (!periodSwitch) {
+        return json({ ok: false, error: 'You already have this plan or a higher one. To move down, cancel and choose again once it ends.' }, 400);
+      }
+    }
+    amountCents = await tierPriceCents(db, tier, billingPeriod);
+    itemName = `${TIER_NAMES[tier] ?? 'Listing'} listing`;
+    productType = 'tier';
+    productTarget = null;
+  }
+
+  if (!amountCents) return json({ ok: false, error: 'That product is not priced yet — contact us.' }, 400);
+
+  const site = getSite(context.env.SITE);
+  const amount = centsToRand(amountCents);
+  // Clicking "Upgrade" twice, or coming back after abandoning PayFast,
+  // reuses the same unpaid checkout instead of piling up pending rows —
+  // and a late ITN for the first attempt still finds its row. Only a row on
+  // the same billing period is reused: its ITN is checked against that
+  // period's price, so switching monthly <-> yearly needs a fresh row.
+  const open = await db
+    .prepare(
+      `SELECT m_payment_id FROM subscriptions
+       WHERE business_id = ? AND status = 'pending' AND product_type = ? AND product_target IS ? AND tier = ? AND billing_period = ?
+       ORDER BY id DESC LIMIT 1`
+    )
+    .bind(businessId, productType, productTarget, tier, billingPeriod)
+    .first<{ m_payment_id: string }>();
+  const mPaymentId = open?.m_payment_id ?? crypto.randomUUID();
+
+  if (!open) {
+    await db
+      .prepare(
+        `INSERT INTO subscriptions (business_id, tier, product_type, product_target, m_payment_id, status, billing_period)
+         VALUES (?, ?, ?, ?, ?, 'pending', ?)`
+      )
+      .bind(businessId, tier, productType, productTarget, mPaymentId, billingPeriod)
+      .run();
+  }
 
   const origin = new URL(context.request.url).origin;
   const fields: Record<string, string> = {
@@ -59,18 +161,22 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     email_address: user.email,
     m_payment_id: mPaymentId,
     amount,
-    item_name: `${site.siteName} — ${TIER_NAMES[tier]} listing`,
-    item_description: `Monthly subscription for "${business.name}" on ${site.siteName}`,
-    custom_str1: String(businessId),
+    item_name: `${site.siteName} — ${itemName}`,
+    item_description: `${yearly ? 'Yearly' : 'Monthly'} subscription for "${business.name}" on ${site.siteName}`,
+    custom_str1: `business:${businessId}`,
+    custom_str2: productType,
+    custom_str3: productTarget ?? '',
     custom_int1: String(tier),
     subscription_type: '1',
     recurring_amount: amount,
-    frequency: '3', // PayFast: 3 = monthly
+    // 3 = monthly, 6 = annual — or a sandbox-only PAYFAST_TEST_FREQUENCY
+    // override for renewal testing (see checkoutFrequency).
+    frequency: checkoutFrequency(context.env, billingPeriod),
     cycles: '0', // 0 = until cancelled
   };
 
   const signature = await signFields(fields, context.env.PAYFAST_PASSPHRASE!);
-  const params = new URLSearchParams({ ...fields, signature });
+  const params = buildCheckoutParams(fields, signature);
 
   return json({ ok: true, redirectUrl: `https://${context.env.PAYFAST_HOST}/eng/process?${params.toString()}` });
 };

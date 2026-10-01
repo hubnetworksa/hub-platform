@@ -1,0 +1,27 @@
+---
+// Monthly / Yearly switch for any page that shows plan or sponsor prices.
+// The prices themselves are rendered in pairs (data-period="monthly" /
+// data-period="yearly") — see src/lib/billing-toggle.ts. Every switch on a
+// page stays in step, and a page script can read currentBilling() or listen
+// with onBillingChange() to pass `billing` on to checkout. Monthly is the
+// default; `note` sits beside the Yearly option ("2 months free").
+interface Props {
+  note?: string;
+}
+const { note } = Astro.props;
+const option = 'padding:8px 16px;border:0;font:inherit;font-size:13px;font-weight:800;cursor:pointer;';
+---
+
+<div role="group" aria-label="Billing period" style="display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap">
+  <span style="display:inline-flex;border:2px solid var(--navy);border-radius:999px;overflow:hidden;background:#fff">
+    <button type="button" data-billing-option="monthly" aria-pressed="true" style={`${option}background:var(--navy);color:#fff`}>Monthly</button>
+    <button type="button" data-billing-option="yearly" aria-pressed="false" style={`${option}background:#fff;color:var(--navy)`}>Yearly</button>
+  </span>
+  {note && <span style="font-size:12.5px;font-weight:800;color:var(--accent-hover)">Yearly: {note}</span>}
+</div>
+
+<script>
+  import { initBillingToggles } from '../lib/billing-toggle';
+
+  initBillingToggles();
+</script>

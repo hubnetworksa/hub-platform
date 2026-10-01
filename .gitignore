@@ -30,6 +30,7 @@ pnpm-debug.log*
 # environment variables
 .env
 .env.production
+.dev.vars
 
 # macOS-specific files
 .DS_Store
@@ -39,3 +40,12 @@ pnpm-debug.log*
 
 # personal Claude Code settings (not shared with the team)
 .claude/settings.local.json
+
+# scratch / agent working files
+.build-*/
+.scratch*
+.mockup-src.txt
+.agent-brief.md
+
+# graphify (knowledge-graph tool) output — local analysis only
+graphify-out/

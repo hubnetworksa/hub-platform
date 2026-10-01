@@ -1,30 +1,65 @@
 ---
+import { adsEnabled } from '../lib/site-overrides';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SearchBox from '../components/SearchBox.astro';
 import Icon from '../components/Icon.astro';
-import PromoBanner from '../components/PromoBanner.astro';
-import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory, topSpotSitewide, featuredSitewide } from '../lib/data';
+import StatTile from '../components/StatTile.astro';
+import PlanBadge from '../components/PlanBadge.astro';
+import { sponsorFor, withoutSponsors, eventsSorted, eventDateParts } from '../lib/data';
+import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory, suburbFor, categoriesFor, FEATURED_TIER, newsSorted, newsDateShort, latestFuel, fuelPeriodLabel } from '../lib/data';
 import { CATEGORY_GROUPS } from '../lib/categoryGroups';
 import site from '../site';
+import AdUnit from '../components/AdUnit.astro';
 
 const groupCount = (group: (typeof CATEGORY_GROUPS)[number]) =>
   categories
     .filter((c) => group.categorySlugs.includes(c.slug))
     .reduce((sum, c) => sum + businessesInCategory(c.id).length, 0);
 
-const topSuburbs = [...suburbs].sort((a, b) => businessesInSuburb(b.id).length - businessesInSuburb(a.id).length).slice(0, 8);
+const topSuburbs = [...suburbs].sort((a, b) => businessesInSuburb(b.id).length - businessesInSuburb(a.id).length).slice(0, 12);
 
-const FEATURES = [
-  { label: 'Find Businesses', path: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.5-4.5"/>' },
-  { label: 'Connect Easily', path: '<rect x="3" y="8" width="8" height="8" rx="4"/><rect x="13" y="8" width="8" height="8" rx="4"/>' },
-  { label: 'Support Local', path: '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>' },
-  { label: 'Trusted Platform', path: '<path d="M12 3l7 3v6c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V6l7-3Z"/><path d="m9 12 2 2 4-4"/>' },
-];
+// Popular quick-search chips — the mockup hardcodes a handful of trade
+// names; here it's the top categories by listing count, which is the real
+// equivalent (always populated, never a category with zero listings).
+const popularCategories = [...categories].sort((a, b) => businessesInCategory(b.id).length - businessesInCategory(a.id).length).slice(0, 4);
+
+// Only ever shown once a business is actually Featured — until then this
+// section just doesn't render, rather than showing an empty state. See
+// business/[slug].astro and the Premium Listings v2 plan for how a
+// business gets here.
+// Every Featured business is rendered (capped for page weight) and the
+// browser shows a random three per visit, so it really is a rotation and
+// no Featured customer is permanently stuck below the fold.
+// Sponsor card wins: the homepage-banner sponsor already has its own strip
+// under the hero, so it is left out of the Featured rotation here.
+const bannerSponsor = sponsorFor('homepage_banner');
+const featuredBusinesses = withoutSponsors(businesses.filter((b) => b.subscription_tier >= FEATURED_TIER), bannerSponsor).slice(0, 24);
+
+// Paying to feature an event promises a spot on the homepage as well as the
+// top of /events/ — this is that spot. Featured upcoming events only; the
+// banner doesn't render at all when there are none.
+// Capped at 8 — every featured event rotates through the banner (not just a
+// slice), but a dot-indicator row stays sane even if dozens ever get
+// featured at once.
+const featuredEvents = eventsSorted().filter((e) => e.featured).slice(0, 8);
 
 // WebSite + Organization structured data — Google's documented way to hint
 // the bold "sitename" shown in search results (otherwise it falls back to
 // the bare domain). No guarantee it switches over, or how fast — this is a
 // signal Google re-crawls and applies on its own schedule, not an instant switch.
+// City centre point for the "<city> today" weather card (fetched live from
+// /api/weather — see functions/api/weather.ts). A site with no entry here
+// simply doesn't render the card.
+const CITY_COORDS: Record<string, [number, number]> = {
+  capetown: [-33.9249, 18.4241],
+  pretoria: [-25.7479, 28.2293],
+  polokwane: [-23.9045, 29.4689],
+};
+const cityCoords = CITY_COORDS[site.slug];
+const homeNews = newsSorted().slice(0, 4);
+const fuel = latestFuel(site.slug);
+const rand = (cents: number) => `R${(cents / 100).toFixed(2)}`;
+
 const jsonLd = [
   {
     '@context': 'https://schema.org',
@@ -40,256 +75,446 @@ const jsonLd = [
     logo: `https://${site.domain}/logo-icon.png`,
   },
 ];
+// No Google ads anywhere a paid listing or sponsor is shown (see
+// BaseLayout's noAds): this page shows one if this is true.
+const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEvents.length > 0;
 ---
 
-<BaseLayout
+<BaseLayout noAds={showsPaid}
   title={`${site.cityLabel} Business Directory`}
   description={`Find businesses across ${site.cityLabel} and surrounding areas — browse by suburb or category to discover what's nearby.`}
   impactVerification
 >
-  {jsonLd.map((d) => <script type="application/ld+json" set:html={JSON.stringify(d)} />)}
+  {jsonLd.map((d) => <script type="application/ld+json" set:html={JSON.stringify(d).replace(/</g, '\\u003c')} />)}
 
-  <section class="hero-banner" style={`background-image: linear-gradient(to right, rgba(9, 26, 15, 0.6) 0%, rgba(9, 26, 15, 0.35) 45%, rgba(9, 26, 15, 0.05) 75%), url('${site.bannerImage}')`}>
-    <div class="container hero-content">
-      <h1>{site.cityLabel}'s Local Business Directory</h1>
-      <p class="hero-tagline">Discover. Connect. Grow.</p>
-      <p class="hero-sub">
-        Your trusted directory of {businesses.length.toLocaleString()} businesses across {suburbs.length} suburbs in {site.cityLabel} and surrounding areas.
-      </p>
-      <div class="search-card">
+  <main>
+    <section style="position:relative;background:var(--navy);overflow:hidden">
+      <img src={site.bannerImage} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%" />
+      <div style="position:absolute;inset:0;background:linear-gradient(105deg,rgba(var(--navy-rgb),.94) 0%,rgba(var(--navy-rgb),.82) 42%,rgba(var(--navy-rgb),.34) 78%,rgba(var(--navy-rgb),.12) 100%)"></div>
+      <div style="position:relative;max-width:1200px;margin:0 auto;padding:clamp(40px,7vw,86px) 20px clamp(28px,4vw,44px)">
+        <span style="display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border:1.5px solid rgba(255,255,255,.34);border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#fff">{site.cityLabel} &amp; surrounds</span>
+        <h1 style="margin:18px 0 14px;color:#fff;font-size:clamp(34px,6.4vw,62px);line-height:1.02;letter-spacing:-.03em;max-width:17ch;text-wrap:balance">{site.cityLabel}'s Local Business Directory</h1>
+        <p style="margin:0 0 26px;color:rgba(255,255,255,.88);font-size:clamp(15px,1.7vw,18.5px);max-width:72ch;line-height:1.5">Discover. Connect. Grow. — local businesses <span style="white-space:nowrap">on {site.siteName}</span></p>
+
         <SearchBox />
+
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">
+          <span style="font-size:12px;font-weight:700;color:rgba(255,255,255,.62);align-self:center;letter-spacing:.06em;text-transform:uppercase">Popular</span>
+          {popularCategories.map((c) => (
+            <a href={`/category/${c.slug}/`} style="padding:7px 13px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.26);color:#fff;font-size:13px;font-weight:700;text-decoration:none">{c.name}</a>
+          ))}
+        </div>
       </div>
-      <div class="feature-row">
-        {FEATURES.map((f) => (
-          <div class="feature">
-            <span class="feature-icon"><Icon path={f.path} size={20} /></span>
-            <span class="feature-label">{f.label}</span>
+    </section>
+
+    {bannerSponsor && (
+      <section style="background:var(--bg-subtle);border-bottom:2px solid var(--border)">
+        <a href={`/business/${bannerSponsor.business_slug}/`} class="home-banner-sponsor" style="max-width:1200px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--navy);text-decoration:none">
+          <span style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span style="padding:3px 9px;border-radius:999px;background:var(--navy);color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase">Homepage sponsor</span>
+            <span style="font-size:16px;font-weight:800;letter-spacing:-.015em">{bannerSponsor.business_name}</span>
+          </span>
+          <span style="font-size:13px;font-weight:800;color:var(--accent-hover)">View listing →</span>
+        </a>
+      </section>
+    )}
+
+    <section style="background:var(--navy);border-top:1px solid rgba(255,255,255,.12)">
+      <div style="max-width:1200px;margin:0 auto;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+        <div style="padding:22px 18px 22px 0;border-right:1px solid rgba(255,255,255,.14)">
+          <StatTile value={businesses.length.toLocaleString()} label="Live listings" />
+        </div>
+        <div style="padding:22px 18px;border-right:1px solid rgba(255,255,255,.14)">
+          <StatTile value={suburbs.length.toLocaleString()} label="Suburbs covered" />
+        </div>
+        <div style="padding:22px 0 22px 18px">
+          <StatTile value={categories.length.toLocaleString()} label="Categories" />
+        </div>
+      </div>
+    </section>
+
+    {featuredBusinesses.length > 0 && (
+      <section style="max-width:1200px;margin:0 auto;padding:clamp(34px,5vw,60px) 20px 0">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;flex-wrap:wrap">
+          <div>
+            <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Featured this month</span>
+            <h2 style="margin:8px 0 0;font-size:clamp(22px,3vw,30px);letter-spacing:-.025em;color:var(--navy)">Businesses paying to be found first</h2>
           </div>
+          <a href="/pricing/" style="font-size:13.5px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">Get this spot →</a>
+        </div>
+        <div id="home-featured-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px">
+          {featuredBusinesses.map((b, i) => {
+            const suburb = suburbFor(b);
+            return (
+              <article class="home-featured-card" data-rotate hidden={i >= 3} style="border:2px solid var(--border);border-radius:14px;background:#fff;overflow:hidden;display:flex;flex-direction:column">
+                <div style="height:6px;background:var(--accent)"></div>
+                <div style="padding:18px 18px 20px;display:flex;flex-direction:column;gap:10px;flex:1">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <PlanBadge tier={b.subscription_tier} variant="light" />
+                    <span style="display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:800;color:var(--accent-hover)">
+                      <Icon path="<circle cx='12' cy='12' r='9'/><path d='m8.5 12.5 2.5 2.5 5-5'/>" size={13} />
+                      Verified
+                    </span>
+                  </div>
+                  <h3 style="margin:0;font-size:19px;line-height:1.2;letter-spacing:-.02em;color:var(--navy)">{b.name}</h3>
+                  {(categoriesFor(b)[0] || suburb) && (
+                    <p style="margin:0;font-size:13.5px;color:var(--muted);font-weight:600">{[categoriesFor(b)[0]?.name, suburb?.name].filter(Boolean).join(' · ')}</p>
+                  )}
+                  <p style="margin:0;font-size:14px;line-height:1.55;color:var(--text)">{b.description}</p>
+                  <div style="display:flex;gap:8px;margin-top:auto;padding-top:6px">
+                    <a href={`/business/${b.slug}/`} style="flex:1;padding:10px 12px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:800;text-decoration:none;text-align:center">View profile</a>
+                    {b.phone && <a href={`tel:${b.phone}`} data-track="phone_click" data-track-slug={b.slug} style="padding:10px 12px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">{b.phone}</a>}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+    )}
+
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(34px,5vw,60px) 20px 0">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;flex-wrap:wrap">
+        <div>
+          <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Browse</span>
+          <h2 style="margin:8px 0 0;font-size:clamp(22px,3vw,30px);letter-spacing:-.025em;color:var(--navy)">What are you looking for?</h2>
+        </div>
+        <a href="/category/" style="font-size:13.5px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">All {categories.length} categories →</a>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:20px">
+        {CATEGORY_GROUPS.map((group) => (
+          <a href={`/section/${group.slug}/`} class="home-category-tile" style="display:flex;flex-direction:column;gap:6px;padding:18px;border:2px solid var(--border);border-radius:14px;background:#fff;min-height:118px;text-decoration:none">
+            <span style="color:var(--accent)"><Icon path={group.iconPath} size={26} /></span>
+            <span style="margin-top:auto;font-size:15.5px;font-weight:800;letter-spacing:-.01em;color:var(--navy);line-height:1.2">{group.name}</span>
+            <span style="font-size:12.5px;font-weight:700;color:var(--muted)">{groupCount(group)} businesses</span>
+          </a>
         ))}
       </div>
-      <a href="/list-your-business/" class="btn btn-primary" style="margin-top: 1.5rem;">List your business — it's free</a>
-    </div>
-    <svg class="hero-wave" viewBox="0 0 1440 100" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0,55 C360,10 1080,95 1440,45 L1440,100 L0,100 Z" style="fill: var(--accent); opacity: 0.35;" />
-      <path d="M0,75 C420,35 1020,100 1440,60 L1440,100 L0,100 Z" style="fill: var(--navy);" />
-    </svg>
-    <span class="watermark" aria-hidden="true">© {site.siteName}</span>
-  </section>
+    </section>
 
-  <section class="container" style="padding-top: 2.5rem; padding-bottom: 2.5rem;">
-    <div class="section-head">
-      <h2>What are you looking for?</h2>
-      <a href="/category/" class="section-link">All categories →</a>
-    </div>
-    <div class="group-grid">
-      {CATEGORY_GROUPS.map((group) => (
-        <a class="group-tile" href={`/section/${group.slug}/`}>
-          <span class="group-icon"><Icon path={group.iconPath} size={26} /></span>
-          <span class="group-name">{group.name}</span>
-          <span class="group-count">{groupCount(group)} businesses</span>
-        </a>
-      ))}
-    </div>
-  </section>
+    {adsEnabled && !showsPaid && site.adsensePublisherId && site.adsenseSlots?.homeInContent && (
+      <section style="max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,44px) 20px 0">
+        <AdUnit placement="homeInContent" />
+      </section>
+    )}
 
-  <section class="container" style="padding-bottom: 3rem;">
-    <div class="section-head">
-      <h2>Browse by suburb</h2>
-      <a href="/suburb/" class="section-link">All suburbs →</a>
-    </div>
-    <div class="chip-row">
-      {topSuburbs.map((s) => (
-        <a class="chip" href={`/suburb/${s.slug}/`}>{s.name} <span class="chip-count">{businessesInSuburb(s.id).length}</span></a>
-      ))}
-    </div>
-  </section>
+    {featuredEvents.length > 0 && (
+      <section style="max-width:1200px;margin:0 auto;padding:clamp(34px,5vw,56px) 20px 0">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;flex-wrap:wrap">
+          <h2 style="margin:0;font-size:clamp(22px,3vw,30px);letter-spacing:-.025em;color:var(--navy)">Featured events</h2>
+          <a href="/events/" style="font-size:13.5px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">All events →</a>
+        </div>
+        <div id="home-events-carousel" style="position:relative;margin-top:18px;border:2px solid var(--border);border-radius:14px;background:#fff;overflow:hidden">
+          <div id="home-events-track" style="display:flex;transition:transform .5s ease">
+            {featuredEvents.map((e, i) => {
+              const { month, day, weekday } = eventDateParts(e);
+              return (
+                <a href={`/events/${e.slug}/`} class="home-event-slide" aria-hidden={i === 0 ? 'false' : 'true'} tabindex={i === 0 ? 0 : -1} style="flex:0 0 100%;position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:clamp(260px,32vw,320px);padding:clamp(18px,3.6vw,30px);text-decoration:none;min-width:0;overflow:hidden">
+                  <span style={`position:absolute;inset:0;display:block;${e.image_url ? 'background:var(--navy)' : 'background:linear-gradient(135deg,var(--navy) 0%,rgba(var(--navy-rgb),.88) 55%,rgba(var(--accent-rgb),.5) 100%)'}`}>
+                    {e.image_url && <img src={e.image_url} alt="" decoding="async" style="width:100%;height:100%;object-fit:cover;display:block" />}
+                  </span>
+                  <span style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(var(--navy-rgb),.1) 0%,rgba(var(--navy-rgb),.18) 32%,rgba(var(--navy-rgb),.8) 70%,rgba(var(--navy-rgb),.95) 100%);pointer-events:none"></span>
+                  <span style="position:absolute;top:16px;left:16px;display:flex;flex-direction:column;align-items:center;padding:8px 14px;border-radius:10px;background:var(--accent);color:var(--contrast);box-shadow:0 4px 14px rgba(0,0,0,.28)">
+                    <span style="font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.85">{month}</span>
+                    <span style="font-size:24px;font-weight:800;line-height:1">{day}</span>
+                    <span style="font-size:10.5px;font-weight:700;opacity:.85">{weekday}</span>
+                  </span>
+                  <span style="position:relative;min-width:0;font-size:clamp(19px,2.6vw,27px);font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1.15;text-shadow:0 2px 10px rgba(0,0,0,.55);text-wrap:pretty">{e.title}</span>
+                  {(e.venue || e.suburb) && <span style="position:relative;min-width:0;font-size:14.5px;font-weight:700;color:rgba(255,255,255,.92);text-shadow:0 1px 5px rgba(0,0,0,.55);margin-top:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{[e.venue, e.suburb].filter(Boolean).join(' · ')}</span>}
+                  <span style="position:relative;font-size:15.5px;font-weight:800;color:#fff;text-shadow:0 1px 5px rgba(0,0,0,.55);margin-top:4px">{e.price}</span>
+                </a>
+              );
+            })}
+          </div>
+          {featuredEvents.length > 1 && (
+            <>
+              <button type="button" id="home-events-prev" aria-label="Previous featured event" style="position:absolute;top:50%;left:10px;transform:translateY(-50%);width:36px;height:36px;border-radius:999px;border:2px solid var(--border);background:#fff;color:var(--navy);font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0">‹</button>
+              <button type="button" id="home-events-next" aria-label="Next featured event" style="position:absolute;top:50%;right:10px;transform:translateY(-50%);width:36px;height:36px;border-radius:999px;border:2px solid var(--border);background:#fff;color:var(--navy);font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0">›</button>
+              <div style="display:flex;justify-content:center;gap:7px;padding:0 0 14px">
+                {featuredEvents.map((_, i) => (
+                  <button type="button" class="home-events-dot" data-dot-index={i} aria-label={`Go to featured event ${i + 1}`} aria-current={i === 0 ? 'true' : 'false'} style="width:8px;height:8px;border-radius:999px;border:none;padding:0;background:var(--border);cursor:pointer"></button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+    )}
+
+    {(cityCoords || homeNews.length > 0 || fuel) && (
+      <section id="today" hidden={homeNews.length === 0 && !fuel} data-lat={cityCoords?.[0]} data-lon={cityCoords?.[1]} style="max-width:1200px;margin:0 auto;padding:clamp(30px,4.5vw,50px) 20px 0">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;flex-wrap:wrap">
+          <h2 style="margin:0;font-size:clamp(22px,3vw,30px);letter-spacing:-.025em;color:var(--navy)">{site.cityLabel} today</h2>
+          {homeNews.length > 0 && <a href="/news/" style="font-size:13.5px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">All local news →</a>}
+        </div>
+        <div class="today-row" style="display:grid;grid-template-columns:1fr;gap:14px;margin-top:18px;align-items:stretch">
+          <div id="today-left" hidden={!fuel} style="display:flex;flex-direction:column;gap:12px;min-width:0">
+          {cityCoords && (
+            <div id="wx-card" hidden style="min-width:0">
+              <div style="border:2px solid var(--border);border-radius:14px;overflow:hidden;background:#fff">
+                <div style="padding:14px 16px;display:flex;align-items:center;gap:11px">
+                  <span style="flex-shrink:0;color:var(--accent);display:flex">
+                    <svg id="wx-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></svg>
+                  </span>
+                  <span style="min-width:0;display:flex;flex-direction:column;gap:2px">
+                    <span id="wx-now" style="font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-.025em;line-height:1.1"></span>
+                    <span id="wx-range" style="font-size:11.5px;font-weight:700;color:var(--muted)"></span>
+                  </span>
+                </div>
+                <div id="wx-days" style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border)"></div>
+              </div>
+              <p style="margin:8px 0 0;font-size:11px;font-weight:600;color:var(--muted)">Forecast: <a href="https://www.met.no/en" target="_blank" rel="noopener noreferrer" style="color:var(--muted)">MET Norway</a></p>
+            </div>
+          )}
+          {fuel && (
+            <div style="border:2px solid var(--border);border-radius:14px;background:#fff;overflow:hidden">
+              <div style="padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+                <span style="flex-shrink:0;color:var(--accent);display:flex">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v16"></path><path d="M3 21h13"></path><path d="M14 9h3a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0v-7l-2.5-2.5"></path></svg>
+                </span>
+                <span style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Fuel price</span>
+                <span style="margin-left:auto;font-size:10.5px;font-weight:700;color:var(--muted)">{fuelPeriodLabel(fuel.period)} · {fuel.region}</span>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)">
+                {fuel.rows.map((r) => (
+                  <div style="background:#fff;padding:12px 16px;display:flex;flex-direction:column;gap:2px">
+                    <span style="font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)">{r.grade}</span>
+                    <span style="font-size:17px;font-weight:800;color:var(--navy);letter-spacing:-.02em">{rand(r.price_cents)}</span>
+                    <span style={`font-size:11.5px;font-weight:800;color:${r.change_cents > 0 ? 'var(--danger)' : 'var(--accent-hover)'}`}>{r.change_cents === 0 ? 'No change' : `${r.change_cents > 0 ? '↑' : '↓'} ${Math.abs(r.change_cents)}c`}</span>
+                  </div>
+                ))}
+              </div>
+              <p style="margin:0;padding:8px 16px;border-top:1px solid var(--border);font-size:10.5px;font-weight:600;color:var(--muted)">Regulated pump price from the official monthly announcement.</p>
+            </div>
+          )}
+          </div>
+          {homeNews.length > 0 && (
+            <div style="border:2px solid var(--border);border-radius:14px;background:#fff;overflow:hidden;min-width:0;display:flex;flex-direction:column">
+              <a href={`/news/${homeNews[0].slug}/`} style="position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-height:158px;flex:1.35;padding:16px 18px;color:#fff;overflow:hidden;text-decoration:none">
+                <span style="position:absolute;inset:0;background:var(--navy);display:block">
+                  <img src={homeNews[0].image_url ?? site.newsBannerImage ?? site.sectionBannerImage} alt="" style="width:100%;height:100%;object-fit:cover;display:block" />
+                </span>
+                <span style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(var(--navy-rgb),.44) 0%,rgba(var(--navy-rgb),.62) 38%,rgba(var(--navy-rgb),.82) 62%,rgba(var(--navy-rgb),.95) 100%);pointer-events:none"></span>
+                <span style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap">
+                  <span style="padding:3px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:9.5px;font-weight:800;letter-spacing:.11em;text-transform:uppercase">{homeNews[0].category}</span>
+                  <span style="font-size:11px;font-weight:800;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)">{newsDateShort(homeNews[0])}</span>
+                </span>
+                <span style="position:relative;font-size:16.5px;font-weight:800;line-height:1.26;letter-spacing:-.018em;text-wrap:pretty">{homeNews[0].title}</span>
+                <span style="position:relative;font-size:11.5px;font-weight:700;color:#fff;opacity:.9;margin-top:5px">{homeNews[0].source_name}</span>
+              </a>
+              {homeNews.slice(1).map((n) => (
+                <a href={`/news/${n.slug}/`} class="home-news-row" style="display:flex;align-items:center;gap:11px;flex:1;padding:10px 16px;border-top:1px solid var(--border);color:var(--navy);text-decoration:none">
+                  <span style={`flex-shrink:0;width:6px;height:34px;border-radius:99px;background:${n.category === 'Traffic' ? 'var(--accent)' : n.category === 'Utilities' ? 'var(--navy)' : 'var(--grad-from)'}`}></span>
+                  <span style="min-width:0;display:flex;flex-direction:column;gap:2px">
+                    <span style="font-size:13px;font-weight:700;line-height:1.32;letter-spacing:-.005em">{n.title}</span>
+                    <span style="font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">{n.category} · {newsDateShort(n)}</span>
+                  </span>
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+    )}
+
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(34px,5vw,56px) 20px 0">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;flex-wrap:wrap">
+        <h2 style="margin:0;font-size:clamp(22px,3vw,30px);letter-spacing:-.025em;color:var(--navy)">Browse by suburb</h2>
+        <a href="/suburb/" style="font-size:13.5px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">All {suburbs.length} suburbs →</a>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:18px">
+        {topSuburbs.map((s) => (
+          <a href={`/suburb/${s.slug}/`} class="home-suburb-chip" style="display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:2px solid var(--border);border-radius:999px;font-size:13.5px;font-weight:700;color:var(--navy);background:#fff;text-decoration:none">
+            {s.name}<span style="font-size:11.5px;font-weight:800;color:var(--muted)">{businessesInSuburb(s.id).length}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section style="margin-top:clamp(40px,6vw,72px);background:var(--navy);color:#fff">
+      <div style="max-width:1200px;margin:0 auto;padding:clamp(36px,5vw,64px) 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:clamp(24px,4vw,56px);align-items:center">
+        <div>
+          <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--grad-from)">For business owners</span>
+          <h2 style="margin:12px 0 14px;color:#fff;font-size:clamp(26px,3.8vw,42px);line-height:1.06;letter-spacing:-.03em;max-width:20ch">Your customers are already searching. Be the one they find.</h2>
+          <p style="margin:0 0 24px;color:rgba(255,255,255,.82);font-size:16px;line-height:1.6;max-width:46ch">Claim your free listing in two minutes, or upgrade to sit above your competitors in your category and suburb.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:10px">
+            <a href="/list-your-business/" style="padding:14px 22px;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;text-decoration:none">List free</a>
+            <a href="/pricing/" style="padding:14px 22px;border-radius:11px;border:2px solid rgba(255,255,255,.34);color:#fff;font-size:14.5px;font-weight:800;text-decoration:none">See plans &amp; prices</a>
+          </div>
+        </div>
+        <div style="display:grid;gap:2px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);border-radius:14px;overflow:hidden">
+          <div style="background:var(--navy);padding:18px 20px">
+            <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-.02em">48 hours</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.7);font-weight:600;margin-top:4px">from submission to a reviewed, live listing</div>
+          </div>
+          <div style="background:var(--navy);padding:18px 20px">
+            <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-.02em">No contract</div>
+            <div style="font-size:13px;color:rgba(255,255,255,.7);font-weight:600;margin-top:4px">month to month, cancel any time</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 </BaseLayout>
 
+<script>
+  // "<city> today" — hidden until the live forecast arrives, so a failed or
+  // slow fetch leaves nothing (never placeholder numbers).
+  const today = document.getElementById('today');
+  if (today) {
+    const ICONS: Record<string, string> = {
+      sun: '<circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/>',
+      cloud: '<path d="M7 18h10a3.6 3.6 0 0 0 .3-7.2A5.4 5.4 0 0 0 6.9 11 3.5 3.5 0 0 0 7 18Z"/>',
+      rain: '<path d="M7 15h10a3.4 3.4 0 0 0 .3-6.8A5.2 5.2 0 0 0 6.9 8.3 3.4 3.4 0 0 0 7 15Z"/><path d="M9 18.5 8 21M13 18.5 12 21M17 18.5 16 21"/>',
+    };
+    interface Wx {
+      ok: boolean;
+      now: { temp: number; cond: string; icon: string };
+      today: { high: number; low: number };
+      days: { day: string; high: number; low: number; icon: string }[];
+    }
+    fetch(`/api/weather?lat=${today.dataset.lat}&lon=${today.dataset.lon}`)
+      .then((r) => (r.ok ? (r.json() as Promise<Wx>) : Promise.reject()))
+      .then((w) => {
+        if (!w.ok || !w.days?.length) return;
+        document.getElementById('wx-icon')!.innerHTML = ICONS[w.now.icon] ?? ICONS.cloud;
+        document.getElementById('wx-now')!.textContent = `${w.now.temp}°C · ${w.now.cond}`;
+        document.getElementById('wx-range')!.textContent = `${w.today.high}° / ${w.today.low}° today`;
+        document.getElementById('wx-days')!.innerHTML = w.days
+          .map(
+            (d) => `<div style="background:var(--bg-subtle);padding:9px 2px;display:flex;flex-direction:column;align-items:center;gap:4px">
+              <span style="font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">${d.day}</span>
+              <span style="color:var(--accent);display:flex"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${ICONS[d.icon] ?? ICONS.cloud}</svg></span>
+              <span style="font-size:12px;font-weight:800;color:var(--navy)">${d.high}°</span>
+            </div>`,
+          )
+          .join('');
+        document.getElementById('wx-card')!.hidden = false;
+        document.getElementById('today-left')!.hidden = false;
+        today.hidden = false;
+      })
+      .catch(() => {});
+  }
+</script>
+
+<script>
+  // Pick three Featured cards at random for this visit.
+  const rotating = [...document.querySelectorAll<HTMLElement>('#home-featured-grid [data-rotate]')];
+  if (rotating.length > 3) {
+    const picks = new Set<number>();
+    while (picks.size < 3) picks.add(Math.floor(Math.random() * rotating.length));
+    rotating.forEach((el, i) => (el.hidden = !picks.has(i)));
+  }
+
+  // Phone clicks from a Featured card count towards the owner's "Phone
+  // clicks" tile (see functions/api/track-view.ts), same as on the profile page.
+  document.getElementById('home-featured-grid')?.addEventListener('click', (e) => {
+    const el = (e.target as HTMLElement).closest<HTMLElement>('[data-track]');
+    if (!el?.dataset.trackSlug) return;
+    try {
+      navigator.sendBeacon('/api/track-view', new Blob([JSON.stringify({ businessSlug: el.dataset.trackSlug, event: el.dataset.track })], { type: 'application/json' }));
+    } catch {
+      // A missed click count is never worth surfacing an error over.
+    }
+  });
+</script>
+
+<script>
+  // Featured events banner — rotates automatically through every slide,
+  // pausing on hover/keyboard focus and respecting prefers-reduced-motion.
+  // With 0 or 1 featured events the prev/next/dot controls simply aren't in
+  // the markup (see the Astro guard around them), and this script is a
+  // harmless no-op in that case.
+  const eventsCarousel = document.getElementById('home-events-carousel');
+  const eventsTrack = document.getElementById('home-events-track');
+  if (eventsCarousel && eventsTrack) {
+    const slides = [...eventsTrack.querySelectorAll<HTMLAnchorElement>('.home-event-slide')];
+    const dots = [...eventsCarousel.querySelectorAll<HTMLButtonElement>('.home-events-dot')];
+    const prevBtn = document.getElementById('home-events-prev');
+    const nextBtn = document.getElementById('home-events-next');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let index = 0;
+    let timer: ReturnType<typeof setInterval> | null = null;
+
+    const show = (next: number) => {
+      index = (next + slides.length) % slides.length;
+      eventsTrack.style.transform = `translateX(-${index * 100}%)`;
+      slides.forEach((s, i) => {
+        const active = i === index;
+        s.setAttribute('aria-hidden', active ? 'false' : 'true');
+        s.tabIndex = active ? 0 : -1;
+      });
+      dots.forEach((d, i) => d.setAttribute('aria-current', i === index ? 'true' : 'false'));
+    };
+
+    const stop = () => {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
+    const start = () => {
+      if (reduceMotion || slides.length < 2) return;
+      stop();
+      timer = setInterval(() => show(index + 1), 5000); // 5s for now — easy to revisit
+    };
+
+    if (slides.length > 1) {
+      prevBtn?.addEventListener('click', () => {
+        show(index - 1);
+        start();
+      });
+      nextBtn?.addEventListener('click', () => {
+        show(index + 1);
+        start();
+      });
+      dots.forEach((d) => {
+        d.addEventListener('click', () => {
+          show(Number(d.dataset.dotIndex));
+          start();
+        });
+      });
+      eventsCarousel.addEventListener('mouseenter', stop);
+      eventsCarousel.addEventListener('mouseleave', start);
+      eventsCarousel.addEventListener('focusin', stop);
+      eventsCarousel.addEventListener('focusout', start);
+      start();
+    }
+  }
+</script>
+
 <style>
-  .hero-banner {
-    position: relative;
-    /* No overflow:hidden here — it would clip the search dropdown a second
-       way (on top of the stacking-context fix below) whenever results
-       extend past this section's bottom edge. Not needed for anything:
-       background-image already clips to its own box regardless, and the
-       wave SVG stays within bounds without it. */
-    z-index: 5;
-    min-height: 460px;
-    /* background-image itself is set inline above (site.bannerImage differs
-       per site) — dark-to-clear overlay keeps the headline/search text
-       legible over the sky no matter how bright that part of the photo is. */
-    background-size: cover, cover;
-    background-position: center, center;
-    background-repeat: no-repeat, no-repeat;
+  .home-featured-card[hidden] {
+    display: none !important;
   }
-  .hero-content {
-    position: relative;
-    padding-top: 3.5rem;
-    padding-bottom: 5.5rem;
+  /* Inline display:flex would otherwise beat the [hidden] attribute. */
+  #today-left[hidden] {
+    display: none !important;
   }
-  .hero-content h1 {
-    font-size: 2.2rem;
-    margin: 0 0 0.6rem;
-    color: #fff;
-    max-width: 22ch;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.55), 0 2px 24px rgba(0, 0, 0, 0.4);
+  .home-events-dot[aria-current='true'] {
+    background: var(--accent);
   }
-  .hero-tagline {
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 1.15rem;
-    font-weight: 600;
-    margin: 0 0 0.75rem;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 1px 14px rgba(0, 0, 0, 0.45);
-  }
-  .hero-sub {
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 1.05rem;
-    max-width: 46ch;
-    margin: 0 0 1.5rem;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 1px 14px rgba(0, 0, 0, 0.45);
-  }
-  .search-card {
-    max-width: 480px;
-    background: var(--bg-card);
-    padding: 0.75rem;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lift);
-  }
-  .feature-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-top: 1.5rem;
-  }
-  .feature {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-  }
-  .feature-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.2rem;
-    height: 2.2rem;
-    border-radius: 50%;
-    background: rgba(var(--accent-rgb), 0.12);
+  #home-events-prev:hover,
+  #home-events-next:hover {
+    border-color: var(--accent);
     color: var(--accent);
-    flex-shrink: 0;
   }
-  .feature-label {
-    font-weight: 700;
-    font-size: 0.8rem;
-    color: #fff;
-    max-width: 8ch;
-    line-height: 1.2;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 1px 10px rgba(0, 0, 0, 0.45);
-  }
-  .feature-icon {
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.55);
-  }
-  .hero-wave {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -1px;
-    width: 100%;
-    height: 70px;
-    display: block;
-  }
-  .watermark {
-    position: absolute;
-    right: 0.75rem;
-    bottom: 5rem;
-    z-index: 2;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    color: rgba(255, 255, 255, 0.85);
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-    pointer-events: none;
-    user-select: none;
-  }
-  @media (max-width: 720px) {
-    .hero-banner {
-      min-height: 320px;
-    }
-    .feature-label {
-      max-width: none;
+  @media (min-width: 760px) {
+    .today-row:has(#today-left:not([hidden])) {
+      grid-template-columns: 300px minmax(0, 1fr) !important;
     }
   }
-  .section-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
+  .home-news-row:hover {
+    background: var(--bg-subtle);
   }
-  .section-head h2 {
-    font-size: 1.15rem;
-    margin: 0;
-  }
-  .section-link {
-    color: var(--accent);
-    text-decoration: none;
-    font-size: 0.9rem;
-    white-space: nowrap;
-  }
-  .group-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 0.75rem;
-    margin-top: 1rem;
-  }
-  .group-tile {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    padding: 1.1rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    text-decoration: none;
-    color: inherit;
-    background: var(--bg-card);
-    transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
-  }
-  .group-tile:hover {
-    border-color: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-  }
-  .group-icon {
-    color: var(--accent);
-  }
-  .group-name {
-    font-weight: 700;
-  }
-  .group-count {
-    color: var(--text-muted);
-    font-size: 0.82rem;
-  }
-  .chip-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 1rem;
-  }
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.45rem 0.85rem;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    text-decoration: none;
-    color: var(--text);
-    font-size: 0.9rem;
-    background: var(--bg-card);
-  }
-  .chip:hover {
+  .home-featured-card:hover {
     border-color: var(--accent);
   }
-  .chip-count {
-    color: var(--text-muted);
-    font-size: 0.78rem;
+  .home-category-tile:hover {
+    border-color: var(--accent);
+    background: var(--bg-subtle);
+  }
+  .home-suburb-chip:hover {
+    border-color: var(--accent);
   }
 </style>

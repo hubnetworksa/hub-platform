@@ -14,15 +14,67 @@
 // `wrangler pages secret put`) before ever pointing PAYFAST_HOST at
 // production.
 
+import type { BillingPeriod } from './pricing';
+
 export interface PayfastEnv {
   PAYFAST_MERCHANT_ID?: string;
   PAYFAST_MERCHANT_KEY?: string;
   PAYFAST_PASSPHRASE?: string;
   PAYFAST_HOST?: string; // e.g. sandbox.payfast.co.za
+  PAYFAST_TEST_FREQUENCY?: string; // sandbox-only override, see checkoutFrequency()
 }
 
 export function payfastConfigured(env: PayfastEnv): boolean {
   return !!(env.PAYFAST_MERCHANT_ID && env.PAYFAST_MERCHANT_KEY && env.PAYFAST_PASSPHRASE && env.PAYFAST_HOST);
+}
+
+export const PAYFAST_SANDBOX_HOST = 'sandbox.payfast.co.za';
+
+// PayFast's subscription `frequency` codes: their own docs list six —
+// 1 = daily, 2 = weekly, 3 = monthly, 4 = quarterly, 5 = biannual,
+// 6 = annual — but their ACTUAL sandbox validation rejects 1 and 2. A real
+// checkout request sent to sandbox.payfast.co.za with frequency=1 comes
+// back a hard 400: "frequency: The frequency must be at least 3." (hit in
+// practice on Pretoria's preview env; the bad PAYFAST_TEST_FREQUENCY=1
+// secret has since been removed there). So despite what the docs say, only
+// 3–6 are usable codes — keep 1 and 2 out of this list so that mistake
+// can't be reintroduced.
+const PAYFAST_FREQUENCIES = ['3', '4', '5', '6'] as const;
+export type PayfastFrequency = (typeof PAYFAST_FREQUENCIES)[number];
+
+// The `frequency` code both subscription checkouts (subscribe/start.ts and
+// submit-business.ts) send to PayFast for a billing period: monthly = 3,
+// yearly = 6.
+//
+// Sandbox renewal testing: a real renewal ITN only arrives after a month
+// (or a year), which makes notify.ts's renewal branch — the part that
+// extends the paid period and keeps a paying customer from being
+// downgraded by the expiry sweep — effectively untestable.
+// PAYFAST_TEST_FREQUENCY exists to let the preview environment pick a
+// different real billing cycle than the one the business actually chose
+// (e.g. force monthly=3 renewals for a business that signed up yearly), so
+// that branch gets exercised sooner than a live year would. It is NOT
+// useful for accelerating renewals down to daily/weekly — those codes are
+// rejected by PayFast's live validation (see above), so the fastest cycle
+// this override can pick is still monthly. If you need a renewal to arrive
+// in minutes rather than weeks for testing, do it some other way instead:
+// manually edit the subscription row's `next_billing_date` in the database
+// to be in the past and trigger the expiry sweep / notify.ts by hand, or
+// just wait out a real billing cycle. The override is honoured ONLY when
+// PAYFAST_HOST is exactly the sandbox host, so a stray setting on the live
+// host can never affect production billing; anything but one of the four
+// actually-valid codes above is ignored too.
+//
+// notify.ts's bookkeeping deliberately does NOT know about this: it still
+// adds one full paid period (+1 month / +1 year, per the subscription
+// row's billing_period) on every renewal. An early renewal is just a
+// renewal that arrived early and extends the period as a normal one would,
+// which is exactly the code path being tested.
+export function checkoutFrequency(env: PayfastEnv, period: BillingPeriod): PayfastFrequency {
+  const real: PayfastFrequency = period === 'yearly' ? '6' : '3';
+  if ((env.PAYFAST_HOST ?? '').trim().toLowerCase() !== PAYFAST_SANDBOX_HOST) return real;
+  const override = (env.PAYFAST_TEST_FREQUENCY ?? '').trim();
+  return (PAYFAST_FREQUENCIES as readonly string[]).includes(override) ? (override as PayfastFrequency) : real;
 }
 
 // The fixed field order the signature is computed over — same order for
@@ -57,6 +109,25 @@ export function buildSignatureString(fields: Record<string, string | undefined>,
     const value = fields[key];
     if (value === undefined || value === '') continue;
     parts.push(`${key}=${phpUrlEncode(value.trim())}`);
+  }
+  parts.push(`passphrase=${phpUrlEncode(passphrase.trim())}`);
+  return parts.join('&');
+}
+
+// An ITN is NOT signed over FIELD_ORDER: PayFast signs an incoming
+// notification over *all* the variables it posted, in the order it posted
+// them, with the passphrase appended last. FIELD_ORDER is the outgoing
+// checkout's field set and has no payment_status / amount_gross /
+// pf_payment_id / token in it at all, so validating an ITN with
+// buildSignatureString() silently ignores every field that actually says
+// what was paid — an attacker could rewrite the amount and the signature
+// would still verify. Keep the two functions separate: this one for
+// incoming ITNs, buildSignatureString() for the outgoing checkout.
+export function buildItnSignatureString(posted: Record<string, string>, passphrase: string): string {
+  const parts: string[] = [];
+  for (const [key, value] of Object.entries(posted)) {
+    if (key === 'signature' || value === undefined) continue;
+    parts.push(`${key}=${phpUrlEncode(String(value).trim())}`);
   }
   parts.push(`passphrase=${phpUrlEncode(passphrase.trim())}`);
   return parts.join('&');
@@ -112,23 +183,55 @@ export async function signFields(fields: Record<string, string | undefined>, pas
   return md5(buildSignatureString(fields, passphrase));
 }
 
+// Builds the actual outgoing query string for the checkout redirect — the
+// exact same field set the signature was computed over, and nothing more.
+//
+// This matters because buildSignatureString skips any field that's
+// undefined OR an empty string (PayFast's own documented behaviour: an
+// unused optional field is simply left out). Naively building
+// `new URLSearchParams({ ...fields, signature })` instead sends every key
+// that exists in the object, empty strings included (e.g. a plain tier
+// upgrade's `custom_str3: productTarget ?? ''`). PayFast then sees a field
+// in the request that wasn't part of what it was signed over, recomputes a
+// different signature on its end, and rejects the whole checkout with
+// "Generated signature does not match submitted signature" — confirmed
+// directly against the sandbox. Always build the redirect URL through this
+// function, never through URLSearchParams directly, so the signed fields
+// and the sent fields can never drift apart again.
+export function buildCheckoutParams(fields: Record<string, string | undefined>, signature: string): URLSearchParams {
+  const params = new URLSearchParams();
+  for (const key of FIELD_ORDER) {
+    const value = fields[key];
+    if (value === undefined || value === '') continue;
+    params.set(key, value);
+  }
+  params.set('signature', signature);
+  return params;
+}
+
 // The Subscriptions REST API uses a DIFFERENT signature scheme than the
-// checkout/ITN flow above: headers + params merged, sorted alphabetically
-// (PHP `ksort` — the opposite rule from the fixed field order used for
-// checkout), passphrase appended, MD5'd, sent as a `signature` header
-// rather than a form field. Confirmed against PayFast's own SDK source
-// (Auth.php / PayFastApi.php), used here only for cancelling a
-// subscription — pause/resume/update follow the identical pattern if
-// ever needed.
+// checkout/ITN flow above: headers + params + passphrase all merged into
+// ONE object and sorted alphabetically together (PHP `ksort`) — unlike
+// checkout, where passphrase is always appended last regardless of the
+// fixed field order. Getting this wrong doesn't fail loudly: PayFast still
+// returns a 401 "Merchant authorization failed", identical to a genuinely
+// wrong merchant ID or passphrase, so it looks like a credentials problem
+// rather than a field-ordering one. Confirmed against two independent
+// working implementations (github.com/payfast-api/core,
+// github.com/jpbester/payfast-mcp) and directly against the PayFast
+// sandbox: appending passphrase last gets "Merchant authorization failed";
+// sorting it in alphabetically (its place is between "merchant-id" and
+// "timestamp") gets past authorization to the next real validation step.
+// Used here for cancelling a subscription — pause/resume/update follow the
+// identical pattern if ever needed.
 async function signApiRequest(
   passphrase: string,
   headers: Record<string, string>,
   params: Record<string, string>
 ): Promise<string> {
-  const merged: Record<string, string> = { ...headers, ...params };
+  const merged: Record<string, string> = { ...headers, ...params, passphrase };
   const keys = Object.keys(merged).sort();
   const parts = keys.map((k) => `${k}=${phpUrlEncode(merged[k])}`);
-  parts.push(`passphrase=${phpUrlEncode(passphrase)}`);
   return md5(parts.join('&'));
 }
 
@@ -163,7 +266,23 @@ export async function cancelPayfastSubscription(env: PayfastEnv, token: string):
     },
   });
   const body = await res.text();
-  return { ok: res.ok, status: res.status, body };
+
+  // PayFast doesn't reliably use the HTTP status to mean success — a token
+  // it can't find still comes back as HTTP 200 with a JSON body saying
+  // {"code":400,"status":"failed",...}, confirmed directly against the
+  // sandbox. Trusting res.ok alone here would tell an owner "cancelled"
+  // while PayFast quietly did nothing, and keep charging their card — the
+  // exact failure mode this function exists to prevent. Treat it as failed
+  // whenever the body itself says so, even on a 2xx response.
+  let bodyOk = res.ok;
+  try {
+    const parsed = JSON.parse(body) as { code?: number; status?: string };
+    if (parsed.status === 'failed' || (typeof parsed.code === 'number' && parsed.code >= 400)) bodyOk = false;
+  } catch {
+    // Not JSON — fall back to the HTTP status alone.
+  }
+
+  return { ok: res.ok && bodyOk, status: res.status, body };
 }
 
 // Checks the incoming ITN's host actually resolves to one of PayFast's own

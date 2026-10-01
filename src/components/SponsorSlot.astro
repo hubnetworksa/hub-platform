@@ -1,0 +1,31 @@
+---
+// The open state of a sponsorship slot: a navy-bordered box with a
+// description and "buy this spot" CTA (e.g. Suburb's "Own {suburb}" box,
+// Pricing's homepage-banner tile). Renders nothing once the slot is sold —
+// the SponsorBanner elsewhere on the page carries the sold state instead.
+import { sponsorFor, type Sponsorship } from '../lib/data';
+import { sponsorHref } from '../lib/sponsor-link';
+
+interface Props {
+  productType: Sponsorship['product_type'];
+  target?: string;
+  title: string;
+  /** Shown only in the open (unsold) state. */
+  openBody: string;
+  ctaLabel?: string;
+}
+const { productType, target, title, openBody, ctaLabel = 'Enquire' } = Astro.props;
+const sponsor = sponsorFor(productType, target);
+const buyHref = sponsorHref(productType, target);
+// Questions go to a pre-filled enquiry naming this exact slot.
+const enquireHref = `/contact/?topic=Advertising&message=${encodeURIComponent(`I'd like to sponsor this spot: ${title}${target ? ` (${target})` : ''}.`)}`;
+---
+
+{!sponsor && (
+  <div style="border:2px solid var(--navy);border-radius:14px;padding:18px;background:#fff">
+    <h3 style="margin:0 0 8px;font-size:17px;letter-spacing:-.02em;color:var(--navy)">{title}</h3>
+    <p style="margin:0 0 14px;font-size:14px;line-height:1.55;color:var(--text)">{openBody}</p>
+    <a href={buyHref} style="display:block;padding:11px 14px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none">{ctaLabel}</a>
+    <a href={enquireHref} style="display:block;margin-top:8px;font-size:12.5px;font-weight:800;color:var(--accent);text-decoration:none">Questions? Ask us →</a>
+  </div>
+)}

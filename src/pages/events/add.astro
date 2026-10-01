@@ -1,0 +1,296 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { priceRand } from '../../lib/data';
+import site from '../../site';
+
+// Organiser submission form — mockup's "Add event" screen (isAddEvent).
+// Submissions go to /api/submit-event (held for admin review, never
+// published directly).
+const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '');
+---
+
+<BaseLayout
+  title="List your event free"
+  description={`List your event on ${site.siteName} for free — ticket prices and your seller link go live within 24 hours of review.`}
+>
+  <main style="max-width:1200px;margin:0 auto;padding:clamp(22px,3.5vw,42px) 20px 60px">
+    <div id="add-shell" style="display:grid;gap:26px">
+      <div style="min-width:0">
+        <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">For organisers</span>
+        <h1 style="margin:12px 0 10px;font-size:clamp(26px,4.2vw,42px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);max-width:20ch">List your event free</h1>
+        <p style="margin:0 0 24px;font-size:16px;line-height:1.6;color:var(--text);max-width:52ch">Ticket prices and your seller link go live within 24 hours of review. You'll need an account so we can hand you the edit rights once it's approved.</p>
+
+        <p id="auth-check" style="color:var(--muted);">Checking your account…</p>
+
+        <form id="event-form" data-contact-email={site.contactEmail} data-site-name={site.siteName} hidden style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Event title
+            <input class="add-input" type="text" name="title" required maxlength="120" placeholder="e.g. Pretoria Night Market — Winter Edition" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)" /></label>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Type
+              <select class="add-input" name="type" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)">
+                <option>Music</option><option>Market</option><option>Sport</option><option>Theatre</option><option>Food &amp; Drink</option><option>Family</option>
+              </select></label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Date
+              <input class="add-input" type="date" name="eventDate" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Time
+              <input class="add-input" type="text" name="eventTime" maxlength="60" placeholder="17:00 – 23:00" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)" /></label>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Venue
+              <input class="add-input" type="text" name="venue" required maxlength="120" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Suburb
+              <input class="add-input" type="text" name="suburb" maxlength="80" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;background:#fff;color:var(--text)" /></label>
+          </div>
+          <div style="border:2px solid var(--navy);border-radius:14px;overflow:hidden">
+            <div style="background:var(--navy);padding:12px 16px;font-size:13px;font-weight:800;color:#fff">Tickets</div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:14px;background:#fff">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px">
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Price shown on the card
+                  <input class="add-input" type="text" name="price" maxlength="60" placeholder="R60 – R120 / Free entry" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" /></label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Seller label
+                  <input class="add-input" type="text" name="host" maxlength="80" placeholder="Sold via Quicket" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" /></label>
+              </div>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">Ticket URL
+                <input class="add-input" type="url" name="ticketUrl" maxlength="300" placeholder="https://www.quicket.co.za/…" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" /></label>
+              <p style="margin:0;font-size:12px;font-weight:600;color:var(--muted);line-height:1.5">We link straight to your seller — we don't take a cut of ticket sales.</p>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+            Poster or photo <span style="font-weight:600;color:var(--muted);font-size:12px">optional</span>
+            <input type="hidden" name="imageUrl" id="event-image-url" />
+            <div id="image-drop" style="position:relative;min-height:190px;border:2px dashed var(--border);border-radius:12px;overflow:hidden;background:var(--bg-subtle);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px;text-align:center">
+              <div id="image-empty" style="display:flex;flex-direction:column;align-items:center;gap:10px">
+                <span style="font-size:13px;font-weight:700;color:var(--muted)">Upload your event poster</span>
+                <label for="event-image-file" style="padding:11px 18px;border-radius:9px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;cursor:pointer">Choose image</label>
+                <span style="font-size:12px;font-weight:600;color:var(--muted);max-width:340px">Landscape works best — <strong>1200 × 630px</strong> is ideal. JPG, PNG or WEBP, under 5MB.</span>
+              </div>
+              <div id="image-preview-wrap" hidden style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;padding:6px 0">
+                <img id="image-preview" alt="" style="max-width:100%;max-height:160px;border-radius:8px;display:block;object-fit:contain" />
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center">
+                  <span id="image-filename" style="font-size:12px;font-weight:700;color:var(--muted)"></span>
+                  <label for="event-image-file" style="padding:8px 14px;border-radius:8px;border:2px solid var(--border);background:#fff;color:var(--navy);font-size:12.5px;font-weight:800;cursor:pointer">Change</label>
+                  <button type="button" id="image-remove" style="padding:8px 14px;border-radius:8px;border:2px solid var(--border);background:#fff;color:var(--danger);font-size:12.5px;font-weight:800;cursor:pointer">Remove</button>
+                </div>
+              </div>
+              <input type="file" id="event-image-file" accept="image/jpeg,image/png,image/webp" style="position:absolute;width:1px;height:1px;opacity:0;overflow:hidden" />
+            </div>
+            <p id="image-status" style="margin:0;font-size:12px;font-weight:700;color:var(--muted);min-height:1.2em"></p>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Description
+            <textarea class="add-input" name="description" rows="4" maxlength="600" placeholder="Two or three sentences — what's on, who's playing, what's included." style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;outline:none;resize:vertical;background:#fff;color:var(--text)"></textarea></label>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Your name <span style="font-weight:600;color:var(--muted);font-size:12px">optional</span>
+              <input class="add-input" type="text" name="contactName" maxlength="80" autocomplete="name" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;outline:none;background:#fff;color:var(--text)" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Email <span style="font-weight:600;color:var(--muted);font-size:12px">not shown publicly</span>
+              <input class="add-input" type="email" name="contactEmail" maxlength="120" autocomplete="email" placeholder="you@organiser.co.za" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;outline:none;background:#fff;color:var(--text)" /></label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">Phone <span style="font-weight:600;color:var(--muted);font-size:12px">optional</span>
+              <input class="add-input" type="tel" name="contactPhone" maxlength="30" autocomplete="tel" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;outline:none;background:#fff;color:var(--text)" /></label>
+          </div>
+
+          {/* honeypot — hidden from real users via CSS, bots tend to fill every field */}
+          <label style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+            Leave this empty
+            <input type="text" name="company_url" tabindex="-1" autocomplete="off" />
+          </label>
+
+          <button id="add-submit" type="submit" style="align-self:flex-start;padding:15px 24px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer">Submit event for review</button>
+          <p id="add-status" role="status" style="margin:0;font-size:0.9rem;color:var(--muted)"></p>
+        </form>
+      </div>
+      <aside style="display:flex;flex-direction:column;gap:14px">
+        <div style="border:2px solid var(--accent);border-radius:14px;overflow:hidden">
+          <div style="background:var(--accent);padding:8px 18px;font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--contrast)">Optional upgrade</div>
+          <div style="padding:18px;background:#fff">
+            <div style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em">{featurePrice}<span style="font-size:14px;font-weight:700;color:var(--muted)"> / event</span></div>
+            <p style="margin:10px 0 14px;font-size:13.5px;line-height:1.55;color:var(--text)">Feature it: top of the Events page until the date passes, plus a card on the homepage that week.</p>
+            <label style="display:flex;align-items:flex-start;gap:10px;font-size:13.5px;font-weight:700;color:var(--navy);line-height:1.5;cursor:pointer">
+              <input type="checkbox" name="wantsFeature" form="event-form" id="wants-feature" style="accent-color:var(--accent);width:17px;height:17px;margin-top:2px;flex-shrink:0" />
+              <span>Feature this event for {featurePrice} — you'll pay now, it goes live once we approve the listing.</span>
+            </label>
+          </div>
+        </div>
+        <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
+          <h2 style="margin:0 0 10px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">What gets rejected</h2>
+          <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text)">Events with no fixed date or venue, ticket links to dead pages, and anything already listed by the venue.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  [hidden] {
+    display: none !important;
+  }
+  #add-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 950px) {
+    #add-shell {
+      grid-template-columns: minmax(0, 1fr) 320px;
+    }
+  }
+  .add-input:focus {
+    border-color: var(--accent) !important;
+  }
+  #add-submit:hover {
+    background: var(--accent-hover) !important;
+  }
+  #add-submit:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+</style>
+
+<script>
+  let loadedAt = Date.now();
+  const form = document.getElementById('event-form') as HTMLFormElement;
+  const authCheck = document.getElementById('auth-check')!;
+  const status = document.getElementById('add-status')!;
+  const submitBtn = document.getElementById('add-submit') as HTMLButtonElement;
+  const contactEmail = form.dataset.contactEmail ?? '';
+  const siteName = form.dataset.siteName ?? '';
+
+  // Same login gate as list-your-business.astro — an event owner needs an
+  // account so approval can hand them edit rights (see /my-events/).
+  (async () => {
+    try {
+      const res = await fetch('/api/me');
+      if (res.status === 401) {
+        window.location.href = '/login/?next=/events/add/';
+        return;
+      }
+    } catch {
+      /* offline / no functions in dev: submission itself doesn't require a session */
+    }
+    authCheck.hidden = true;
+    form.hidden = false;
+  })();
+
+  // No point offering dates that have already gone by.
+  const dateInput = form.elements.namedItem('eventDate') as HTMLInputElement;
+  const now = new Date();
+  dateInput.min = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+  // ---- Poster upload: uploads immediately on choosing a file (not on form
+  // submit), so the organiser sees straight away if it didn't work rather
+  // than losing the rest of the form's typing to a failed upload later. ----
+  const imageFile = document.getElementById('event-image-file') as HTMLInputElement;
+  const imageUrlField = document.getElementById('event-image-url') as HTMLInputElement;
+  const imageEmpty = document.getElementById('image-empty')!;
+  const imagePreviewWrap = document.getElementById('image-preview-wrap')!;
+  const imagePreview = document.getElementById('image-preview') as HTMLImageElement;
+  const imageFilename = document.getElementById('image-filename')!;
+  const imageStatus = document.getElementById('image-status')!;
+  const imageRemoveBtn = document.getElementById('image-remove') as HTMLButtonElement;
+  let uploadingImage = false;
+
+  function resetImage() {
+    imageFile.value = '';
+    imageUrlField.value = '';
+    imagePreviewWrap.hidden = true;
+    imageEmpty.style.display = 'flex';
+  }
+
+  imageFile.addEventListener('change', async () => {
+    const file = imageFile.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      imageStatus.style.color = 'var(--danger)';
+      imageStatus.textContent = 'That image is over 5MB — please use a smaller file.';
+      imageFile.value = '';
+      return;
+    }
+
+    const localPreview = URL.createObjectURL(file);
+    imagePreview.src = localPreview;
+    imageFilename.textContent = file.name;
+    imageEmpty.style.display = 'none';
+    imagePreviewWrap.hidden = false;
+    imageStatus.style.color = 'var(--muted)';
+    imageStatus.textContent = 'Uploading…';
+    uploadingImage = true;
+
+    try {
+      const body = new FormData();
+      body.append('photo', file);
+      const res = await fetch('/api/submit-event-image', { method: 'POST', body });
+      const result = await res.json();
+      if (result.ok) {
+        imageUrlField.value = result.url;
+        imageStatus.textContent = 'Uploaded.';
+      } else {
+        imageUrlField.value = '';
+        imageStatus.style.color = 'var(--danger)';
+        imageStatus.textContent = result.error || 'Could not upload that image — please try again.';
+      }
+    } catch {
+      imageUrlField.value = '';
+      imageStatus.style.color = 'var(--danger)';
+      imageStatus.textContent = 'Could not upload that image — please try again.';
+    } finally {
+      uploadingImage = false;
+      URL.revokeObjectURL(localPreview);
+    }
+  });
+
+  imageRemoveBtn.addEventListener('click', () => {
+    resetImage();
+    imageStatus.textContent = '';
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (uploadingImage) return void (status.textContent = 'Your poster is still uploading — one moment.');
+    const data = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+    if (!data.title?.trim()) return void (status.textContent = 'Please give your event a title.');
+    if (!data.eventDate) return void (status.textContent = 'Please choose the date of the event.');
+    if (!data.venue?.trim()) return void (status.textContent = 'Please add the venue — events with no fixed venue are rejected.');
+
+    status.textContent = 'Submitting…';
+    submitBtn.disabled = true;
+    try {
+      const res = await fetch('/api/submit-event', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...data, loadedAt }),
+      });
+      if (res.status === 401) {
+        // Session expired between page load and submit (the page already
+        // checked once on load) — straight to login, no error message shown.
+        window.location.href = '/login/?next=/events/add/';
+        return;
+      }
+      const result = await res.json();
+      if (result.ok && result.redirectUrl) {
+        // Chose to feature it — off to PayFast now, before the "saved for
+        // review" message (the submission is already saved either way).
+        status.textContent = 'Taking you to PayFast to pay for featuring…';
+        window.location.href = result.redirectUrl;
+        return;
+      }
+      if (result.ok) {
+        // Saved for review and emailed to our team by the server.
+        form.reset();
+        resetImage();
+        imageStatus.textContent = '';
+        loadedAt = Date.now();
+        status.textContent = "Thanks! Your event is in for review. It goes live once we've approved it, and we'll be in touch if we need anything else.";
+      } else {
+        status.textContent = result.error || 'Something went wrong — please try again.';
+      }
+    } catch {
+      status.textContent = 'Something went wrong — please try again.';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  // Returning from PayFast after paying to feature a just-submitted event.
+  const returnParams = new URLSearchParams(window.location.search);
+  if (returnParams.get('event_featured')) {
+    status.textContent = 'Thanks — your payment is being confirmed. Your event will show as featured once an admin approves it and PayFast confirms the payment.';
+  } else if (returnParams.get('event_feature_cancelled')) {
+    status.textContent = 'Checkout cancelled — you have not been charged. Your event is still in for review, just not featured.';
+  }
+</script>

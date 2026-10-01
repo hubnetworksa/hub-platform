@@ -1,0 +1,122 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminShell from '../../components/AdminShell.astro';
+import site from '../../site';
+
+const inputStyle = 'padding:12px;border:2px solid var(--border);border-radius:10px;font-size:14px;outline:none;background:#fff;color:var(--text)';
+const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)';
+// The values in this site's own config — what "Reset" goes back to, and what
+// the fields show until an override is saved.
+const defaults = { site_name: site.siteName, site_city_label: site.cityLabel, site_footer_tagline: site.footerTagline };
+---
+
+<BaseLayout title="Site settings" description="Site name, city label, footer tagline and theme." noindex={true}>
+  <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
+
+  <div id="content" hidden>
+    <AdminShell active="settings" title="Site settings" subtitle="Names, taglines and theme for this hub">
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:16px">
+        <div>
+          <h2 style="margin:0 0 4px;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Site being managed</h2>
+          <p style="margin:0;font-size:13px;font-weight:600;color:var(--muted)">This console manages {site.siteName} — each hub has its own listings, colours and ad inventory, and its own admin at its own address.</p>
+        </div>
+        <form id="settings-form" style="display:contents" novalidate>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+            <label style={labelStyle}>
+              Site name
+              <input type="text" name="site_name" maxlength="60" placeholder={defaults.site_name} style={inputStyle} />
+            </label>
+            <label style={labelStyle}>
+              City label
+              <input type="text" name="site_city_label" maxlength="40" placeholder={defaults.site_city_label} style={inputStyle} />
+            </label>
+            <label style={labelStyle}>
+              Footer tagline
+              <input type="text" name="site_footer_tagline" maxlength="160" placeholder={defaults.site_footer_tagline} style={inputStyle} />
+            </label>
+          </div>
+        </form>
+        <div>
+          <div style="font-size:12.5px;font-weight:800;color:var(--navy);margin-bottom:8px">Theme (from this site's config)</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border:2px solid var(--border);border-radius:10px;font-size:12.5px;font-weight:700;color:var(--navy)"><span style="width:18px;height:18px;border-radius:5px;background:var(--accent)"></span>Accent</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border:2px solid var(--border);border-radius:10px;font-size:12.5px;font-weight:700;color:var(--navy)"><span style="width:18px;height:18px;border-radius:5px;background:var(--navy)"></span>Navy</div>
+            <div style="display:flex;align-items:center;gap:8px;padding:9px 12px;border:2px solid var(--border);border-radius:10px;font-size:12.5px;font-weight:700;color:var(--navy)"><span style="width:18px;height:18px;border-radius:5px;background:var(--bg-subtle)"></span>Subtle</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:center">
+          <button id="save-settings" type="button" style="padding:12px 17px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;cursor:pointer">Save settings</button>
+          <button id="deploy-settings" type="button" style="padding:12px 17px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font-size:13.5px;font-weight:800;cursor:pointer">Rebuild &amp; deploy</button>
+          <button id="reset-settings" type="button" style="padding:12px 17px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-size:13px;font-weight:800;cursor:pointer">Reset</button>
+          <span id="settings-note" hidden style="font-size:12.5px;font-weight:800;color:var(--accent-hover)"></span>
+        </div>
+      </div>
+    </AdminShell>
+  </div>
+  <script type="application/json" id="settings-defaults" set:html={JSON.stringify(defaults).replace(/</g, '\\u003c')} />
+</BaseLayout>
+
+<script>
+  import { requireAdmin, showContent, postJson } from '../../lib/admin-html';
+
+  const defaults: Record<string, string> = JSON.parse(document.getElementById('settings-defaults')!.textContent || '{}');
+  const form = document.getElementById('settings-form') as HTMLFormElement;
+  const note = document.getElementById('settings-note')!;
+
+  function say(message: string, tone: 'ok' | 'error' = 'ok') {
+    note.textContent = message;
+    note.hidden = !message;
+    note.style.color = tone === 'ok' ? 'var(--accent-hover)' : 'var(--danger)';
+  }
+
+  // Fields show the saved override, or this site's config value until one is saved.
+  async function load() {
+    const res = await fetch('/api/admin/site-settings');
+    const data = await res.json();
+    const saved = new Map<string, string>((data.settings ?? []).map((s: { key: string; value: string }) => [s.key, s.value]));
+    for (const key of Object.keys(defaults)) {
+      (form.elements.namedItem(key) as HTMLInputElement).value = saved.get(key) || defaults[key];
+    }
+  }
+
+  document.getElementById('save-settings')!.addEventListener('click', async (e) => {
+    const btn = e.currentTarget as HTMLButtonElement;
+    btn.disabled = true;
+    // A value equal to the config default is stored as "no override".
+    const values: Record<string, string> = {};
+    for (const key of Object.keys(defaults)) {
+      const v = (form.elements.namedItem(key) as HTMLInputElement).value.trim();
+      values[key] = v === defaults[key] ? '' : v;
+    }
+    const result = await postJson('/api/admin/site-settings', { action: 'save-text', values });
+    btn.disabled = false;
+    say(result.ok ? 'Saved — header, footer and every page update on the next Rebuild & deploy.' : String(result.error || 'Could not save.'), result.ok ? 'ok' : 'error');
+  });
+
+  document.getElementById('deploy-settings')!.addEventListener('click', async (e) => {
+    const btn = e.currentTarget as HTMLButtonElement;
+    btn.disabled = true;
+    say('Queuing deploy…');
+    const result = await postJson('/api/admin/rebuild', {});
+    btn.disabled = false;
+    say(result.ok ? `Deploy queued for ${defaults.site_name}. Live in a few minutes.` : String(result.error || 'Could not queue a deploy.'), result.ok ? 'ok' : 'error');
+  });
+
+  document.getElementById('reset-settings')!.addEventListener('click', async () => {
+    const result = await postJson('/api/admin/site-settings', { action: 'reset' });
+    if (result.ok) {
+      await load();
+      say('Reset to the values in this site’s config.');
+    } else {
+      say(String(result.error || 'Could not reset.'), 'error');
+    }
+  });
+
+  async function init() {
+    if (!(await requireAdmin('/admin/settings/'))) return;
+    showContent();
+    await load();
+  }
+
+  init();
+</script>

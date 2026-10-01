@@ -1,0 +1,126 @@
+name: Deploy Ethan preview
+
+# A standing preview build of the Ethan dev branch, separate from
+# deploy.yml's production deploy (which only triggers on `main` and
+# always tags its deploy `--branch=main`, so it can never produce a
+# preview URL). This workflow deploys the SAME three Cloudflare Pages
+# projects but tagged with the real branch name, so Cloudflare serves it
+# at its own preview alias instead of overwriting production.
+#
+# Not run from deploy.yml on purpose: the routine-SQL-apply/clear and
+# DB-snapshot-refresh steps there are specific to the main-branch
+# automated research routine and would be wrong to run from a dev branch
+# (they commit bot housekeeping back to whichever branch triggered them).
+#
+# Note: there is only one D1 database per site — this preview reads/writes
+# the exact same production database main's deploy uses. It is a preview
+# of the FRONTEND only, not an isolated staging environment.
+
+on:
+  push:
+    branches: [Ethan]
+  workflow_dispatch:
+    inputs:
+      refresh_data:
+        description: "Re-read the live database instead of using the cached copy"
+        type: boolean
+        default: false
+
+concurrency:
+  group: pages-ethan-preview
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - site: polokwane
+            pages_project: polokwanehub
+          - site: pretoria
+            pages_project: pretoriahub
+          - site: capetown
+            pages_project: thecapetownhub
+    env:
+      SITE: ${{ matrix.site }}
+      # Preview only: fake Featured/Verified listings, sponsors and featured events so every
+      # premium spot can be seen. Never set in deploy.yml, so production is unaffected.
+      DEMO_PREMIUM: "true"
+      # Preview only: show is_test=1 businesses (see scripts/fetch-d1-data.mjs) so a test
+      # listing created to check a feature is actually visible somewhere. Never set in
+      # deploy.yml — production always filters them out, even though the DB is shared.
+      INCLUDE_TEST_DATA: "true"
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Fail the preview before it deploys if the backend code doesn't type-check.
+      - name: Type-check the backend (Pages Functions)
+        run: npm run typecheck:functions
+
+      # Reuse this city's database data for up to 6 hours instead of
+      # re-reading the whole live database on every preview push (D1's free
+      # plan caps rows read per day across the account). Run the workflow
+      # manually with "refresh_data" ticked to force a fresh read, e.g. right
+      # after changing data you want to see in the preview.
+      - name: Work out the data cache window
+        id: window
+        run: echo "bucket=$(date -u +%Y%m%d)-$(( 10#$(date -u +%H) / 6 ))" >> "$GITHUB_OUTPUT"
+
+      - name: Restore cached database data
+        id: d1cache
+        if: github.event.inputs.refresh_data != 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: src/data
+          # Saved keys end in the run id, so match on the prefix; any copy
+          # from this 6-hour window will do.
+          key: d1-data-${{ matrix.site }}-${{ steps.window.outputs.bucket }}
+          restore-keys: d1-data-${{ matrix.site }}-${{ steps.window.outputs.bucket }}-
+
+      # Fetch and save the raw data BEFORE the build's demo-premium step
+      # rewrites src/data, so the cache always holds the real database copy.
+      - name: Fetch fresh database data
+        if: steps.d1cache.outputs.cache-matched-key == ''
+        run: npm run fetch-data
+
+      - name: Save database data to the cache
+        if: steps.d1cache.outputs.cache-matched-key == ''
+        uses: actions/cache/save@v4
+        with:
+          path: src/data
+          key: d1-data-${{ matrix.site }}-${{ steps.window.outputs.bucket }}-${{ github.run_id }}
+
+      - name: Build with Astro
+        env:
+          # src/data is already in place (cache or the fetch above), so the
+          # prebuild fetch step skips its D1 reads.
+          USE_CACHED_D1_DATA: "true"
+        run: npm run build
+
+      # Same reason as deploy.yml: wrangler pages deploy only reads a
+      # literal ./wrangler.jsonc, so the per-site config has to be copied
+      # into place under that exact name right before deploying.
+      # Preview only: turn the demo admin login (admin@admin.com) on for this
+      # deployment. The committed default is false, and deploy.yml never
+      # touches this file, so production always rejects it.
+      - name: Enable demo admin for the preview build
+        run: echo "export const DEMO_ADMIN_ENABLED = true;" > functions/_lib/demo-flags.ts
+
+      - name: Deploy preview to Cloudflare Pages
+        run: |
+          cp wrangler.${{ matrix.site }}.jsonc wrangler.jsonc
+          npx wrangler pages deploy dist --project-name=${{ matrix.pages_project }} --branch=${{ github.ref_name }} --commit-dirty=true

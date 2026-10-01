@@ -1,229 +1,198 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import AdminShell from '../components/AdminShell.astro';
 ---
 
 <BaseLayout title="Admin Dashboard" description="Approve submissions and manage the site." noindex={true}>
-  <section class="admin-wrap">
-    <div id="loading" class="loading">Loading…</div>
+  <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
 
-    <div id="content" class="admin" hidden>
-      <div class="admin-header">
-        <div>
-          <h1>Admin Dashboard</h1>
-          <div id="health-row" class="health-row"></div>
+  <div id="content" hidden>
+    <AdminShell active="dashboard" title="Dashboard" subtitle="Everything happening on this hub today">
+      <div id="stats-strip" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px"></div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px">
+        <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+          <div style="padding:14px 18px;border-bottom:2px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px">
+            <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Waiting for approval</h2>
+            <a href="/admin/submissions/" style="border:0;background:transparent;font-size:12.5px;font-weight:800;color:var(--accent);cursor:pointer;text-decoration:none">Open queue →</a>
+          </div>
+          <div id="waiting-error" hidden style="padding:10px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;color:var(--danger)"></div>
+          <div id="waiting-list"></div>
         </div>
-        <div class="header-actions">
-          <button id="rebuild-btn" class="btn-outline">Rebuild now</button>
-          <button id="logout-btn" class="btn-outline">Log out</button>
+
+        <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+          <div style="padding:14px 18px;border-bottom:2px solid var(--border)">
+            <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Revenue by product</h2>
+          </div>
+          <div id="revenue-row" style="padding:16px 18px;display:flex;flex-direction:column;gap:13px"></div>
         </div>
       </div>
 
-      <div id="stats-strip" class="stats-strip"></div>
-
-      <div class="nav-grid">
-        <a href="/admin/submissions/" class="nav-card">
-          <strong id="count-submissions">–</strong>
-          <span>Pending submissions</span>
-        </a>
-        <a href="/admin/claims/" class="nav-card">
-          <strong id="count-claims">–</strong>
-          <span>Pending business claims</span>
-        </a>
-        <a href="/admin/reports/" class="nav-card">
-          <strong id="count-reports">–</strong>
-          <span>Reports &amp; removal requests</span>
-        </a>
-        <a href="/admin/businesses/" class="nav-card">
-          <strong id="count-businesses">–</strong>
-          <span>Businesses</span>
-        </a>
-        <a href="/admin/users/" class="nav-card">
-          <strong id="count-users">–</strong>
-          <span>Users</span>
-        </a>
-        <a href="/admin/subscriptions/" class="nav-card">
-          <strong id="count-subscriptions">–</strong>
-          <span>Active subscriptions</span>
-        </a>
-        <a href="/admin/activity/" class="nav-card">
-          <strong>→</strong>
-          <span>Recent activity</span>
-        </a>
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap">
+          <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Routine health</h2>
+          <span id="routine-health-checked" style="font-size:12px;font-weight:700;color:var(--muted)"></span>
+        </div>
+        <div id="routine-health" style="padding:14px 18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px"></div>
       </div>
-    </div>
-  </section>
+
+      <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:center">
+        <button id="rebuild-btn" type="button" style="padding:11px 15px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font-size:13.5px;font-weight:800;cursor:pointer">Rebuild &amp; deploy</button>
+        <span id="health-row" style="display:flex;gap:0.75rem;"></span>
+        <span id="rebuild-msg" hidden style="font-size:13px;font-weight:700"></span>
+      </div>
+    </AdminShell>
+  </div>
 </BaseLayout>
 
 <script>
-  async function postJson(url: string, body: unknown): Promise<{ ok: boolean }> {
-    const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    return { ok: res.ok };
+  import { esc, randFromCents, requireAdmin, showContent, postJson, fmtDate } from '../lib/admin-html';
+
+  function statTile(value: string | number, label: string, note?: string): string {
+    return `<div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:18px">
+      <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">${label}</div>
+      <div style="font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:8px;line-height:1">${value}</div>
+      ${note ? `<div style="font-size:12.5px;font-weight:700;color:var(--accent-hover);margin-top:5px">${note}</div>` : ''}
+    </div>`;
+  }
+
+  // A submission in the queue — mockup's inline Approve / Reject row.
+  function queueRow(s: { token: string; name: string; category_name: string | null; category_slug: string; suburb_name: string | null; suburb_slug: string }): string {
+    const meta = [s.category_name ?? s.category_slug, s.suburb_name ?? s.suburb_slug].filter(Boolean).join(' · ');
+    return `<div style="padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="min-width:0;flex:1">
+        <div style="font-size:14.5px;font-weight:800;color:var(--navy)">${esc(s.name)}</div>
+        <div style="font-size:12.5px;font-weight:600;color:var(--muted)">${esc(meta)}</div>
+      </div>
+      <button data-action="approve" data-token="${esc(s.token)}" style="padding:8px 12px;border:0;border-radius:8px;background:var(--accent);color:var(--contrast);font-size:12.5px;font-weight:800;cursor:pointer">Approve</button>
+      <button data-action="reject" data-token="${esc(s.token)}" style="padding:8px 12px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--danger);font-size:12.5px;font-weight:800;cursor:pointer">Reject</button>
+    </div>`;
+  }
+
+  // Claims and reports have their own review pages — link out to them.
+  function linkRow(name: string, meta: string, href: string): string {
+    return `<a href="${href}" style="display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);text-decoration:none;color:inherit;">
+      <div style="min-width:0;flex:1">
+        <div style="font-size:14.5px;font-weight:800;color:var(--navy)">${esc(name)}</div>
+        <div style="font-size:12.5px;font-weight:600;color:var(--muted)">${esc(meta)}</div>
+      </div>
+      <span style="font-size:12.5px;font-weight:800;color:var(--accent)">Review →</span>
+    </a>`;
+  }
+
+  // /api/confirm-listing answers with a small HTML page whose <h1> is the
+  // outcome, and reports some failures ("Already handled", "Couldn't
+  // publish") with a 200 — so both the status and that heading are checked.
+  async function postForm(url: string, params: Record<string, string>): Promise<{ ok: boolean; message: string }> {
+    try {
+      const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(params) });
+      const text = await res.text();
+      const heading = (/<h1[^>]*>([^<]*)<\/h1>/i.exec(text)?.[1] ?? '').trim();
+      const failed = !res.ok || /expired|couldn|already|nothing to review/i.test(heading);
+      return { ok: !failed, message: heading || (res.ok ? '' : `Request failed (${res.status}).`) };
+    } catch {
+      return { ok: false, message: 'Network error.' };
+    }
   }
 
   async function init() {
-    const me = await fetch('/api/me');
-    if (me.status === 401) {
-      window.location.href = '/login/?next=/admin/';
-      return;
-    }
-    const meData = await me.json();
-    if (!meData.isAdmin) {
-      window.location.href = '/my-businesses/';
-      return;
-    }
+    if (!(await requireAdmin('/admin/'))) return;
 
     const res = await fetch('/api/admin/overview');
     const data = await res.json();
-    document.getElementById('loading')!.hidden = true;
-    document.getElementById('content')!.hidden = false;
+    showContent();
+    const s = data.stats;
 
-    document.getElementById('stats-strip')!.innerHTML = `
-      <div class="stat"><strong>${data.stats.businesses}</strong><span>Businesses</span></div>
-      <div class="stat"><strong>${data.stats.users}</strong><span>Users</span></div>
-      <div class="stat"><strong>${data.stats.pendingSubmissions}</strong><span>Pending submissions</span></div>
-      <div class="stat"><strong>${data.stats.pendingClaims}</strong><span>Pending claims</span></div>
-      <div class="stat"><strong>${data.stats.openReports}</strong><span>Open reports</span></div>
-      <div class="stat"><strong>${data.stats.activeSubscriptions}</strong><span>Active subscriptions</span></div>
-    `;
+    // Every number below is computed from D1 by /api/admin/overview.
+    const paid = s.featuredListings + s.verifiedListings;
+    const oldest = s.oldestAwaitingDays;
+    document.getElementById('stats-strip')!.innerHTML = [
+      statTile(s.businesses.toLocaleString('en-US'), 'Live listings', `+${s.newThisWeek.toLocaleString('en-US')} this week`),
+      statTile(paid.toLocaleString('en-US'), 'Paid listings', `${s.featuredListings} featured · ${s.verifiedListings} verified`),
+      statTile(s.awaitingReview, 'Awaiting review', s.awaitingReview === 0 ? 'queue is clear' : oldest === null ? '' : oldest <= 0 ? 'oldest today' : `oldest ${oldest} day${oldest === 1 ? '' : 's'}`),
+      statTile(randFromCents(data.revenue.totalCents), 'Monthly recurring', 'across all products'),
+    ].join('');
+
+    const rows: { label: string; cents: number }[] = data.revenue.rows;
+    const max = Math.max(...rows.map((r) => r.cents), 1);
+    document.getElementById('revenue-row')!.innerHTML =
+      rows
+        .map(
+          (r) => `<div>
+      <div style="display:flex;justify-content:space-between;gap:10px;font-size:13px;font-weight:800;color:var(--navy)"><span>${esc(r.label)}</span><span>${randFromCents(r.cents)}</span></div>
+      <div style="height:8px;border-radius:99px;background:var(--bg-subtle);margin-top:6px;overflow:hidden"><div style="height:100%;border-radius:99px;background:var(--accent);width:${Math.round((r.cents / max) * 100)}%"></div></div>
+    </div>`
+        )
+        .join('') +
+      `<div style="border-top:2px solid var(--border);padding-top:12px;display:flex;justify-content:space-between;font-size:15px;font-weight:800;color:var(--navy)"><span>Monthly recurring</span><span>${randFromCents(data.revenue.totalCents)}</span></div>`;
+
+    const waiting: string[] = [];
+    for (const sub of data.submissions.filter((x: { status: string }) => x.status === 'Pending your approval')) waiting.push(queueRow(sub));
+    if (s.pendingClaims > 0) waiting.push(linkRow(`${s.pendingClaims} pending claim${s.pendingClaims === 1 ? '' : 's'}`, 'Business and event ownership claims awaiting review', '/admin/claims/'));
+    if (s.openReports > 0) waiting.push(linkRow(`${s.openReports} open report${s.openReports === 1 ? '' : 's'}`, 'Reports & removal requests', '/admin/reports/'));
+    if (s.pendingReviews > 0) waiting.push(linkRow(`${s.pendingReviews} review${s.pendingReviews === 1 ? '' : 's'} to moderate`, 'Pending or flagged reviews', '/admin/reviews/'));
+    if (s.pendingEventSubmissions > 0) waiting.push(linkRow(`${s.pendingEventSubmissions} event submission${s.pendingEventSubmissions === 1 ? '' : 's'}`, 'Events submitted by the public', '/admin/events/'));
+    document.getElementById('waiting-list')!.innerHTML = waiting.length > 0 ? waiting.join('') : `<div style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted)">Queue is clear.</div>`;
+
+    // Routine health tile: one chip per scheduled routine, from the daily routine-health workflow.
+    const rh = data.routineHealth as { checkedAt: string; rows: { routine: string; lastRun: string | null; daysAgo: number | null; status: string }[] } | null;
+    const ROUTINE_LABELS: Record<string, string> = { discovery: 'Business discovery', centres: 'Shopping centres', enrichment: 'Enrichment', 'closed-check': 'Closed check', events: 'Events', news: 'News', tourism: 'Tourism refresh', fuel: 'Fuel prices' };
+    const healthBox = document.getElementById('routine-health')!;
+    if (!rh || !rh.rows?.length) {
+      healthBox.innerHTML = `<div style="font-size:13px;font-weight:700;color:var(--muted)">No health check has run yet. It runs every morning at 07:30 UTC.</div>`;
+    } else {
+      document.getElementById('routine-health-checked')!.textContent = `Checked ${fmtDate(rh.checkedAt)}`;
+      healthBox.innerHTML = rh.rows
+        .map((r) => {
+          const colour = r.status === 'ok' ? '#1a8f5e' : r.status === 'late' ? 'var(--danger,#c23838)' : 'var(--muted)';
+          const word = r.status === 'ok' ? 'On time' : r.status === 'late' ? 'Late' : 'Not running';
+          const when = r.lastRun ? (r.daysAgo != null && r.daysAgo < 1 ? 'ran today' : `ran ${r.daysAgo} days ago`) : 'no runs yet';
+          return `<div style="border:2px solid var(--border);border-radius:10px;padding:10px 12px">
+            <div style="font-size:13px;font-weight:800;color:var(--navy)">${esc(ROUTINE_LABELS[r.routine] ?? r.routine)}</div>
+            <div style="font-size:12px;font-weight:700;margin-top:3px;color:${colour}">● ${word}</div>
+            <div style="font-size:11.5px;font-weight:600;color:var(--muted);margin-top:2px">${esc(when)}</div>
+          </div>`;
+        })
+        .join('');
+    }
 
     document.getElementById('health-row')!.innerHTML = `
-      <span class="health-dot ${data.health.resendConfigured ? 'health-ok' : 'health-bad'}">● Resend</span>
-      <span class="health-dot ${data.health.dispatchConfigured ? 'health-ok' : 'health-bad'}">● Rebuild trigger</span>
+      <span style="font-size:0.78rem;font-weight:600;${data.health.resendConfigured ? 'color:#1a8f5e' : 'color:var(--danger,#c23838)'}">● Resend</span>
+      <span style="font-size:0.78rem;font-weight:600;${data.health.dispatchConfigured ? 'color:#1a8f5e' : 'color:var(--danger,#c23838)'}">● Rebuild trigger</span>
     `;
-
-    document.getElementById('count-submissions')!.textContent = String(data.stats.pendingSubmissions);
-    document.getElementById('count-claims')!.textContent = String(data.stats.pendingClaims);
-    document.getElementById('count-reports')!.textContent = String(data.stats.openReports);
-    document.getElementById('count-businesses')!.textContent = String(data.stats.businesses);
-    document.getElementById('count-users')!.textContent = String(data.stats.users);
-    document.getElementById('count-subscriptions')!.textContent = String(data.stats.activeSubscriptions);
   }
+
+  document.getElementById('waiting-list')!.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-action]') as HTMLButtonElement | null;
+    if (!btn) return;
+    btn.disabled = true;
+    const errEl = document.getElementById('waiting-error')!;
+    errEl.hidden = true;
+    const result = await postForm('/api/confirm-listing', { token: btn.dataset.token!, action: btn.dataset.action! });
+    if (!result.ok) {
+      errEl.textContent = result.message || 'Could not update that submission.';
+      errEl.hidden = false;
+      btn.disabled = false;
+      return;
+    }
+    init();
+  });
+
+  document.addEventListener('admin:listing-saved', () => init());
 
   document.getElementById('rebuild-btn')!.addEventListener('click', async (e) => {
     const btn = e.currentTarget as HTMLButtonElement;
     btn.disabled = true;
     btn.textContent = 'Rebuilding…';
-    await postJson('/api/admin/rebuild', {});
-    btn.textContent = 'Rebuild now';
+    const msg = document.getElementById('rebuild-msg')!;
+    msg.hidden = true;
+    const result = await postJson('/api/admin/rebuild', {});
+    btn.textContent = 'Rebuild & deploy';
     btn.disabled = false;
-  });
-
-  document.getElementById('logout-btn')!.addEventListener('click', async () => {
-    await fetch('/api/logout', { method: 'POST' });
-    window.location.href = '/';
+    msg.textContent = result.ok ? 'Deploy queued. Live in a few minutes.' : String(result.error || 'Could not queue a deploy.');
+    msg.style.color = result.ok ? 'var(--accent-hover)' : 'var(--danger)';
+    msg.hidden = false;
   });
 
   init();
 </script>
-
-<style>
-  .admin-wrap {
-    display: flex;
-    justify-content: center;
-    padding: 3rem 1rem;
-  }
-  .loading {
-    color: var(--text-muted);
-  }
-  .admin {
-    width: 100%;
-    max-width: 760px;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-  .admin-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-  .admin-header h1 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: var(--navy);
-  }
-  .header-actions {
-    display: flex;
-    gap: 0.5rem;
-    flex-shrink: 0;
-  }
-  .btn-outline {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius);
-    font-weight: 600;
-    font-size: 0.88rem;
-    cursor: pointer;
-  }
-
-  :global(.health-row) {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 0.4rem;
-  }
-  :global(.health-dot) {
-    font-size: 0.78rem;
-    font-weight: 600;
-  }
-  :global(.health-ok) {
-    color: #1a8f5e;
-  }
-  :global(.health-bad) {
-    color: var(--danger, #c23838);
-  }
-
-  :global(.stats-strip) {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-    gap: 0.75rem;
-  }
-  :global(.stat) {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 0.9rem 0.75rem;
-    text-align: center;
-  }
-  :global(.stat strong) {
-    display: block;
-    font-size: 1.4rem;
-    color: var(--navy);
-  }
-  :global(.stat span) {
-    font-size: 0.76rem;
-    color: var(--text-muted);
-  }
-
-  .nav-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 0.9rem;
-  }
-  .nav-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg, 16px);
-    padding: 1.4rem 1.25rem;
-    text-decoration: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  .nav-card:hover {
-    border-color: var(--accent);
-    box-shadow: 0 4px 14px rgba(16, 26, 51, 0.08);
-  }
-  .nav-card strong {
-    font-size: 1.8rem;
-    color: var(--accent);
-  }
-  .nav-card span {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--navy);
-  }
-</style>

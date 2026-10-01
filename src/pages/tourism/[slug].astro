@@ -1,17 +1,27 @@
 ---
+import { sponsorFor } from '../../lib/data';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageBanner from '../../components/PageBanner.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Icon from '../../components/Icon.astro';
-// Tourism content is currently only authored for Polokwane — see tourism/index.astro's note.
-import { ATTRACTIONS } from '../../site-content/polokwane/tourism';
+import SponsorSlot from '../../components/SponsorSlot.astro';
+import { ATTRACTIONS as CAPETOWN_ATTRACTIONS } from '../../site-content/capetown/tourism';
+import { ATTRACTIONS as PRETORIA_ATTRACTIONS } from '../../site-content/pretoria/tourism';
+import { ATTRACTIONS as POLOKWANE_ATTRACTIONS } from '../../site-content/polokwane/tourism';
+import type { Attraction } from '../../site-content/attraction-types';
 import site from '../../site';
 
 const ICON_PIN = '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>';
 
 export function getStaticPaths() {
   if (!site.features.tourism) return [];
-  return ATTRACTIONS.map((attraction) => ({ params: { slug: attraction.slug }, props: { attraction } }));
+  const attractionsBySite: Record<string, Attraction[]> = {
+    capetown: CAPETOWN_ATTRACTIONS,
+    pretoria: PRETORIA_ATTRACTIONS,
+    polokwane: POLOKWANE_ATTRACTIONS,
+  };
+  const attractions = attractionsBySite[site.slug] ?? [];
+  return attractions.map((attraction) => ({ params: { slug: attraction.slug }, props: { attraction } }));
 }
 
 const { attraction } = Astro.props;
@@ -37,6 +47,7 @@ const jsonLd = {
   name: attraction.name,
   description: attraction.metaDescription,
   url: canonical,
+  ...(attraction.imageUrl ? { image: `${siteUrl}${attraction.imageUrl}` } : {}),
   address: {
     '@type': 'PostalAddress',
     ...(attraction.address.streetAddress ? { streetAddress: attraction.address.streetAddress } : {}),
@@ -54,10 +65,13 @@ const jsonLd = {
 };
 
 const paras = (text: string) => text.split(/\n{2,}/);
+// No Google ads anywhere a paid listing or sponsor is shown (see
+// BaseLayout's noAds): this page shows one if this is true.
+const showsPaid = !!sponsorFor('tourism_sponsor', attraction.slug);
 ---
 
-<BaseLayout title={attraction.pageTitle} description={attraction.metaDescription} canonical={canonical}>
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+<BaseLayout noAds={showsPaid} title={attraction.pageTitle} description={attraction.metaDescription} canonical={canonical} ogImage={attraction.imageUrl}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <PageBanner title={attraction.name} description={attraction.teaser}>
     <Breadcrumbs
@@ -71,7 +85,17 @@ const paras = (text: string) => text.split(/\n{2,}/);
   </PageBanner>
 
   <section class="container" style="padding-top: 2rem; padding-bottom: 3rem; max-width: 760px;">
-    {/* IMAGE NEEDED: {attraction.imageNeeded} — no stock/generic bushveld photos. */}
+    {attraction.imageUrl && (
+      <figure style="margin:0 0 1.5rem">
+        <img src={attraction.imageUrl} alt={attraction.name} style="width:100%;height:auto;max-height:420px;object-fit:cover;border-radius:var(--radius);display:block" />
+        {attraction.imageCredit && (
+          <figcaption style="margin-top:0.4rem;font-size:0.78rem;color:var(--text-muted)">
+            {attraction.imageSourceUrl ? <a href={attraction.imageSourceUrl} target="_blank" rel="noopener noreferrer">{attraction.imageCredit}</a> : attraction.imageCredit}
+          </figcaption>
+        )}
+      </figure>
+    )}
+    {!attraction.imageUrl && <Fragment set:html={`<!-- IMAGE NEEDED: ${attraction.imageNeeded.replace(/--/g, '—')} -->`} />}
 
     <h2>What it is</h2>
     {paras(attraction.whatItIs).map((p) => <p>{p}</p>)}
@@ -116,7 +140,19 @@ const paras = (text: string) => text.split(/\n{2,}/);
       </ul>
     )}
 
-    <p style="margin-top: 2rem;">
+    {!showsPaid && (
+      <div style="margin-top: 2rem; max-width: 420px;">
+        <SponsorSlot
+          productType="tourism_sponsor"
+          target={attraction.slug}
+          title="Sponsor this page"
+          openBody="Put your business here as the sponsor of this attraction's page — one advertiser at a time, month to month."
+          ctaLabel="Sponsor this page"
+        />
+      </div>
+    )}
+
+    <p style="margin-top: 1.25rem;">
       <a href="/tourism/">← All {site.cityLabel} attractions</a>
     </p>
   </section>

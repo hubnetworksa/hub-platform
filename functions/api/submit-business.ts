@@ -1,10 +1,16 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSite } from '../_lib/site';
+import { rateLimited } from '../_lib/messages';
 import { getSessionUser } from '../_lib/auth';
+import { signFields, buildCheckoutParams, payfastConfigured, checkoutFrequency, type PayfastEnv } from '../_lib/payfast';
+import { TIER_NAMES, tierPriceCents, centsToRand, parseBillingPeriod } from '../_lib/pricing';
+import { sendEmail } from '../_lib/send-email';
+import { escapeHtml } from '../../src/lib/business-submission';
 
-interface Env {
+interface Env extends PayfastEnv {
   DB: D1Database;
   SITE: string;
+  RESEND_API_KEY?: string;
 }
 
 // Submissions no longer publish immediately — they're held in
@@ -13,12 +19,11 @@ interface Env {
 // checks below (honeypot, minimum time-on-form, length caps, raw-tag
 // rejection) still matter as the first filter before a human ever sees it.
 //
-// Notifying the admin of a new submission is done via a mailto: link the
-// client opens (see list-your-business.astro), not server-side SMTP — this
-// Function has no email-sending credentials at all. The site's contact
-// address is a Cloudflare Email Routing address (receive-only); the actual
-// send happens from the submitter's own mail client, which is real email
-// transport start to finish, just not something this Function drives.
+// The admin is emailed about each new submission by this function, straight
+// after it is saved (best-effort — the saved row is what matters). The
+// visitor's own mail app is never used. Trading hours and the shopping centre
+// the form collects are stored on the pending row and copied onto the business
+// when it is approved (see business-submission.ts).
 
 const MAX_LEN: Record<string, number> = {
   name: 120,
@@ -27,6 +32,8 @@ const MAX_LEN: Record<string, number> = {
   email: 120,
   website: 200,
   description: 600,
+  hours: 300,
+  centre: 120,
 };
 
 function clean(v: unknown, field: string): string | null {
@@ -56,6 +63,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!loadedAt || Date.now() - loadedAt < 3000) {
     return json({ ok: false, error: 'Submission rejected.' }, 400);
   }
+  if (await rateLimited(context.env.DB, context.request, site.slug, 'submit-business', 5)) {
+    return json({ ok: false, error: 'Too many submissions from your connection. Please try again in an hour.' }, 429);
+  }
 
   const name = clean(body.name, 'name');
   const categorySlug = typeof body.category === 'string' ? body.category.trim() : '';
@@ -72,8 +82,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const db = context.env.DB;
 
-  const category = await db.prepare('SELECT id FROM categories WHERE slug = ?').bind(categorySlug).first();
-  const suburb = await db.prepare('SELECT id FROM suburbs WHERE slug = ?').bind(suburbSlug).first();
+  const category = await db.prepare('SELECT id, name FROM categories WHERE slug = ?').bind(categorySlug).first<{ id: number; name: string }>();
+  const suburb = await db.prepare('SELECT id, name FROM suburbs WHERE slug = ?').bind(suburbSlug).first<{ id: number; name: string }>();
   if (!category || !suburb) {
     return json({ ok: false, error: 'Unknown category or suburb.' }, 400);
   }
@@ -83,21 +93,121 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // up under their "My Businesses" once approved+confirmed.
   const sessionUser = await getSessionUser(context.request, db);
 
+  // Plan chosen at signup (0=Basic/Free, 1=Verified, 2=Featured) — see the
+  // Premium Listings v2 plan. Purely additive: an invalid/missing value or
+  // a payfast misconfiguration just falls back to a free (tier 0)
+  // submission rather than blocking the listing itself.
+  const chosenTier = [0, 1, 2].includes(Number(body.chosenTier)) ? Number(body.chosenTier) : 0;
+  // Monthly unless the plan picker asked for yearly (a free listing has no
+  // billing period, so it always stays the default).
+  const billingPeriod = chosenTier === 0 ? 'monthly' : parseBillingPeriod(body.billing);
+  const yearly = billingPeriod === 'yearly';
+
+  // Trading hours (free text, "Mon–Fri 08:00–17:00, Sat Closed") and the
+  // shopping centre (its slug) from the form. Both are kept on the pending row
+  // and copied onto the business when it is approved. An unknown centre slug is ignored.
+  const hours = clean(body.hours, 'hours');
+  const centreSlug = clean(body.centre, 'centre');
+  const centre = centreSlug
+    ? await db.prepare('SELECT slug, name FROM shopping_centers WHERE slug = ?').bind(centreSlug).first<{ slug: string; name: string }>()
+    : null;
+
   const token = crypto.randomUUID();
-  await db
+  const insert = await db
     .prepare(
       `INSERT INTO pending_submissions
-        (token, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        (token, name, category_slug, suburb_slug, address, phone, email, website, description, submitted_by_user_id, chosen_tier, hours, shopping_center_slug, chosen_billing_period)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
-    .bind(token, name, categorySlug, suburbSlug, address, phone, email, website, description, sessionUser?.id ?? null)
+    .bind(token, name, categorySlug, suburbSlug, address, phone, email, website, description, sessionUser?.id ?? null, chosenTier, hours, centre?.slug ?? null, billingPeriod)
     .run();
+  const submissionId = insert.meta.last_row_id;
 
   const reviewUrl = `https://${site.domain}/verify-listing?token=${token}`;
 
-  // The row is safely saved regardless — the client builds and opens the
-  // mailto: notification from this response, we don't send anything here.
-  return json({ ok: true, reviewUrl });
+  // Tell the admin there is a listing to review.
+  const details = [
+    `Name: ${name}`,
+    `Category: ${category.name}`,
+    `Suburb: ${suburb.name}`,
+    ...(address ? [`Address: ${address}`] : []),
+    ...(centre ? [`Shopping centre: ${centre.name}`] : []),
+    ...(phone ? [`Phone: ${phone}`] : []),
+    ...(email ? [`Email: ${email}`] : []),
+    ...(website ? [`Website: ${website}`] : []),
+    ...(hours ? [`Trading hours: ${hours}`] : []),
+    ...(description ? [`Description: ${description}`] : []),
+    `Plan chosen: ${TIER_NAMES[chosenTier]}${yearly ? ' (billed yearly)' : ''}`,
+    ...(sessionUser ? [`Submitted by account: ${sessionUser.email}`] : []),
+  ];
+  await sendEmail(context.env, {
+    from: `${site.siteName} <${site.contactEmail}>`,
+    to: site.contactEmail,
+    subject: `New business listing to review: ${name}`,
+    replyTo: email ?? sessionUser?.email ?? undefined,
+    text: `A new business listing was submitted on ${site.siteName}.\n\n${details.join('\n')}\n\nReview & approve: ${reviewUrl}`,
+    html: `<div style="font-family:sans-serif;max-width:520px">
+      <h2>New business listing to review</h2>
+      <p>${details.map((d) => escapeHtml(d)).join('<br>')}</p>
+      <p><a href="${reviewUrl}">Review &amp; approve</a></p></div>`,
+  });
+
+  // No paid tier chosen — nothing more to do.
+  // The review URL carries the admin approval token and must only ever go
+  // to the admin email above — returning it here would let the submitter
+  // approve their own listing via /api/confirm-listing.
+  if (chosenTier === 0 || !payfastConfigured(context.env)) {
+    return json({ ok: true });
+  }
+
+  // Paid tier: build the PayFast checkout right here rather than a second
+  // round trip to subscribe/start.ts — there's no `businesses` row (and so
+  // no owning session) for that endpoint to authorize against yet. The
+  // submission itself is the only thing identifying this payment; the
+  // tier is actually applied once the listing is approved+confirmed (see
+  // business-submission.ts's insertApprovedBusiness) via the
+  // "submission:<id>" branch of subscribe/notify.ts.
+  const priceCents = await tierPriceCents(db, chosenTier, billingPeriod);
+  if (!priceCents) return json({ ok: true });
+
+  const amount = centsToRand(priceCents);
+  const mPaymentId = crypto.randomUUID();
+  await db
+    .prepare(`UPDATE pending_submissions SET m_payment_id = ?, payment_status = 'pending' WHERE id = ?`)
+    .bind(mPaymentId, submissionId)
+    .run();
+
+  const origin = new URL(context.request.url).origin;
+  const contactEmail = email ?? site.contactEmail;
+  const fields: Record<string, string> = {
+    merchant_id: context.env.PAYFAST_MERCHANT_ID!,
+    merchant_key: context.env.PAYFAST_MERCHANT_KEY!,
+    // Same origin the request came in on (like notify_url) — hardcoding the
+    // production domain bounced preview-deploy checkouts to the live site.
+    return_url: `${origin}/list-your-business/checkout/?paid=1`,
+    cancel_url: `${origin}/list-your-business/checkout/?payment_cancelled=1`,
+    notify_url: `${origin}/api/subscribe/notify`,
+    name_first: name,
+    email_address: contactEmail,
+    m_payment_id: mPaymentId,
+    amount,
+    item_name: `${site.siteName} — ${TIER_NAMES[chosenTier]} listing`,
+    item_description: `${yearly ? 'Yearly' : 'Monthly'} subscription for "${name}" on ${site.siteName} (applies once your listing is approved)`,
+    custom_str1: `submission:${submissionId}`,
+    custom_str2: 'tier',
+    custom_int1: String(chosenTier),
+    subscription_type: '1',
+    recurring_amount: amount,
+    // 3 = monthly, 6 = annual — or a sandbox-only PAYFAST_TEST_FREQUENCY
+    // override for renewal testing (see checkoutFrequency).
+    frequency: checkoutFrequency(context.env, billingPeriod),
+    cycles: '0',
+  };
+  const signature = await signFields(fields, context.env.PAYFAST_PASSPHRASE!);
+  const params = buildCheckoutParams(fields, signature);
+  const redirectUrl = `https://${context.env.PAYFAST_HOST}/eng/process?${params.toString()}`;
+
+  return json({ ok: true, redirectUrl });
 };
 
 function json(data: unknown, status = 200): Response {

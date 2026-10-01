@@ -28,7 +28,7 @@
         let href: string | null = null;
         let label: string | null = null;
         if (data.kind === 'search' && typeof data.q === 'string' && data.q) {
-          href = '/?q=' + encodeURIComponent(data.q);
+          href = '/search/?q=' + encodeURIComponent(data.q);
           label = `Back to results for “${data.q}”`;
         } else if (data.kind === 'suburb' && typeof data.slug === 'string' && typeof data.name === 'string') {
           href = `/suburb/${data.slug}/`;

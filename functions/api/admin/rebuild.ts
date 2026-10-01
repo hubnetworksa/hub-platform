@@ -1,6 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
-import { triggerRebuild } from '../../_lib/deploy-hook';
+import { triggerRebuild, rebuildTarget } from '../../_lib/deploy-hook';
 
 interface Env {
   DB: D1Database;
@@ -13,7 +13,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   if (!context.env.GITHUB_DISPATCH_TOKEN) return json({ ok: false, error: 'GITHUB_DISPATCH_TOKEN is not configured.' }, 503);
 
-  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN);
+  await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
   return json({ ok: true });
 };
 

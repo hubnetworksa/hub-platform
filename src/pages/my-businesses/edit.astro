@@ -1,45 +1,1026 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import BillingToggle from '../../components/BillingToggle.astro';
+import { priceRand, yearlyPriceRand, sponsorships } from '../../lib/data';
+import { TOURISM } from '../../site-content/tourism';
+import site from '../../site';
+
+// One icon per tab and per card-section header, so the sidebar and the
+// section headers read at a glance instead of as plain text — same
+// stroke-icon language already used across the rest of the site
+// (Icon.astro), not a new visual system.
+const TAB_ICONS: Record<string, string> = {
+  overview: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+  listing: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>',
+  enquiries: '<path d="M4 12h4l2 3h4l2-3h4"/><path d="M5.5 5h13l2.5 7v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7l2.5-7Z"/>',
+  reviews: '<path d="m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7Z"/>',
+  billing: '<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/><path d="M6 15h4"/>',
+};
+const SECTION_ICONS = {
+  photos: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="m21 16-5-4-4 3-3-2-4 3"/>',
+  search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.5-4.5"/>',
+  tourism: '<path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"/><circle cx="12" cy="10" r="2.5"/>',
+  sponsorships: '<path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6l-5 4H4a1 1 0 0 0-1 1Z"/><path d="M15 9a3 3 0 0 1 0 6"/><path d="M17.5 6.5a7 7 0 0 1 0 11"/>',
+  payments: '<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.5h19"/><path d="M6 15h4"/>',
+  lock: '<rect x="4" y="10.5" width="16" height="10.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>',
+};
+
+const priceVerified = priceRand('price_verified_cents').replace(/\.00$/, '');
+const priceFeatured = priceRand('price_featured_cents').replace(/\.00$/, '');
+const priceTourismSponsor = priceRand('price_sponsor_tourism_cents').replace(/\.00$/, '');
+// Yearly twins (monthly × 10 unless a yearly price is set), for the Monthly / Yearly switch.
+const priceVerifiedYearly = yearlyPriceRand('price_verified_cents').replace(/\.00$/, '');
+const priceFeaturedYearly = yearlyPriceRand('price_featured_cents').replace(/\.00$/, '');
+const priceTourismSponsorYearly = yearlyPriceRand('price_sponsor_tourism_cents').replace(/\.00$/, '');
+
+// One sponsor slot per attraction (not a single citywide slot) — more
+// attractions get added over time, so this list just grows with them.
+// `sponsoredSlugs` is a build-time snapshot (same eventual-consistency
+// tradeoff as every other sponsorship slot on this site — refreshes on
+// the next rebuild); subscribe/start.ts's isSlotTaken() check is what
+// actually guards against double-selling in real time.
+const tourismPicks = (TOURISM[site.slug]?.picks ?? []).filter((p): p is typeof p & { slug: string } => Boolean(p.slug)).map((p) => ({ slug: p.slug, name: p.name }));
+const tourismSponsoredSlugs = sponsorships.filter((s) => s.product_type === 'tourism_sponsor' && s.product_target).map((s) => s.product_target as string);
+const tourismPicksJson = JSON.stringify({ picks: tourismPicks, sponsoredSlugs: tourismSponsoredSlugs }).replace(/</g, '\\u003c');
+
+const TABS = [
+  ['overview', 'Overview'],
+  ['listing', 'Edit listing'],
+  ['enquiries', 'Enquiries'],
+  ['reviews', 'Reviews'],
+  ['billing', 'Billing'],
+];
+
+// All five tiles are real, first-party counts, not mockup placeholders.
+// Profile views, phone/website clicks and search appearances come from
+// functions/api/track-view.ts (search.astro beacons once per real search,
+// naming every business shown in that page of results); enquiries were
+// already being saved by functions/api/enquiry.ts, this dashboard just
+// never read them back before. Every tile starts at this static "—" and is
+// filled in client-side once real data loads (see #stat-* ids below and
+// renderStats() in the script).
+const STATS: [id: string, label: string, icon: string][] = [
+  ['views', 'Profile views', '<path d="M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7Z"/><circle cx="12" cy="12" r="3"/>'],
+  ['phone-clicks', 'Phone clicks', '<path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z"/>'],
+  ['website-clicks', 'Website clicks', '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/>'],
+  ['enquiries', 'Enquiries', '<path d="M4 12h4l2 3h4l2-3h4"/><path d="M5.5 5h13l2.5 7v7a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-7l2.5-7Z"/>'],
+  ['search', 'Search appearances', '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.5-4.5"/>'],
+];
+
+const fieldLabel = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)';
+const fieldInput = 'padding:13px;border:2px solid var(--border);border-radius:11px;font-size:14.5px;outline:none;background:#fff;color:var(--text)';
+const cardBox = 'background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden';
+const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0';
 ---
 
-<BaseLayout title="Edit business" description="Edit your business listing details." noindex={true}>
-  <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 560px;">
-    <div id="loading">Loading…</div>
+<BaseLayout title="Manage business" description="Manage your business listing, plan and photos." noindex={true}>
+  <main style="max-width:1200px;margin:0 auto;padding:clamp(20px,3vw,36px) 20px 60px" data-price-verified={priceVerified} data-price-featured={priceFeatured} data-price-tourism-sponsor={priceTourismSponsor} data-price-verified-yearly={priceVerifiedYearly} data-price-featured-yearly={priceFeaturedYearly} data-price-tourism-sponsor-yearly={priceTourismSponsorYearly} id="owner-main">
+    <div id="loading" style="display:flex;align-items:center;gap:10px;color:var(--muted);font-weight:700;font-size:14px;padding:3rem 0;"><span class="spinner"></span>Loading…</div>
 
-    <form id="edit-form" hidden>
-      <h1 id="business-name"></h1>
-      <label>
-        Address
-        <input type="text" name="address" maxlength="200" />
-      </label>
-      <label>
-        Phone
-        <input type="tel" name="phone" maxlength="30" />
-      </label>
-      <label>
-        Website
-        <input type="url" name="website" maxlength="200" />
-      </label>
-      <label>
-        Description
-        <textarea name="description" maxlength="600" rows="4"></textarea>
-      </label>
-      <label>
-        Hours
-        <textarea name="hours" maxlength="400" rows="3" placeholder="e.g. Mon-Fri 8am-5pm"></textarea>
-      </label>
-      <button type="submit" class="btn btn-primary">Save changes</button>
-      <p id="form-status" role="status"></p>
-    </form>
-  </section>
+    <div id="dashboard" hidden>
+      <div id="hidden-banner" hidden style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;margin-bottom:14px;border-radius:var(--radius-lg);background:rgba(194,56,56,.08);border:2px solid var(--danger)">
+        <span style="color:var(--danger);flex-shrink:0;font-size:18px;line-height:1">⚠</span>
+        <div style="min-width:0">
+          <div style="font-size:14px;font-weight:800;color:var(--danger)">This business isn't showing on the site right now</div>
+          <p id="hidden-reason-text" style="margin:3px 0 0;font-size:13px;font-weight:600;color:var(--text);line-height:1.5"></p>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 22px;background:#fff;border:2px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow)">
+        <span id="biz-initials" style="width:50px;height:50px;border-radius:13px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0"></span>
+        <div style="min-width:0">
+          <h1 id="business-name" style="margin:0;font-size:clamp(20px,3vw,27px);letter-spacing:-.025em;color:var(--navy)"></h1>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap">
+            <span id="biz-plan-chip" style="padding:4px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase"></span>
+            <span id="biz-meta" style="font-size:12.5px;font-weight:700;color:var(--muted)"></span>
+          </div>
+        </div>
+        <span style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+          <a href="/my-businesses/" class="owner-btn-ghost" style="padding:11px 15px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-weight:800;color:var(--navy);background:#fff;text-decoration:none">All my businesses</a>
+          <a id="view-public" href="#" class="owner-btn-ghost" style="padding:11px 15px;border:2px solid var(--border);border-radius:10px;font-size:13px;font-weight:800;color:var(--navy);background:#fff;text-decoration:none">View public page</a>
+        </span>
+      </div>
+
+      <div class="owner-shell" style="gap:22px;margin-top:20px">
+        <aside class="owner-nav" style="gap:8px;overflow-x:auto;padding-bottom:4px" role="tablist">
+          {TABS.map(([key, label]) => (
+            <button type="button" role="tab" class="owner-tab" data-tab={key} style="align-items:center;gap:10px;padding:11px 14px;border-radius:10px;cursor:pointer;white-space:nowrap;font-size:13.5px;font-weight:800;text-align:left;border:2px solid var(--border);background:#fff;color:var(--navy)">
+              <Icon path={TAB_ICONS[key]} size={16} />
+              <span>{label}</span>
+            </button>
+          ))}
+        </aside>
+
+        <div style="min-width:0">
+          <div style="margin-bottom:16px">
+            <h2 id="owner-title" style="margin:0;font-size:20px;letter-spacing:-.025em;color:var(--navy)"></h2>
+            <p id="owner-subtitle" style="margin:3px 0 0;font-size:13.5px;font-weight:600;color:var(--muted)"></p>
+          </div>
+
+          <!-- Overview -->
+          <section class="owner-panel" data-panel="overview">
+            <!-- Shown instead of numbers on a free (Basic) listing: the stats exist, a paid plan unlocks them. -->
+            <div id="stats-locked" hidden style="margin-bottom:14px;border:2px solid var(--navy);border-radius:var(--radius-lg);background:var(--bg-subtle);padding:18px 20px;box-shadow:var(--shadow)">
+              <div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">
+                <span style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;background:var(--navy);color:#fff;flex-shrink:0"><Icon path={SECTION_ICONS.lock} size={17} /></span>
+                <div style="flex:1;min-width:220px">
+                  <h3 style="margin:0 0 4px;font-size:16px;letter-spacing:-.015em;color:var(--navy)">Stats are a paid-plan feature</h3>
+                  <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text)">See how many people view your page, call you, click through to your website, send enquiries and appear in search — plus the exact words they searched. Included with Verified (from {priceVerified}/month) and Featured.</p>
+                </div>
+                <a href="#billing" data-goto="billing" style="align-self:center;padding:11px 16px;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;text-decoration:none;white-space:nowrap">Upgrade to unlock</a>
+              </div>
+            </div>
+            <div id="stats-tiles" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+              {STATS.map(([id, label, icon]) => (
+                <div class="owner-stat-tile" style="background:#fff;border:2px solid var(--border);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow)">
+                  <span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9px;background:rgba(var(--accent-rgb),.1);color:var(--accent-hover);margin-bottom:10px">
+                    <Icon path={icon} size={16} />
+                  </span>
+                  <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">{label}</div>
+                  <div id={`stat-${id}-value`} style="font-size:28px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px;line-height:1">—</div>
+                  <div id={`stat-${id}-note`} style="font-size:12.5px;font-weight:700;color:var(--muted);margin-top:5px">No data yet</div>
+                </div>
+              ))}
+            </div>
+            <p style="margin:10px 0 0;font-size:12px;font-weight:600;color:var(--muted)">Profile views and clicks are counted from real visitors to your page, over the last 30 days.</p>
+            <div style={`${cardBox};margin-top:14px;box-shadow:var(--shadow)`}>
+              <div class="owner-section-head" style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px">
+                <span style="color:var(--accent)"><Icon path={SECTION_ICONS.search} size={17} /></span>
+                <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">What people searched to find you</h3>
+              </div>
+              <div id="search-terms-list"></div>
+              <p id="search-terms-empty" hidden style={emptyNote}>No search terms recorded yet — this fills in as people find you through search.</p>
+              <p id="search-terms-locked" hidden style={emptyNote}>The words people searched to find you show here on a paid plan. <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a>.</p>
+            </div>
+          </section>
+
+          <!-- Edit listing -->
+          <section class="owner-panel" data-panel="listing" hidden>
+            <div style="display:flex;flex-direction:column;gap:15px">
+              <form id="edit-form" style="display:flex;flex-direction:column;gap:15px">
+                <label style={fieldLabel}>Business name
+                  <input type="text" name="name" id="field-name" disabled class="owner-input" style={`${fieldInput};background:var(--bg-subtle);color:var(--muted)`} />
+                </label>
+                <label style={fieldLabel}>Description
+                  <textarea name="description" maxlength="600" rows="4" class="owner-input" style={`${fieldInput};resize:vertical`}></textarea>
+                </label>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px">
+                  <label style={fieldLabel}>Phone
+                    <input type="tel" name="phone" maxlength="30" class="owner-input" style={fieldInput} />
+                  </label>
+                  <label style={fieldLabel}>Website
+                    <input type="url" name="website" maxlength="200" class="owner-input" style={fieldInput} />
+                  </label>
+                </div>
+                <label style={fieldLabel}>Business email
+                  <input type="email" name="email" maxlength="160" placeholder="hello@yourbusiness.co.za" class="owner-input" style={fieldInput} />
+                </label>
+                <p style="margin:-9px 0 0;font-size:12px;font-weight:600;color:var(--muted)">Customer enquiries from your listing go here. It's also where we send an ownership-claim link if someone else tries to claim this business — keep it current.</p>
+                <label style={fieldLabel}>Address
+                  <input type="text" name="address" maxlength="200" class="owner-input" style={fieldInput} />
+                </label>
+                <label style={fieldLabel}>Opening hours
+                  <textarea name="hours" maxlength="400" rows="3" placeholder="e.g. Mon-Fri 8am-5pm" class="owner-input" style={`${fieldInput};resize:vertical`}></textarea>
+                </label>
+                <div style="border-top:2px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:15px">
+                  <!-- Always shown so a Basic / Verified owner sees exactly what Featured adds; the
+                       inputs are disabled (and so left out of the saved form) until the plan allows it.
+                       The pill has an inline display, so the script toggles style.display, not `hidden`. -->
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;font-weight:800;color:var(--navy)">Social pages
+                    <span id="social-note" style="display:none;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:var(--navy);color:#fff;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.02em"><Icon path={SECTION_ICONS.lock} size={12} /> Featured plan</span>
+                  </div>
+                  <p id="social-locked" hidden style="margin:0;font-size:13.5px;font-weight:600;color:var(--muted);line-height:1.55">
+                    Linking your Instagram, Facebook, LinkedIn and YouTube pages is a Featured-plan perk. <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a> to add them.
+                  </p>
+                  <div id="social-fields" class="social-fields">
+                    <label style={fieldLabel}>Instagram
+                      <input type="url" name="social_instagram" maxlength="200" placeholder="https://instagram.com/yourbusiness" class="owner-input" style={fieldInput} />
+                    </label>
+                    <label style={fieldLabel}>Facebook
+                      <input type="url" name="social_facebook" maxlength="200" placeholder="https://facebook.com/yourbusiness" class="owner-input" style={fieldInput} />
+                    </label>
+                    <label style={fieldLabel}>LinkedIn
+                      <input type="url" name="social_linkedin" maxlength="200" placeholder="https://linkedin.com/company/yourbusiness" class="owner-input" style={fieldInput} />
+                    </label>
+                    <label style={fieldLabel}>YouTube
+                      <input type="url" name="social_youtube" maxlength="200" placeholder="https://youtube.com/@yourbusiness" class="owner-input" style={fieldInput} />
+                    </label>
+                  </div>
+                </div>
+              </form>
+
+              <div style="border:2px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)">
+                <div class="owner-section-head" style="padding:13px 16px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;color:var(--navy)">
+                  <span style="color:var(--accent)"><Icon path={SECTION_ICONS.photos} size={17} /></span>
+                  Photos <span id="photos-count" style="font-weight:600;color:var(--muted)"></span>
+                </div>
+                <div id="photos-locked" hidden style="padding:18px 16px;font-size:13.5px;font-weight:600;color:var(--muted);line-height:1.55">
+                  Photos come with a paid plan: up to 4 on Verified, up to 10 on Featured. <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a> to add photos.
+                </div>
+                <div id="photos-unlocked" hidden>
+                  <div id="photos-grid" style="padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px"></div>
+                  <p id="photos-empty" hidden style="margin:0;padding:4px 16px 14px;font-size:13px;font-weight:600;color:var(--muted)">No photos yet — add your first below.</p>
+                  <form id="photo-upload-form" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:0 14px 14px">
+                    <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required style="font-size:13px;max-width:100%" />
+                    <button type="submit" class="owner-btn-ghost" style="padding:9px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:12.5px;font-weight:800;cursor:pointer">Upload photo</button>
+                  </form>
+                </div>
+                <p id="photo-status" role="status" style="margin:0;padding:0 16px 14px;font-size:13px;font-weight:600;color:var(--muted)" hidden></p>
+              </div>
+
+              <button type="submit" form="edit-form" class="owner-btn-primary" style="align-self:flex-start;padding:14px 22px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;cursor:pointer">Save changes</button>
+              <p id="form-status" role="status" style="margin:0;font-size:13px;font-weight:700;color:var(--muted)"></p>
+              <p style="margin:0;font-size:12px;font-weight:600;color:var(--muted)">Changes to the description, phone, website, address and hours go live immediately. To change your business name or category, <a href="/contact/" style="color:var(--accent-hover);font-weight:800">contact us</a>.</p>
+            </div>
+          </section>
+
+          <!-- Enquiries -->
+          <section class="owner-panel" data-panel="enquiries" hidden>
+            <div style={`${cardBox};box-shadow:var(--shadow)`}>
+              <div class="owner-section-head" style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px">
+                <span style="color:var(--accent)"><Icon path={TAB_ICONS.enquiries} size={17} /></span>
+                <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Messages from customers</h3>
+              </div>
+              <div id="enquiries-list"></div>
+              <div id="enquiries-empty" hidden style="padding:30px 18px;text-align:center">
+                <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--bg-subtle);color:var(--muted);margin-bottom:8px"><Icon path={TAB_ICONS.enquiries} size={17} /></span>
+                <p style="font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No enquiries yet. When someone sends one from your page, it'll show up here.</p>
+              </div>
+            </div>
+            <p id="enquiries-total-note" style="margin:10px 0 0;font-size:12px;font-weight:600;color:var(--muted)"></p>
+          </section>
+
+          <!-- Reviews -->
+          <section class="owner-panel" data-panel="reviews" hidden>
+            <div style={`${cardBox};box-shadow:var(--shadow)`}>
+              <div class="owner-section-head" style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px">
+                <span style="color:var(--accent)"><Icon path={TAB_ICONS.reviews} size={17} /></span>
+                <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">What customers wrote</h3>
+              </div>
+              <div id="reviews-list"></div>
+              <div id="reviews-empty" hidden style="padding:30px 18px;text-align:center">
+                <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--bg-subtle);color:var(--muted);margin-bottom:8px"><Icon path={TAB_ICONS.reviews} size={17} /></span>
+                <p style="font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No reviews yet. When a customer reviews you, it'll show up here — including before it's approved.</p>
+              </div>
+            </div>
+            <p id="reviews-total-note" style="margin:10px 0 0;font-size:12px;font-weight:600;color:var(--muted)"></p>
+          </section>
+
+          <!-- Billing -->
+          <section class="owner-panel" data-panel="billing" hidden>
+            <div style="border:2px solid var(--accent);border-radius:var(--radius-lg);overflow:hidden;background:#fff;box-shadow:var(--shadow-lift)">
+              <div style="background:var(--accent);padding:9px 20px;font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--contrast);display:flex;align-items:center;gap:7px">
+                <Icon path={TAB_ICONS.billing} size={13} /> Current plan
+              </div>
+              <div style="padding:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+                <div>
+                  <div id="plan-name" style="font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1"></div>
+                  <div id="plan-current" style="font-size:14px;font-weight:700;color:var(--muted);margin-top:5px"></div>
+                </div>
+                <div id="plan-buttons" style="display:flex;gap:9px;margin-left:auto;flex-wrap:wrap"></div>
+              </div>
+            </div>
+            <div style="margin-top:12px"><BillingToggle note="2 months free" /></div>
+            <p id="plan-status" role="status" style="margin:10px 0 0;font-size:13px;font-weight:700;color:var(--muted)"></p>
+            <p style="margin:8px 0 0;font-size:13px;font-weight:600;color:var(--muted)"><a href="/pricing/" style="color:var(--accent-hover);font-weight:800">Compare plans</a></p>
+
+            <div style={`${cardBox};margin-top:14px;box-shadow:var(--shadow)`}>
+              <div class="owner-section-head" style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px">
+                <span style="color:var(--accent)"><Icon path={SECTION_ICONS.sponsorships} size={17} /></span>
+                <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Your sponsorships</h3>
+              </div>
+              <div id="sponsorships-list"></div>
+              <p id="sponsorships-empty" hidden style={emptyNote}>You don't sponsor any spots yet. <a href="/pricing/" style="color:var(--accent-hover);font-weight:800">See sponsorship options</a></p>
+              <p id="sponsorships-status" role="status" hidden style="margin:0;padding:12px 18px 14px;font-size:13px;font-weight:700;color:var(--muted)"></p>
+            </div>
+
+            {site.features.tourism && tourismPicks.length > 0 && (
+              <div style={`${cardBox};margin-top:14px;box-shadow:var(--shadow)`}>
+                <div class="owner-section-head" style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px">
+                  <span style="color:var(--accent)"><Icon path={SECTION_ICONS.tourism} size={17} /></span>
+                  <div>
+                    <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Things to do sponsorships</h3>
+                    <p style="margin:4px 0 0;font-size:12.5px;font-weight:600;color:var(--muted)">{priceTourismSponsor} / month per attraction — one sponsor per attraction page, and more attractions get added over time.</p>
+                  </div>
+                </div>
+                <div id="tourism-sponsor-picker" class="tourism-sponsor-picker" style="padding:16px 18px;align-items:center;gap:10px;flex-wrap:wrap">
+                  <select id="tourism-sponsor-select" style="padding:11px 13px;border:2px solid var(--border);border-radius:9px;font-size:13.5px;outline:none;background:#fff;color:var(--text);flex:1;min-width:200px"></select>
+                  <button id="tourism-sponsor-buy" type="button" style="padding:11px 16px;border:2px solid var(--navy);border-radius:9px;background:#fff;color:var(--navy);font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap">Sponsor this attraction</button>
+                </div>
+                <p id="tourism-sponsor-all-taken" hidden style={emptyNote}>Every attraction is currently sponsored — check back later.</p>
+                <p id="tourism-sponsor-status" role="status" style="margin:0;padding:0 18px 14px;font-size:13px;font-weight:700;color:var(--muted)"></p>
+              </div>
+            )}
+
+            <div style={`${cardBox};margin-top:14px;box-shadow:var(--shadow)`}>
+              <div class="owner-section-head" style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px">
+                <span style="color:var(--accent)"><Icon path={SECTION_ICONS.payments} size={17} /></span>
+                <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Payment history</h3>
+              </div>
+              <div id="payments-list"></div>
+              <p id="payments-empty" hidden style={emptyNote}>No payments yet.</p>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+  {site.features.tourism && tourismPicks.length > 0 && (
+    <script type="application/json" id="tourism-picks-data" set:html={tourismPicksJson} />
+  )}
 </BaseLayout>
 
+<style is:global>
+  .social-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; }
+  .social-fields[hidden] { display: none; }
+  .owner-shell { display: grid; grid-template-columns: 1fr; }
+  .owner-nav { display: flex; flex-direction: row; }
+  .owner-tab { display: flex; font-family: inherit; }
+  .owner-tab.on { border-color: var(--navy) !important; background: var(--navy) !important; color: #fff !important; }
+  .owner-panel[hidden], #dashboard[hidden], #hidden-banner[hidden], #photos-locked[hidden], #photos-unlocked[hidden], #photos-empty[hidden], #photo-status[hidden], #payments-empty[hidden], #search-terms-empty[hidden], #sponsorships-empty[hidden], #sponsorships-status[hidden], #tourism-sponsor-picker[hidden], #tourism-sponsor-all-taken[hidden] { display: none !important; }
+  .tourism-sponsor-picker { display: flex; }
+  @media (min-width: 760px) {
+    .owner-shell { grid-template-columns: 210px minmax(0, 1fr); }
+    .owner-nav { flex-direction: column; }
+  }
+  .owner-input:focus { border-color: var(--accent) !important; }
+  .owner-btn-primary:hover { background: var(--accent-hover) !important; }
+  .owner-btn-ghost:hover { border-color: var(--accent) !important; }
+  .owner-photo { position: relative; aspect-ratio: 4/3; border-radius: 10px; overflow: hidden; background: var(--bg-subtle); box-shadow: var(--shadow); transition: transform .15s ease; }
+  .owner-photo:hover { transform: translateY(-2px); }
+  .owner-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .owner-photo button { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; line-height: 1; font-size: 15px; }
+  .owner-stat-tile { transition: transform .15s ease, box-shadow .15s ease; }
+  .owner-stat-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+  .spinner { width: 16px; height: 16px; flex-shrink: 0; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: mb-spin 0.7s linear infinite; }
+  @keyframes mb-spin { to { transform: rotate(360deg); } }
+</style>
+
 <script>
+  import { currentBilling, onBillingChange } from '../../lib/billing-toggle';
   const params = new URLSearchParams(window.location.search);
   const businessId = params.get('id');
+  const main = document.getElementById('owner-main')!;
   const loading = document.getElementById('loading')!;
+  const dashboard = document.getElementById('dashboard')!;
   const form = document.getElementById('edit-form') as HTMLFormElement;
-  const status = document.getElementById('form-status')!;
+  const formStatus = document.getElementById('form-status')!;
+
+  const TIER_NAMES: Record<number, string> = { 0: 'Basic', 1: 'Verified', 2: 'Featured' };
+  const TIER_PRICE: Record<number, string> = { 1: main.dataset.priceVerified ?? '—', 2: main.dataset.priceFeatured ?? '—' };
+  const TIER_PRICE_YEARLY: Record<number, string> = { 1: main.dataset.priceVerifiedYearly ?? '—', 2: main.dataset.priceFeaturedYearly ?? '—' };
+  const FEATURED_TIER = 2;
+  const PHOTO_CAPS: Record<number, number> = { 1: 4, 2: 10 };
+
+  const TITLES: Record<string, [string, string]> = {
+    overview: ['Overview', 'Your listing at a glance'],
+    listing: ['Edit listing', 'Everything customers see, editable here'],
+    enquiries: ['Enquiries', 'Messages from customers'],
+    reviews: ['Reviews', 'What customers wrote about you'],
+    billing: ['Billing', 'Your plan and payment history'],
+  };
+
+  type Business = {
+    id: number; slug: string; name: string; created_at: string; suburb_name: string | null; category_name: string | null;
+    address: string | null; phone: string | null; website: string | null; email: string | null; description: string | null; hours: string | null;
+    subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null;
+    /** 'yearly' or 'monthly' — the billing period of the current tier plan. */
+    billing_period?: string | null;
+    social_instagram: string | null; social_facebook: string | null; social_linkedin: string | null; social_youtube: string | null;
+    visible: boolean; hidden_reason: 'admin_hidden' | 'marked_closed' | null;
+  };
+  type Photo = { id: number; r2_key: string; caption: string | null };
+  type Stats = { has_any: boolean; views: number; phone_clicks: number; website_clicks: number; search_appearances: number };
+  type SearchTerm = { query: string; n: number };
+  type Enquiry = { id: number; name: string | null; contact: string; message: string; created_at: string };
+  type Review = { id: number; rating: number; author_name: string; comment: string; status: string; flagged: number; owner_reply: string | null; owner_reply_at: string | null; created_at: string };
+  type Payment = { id: number; amount_cents: number; status: string; paid_at: string; invoice_number: string | null; tier: number; product_type: string | null; product_target: string | null };
+  type Sponsorship = { product_type: string; product_target: string | null; current_period_end: string | null; status: string };
+
+  // Shared by the Billing tab's sponsorship list and its payment history, so
+  // a payment for e.g. a suburb sponsorship reads the same way in both places.
+  const SPONSOR_TYPE_LABELS: Record<string, string> = {
+    category_sponsor: 'Category sponsor',
+    suburb_sponsor: 'Suburb sponsor',
+    homepage_banner: 'Homepage banner',
+    centre_sponsor: 'Shopping centre sponsor',
+    guide_sponsor: 'Guide sponsor',
+    tourism_sponsor: 'Things to do sponsor',
+  };
+
+  function esc(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function parseDate(s: string | null): Date | null {
+    if (!s) return null;
+    const d = new Date(/[zZ]|[+-]\d\d:?\d\d$/.test(s) ? s : s.replace(' ', 'T') + 'Z');
+    return isNaN(d.getTime()) ? null : d;
+  }
+  function longDate(s: string | null): string | null {
+    const d = parseDate(s);
+    return d ? d.toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric' }) : null;
+  }
+  function shortDate(s: string): string {
+    const d = parseDate(s);
+    return d ? d.toLocaleDateString('en-ZA', { day: '2-digit', month: 'short', year: 'numeric' }) : s;
+  }
+  function initialsOf(name: string): string {
+    const words = name.split(/\s+/).filter((w) => /[A-Za-z0-9]/.test(w[0] ?? ''));
+    return ((words[0]?.[0] ?? '') + (words[1]?.[0] ?? '')).toUpperCase() || '?';
+  }
+  // An admin-comped plan is stored as an active subscription expiring ~100
+  // years out with no PayFast row behind it (admin/listings.ts) — nothing
+  // renews, nothing is charged, and /api/subscribe/cancel has nothing to cancel.
+  function isComplimentary(expiresAt: string | null): boolean {
+    const d = parseDate(expiresAt);
+    return !!d && d.getTime() - Date.now() > 50 * 365.25 * 86400000;
+  }
+
+  // ---- Tabs ----
+  function showTab(key: string) {
+    if (!TITLES[key]) key = 'overview';
+    document.querySelectorAll<HTMLElement>('.owner-tab').forEach((t) => {
+      const on = t.dataset.tab === key;
+      t.classList.toggle('on', on);
+      t.setAttribute('aria-selected', String(on));
+    });
+    document.querySelectorAll<HTMLElement>('.owner-panel').forEach((p) => {
+      p.hidden = p.dataset.panel !== key;
+    });
+    document.getElementById('owner-title')!.textContent = TITLES[key][0];
+    document.getElementById('owner-subtitle')!.textContent = TITLES[key][1];
+  }
+  document.querySelectorAll<HTMLElement>('.owner-tab').forEach((t) => {
+    t.addEventListener('click', () => {
+      const key = t.dataset.tab!;
+      history.replaceState(null, '', `${location.pathname}${location.search}#${key}`);
+      showTab(key);
+    });
+  });
+  document.querySelectorAll<HTMLElement>('[data-goto]').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const key = a.dataset.goto!;
+      history.replaceState(null, '', `${location.pathname}${location.search}#${key}`);
+      showTab(key);
+    });
+  });
+
+  // ---- Header ----
+  function renderHeader(b: Business) {
+    document.getElementById('business-name')!.textContent = b.name;
+    document.getElementById('biz-initials')!.textContent = initialsOf(b.name);
+    const chip = document.getElementById('biz-plan-chip')!;
+    const tier = b.subscription_tier;
+    chip.textContent = TIER_NAMES[tier] ?? 'Basic';
+    if (tier >= 2) chip.style.cssText += ';background:var(--accent);color:var(--contrast)';
+    else if (tier === 1) chip.style.cssText += ';background:var(--navy);color:#fff';
+    else chip.style.cssText += ';background:var(--bg-subtle);color:var(--muted);border:1px solid var(--border)';
+    const created = parseDate(b.created_at);
+    const since = created ? `Live since ${created.toLocaleDateString('en-ZA', { month: 'short', year: 'numeric' })}` : '';
+    document.getElementById('biz-meta')!.textContent = [since, b.category_name, b.suburb_name].filter(Boolean).join(' · ');
+    (document.getElementById('view-public') as HTMLAnchorElement).href = `/business/${b.slug}/`;
+  }
+
+  // ---- Visibility ----
+  // Two independent things can pull a listing off the public site without
+  // touching its plan at all: an admin hiding it, or the automated
+  // closed-business check flagging it. Either way the dashboard otherwise
+  // looks completely normal (plan, photos, everything editable) with no
+  // hint that none of it is actually showing anywhere — this banner is
+  // that hint. See update-business.ts's GET for how visible/hidden_reason
+  // are computed.
+  function renderVisibility(b: Business) {
+    const banner = document.getElementById('hidden-banner')!;
+    if (b.visible) {
+      banner.hidden = true;
+      return;
+    }
+    const reasonText =
+      b.hidden_reason === 'marked_closed'
+        ? "Our automated check flagged this business as possibly closed, so it's been taken off the site. If that's wrong, "
+        : "An admin has taken this listing off the site. If you think that's a mistake, ";
+    document.getElementById('hidden-reason-text')!.innerHTML =
+      esc(reasonText) + '<a href="/contact/" style="color:var(--danger);font-weight:800;text-decoration:underline">contact us</a> and we\'ll sort it out. ' +
+      (b.subscription_tier > 0 ? "You're still being charged for your plan while this is unresolved." : '');
+    banner.hidden = false;
+  }
+
+  // ---- Billing ----
+  function planButton(label: string): HTMLButtonElement {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = label;
+    btn.style.cssText = 'padding:12px 17px;border:2px solid var(--navy);border-radius:10px;background:#fff;color:var(--navy);font-size:13.5px;font-weight:800;cursor:pointer;font-family:inherit;';
+    return btn;
+  }
+
+  // Re-rendered when the Monthly / Yearly switch changes, so the upgrade
+  // buttons always show (and check out at) the chosen period's price.
+  let planBusiness: Business | null = null;
+  onBillingChange(() => {
+    if (planBusiness) renderPlan(planBusiness);
+    renderTourismPriceNote();
+  });
+
+  function renderPlan(business: Business) {
+    planBusiness = business;
+    const nameEl = document.getElementById('plan-name')!;
+    const current = document.getElementById('plan-current')!;
+    const buttons = document.getElementById('plan-buttons')!;
+    const planStatus = document.getElementById('plan-status')!;
+
+    const tier = business.subscription_tier;
+    nameEl.textContent = TIER_NAMES[tier] ?? 'Basic';
+    const expiry = longDate(business.subscription_expires_at);
+    const complimentary = tier > 0 && isComplimentary(business.subscription_expires_at);
+    if (complimentary) {
+      current.textContent = 'Complimentary — no charge';
+    } else if (tier > 0) {
+      const yearlyPlan = business.billing_period === 'yearly';
+      const each = yearlyPlan ? TIER_PRICE_YEARLY[tier] : TIER_PRICE[tier];
+      const price = each && each !== '—' ? `${each}/${yearlyPlan ? 'year · billed yearly' : 'month'}` : null;
+      const tail = business.subscription_status === 'cancelled'
+        ? `cancelled${expiry ? ` · active until ${expiry}` : ''}`
+        : expiry ? `renews ${expiry}` : null;
+      current.textContent = [price, tail].filter(Boolean).join(' · ');
+    } else {
+      current.textContent = 'Free';
+    }
+
+    buttons.innerHTML = '';
+    for (const t of [1, 2]) {
+      if (t === tier && business.subscription_status === 'active') continue;
+      if (t < tier && business.subscription_status === 'active') continue; // no downgrade via checkout — cancel instead
+      const yearlyChoice = currentBilling() === 'yearly';
+      const upgradePrice = yearlyChoice ? TIER_PRICE_YEARLY[t] : TIER_PRICE[t];
+      const btn = planButton(`Upgrade to ${TIER_NAMES[t]}${upgradePrice && upgradePrice !== '—' ? ` · ${upgradePrice}/${yearlyChoice ? 'yr' : 'mo'}` : ''}`);
+      btn.addEventListener('click', async () => {
+        planStatus.textContent = 'Starting checkout…';
+        const res = await fetch('/api/subscribe/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId: Number(businessId), tier: t, billing: currentBilling() }),
+        });
+        const result = await res.json();
+        if (result.ok) window.location.href = result.redirectUrl;
+        else planStatus.textContent = result.error || 'Could not start checkout.';
+      });
+      buttons.appendChild(btn);
+    }
+    if (complimentary) {
+      const note = document.createElement('span');
+      note.textContent = 'Managed by the site admin';
+      note.style.cssText = 'align-self:center;font-size:12.5px;font-weight:700;color:var(--muted)';
+      buttons.appendChild(note);
+    } else if (tier > 0 && business.subscription_status === 'active') {
+      const cancelBtn = planButton('Cancel');
+      cancelBtn.style.borderColor = 'var(--border)';
+      cancelBtn.style.color = 'var(--danger)';
+      cancelBtn.addEventListener('click', async () => {
+        if (!confirm('Cancel your subscription? You keep your current plan until the paid period ends.')) return;
+        planStatus.textContent = 'Cancelling…';
+        const res = await fetch('/api/subscribe/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId: Number(businessId) }),
+        });
+        const result = await res.json();
+        if (result.ok) {
+          business.subscription_status = 'cancelled';
+          renderPlan(business);
+          document.getElementById('plan-status')!.textContent = 'Cancelled — you keep your plan until the current period ends.';
+        } else {
+          planStatus.textContent = result.error || 'Could not cancel.';
+        }
+      });
+      buttons.appendChild(cancelBtn);
+    }
+
+    if (params.get('upgraded') && !planStatus.textContent) planStatus.textContent = 'Thanks — your payment is being confirmed. Your plan switches on as soon as PayFast confirms it (refresh in a minute), and your public page shows it within about 15 minutes.';
+    else if (params.get('upgrade_cancelled')) planStatus.textContent = 'Checkout cancelled — you have not been charged.';
+  }
+
+  // ---- Sponsorships: one slot per Things to do attraction (not a single
+  // citywide slot — more attractions get added over time, so this list
+  // just grows with them), each a real monthly recurring subscription via
+  // the same subscribe/start.ts path as a tier upgrade — unlike an event
+  // feature, which is a once-off payment. ----
+  interface TourismPick { slug: string; name: string }
+  function tourismPicksData(): { picks: TourismPick[]; sponsoredSlugs: string[] } {
+    const dataEl = document.getElementById('tourism-picks-data');
+    return dataEl ? JSON.parse(dataEl.textContent || '{}') : { picks: [], sponsoredSlugs: [] };
+  }
+  function mySponsorships(sponsorships: Sponsorship[]): Sponsorship[] {
+    return sponsorships.filter((s) => s.product_target || s.product_type === 'homepage_banner');
+  }
+
+  function renderSponsorships(sponsorships: Sponsorship[]) {
+    renderSponsorshipList(sponsorships);
+    renderTourismPicker(sponsorships);
+  }
+
+  // Every sponsorship this business holds (category, suburb, banner, centre,
+  // guide, attraction), each with its own cancel — this card always renders,
+  // unlike the tourism picker below, which only exists on cities with picks.
+  function renderSponsorshipList(sponsorships: Sponsorship[]) {
+    const listEl = document.getElementById('sponsorships-list')!;
+    const emptyEl = document.getElementById('sponsorships-empty')!;
+    const statusEl = document.getElementById('sponsorships-status')!;
+    const { picks } = tourismPicksData();
+    const mine = mySponsorships(sponsorships);
+
+    function setStatus(msg: string) {
+      statusEl.textContent = msg;
+      statusEl.hidden = !msg;
+    }
+
+    listEl.innerHTML = '';
+    emptyEl.hidden = mine.length > 0;
+    mine.forEach((s, i) => {
+      const pick = picks.find((p) => p.slug === s.product_target);
+      const row = document.createElement('div');
+      row.style.cssText = `display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;${i === mine.length - 1 ? '' : 'border-bottom:1px solid var(--border)'}`;
+      const expiry = longDate(s.current_period_end);
+      const label = s.product_type === 'tourism_sponsor'
+        ? pick?.name ?? s.product_target ?? ''
+        : `${SPONSOR_TYPE_LABELS[s.product_type] ?? 'Sponsorship'}${s.product_target ? ` — ${s.product_target}` : ''}`;
+      const when = s.status === 'cancelled' ? (expiry ? `cancelled · ends ${expiry}` : 'cancelled') : expiry ? `renews ${expiry}` : '';
+      row.innerHTML = `<span style="font-size:14.5px;font-weight:800;color:var(--navy)">${esc(label)}</span><span style="font-size:12.5px;font-weight:700;color:var(--muted)">${esc(when)}</span>`;
+      if (s.status === 'cancelled') {
+        listEl.appendChild(row);
+        return;
+      }
+      const cancelBtn = planButton('Cancel');
+      cancelBtn.style.borderColor = 'var(--border)';
+      cancelBtn.style.color = 'var(--danger)';
+      cancelBtn.style.padding = '8px 13px';
+      cancelBtn.style.fontSize = '12.5px';
+      cancelBtn.addEventListener('click', async () => {
+        if (!confirm(`Cancel sponsoring "${label}"? You keep the slot until the paid period ends.`)) return;
+        setStatus('Cancelling…');
+        const res = await fetch('/api/subscribe/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId: Number(businessId), productType: s.product_type, productTarget: s.product_target }),
+        });
+        const result = await res.json();
+        if (result.ok) {
+          s.status = 'cancelled';
+          renderSponsorships(sponsorships);
+          setStatus('Cancelled — you keep the slot until the current period ends.');
+        } else {
+          setStatus(result.error || 'Could not cancel.');
+        }
+      });
+      row.appendChild(cancelBtn);
+      listEl.appendChild(row);
+    });
+  }
+
+  function renderTourismPriceNote() {
+    const statusEl = document.getElementById('tourism-sponsor-status');
+    if (!statusEl || params.get('upgraded') || params.get('upgrade_cancelled')) return;
+    const yearly = currentBilling() === 'yearly';
+    const label = (yearly ? main.dataset.priceTourismSponsorYearly : main.dataset.priceTourismSponsor) ?? '—';
+    statusEl.textContent = `${label} / ${yearly ? 'year' : 'month'} per attraction.`;
+  }
+
+  function renderTourismPicker(sponsorships: Sponsorship[]) {
+    const pickerEl = document.getElementById('tourism-sponsor-picker');
+    const selectEl = document.getElementById('tourism-sponsor-select') as HTMLSelectElement | null;
+    const buyBtn = document.getElementById('tourism-sponsor-buy') as HTMLButtonElement | null;
+    const allTakenEl = document.getElementById('tourism-sponsor-all-taken');
+    const statusEl = document.getElementById('tourism-sponsor-status');
+    if (!pickerEl || !selectEl || !buyBtn || !allTakenEl || !statusEl) return; // no tourism picks at build time — card not rendered
+
+    const { picks, sponsoredSlugs } = tourismPicksData();
+
+    const mineBySlug = new Map(mySponsorships(sponsorships).map((s) => [s.product_target as string, s]));
+    // Open to buy: not sponsored by anyone (per the build-time snapshot) and not already mine.
+    const soldSlugs = new Set(sponsoredSlugs);
+    const open = picks.filter((p) => !soldSlugs.has(p.slug) && !mineBySlug.has(p.slug));
+
+    pickerEl.hidden = open.length === 0;
+    allTakenEl.hidden = open.length > 0;
+    if (open.length > 0) {
+      selectEl.innerHTML = open.map((p) => `<option value="${esc(p.slug)}">${esc(p.name)}</option>`).join('');
+      buyBtn.onclick = async () => {
+        const target = selectEl.value;
+        if (!target) return;
+        statusEl.textContent = 'Starting checkout…';
+        const res = await fetch('/api/subscribe/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId: Number(businessId), productType: 'tourism_sponsor', productTarget: target, billing: currentBilling() }),
+        });
+        const result = await res.json();
+        if (result.ok) window.location.href = result.redirectUrl;
+        else statusEl.textContent = result.error || 'Could not start checkout.';
+      };
+    }
+
+    renderTourismPriceNote();
+    if (params.get('upgraded')) statusEl.textContent = 'Thanks — your payment is being confirmed (refresh in a minute). The sponsorship shows on the public page within about 15 minutes.';
+    else if (params.get('upgrade_cancelled')) statusEl.textContent = 'Checkout cancelled — you have not been charged.';
+  }
+
+  // ---- Overview stats ----
+  function setStat(id: string, value: string | null, note: string) {
+    const valueEl = document.getElementById(`stat-${id}-value`);
+    const noteEl = document.getElementById(`stat-${id}-note`);
+    if (!valueEl || !noteEl) return;
+    if (value !== null) valueEl.textContent = value;
+    noteEl.textContent = note;
+  }
+  function renderStats(stats: Stats | null, enquiriesRecent: number, enquiriesTotal: number) {
+    // null = free (Basic) listing: the server sends no numbers at all (see
+    // update-business.ts's statsUnlocked). Keep every tile visible so the
+    // owner can see what a paid plan unlocks, just without values.
+    const locked = stats === null;
+    document.getElementById('stats-locked')!.hidden = !locked;
+    document.getElementById('stats-tiles')!.style.opacity = locked ? '.55' : '';
+    document.getElementById('search-terms-locked')!.hidden = !locked;
+    if (locked) {
+      for (const id of ['views', 'phone-clicks', 'website-clicks', 'search', 'enquiries']) setStat(id, '—', 'Paid plans only');
+      return;
+    }
+    if (stats.has_any) {
+      setStat('views', String(stats.views), 'Last 30 days');
+      setStat('phone-clicks', String(stats.phone_clicks), 'Last 30 days');
+      setStat('website-clicks', String(stats.website_clicks), 'Last 30 days');
+      setStat('search', String(stats.search_appearances), 'Last 30 days');
+    } else {
+      setStat('views', null, 'No data yet');
+      setStat('phone-clicks', null, 'No data yet');
+      setStat('website-clicks', null, 'No data yet');
+      setStat('search', null, 'No data yet');
+    }
+    setStat('enquiries', enquiriesTotal > 0 ? String(enquiriesRecent) : null, enquiriesTotal > 0 ? 'Last 30 days' : 'No data yet');
+  }
+
+  // The words behind the "Search appearances" tile, over the same 30 days
+  // (see update-business.ts's searchTerms). Bars are relative to the top term.
+  function renderSearchTerms(terms: SearchTerm[], locked = false) {
+    const list = document.getElementById('search-terms-list')!;
+    const empty = document.getElementById('search-terms-empty')!;
+    if (locked) {
+      list.innerHTML = '';
+      empty.hidden = true;
+      return;
+    }
+    empty.hidden = terms.length > 0;
+    if (terms.length === 0) {
+      list.innerHTML = '';
+      return;
+    }
+    const max = Math.max(...terms.map((t) => t.n), 1);
+    list.innerHTML = terms
+      .map((t, i) => {
+        const border = i === terms.length - 1 ? '' : 'border-bottom:1px solid var(--border);';
+        const pct = Math.max(4, Math.round((t.n / max) * 100));
+        return `<div style="padding:11px 18px;${border}display:flex;align-items:center;gap:12px">
+          <span style="flex:1;min-width:0;font-size:14px;font-weight:700;color:var(--navy);overflow-wrap:anywhere">${esc(t.query)}</span>
+          <span style="width:110px;height:6px;border-radius:999px;background:var(--bg-subtle);overflow:hidden;flex-shrink:0" aria-hidden="true"><span style="display:block;height:100%;width:${pct}%;border-radius:999px;background:var(--accent)"></span></span>
+          <span style="min-width:3ch;text-align:right;font-size:13px;font-weight:800;color:var(--muted)">${t.n}</span>
+        </div>`;
+      })
+      .join('');
+  }
+
+  // ---- Enquiries ----
+  function renderEnquiries(enquiries: Enquiry[], total: number) {
+    const list = document.getElementById('enquiries-list')!;
+    const empty = document.getElementById('enquiries-empty')!;
+    const totalNote = document.getElementById('enquiries-total-note')!;
+    if (enquiries.length === 0) {
+      empty.hidden = false;
+      totalNote.textContent = '';
+      return;
+    }
+    list.innerHTML = enquiries
+      .map((e, i) => {
+        const border = i === enquiries.length - 1 ? '' : 'border-bottom:1px solid var(--border);';
+        return `<div style="padding:14px 18px;${border}display:flex;gap:12px">
+          <span style="width:34px;height:34px;border-radius:50%;background:var(--bg-subtle);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0">${esc(initialsOf(e.name || '?'))}</span>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:5px">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+              <span style="font-size:14px;font-weight:800;color:var(--navy)">${esc(e.name || 'Someone')} <span style="font-weight:600;color:var(--muted);font-size:12.5px">· ${esc(e.contact)}</span></span>
+              <span style="font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap">${esc(shortDate(e.created_at))}</span>
+            </div>
+            <p style="margin:0;font-size:13.5px;line-height:1.5;color:var(--text)">${esc(e.message).replace(/\n/g, '<br>')}</p>
+          </div>
+        </div>`;
+      })
+      .join('');
+    totalNote.textContent =
+      total > enquiries.length ? `Showing the ${enquiries.length} most recent of ${total} enquiries.` : `${total} enquir${total === 1 ? 'y' : 'ies'} in total.`;
+  }
+
+  // ---- Reviews ----
+  // Owner oversight, not control: every review shows here the moment it's
+  // submitted (with its real status), and the owner can reply or flag it
+  // for admin — never hide or delete it themselves. Only
+  // functions/api/admin/reviews.ts changes what's public.
+  const STATUS_PILL: Record<string, string> = {
+    pending: 'background:var(--bg-subtle);color:var(--muted)',
+    approved: 'background:rgba(26,143,94,.12);color:#1a8f5e',
+    rejected: 'background:var(--bg-subtle);color:var(--danger)',
+  };
+  const STATUS_LABEL: Record<string, string> = { pending: 'Pending review', approved: 'Live', rejected: 'Rejected' };
+
+  function starsHtml(rating: number): string {
+    return Array.from({ length: 5 }, (_, i) => `<svg width="13" height="13" viewBox="0 0 24 24" fill="${i < rating ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.8"><path d="m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7Z"/></svg>`).join('');
+  }
+
+  function renderReviews(reviews: Review[], total: number) {
+    const list = document.getElementById('reviews-list')!;
+    const empty = document.getElementById('reviews-empty')!;
+    const totalNote = document.getElementById('reviews-total-note')!;
+    if (reviews.length === 0) {
+      empty.hidden = false;
+      totalNote.textContent = '';
+      return;
+    }
+    list.innerHTML = reviews
+      .map((r, i) => {
+        const border = i === reviews.length - 1 ? '' : 'border-bottom:1px solid var(--border);';
+        const replyBlock = r.owner_reply
+          ? `<div style="margin-top:8px;padding:9px 12px;border-left:3px solid var(--accent);background:var(--bg-subtle);border-radius:0 8px 8px 0"><div style="font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--accent-hover)">Your reply</div><p style="margin:4px 0 0;font-size:13px;line-height:1.5;color:var(--text)">${esc(r.owner_reply)}</p></div>`
+          : r.status === 'approved'
+            ? `<div style="margin-top:8px;display:flex;gap:8px;align-items:flex-start">
+                <textarea data-reply-box="${r.id}" rows="2" placeholder="Reply to this review…" style="flex:1;padding:9px 11px;border:2px solid var(--border);border-radius:9px;font-size:13px;outline:none;resize:vertical;font-family:inherit"></textarea>
+                <button type="button" data-reply-send="${r.id}" style="padding:9px 13px;border:0;border-radius:9px;background:var(--navy);color:#fff;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap">Reply</button>
+              </div>`
+            : '';
+        const flagBtn = r.flagged
+          ? `<span style="font-size:11.5px;font-weight:700;color:var(--muted)">Reported to admin</span>`
+          : `<button type="button" data-flag-id="${r.id}" style="border:0;background:none;padding:0;font-size:11.5px;font-weight:700;color:var(--muted);text-decoration:underline;cursor:pointer">Report to admin</button>`;
+        return `<div style="padding:14px 18px;${border}display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+            <span style="display:flex;align-items:center;gap:8px">
+              <span style="color:var(--accent);display:flex;gap:1px">${starsHtml(r.rating)}</span>
+              <span style="font-size:14px;font-weight:800;color:var(--navy)">${esc(r.author_name)}</span>
+              <span style="padding:2px 8px;border-radius:999px;font-size:10px;font-weight:800;text-transform:uppercase;${STATUS_PILL[r.status] ?? ''}">${STATUS_LABEL[r.status] ?? r.status}</span>
+            </span>
+            <span style="font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap">${esc(shortDate(r.created_at))}</span>
+          </div>
+          <p style="margin:0;font-size:13.5px;line-height:1.5;color:var(--text)">${esc(r.comment)}</p>
+          ${replyBlock}
+          <div>${flagBtn}</div>
+        </div>`;
+      })
+      .join('');
+    totalNote.textContent =
+      total > reviews.length ? `Showing the ${reviews.length} most recent of ${total} reviews.` : `${total} review${total === 1 ? '' : 's'} in total.`;
+
+    list.querySelectorAll<HTMLButtonElement>('button[data-flag-id]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const reason = window.prompt('Why are you reporting this review to admin? (optional)') ?? '';
+        btn.disabled = true;
+        const res = await fetch('/api/flag-review', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reviewId: Number(btn.dataset.flagId), reason }),
+        });
+        const result = await res.json();
+        if (result.ok) {
+          const target = reviews.find((r) => r.id === Number(btn.dataset.flagId));
+          if (target) target.flagged = 1;
+          renderReviews(reviews, total);
+        } else {
+          btn.disabled = false;
+          alert(result.error || 'Could not report this review.');
+        }
+      });
+    });
+    list.querySelectorAll<HTMLButtonElement>('button[data-reply-send]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = Number(btn.dataset.replySend);
+        const box = list.querySelector<HTMLTextAreaElement>(`textarea[data-reply-box="${id}"]`)!;
+        const reply = box.value.trim();
+        if (!reply) return;
+        btn.disabled = true;
+        const res = await fetch('/api/review-reply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reviewId: id, reply }),
+        });
+        const result = await res.json();
+        if (result.ok) {
+          const target = reviews.find((r) => r.id === id);
+          if (target) target.owner_reply = reply;
+          renderReviews(reviews, total);
+        } else {
+          btn.disabled = false;
+          alert(result.error || 'Could not send your reply.');
+        }
+      });
+    });
+  }
+
+  function renderPayments(payments: Payment[]) {
+    const list = document.getElementById('payments-list')!;
+    const empty = document.getElementById('payments-empty')!;
+    if (payments.length === 0) {
+      empty.hidden = false;
+      return;
+    }
+    const pill = 'padding:4px 10px;border-radius:999px;background:rgba(var(--accent-rgb),.13);color:var(--accent-hover);font-size:11px;font-weight:800;text-transform:uppercase';
+    list.innerHTML = payments
+      .map((p, i) => {
+        const what =
+          p.product_type && p.product_type !== 'tier'
+            ? `${SPONSOR_TYPE_LABELS[p.product_type] ?? 'Sponsorship'}${p.product_target ? ` — ${p.product_target}` : ''}`
+            : `${TIER_NAMES[p.tier] ?? 'Plan'} plan`;
+        const cents = p.amount_cents;
+        const amount = `R${(cents / 100).toFixed(cents % 100 ? 2 : 0)}`;
+        const paid = p.status === 'COMPLETE';
+        const border = i === payments.length - 1 ? '' : 'border-bottom:1px solid var(--border);';
+        return `<div style="padding:13px 18px;${border}display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span style="font-size:14px;font-weight:700;color:var(--navy);flex:1;min-width:0">${esc(what)} · ${esc(shortDate(p.paid_at))}</span>
+          <span style="${paid ? pill : 'padding:4px 10px;border-radius:999px;background:var(--bg-subtle);color:var(--muted);font-size:11px;font-weight:800;text-transform:uppercase'}">${paid ? 'Paid' : esc(p.status)}</span>
+          <span style="font-size:14px;font-weight:800;color:var(--navy)">${amount}</span>
+          ${p.invoice_number ? `<a href="/api/invoice?paymentId=${p.id}" target="_blank" rel="noopener" style="padding:7px 12px;border:2px solid var(--border);border-radius:8px;color:var(--navy);font-size:12px;font-weight:800;text-decoration:none;white-space:nowrap">Invoice</a>` : ''}
+        </div>`;
+      })
+      .join('');
+  }
+
+  // ---- Photos ----
+  function renderPhotos(business: Business, initial: Photo[]) {
+    const locked = document.getElementById('photos-locked')!;
+    const unlocked = document.getElementById('photos-unlocked')!;
+    const count = document.getElementById('photos-count')!;
+    const PHOTO_CAP = PHOTO_CAPS[business.subscription_tier] ?? 0;
+    const planName = business.subscription_tier >= FEATURED_TIER ? 'Featured' : 'Verified';
+    if (PHOTO_CAP === 0) {
+      count.textContent = '— a Verified and Featured plan perk';
+      locked.hidden = false;
+      return;
+    }
+    unlocked.hidden = false;
+
+    const grid = document.getElementById('photos-grid')!;
+    const emptyEl = document.getElementById('photos-empty')!;
+    const photoStatus = document.getElementById('photo-status')!;
+    let photos = initial.slice();
+
+    function setStatus(msg: string) {
+      photoStatus.textContent = msg;
+      photoStatus.hidden = !msg;
+    }
+    function renderGrid() {
+      count.textContent = `— ${Math.min(photos.length, PHOTO_CAP)} of ${PHOTO_CAP} used on ${planName}`;
+      emptyEl.hidden = photos.length > 0;
+      grid.hidden = photos.length === 0;
+      grid.innerHTML = photos
+        .map(
+          (p) =>
+            `<div class="owner-photo"><img src="/media/${esc(p.r2_key)}" alt="${esc(p.caption ?? '')}" /><button type="button" data-photo-id="${p.id}" aria-label="Remove photo">×</button></div>`
+        )
+        .join('');
+    }
+    renderGrid();
+
+    grid.addEventListener('click', async (e) => {
+      const btn = (e.target as HTMLElement).closest('button[data-photo-id]') as HTMLButtonElement | null;
+      if (!btn) return;
+      const photoId = Number(btn.dataset.photoId);
+      const res = await fetch(`/api/business-photos?photoId=${photoId}`, { method: 'DELETE' });
+      const result = await res.json();
+      if (result.ok) {
+        photos = photos.filter((p) => p.id !== photoId);
+        renderGrid();
+        setStatus('');
+      } else setStatus(result.error || 'Could not delete photo.');
+    });
+
+    const uploadForm = document.getElementById('photo-upload-form') as HTMLFormElement;
+    uploadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fileInput = uploadForm.elements.namedItem('photo') as HTMLInputElement;
+      if (!fileInput.files?.[0]) return;
+      setStatus('Uploading…');
+      const fd = new FormData();
+      fd.append('businessId', String(businessId));
+      fd.append('photo', fileInput.files[0]);
+      const res = await fetch('/api/business-photos', { method: 'POST', body: fd });
+      const result = await res.json();
+      if (result.ok) {
+        setStatus('');
+        uploadForm.reset();
+        const refreshed = await fetch(`/api/business-photos?businessId=${businessId}`).then((r) => r.json());
+        if (refreshed.ok) {
+          photos = refreshed.photos;
+          renderGrid();
+        }
+      } else {
+        setStatus(result.error || 'Could not upload photo.');
+      }
+    });
+  }
 
   async function init() {
     if (!businessId) {
@@ -56,19 +1037,55 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       loading.textContent = data.error || 'Could not load this business.';
       return;
     }
-    loading.hidden = true;
-    form.hidden = false;
-    document.getElementById('business-name')!.textContent = data.business.name;
-    (form.elements.namedItem('address') as HTMLInputElement).value = data.business.address ?? '';
-    (form.elements.namedItem('phone') as HTMLInputElement).value = data.business.phone ?? '';
-    (form.elements.namedItem('website') as HTMLInputElement).value = data.business.website ?? '';
-    (form.elements.namedItem('description') as HTMLTextAreaElement).value = data.business.description ?? '';
-    (form.elements.namedItem('hours') as HTMLTextAreaElement).value = data.business.hours ?? '';
+    const b: Business = data.business;
+    // loading carries its own inline style="display:flex", which beats the
+    // UA [hidden]{display:none} rule on specificity — .hidden alone is a
+    // silent no-op (same bug fixed in sponsor.astro's sp-target-wrap).
+    loading.style.display = 'none';
+    dashboard.hidden = false;
+
+    (document.getElementById('field-name') as HTMLInputElement).value = b.name;
+    (form.elements.namedItem('address') as HTMLInputElement).value = b.address ?? '';
+    (form.elements.namedItem('phone') as HTMLInputElement).value = b.phone ?? '';
+    (form.elements.namedItem('website') as HTMLInputElement).value = b.website ?? '';
+    (form.elements.namedItem('email') as HTMLInputElement).value = b.email ?? '';
+    (form.elements.namedItem('description') as HTMLTextAreaElement).value = b.description ?? '';
+    (form.elements.namedItem('hours') as HTMLTextAreaElement).value = b.hours ?? '';
+
+    const socialOn = (b.subscription_status === 'active' || b.subscription_status === 'cancelled') && b.subscription_tier >= FEATURED_TIER;
+    // The four fields stay visible on every plan; below Featured they are locked
+    // (disabled inputs are skipped by FormData, so nothing social is submitted and
+    // update-business.ts ignores the links for non-Featured listings anyway).
+    document.getElementById('social-locked')!.hidden = socialOn;
+    document.getElementById('social-note')!.style.display = socialOn ? 'none' : 'inline-flex';
+    for (const k of ['instagram', 'facebook', 'linkedin', 'youtube'] as const) {
+      const input = form.elements.namedItem('social_' + k) as HTMLInputElement;
+      input.value = b[('social_' + k) as 'social_instagram'] ?? '';
+      input.disabled = !socialOn;
+      input.style.background = socialOn ? '#fff' : 'var(--bg-subtle)';
+      input.style.color = socialOn ? 'var(--text)' : 'var(--muted)';
+      input.style.cursor = socialOn ? '' : 'not-allowed';
+    }
+
+    renderHeader(b);
+    renderVisibility(b);
+    renderPlan(b);
+    renderSponsorships(data.sponsorships ?? []);
+    renderPayments(data.payments ?? []);
+    renderPhotos(b, data.photos ?? []);
+    const statsLocked = data.statsLocked === true || data.stats === null;
+    renderStats(statsLocked ? null : (data.stats ?? { has_any: false, views: 0, phone_clicks: 0, website_clicks: 0, search_appearances: 0 }), data.enquiriesRecent ?? 0, data.enquiriesTotal ?? 0);
+    renderSearchTerms(data.searchTerms ?? [], statsLocked);
+    renderEnquiries(data.enquiries ?? [], data.enquiriesTotal ?? 0);
+    renderReviews(data.reviews ?? [], data.reviewsTotal ?? 0);
+
+    const fromHash = location.hash.replace('#', '');
+    showTab(params.get('upgraded') || params.get('upgrade_cancelled') ? 'billing' : fromHash || 'overview');
   }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    status.textContent = 'Saving…';
+    formStatus.textContent = 'Saving…';
     const data = Object.fromEntries(new FormData(form).entries());
     const res = await fetch('/api/update-business', {
       method: 'POST',
@@ -76,42 +1093,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       body: JSON.stringify({ ...data, businessId: Number(businessId) }),
     });
     const result = await res.json();
-    status.textContent = result.ok ? 'Saved.' : result.error || 'Something went wrong.';
+    formStatus.textContent = result.ok ? 'Saved.' : result.error || 'Something went wrong.';
   });
 
   init();
 </script>
-
-<style>
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-  label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-  input, textarea {
-    font: inherit;
-    padding: 0.6rem 0.75rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text);
-  }
-  button {
-    align-self: flex-start;
-    border: none;
-    cursor: pointer;
-  }
-  #form-status {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin: 0;
-  }
-</style>

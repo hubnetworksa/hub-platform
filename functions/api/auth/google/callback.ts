@@ -1,5 +1,5 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
-import { createSession, sessionCookie, isAdminEmail } from '../../../_lib/auth';
+import { rotateSession, sessionCookie, isAdminEmail } from '../../../_lib/auth';
 import { sendEmail } from '../../../_lib/send-email';
 import { getSite } from '../../../_lib/site';
 
@@ -32,7 +32,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (!code || !state || !expectedCsrf || csrf !== expectedCsrf) {
     return new Response('Sign-in failed — the request expired or was tampered with. Please try again.', { status: 400 });
   }
-  const redirectTo = next && next.startsWith('/') ? next : '/my-businesses/';
+  const redirectTo = next && /^\/(?![\/\\])/.test(next) ? next : '/my-businesses/';
 
   const redirectUri = `${url.origin}/api/auth/google/callback`;
   const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
@@ -78,7 +78,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     await db.prepare('UPDATE users SET google_sub = ? WHERE id = ? AND google_sub IS NULL').bind(claims.sub, user.id).run();
   }
 
-  const token = await createSession(db, user.id);
+  const token = await rotateSession(db, context.request, user.id);
   // The admin account always lands on the admin dashboard, regardless of
   // whatever `next` the login page carried through.
   const finalRedirect = isAdminEmail(email) ? '/admin/' : redirectTo;

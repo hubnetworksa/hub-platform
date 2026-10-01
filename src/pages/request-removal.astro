@@ -17,6 +17,7 @@ import site from '../site';
     <p id="business-name" style="color: var(--text-muted); font-weight: 600;">Loading listing…</p>
 
     <form id="removal-form">
+      <input type="text" name="company_url" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0;height:0;width:0" />
       <label>
         Why should this listing be removed? *
         <textarea name="reason" required maxlength="1000" rows="4" placeholder="e.g. this is my business and I'd like it removed, this business has closed, this information is about me and I object to it being published..."></textarea>
@@ -55,24 +56,45 @@ import site from '../site';
   const form = document.getElementById('removal-form');
   const status = document.getElementById('form-status');
 
-  // No server round-trip — this opens the visitor's own email app with a
-  // pre-filled message to our contact address. Their mail client does the
-  // actual sending; Cloudflare Email Routing on our side just forwards it
-  // into our inbox from there.
-  form.addEventListener('submit', (e) => {
+  // Sent by the website itself (saved for the admin Reports tab and emailed by
+  // the server) — the visitor's own email app is never opened.
+  const loadedAt = Date.now();
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!slug || !name) {
       status.textContent = 'No listing specified.';
       return;
     }
     const data = Object.fromEntries(new FormData(form).entries());
-    const businessUrl = `https://${domain}/business/${slug}/`;
-    const lines = [`Business: ${name}`, `Link: ${businessUrl}`, '', 'Reason:', data.reason || ''];
-    if (data.relationship) lines.push('', `Requester's relationship to the business: ${data.relationship}`);
-    lines.push('', `Requester's email: ${data.requesterEmail || ''}`);
-    const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent(`Data removal request: ${name}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
-    status.innerHTML = `Opening your email app to send this — if it didn't open, <a href="${mailto}">click here</a>.`;
-    window.location.href = mailto;
+    const btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    status.textContent = 'Sending…';
+    try {
+      const res = await fetch('/api/request-removal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          businessSlug: slug,
+          businessName: name,
+          reason: data.reason,
+          relationship: data.relationship || undefined,
+          requesterEmail: data.requesterEmail,
+          company_url: data.company_url || '',
+          loadedAt,
+        }),
+      });
+      const result = await res.json();
+      if (result.ok) {
+        form.reset();
+        status.textContent = 'Thank you — your removal request has been sent. We review every request by hand and will reply by email.';
+      } else {
+        status.textContent = result.error || 'Something went wrong — please try again.';
+        btn.disabled = false;
+      }
+    } catch {
+      status.textContent = 'Something went wrong — please try again.';
+      btn.disabled = false;
+    }
   });
 </script>
 

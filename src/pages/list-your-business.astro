@@ -1,181 +1,220 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { categories, suburbs } from '../lib/data';
+import FlowProgress from '../components/FlowProgress.astro';
+import BillingToggle from '../components/BillingToggle.astro';
+import { categories, suburbs, businesses, yearlyToggleNote } from '../lib/data';
+import { getFlowPlans } from '../lib/list-flow-plans';
 import site from '../site';
 
 const sortedCategories = [...categories].sort((a, b) => a.name.localeCompare(b.name));
 const sortedSuburbs = [...suburbs].sort((a, b) => a.name.localeCompare(b.name));
+const plans = getFlowPlans();
+const billingNote = yearlyToggleNote(['price_verified_cents', 'price_featured_cents']);
 ---
 
 <BaseLayout
   title="List your business"
   description={`List your business on ${site.siteName} for free.`}
 >
-  <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 560px;">
-    <h1>List your business</h1>
-    <p style="color: var(--text-muted);">Free — we check each submission before it goes live, usually within a day.</p>
-    <p id="auth-check">Checking your account…</p>
+  <main id="flow-root" data-plans={JSON.stringify(plans)} style="max-width:1200px;margin:0 auto;padding:clamp(24px,4vw,44px) 20px 60px">
+    <div class="flow-grid" style="display:grid;gap:26px">
+      <div style="min-width:0">
+        <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Step 1 of 3</span>
+        <h1 style="margin:12px 0 10px;font-size:clamp(28px,4.4vw,44px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);max-width:20ch">List your business on {site.siteName}</h1>
+        <p style="margin:0 0 22px;font-size:16px;line-height:1.6;color:var(--text);max-width:52ch">Free to be listed. We check every submission by hand — usually live within 48 hours.</p>
 
-    <form id="listing-form" hidden>
-      <label>
-        Business name *
-        <input type="text" name="name" required maxlength="120" />
-      </label>
-      <label>
-        Category *
-        <select name="category" required>
-          <option value="" disabled selected>Choose a category</option>
-          {sortedCategories.map((c) => <option value={c.slug}>{c.name}</option>)}
-        </select>
-      </label>
-      <label>
-        Suburb *
-        <select name="suburb" required>
-          <option value="" disabled selected>Choose a suburb</option>
-          {sortedSuburbs.map((s) => <option value={s.slug}>{s.name}</option>)}
-        </select>
-      </label>
-      <label>
-        Description <span>(optional — a sentence or two about what you do)</span>
-        <textarea name="description" maxlength="600" rows="3"></textarea>
-      </label>
-      <label>
-        Address <span>(optional)</span>
-        <input type="text" name="address" maxlength="200" />
-      </label>
-      <label>
-        Phone <span>(optional)</span>
-        <input type="tel" name="phone" maxlength="30" />
-      </label>
-      <label>
-        Email <span>(optional, not shown publicly)</span>
-        <input type="email" name="email" maxlength="120" />
-      </label>
-      <label>
-        Website <span>(optional, stored but not shown publicly)</span>
-        <input type="url" name="website" maxlength="200" />
-      </label>
+        <FlowProgress step={1} mb={24} />
 
-      {/* honeypot — hidden from real users via CSS, bots tend to fill every field */}
-      <label class="hp-field" aria-hidden="true">
-        Leave this empty
-        <input type="text" name="company_url" tabindex="-1" autocomplete="off" />
-      </label>
+        <p id="auth-check" style="color:var(--muted);">Checking your account…</p>
 
-      <button type="submit" class="btn btn-primary">List my business</button>
-      <p id="form-status" role="status"></p>
-    </form>
-  </section>
+        <form id="step1-form" hidden style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy);letter-spacing:.01em">
+            Business name
+            <input type="text" name="name" class="fld" required minlength="2" maxlength="120" placeholder="e.g. De Souza Hardware &amp; Brick Depot" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
+          </label>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+              Category
+              <select name="category" class="fld" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;color:var(--text);outline:none;background:#fff">
+                <option value="" disabled selected>Choose a category</option>
+                {sortedCategories.map((c) => <option value={c.slug}>{c.name}</option>)}
+              </select>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+              Suburb
+              <select name="suburb" class="fld" required style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;color:var(--text);outline:none;background:#fff">
+                <option value="" disabled selected>Choose a suburb</option>
+                {sortedSuburbs.map((s) => <option value={s.slug}>{s.name}</option>)}
+              </select>
+            </label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+            What do you do?
+            <textarea name="description" class="fld" maxlength="600" rows="4" placeholder="A sentence or two customers would search for." style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;font-family:inherit;color:var(--text);outline:none;background:#fff;resize:vertical"></textarea>
+          </label>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px">
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+              Phone
+              <input type="tel" name="phone" class="fld" maxlength="30" placeholder="012 527 0542" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
+            </label>
+            <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
+              Email <span style="font-weight:600;color:var(--muted);font-size:12px">not shown publicly</span>
+              <input type="email" name="email" class="fld" maxlength="120" placeholder="you@business.co.za" style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;color:var(--text);outline:none;background:#fff" />
+            </label>
+          </div>
+
+          <div style="border:2px solid var(--navy);border-radius:14px;overflow:hidden;margin-top:4px">
+            <div style="background:var(--navy);padding:12px 16px;font-size:13px;font-weight:800;color:#fff;letter-spacing:.01em">Choose how you appear</div>
+            <div style="padding:12px 16px;border-bottom:2px solid var(--border);background:#fff"><BillingToggle note={billingNote} /></div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:2px;background:var(--border)">
+              {plans.map((p) => (
+                <button type="button" class="plan-btn" data-tier={p.tier} aria-pressed="false" style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;text-align:left;padding:16px;border:0;cursor:pointer;background:#fff;color:var(--navy);box-shadow:none;font:inherit">
+                  <span style="font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">{p.name}</span>
+                  <span style="font-size:22px;font-weight:800;letter-spacing:-.02em"><span data-period="monthly">{p.price}</span><span data-period="yearly" hidden>{p.yearlyPrice}</span></span>
+                  {p.yearlyNote && <span data-period="yearly" hidden style="font-size:12px;font-weight:800;color:var(--accent-hover)">{p.yearlyNote}</span>}
+                  <span style="font-size:12.5px;font-weight:600;line-height:1.4">{p.note}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* honeypot — hidden from real users via CSS, bots tend to fill every field */}
+          <label style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">
+            Leave this empty
+            <input type="text" name="company_url" tabindex="-1" autocomplete="off" />
+          </label>
+
+          <button type="submit" class="btn-primary" style="align-self:flex-start;padding:15px 24px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:15px;font-weight:800;cursor:pointer">Continue to contact details</button>
+        </form>
+      </div>
+
+      <aside style="display:flex;flex-direction:column;gap:14px">
+        <div style="border:2px solid var(--border);border-radius:14px;padding:20px;background:var(--bg-subtle)">
+          <h2 style="margin:0 0 12px;font-size:16px;letter-spacing:-.015em;color:var(--navy)">Why owners list here</h2>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div>
+              <div style="font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-.02em">{businesses.length.toLocaleString()}</div>
+              <div style="font-size:12.5px;font-weight:700;color:var(--muted)">businesses already listed in {site.cityLabel}</div>
+            </div>
+            <div>
+              <div style="font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-.02em">48 hrs</div>
+              <div style="font-size:12.5px;font-weight:700;color:var(--muted)">average time from submission to live</div>
+            </div>
+          </div>
+        </div>
+        <div style="border:2px solid var(--border);border-radius:14px;padding:20px;background:#fff">
+          <h2 style="margin:0 0 10px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">What happens next</h2>
+          <ol style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;font-size:13.5px;line-height:1.5;color:var(--text)">
+            <li>We check the details against public records.</li>
+            <li>You get an email confirming it's live.</li>
+            <li>You can edit or upgrade any time from My Businesses.</li>
+          </ol>
+        </div>
+      </aside>
+    </div>
+  </main>
 </BaseLayout>
 
-<script define:vars={{ contactEmail: site.contactEmail, siteName: site.siteName }}>
-  // NOTE: define:vars forces this script to stay inline and unprocessed by
-  // Astro/Vite (no TypeScript stripping) — it must be plain browser JS, or
-  // it throws a SyntaxError on load and never runs at all.
-  const loadedAt = Date.now();
-  const form = document.getElementById('listing-form');
-  const status = document.getElementById('form-status');
-  const authCheck = document.getElementById('auth-check');
+<style>
+  [hidden] {
+    display: none !important;
+  }
+  .flow-grid {
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 950px) {
+    .flow-grid {
+      grid-template-columns: minmax(0, 1fr) 320px;
+    }
+  }
+  .fld:focus {
+    border-color: var(--accent) !important;
+  }
+  .btn-primary:hover {
+    background: var(--accent-hover) !important;
+  }
+  /* Mockup's selected-plan look: subtle fill, accent ring, accent-hover text. */
+  .plan-btn.is-active {
+    background: var(--bg-subtle) !important;
+    color: var(--accent-hover) !important;
+    box-shadow: inset 0 0 0 2px var(--accent) !important;
+  }
+</style>
+
+<script>
+  import { loadDraft, saveDraft, readPlans } from '../lib/list-flow-client';
+  import { currentBilling, onBillingChange, setBilling } from '../lib/billing-toggle';
+
+  const root = document.getElementById('flow-root') as HTMLElement;
+  const form = document.getElementById('step1-form') as HTMLFormElement;
+  const authCheck = document.getElementById('auth-check') as HTMLElement;
+  const planBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.plan-btn'));
+  const plans = readPlans(root);
+
+  // An in-flight PayFast return from before the flow was split into pages.
+  const q = new URLSearchParams(window.location.search);
+  if (q.get('submitted')) {
+    window.location.replace(`/list-your-business/checkout/?${q.get('payment_cancelled') ? 'payment_cancelled=1' : 'paid=1'}`);
+  }
+
+  // Keep the load time for the server's minimum-time-on-form check.
+  let draft = saveDraft({ loadedAt: loadDraft().loadedAt });
+  let tier = plans.some((p) => p.tier === draft.tier) ? draft.tier : 0;
+  // Monthly unless this draft already chose yearly, or the owner arrived
+  // from the pricing page with its switch on Yearly (?billing=yearly).
+  let billing: 'monthly' | 'yearly' = draft.billing === 'yearly' || q.get('billing') === 'yearly' ? 'yearly' : 'monthly';
+  if (billing === 'yearly') setBilling('yearly');
+  onBillingChange((period) => (billing = period));
+
+  const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+  for (const name of ['name', 'category', 'suburb', 'description', 'phone', 'email']) {
+    const v = (draft as unknown as Record<string, string>)[name] ?? '';
+    if (v) field(name).value = v;
+  }
+
+  function paintPlans() {
+    planBtns.forEach((b) => {
+      const on = Number(b.dataset.tier) === tier;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+  planBtns.forEach((b) =>
+    b.addEventListener('click', () => {
+      tier = Number(b.dataset.tier);
+      paintPlans();
+    })
+  );
+  paintPlans();
 
   (async () => {
-    const res = await fetch('/api/me');
-    if (res.status === 401) {
-      window.location.href = '/login/?next=/list-your-business/';
-      return;
+    try {
+      const res = await fetch('/api/me');
+      if (res.status === 401) {
+        window.location.href = '/login/?next=/list-your-business/';
+        return;
+      }
+    } catch {
+      /* offline / no functions in dev: submission itself doesn't require a session */
     }
     authCheck.hidden = true;
     form.hidden = false;
   })();
 
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
-    status.textContent = 'Submitting…';
-    const data = Object.fromEntries(new FormData(form).entries());
-    try {
-      const res = await fetch('/api/submit-business', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, loadedAt }),
-      });
-      const result = await res.json();
-      if (result.ok) {
-        // The listing is already safely saved server-side (pending review).
-        // Notifying us is a mailto: link, not server-side SMTP — this opens
-        // the visitor's own email app with the review link pre-filled;
-        // their mail client does the actual sending, and Cloudflare Email
-        // Routing on our side forwards it into our inbox from there.
-        const lines = [
-          `A new business listing was submitted on ${siteName}.`,
-          '',
-          `Name: ${data.name || ''}`,
-          `Category: ${data.category || ''}`,
-          `Suburb: ${data.suburb || ''}`,
-        ];
-        if (data.address) lines.push(`Address: ${data.address}`);
-        if (data.phone) lines.push(`Phone: ${data.phone}`);
-        if (data.email) lines.push(`Email: ${data.email}`);
-        if (data.website) lines.push(`Website: ${data.website}`);
-        if (data.description) lines.push(`Description: ${data.description}`);
-        lines.push('', `Review & approve: ${result.reviewUrl}`);
-        const mailto = `mailto:${contactEmail}?subject=${encodeURIComponent(`New business listing to review: ${data.name || ''}`)}&body=${encodeURIComponent(lines.join('\n'))}`;
-        status.innerHTML = `Thanks! We've opened your email app with a message to us so we can review it quickly — please hit send. If it didn't open, <a href="${mailto}">click here</a>.`;
-        form.reset();
-        window.location.href = mailto;
-      } else {
-        status.textContent = result.error || 'Something went wrong — please try again.';
-      }
-    } catch {
-      status.textContent = 'Something went wrong — please try again.';
-    }
+    const v = (name: string) => field(name).value.trim();
+    draft = saveDraft({
+      name: v('name'),
+      category: field('category').value,
+      suburb: field('suburb').value,
+      description: v('description'),
+      phone: v('phone'),
+      email: v('email'),
+      company_url: field('company_url').value,
+      tier,
+      billing: tier > 0 ? currentBilling() : 'monthly',
+    });
+    window.location.href = '/list-your-business/contact/';
   });
 </script>
-
-<style>
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-  label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-  label span {
-    font-weight: 400;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-  }
-  input, select, textarea {
-    font: inherit;
-    padding: 0.6rem 0.75rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background: var(--bg-card);
-    color: var(--text);
-  }
-  input:focus, select:focus, textarea:focus {
-    outline: 2px solid var(--accent);
-    outline-offset: 1px;
-  }
-  .hp-field {
-    position: absolute;
-    left: -9999px;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-  }
-  button {
-    align-self: flex-start;
-    border: none;
-    cursor: pointer;
-  }
-  #form-status {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    margin: 0;
-  }
-</style>

@@ -112,6 +112,35 @@ and `status/<slug>/routine-state.json` each run — make sure whichever agent
 you configure is told which site it owns and only touches that site's
 paths.
 
+### 4b. The events routine — a second, separate weekly agent per site
+
+Deliberately **not the same agent/schedule** as the hourly business
+routine above — a different cadence (weekly, not hourly) and a different
+runbook (`ROUTINE.events.<slug>.md`), so it needs its own scheduled cloud
+agent pointed at this repo too, one per site, same "repo read/write only,
+no Cloudflare credentials" setup as above. It researches real upcoming
+events (markets, gigs, sport, theatre) and proposes them the same way —
+SQL under `db/routine-updates/<site>/`, the same GitHub Action applies it
+— reading `status/<slug>/db-snapshot.json`'s `events` array for what's
+already listed (no separate state file needed, unlike the business
+routine's `routine-state.json`, since this job re-searches broadly every
+run rather than working through a rotation).
+
+### 4c. The news routine — a third scheduled agent per site
+
+Runs **daily** from its own runbook (`ROUTINE.news.<slug>.md`) — again its own
+scheduled cloud agent per site, repo read/write only, no Cloudflare
+credentials. It finds the day's useful local news (traffic, utilities, business,
+sport, tourism), writes each story **in its own words** (never copied text),
+verifies every fact against at least two independent sources, runs
+`node scripts/check-news.mjs <file> --city <slug> --online` (which fails on
+copied text, invented numbers, stale stories or fewer than two sources), then
+proposes the articles as SQL under `db/routine-updates/<slug>/`. Reads
+`status/<slug>/db-snapshot.json`'s `news` array to avoid repeats and logs to
+`status/<slug>/news-agent-log.jsonl`. Articles appear on `/news/`, in the
+homepage "today" panel and at `/news/<slug>/` after the next deploy; the admin
+"News" tab can remove one.
+
 ## 5. Email
 
 No SMTP, no Pages secret, no credentials at all — every site uses the same
@@ -171,6 +200,43 @@ Swap `polokwane` for `pretoria` or `capetown` throughout. `npm run
 dev:<site>` and `build:<site>` are shortcuts for `SITE=<site> npm run
 dev`/`build`; use the `SITE=<site> npm run <script>` form directly for
 anything else (`db:migrate:local`, `db:migrate:remote`, etc.).
+
+## 9. Launch checks
+
+Four commands cover a release, from the repo to the live site. All of them are
+read-only against production except `launch-test.mjs`, which creates clearly
+named `LAUNCH TEST` rows and deletes them again.
+
+```
+# 1. Typecheck, build all three cities, check links, open every page type in a
+#    headless browser at 1280px and 390px (needs `npx playwright install chromium`
+#    once). Builds go to .build-<city> and are removed afterwards.
+bash scripts/launch-check.sh                 # CITIES="polokwane" to do one city
+
+# 2. Row counts of every table, before and after anything risky (read-only).
+node scripts/db-rowcounts.mjs --site polokwane --json before.json
+node scripts/db-rowcounts.mjs --site polokwane --json after.json
+node scripts/compare-rowcounts.mjs before.json after.json --allow-decrease sessions,rate_limits
+
+# 3. Exercise every /api route on a LIVE deployment with a disposable account
+#    (register, forms, owner dashboard, PayFast redirect, admin approve/hide/
+#    delete, cleanup) and print a coverage table of functions/api/**.
+#    On the Ethan preview the demo admin works; on production pass the session
+#    cookie of a signed-in admin and --allow-production.
+node scripts/launch-test.mjs --base https://ethan-kp7p.polokwanehub-49u.pages.dev   --admin-email admin@admin.com --admin-password admin --json launch.json
+node scripts/launch-test.mjs --base https://polokwanehub.com --allow-production   --admin-session <session cookie> --json launch.json
+
+# 4. Browser smoke test on its own, against any URL (signed-in passes optional).
+node scripts/smoke-test.mjs https://ethan-kp7p.polokwanehub-49u.pages.dev   --email owner@example.com --password ... --admin-email admin@admin.com --admin-password admin
+```
+
+Things to know before running `launch-test.mjs`: it sends real emails to the
+site's contact address (new-account, contact, report, removal, claim notices);
+it counts against the per-IP form rate limits (5 an hour for sign-up, business
+and event submissions, claims), so two runs inside an hour can hit 429s; the
+test account it creates cannot be deleted through the API (the SQL to remove it
+is printed at the end); and admin actions on a preview deploy dispatch the
+preview's own rebuild workflow when `GITHUB_DISPATCH_TOKEN` is set there.
 
 ## Migrating a site to the shared Cloudflare account
 

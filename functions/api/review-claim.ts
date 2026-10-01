@@ -5,6 +5,10 @@ interface Env {
   DB: D1Database;
 }
 
+// The review link is valid for 14 days — same window as the owner-side
+// confirmation link in functions/api/verify-claim.ts.
+const MAX_AGE_DAYS = 14;
+
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const form = await context.request.formData();
   const token = String(form.get('token') ?? '');
@@ -12,12 +16,18 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const db = context.env.DB;
 
   const claim = await db
-    .prepare("SELECT bc.id, bc.business_id, bc.user_id, bc.status, b.name AS business_name, u.email AS claimant_email FROM business_claims bc JOIN businesses b ON b.id = bc.business_id JOIN users u ON u.id = bc.user_id WHERE bc.review_token = ?")
+    .prepare("SELECT bc.id, bc.business_id, bc.user_id, bc.status, bc.created_at, b.name AS business_name, b.owner_user_id, u.email AS claimant_email FROM business_claims bc JOIN businesses b ON b.id = bc.business_id JOIN users u ON u.id = bc.user_id WHERE bc.review_token = ?")
     .bind(token)
-    .first<{ id: number; business_id: number; user_id: number; status: string; business_name: string; claimant_email: string }>();
+    .first<{ id: number; business_id: number; user_id: number; status: string; created_at: string; business_name: string; owner_user_id: number | null; claimant_email: string }>();
 
   if (!claim || claim.status !== 'pending') {
     return html(`<h1>Already handled</h1><p>This claim was already actioned — no action taken.</p>`);
+  }
+
+  const createdMs = Date.parse(claim.created_at.includes('T') ? claim.created_at : claim.created_at.replace(' ', 'T') + 'Z');
+  const ageDays = Number.isFinite(createdMs) ? (Date.now() - createdMs) / 86_400_000 : 0;
+  if (ageDays > MAX_AGE_DAYS) {
+    return html(`<h1>This link has expired</h1><p>Claims can only be reviewed within ${MAX_AGE_DAYS} days of being submitted, and this one is older than that — nothing has changed. Ask ${escapeHtml(claim.claimant_email)} to submit the claim again.</p>`);
   }
 
   if (action !== 'approve') {
@@ -26,12 +36,25 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return html(`<h1>Claim rejected</h1><p>The business remains unclaimed.</p>`);
   }
 
+  // Only ever hands over an UNOWNED business — an unconditional update let a
+  // second claim silently take a listing away from whoever already owns it.
+  const linked = await db
+    .prepare('UPDATE businesses SET owner_user_id = ? WHERE id = ? AND owner_user_id IS NULL')
+    .bind(claim.user_id, claim.business_id)
+    .run();
+  if (!linked.meta.changes) {
+    return html(`<h1>Already claimed</h1><p>"${escapeHtml(claim.business_name)}" is already linked to another account, so this claim was not applied. Nothing has changed.</p>`);
+  }
+
   await db.prepare("UPDATE business_claims SET status = 'approved', reviewed_at = datetime('now') WHERE id = ?").bind(claim.id).run();
-  await db.prepare('UPDATE businesses SET owner_user_id = ? WHERE id = ?').bind(claim.user_id, claim.business_id).run();
   await logActivity(db, 'claim_approved', claim.business_name, `Claim by ${claim.claimant_email} approved.`);
 
   return html(`<h1>Claim approved</h1><p>The business is now linked to that account.</p>`);
 };
+
+function escapeHtml(s: string): string {
+  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
+}
 
 function html(body: string): Response {
   return new Response(

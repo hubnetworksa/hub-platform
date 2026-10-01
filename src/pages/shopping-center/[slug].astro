@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BusinessCard from '../../components/BusinessCard.astro';
-import PageBanner from '../../components/PageBanner.astro';
+import SponsorBanner from '../../components/SponsorBanner.astro';
+import StatTile from '../../components/StatTile.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import { shoppingCenters, suburbs, businessesInShoppingCenter, categoriesFor } from '../../lib/data';
+import { shoppingCenters, suburbs, businessesInShoppingCenter, categoriesFor, FEATURED_TIER, sponsorFor, withoutSponsors, priceRand, isPaidListing } from '../../lib/data';
 import { collectionPageJsonLd } from '../../lib/seo';
 import { synonymsFor } from '../../lib/categorySynonyms';
 import site from '../../site';
@@ -20,10 +21,6 @@ const suburb = center.suburb_id != null ? suburbs.find((s) => s.id === center.su
 
 const centerUrl = `https://${site.domain}/shopping-center/${center.slug}/`;
 
-// Union of every tenant's category synonyms (e.g. a mall with a pharmacy
-// and a hair salon picks up "chemist"/"hairdresser" too) — same reasoning
-// as business/[slug].astro's own keywords field: costs nothing, widens
-// what this page can match beyond its own literal name/description.
 const keywords = [...new Set(businesses.flatMap((b) => categoriesFor(b).flatMap((c) => synonymsFor(c.slug))))];
 
 const centerJsonLd = {
@@ -44,51 +41,86 @@ const tenantsJsonLd = collectionPageJsonLd({
   url: centerUrl,
   items: businesses.map((b) => ({ name: b.name, url: `https://${site.domain}/business/${b.slug}/` })),
 });
+
+const centreSponsor = sponsorFor('centre_sponsor', center.slug);
+const featuredStores = businesses.filter((b) => b.subscription_tier >= FEATURED_TIER);
+// Sponsor card wins: the centre sponsor's banner is at the top of the page,
+// so it is never also the pinned store (it still sits in the ordinary
+// paid-first list below, once, like any tenant).
+const pinned = withoutSponsors(featuredStores, centreSponsor)[0];
+// Paid stores first (Featured, then Verified), then alphabetical.
+const rest = businesses.filter((b) => b !== pinned).sort((a, b) => (b.subscription_tier ?? 0) - (a.subscription_tier ?? 0) || a.name.localeCompare(b.name));
+const heroSrc = site.sectionBannerImage;
+import { sponsorHref } from '../../lib/sponsor-link';
+// No Google ads anywhere a paid listing or sponsor is shown (see
+// BaseLayout's noAds): this page shows one if this is true.
+const showsPaid = businesses.some(isPaidListing) || !!centreSponsor;
 ---
 
-<BaseLayout
+<BaseLayout noAds={showsPaid}
   title={center.name}
   description={center.description ?? `${businesses.length} businesses at ${center.name}, ${site.cityLabel}.`}
 >
-  <script type="application/ld+json" set:html={JSON.stringify(centerJsonLd)} />
-  <script type="application/ld+json" set:html={JSON.stringify(tenantsJsonLd)} />
+  <script type="application/ld+json" set:html={JSON.stringify(centerJsonLd).replace(/</g, '\\u003c')} />
+  <script type="application/ld+json" set:html={JSON.stringify(tenantsJsonLd).replace(/</g, '\\u003c')} />
 
-  <PageBanner title={center.name} description={`${businesses.length} businesses listed here.`}>
-    <Breadcrumbs
-      slot="breadcrumbs"
-      items={[
-        { label: 'Shopping Centres', href: '/shopping-center/' },
-        ...(suburb ? [{ label: suburb.name, href: `/suburb/${suburb.slug}/` }] : []),
-        { label: center.name },
-      ]}
-    />
-  </PageBanner>
-
-  <section class="container" style="padding-top: 2rem; padding-bottom: 3rem;">
-    {center.description && <p class="center-desc">{center.description}</p>}
-    {center.address && <p style="color: var(--text-muted); margin-top: 0;">{center.address}</p>}
-    <div class="business-grid">
-      {businesses.map((business) => (
-        <BusinessCard
-          business={business}
-          listContext={{ kind: 'shopping-center', slug: center.slug, name: center.name }}
+  <main>
+    <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">
+      <img src={heroSrc} alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 55%" />
+      <div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(var(--navy-rgb),.93) 0%,rgba(var(--navy-rgb),.72) 52%,rgba(var(--navy-rgb),.2) 100%)"></div>
+      <div style="position:relative;max-width:1200px;margin:0 auto;padding:26px 20px 32px">
+        <Breadcrumbs
+          variant="plain"
+          onDark
+          items={[{ label: 'Home', href: '/' }, { label: 'Shopping centres', href: '/shopping-center/' }, { label: center.name }]}
         />
-      ))}
-    </div>
-  </section>
-</BaseLayout>
+        <h1 style="margin:14px 0 10px;color:#fff;font-size:clamp(28px,4.6vw,46px);letter-spacing:-.03em;line-height:1.04;max-width:22ch">{center.name}</h1>
+        <p style="margin:0;color:rgba(255,255,255,.86);font-size:15.5px;max-width:56ch;line-height:1.55">{center.address ?? center.description}</p>
+      </div>
+    </section>
 
-<style>
-  .center-desc {
-    max-width: 68ch;
-    margin: 0 0 0.4rem;
-    line-height: 1.65;
-    color: var(--text);
-  }
-  .business-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 0.75rem;
-    margin-top: 1rem;
-  }
-</style>
+    <section style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
+      <SponsorBanner productType="centre_sponsor" target={center.slug} context={center.name} />
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+        <div style="background:#fff;padding:16px"><StatTile compact variant="light" value={String(businesses.length)} label="Stores listed" /></div>
+        <div style="background:#fff;padding:16px"><StatTile compact variant="light" value={center.type === 'mall' ? 'Mall' : 'Fuel station'} label="Centre type" /></div>
+        <div style="background:#fff;padding:16px"><StatTile compact variant="light" value={suburb?.name ?? '—'} label="Suburb" /></div>
+        <div style="background:#fff;padding:16px"><StatTile compact variant="light" value={String(featuredStores.length)} label="Featured stores" color="var(--accent)" /></div>
+      </div>
+
+      {center.description && <p style="max-width:68ch;margin:24px 0 0;line-height:1.65;color:var(--text)">{center.description}</p>}
+
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:12px;margin-top:30px;flex-wrap:wrap">
+        <h2 style="margin:0;font-size:clamp(20px,2.8vw,26px);letter-spacing:-.02em;color:var(--navy)">Stores in this centre</h2>
+        <span style="font-size:12.5px;font-weight:700;color:var(--muted)">Featured stores shown first</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:18px">
+        {pinned && <BusinessCard business={pinned} showSuburb={false} metaOverride={pinned.address ?? ''} listContext={{ kind: 'shopping-center', slug: center.slug, name: center.name }} />}
+        {rest.map((business) => (
+          <BusinessCard business={business} showSuburb={false} metaOverride="" listContext={{ kind: 'shopping-center', slug: center.slug, name: center.name }} />
+        ))}
+      </div>
+
+      <div style="margin-top:28px;border:2px solid var(--navy);border-radius:16px;overflow:hidden;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+        <div style="background:var(--navy);padding:24px">
+          <h3 style="margin:0 0 8px;color:#fff;font-size:22px;letter-spacing:-.02em">Centre management</h3>
+          <p style="margin:0;color:rgba(255,255,255,.8);font-size:14.5px;line-height:1.55">Sponsor your whole centre page — your branding at the top, every store listed underneath.</p>
+        </div>
+        <div style="background:#fff;padding:24px;display:flex;flex-direction:column;gap:12px;justify-content:center">
+          {centreSponsor ? (
+            <>
+              <span style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)">Currently sponsored by</span>
+              <a href={`/business/${centreSponsor.business_slug}/`} style="font-size:20px;font-weight:800;color:var(--navy);text-decoration:none">{centreSponsor.business_name}</a>
+            </>
+          ) : (
+            <>
+              <span style="font-size:13.5px;font-weight:700;color:var(--muted)">Centre sponsorship from</span>
+              <span style="font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1">{priceRand('price_sponsor_centre_cents')}<span style="font-size:15px;font-weight:700;color:var(--muted)"> / month</span></span>
+              <a href={sponsorHref('centre_sponsor', center.slug)} style="align-self:flex-start;padding:12px 18px;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;text-decoration:none">Sponsor this centre</a>
+            </>
+          )}
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

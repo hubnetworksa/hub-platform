@@ -1,53 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import LegalPage from '../components/LegalPage.astro';
 import site from '../site';
 ---
 
-<BaseLayout title="Privacy Policy" description={`How ${site.siteName} handles data.`}>
-  <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 680px;">
-    <h1>Privacy Policy</h1>
-    <p style="color: var(--text-muted); font-size: 0.9rem;">Last updated: {new Date().toLocaleDateString('en-ZA', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-
-    <h2>What we collect</h2>
-    <p>
-      Business listing data (name, address, contact details) comes from publicly available
-      sources — business owners' own submissions and research against public web sources
-      (including map services like Google Maps) — never from private or personal accounts.
-    </p>
-    <p>
-      If you submit a business listing or a correction, we store the contact details you
-      provide solely to publish or verify that listing.
-    </p>
-
-    <h2>Cookies &amp; tracking</h2>
-    <p>
-      This site is prepared for advertising through Google AdSense, but no ads are shown yet
-      — the AdSense script is loaded for site verification only, and no cookies are set by it
-      at this stage. Once ads go live, Google and its partners may use cookies to serve and
-      measure ads, including personalised ads based on your visits to this and other sites.
-      You can view or opt out of personalised advertising at Google's
-      <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer">Ads Settings</a>,
-      and read more at Google's
-      <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer">How Google uses information from sites that use its services</a>.
-      This page will be updated again once ads are actually switched on.
-    </p>
-
-    <h2>Third-party data</h2>
-    <p>
-      Some listings draw on publicly available Google Maps content as part of our
-      research process.
-    </p>
-
-    <h2>Your rights under POPIA</h2>
-    <p>
-      Under South Africa's Protection of Personal Information Act (POPIA), you can ask us to
-      correct or delete personal information we hold about you. Every business page has a
-      "Request data removal" link that sends us a removal request with your reason — we
-      review each one by hand and confirm by email once it's actioned, usually within a few
-      days. You can also email us directly (see "Contact" below).
-    </p>
-
-    <h2>Contact</h2>
-    <p>Questions about this policy or your data: <a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a>.</p>
-  </section>
+<BaseLayout
+  title="Privacy & POPIA"
+  description={`How ${site.siteName} handles your data, your rights under POPIA, and our use of cookies.`}
+>
+  <LegalPage route="/privacy/" />
 </BaseLayout>

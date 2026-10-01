@@ -1,13 +1,19 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
+import { TIER_NAMES, tierPriceCents, centsToRand, parseBillingPeriod } from '../../_lib/pricing';
+import { cancelPayfastSubscription, payfastConfigured, type PayfastEnv } from '../../_lib/payfast';
+import { requestRebuild } from '../../_lib/deploy-hook';
+import { logActivity } from '../../_lib/activity-log';
 
-interface Env {
+interface Env extends PayfastEnv {
   DB: D1Database;
+  GITHUB_DISPATCH_TOKEN?: string;
 }
 
-const TIER_NAMES: Record<number, string> = { 1: 'Verified', 2: 'Verified Plus', 3: 'Featured', 4: 'Premium' };
-const TIER_PRICES: Record<number, number> = { 1: 50, 2: 99, 3: 199, 4: 299 };
-
+// Admin's "Plans & pricing" tab reads this for the subscriber list + MRR.
+// Sponsorship slots (category/suburb/homepage/centre) are a separate
+// product surfaced by admin/ads-sponsors.ts instead — this endpoint is
+// tier subscriptions only.
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const user = await getSessionUser(context.request, context.env.DB);
   if (!user || !isAdminEmail(user.email)) return json({ ok: false }, 403);
@@ -16,29 +22,52 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 
   const active = await db
     .prepare(
-      `SELECT b.id, b.name, b.subscription_tier, b.subscription_status, b.subscription_expires_at
+      `SELECT b.id, b.name, b.subscription_tier, b.subscription_status, b.subscription_expires_at,
+              (SELECT s.billing_period FROM subscriptions s
+               WHERE s.business_id = b.id AND s.product_type = 'tier' AND s.status IN ('active', 'cancelled')
+               ORDER BY s.id DESC LIMIT 1) AS billing_period
        FROM businesses b WHERE b.subscription_status IN ('active', 'cancelled') ORDER BY b.subscription_tier DESC, b.name`
     )
-    .all<{ id: number; name: string; subscription_tier: number; subscription_status: string; subscription_expires_at: string | null }>();
+    .all<{ id: number; name: string; subscription_tier: number; subscription_status: string; subscription_expires_at: string | null; billing_period: string | null }>();
 
-  const monthlyRevenue = active.results
-    .filter((r) => r.subscription_status === 'active')
-    .reduce((sum, r) => sum + (TIER_PRICES[r.subscription_tier] ?? 0), 0);
+  // Keyed "<tier>:<period>" — a yearly subscriber is listed at the yearly price.
+  const priceCents: Record<string, number> = {};
+  for (const tier of [1, 2]) {
+    for (const period of ['monthly', 'yearly'] as const) priceCents[`${tier}:${period}`] = (await tierPriceCents(db, tier, period)) ?? 0;
+  }
+
+  // Revenue is what PayFast actually bills: active, token-bearing tier
+  // subscriptions at the amount each last paid. Admin comps have no
+  // subscription row and bring in nothing, so they don't count. A yearly
+  // row's payment covers 12 months, so it counts as a twelfth of it.
+  const billed = await db
+    .prepare(
+      `SELECT COALESCE(ROUND(SUM((SELECT p.amount_cents FROM payments p WHERE p.subscription_id = s.id ORDER BY p.id DESC LIMIT 1)
+                                 / CASE WHEN s.billing_period = 'yearly' THEN 12.0 ELSE 1 END)), 0) AS cents
+       FROM subscriptions s WHERE s.product_type = 'tier' AND s.status = 'active'`
+    )
+    .first<{ cents: number }>();
+  const monthlyRevenueCents = billed?.cents ?? 0;
 
   return json({
     ok: true,
-    subscriptions: active.results.map((r) => ({
-      ...r,
-      tierName: TIER_NAMES[r.subscription_tier] ?? 'Free',
-      priceRand: TIER_PRICES[r.subscription_tier] ?? 0,
-    })),
-    monthlyRevenue,
+    subscriptions: active.results.map((r) => {
+      const billingPeriod = parseBillingPeriod(r.billing_period);
+      return {
+        ...r,
+        tierName: TIER_NAMES[r.subscription_tier] ?? 'Basic',
+        billingPeriod,
+        priceRand: centsToRand(priceCents[`${r.subscription_tier}:${billingPeriod}`] ?? 0),
+      };
+    }),
+    monthlyRevenueRand: centsToRand(monthlyRevenueCents),
   });
 };
 
 // Admin comp/override — set a business to any tier directly, bypassing
 // PayFast entirely (e.g. a manually comped account, or correcting a
-// support issue). Does not touch billing.
+// support issue). Does not touch billing. tier 0 = Basic/Free, 1 =
+// Verified, 2 = Featured.
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const user = await getSessionUser(context.request, context.env.DB);
   if (!user || !isAdminEmail(user.email)) return json({ ok: false }, 403);
@@ -51,11 +80,31 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
   const businessId = Number(body.businessId);
   const tier = Number(body.tier);
-  if (!businessId || tier < 0 || tier > 4) return json({ ok: false, error: 'Invalid business or tier.' }, 400);
+  if (!Number.isInteger(businessId) || businessId <= 0 || !Number.isInteger(tier) || tier < 0 || tier > 2) {
+    return json({ ok: false, error: 'Invalid business or tier.' }, 400);
+  }
 
   const db = context.env.DB;
   if (tier === 0) {
     await db.prepare(`UPDATE businesses SET subscription_tier = 0, subscription_status = 'expired' WHERE id = ?`).bind(businessId).run();
+    // Removing a plan must also stop PayFast billing for it — otherwise the
+    // owner keeps paying for a tier they no longer have.
+    const paying = await db
+      .prepare(`SELECT id, payfast_token FROM subscriptions WHERE business_id = ? AND product_type = 'tier' AND status = 'active'`)
+      .bind(businessId)
+      .all<{ id: number; payfast_token: string | null }>();
+    for (const sub of paying.results) {
+      let note = 'stopped by admin';
+      if (sub.payfast_token && payfastConfigured(context.env)) {
+        const r = await cancelPayfastSubscription(context.env, sub.payfast_token).catch(() => ({ ok: false, status: 0 }));
+        if (!r.ok) note = `stopped by admin, but PayFast refused the cancel (HTTP ${r.status}) — cancel token ${sub.payfast_token} by hand`;
+      }
+      await db
+        .prepare(`UPDATE subscriptions SET status = 'cancelled', cancelled_at = datetime('now'), current_period_end = datetime('now') WHERE id = ?`)
+        .bind(sub.id)
+        .run();
+      await logActivity(db, 'subscription_admin_removed', null, `Business #${businessId} tier subscription #${sub.id} ${note}.`);
+    }
   } else {
     await db
       .prepare(`UPDATE businesses SET subscription_tier = ?, subscription_status = 'active', subscription_expires_at = datetime('now', '+100 years') WHERE id = ?`)
@@ -63,6 +112,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       .run();
   }
 
+  await requestRebuild(context.env, 'admin changed a plan');
   return json({ ok: true });
 };
 

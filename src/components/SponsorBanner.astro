@@ -1,0 +1,35 @@
+---
+// The sold state of a category or suburb sponsorship, shown ABOVE the
+// listings ("your card above every listing" on the pricing page). Renders
+// nothing while the slot is open; the sidebar SponsorSlot carries the buy
+// button in that case.
+import { sponsorFor, businesses, categoriesFor, suburbFor, type Sponsorship } from '../lib/data';
+
+interface Props {
+  productType: Sponsorship['product_type'];
+  target?: string;
+  /** e.g. "Plumbers in Cape Town" — what the business is sponsoring. */
+  context: string;
+}
+const { productType, target, context } = Astro.props;
+const sponsor = sponsorFor(productType, target);
+const business = sponsor ? businesses.find((b) => b.id === sponsor.business_id) : undefined;
+const meta = business ? [categoriesFor(business)[0]?.name, suburbFor(business)?.name].filter(Boolean).join(' · ') : '';
+const blurb = business?.description ? business.description.slice(0, 160) + (business.description.length > 160 ? '…' : '') : '';
+---
+
+{sponsor && (
+  <a
+    href={`/business/${sponsor.business_slug}/`}
+    class="sponsor-banner"
+    style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px 18px;margin-bottom:22px;border:2px solid var(--accent);border-radius:14px;background:#fff;color:var(--navy);text-decoration:none"
+  >
+    <span style="display:flex;flex-direction:column;gap:5px;min-width:0;flex:1 1 280px">
+      <span style="align-self:flex-start;padding:3px 9px;border-radius:999px;background:var(--accent);color:var(--contrast);font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase">Sponsor · {context}</span>
+      <span style="font-size:18px;font-weight:800;letter-spacing:-.02em">{sponsor.business_name}</span>
+      {meta && <span style="font-size:12.5px;font-weight:700;color:var(--muted)">{meta}</span>}
+      {blurb && <span style="font-size:13.5px;line-height:1.5;color:var(--text)">{blurb}</span>}
+    </span>
+    <span style="font-size:13.5px;font-weight:800;color:var(--accent-hover);white-space:nowrap">View listing →</span>
+  </a>
+)}

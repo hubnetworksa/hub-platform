@@ -9,16 +9,7 @@
   // Cloudflare Pages dashboard too (Settings → Environment variables);
   // whatever's there overrides this file for an actual deployed build.
   "vars": {
-    "SITE": "pretoria",
-    // Premium Listings pilot (see the plan doc) — PayFast's own PUBLICLY
-    // DOCUMENTED sandbox demo credentials, safe to commit (they only work
-    // against sandbox.payfast.co.za, never move real money). Swap for a
-    // real merchant account's secrets via `wrangler pages secret put`
-    // before ever changing PAYFAST_HOST off "sandbox.payfast.co.za".
-    "PAYFAST_MERCHANT_ID": "10000100",
-    "PAYFAST_MERCHANT_KEY": "46f0cd694581a",
-    "PAYFAST_PASSPHRASE": "jt7NOE43FZPn",
-    "PAYFAST_HOST": "sandbox.payfast.co.za"
+    "SITE": "pretoria"
   },
 
   "d1_databases": [
@@ -35,7 +26,55 @@
       "binding": "MEDIA",
       "bucket_name": "pretoriahub-media"
     }
-  ]
+  ],
+
+  // Ethan-branch-only: PayFast SANDBOX credentials for the dev preview
+  // (Production has its own, set as encrypted Pages secrets — never
+  // touched by this file). These are PayFast's own publicly documented
+  // sandbox test pair (developers.payfast.co.za), safe to commit — they
+  // only work against sandbox.payfast.co.za and move no real money. Preview
+  // deploys use this env.preview block automatically; Production ignores it.
+  // IMPORTANT: defining env.preview at all makes Cloudflare Pages stop
+  // inheriting EVERYTHING top-level for preview deploys — not just vars,
+  // also d1_databases and r2_buckets (confirmed the hard way, twice: SITE
+  // missing broke every page, then DB missing broke every D1 query). So
+  // every top-level binding is repeated below, not just the new PayFast vars.
+  "env": {
+    "preview": {
+      "vars": {
+        "SITE": "pretoria",
+        "PAYFAST_MERCHANT_ID": "10004002",
+        "PAYFAST_MERCHANT_KEY": "q1cd2rdny4a53",
+        "PAYFAST_PASSPHRASE": "payfast",
+        "PAYFAST_HOST": "sandbox.payfast.co.za",
+        // Purchases made on the preview rebuild the preview (its own
+        // workflow on the Ethan branch), never production. Needs a
+        // GITHUB_DISPATCH_TOKEN secret on the Preview environment to fire.
+        "REBUILD_WORKFLOW": "deploy-ethan-preview.yml",
+        "REBUILD_REF": "Ethan"
+        // CRON_SECRET is deliberately NOT set here. This repo is public and
+        // preview deploys bind the production database, so a committed value
+        // would let anyone run the admin sweep endpoints against live data.
+        // With it unset those endpoints return 401 on preview; set it as a
+        // Preview-environment secret in the Cloudflare dashboard if you need
+        // to exercise them there.
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "pretoriahub-db",
+          "database_id": "0681593f-b710-402d-aae4-684be8302010",
+          "migrations_dir": "db/migrations/pretoria"
+        }
+      ],
+      "r2_buckets": [
+        {
+          "binding": "MEDIA",
+          "bucket_name": "pretoriahub-media"
+        }
+      ]
+    }
+  }
 
   // Consolidation note (see plan): Pretoria previously sent email via Gmail
   // SMTP (worker-mailer + compatibility_flags: ["nodejs_compat"] + a
