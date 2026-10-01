@@ -451,10 +451,14 @@ const mapsUrl = (business.address || (business.lat && business.lng))
      justify-self:stretch as start instead, so each photo only rendered
      at its intrinsic size in the corner of its cell. Sizing the ratio on
      the wrapping <span> and letting the <img> fill it with object-fit
-     avoids that grid quirk entirely. */
+     avoids that grid quirk entirely.
+     auto-fill, not auto-fit: with auto-fit a listing with one or two photos
+     collapsed the empty tracks and stretched each photo across the whole
+     page (one photo rendered 1160x870 on desktop). Tiles stay the same
+     size however many photos there are; two per row on a phone. */
   .business-photo-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(200px, calc(50% - 5px)), 1fr));
     gap: 10px;
     margin-top: 14px;
   }

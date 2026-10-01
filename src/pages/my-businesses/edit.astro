@@ -275,23 +275,30 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
                 </div>
               </div>
 
-              <div style="border:2px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)">
-                <div class="owner-section-head" style="padding:13px 16px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px;font-size:13px;font-weight:800;color:var(--navy)">
+              <!-- Photos: same look and flow as the Logo card above. The locked panel
+                   is unchanged; once unlocked, each photo is resized in the browser
+                   (preparePhoto) so phone photos of any size upload. -->
+              <div id="photos-card" style="border:2px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)">
+                <div class="owner-section-head" style="padding:13px 16px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:13px;font-weight:800;color:var(--navy)">
                   <span style="color:var(--accent)"><Icon path={SECTION_ICONS.photos} size={17} /></span>
                   Photos <span id="photos-count" style="font-weight:600;color:var(--muted)"></span>
                 </div>
                 <div id="photos-locked" hidden style="padding:18px 16px;font-size:13.5px;font-weight:600;color:var(--muted);line-height:1.55">
                   Photos come with a paid plan: up to 4 on Verified, up to 10 on Featured. <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a> to add photos.
                 </div>
-                <div id="photos-unlocked" hidden>
-                  <div id="photos-grid" style="padding:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px"></div>
-                  <p id="photos-empty" hidden style="margin:0;padding:4px 16px 14px;font-size:13px;font-weight:600;color:var(--muted)">No photos yet — add your first below.</p>
-                  <form id="photo-upload-form" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:0 14px 14px">
-                    <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required style="font-size:13px;max-width:100%" />
-                    <button type="submit" class="owner-btn-ghost" style="padding:9px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:12.5px;font-weight:800;cursor:pointer">Upload photo</button>
-                  </form>
+                <div id="photos-unlocked" class="photos-body" hidden>
+                  <div id="photos-grid" class="photos-grid"></div>
+                  <div style="display:flex;flex-direction:column;gap:10px;min-width:0">
+                    <p style="margin:0;font-size:13.5px;font-weight:600;color:var(--text);line-height:1.55">Your photos show in the Gallery on your listing, where customers can tap one to see it full screen.</p>
+                    <p style="margin:0;font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.55">Landscape works best. Phone photos of any size are fine: they're resized before they upload. JPG, PNG, WEBP or HEIC.</p>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                      <input id="photos-file" type="file" accept="image/*" multiple class="logo-file" tabindex="-1" aria-hidden="true" />
+                      <button type="button" id="photos-upload" class="owner-btn-ghost logo-btn">Add photos</button>
+                    </div>
+                    <p id="photo-status" role="status" hidden style="margin:0;font-size:13px;font-weight:600;color:var(--muted);line-height:1.5"></p>
+                    <ul id="photos-progress" class="photos-progress" aria-live="polite" hidden></ul>
+                  </div>
                 </div>
-                <p id="photo-status" role="status" style="margin:0;padding:0 16px 14px;font-size:13px;font-weight:600;color:var(--muted)" hidden></p>
               </div>
 
               <button type="submit" form="edit-form" class="owner-btn-primary" style="align-self:flex-start;padding:14px 22px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;cursor:pointer">Save changes</button>
@@ -405,7 +412,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   .owner-nav { display: flex; flex-direction: row; }
   .owner-tab { display: flex; font-family: inherit; }
   .owner-tab.on { border-color: var(--navy) !important; background: var(--navy) !important; color: #fff !important; }
-  .owner-panel[hidden], #dashboard[hidden], #hidden-banner[hidden], #photos-locked[hidden], #photos-unlocked[hidden], #photos-empty[hidden], #photo-status[hidden], #payments-empty[hidden], #search-terms-empty[hidden], #sponsorships-empty[hidden], #sponsorships-status[hidden], #tourism-sponsor-picker[hidden], #tourism-sponsor-all-taken[hidden] { display: none !important; }
+  .owner-panel[hidden], #dashboard[hidden], #hidden-banner[hidden], #photos-locked[hidden], #photos-unlocked[hidden],#photo-status[hidden], #payments-empty[hidden], #search-terms-empty[hidden], #sponsorships-empty[hidden], #sponsorships-status[hidden], #tourism-sponsor-picker[hidden], #tourism-sponsor-all-taken[hidden] { display: none !important; }
   .tourism-sponsor-picker { display: flex; }
   /* Logo card. Display lives in these rules, never inline, so [hidden] wins. */
   .logo-lock { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; background: var(--navy); color: #fff; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; }
@@ -426,10 +433,22 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   .owner-input:focus { border-color: var(--accent) !important; }
   .owner-btn-primary:hover { background: var(--accent-hover) !important; }
   .owner-btn-ghost:hover { border-color: var(--accent) !important; }
-  .owner-photo { position: relative; aspect-ratio: 4/3; border-radius: 10px; overflow: hidden; background: var(--bg-subtle); box-shadow: var(--shadow); transition: transform .15s ease; }
-  .owner-photo:hover { transform: translateY(-2px); }
-  .owner-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .owner-photo button { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; line-height: 1; font-size: 15px; }
+  /* Photos card: tiles, buttons and status follow the Logo card above. */
+  .photos-body { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+  .photos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 12px; }
+  .photo-tile { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .photo-frame { position: relative; aspect-ratio: 4 / 3; border: 2px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--bg-subtle); }
+  .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-empty-tile .photo-frame { border-style: dashed; }
+  .photo-tile.is-busy .photo-frame img { opacity: .5; }
+  .photo-busy { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .photo-tile .logo-btn { align-self: flex-start; padding: 6px 11px; font-size: 12px; }
+  .photos-progress { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; font-weight: 600; color: var(--muted); line-height: 1.45; }
+  .photos-progress li { display: flex; flex-wrap: wrap; column-gap: 8px; min-width: 0; }
+  .photos-progress .pf-name { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+  .photos-progress .pf-ok { color: var(--accent-hover); }
+  .photos-progress .pf-err { color: #b42318; }
+  #photos-progress[hidden] { display: none !important; }
   .owner-stat-tile { transition: transform .15s ease, box-shadow .15s ease; }
   .owner-stat-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
   .spinner { width: 16px; height: 16px; flex-shrink: 0; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: mb-spin 0.7s linear infinite; }
@@ -1048,6 +1067,80 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   }
 
   // ---- Photos ----
+  // Every photo is redrawn in the browser before it uploads: EXIF rotation
+  // applied, scaled to fit 1600px on its longest side (never upscaled) and
+  // re-encoded as WebP (JPEG where the browser can't encode WebP), so a
+  // 5–20MB phone shot goes up as a few hundred KB. No trim: unlike a logo,
+  // a photo's edges are part of the picture. The server still checks the
+  // actual bytes, the plan and the size.
+  const PHOTO_MAX_PX = 1600;
+  const PHOTO_QUALITY = 0.82;
+  const PHOTO_MAX_BYTES = 8 * 1024 * 1024; // functions/api/business-photos.ts MAX_FILE_BYTES
+  const PHOTO_ICON = `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="m21 16-5-4-4 3-3-2-4 3"/></svg>`;
+  const isHeic = (file: File) => /^image\/hei[cf]/i.test(file.type) || /\.hei[cf]$/i.test(file.name);
+
+  class PhotoError extends Error {}
+
+  /** Decoded, upright image. createImageBitmap with imageOrientation applies
+   *  the EXIF rotation; the <img> fallback (older Safari) does it by default. */
+  async function decodePhoto(file: File): Promise<{ src: CanvasImageSource; w: number; h: number; close: () => void }> {
+    if ('createImageBitmap' in window) {
+      try {
+        const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
+        return { src: bmp, w: bmp.width, h: bmp.height, close: () => bmp.close() };
+      } catch {
+        // fall through to <img>
+      }
+    }
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.src = url;
+    try {
+      await img.decode();
+    } catch {
+      URL.revokeObjectURL(url);
+      throw new PhotoError(
+        isHeic(file)
+          ? "This browser can't open HEIC photos. On your iPhone, choose the photo from Photos (it's converted to JPG), or set Settings › Camera › Formats to Most Compatible, then try again."
+          : "Couldn't read that image — try a JPG or PNG."
+      );
+    }
+    return { src: img, w: img.naturalWidth, h: img.naturalHeight, close: () => URL.revokeObjectURL(url) };
+  }
+
+  function encode(canvas: HTMLCanvasElement, type: string, quality: number): Promise<Blob | null> {
+    return new Promise((resolve) => canvas.toBlob(resolve, type, quality));
+  }
+
+  async function preparePhoto(file: File): Promise<Blob> {
+    const img = await decodePhoto(file);
+    try {
+      if (!img.w || !img.h) throw new PhotoError("Couldn't read that image — try a JPG or PNG.");
+      const scale = Math.min(1, PHOTO_MAX_PX / Math.max(img.w, img.h));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(img.w * scale));
+      canvas.height = Math.max(1, Math.round(img.h * scale));
+      const ctx = canvas.getContext('2d')!;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img.src, 0, 0, canvas.width, canvas.height);
+      // WebP keeps any transparency. A browser that can't encode WebP hands
+      // back a PNG instead; use JPEG then, on white so transparent areas
+      // don't turn black.
+      let blob = await encode(canvas, 'image/webp', PHOTO_QUALITY);
+      if (!blob || blob.type !== 'image/webp') {
+        ctx.globalCompositeOperation = 'destination-over';
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        blob = await encode(canvas, 'image/jpeg', PHOTO_QUALITY);
+        if (blob && blob.size > PHOTO_MAX_BYTES) blob = await encode(canvas, 'image/jpeg', 0.6);
+      }
+      if (!blob) throw new PhotoError("Couldn't process that image — try a JPG or PNG.");
+      return blob;
+    } finally {
+      img.close();
+    }
+  }
+
   function renderPhotos(business: Business, initial: Photo[]) {
     const locked = document.getElementById('photos-locked')!;
     const unlocked = document.getElementById('photos-unlocked')!;
@@ -1062,62 +1155,207 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     unlocked.hidden = false;
 
     const grid = document.getElementById('photos-grid')!;
-    const emptyEl = document.getElementById('photos-empty')!;
-    const photoStatus = document.getElementById('photo-status')!;
+    const status = document.getElementById('photo-status')!;
+    const progress = document.getElementById('photos-progress')!;
+    const fileInput = document.getElementById('photos-file') as HTMLInputElement;
+    const uploadBtn = document.getElementById('photos-upload') as HTMLButtonElement;
     let photos = initial.slice();
+    // Instant previews of the photos uploading right now, shown after the saved ones.
+    let pending: { id: number; url: string }[] = [];
+    let pendingSeq = 0;
+    let busy = false;
 
     function setStatus(msg: string) {
-      photoStatus.textContent = msg;
-      photoStatus.hidden = !msg;
+      status.textContent = msg;
+      status.hidden = !msg;
     }
-    function renderGrid() {
-      count.textContent = `— ${Math.min(photos.length, PHOTO_CAP)} of ${PHOTO_CAP} used on ${planName}`;
-      emptyEl.hidden = photos.length > 0;
-      grid.hidden = photos.length === 0;
-      grid.innerHTML = photos
-        .map(
-          (p) =>
-            `<div class="owner-photo"><img src="/media/${esc(p.r2_key)}" alt="${esc(p.caption ?? '')}" /><button type="button" data-photo-id="${p.id}" aria-label="Remove photo">×</button></div>`
-        )
-        .join('');
+    // Tiles are kept by key and reused, so re-rendering never reloads (or
+    // flashes) a photo that is already on screen.
+    const tiles = new Map<string, HTMLElement>();
+    // A just-uploaded photo keeps showing its local preview, no refetch.
+    const localSrc = new Map<string, string>();
+    function tile(key: string, html: string): HTMLElement {
+      let el = tiles.get(key);
+      if (!el) {
+        const t = document.createElement('template');
+        t.innerHTML = html.trim();
+        el = t.content.firstElementChild as HTMLElement;
+        tiles.set(key, el);
+      }
+      return el;
     }
-    renderGrid();
+    function render() {
+      const n = Math.min(photos.length, PHOTO_CAP);
+      count.textContent = `— ${n} / ${PHOTO_CAP} photos on ${planName}`;
+      const els: HTMLElement[] = photos.map((p, i) => {
+        const el = tile(
+          `s:${p.r2_key}`,
+          `<div class="photo-tile">
+            <span class="photo-frame"><img src="${esc(localSrc.get(p.r2_key) ?? `/media/${p.r2_key}`)}" alt="" /></span>
+            <button type="button" class="owner-btn-ghost logo-btn logo-btn-quiet">Remove</button>
+          </div>`
+        );
+        el.querySelector('img')!.alt = p.caption ?? `Photo ${i + 1}`;
+        const btn = el.querySelector('button')!;
+        btn.dataset.photoId = String(p.id);
+        btn.setAttribute('aria-label', `Remove photo ${i + 1}`);
+        btn.disabled = busy;
+        return el;
+      });
+      for (const p of pending) {
+        els.push(
+          tile(
+            `p:${p.id}`,
+            `<div class="photo-tile is-busy"><span class="photo-frame"><img src="${p.url}" alt="Uploading photo" /><span class="photo-busy"><span class="spinner"></span></span></span></div>`
+          )
+        );
+      }
+      if (!els.length) els.push(tile('empty', `<div class="photo-tile photo-empty-tile"><span class="photo-frame"><span class="logo-empty">${PHOTO_ICON}</span></span></div>`));
+      grid.replaceChildren(...els);
+      const full = photos.length >= PHOTO_CAP;
+      uploadBtn.disabled = busy || full;
+      uploadBtn.textContent = full ? 'Photo limit reached' : photos.length ? 'Add more photos' : 'Add photos';
+    }
+    render();
+    if (photos.length > PHOTO_CAP) setStatus(`Only your first ${PHOTO_CAP} photos show on ${planName}. Remove some to make room for new ones.`);
+
+    // One line per picked file: name, then where it's up to.
+    function progressLine(name: string) {
+      const li = document.createElement('li');
+      const nameEl = document.createElement('span');
+      nameEl.className = 'pf-name';
+      nameEl.textContent = name;
+      const state = document.createElement('span');
+      li.append(nameEl, state);
+      progress.append(li);
+      progress.hidden = false;
+      return (msg: string, kind: '' | 'ok' | 'err' = '') => {
+        state.textContent = msg;
+        state.className = kind ? `pf-${kind}` : '';
+      };
+    }
+
+    async function uploadOne(file: File, set: ReturnType<typeof progressLine>): Promise<boolean> {
+      if (!file.type.startsWith('image/') && !isHeic(file)) {
+        set('Not an image — choose a JPG, PNG, WEBP or HEIC photo.', 'err');
+        return false;
+      }
+      set('Resizing…');
+      let blob: Blob;
+      try {
+        blob = await preparePhoto(file);
+      } catch (err) {
+        set(err instanceof PhotoError ? err.message : "Couldn't read that image — try a JPG or PNG.", 'err');
+        return false;
+      }
+      if (blob.size > PHOTO_MAX_BYTES) {
+        set('Still too big after resizing — try a smaller photo.', 'err');
+        return false;
+      }
+      const preview = { id: ++pendingSeq, url: URL.createObjectURL(blob) };
+      pending.push(preview);
+      render();
+      set(`Uploading ${Math.max(1, Math.round(blob.size / 1024))} KB…`);
+      let kept = false;
+      try {
+        const ext = blob.type === 'image/webp' ? 'webp' : blob.type === 'image/png' ? 'png' : 'jpg';
+        const fd = new FormData();
+        fd.append('businessId', String(businessId));
+        fd.append('photo', blob, `photo.${ext}`);
+        let result: { ok?: boolean; error?: string; key?: string; id?: number | null } = { ok: false };
+        try {
+          const res = await fetch('/api/business-photos', { method: 'POST', body: fd });
+          result = await res.json().catch(() => ({ ok: false, error: res.status === 413 ? 'Photo is too big to upload.' : `Upload failed (error ${res.status}) — please try again.` }));
+        } catch {
+          result = { ok: false, error: 'Upload failed — check your connection and try again.' };
+        }
+        if (result.ok && result.key) {
+          photos.push({ id: result.id ?? -preview.id, r2_key: result.key, caption: null });
+          localSrc.set(result.key, preview.url);
+          kept = true;
+          set('Uploaded', 'ok');
+          return true;
+        }
+        set(result.error || 'Could not upload photo.', 'err');
+        return false;
+      } finally {
+        // Success: the saved tile replaces the preview. Failure: the grid goes
+        // back to exactly what was there before.
+        pending = pending.filter((p) => p !== preview);
+        tiles.delete(`p:${preview.id}`);
+        if (!kept) URL.revokeObjectURL(preview.url);
+        render();
+      }
+    }
+
+    uploadBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', async () => {
+      const files = Array.from(fileInput.files ?? []);
+      fileInput.value = '';
+      if (!files.length || busy) return;
+      busy = true;
+      progress.replaceChildren();
+      setStatus(files.length > 1 ? `Uploading ${files.length} photos…` : 'Uploading…');
+      render();
+      let done = 0;
+      let failed = 0;
+      try {
+        // One at a time, so the plan's limit is checked against each saved photo.
+        for (const file of files) {
+          const set = progressLine(file.name || 'Photo');
+          if (photos.length >= PHOTO_CAP) {
+            set(`Skipped — ${planName} allows up to ${PHOTO_CAP} photos.`, 'err');
+            failed++;
+            continue;
+          }
+          if (await uploadOne(file, set)) done++;
+          else failed++;
+        }
+      } finally {
+        busy = false;
+        render();
+      }
+      if (done) {
+        // Sync with the server's list (real ids and order).
+        const refreshed = await fetch(`/api/business-photos?businessId=${encodeURIComponent(String(businessId))}`)
+          .then((r) => r.json())
+          .catch(() => null);
+        if (refreshed?.ok) {
+          photos = refreshed.photos;
+          render();
+        }
+      }
+      const live = `${done === 1 ? 'It' : 'They'} will appear on your public listing within about 15–25 minutes.`;
+      if (done && !failed) setStatus(`Saved ${done === 1 ? 'your photo' : `${done} photos`}. ${live}`);
+      else if (done) setStatus(`Saved ${done} of ${files.length} photos — see below for the rest. ${live}`);
+      else setStatus(files.length === 1 ? 'Your photo was not uploaded — see below.' : 'No photos were uploaded — see below.');
+    });
 
     grid.addEventListener('click', async (e) => {
       const btn = (e.target as HTMLElement).closest('button[data-photo-id]') as HTMLButtonElement | null;
-      if (!btn) return;
+      if (!btn || busy) return;
+      if (!confirm('Remove this photo?')) return;
       const photoId = Number(btn.dataset.photoId);
-      const res = await fetch(`/api/business-photos?photoId=${photoId}`, { method: 'DELETE' });
-      const result = await res.json();
+      btn.disabled = true;
+      btn.textContent = 'Removing…';
+      const res = await fetch(`/api/business-photos?photoId=${encodeURIComponent(String(photoId))}`, { method: 'DELETE' }).catch(() => null);
+      const result = res ? await res.json().catch(() => ({ ok: false })) : { ok: false, error: 'Could not reach the server — try again.' };
+      btn.textContent = 'Remove';
       if (result.ok) {
-        photos = photos.filter((p) => p.id !== photoId);
-        renderGrid();
-        setStatus('Photo deleted. Your listing will update within about 15–25 minutes.');
-      } else setStatus(result.error || 'Could not delete photo.');
-    });
-
-    const uploadForm = document.getElementById('photo-upload-form') as HTMLFormElement;
-    uploadForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fileInput = uploadForm.elements.namedItem('photo') as HTMLInputElement;
-      if (!fileInput.files?.[0]) return;
-      setStatus('Uploading…');
-      const fd = new FormData();
-      fd.append('businessId', String(businessId));
-      fd.append('photo', fileInput.files[0]);
-      const res = await fetch('/api/business-photos', { method: 'POST', body: fd });
-      const result = await res.json();
-      if (result.ok) {
-        setStatus('Photo uploaded. Your listing will update within about 15–25 minutes.');
-        uploadForm.reset();
-        const refreshed = await fetch(`/api/business-photos?businessId=${businessId}`).then((r) => r.json());
-        if (refreshed.ok) {
-          photos = refreshed.photos;
-          renderGrid();
+        for (const p of photos.filter((p) => p.id === photoId)) {
+          tiles.delete(`s:${p.r2_key}`);
+          const local = localSrc.get(p.r2_key);
+          if (local) URL.revokeObjectURL(local);
+          localSrc.delete(p.r2_key);
         }
+        photos = photos.filter((p) => p.id !== photoId);
+        progress.replaceChildren();
+        progress.hidden = true;
+        setStatus('Photo removed. It will disappear from your public listing within about 15–25 minutes.');
       } else {
-        setStatus(result.error || 'Could not upload photo.');
+        setStatus(result.error || 'Could not remove photo.');
       }
+      render();
     });
   }
 

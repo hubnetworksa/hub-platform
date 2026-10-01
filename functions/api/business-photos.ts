@@ -9,7 +9,11 @@ interface Env {
   GITHUB_DISPATCH_TOKEN?: string;
 }
 
-const MAX_FILE_BYTES = 8 * 1024 * 1024; // 8MB per photo
+// The dashboard resizes every photo to at most 1600px on its longest side
+// and sends WebP (JPEG where the browser can't encode WebP), so real uploads
+// are a few hundred KB whatever the phone shot. This cap is only a backstop
+// for a browser that couldn't resize; the bytes are still sniffed below.
+const MAX_FILE_BYTES = 8 * 1024 * 1024;
 // Photo caps by tier (0=Basic, 1=Verified, 2=Featured) — see the Premium
 // pricing page: Verified up to 4, Featured up to 10. Enforced here at
 // upload time, and the public page shows no more than the current cap.
@@ -66,17 +70,34 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (file.size > MAX_FILE_BYTES) return json({ ok: false, error: 'Photo must be under 8MB.' }, 400);
   const bytes = await file.arrayBuffer();
   const kind = sniffImage(bytes);
-  if (!kind) return json({ ok: false, error: 'Please upload a JPG, PNG or WEBP photo.' }, 400);
+  if (!kind) {
+    // HEIC/HEIF (iPhone): an ISO-BMFF "ftyp" box with a HEIF brand. Only
+    // reached when the browser couldn't convert it (see preparePhoto).
+    const head = String.fromCharCode(...new Uint8Array(bytes.slice(4, 12)));
+    const heic = /^ftyp(heic|heix|hevc|hevx|heim|heis|mif1|msf1)$/.test(head);
+    const error = heic
+      ? "That's an iPhone HEIC photo, which can't be shown on the web. Export it as a JPG (or set Camera > Formats to Most Compatible) and try again."
+      : 'Please upload a JPG, PNG or WEBP photo.';
+    return json({ ok: false, error }, 400);
+  }
 
   // Never the uploader's own filename in the key: it ends up in a public URL.
   const key = `business-photos/${businessId}/${crypto.randomUUID()}.${kind.ext}`;
   await context.env.MEDIA.put(key, bytes, { httpMetadata: { contentType: kind.contentType } });
 
-  const sortOrder = existing?.n ?? 0;
-  await db.prepare('INSERT INTO business_photos (business_id, r2_key, sort_order) VALUES (?, ?, ?)').bind(businessId, key, sortOrder).run();
+  // After the last photo, not at COUNT(*): once one is removed the count
+  // would hand out a sort_order that's already taken.
+  const row = await db
+    .prepare(
+      `INSERT INTO business_photos (business_id, r2_key, sort_order)
+       VALUES (?, ?, (SELECT COALESCE(MAX(sort_order) + 1, 0) FROM business_photos WHERE business_id = ?))
+       RETURNING id, sort_order`
+    )
+    .bind(businessId, key, businessId)
+    .first<{ id: number; sort_order: number }>();
 
   await requestRebuild(context.env, 'business photo uploaded');
-  return json({ ok: true, key });
+  return json({ ok: true, key, id: row?.id ?? null, sort_order: row?.sort_order ?? null });
 };
 
 export const onRequestDelete: PagesFunction<Env> = async (context) => {
