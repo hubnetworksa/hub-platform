@@ -146,6 +146,7 @@ for (const s of stmts) {
       }
       if (slug && bizBySlug.has(slug)) err(`${label}: already exists in the snapshot`);
       if (slug && newBiz.has(slug)) err(`${label}: appears twice in this file`);
+      if (cols.some((c) => c.toLowerCase() === 'whatsapp')) err(`${label}: routines may never set whatsapp (a Featured-plan field only the owner or an admin fills in); leave the column out`);
       const phone = unq(row.phone), address = unq(row.address);
       if (slug && suppressedSlugs.has(slug)) err(`${label}: slug matches a business ${SUPPRESSED_MSG}`);
       else if (phone && digits(phone).length >= 9 && suppressedPhones.has(digits(phone).slice(-9))) err(`${label}: phone ${phone} matches a business ${SUPPRESSED_MSG}`);
@@ -210,6 +211,11 @@ for (const s of stmts) {
   const setCols = splitTop(setPart).map((a) => a.split('=')[0].trim().toLowerCase());
   if (setCols.some((c) => c === 'description' || c === 'short_description' || c === 'description_enriched_at')) {
     err(`Routines may never change an existing business's description, short_description or description_enriched_at (descriptions belong to the owner or an admin). Remove this UPDATE; a new business gets its description in its INSERT only: ${head}…`);
+    continue;
+  }
+  // The WhatsApp number is a Featured-plan field the owner (or an admin) fills in, never a routine.
+  if (setCols.includes('whatsapp')) {
+    err(`Routines may never change a business's whatsapp number (it belongs to the owner or an admin). Remove this UPDATE: ${head}…`);
     continue;
   }
   // Owned, owner-submitted or paid listings belong to their owner (snapshot `owner_managed`).

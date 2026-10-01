@@ -3,7 +3,7 @@ import { getSessionUser, isAdminEmail } from '../_lib/auth';
 import { SOCIAL_KINDS, SOCIAL_LABELS, normalizeSocial } from '../_lib/social';
 import { requestRebuild } from '../_lib/deploy-hook';
 import { looksLikeEmail } from '../_lib/messages';
-import { formatPhoneZA } from '../../src/lib/phone';
+import { formatPhoneZA, whatsappDigitsZA } from '../../src/lib/phone';
 import { descriptionLimitError, toSingleParagraph } from '../../src/lib/rich-text';
 
 interface Env {
@@ -30,7 +30,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .prepare(
       `SELECT b.id, b.slug, b.name, b.address, b.phone, b.website, b.email, b.description, b.short_description, b.hours, b.owner_user_id,
               b.subscription_tier, b.subscription_status, b.subscription_expires_at, b.created_at,
-              b.social_instagram, b.social_facebook, b.social_linkedin, b.social_youtube, b.logo_key,
+              b.social_instagram, b.social_facebook, b.social_linkedin, b.social_youtube, b.logo_key, b.whatsapp,
               b.status, b.closed_at, s.name AS suburb_name,
               (SELECT ts.billing_period FROM subscriptions ts
                WHERE ts.business_id = b.id AND ts.product_type = 'tier' AND ts.status IN ('active', 'cancelled')
@@ -42,7 +42,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     .first<{
       id: number; slug: string; name: string; address: string | null; phone: string | null; website: string | null; email: string | null; description: string; short_description: string | null; hours: string | null; owner_user_id: number | null;
       subscription_tier: number; subscription_status: string | null; subscription_expires_at: string | null; created_at: string; suburb_name: string | null;
-      social_instagram: string | null; social_facebook: string | null; social_linkedin: string | null; social_youtube: string | null; logo_key: string | null;
+      social_instagram: string | null; social_facebook: string | null; social_linkedin: string | null; social_youtube: string | null; logo_key: string | null; whatsapp: string | null;
       status: string; closed_at: string | null; category_name: string | null; billing_period: string | null;
     }>();
   if (!business || (business.owner_user_id !== user.id && !isAdminEmail(user.email))) return json({ ok: false, error: 'You do not own this business.' }, 403);
@@ -167,6 +167,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       social_instagram: business.social_instagram, social_facebook: business.social_facebook, social_linkedin: business.social_linkedin, social_youtube: business.social_youtube,
       // Logo (Verified/Featured perk) — the dashboard's Logo card previews it.
       logo_key: business.logo_key,
+      // WhatsApp number (Featured perk): editable on Featured, shown locked below it.
+      whatsapp: business.whatsapp,
       // Whether the business currently shows on the public site at all —
       // an admin can hide a listing (status != 'published') and the
       // automated closed-business check can flag one as closed
@@ -205,7 +207,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const businessId = Number(body.businessId);
   if (!businessId) return json({ ok: false, error: 'Missing business.' }, 400);
 
-  const business = await db.prepare('SELECT owner_user_id, subscription_tier, subscription_status FROM businesses WHERE id = ?').bind(businessId).first<{ owner_user_id: number | null; subscription_tier: number; subscription_status: string | null }>();
+  const business = await db.prepare('SELECT owner_user_id, subscription_tier, subscription_status, whatsapp FROM businesses WHERE id = ?').bind(businessId).first<{ owner_user_id: number | null; subscription_tier: number; subscription_status: string | null; whatsapp: string | null }>();
   if (!business || (business.owner_user_id !== user.id && !isAdminEmail(user.email))) return json({ ok: false, error: 'You do not own this business.' }, 403);
 
   const address = clean(body.address, 200);
@@ -231,6 +233,27 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // Social links are a Featured-plan perk: saved only while the plan is active,
   // and left untouched for any other plan (never wiped by a downgrade).
   const isFeatured = (business.subscription_status === 'active' || business.subscription_status === 'cancelled') && business.subscription_tier >= 2;
+
+  // WhatsApp number, also a Featured-plan perk. Only touched when the form
+  // sends it (the dashboard disables, and so omits, the field below Featured);
+  // sent empty, it's cleared. A non-Featured listing sending its stored value
+  // back unchanged is a no-op; trying to change it is refused outright.
+  let whatsapp: string | null | undefined;
+  if (typeof body.whatsapp === 'string') {
+    const raw = clean(body.whatsapp, 30);
+    const comparable = (v: string | null) => (v ? whatsappDigitsZA(v) ?? v.trim() : '');
+    if (!isFeatured) {
+      if (comparable(raw) !== comparable(business.whatsapp)) {
+        return json({ ok: false, error: 'The WhatsApp button is a Featured-plan perk. Upgrade to Featured under Billing to add a WhatsApp number.' }, 403);
+      }
+    } else {
+      if (raw && !whatsappDigitsZA(raw)) {
+        return json({ ok: false, error: 'WhatsApp needs a South African cellphone number, e.g. 082 123 4567 or +27 82 123 4567 (06x, 07x or 08x; not a landline or 086/080 number).' }, 400);
+      }
+      whatsapp = raw ? formatPhoneZA(raw) : null;
+    }
+  }
+
   if (isFeatured) {
     const values: (string | null)[] = [];
     for (const kind of SOCIAL_KINDS) {
@@ -252,6 +275,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .run();
   if (hasShort) {
     await db.prepare('UPDATE businesses SET short_description = ? WHERE id = ?').bind(shortDescription, businessId).run();
+  }
+  if (whatsapp !== undefined) {
+    await db.prepare('UPDATE businesses SET whatsapp = ? WHERE id = ?').bind(whatsapp, businessId).run();
   }
 
   // Every field just saved (and the social links above, when applicable) is

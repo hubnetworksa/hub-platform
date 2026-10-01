@@ -71,9 +71,11 @@ async function main() {
     `SELECT id, slug, name, suburb_id, address, phone, website, email, description, lat, lng, source_urls, shopping_center_id, description_enriched_at, hours, origin, owner_user_id, subscription_tier, subscription_status, subscription_expires_at, social_instagram, social_facebook, social_linkedin, social_youtube${extra}
      FROM businesses WHERE status = 'published' AND closed_at IS NULL${INCLUDE_TEST_DATA ? '' : ' AND is_test = 0'} ORDER BY name;`;
   // short_description (the business-short-description migration) is optional
-  // the same way: each missing column is dropped from the query in turn.
+  // the same way, and so is whatsapp (the business-whatsapp migration; without
+  // it no WhatsApp buttons show): each missing column is dropped in turn,
+  // newest first.
   let businesses;
-  const optional = [', logo_key', ', short_description'];
+  const optional = [', logo_key', ', short_description', ', whatsapp'];
   for (;;) {
     try {
       businesses = query(businessesSql(optional.join('')));

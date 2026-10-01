@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { businesses, suburbFor, categoriesFor, websiteUrl, logoFor } from '../lib/data';
+import { businesses, suburbFor, categoriesFor, websiteUrl, logoFor, whatsappFor } from '../lib/data';
 import { groupForCategory } from '../lib/categoryGroups';
 import { synonymsFor, locationSynonymsFor } from '../lib/categorySynonyms';
 import { formatPhoneZA } from '../lib/phone';
@@ -11,6 +11,7 @@ export const GET: APIRoute = () => {
     const cat = categoriesFor(b)[0];
     const suburb = suburbFor(b);
     const logo = logoFor(b);
+    const wa = whatsappFor(b);
     return {
       n: b.name,
       s: b.slug,
@@ -45,6 +46,9 @@ export const GET: APIRoute = () => {
       // Logo URL — only on paid listings that have one (see logoFor), so
       // the key is simply absent for nearly every row.
       ...(logo ? { l: logo } : {}),
+      // WhatsApp chat link (wa.me) — only on paid-up Featured listings with a
+      // number (see whatsappFor), for the pinned card's WhatsApp button.
+      ...(wa ? { wa } : {}),
     };
   });
   return new Response(JSON.stringify(index), {

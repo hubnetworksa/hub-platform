@@ -71,3 +71,19 @@ export function phoneHref(raw: string | null | undefined): string {
   if (parsed) return `tel:+27${parsed.national.slice(1)}`;
   return `tel:${first.replace(EXT_RE, '').replace(/[^\d+*#]/g, '').replace(/#/g, '%23')}`;
 }
+
+/** WhatsApp only works on a mobile number: 06x, 07x or 08x, except the
+ *  non-mobile 080x (toll-free) and 086x (sharecall/fax) ranges. */
+function isMobileNational(d: string): boolean {
+  return /^0[67]\d{8}$/.test(d) || /^08[1-57-9]\d{7}$/.test(d);
+}
+
+/** wa.me digits (`27821234567`) when the value is exactly one SA mobile number
+ *  (0821234567, 082 123 4567, +27 82 123 4567, 0027…), otherwise null. */
+export function whatsappDigitsZA(raw: string | null | undefined): string | null {
+  const text = (raw ?? '').trim();
+  if (!text || splitNumbers(text).length !== 1) return null;
+  const parsed = parseOne(text);
+  if (!parsed || parsed.ext || !isMobileNational(parsed.national)) return null;
+  return '27' + parsed.national.slice(1);
+}

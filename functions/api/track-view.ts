@@ -6,7 +6,7 @@ interface Env {
   SITE: string;
 }
 
-const EVENTS = new Set(['view', 'phone_click', 'website_click', 'search_appearance']);
+const EVENTS = new Set(['view', 'phone_click', 'website_click', 'search_appearance', 'whatsapp_click']);
 // A single search can show many businesses at once; capped generously above
 // the site's own render cap (40 results + 1 pinned) so a legitimate full
 // page of results is never silently truncated.
@@ -38,6 +38,9 @@ async function recordOnce(db: D1Database, businessId: number, event: string, ipH
     try {
       await db.prepare('INSERT INTO business_stats (business_id, event, ip_hash, query) VALUES (?, ?, ?, ?)').bind(businessId, event, ipHash, query).run();
     } catch (err) {
+      // 'whatsapp_click' needs the whatsapp-click-stat migration's wider CHECK;
+      // until a city's database has it, that one event is just not counted.
+      if (err instanceof Error && /CHECK constraint failed/i.test(err.message)) return;
       // The `query` column arrives with the search_terms migration; until it
       // is applied on a given city's database, keep counting views/clicks
       // rather than losing every event over one optional field.

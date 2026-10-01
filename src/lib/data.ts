@@ -12,6 +12,8 @@ import newsRaw from '../data/news.json';
 import fuelRaw from '../data/fuel-prices.json';
 import { canFormatDescription, renderRichText, plainHtml, renderInline, plainLine } from './rich-text';
 import { centsToRand, monthlyAndYearly } from '../../functions/_lib/pricing';
+import { whatsappUrl } from './whatsapp';
+import site from '../site';
 
 export interface Suburb {
   id: number;
@@ -77,6 +79,9 @@ export interface Business {
   social_youtube?: string | null;
   /** Verified/Featured perk: R2 key of the uploaded logo (see logoFor). */
   logo_key?: string | null;
+  /** Featured perk: SA mobile number for the WhatsApp button, stored formatted
+   *  like phone ("082 123 4567"). Shown only via whatsappFor. */
+  whatsapp?: string | null;
 }
 
 /** The Featured tier's numeric value — gates the Photos gallery and
@@ -102,6 +107,16 @@ export function logoFor(b: { logo_key?: string | null; subscription_tier: number
   if (!b.logo_key) return null;
   if (!canFormatDescription(b)) return null;
   return b.logo_key.startsWith('/') ? b.logo_key : `/media/${b.logo_key}`;
+}
+
+/** wa.me chat link for the WhatsApp button, or null when there's none to
+ *  show. Featured-plan perk: only while the Featured plan is paid up (active,
+ *  or cancelled but still paid-through), the logoFor rule at tier 2. A lapsed
+ *  or downgraded listing keeps its stored number for when it renews. */
+export function whatsappFor(b: { name: string; whatsapp?: string | null; subscription_tier: number; subscription_status: string | null }): string | null {
+  if (!b.whatsapp) return null;
+  if ((b.subscription_tier ?? 0) < FEATURED_TIER || !canFormatDescription(b)) return null;
+  return whatsappUrl(b.whatsapp, b.name, site.siteName);
 }
 
 /** Safe HTML for a business's description on its own page. Formatting (bold,

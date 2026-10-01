@@ -1,0 +1,33 @@
+---
+// Compact green "WhatsApp" chat button for Featured cards (homepage premium
+// cards, the suburb Featured strip). Renders nothing unless whatsappFor says
+// the listing qualifies (Featured, paid up, has an SA mobile number). The
+// business page has its own full-size button; search.astro builds the same
+// markup client-side for its pinned card.
+import Icon from './Icon.astro';
+import { whatsappFor, type Business } from '../lib/data';
+import { WHATSAPP_ICON, WHATSAPP_GREEN } from '../lib/whatsapp';
+
+interface Props {
+  business: Business;
+  /** Grow to share a wrapping button row evenly (homepage cards). */
+  grow?: boolean;
+}
+const { business, grow = false } = Astro.props;
+const href = whatsappFor(business);
+---
+
+{href && (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener"
+    data-track="whatsapp_click"
+    data-track-slug={business.slug}
+    aria-label={`Chat to ${business.name} on WhatsApp`}
+    style={`${grow ? 'flex:1 1 auto;' : ''}display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border-radius:9px;background:${WHATSAPP_GREEN};color:#fff;font-size:13px;font-weight:800;text-decoration:none;white-space:nowrap`}
+  >
+    <Icon path={WHATSAPP_ICON} size={15} />
+    WhatsApp
+  </a>
+)}

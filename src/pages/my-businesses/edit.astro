@@ -176,6 +176,20 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
                   <label style={fieldLabel}>Phone
                     <input type="tel" name="phone" maxlength="30" class="owner-input" style={fieldInput} />
                   </label>
+                  <!-- Featured perk: the WhatsApp chat button. Below Featured the input is disabled
+                       (so FormData leaves it out) and update-business.ts refuses a change with a 403. -->
+                  <div style="display:flex;flex-direction:column;gap:7px">
+                    <label style={fieldLabel}>
+                      <span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">WhatsApp number
+                        <span id="whatsapp-lock" class="logo-lock" hidden><Icon path={SECTION_ICONS.lock} size={12} /> Featured plan</span>
+                      </span>
+                      <input type="tel" name="whatsapp" id="field-whatsapp" maxlength="30" placeholder="e.g. 082 123 4567" disabled class="owner-input" style={fieldInput} />
+                    </label>
+                    <label id="whatsapp-same-wrap" style="display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer">
+                      <input type="checkbox" id="whatsapp-same" disabled /> Same as phone
+                    </label>
+                    <span id="whatsapp-locked" hidden style="font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.5">A WhatsApp chat button comes with the Featured plan. <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a>.</span>
+                  </div>
                   <label style={fieldLabel}>Website
                     <input type="url" name="website" maxlength="200" class="owner-input" style={fieldInput} />
                   </label>
@@ -404,7 +418,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   .logo-btn { padding: 9px 14px; border: 2px solid var(--border); border-radius: 9px; background: #fff; color: var(--navy); font-family: inherit; font-size: 12.5px; font-weight: 800; cursor: pointer; }
   .logo-btn-quiet { color: var(--muted); }
   .logo-btn:disabled { background: var(--bg-subtle); color: var(--muted); cursor: not-allowed; }
-  #desc-locked[hidden], #logo-lock[hidden], #logo-locked[hidden], #logo-status[hidden], #logo-remove[hidden], #logo-preview-lg[hidden], #logo-preview-sm[hidden], #logo-empty-lg[hidden], #logo-empty-sm[hidden] { display: none !important; }
+  #whatsapp-lock[hidden], #whatsapp-locked[hidden], #desc-locked[hidden], #logo-lock[hidden], #logo-locked[hidden], #logo-status[hidden], #logo-remove[hidden], #logo-preview-lg[hidden], #logo-preview-sm[hidden], #logo-empty-lg[hidden], #logo-empty-sm[hidden] { display: none !important; }
   @media (min-width: 760px) {
     .owner-shell { grid-template-columns: 210px minmax(0, 1fr); }
     .owner-nav { flex-direction: column; }
@@ -470,6 +484,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     /** 'yearly' or 'monthly' — the billing period of the current tier plan. */
     billing_period?: string | null;
     social_instagram: string | null; social_facebook: string | null; social_linkedin: string | null; social_youtube: string | null;
+    whatsapp?: string | null;
     logo_key?: string | null;
     visible: boolean; hidden_reason: 'admin_hidden' | 'marked_closed' | null;
   };
@@ -1342,6 +1357,34 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       input.style.color = socialOn ? 'var(--text)' : 'var(--muted)';
       input.style.cursor = socialOn ? '' : 'not-allowed';
     }
+
+    // WhatsApp number: same Featured rule. Locked, it still shows the stored
+    // number (greyed) so a lapsed owner sees it's kept for when they renew.
+    const waInput = form.elements.namedItem('whatsapp') as HTMLInputElement;
+    const waSame = document.getElementById('whatsapp-same') as HTMLInputElement;
+    const phoneInput = form.elements.namedItem('phone') as HTMLInputElement;
+    const digitsOf = (v: string) => v.replace(/\D/g, '').replace(/^27/, '0');
+    waInput.value = b.whatsapp ?? '';
+    waInput.disabled = !socialOn;
+    waSame.disabled = !socialOn;
+    waSame.checked = socialOn && !!b.whatsapp && digitsOf(b.whatsapp) === digitsOf(b.phone ?? '');
+    waInput.readOnly = waSame.checked;
+    waInput.style.background = socialOn && !waSame.checked ? '#fff' : 'var(--bg-subtle)';
+    waInput.style.color = socialOn ? 'var(--text)' : 'var(--muted)';
+    waInput.style.cursor = socialOn ? '' : 'not-allowed';
+    document.getElementById('whatsapp-lock')!.hidden = socialOn;
+    document.getElementById('whatsapp-locked')!.hidden = socialOn;
+    document.getElementById('whatsapp-same-wrap')!.style.display = socialOn ? 'inline-flex' : 'none';
+    const syncWhatsapp = () => {
+      if (!waSame.checked) return;
+      waInput.value = phoneInput.value;
+    };
+    waSame.onchange = () => {
+      waInput.readOnly = waSame.checked;
+      waInput.style.background = waSame.checked ? 'var(--bg-subtle)' : '#fff';
+      syncWhatsapp();
+    };
+    phoneInput.oninput = syncWhatsapp;
 
     renderHeader(b);
     renderVisibility(b);

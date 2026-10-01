@@ -64,7 +64,7 @@ export function getFlowPlans(): FlowPlan[] {
       yearlyAmount: featuredYearly,
       yearlyNote: yearlyNote('price_featured_cents'),
       note: 'Top of your category and suburb',
-      summary: 'Top of your category and suburb, photos, social page links, enquiry form',
+      summary: 'Top of your category and suburb, photos, social page links, WhatsApp chat button, enquiry form',
     },
   ];
 }

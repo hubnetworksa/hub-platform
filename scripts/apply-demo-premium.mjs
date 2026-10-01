@@ -117,6 +117,7 @@ function makeFakeBusiness({ name, slugBase, donor, categoryId, suburbId, shoppin
     social_linkedin: null,
     social_youtube: null,
     logo_key: null,
+    whatsapp: null,
   };
   fakeBusinesses.push(business);
   const catId = categoryId ?? primaryCategoryId(donor);
@@ -157,6 +158,9 @@ const DEMO_SOCIALS = {
 // logo spot.
 const DEMO_LOGO_SQUARE = '/demo-logo.png';
 const DEMO_LOGO_WIDE = '/demo-logo-wide.png';
+// Sample WhatsApp number (Featured perk). The Verified demo gets it too, to
+// show the button stays hidden below Featured (whatsappFor in data.ts).
+const DEMO_WHATSAPP = '082 123 4567';
 
 let featuredCount = 0;
 let verifiedCount = 0;
@@ -176,6 +180,7 @@ for (const s of suburbs) {
   featured.subscription_expires_at = expires;
   featured.logo_key = DEMO_LOGO_SQUARE;
   Object.assign(featured, DEMO_SOCIALS);
+  featured.whatsapp = DEMO_WHATSAPP;
   featuredCount++;
 
   const verifiedDonor = donors[1] ?? donors[0];
@@ -189,6 +194,7 @@ for (const s of suburbs) {
   verified.subscription_status = 'active';
   verified.subscription_expires_at = expires;
   verified.logo_key = DEMO_LOGO_WIDE;
+  verified.whatsapp = DEMO_WHATSAPP;
   verifiedCount++;
 }
 
