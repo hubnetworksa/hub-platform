@@ -1,0 +1,47 @@
+name: Resend owner confirmation email
+
+# Manual only. Re-sends the "please confirm your listing" email for a
+# submission that's awaiting owner confirmation, via the site's
+# /api/admin/resend-owner-confirm with the stored CRON_SECRET (the same
+# endpoint as Approvals → "Resend verification email" in the admin). Also
+# restarts its reminder/expiry clock. Optionally changes the email first.
+on:
+  workflow_dispatch:
+    inputs:
+      site:
+        description: "capetown, pretoria or polokwane"
+        required: true
+        type: choice
+        options: [capetown, pretoria, polokwane]
+      submission_id:
+        description: "pending_submissions.id"
+        required: true
+      email:
+        description: "New owner email (leave blank to keep the current one)"
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  resend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Call the site
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SITE: ${{ inputs.site }}
+          SUBMISSION_ID: ${{ inputs.submission_id }}
+          EMAIL: ${{ inputs.email }}
+        run: |
+          host=$(node -e "const s=require('./sites/'+process.env.SITE+'.json');console.log(s.domainLive?s.domain:s.pagesDevHost)")
+          body=$(jq -nc --arg id "$SUBMISSION_ID" --arg e "$EMAIL" '{submissionId:($id|tonumber)} + (if $e=="" then {} else {email:$e} end)')
+          echo "POST https://$host/api/admin/resend-owner-confirm (submission $SUBMISSION_ID)"
+          curl -sS -X POST "https://$host/api/admin/resend-owner-confirm" \
+            -H "Authorization: Bearer $CRON_SECRET" -H "Content-Type: application/json" \
+            -d "$body" -o result.json -w "HTTP %{http_code}\n"
+          cat result.json; echo
+          jq -e '.ok == true' result.json >/dev/null

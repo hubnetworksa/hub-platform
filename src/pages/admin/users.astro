@@ -40,12 +40,44 @@ const ROLES = [
       </div>
     </AdminShell>
   </div>
+
+  <dialog id="delete-user-dialog" aria-labelledby="delete-user-title" style="width:min(520px,calc(100vw - 32px));padding:0;border:0;border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.25)">
+    <form method="dialog" id="delete-user-form" style="display:flex;flex-direction:column;gap:14px;padding:20px">
+      <h2 id="delete-user-title" style="margin:0;font-size:17px;letter-spacing:-.02em;color:var(--navy)">Delete account?</h2>
+      <p style="margin:0;font-size:13.5px;font-weight:600;line-height:1.5;color:var(--text)">
+        <strong id="delete-user-email" style="overflow-wrap:anywhere"></strong> will be removed for good: their sign-ins, reviews and pending claims are deleted, and any submissions they made stay in the queue without a link to them. This can't be undone.
+      </p>
+      <div id="delete-user-owned" hidden style="display:flex;flex-direction:column;gap:9px;padding:12px 14px;border:2px solid var(--border);border-radius:12px">
+        <div style="font-size:13px;font-weight:800;color:var(--navy)">They own <span id="delete-user-owned-count"></span>:</div>
+        <ul id="delete-user-owned-list" style="margin:0;padding-left:18px;font-size:13px;font-weight:600;color:var(--text)"></ul>
+        <label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;font-weight:700;color:var(--text);cursor:pointer">
+          <input type="radio" name="owned" value="unassign" checked style="margin-top:2px;accent-color:var(--accent)" />
+          <span>Keep the listings, with no owner (they can be reassigned later)</span>
+        </label>
+        <label style="display:flex;gap:8px;align-items:flex-start;font-size:13px;font-weight:700;color:var(--danger);cursor:pointer">
+          <input type="radio" name="owned" value="delete" style="margin-top:2px;accent-color:var(--danger)" />
+          <span>Delete the listings too (permanent; not possible for one with paid invoices)</span>
+        </label>
+      </div>
+      <p id="delete-user-error" role="alert" hidden style="margin:0;font-size:13px;font-weight:700;color:var(--danger)"></p>
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
+        <button id="delete-user-confirm" type="button" style="padding:12px 18px;border:0;border-radius:10px;background:var(--danger);color:#fff;font-size:14px;font-weight:800;cursor:pointer">Delete account</button>
+        <button value="cancel" style="padding:12px 18px;border:2px solid var(--border);border-radius:10px;background:#fff;color:var(--navy);font-size:14px;font-weight:800;cursor:pointer">Cancel</button>
+      </div>
+    </form>
+  </dialog>
 </BaseLayout>
 
-<script>
-  import { esc, requireAdmin, showContent, timeAgo, fmtDate } from '../../lib/admin-html';
+<style>
+  #delete-user-dialog::backdrop {
+    background: rgba(16, 26, 51, 0.55);
+  }
+</style>
 
-  interface UserRow { email: string; created_at: string; owned_count: number; last_seen: string | null; role: string }
+<script>
+  import { esc, requireAdmin, showContent, timeAgo, fmtDate, postJson } from '../../lib/admin-html';
+
+  interface UserRow { id: number; email: string; created_at: string; owned_count: number; last_seen: string | null; role: string }
 
   function roleStyle(role: string): string {
     const tone = role === 'Admin' ? 'background:var(--accent);color:var(--contrast)' : role === 'Owner' ? 'background:rgba(var(--accent-rgb),.13);color:var(--accent-hover)' : 'background:var(--bg-subtle);color:var(--muted)';
@@ -58,14 +90,85 @@ const ROLES = [
     return `
       <div class="admin-row" style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:13px;flex-wrap:wrap">
         <span style="flex-shrink:0;width:40px;height:40px;border-radius:10px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800">${esc(initials)}</span>
-        <div style="min-width:0;flex:1">
+        <div style="min-width:0;flex:1 1 180px">
           <div style="font-size:14.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em;overflow-wrap:anywhere">${esc(u.email)}</div>
           <div style="font-size:12.5px;font-weight:600;color:var(--muted)">Joined ${esc(fmtDate(u.created_at))} · ${owns}</div>
         </div>
         <span style="${roleStyle(u.role)}">${esc(u.role)}</span>
         <span style="font-size:12px;font-weight:700;color:var(--muted);min-width:82px;text-align:right">${esc(timeAgo(u.last_seen))}</span>
+        ${u.role === 'Admin'
+          ? '<span style="min-width:68px"></span>'
+          : `<button type="button" data-delete-user="${u.id}" style="min-width:68px;padding:7px 11px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--danger);font-size:12.5px;font-weight:800;cursor:pointer">Delete</button>`}
       </div>`;
   }
+
+  let users: UserRow[] = [];
+  let deleting: UserRow | null = null;
+  const dialog = document.getElementById('delete-user-dialog') as HTMLDialogElement;
+  const dialogError = document.getElementById('delete-user-error')!;
+  const confirmBtn = document.getElementById('delete-user-confirm') as HTMLButtonElement;
+
+  function showDialogError(message: string) {
+    dialogError.textContent = message;
+    dialogError.hidden = !message;
+  }
+
+  function showOwned(list: { id: number; name: string }[]) {
+    const owned = document.getElementById('delete-user-owned')!;
+    owned.hidden = list.length === 0;
+    document.getElementById('delete-user-owned-count')!.textContent = `${list.length} business${list.length === 1 ? '' : 'es'}`;
+    document.getElementById('delete-user-owned-list')!.innerHTML = list.map((b) => `<li>${esc(b.name)}</li>`).join('');
+  }
+
+  async function openDelete(u: UserRow) {
+    deleting = u;
+    showDialogError('');
+    showOwned([]);
+    (document.querySelector('#delete-user-form input[value="unassign"]') as HTMLInputElement).checked = true;
+    document.getElementById('delete-user-email')!.textContent = u.email;
+    confirmBtn.disabled = false;
+    dialog.showModal();
+    if (u.owned_count > 0) {
+      // With no choice given, the endpoint refuses (409) and names what the
+      // account owns, so the dialog can list it before anything is deleted.
+      confirmBtn.disabled = true;
+      const result = await postJson('/api/admin/delete-user', { userId: u.id });
+      confirmBtn.disabled = false;
+      if (Array.isArray(result.ownsBusinesses)) showOwned(result.ownsBusinesses as { id: number; name: string }[]);
+      else if (!result.ok) showDialogError(result.error || 'Could not check what this account owns.');
+    }
+  }
+
+  confirmBtn.addEventListener('click', async () => {
+    if (!deleting) return;
+    const ownsAny = !document.getElementById('delete-user-owned')!.hidden;
+    const choice = (document.querySelector('#delete-user-form input[name="owned"]:checked') as HTMLInputElement | null)?.value;
+    showDialogError('');
+    confirmBtn.disabled = true;
+    const original = confirmBtn.textContent;
+    confirmBtn.textContent = 'Deleting…';
+    const result = await postJson('/api/admin/delete-user', {
+      userId: deleting.id,
+      ...(ownsAny ? (choice === 'delete' ? { deleteBusinesses: true } : { unassign: true }) : {}),
+    });
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = original;
+    if (!result.ok) {
+      if (Array.isArray(result.ownsBusinesses)) showOwned(result.ownsBusinesses as { id: number; name: string }[]);
+      showDialogError(result.error || 'Could not delete that account.');
+      return;
+    }
+    dialog.close();
+    deleting = null;
+    init();
+  });
+
+  document.getElementById('users-list')!.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('button[data-delete-user]') as HTMLButtonElement | null;
+    if (!btn) return;
+    const u = users.find((x) => x.id === Number(btn.dataset.deleteUser));
+    if (u) void openDelete(u);
+  });
 
   async function init() {
     if (!(await requireAdmin('/admin/users/'))) return;
@@ -73,6 +176,7 @@ const ROLES = [
     const res = await fetch('/api/admin/users');
     const data = await res.json();
     showContent();
+    users = data.users;
 
     const list = document.getElementById('users-list')!;
     document.getElementById('users-count')!.textContent = `${data.users.length.toLocaleString('en-US')} account${data.users.length === 1 ? '' : 's'}`;

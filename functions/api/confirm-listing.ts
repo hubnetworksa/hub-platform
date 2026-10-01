@@ -2,12 +2,9 @@ import type { PagesFunction, D1Database, R2Bucket } from '@cloudflare/workers-ty
 import { generateUniqueSlug, insertApprovedBusiness, shoppingCenterIdForSlug } from '../../src/lib/business-submission';
 import { getSite } from '../_lib/site';
 import { triggerRebuild, rebuildTarget } from '../_lib/deploy-hook';
-import { sendEmail } from '../_lib/send-email';
-import { ownerConfirmEmailHtml } from '../_lib/email-template';
+import { sendOwnerConfirmEmail } from '../_lib/owner-confirm';
 import { logActivity } from '../_lib/activity-log';
 import { closePaidSubmission } from '../_lib/paid-submission';
-import { formatPhoneZA } from '../../src/lib/phone';
-import { plainLine } from '../../src/lib/rich-text';
 
 interface Env {
   DB: D1Database;
@@ -123,41 +120,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     .bind(ownerToken, row.id)
     .run();
 
-  const ownerConfirmUrl = `https://${site.domain}/owner-confirm-listing?token=${ownerToken}`;
-  const detailLines = [
-    `Name: ${row.name}`,
-    row.address && `Address: ${row.address}`,
-    row.phone && `Phone: ${formatPhoneZA(row.phone)}`,
-    row.website && `Website: ${row.website}`,
-    `Description: ${plainLine(row.description)}`,
-  ].filter(Boolean);
-  const bodyText = [
-    `Hi,`,
-    ``,
-    `Someone listed "${row.name}" on ${site.siteName} — before it goes live, please confirm the details below are correct:`,
-    ``,
-    ...detailLines,
-    ``,
-    `Confirm or dispute here: ${ownerConfirmUrl}`,
-  ].join('\n');
-  const subject = `Please confirm your ${site.siteName} listing: ${row.name}`;
-
-  const ownerHtml = ownerConfirmEmailHtml(site, {
-    businessName: row.name,
-    address: row.address,
-    phone: row.phone,
-    website: row.website,
-    description: row.description,
-    confirmUrl: ownerConfirmUrl,
-  });
-
-  const emailResult = await sendEmail(context.env, {
-    from: `${site.siteName} <${site.contactEmail}>`,
-    to: row.email,
-    subject,
-    text: bodyText,
-    html: ownerHtml,
-  });
+  const emailResult = await sendOwnerConfirmEmail(context.env, site, row.email, row, ownerToken);
+  const { subject, text: bodyText } = emailResult;
 
   if (emailResult.sent) {
     await logActivity(db, 'submission_approved', row.name, `Awaiting owner confirmation — emailed ${row.email}.`);

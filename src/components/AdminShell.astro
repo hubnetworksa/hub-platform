@@ -144,6 +144,10 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
         </label>
       </div>
       <label style={labelStyle}>
+        Contact email <span style="font-weight:600;color:var(--muted)">(optional, where enquiries are sent)</span>
+        <input type="email" name="email" autocomplete="off" style={fieldStyle} />
+      </label>
+      <label style={labelStyle}>
         Description
         <textarea name="description" rows="3" style={`${fieldStyle};resize:vertical`}></textarea>
       </label>
@@ -477,6 +481,7 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
         field('category').value = l.category_name ?? '';
         field('suburb').value = l.suburb_name ?? '';
         field('phone').value = l.phone ?? '';
+        field('email').value = l.email ?? '';
         field('plan').value = String(l.subscription_tier ?? 0);
         field('description').value = l.description ?? '';
         field('short_description').value = l.short_description ?? '';
@@ -526,6 +531,7 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
           category: field('category').value,
           suburb: field('suburb').value,
           phone: field('phone').value,
+          email: field('email').value,
           plan: Number(field('plan').value),
           description: field('description').value,
           short_description: field('short_description').value,

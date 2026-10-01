@@ -4,6 +4,7 @@ import { logActivity } from '../../_lib/activity-log';
 import { triggerRebuild, rebuildTarget } from '../../_lib/deploy-hook';
 import { generateUniqueSlug, insertApprovedBusiness } from '../../../src/lib/business-submission';
 import { formatPhoneZA } from '../../../src/lib/phone';
+import { looksLikeEmail } from '../../_lib/messages';
 import { descriptionLimitError, toSingleParagraph } from '../../../src/lib/rich-text';
 
 interface Env {
@@ -17,7 +18,7 @@ const PLAN_TIERS: Record<string, number> = { basic: 0, verified: 1, featured: 2 
 //   GET  ?q=&plan=&status=&limit=&offset=  paged list across EVERY business
 //                                          (published and hidden), with totals
 //   GET  ?id=                              one listing, for the edit modal
-//   POST {id?, name, category, suburb, phone, plan, description}
+//   POST {id?, name, category, suburb, phone, email?, plan, description}
 //                                          create (no id) or update (id)
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const db = context.env.DB;
@@ -30,7 +31,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (id) {
     const row = await db
       .prepare(
-        `SELECT b.id, b.slug, b.name, b.status, b.phone, b.description, b.short_description, b.subscription_tier, b.owner_user_id,
+        `SELECT b.id, b.slug, b.name, b.status, b.phone, b.email, b.description, b.short_description, b.subscription_tier, b.owner_user_id,
                 s.slug AS suburb_slug, s.name AS suburb_name, u.email AS owner_email,
                 (SELECT c.slug FROM business_categories bc JOIN categories c ON c.id = bc.category_id WHERE bc.business_id = b.id AND bc.is_primary = 1 LIMIT 1) AS category_slug,
                 (SELECT c.name FROM business_categories bc JOIN categories c ON c.id = bc.category_id WHERE bc.business_id = b.id AND bc.is_primary = 1 LIMIT 1) AS category_name
@@ -141,6 +142,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const shortDescription = hasShort ? toSingleParagraph(body.short_description as string) || null : null;
   const shortError = descriptionLimitError(shortDescription, 'short');
   if (shortError) return json({ ok: false, error: shortError }, 400);
+  // The public contact email. Only touched when sent (older callers don't);
+  // sent empty, it's cleared.
+  const hasEmail = typeof body.email === 'string';
+  const email = hasEmail ? clean(body.email, 160) : null;
+  if (email && !looksLikeEmail(email)) return json({ ok: false, error: "That doesn't look like a valid email address." }, 400);
   const tier = parsePlan(body.plan) ?? 0;
 
   if (!name) return json({ ok: false, error: 'Add the business name.' }, 400);
@@ -170,6 +176,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       .bind(name, suburb.id, phone, description, id)
       .run();
     if (hasShort) await db.prepare('UPDATE businesses SET short_description = ? WHERE id = ?').bind(shortDescription, id).run();
+    if (hasEmail) await db.prepare('UPDATE businesses SET email = ? WHERE id = ?').bind(email, id).run();
     await db.prepare('DELETE FROM business_categories WHERE business_id = ? AND is_primary = 1').bind(id).run();
     // A business can also carry non-primary categories; INSERT OR REPLACE so
     // picking one of those as the new primary doesn't hit the composite PK.
@@ -203,7 +210,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     address: null,
     phone,
     website: null,
-    email: null,
+    email,
     description,
     shortDescription,
     ownerUserId: null,
