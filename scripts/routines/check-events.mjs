@@ -8,12 +8,14 @@
 // fields; a type outside the allowed list; a date in the past, badly formed or more than a year
 // out; a slug that doesn't follow slugify(title)-date; an event already on the site (same slug,
 // or same title on the same date); fewer than 3 verification sources on 3 different sites; any
-// ticket-resale site counted as a verification source; non-https links; HTML in any text field;
+// ticket-resale site counted as a verification source; a NULL in a column the events table
+// declares NOT NULL (OR IGNORE would silently drop the row); non-https links; HTML in any text field;
 // an image_source other than NULL, 'stock' or 'official'; and more than 10 events in one file.
 // --online also fetches every verification source and fails an event when fewer than 3 of them
 // can be read and mention both a word of the title and the event's date.
 import { readFileSync } from 'node:fs';
 import { loadSnapshot, parseArgs, requireCity, slugify } from './lib.mjs';
+import { notNullProblems } from './sql-rows.mjs';
 
 const { positional, flags } = parseArgs(process.argv.slice(2));
 const file = positional[0];
@@ -76,6 +78,9 @@ for (const stmt of splitStatements(sql)) {
   const e = [];
   const label = r.slug ?? '(no slug)';
 
+  // A NULL in a NOT NULL column makes INSERT OR IGNORE drop the row silently on deploy.
+  e.push(...notNullProblems(r, 'events', label));
+
   for (const f of ['slug', 'title', 'type', 'event_date', 'venue', 'description', 'verification_json']) if (!r[f]) e.push(`missing ${f}`);
   if (r.type && !TYPES.includes(r.type)) e.push(`type '${r.type}' is not one of ${TYPES.join(', ')}`);
   if (r.event_date) {
@@ -98,7 +103,7 @@ for (const stmt of splitStatements(sql)) {
   if (r.title && (r.title.length < 4 || r.title.length > 160)) e.push('title should be 4 to 160 characters');
   if (r.description && (r.description.length < 40 || r.description.length > 1200)) e.push('description should be 40 to 1,200 characters');
   for (const f of ['ticket_url', 'image_url']) {
-    if (r[f] && !/^https:\/\//.test(r[f]) && !(f === 'image_url' && r[f].startsWith('/media/'))) e.push(`${f} must be an https link`);
+    if (r[f] && !/^https:\/\//.test(r[f]) && !(f === 'image_url' && r[f].startsWith('/media/')) && !(f === 'ticket_url' && r[f] === '#')) e.push(`${f} must be an https link${f === 'ticket_url' ? " (or '#' when there is no ticket link)" : ''}`);
   }
   if (r.image_source != null && !['stock', 'official'].includes(r.image_source)) e.push(`image_source must be NULL, 'stock' or 'official' (AI images are added later by the deploy)`);
   if (r.image_url && !r.image_source) e.push('image_url is set but image_source is not');

@@ -13,6 +13,7 @@
 
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync, readdirSync, writeFileSync, existsSync } from 'node:fs';
+import { insertRows, notNullProblems, splitStatements, stripComments } from './routines/sql-rows.mjs';
 
 const args = process.argv.slice(2);
 const flag = (name) => args.includes(`--${name}`);
@@ -106,6 +107,13 @@ for (const file of files) {
     .filter(Boolean);
   for (const s of statements) {
     if (!/^INSERT\s+(OR\s+IGNORE\s+)?INTO\s+(news|fuel_prices)\b/i.test(s)) problems.push(`Statement is not an INSERT INTO news / fuel_prices: ${s.slice(0, 60)}…`);
+  }
+
+  // A NULL in a NOT NULL column makes INSERT OR IGNORE drop the row silently — both on
+  // deploy and in the in-memory run below, which would then never see the row. So read
+  // the rows straight from the SQL text and check them first.
+  for (const s of splitStatements(stripComments(sql))) {
+    for (const { row } of insertRows(s, 'news') ?? []) problems.push(...notNullProblems(row, 'news'));
   }
 
   const db = new DatabaseSync(':memory:');

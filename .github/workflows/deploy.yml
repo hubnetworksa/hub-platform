@@ -141,6 +141,11 @@ jobs:
               echo "Applying $f"
               npx wrangler d1 execute "$(node -e "console.log(require('./sites/${{ matrix.site }}.json').dbName)")" \
                 --config "wrangler.${{ matrix.site }}.jsonc" --remote --file="$f"
+              # INSERT OR IGNORE silently skips rows that break a NOT NULL
+              # constraint; warn (never fail) if any events/news row is missing.
+              if grep -qiE 'INTO[[:space:]]+(events|news)\b' "$f"; then
+                node scripts/routines/verify-applied.mjs "$f" --site ${{ matrix.site }} || true
+              fi
             done
           fi
 

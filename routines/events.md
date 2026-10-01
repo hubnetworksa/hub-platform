@@ -53,6 +53,7 @@ INSERT OR IGNORE INTO events (
 - `price` is shown exactly as written on the public page: write it the way a person reads it (`'R180 - R650'`, `'Free entry'`, `'R150 (includes tasting glass)'`).
 - `host` is a short seller label (`'Sold via Quicket'`, `'No ticket needed'`, `'Pay at the door'`).
 - `organiser`, `organiser_note`, `doors`, `ages`, `parking`, `traders` are optional: fill what you genuinely found, leave `NULL` for the rest.
+- **Never `NULL` in a column the table requires.** `price` must always be a string: `'Price TBC'` if no source states one. `ticket_url` is `'#'` when there is no ticket link. `description` is `''` at the very least (the check wants 40+ characters anyway). `slug`, `title`, `type`, `event_date` are always set. `INSERT OR IGNORE` silently drops a row with a `NULL` in any of these and the deploy still reports success, so the event just never appears. The check rejects them.
 - `verification_json` is the JSON array of your 3 or more non-resale source URLs: the audit trail. Do not pad it with resale URLs.
 
 ## The check: every time, before you push
