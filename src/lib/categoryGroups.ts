@@ -58,7 +58,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
       'accountants', 'attorneys-legal', 'estate-agents', 'insurance', 'computer-it-services', 'software-development',
       'printing-services', 'photographers', 'business-consulting', 'commercial-property-office-space',
       'engineering-surveying', 'financial-investment-services', 'marketing-advertising', 'recruitment-hr-services',
-      'bookkeeping-services', 'tax-practitioners',
+      'bookkeeping-services', 'tax-practitioners', 'construction-claims-management',
     ],
   },
   {

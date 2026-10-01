@@ -38,6 +38,7 @@ export const CATEGORY_SCHEMA_TYPES: Record<string, string> = {
   'clinics-healthcare': 'MedicalClinic',
   'commercial-property-office-space': 'RealEstateAgent',
   'computer-it-services': 'ProfessionalService',
+  'construction-claims-management': 'ProfessionalService',
   'convenience-stores': 'ConvenienceStore',
   dentists: 'Dentist',
   'doctors-gps': 'Physician',

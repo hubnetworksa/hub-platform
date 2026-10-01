@@ -92,6 +92,12 @@ export const CATEGORY_SYNONYMS: Record<string, string[]> = {
     'computer repair', 'it support', 'laptop repair', 'tech support', 'network support', 'it services',
     'computer technician', 'data recovery',
   ],
+  'construction-claims-management': [
+    'construction claims', 'claims consultant', 'construction claims consultant', 'contract claims', 'delay claims',
+    'extension of time', 'eot claims', 'quantum', 'quantum surveyor', 'claims quantity surveyor', 'contract dispute',
+    'construction dispute', 'adjudication', 'arbitration', 'construction arbitration', 'jbcc', 'fidic', 'nec contract', 'gcc',
+    'contract administration', 'forensic delay analysis', 'variation claims',
+  ],
   'convenience-stores': ['spaza shop', 'spaza', 'corner shop', 'tuck shop', 'cafe', 'café', 'convenience shop'],
   dentists: ['dentist', 'dentists', 'dental practice', 'teeth', 'dental clinic', 'tooth extraction', 'braces', 'dental surgery'],
   'doctors-gps': [

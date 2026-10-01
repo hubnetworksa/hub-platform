@@ -101,6 +101,7 @@ const CATEGORY_SLUGS = new Set([
   'logistics-courier-transport', 'solar-renewable-energy',
   'industrial-suppliers-manufacturing', 'commercial-property-office-space',
   'recruitment-hr-services', 'financial-investment-services',
+  'construction-claims-management',
 ]);
 
 // Exact-match (lowercased) free-text category -> our slug. Curated by hand
@@ -329,6 +330,11 @@ const CATEGORY_MAP = {
   'marketing agency': 'marketing-advertising',
   'solar energy company': 'solar-renewable-energy',
   'engineering consultant': 'engineering-surveying',
+  'construction claims': 'construction-claims-management',
+  'claims consultant': 'construction-claims-management',
+  'contract claims': 'construction-claims-management',
+  'delay analysis': 'construction-claims-management',
+  'quantum': 'construction-claims-management',
   'property management company': 'commercial-property-office-space',
   'courier service': 'logistics-courier-transport',
   'shopping mall': null,
