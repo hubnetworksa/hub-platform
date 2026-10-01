@@ -19,24 +19,87 @@ const sortedSuburbs = [...suburbs].sort((a, b) => businessesInSuburb(b.id).lengt
       placeholder={`Plumber, dentist, panel beater…`}
       aria-label="Search businesses"
       autocomplete="off"
-      style="flex:1;min-width:0;border:0;background:transparent;padding:15px 0;font-size:15.5px;color:var(--text);outline:none"
+      class="hs-input"
     />
   </div>
-  <div style="display:grid;grid-template-columns:1fr auto;gap:8px">
+  <div class="hs-row">
     <div style="display:flex;align-items:center;gap:10px;padding:0 12px;border-radius:10px;background:var(--bg-subtle)">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.9" stroke-linecap="round"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
-      <select name="suburb" style="flex:1;min-width:0;border:0;background:transparent;padding:14px 0;font-size:14.5px;font-weight:600;color:var(--text);outline:none">
+      <select name="suburb" aria-label="Suburb" class="hs-select">
         <option value="">All suburbs</option>
         {sortedSuburbs.slice(0, 40).map((s) => <option value={s.slug}>{s.name}</option>)}
       </select>
     </div>
-    <button type="submit" class="hero-search-submit" style="padding:14px 26px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;cursor:pointer">Search</button>
+    <button type="submit" class="hero-search-submit">Search</button>
   </div>
 </form>
 
 <style>
+  .hs-input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    padding: 15px 0;
+    font-size: 15.5px;
+    color: var(--text);
+    outline: none;
+  }
+  .hs-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+  .hs-select {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    border: 0;
+    background: transparent;
+    padding: 14px 4px 14px 0;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--text);
+    outline: none;
+    text-overflow: ellipsis;
+    cursor: pointer;
+  }
+  .hero-search-submit {
+    padding: 14px 26px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--accent);
+    color: var(--contrast);
+    font-size: 14.5px;
+    font-weight: 800;
+    cursor: pointer;
+    min-height: 48px;
+  }
   .hero-search-submit:hover {
     background: var(--accent-hover);
+  }
+  /* Phones: input, suburb and button each get a full-width row, 16px text
+     (stops iOS zooming into the field) and 48px touch targets. */
+  @media (max-width: 560px) {
+    .hs-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .hs-input,
+    .hs-select,
+    .hero-search-submit {
+      font-size: 16px;
+    }
+    .hs-input,
+    .hs-select {
+      height: 48px;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+    .hero-search-submit {
+      width: 100%;
+      height: 48px;
+      padding: 0 20px;
+    }
   }
 </style>
 
