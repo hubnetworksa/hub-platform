@@ -43,6 +43,9 @@ function lastLogDate(file, action) {
   return null;
 }
 
+// --force skips the weekly/monthly gate for a one-off manual run (dedupe still applies).
+const FORCE = process.argv.includes('--force');
+
 switch (routine) {
   case 'discovery': {
     const st = loadState(city, 'discovery', null);
@@ -139,7 +142,7 @@ switch (routine) {
 
   case 'events': {
     const last = lastLogDate('events-agent-log.jsonl');
-    if (daysSince(last) < 6.5) notDue(`Runs weekly (last run ${last}).`);
+    if (!FORCE && daysSince(last) < 6.5) notDue(`Runs weekly (last run ${last}).`);
     const cutoff = new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10);
     due({ routine, city, area: cfg.eventsArea, today, knownEvents: (snap.events ?? []).filter((e) => e.event_date >= cutoff), types: ['Music', 'Market', 'Sport', 'Theatre', 'Food & Drink', 'Family', 'Other'] });
     break;
@@ -156,7 +159,7 @@ switch (routine) {
 
   case 'tourism': {
     const last = lastLogDate('tourism-agent-log.jsonl');
-    if (daysSince(last) < 28) notDue(`Runs monthly (last run ${last}).`);
+    if (!FORCE && daysSince(last) < 28) notDue(`Runs monthly (last run ${last}).`);
     const file = path.join(ROOT, 'src/site-content/tourism.ts');
     const text = existsSync(file) ? readFileSync(file, 'utf8') : '';
     const block = text.split(new RegExp(`\\n  ${city}: \\{`))[1]?.split(/\n  \},?\n/)[0] ?? '';
