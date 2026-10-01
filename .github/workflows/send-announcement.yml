@@ -1,0 +1,64 @@
+name: Send announcement email
+
+# Manual only. Calls a site's /api/admin/send-announcement with the stored
+# CRON_SECRET so the value never has to be handled by hand.
+#   mode=test     one real email to `test_to`, nothing recorded
+#   mode=dry_run  masked list of who WOULD receive it, nothing sent
+#   mode=send     the real campaign (idempotent: each user is stamped once)
+on:
+  workflow_dispatch:
+    inputs:
+      site:
+        description: "capetown, pretoria or polokwane"
+        required: true
+        type: choice
+        options: [capetown, pretoria, polokwane]
+      mode:
+        description: "test, dry_run or send"
+        required: true
+        type: choice
+        options: [test, dry_run, send]
+        default: dry_run
+      campaign:
+        description: "Campaign id (one send per user per campaign)"
+        required: true
+        default: "relaunch-2026-10"
+      test_to:
+        description: "Address for mode=test"
+        required: false
+      limit:
+        description: "Max recipients this run (mode=send only)"
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Call the site
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SITE: ${{ inputs.site }}
+          MODE: ${{ inputs.mode }}
+          CAMPAIGN: ${{ inputs.campaign }}
+          TEST_TO: ${{ inputs.test_to }}
+          LIMIT: ${{ inputs.limit }}
+        run: |
+          host=$(node -e "const s=require('./sites/'+process.env.SITE+'.json');console.log(s.domainLive?s.domain:s.pagesDevHost)")
+          case "$MODE" in
+            test)    body=$(jq -nc --arg c "$CAMPAIGN" --arg t "$TEST_TO" '{campaign:$c,test_to:$t}') ;;
+            dry_run) body=$(jq -nc --arg c "$CAMPAIGN" '{campaign:$c,dry_run:true}') ;;
+            send)    body=$(jq -nc --arg c "$CAMPAIGN" --arg l "$LIMIT" '{campaign:$c} + (if $l=="" then {} else {limit:($l|tonumber)} end)') ;;
+            *) echo "unknown mode $MODE"; exit 1 ;;
+          esac
+          echo "POST https://$host/api/admin/send-announcement ($MODE)"
+          curl -sS -X POST "https://$host/api/admin/send-announcement" \
+            -H "Authorization: Bearer $CRON_SECRET" -H "Content-Type: application/json" \
+            -d "$body" -o result.json -w "HTTP %{http_code}\n"
+          cat result.json; echo
+          jq -e '.ok == true' result.json >/dev/null

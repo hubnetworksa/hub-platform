@@ -169,6 +169,146 @@ export function ownerReminderEmailHtml(site: Site, data: OwnerReminderEmailData)
 </html>`;
 }
 
+
+export interface RelaunchEmailData {
+  /** Per-user opt-out link (functions/api/unsubscribe.ts?t=<token>). */
+  unsubscribeUrl: string;
+  /** https://<domain>/my-businesses/ */
+  dashboardUrl: string;
+  /** https://<domain>/ */
+  siteUrl: string;
+}
+
+// The one-off relaunch announcement (functions/api/admin/send-announcement.ts).
+// Written from CHANGES-ETHAN-BRANCH.md — only features that actually shipped.
+// Same shell as listingLiveEmailHtml; <ul> rather than nested tables for the
+// bullets because every major client (Gmail, Outlook desktop and web, Apple
+// Mail) renders a plain list with inline margins correctly.
+export function relaunchEmailHtml(site: Site, data: RelaunchEmailData): string {
+  const t = site.theme;
+  const base = `https://${site.domain}`;
+  const bannerUrl = `${base}${site.bannerImage}`;
+  const logoUrl = `${base}/logo-icon.png`;
+  const name = escapeHtml(site.siteName);
+  const city = escapeHtml(site.cityLabel);
+
+  const link = (path: string, label: string) =>
+    `<a href="${base}${path}" style="color:${t.accent};font-weight:700;text-decoration:none;">${label}</a>`;
+  const li = (html: string) => `<li style="margin:0 0 8px;">${html}</li>`;
+  const h2 = (text: string) =>
+    `<h2 style="margin:24px 0 10px;font-size:15px;line-height:1.3;color:${t.navy};text-transform:uppercase;letter-spacing:0.04em;">${text}</h2>`;
+  const ul = (items: string[]) =>
+    `<ul style="margin:0;padding:0 0 0 20px;color:${t.text};font-size:14px;line-height:1.55;">${items.join('')}</ul>`;
+
+  const owners = ul([
+    li(`${link('/my-businesses/', 'Your owner dashboard')}: edit your listing, trading hours and contact details yourself.`),
+    li(`Paid plans add photos, an enquiry form that sends customer messages straight to your inbox, and stats on views and clicks.`),
+    li(`Not managing your listing yet? ${link('/my-businesses/claim/', 'Claim it')} and we'll verify it with you.`),
+    li(`Plans are Basic (free), Verified and Featured, plus exclusive sponsor spots on category, suburb and shopping-centre pages. Monthly or yearly billing. ${link('/pricing/', 'See plans and pricing')}.`),
+  ]);
+
+  const everyone = ul([
+    li(`${link('/events/', `Events in ${city}`)}, with a form to add your own.`),
+    li(`${link('/news/', 'Local news and this month’s fuel prices')}.`),
+    li(`${link('/tourism/', 'Things to do')} in and around ${city}.`),
+    li(`An ${link('/suburb/map/', 'interactive suburb map')} to browse by area.`),
+    li(`Search with an <strong style="color:${t.text};">Open now</strong> filter so you only see businesses trading right now.`),
+    li(`Install ${name} as an app: open the site in your phone’s browser and choose <em>Install</em> or <em>Add to Home screen</em>.`),
+  ]);
+
+  return `<!doctype html>
+<html>
+<body style="margin:0;padding:0;background:${t.bgSubtle};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${t.bgSubtle};padding:24px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:${t.bgCard};border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);max-width:560px;">
+          <tr>
+            <td>
+              <img src="${bannerUrl}" width="560" alt="${name}" style="display:block;width:100%;max-width:560px;height:160px;object-fit:cover;">
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px 8px;">
+              <img src="${logoUrl}" width="36" height="41" alt="${name} logo" style="display:block;margin-bottom:12px;">
+              <h1 style="margin:0 0 8px;font-size:22px;line-height:1.25;color:${t.navy};">${name} has a new look</h1>
+              <p style="margin:0;color:${t.textMuted};font-size:14px;line-height:1.55;">
+                We’ve rebuilt ${name} from the ground up. The new site is faster, works properly on phones, and can be installed on your phone as an app. Here’s what’s changed.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 32px;">
+              ${h2('For business owners')}
+              ${owners}
+              ${h2('For everyone')}
+              ${everyone}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px 24px;">
+              <a href="${data.dashboardUrl}" style="display:inline-block;background:${t.accent};color:${t.accentContrast};text-decoration:none;font-weight:700;font-size:15px;padding:12px 24px;border-radius:8px;">Open your dashboard</a>
+              <p style="margin:14px 0 0;font-size:14px;"><a href="${data.siteUrl}" style="color:${t.accent};font-weight:700;text-decoration:none;">See the new site</a></p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:16px 32px 28px;border-top:1px solid ${t.border};">
+              <p style="margin:0;color:${t.textMuted};font-size:12px;line-height:1.55;">
+                You’re receiving this because you have an account on ${name}. We’ll only email you about your account and occasional service updates.
+                <a href="${data.unsubscribeUrl}" style="color:${t.textMuted};text-decoration:underline;">Unsubscribe from updates</a>
+                &middot; POPIA: see our <a href="${base}/privacy/" style="color:${t.textMuted};text-decoration:underline;">privacy policy</a>.
+              </p>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:20px 0 0;color:${t.textMuted};font-size:12px;">${name} &middot; ${escapeHtml(site.contactEmail)}</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+/** Plain-text twin of relaunchEmailHtml — sent as the `text` part, and what
+ *  clients that refuse HTML show. Keep the two in step. */
+export function relaunchEmailText(site: Site, data: RelaunchEmailData): string {
+  const base = `https://${site.domain}`;
+  const name = site.siteName;
+  const city = site.cityLabel;
+  return [
+    `${name} has a new look`,
+    ``,
+    `We've rebuilt ${name} from the ground up. The new site is faster, works properly on phones, and can be installed on your phone as an app. Here's what's changed.`,
+    ``,
+    `FOR BUSINESS OWNERS`,
+    ``,
+    `- Your owner dashboard: edit your listing, trading hours and contact details yourself. ${base}/my-businesses/`,
+    `- Paid plans add photos, an enquiry form that sends customer messages straight to your inbox, and stats on views and clicks.`,
+    `- Not managing your listing yet? Claim it and we'll verify it with you. ${base}/my-businesses/claim/`,
+    `- Plans are Basic (free), Verified and Featured, plus exclusive sponsor spots on category, suburb and shopping-centre pages. Monthly or yearly billing. ${base}/pricing/`,
+    ``,
+    `FOR EVERYONE`,
+    ``,
+    `- Events in ${city}, with a form to add your own. ${base}/events/`,
+    `- Local news and this month's fuel prices. ${base}/news/`,
+    `- Things to do in and around ${city}. ${base}/tourism/`,
+    `- An interactive suburb map to browse by area. ${base}/suburb/map/`,
+    `- Search with an "Open now" filter so you only see businesses trading right now.`,
+    `- Install ${name} as an app: open the site in your phone's browser and choose "Install" or "Add to Home screen".`,
+    ``,
+    `Open your dashboard: ${data.dashboardUrl}`,
+    `See the new site: ${data.siteUrl}`,
+    ``,
+    `--`,
+    `You're receiving this because you have an account on ${name}. We'll only email you about your account and occasional service updates.`,
+    `Unsubscribe from updates: ${data.unsubscribeUrl}`,
+    `POPIA: see ${base}/privacy/`,
+    ``,
+    `${name} · ${site.contactEmail}`,
+  ].join('\n');
+}
+
+
 function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>)[c]!);
 }
