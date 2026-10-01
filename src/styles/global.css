@@ -407,20 +407,10 @@ main {
   grid-template-rows: auto 1fr;
   column-gap: 28px;
 }
-/* The profile card clips its rounded corners. overflow:hidden would make it
-   the sticky logo's scroll container (pushing the logo down), so use
-   overflow:clip where supported and only make the logo sticky there. */
+/* The profile card clips its rounded corners. The logo is static at the top
+   of its column and scrolls with the page. */
 .biz-profile-card {
   overflow: hidden;
-}
-@supports (overflow: clip) {
-  .biz-profile-card {
-    overflow: clip;
-  }
-  .biz-head > .biz-logo {
-    position: sticky;
-    top: 132px;
-  }
 }
 .biz-head > .biz-logo {
   grid-area: logo;
@@ -447,7 +437,6 @@ main {
     column-gap: 14px;
   }
   .biz-head > .biz-logo {
-    position: static;
     height: 96px;
     min-width: 96px;
     max-width: 150px;
