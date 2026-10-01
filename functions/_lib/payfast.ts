@@ -30,9 +30,16 @@ export function payfastConfigured(env: PayfastEnv): boolean {
 
 export const PAYFAST_SANDBOX_HOST = 'sandbox.payfast.co.za';
 
-// PayFast's subscription `frequency` codes (their documented set):
-// 1 = daily, 2 = weekly, 3 = monthly, 4 = quarterly, 5 = biannual, 6 = annual.
-const PAYFAST_FREQUENCIES = ['1', '2', '3', '4', '5', '6'] as const;
+// PayFast's subscription `frequency` codes: their own docs list six —
+// 1 = daily, 2 = weekly, 3 = monthly, 4 = quarterly, 5 = biannual,
+// 6 = annual — but their ACTUAL sandbox validation rejects 1 and 2. A real
+// checkout request sent to sandbox.payfast.co.za with frequency=1 comes
+// back a hard 400: "frequency: The frequency must be at least 3." (hit in
+// practice on Pretoria's preview env; the bad PAYFAST_TEST_FREQUENCY=1
+// secret has since been removed there). So despite what the docs say, only
+// 3–6 are usable codes — keep 1 and 2 out of this list so that mistake
+// can't be reintroduced.
+const PAYFAST_FREQUENCIES = ['3', '4', '5', '6'] as const;
 export type PayfastFrequency = (typeof PAYFAST_FREQUENCIES)[number];
 
 // The `frequency` code both subscription checkouts (subscribe/start.ts and
@@ -42,17 +49,25 @@ export type PayfastFrequency = (typeof PAYFAST_FREQUENCIES)[number];
 // Sandbox renewal testing: a real renewal ITN only arrives after a month
 // (or a year), which makes notify.ts's renewal branch — the part that
 // extends the paid period and keeps a paying customer from being
-// downgraded by the expiry sweep — effectively untestable. Setting
-// PAYFAST_TEST_FREQUENCY=1 (daily) in .dev.vars / the preview environment
-// makes the sandbox bill the subscription every day so renewals can be
-// watched arriving. The override is honoured ONLY when PAYFAST_HOST is
-// exactly the sandbox host, so a stray setting on the live host can never
-// make production bill a customer daily; anything but one of the six
-// documented codes is ignored too.
+// downgraded by the expiry sweep — effectively untestable.
+// PAYFAST_TEST_FREQUENCY exists to let the preview environment pick a
+// different real billing cycle than the one the business actually chose
+// (e.g. force monthly=3 renewals for a business that signed up yearly), so
+// that branch gets exercised sooner than a live year would. It is NOT
+// useful for accelerating renewals down to daily/weekly — those codes are
+// rejected by PayFast's live validation (see above), so the fastest cycle
+// this override can pick is still monthly. If you need a renewal to arrive
+// in minutes rather than weeks for testing, do it some other way instead:
+// manually edit the subscription row's `next_billing_date` in the database
+// to be in the past and trigger the expiry sweep / notify.ts by hand, or
+// just wait out a real billing cycle. The override is honoured ONLY when
+// PAYFAST_HOST is exactly the sandbox host, so a stray setting on the live
+// host can never affect production billing; anything but one of the four
+// actually-valid codes above is ignored too.
 //
 // notify.ts's bookkeeping deliberately does NOT know about this: it still
 // adds one full paid period (+1 month / +1 year, per the subscription
-// row's billing_period) on every renewal. An early daily renewal is just a
+// row's billing_period) on every renewal. An early renewal is just a
 // renewal that arrived early and extends the period as a normal one would,
 // which is exactly the code path being tested.
 export function checkoutFrequency(env: PayfastEnv, period: BillingPeriod): PayfastFrequency {
