@@ -24,6 +24,11 @@ for (const b of snap.businesses) {
   bySuburb.get(b.suburb_slug).push(b);
 }
 const slim = (b) => ({ slug: b.slug, name: b.name, phone: b.phone, address: b.address, centre: b.shopping_center_slug ?? null });
+// Businesses an admin hid or deleted (snapshot `suppressed`, see write-db-snapshot.mjs).
+const doNotAdd = (suburbSlugs) => (snap.suppressed ?? [])
+  .filter((s) => suburbSlugs.includes(s.suburb))
+  .map((s) => ({ name: s.name, slug: s.slug, phoneDigits: s.phoneDigits, website: s.website }));
+const DO_NOT_ADD_NOTE = 'doNotAdd lists businesses an admin hid or deleted: never re-add them (validate.mjs rejects a matching slug, phone or name).';
 
 function lastLogDate(file, action) {
   const p = path.join(ROOT, 'status', city, file);
@@ -58,6 +63,8 @@ switch (routine) {
         knownBusinesses: (bySuburb.get(slug) ?? []).map(slim),
         knownCentres: snap.shopping_centers.filter((c) => c.suburb_slug === slug).map((c) => ({ slug: c.slug, name: c.name })),
       })),
+      doNotAddNote: DO_NOT_ADD_NOTE,
+      doNotAdd: doNotAdd(targets),
       categories: snap.categories,
       categoryNotes: cfg.categoryNotes,
     });
@@ -75,6 +82,8 @@ switch (routine) {
       knownTenants: tenants(slug),
       // Existing businesses in the same suburb that are not linked to any centre: candidates to LINK instead of inserting a duplicate.
       unlinkedInSuburb: (bySuburb.get(known.get(slug)?.suburb_slug) ?? []).filter((b) => !b.shopping_center_slug).map(slim),
+      doNotAddNote: DO_NOT_ADD_NOTE,
+      doNotAdd: doNotAdd([known.get(slug)?.suburb_slug].filter(Boolean)),
       categories: snap.categories,
       suburbs: snap.suburbs.map((s) => s.slug),
     });

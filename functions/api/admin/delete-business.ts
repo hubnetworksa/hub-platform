@@ -82,6 +82,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // Log before deleting — the name wouldn't be recoverable afterward.
   await logActivity(db, 'business_deleted', business.name, `Deleted by admin (${user.email}).`);
 
+  // What the suppressed_businesses tombstone needs, read while the row exists.
+  const tombstone = await db
+    .prepare('SELECT b.name, b.slug, s.slug AS suburb_slug, b.phone, b.website FROM businesses b LEFT JOIN suburbs s ON s.id = b.suburb_id WHERE b.id = ?')
+    .bind(businessId)
+    .first<{ name: string; slug: string | null; suburb_slug: string | null; phone: string | null; website: string | null }>()
+    .catch(() => null);
+
   // Children before parents: payments → subscriptions, then the tables that
   // point straight at the business, then the business itself. All-or-nothing.
   try {
@@ -100,6 +107,20 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     const blocker = await findBlockingTable(db, businessId);
     console.error(`delete-business: business ${businessId} is still referenced by ${blocker ?? 'another table'}`, err);
     return json({ ok: false, error: `Can't delete this business: rows in ${blocker ?? 'another table'} still reference it.` }, 409);
+  }
+
+  // Tombstone so the research routines never re-add it (see
+  // db/migrations/<city>/*_suppressed_businesses.sql). Best-effort: a missing
+  // table must never break a delete that has already happened.
+  if (tombstone) {
+    try {
+      await db
+        .prepare("INSERT INTO suppressed_businesses (name, slug, suburb_slug, phone_digits, website, reason) VALUES (?, ?, ?, ?, ?, 'deleted')")
+        .bind(tombstone.name, tombstone.slug, tombstone.suburb_slug, String(tombstone.phone ?? '').replace(/\D/g, '').slice(-9) || null, tombstone.website)
+        .run();
+    } catch (err) {
+      console.error(`delete-business: could not record tombstone for business ${businessId}`, err);
+    }
   }
 
   // Its sponsor spots must not stay sold (and billed) to a business that no

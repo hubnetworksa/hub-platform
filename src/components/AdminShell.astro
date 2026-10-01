@@ -451,7 +451,7 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
     document.dispatchEvent(new CustomEvent('admin:listing-saved'));
   }
   function setVisibilityLabel() {
-    visibilityBtn.textContent = editingStatus === 'published' ? 'Hide from site' : 'Publish to site';
+    visibilityBtn.textContent = editingStatus === 'published' ? 'Hide from site' : 'Unhide (show on site)';
   }
 
   async function openModal(id?: number) {

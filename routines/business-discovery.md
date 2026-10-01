@@ -12,7 +12,7 @@ Run: `node scripts/routines/next.mjs discovery --city <city>`
 
 ## For each suburb, one at a time
 
-1. Search for businesses in that suburb that are **not** in `knownBusinesses`. Cover a range of categories, not just restaurants. Read `categoryNotes` for city-specific rules (for example, where banks and ATMs are filed).
+1. Search for businesses in that suburb that are **not** in `knownBusinesses`. Cover a range of categories, not just restaurants. Read `categoryNotes` for city-specific rules (for example, where banks and ATMs are filed). Businesses in the packet's `doNotAdd` list were removed by an admin and must never be re-added (not even under a new slug or phone format).
 2. Verify each candidate per `_shared.md`: 2 independent sources, a real street address and phone for this exact branch, no individual named.
 3. **Boundary suburbs:** a business on a boundary street can be found under either neighbour. The validator rejects a phone number that already exists anywhere in the city, but also skim the suburb's neighbours if you notice the same name.
 4. **Shopping centres:** if a business is inside a centre listed in `knownCentres`, give it that centre's `shopping_center_id`. If you find a multi-tenant mall that is not in `knownCentres` and it clears the 2-source bar, insert it as a new shopping centre. It queues itself for its first sweep by the centres routine; you do not need to do anything else, and you do **not** research its tenants (the centres routine owns that).

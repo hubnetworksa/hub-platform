@@ -6,7 +6,7 @@
 // Fails (exit 1) on anything a routine must never write: statements outside the routine's
 // narrow allow-list, unknown suburb/category slugs, missing phone or address, fewer than two
 // independent sources, duplicate slugs or phone numbers (across ALL suburbs, not just the
-// searched one), UPDATEs without their one-time guard, source lists that drop existing entries,
+// searched one), businesses an admin hid or deleted (snapshot `suppressed`), UPDATEs without their one-time guard, source lists that drop existing entries,
 // and files with more records than the checkpoint cap. Prints WARN lines for softer concerns.
 import { readFileSync } from 'node:fs';
 import { digits, loadConfig, loadSnapshot, parseArgs, requireCity, slugify } from './lib.mjs';
@@ -86,6 +86,21 @@ for (const b of snap.businesses) {
   if (a.length > 8) addrOwner.set(a, b.slug);
 }
 
+// Hidden or deleted by an admin (snapshot `suppressed`, see write-db-snapshot.mjs): never re-add.
+const normName = (n) => String(n ?? '').toLowerCase().replace(/['’.]/g, '').replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ')
+  .split(' ').filter((w) => w && !['pty', 'ltd', 'cc', 'inc', 'the', 'limited', 'proprietary'].includes(w)).join(' ');
+const suppressedSlugs = new Set();
+const suppressedPhones = new Set();
+const suppressedNames = new Set(); // `${suburb}|${normalised name}`
+for (const s of snap.suppressed ?? []) {
+  if (s.slug) suppressedSlugs.add(s.slug);
+  const p = digits(s.phoneDigits).slice(-9);
+  if (p.length >= 9) suppressedPhones.add(p);
+  const n = normName(s.name);
+  if (n && s.suburb) suppressedNames.add(`${s.suburb}|${n}`);
+}
+const SUPPRESSED_MSG = 'previously hidden/deleted by an admin; do not re-add';
+
 // ---------- allow-lists ----------
 const INSERT_TABLES = { discovery: ['businesses', 'business_categories', 'shopping_centers'], centres: ['businesses', 'business_categories', 'shopping_centers'] };
 const stmts = splitStatements(noComments);
@@ -127,6 +142,9 @@ for (const s of stmts) {
       if (slug && bizBySlug.has(slug)) err(`${label}: already exists in the snapshot`);
       if (slug && newBiz.has(slug)) err(`${label}: appears twice in this file`);
       const phone = unq(row.phone), address = unq(row.address);
+      if (slug && suppressedSlugs.has(slug)) err(`${label}: slug matches a business ${SUPPRESSED_MSG}`);
+      else if (phone && digits(phone).length >= 9 && suppressedPhones.has(digits(phone).slice(-9))) err(`${label}: phone ${phone} matches a business ${SUPPRESSED_MSG}`);
+      else if (name && suburb && suppressedNames.has(`${suburb}|${normName(name)}`)) err(`${label}: name "${name}" in ${suburb} matches a business ${SUPPRESSED_MSG}`);
       if (!address) err(`${label}: street address is mandatory`);
       if (!phone || digits(phone).length < 9) err(`${label}: a real phone number is mandatory`);
       else {

@@ -70,14 +70,15 @@ import Icon from '../../components/Icon.astro';
       <div class="admin-cols admin-row" style="gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);align-items:center">
         <div style="min-width:0">
           <div style="font-size:14.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em">${esc(b.name)}${hidden ? ' <span style="margin-left:6px;padding:2px 8px;border-radius:999px;background:var(--bg-subtle);color:var(--muted);font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;vertical-align:1px">Hidden</span>' : ''}</div>
-          <div style="font-size:12.5px;font-weight:600;color:var(--muted)">${esc(sub || `status: ${b.status}`)}</div>
+          <div style="font-size:12.5px;font-weight:600;color:var(--muted)">${esc(sub || (hidden ? 'Hidden' : `status: ${b.status}`))}</div>
         </div>
         <div class="admin-hide" style="min-width:0;font-size:13px;font-weight:700;color:var(--text)">${esc(b.category_name ?? '')}</div>
         <div class="admin-hide"><span style="${planPillStyle(plan)}">${plan}</span></div>
         <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end">
           <button data-cycle="${b.id}" class="admin-btn-plan" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);cursor:pointer">Plan</button>
           <button data-edit="${b.id}" style="padding:8px 11px;border:0;border-radius:8px;background:var(--navy);color:#fff;font-size:12px;font-weight:800;cursor:pointer">Edit</button>
-          <button data-delete="${b.id}" class="admin-btn-remove" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--danger);font-size:12px;font-weight:800;cursor:pointer">Remove</button>
+          <button data-visibility="${b.id}" class="admin-btn-plan" title="${hidden ? 'Show this listing on the site again' : 'Take this listing off the site and keep it out of the research routines'}" style="padding:8px 11px;border:2px solid var(--navy);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);cursor:pointer">${hidden ? 'Unhide' : 'Hide'}</button>
+          <button data-delete="${b.id}" class="admin-btn-remove" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--danger);font-size:12px;font-weight:800;cursor:pointer">Delete</button>
         </div>
       </div>`;
   }
@@ -154,11 +155,28 @@ import Icon from '../../components/Icon.astro';
       return;
     }
 
+    const visibilityBtn = target.closest('button[data-visibility]') as HTMLButtonElement | null;
+    if (visibilityBtn) {
+      const id = Number(visibilityBtn.dataset.visibility);
+      const row = rows.find((r) => r.id === id);
+      if (!row) return;
+      const makePublic = row.status !== 'published';
+      visibilityBtn.disabled = true;
+      const result = await postJson('/api/admin/toggle-business-status', { businessId: id, status: makePublic ? 'published' : 'rejected' });
+      if (!result.ok) {
+        window.alert(String(result.error || 'Could not change that listing.'));
+        visibilityBtn.disabled = false;
+        return;
+      }
+      load();
+      return;
+    }
+
     const deleteBtn = target.closest('button[data-delete]') as HTMLButtonElement | null;
     if (deleteBtn) {
       const id = Number(deleteBtn.dataset.delete);
       const row = rows.find((r) => r.id === id);
-      if (!window.confirm(`Permanently delete "${row?.name ?? 'this business'}"? This can't be undone.`)) return;
+      if (!row || !window.confirm(`Delete permanently? Hiding is usually better — it removes the listing from the site and keeps it out of the research routines, and you can unhide it later.`)) return;
       deleteBtn.disabled = true;
       const result = await postJson('/api/admin/delete-business', { businessId: id });
       if (!result.ok) {

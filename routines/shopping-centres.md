@@ -14,7 +14,7 @@ The packet gives one `centre`, its `knownTenants`, `unlinkedInSuburb`, `categori
 
 1. **Find the centre's own official website.** Search `"<centre name>" official website` or `"<centre name>" store directory <suburb>`. If there is no real, distinct website (a directory listing, Facebook-only presence, or nothing), **stop here**: log `official_site_found: false` and record the centre as swept (below). This is a normal outcome: some rows are single shops or brand names that will never have a mall website.
 2. **Fetch its full tenant list** (a "Stores", "Tenants" or "Store Directory" page). Read the whole list, not a sample. If fetching is blocked and search snippets cannot give you the **complete** list with confidence, treat it exactly like "no official website found". A partial list is worse than no sweep, because step 3 would unlink real tenants who were merely not visible.
-3. **Reconcile against `knownTenants` and the city:**
+3. **Reconcile against `knownTenants` and the city:** businesses in the packet's `doNotAdd` list were removed by an admin and must never be re-added, even if the mall still lists them.
    - **Known tenant not on the official list:** unlink it.
      `UPDATE businesses SET shopping_center_id = NULL WHERE slug = '<business-slug>';`
    - **Tenant on the official list that already exists as a standalone business** (same name, right area) **but is not linked:** link the existing row, do not insert a duplicate. Find the business in the packet's `unlinkedInSuburb` list (existing businesses in the centre's suburb that are not linked to any centre). Use:

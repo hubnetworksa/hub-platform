@@ -6,11 +6,56 @@
 // how it knows current state (what's already published, what's missing
 // address/phone).
 
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import path from 'node:path';
 
 const SITE = process.env.SITE;
 if (!SITE) {
   throw new Error('SITE env var is not set. Run with e.g. `SITE=polokwane node scripts/write-db-snapshot.mjs`.');
+}
+
+// Businesses an admin hid (status != 'published') or deleted (tombstones in
+// suppressed_businesses) — src/data only holds published ones, so these come
+// straight from D1, same wrangler-exec pattern as fetch-d1-data.mjs. The
+// routines put them in their packets as `doNotAdd` and validate.mjs rejects
+// any INSERT that matches one. If D1 can't be read (no credentials locally,
+// table not migrated yet) the previous snapshot's list is kept rather than
+// silently emptied.
+function d1Query(sql) {
+  const site = JSON.parse(readFileSync(`sites/${SITE}.json`, 'utf8'));
+  const args = [path.join('node_modules', 'wrangler', 'bin', 'wrangler.js'), 'd1', 'execute', site.dbName, '--config', `wrangler.${SITE}.jsonc`, '--remote', '--json', '--command', sql];
+  const raw = execFileSync(process.execPath, args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'] });
+  return JSON.parse(raw.slice(raw.indexOf('[')))[0]?.results ?? [];
+}
+const last9 = (p) => String(p ?? '').replace(/\D/g, '').slice(-9) || null;
+function loadSuppressed() {
+  const previous = () => {
+    try {
+      const file = `status/${SITE}/db-snapshot.json`;
+      return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')).suppressed ?? [] : [];
+    } catch {
+      return [];
+    }
+  };
+  let hidden;
+  try {
+    hidden = d1Query(
+      `SELECT b.name, b.slug, s.slug AS suburb, b.phone, b.website FROM businesses b LEFT JOIN suburbs s ON s.id = b.suburb_id WHERE b.status != 'published';`
+    ).map((b) => ({ name: b.name, slug: b.slug, suburb: b.suburb, phoneDigits: last9(b.phone), website: b.website ?? null, reason: 'hidden' }));
+  } catch {
+    process.stderr.write(`[${SITE}] Could not read hidden businesses from D1; keeping the previous snapshot's suppressed list.\n`);
+    return previous();
+  }
+  let deleted = [];
+  try {
+    deleted = d1Query('SELECT name, slug, suburb_slug, phone_digits, website FROM suppressed_businesses;').map((r) => ({
+      name: r.name, slug: r.slug, suburb: r.suburb_slug, phoneDigits: r.phone_digits || null, website: r.website ?? null, reason: 'deleted',
+    }));
+  } catch {
+    process.stderr.write(`[${SITE}] suppressed_businesses table not available yet; only hidden businesses are suppressed.\n`);
+  }
+  return [...hidden, ...deleted];
 }
 
 const suburbs = JSON.parse(readFileSync('src/data/suburbs.json', 'utf8'));
@@ -68,6 +113,8 @@ const snapshot = {
   // Read by the news routine's monthly fuel-price update (previous prices -> change_cents).
   fuel_prices: fuel.map((f) => ({ period: f.period, region: f.region, grade: f.grade, price_cents: f.price_cents })),
   news: news.map((n) => ({ slug: n.slug, title: n.title, published_date: n.published_date, source_url: n.source_url })),
+  // Hidden or deleted by an admin: the research routines must never re-add these.
+  suppressed: loadSuppressed(),
 };
 
 // Compact (no pretty-print indentation) since the hourly research routine
@@ -80,5 +127,5 @@ mkdirSync(`status/${SITE}`, { recursive: true });
 writeFileSync(`status/${SITE}/db-snapshot.json`, JSON.stringify(snapshot));
 process.stderr.write(
   `[${SITE}] Wrote status/${SITE}/db-snapshot.json (${snapshot.businesses.length} businesses, ` +
-  `${snapshot.shopping_centers.length} shopping centres, ${snapshot.events.length} events).\n`
+  `${snapshot.shopping_centers.length} shopping centres, ${snapshot.events.length} events, ${snapshot.suppressed.length} suppressed).\n`
 );
