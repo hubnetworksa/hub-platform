@@ -7,9 +7,10 @@ import { logoFor, type Business } from '../lib/data';
 
 interface Props {
   business: Pick<Business, 'name' | 'logo_key' | 'subscription_tier' | 'subscription_status'>;
-  /** xl fills the business page header's left column (150–176px, sized in
-   *  CSS by .biz-head), pin 76px (pinned Featured card), card 68px (cards,
-   *  strips, sponsor banner), row 60px (search rows), lg 88px, md 52px,
+  /** Tile HEIGHT per size (the width follows the logo's shape up to a
+   *  max-width, see .biz-logo in global.css): xl 150px (business page header;
+   *  96px on phones), pin 72px (pinned Featured card), card 64px (cards,
+   *  strips, sponsor banner), row 56px (search rows), lg 88px, md 52px,
    *  sm 36px (dense rows). */
   size?: 'xl' | 'pin' | 'card' | 'row' | 'lg' | 'md' | 'sm';
   /** Above-the-fold (business page header): load straight away. */
@@ -18,7 +19,8 @@ interface Props {
 
 const { business, size = 'md', eager = false } = Astro.props;
 const src = logoFor(business);
-const PX = { xl: 176, pin: 76, card: 68, row: 60, lg: 88, md: 52, sm: 36 } as const;
+// width/height only reserve a square until the image loads; CSS sizes it.
+const PX = { xl: 150, pin: 72, card: 64, row: 56, lg: 88, md: 52, sm: 36 } as const;
 const px = PX[size];
 ---
 

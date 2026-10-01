@@ -212,8 +212,11 @@ main {
    src/components/BusinessLogo.astro and by search.astro's client-side
    renderRow(), so both share these rules. White tile with a hairline so any
    logo (transparent PNG, white-background JPG, wide wordmark) sits the same;
-   object-fit:contain never crops or stretches. Fixed sizes, so no layout
-   shift while the image loads. */
+   object-fit:contain never crops or stretches. Each size has a fixed HEIGHT
+   and the width follows the logo's shape (square logo = square tile, wide
+   wordmark = wide tile) between the height and a max-width, so a wide logo
+   isn't shrunk into a square. Uploads are trimmed of empty margins (see
+   my-businesses/edit.astro), so the mark fills the tile. */
 .biz-logo {
   flex-shrink: 0;
   display: flex;
@@ -225,20 +228,21 @@ main {
 }
 .biz-logo img {
   display: block;
-  width: 100%;
   height: 100%;
+  width: auto;
+  max-width: 100%;
   object-fit: contain;
 }
-.biz-logo--lg { width: 88px; height: 88px; padding: 9px; border-radius: 12px; }
-.biz-logo--md { width: 52px; height: 52px; padding: 5px; border-radius: 12px; }
-.biz-logo--sm { width: 36px; height: 36px; padding: 3px; border-radius: 8px; }
+.biz-logo--lg { height: 88px; min-width: 88px; max-width: 160px; padding: 6px; border-radius: 12px; }
+.biz-logo--md { height: 52px; min-width: 52px; max-width: 100px; padding: 4px; border-radius: 12px; }
+.biz-logo--sm { height: 36px; min-width: 36px; max-width: 72px; padding: 3px; border-radius: 8px; }
 /* Bigger tiles so a paid listing's logo stands out: pin = the pinned
    Featured search card, card = listing cards/strips/sponsor banner,
    row = search result rows. */
-.biz-logo--xl { width: 176px; height: 176px; padding: 18px; border-radius: 18px; }
-.biz-logo--pin { width: 76px; height: 76px; padding: 8px; border-radius: 14px; }
-.biz-logo--card { width: 68px; height: 68px; padding: 7px; border-radius: 13px; }
-.biz-logo--row { width: 60px; height: 60px; padding: 6px; border-radius: 11px; }
+.biz-logo--xl { height: 150px; min-width: 150px; max-width: 260px; padding: 10px; border-radius: 18px; }
+.biz-logo--pin { height: 72px; min-width: 72px; max-width: 140px; padding: 5px; border-radius: 14px; }
+.biz-logo--card { height: 64px; min-width: 64px; max-width: 120px; padding: 5px; border-radius: 13px; }
+.biz-logo--row { height: 56px; min-width: 56px; max-width: 110px; padding: 4px; border-radius: 11px; }
 /* Logo + name block: the logo beside a column of name/meta lines. */
 .biz-id {
   display: flex;
@@ -289,13 +293,13 @@ main {
     text-align: center;
   }
 }
-/* Business page header: a big square logo tile in a left column; every bit
-   of the header's content (name, badges, description, buttons, details)
-   sits in the right column. On phones the logo sits beside the name row and
+/* Business page header: a big logo tile (150px high, up to 260px wide) in a
+   left column; every bit of the header's content (name, badges,
+   description, buttons, details) sits in the right column. On phones the logo sits beside the name row and
    the rest runs full width below. */
 .biz-head {
   display: grid;
-  grid-template-columns: clamp(150px, 15vw, 176px) minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   grid-template-areas: "logo top" "logo rest";
   grid-template-rows: auto 1fr;
   column-gap: 28px;
@@ -318,11 +322,7 @@ main {
 .biz-head > .biz-logo {
   grid-area: logo;
   align-self: start;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1;
-  padding: 18px;
-  border-radius: 18px;
+  justify-self: start;
 }
 .biz-head-text {
   grid-area: top;
@@ -338,16 +338,17 @@ main {
 }
 @media (max-width: 760px) {
   .biz-head {
-    grid-template-columns: 72px minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas: "logo top" "rest rest";
     grid-template-rows: auto auto;
     column-gap: 14px;
   }
   .biz-head > .biz-logo {
     position: static;
-    width: 72px;
-    height: 72px;
-    padding: 7px;
-    border-radius: 13px;
+    height: 96px;
+    min-width: 96px;
+    max-width: 150px;
+    padding: 6px;
+    border-radius: 14px;
   }
 }
