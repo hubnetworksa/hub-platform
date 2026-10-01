@@ -67,7 +67,7 @@ async function main() {
   // logo_key arrived with the business-logo migration; a database that
   // hasn't had it applied yet just builds without logos.
   const businessesSql = (extra) =>
-    `SELECT id, slug, name, suburb_id, address, phone, website, email, description, lat, lng, source_urls, shopping_center_id, description_enriched_at, hours, owner_user_id, subscription_tier, subscription_status, subscription_expires_at, social_instagram, social_facebook, social_linkedin, social_youtube${extra}
+    `SELECT id, slug, name, suburb_id, address, phone, website, email, description, lat, lng, source_urls, shopping_center_id, description_enriched_at, hours, origin, owner_user_id, subscription_tier, subscription_status, subscription_expires_at, social_instagram, social_facebook, social_linkedin, social_youtube${extra}
      FROM businesses WHERE status = 'published' AND closed_at IS NULL${INCLUDE_TEST_DATA ? '' : ' AND is_test = 0'} ORDER BY name;`;
   let businesses;
   try {

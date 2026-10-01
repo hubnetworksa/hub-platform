@@ -6,6 +6,16 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 export const CITIES = ['capetown', 'pretoria', 'polokwane'];
+
+// Routines switched off for every city. next.mjs reports them not due (even with --force),
+// so the cloud agent logs and stops without writing SQL, and health.mjs stops counting them
+// as late. The routine prompts live in another account, so this is where they are turned off.
+export const DISABLED_ROUTINES = {
+  // Job 4 rewrote a paying owner's own description (Polokwane business 1418, 1 Oct 2026).
+  // validate.mjs also rejects any SQL that sets description or description_enriched_at, and
+  // a trigger (db/migrations/<city>/*_block_routine_description_rewrites.sql) drops such writes.
+  enrichment: 'The enrichment routine is disabled: routines must never change an existing business description, hours or email. Log a not-due line and stop; write no SQL.',
+};
 export const ROOT = process.cwd();
 
 export function parseArgs(argv) {

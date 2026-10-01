@@ -1,5 +1,7 @@
 # Routine 3: description, hours and email enrichment
 
+> **DISABLED (1 Oct 2026). Do nothing.** This routine rewrote a paying owner's own description. Routines must never change an existing business's description, hours or email. `next.mjs enrichment` now always reports not due and `validate.mjs` rejects every enrichment file. Stop as soon as `next.mjs` says not due, as with any other routine. Write no SQL. The rest of this page is kept only for reference.
+
 Read `routines/_shared.md` first. Discovery inserts businesses with a quick, bare description to keep coverage fast. This routine is the second pass: it researches existing businesses in more depth and fills in a better description, the trading hours and **the company's contact email**.
 
 **You own:** on an **existing** business, only these columns: `description`, `description_enriched_at`, `hours`, `source_urls` (append only), and `email` (only when it is empty). Nothing else on the row may change (name, phone, address, category, coordinates), even if you notice it looks wrong: that is not this routine's job.

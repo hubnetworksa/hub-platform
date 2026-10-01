@@ -9,11 +9,13 @@
 // (Fuel prices have their own guard: scripts/fuel-due.mjs.)
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { ROOT, daysSince, due, loadConfig, loadSnapshot, loadState, notDue, parseArgs, requireCity } from './lib.mjs';
+import { DISABLED_ROUTINES, ROOT, daysSince, due, loadConfig, loadSnapshot, loadState, notDue, parseArgs, requireCity } from './lib.mjs';
 
 const { positional, flags } = parseArgs(process.argv.slice(2));
 const routine = positional[0];
 const city = requireCity(flags);
+// Switched-off routines are never due, --force included (see DISABLED_ROUTINES in lib.mjs).
+if (DISABLED_ROUTINES[routine]) notDue(DISABLED_ROUTINES[routine]);
 const cfg = loadConfig(city);
 const snap = loadSnapshot(city);
 const today = new Date().toISOString().slice(0, 10);
@@ -23,6 +25,9 @@ for (const b of snap.businesses) {
   if (!bySuburb.has(b.suburb_slug)) bySuburb.set(b.suburb_slug, []);
   bySuburb.get(b.suburb_slug).push(b);
 }
+// Owned, owner-submitted or paid listings belong to their owner: no routine may change them
+// (snapshot `owner_managed`, see write-db-snapshot.mjs; validate.mjs rejects UPDATEs on them).
+const editable = snap.businesses.filter((b) => !b.owner_managed);
 const slim = (b) => ({ slug: b.slug, name: b.name, phone: b.phone, address: b.address, centre: b.shopping_center_slug ?? null });
 // Businesses an admin hid or deleted (snapshot `suppressed`, see write-db-snapshot.mjs).
 const doNotAdd = (suburbSlugs) => (snap.suppressed ?? [])
@@ -110,11 +115,11 @@ switch (routine) {
   case 'enrichment': {
     const st = loadState(city, 'enrichment', {});
     const item = (b) => ({ slug: b.slug, name: b.name, suburb: b.suburb_slug, category: b.category_slug, address: b.address, phone: b.phone, website: b.website ?? null, sourceUrls: b.source_urls, centre: b.shopping_center_slug ?? null, hours: b.hours ?? null, hasEmail: b.has_email ?? null });
-    const backlog = snap.businesses.filter((b) => b.description_enriched_at == null);
+    const backlog = editable.filter((b) => b.description_enriched_at == null);
     if (backlog.length) {
       due({ routine, city, mode: 'full', remainingBacklog: backlog.length, maxRecordsPerFile: cfg.enrichment.maxRecordsPerFile, batch: backlog.slice(0, cfg.enrichment.batch).map(item), categoryNotes: cfg.categoryNotes });
     }
-    const noEmail = snap.businesses.filter((b) => b.description_enriched_at != null && b.has_email === false);
+    const noEmail = editable.filter((b) => b.description_enriched_at != null && b.has_email === false);
     if (!noEmail.length) {
       const unknown = snap.businesses.some((b) => b.has_email === undefined);
       notDue(unknown ? 'No description backlog; the snapshot has no has_email field yet (refresh it with scripts/write-db-snapshot.mjs), so the email pass cannot run.' : 'Every business is enriched and has an email or was already checked.');
@@ -131,11 +136,11 @@ switch (routine) {
     const st = loadState(city, 'closed-check', null);
     if (!st) notDue('No closed-check state yet: run scripts/routines/migrate-state.mjs --write first.');
     if (daysSince(st.last_run_at) < cfg.closedCheck.everyDays) notDue(`Runs every ${cfg.closedCheck.everyDays} days (last run ${st.last_run_at}).`);
-    if (!snap.businesses.length) notDue('No published businesses to check yet.');
-    let start = st.last_slug ? snap.businesses.findIndex((b) => b.slug === st.last_slug) + 1 : 0;
+    if (!editable.length) notDue('No published businesses to check yet.');
+    let start = st.last_slug ? editable.findIndex((b) => b.slug === st.last_slug) + 1 : 0;
     if (start <= 0 && st.last_slug) start = 0;
     const batch = [];
-    for (let i = 0; i < Math.min(cfg.closedCheck.batch, snap.businesses.length); i++) batch.push(snap.businesses[(start + i) % snap.businesses.length]);
+    for (let i = 0; i < Math.min(cfg.closedCheck.batch, editable.length); i++) batch.push(editable[(start + i) % editable.length]);
     due({ routine, city, mode: 'batch', batch: batch.map((b) => ({ slug: b.slug, name: b.name, suburb: b.suburb_slug, address: b.address, phone: b.phone })) });
     break;
   }

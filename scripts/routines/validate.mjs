@@ -7,9 +7,12 @@
 // narrow allow-list, unknown suburb/category slugs, missing phone or address, fewer than two
 // independent sources, duplicate slugs or phone numbers (across ALL suburbs, not just the
 // searched one), businesses an admin hid or deleted (snapshot `suppressed`), UPDATEs without their one-time guard, source lists that drop existing entries,
-// and files with more records than the checkpoint cap. Prints WARN lines for softer concerns.
+// and files with more records than the checkpoint cap. Also rejects any UPDATE that sets an
+// existing business's description or description_enriched_at, any UPDATE on an owner-managed
+// listing (claimed, owner-submitted or paid; centre links excepted), and every file of a
+// routine in DISABLED_ROUTINES (lib.mjs). Prints WARN lines for softer concerns.
 import { readFileSync } from 'node:fs';
-import { digits, loadConfig, loadSnapshot, parseArgs, requireCity, slugify } from './lib.mjs';
+import { DISABLED_ROUTINES, digits, loadConfig, loadSnapshot, parseArgs, requireCity, slugify } from './lib.mjs';
 
 const { positional, flags } = parseArgs(process.argv.slice(2));
 const file = positional[0];
@@ -27,6 +30,8 @@ const errors = [];
 const warns = [];
 const err = (m) => errors.push(m);
 const warn = (m) => warns.push(m);
+// A switched-off routine has nothing it may write (see DISABLED_ROUTINES in lib.mjs).
+if (DISABLED_ROUTINES[routine]) err(`${DISABLED_ROUTINES[routine]} Delete this file instead of pushing it.`);
 
 // ---------- SQL tokenising ----------
 const raw = readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
@@ -197,6 +202,24 @@ for (const s of stmts) {
   if (!/^UPDATE\b/i.test(s)) { err(`Only INSERT OR IGNORE and the routine's own UPDATEs are allowed: ${head}…`); continue; }
   records++;
 
+  // No routine may rewrite an existing business's description (job 4 replaced a paying owner's
+  // own text, Polokwane business 1418, 1 Oct 2026). A trigger in D1 also drops any UPDATE that
+  // changes description_enriched_at, so such a statement would silently do nothing anyway.
+  const bare = s.replace(/'(?:[^']|'')*'/g, "''");
+  const setPart = /^UPDATE\s+businesses\s+SET\s+([\s\S]*?)(?:\s+WHERE\b[\s\S]*)?$/i.exec(bare)?.[1] ?? '';
+  const setCols = splitTop(setPart).map((a) => a.split('=')[0].trim().toLowerCase());
+  if (setCols.some((c) => c === 'description' || c === 'description_enriched_at')) {
+    err(`Routines may never change an existing business's description or description_enriched_at (descriptions belong to the owner or an admin). Remove this UPDATE; a new business gets its description in its INSERT only: ${head}…`);
+    continue;
+  }
+  // Owned, owner-submitted or paid listings belong to their owner (snapshot `owner_managed`).
+  // Linking a business to its shopping centre (centres routine) is not an owner-editable field.
+  const target = /\bWHERE\s+slug\s*=\s*'([^']+)'/i.exec(s)?.[1];
+  if (routine !== 'centres' && target && bizBySlug.get(target)?.owner_managed) {
+    err(`business "${target}" is owner-managed (claimed, owner-submitted or paid): routines must never change it. Remove this UPDATE; if something looks wrong, mention it in the log line for an admin instead: ${head}…`);
+    continue;
+  }
+
   if (routine === 'centres') {
     const link = /^UPDATE\s+businesses\s+SET\s+shopping_center_id\s*=\s*(NULL|\(\s*SELECT\s+id\s+FROM\s+shopping_centers\s+WHERE\s+slug\s*=\s*'([^']+)'\s*\))\s+WHERE\s+slug\s*=\s*'([^']+)'$/i.exec(s);
     if (!link) { err(`The centres routine may only change shopping_center_id (link or unlink one business by slug): ${head}…`); continue; }
@@ -226,25 +249,8 @@ for (const s of stmts) {
       else if (b.has_email === true) err(`${label}: the business already has an email`);
       continue;
     }
-    const m = /^UPDATE\s+businesses\s+SET\s+([\s\S]+?)\s+WHERE\s+slug\s*=\s*'([^']+)'\s+AND\s+description_enriched_at\s+IS\s+NULL$/i.exec(s);
-    if (!m) { err(`Enrichment UPDATE must end with "WHERE slug = '…' AND description_enriched_at IS NULL" (or be the guarded email UPDATE): ${head}…`); continue; }
-    const slug = m[2];
-    const label = `enrichment of ${slug}`;
-    const assigns = Object.fromEntries(splitTop(m[1]).map((a) => { const i = a.indexOf('='); return [a.slice(0, i).trim(), a.slice(i + 1).trim()]; }));
-    for (const c of Object.keys(assigns)) if (!['description', 'description_enriched_at', 'hours', 'source_urls'].includes(c)) err(`${label}: may not change column "${c}"`);
-    if (!assigns.description) err(`${label}: description is required`);
-    if (assigns.description_enriched_at !== "datetime('now')") err(`${label}: must set description_enriched_at = datetime('now')`);
-    if (assigns.hours && /NULL/i.test(assigns.hours)) err(`${label}: omit hours entirely when none were found, never set it to NULL`);
-    const b = bizBySlug.get(slug);
-    if (!b) err(`${label}: business is not in the snapshot`);
-    else if (b.description_enriched_at != null) err(`${label}: already enriched`);
-    if (assigns.source_urls && b) {
-      const next = parseUrls(unq(assigns.source_urls), label);
-      let prev = [];
-      try { prev = JSON.parse(b.source_urls ?? '[]'); } catch { /* ignore */ }
-      const missing = prev.filter((u) => !next.includes(u));
-      if (missing.length) err(`${label}: source_urls must append, not replace (dropped ${missing.length} existing entr${missing.length === 1 ? 'y' : 'ies'})`);
-    }
+    // The description/hours pass is gone (descriptions are rejected above); only the guarded email UPDATE was left.
+    err(`The enrichment routine may only write the guarded email UPDATE: ${head}…`);
     continue;
   }
 

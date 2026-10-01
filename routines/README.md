@@ -8,7 +8,7 @@ These are the rewritten routines described in `ROUTINES-PLAN.md`. They live on t
 |---|---|---|---|
 | `business-discovery.md` | 1. Business discovery | Job 1 of the business runbook | Hourly at :00 while a city has uncovered suburbs; the script drops it to weekly afterwards |
 | `shopping-centres.md` | 2. Shopping centres | Jobs 2 and 3, new-mall search | Daily 08:30 (one centre per run) |
-| `enrichment.md` | 3. Description, hours and email enrichment | Job 4, plus company emails | Daily 11:30 |
+| `enrichment.md` | 3. Description, hours and email enrichment (**disabled**: `DISABLED_ROUTINES` in `scripts/routines/lib.mjs`) | Job 4, plus company emails | Off; unschedule it |
 | `closed-check.md` | 4. Closed-business check | Job 5 | Weekly, Monday 12:30 |
 | `events.md` | Events | `ROUTINE.events.<city>.md` | Weekly, Sunday 07:00 |
 | `news.md` | Local news | `ROUTINE.news.<city>.md` (news only) | Daily 04:00 |

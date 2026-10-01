@@ -7,7 +7,7 @@
 // database and no network. Exit code 1 when anything is late, so a GitHub Action can alert on it.
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { CITIES, ROOT, daysSince, parseArgs } from './lib.mjs';
+import { CITIES, DISABLED_ROUTINES, ROOT, daysSince, parseArgs } from './lib.mjs';
 
 const { flags } = parseArgs(process.argv.slice(2));
 
@@ -39,7 +39,7 @@ for (const city of CITIES) {
   for (const [name, r] of Object.entries(ROUTINES)) {
     const date = lastRun(path.join(ROOT, 'status', city, r.file), r.actions);
     const age = daysSince(date);
-    rows.push({ routine: name, city, lastRun: date, daysAgo: Number.isFinite(age) ? Math.round(age * 10) / 10 : null, status: date == null ? 'never' : age > r.lateAfterDays ? 'late' : 'ok' });
+    rows.push({ routine: name, city, lastRun: date, daysAgo: Number.isFinite(age) ? Math.round(age * 10) / 10 : null, status: DISABLED_ROUTINES[name] ? 'off' : date == null ? 'never' : age > r.lateAfterDays ? 'late' : 'ok' });
   }
 }
 // Fuel is one routine for all cities. "fuel_not_due" logs still count as a healthy run.

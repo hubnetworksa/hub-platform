@@ -103,6 +103,9 @@ const snapshot = {
     // Used by the split routines: website to research from, and whether an email is already on file (the address itself stays out of the snapshot).
     website: b.website ?? null,
     has_email: Boolean(b.email),
+    // Owned, owner-submitted or paid: the listing belongs to its owner and no routine may
+    // change it (next.mjs leaves it out of every work batch, validate.mjs rejects UPDATEs on it).
+    owner_managed: b.owner_user_id != null || b.origin === 'owner_submitted' || Number(b.subscription_tier ?? 0) >= 1,
   })),
   // Read by the weekly events research routine (ROUTINE.events.<slug>.md)
   // to know what's already listed, purely for dedup — it has no other
@@ -120,9 +123,9 @@ const snapshot = {
 // Compact (no pretty-print indentation) since the hourly research routine
 // reads this whole file as LLM context every run -- indentation and
 // repeated field names cost real tokens with zero information value.
-// `description` is omitted for the same reason: job 4 (the only job that
-// touches it) always replaces it wholesale keyed off `description_enriched_at`
-// and never reads the old text; D1 remains the source of truth for it.
+// `description` is omitted for the same reason: no routine reads it, and none
+// may change it (job 4, the enrichment pass, is disabled; see DISABLED_ROUTINES
+// in scripts/routines/lib.mjs). D1 remains the source of truth for it.
 mkdirSync(`status/${SITE}`, { recursive: true });
 writeFileSync(`status/${SITE}/db-snapshot.json`, JSON.stringify(snapshot));
 process.stderr.write(
