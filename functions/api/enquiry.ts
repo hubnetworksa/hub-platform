@@ -1,7 +1,7 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
-import { escapeHtml } from '../../src/lib/business-submission';
 import { getSite } from '../_lib/site';
 import { sendEmail } from '../_lib/send-email';
+import { enquiryEmailHtml, enquiryEmailText } from '../_lib/email-template';
 import { cleanText, looksLikeEmail, visitorHash, overMessageLimit, json } from '../_lib/messages';
 
 interface Env {
@@ -74,17 +74,21 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   const recipient = business.email && looksLikeEmail(business.email) ? business.email : site.contactEmail;
   const businessUrl = `https://${site.domain}/business/${slug}/`;
+  const enquiryData = {
+    businessName: business.name,
+    businessUrl,
+    senderName: name,
+    contact,
+    message,
+    replyable: looksLikeEmail(contact),
+  };
   const { sent } = await sendEmail(context.env, {
     from: `${site.siteName} <${site.contactEmail}>`,
     to: recipient,
     subject: `Enquiry via ${site.siteName}: ${business.name}`,
     replyTo: looksLikeEmail(contact) ? contact : undefined,
-    text: `Someone sent an enquiry about ${business.name} on ${site.siteName}.\n${businessUrl}\n\nFrom: ${name}\nContact: ${contact}\n\n${message}`,
-    html: `<div style="font-family:sans-serif;max-width:520px">
-      <h2>New enquiry for ${escapeHtml(business.name)}</h2>
-      <p>Sent through <a href="${businessUrl}">${escapeHtml(site.siteName)}</a>.</p>
-      <p><strong>From:</strong> ${escapeHtml(name)}<br><strong>Contact:</strong> ${escapeHtml(contact)}</p>
-      <p>${escapeHtml(message).replace(/\n/g, '<br>')}</p></div>`,
+    text: enquiryEmailText(site, enquiryData),
+    html: enquiryEmailHtml(site, enquiryData),
   });
   if (sent) await db.prepare('UPDATE messages SET emailed = 1 WHERE id = ?').bind(insert.meta.last_row_id).run();
 

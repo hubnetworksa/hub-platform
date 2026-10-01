@@ -309,6 +309,121 @@ export function relaunchEmailText(site: Site, data: RelaunchEmailData): string {
 }
 
 
+export interface EnquiryEmailData {
+  businessName: string;
+  /** https://<domain>/business/<slug>/ */
+  businessUrl: string;
+  senderName: string;
+  /** What the sender typed under "how to reach you": an email or a phone number. */
+  contact: string;
+  message: string;
+  /** True when `contact` is an email address, so the owner can reply directly. */
+  replyable: boolean;
+}
+
+// Sent to a business owner when someone uses the enquiry form on their listing
+// (functions/api/enquiry.ts). Same shell as listingLiveEmailHtml. The sender
+// controls name, contact and message, so every one of them is escaped.
+export function enquiryEmailHtml(site: Site, data: EnquiryEmailData): string {
+  const t = site.theme;
+  const bannerUrl = `https://${site.domain}${site.bannerImage}`;
+  const logoUrl = `https://${site.domain}/logo-icon.png`;
+  const name = escapeHtml(site.siteName);
+  const business = escapeHtml(data.businessName);
+  const sender = escapeHtml(data.senderName);
+  const contact = escapeHtml(data.contact);
+  const message = escapeHtml(data.message).replace(/\r?\n/g, '<br>');
+
+  const mailto = `mailto:${encodeURIComponent(data.contact).replace(/%40/g, '@')}?subject=${encodeURIComponent(`Re: your enquiry to ${data.businessName}`)}`;
+  const contactCell = data.replyable
+    ? `<a href="${escapeHtml(mailto)}" style="color:${t.accent};text-decoration:none;font-weight:600;">${contact}</a>`
+    : `<span style="font-weight:600;">${contact}</span><br><span style="color:${t.textMuted};font-size:12px;">Call or message them</span>`;
+
+  const row = (label: string, value: string, last = false) => `<tr>
+                  <td style="padding:10px 16px;${last ? '' : `border-bottom:1px solid ${t.border};`}color:${t.textMuted};font-size:13px;font-weight:600;width:90px;vertical-align:top;">${label}</td>
+                  <td style="padding:10px 16px;${last ? '' : `border-bottom:1px solid ${t.border};`}color:${t.text};font-size:14px;line-height:1.5;">${value}</td>
+                </tr>`;
+
+  const listingLink = `<a href="${escapeHtml(data.businessUrl)}" style="color:${t.accent};font-weight:700;text-decoration:none;">View your listing</a>`;
+  const cta = data.replyable
+    ? `<a href="${escapeHtml(mailto)}" style="display:inline-block;background:${t.accent};color:${t.accentContrast};text-decoration:none;font-weight:700;font-size:15px;padding:12px 24px;border-radius:8px;">Reply to ${sender} →</a>
+              <p style="margin:14px 0 0;font-size:14px;">${listingLink}</p>`
+    : `<p style="margin:0;font-size:14px;">${listingLink}</p>`;
+
+  return `<!doctype html>
+<html>
+<body style="margin:0;padding:0;background:${t.bgSubtle};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${t.bgSubtle};padding:24px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:${t.bgCard};border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);max-width:560px;">
+          <tr>
+            <td>
+              <img src="${bannerUrl}" width="560" alt="${name}" style="display:block;width:100%;max-width:560px;height:160px;object-fit:cover;">
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px 8px;">
+              <img src="${logoUrl}" width="36" height="41" alt="" style="display:block;margin-bottom:12px;">
+              <h1 style="margin:0 0 4px;font-size:20px;line-height:1.3;color:${t.navy};">New enquiry for ${business}</h1>
+              <p style="margin:0 0 20px;color:${t.textMuted};font-size:14px;line-height:1.5;">
+                Someone contacted you through your ${name} listing.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid ${t.border};border-radius:8px;border-collapse:separate;">
+                ${row('From', sender)}
+                ${row('Contact', contactCell, true)}
+              </table>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;">
+                <tr>
+                  <td style="background:${t.bgSubtle};border-left:3px solid ${t.accent};border-radius:4px;padding:14px 18px;color:${t.text};font-size:14px;line-height:1.6;">${message}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px 24px;">
+              ${cta}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:16px 32px 28px;border-top:1px solid ${t.border};">
+              <p style="margin:0;color:${t.textMuted};font-size:12px;line-height:1.55;">You're receiving this because you manage ${business} on ${name}.</p>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:20px 0 0;color:${t.textMuted};font-size:12px;">${name} · ${escapeHtml(site.contactEmail)}</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+/** Plain-text twin of enquiryEmailHtml. Keep the two in step. */
+export function enquiryEmailText(site: Site, data: EnquiryEmailData): string {
+  return [
+    `New enquiry for ${data.businessName}`,
+    ``,
+    `Someone contacted you through your ${site.siteName} listing.`,
+    ``,
+    `From: ${data.senderName}`,
+    `Contact: ${data.contact}${data.replyable ? ' (reply to this email to answer them)' : ' (call or message them)'}`,
+    ``,
+    data.message,
+    ``,
+    `View your listing: ${data.businessUrl}`,
+    ``,
+    `--`,
+    `You're receiving this because you manage ${data.businessName} on ${site.siteName}.`,
+    `${site.siteName} · ${site.contactEmail}`,
+  ].join('\n');
+}
+
+
 function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>)[c]!);
 }
