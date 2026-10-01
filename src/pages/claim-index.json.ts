@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { formatPhoneZA } from '../lib/phone';
 import { businesses, suburbFor, categoriesFor, shoppingCenters, businessesInShoppingCenter, priceRand, websiteUrl } from '../lib/data';
 
 // Build-time snapshot used by the claim page (src/pages/my-businesses/claim.astro)
@@ -12,7 +13,7 @@ export const GET: APIRoute = () => {
     n: biz.name,
     sb: suburbFor(biz)?.name ?? '',
     c: categoriesFor(biz)[0]?.name ?? '',
-    p: biz.phone ?? '',
+    p: formatPhoneZA(biz.phone),
     a: biz.address ?? '',
     w: websiteUrl(biz.website) ?? '',
     h: biz.hours ?? '',

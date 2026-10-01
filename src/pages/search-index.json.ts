@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { businesses, suburbFor, categoriesFor, websiteUrl } from '../lib/data';
 import { groupForCategory } from '../lib/categoryGroups';
 import { synonymsFor, locationSynonymsFor } from '../lib/categorySynonyms';
+import { formatPhoneZA } from '../lib/phone';
 import site from '../site';
 
 export const GET: APIRoute = () => {
@@ -31,7 +32,7 @@ export const GET: APIRoute = () => {
       // Only the pinned (top Featured) result renders these — see
       // renderRow(r, pinned=true) in search.astro — so they're worth the
       // extra bytes despite not being used by every row.
-      p: b.phone ?? '',
+      p: formatPhoneZA(b.phone),
       w: websiteUrl(b.website) ?? '',
       a: b.address ?? '',
       d: b.description ?? '',

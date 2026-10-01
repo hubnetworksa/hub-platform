@@ -112,6 +112,7 @@ import AdminShell from '../../components/AdminShell.astro';
 </BaseLayout>
 
 <script>
+  import { formatPhoneZA } from '../../lib/phone';
   interface EventRow {
     id: number;
     title: string;
@@ -275,7 +276,7 @@ import AdminShell from '../../components/AdminShell.astro';
   }
 
   function submissionRow(s: SubmissionRow): string {
-    const contact = [s.contact_name, s.contact_email, s.contact_phone].filter(Boolean).map(esc).join(' · ');
+    const contact = [s.contact_name, s.contact_email, formatPhoneZA(s.contact_phone)].filter(Boolean).map(esc).join(' · ');
     const ticket = safeUrl(s.ticket_url);
     const poster = safeUrl(s.image_url);
     const link = (href: string, label: string) => `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-hover);font-weight:800">${label}</a>`;

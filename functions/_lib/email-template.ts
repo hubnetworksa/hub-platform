@@ -1,4 +1,5 @@
 import type { Site } from './site';
+import { formatPhoneZA } from '../../src/lib/phone';
 
 // Table-based layout with inline styles throughout, on purpose — the usual
 // constraints for HTML email (many clients strip <style> blocks or ignore
@@ -21,7 +22,7 @@ export function ownerConfirmEmailHtml(site: Site, data: OwnerConfirmEmailData): 
   const rows = ([
     ['Business', data.businessName],
     ['Address', data.address],
-    ['Phone', data.phone],
+    ['Phone', formatPhoneZA(data.phone)],
     ['Website', data.website],
   ] as const)
     .filter(([, v]) => v)

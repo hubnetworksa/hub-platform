@@ -41,6 +41,7 @@ import Icon from '../../components/Icon.astro';
 
 <script>
   import { esc, planPillStyle, TIER_NAMES, postJson, requireAdmin, showContent } from '../../lib/admin-html';
+  import { formatPhoneZA } from '../../lib/phone';
 
   interface Row {
     id: number;
@@ -63,7 +64,7 @@ import Icon from '../../components/Icon.astro';
   function renderRow(b: Row): string {
     const tier = b.subscription_tier ?? 0;
     const plan = TIER_NAMES[tier] ?? 'Basic';
-    const sub = [b.suburb_name, b.phone].filter(Boolean).join(' · ');
+    const sub = [b.suburb_name, formatPhoneZA(b.phone)].filter(Boolean).join(' · ');
     const hidden = b.status !== 'published';
     return `
       <div class="admin-cols admin-row" style="gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);align-items:center">

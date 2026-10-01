@@ -37,6 +37,7 @@ import AdminShell from '../../components/AdminShell.astro';
 
 <script>
   import { esc, requireAdmin, showContent, postJson, timeAgo } from '../../lib/admin-html';
+  import { formatPhoneZA } from '../../lib/phone';
 
   interface BusinessClaim {
     id: number;
@@ -90,7 +91,7 @@ import AdminShell from '../../components/AdminShell.astro';
   const DISMISS = 'padding:10px 14px;border:2px solid var(--border);border-radius:9px;background:#fff;color:var(--navy);font-size:13px;font-weight:800;cursor:pointer;';
 
   function contactLine(c: { contactName: string | null; contactPhone: string | null; contactEmail: string | null; roleNote: string | null }): string {
-    return `${esc(c.contactName ?? 'Not specified')} · ${esc(c.contactPhone ?? 'Not specified')} · ${esc(c.contactEmail ?? 'Not specified')} · ${esc(c.roleNote ?? 'Not specified')}`;
+    return `${esc(c.contactName ?? 'Not specified')} · ${esc(formatPhoneZA(c.contactPhone) || 'Not specified')} · ${esc(c.contactEmail ?? 'Not specified')} · ${esc(c.roleNote ?? 'Not specified')}`;
   }
 
   function renderClaim(c: BusinessClaim): string {

@@ -1,5 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { escapeHtml } from '../src/lib/business-submission';
+import { formatPhoneZA } from '../src/lib/phone';
 import { getSite } from './_lib/site';
 
 interface Env {
@@ -42,7 +43,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const rowsHtml = [
     ['Name', row.name],
     ['Address', row.address],
-    ['Phone', row.phone],
+    ['Phone', formatPhoneZA(row.phone)],
     ['Website', row.website],
   ]
     .filter(([, v]) => v)

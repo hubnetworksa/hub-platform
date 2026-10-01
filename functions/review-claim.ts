@@ -1,5 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { escapeHtml } from '../src/lib/business-submission';
+import { formatPhoneZA } from '../src/lib/phone';
 import { getSite } from './_lib/site';
 
 interface Env {
@@ -38,7 +39,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     <h1>Claim request for "${escapeHtml(row.business_name)}"</h1>
     <p>Account email: <strong>${escapeHtml(row.claimant_email)}</strong></p>
     <p>Name: <strong>${escapeHtml(row.contact_name ?? 'Not specified')}</strong></p>
-    <p>Phone: <strong>${escapeHtml(row.contact_phone ?? 'Not specified')}</strong></p>
+    <p>Phone: <strong>${escapeHtml(formatPhoneZA(row.contact_phone) || 'Not specified')}</strong></p>
     <p>Email: <strong>${escapeHtml(row.contact_email ?? 'Not specified')}</strong></p>
     <p>Role: <strong>${escapeHtml(row.role_note ?? 'Not specified')}</strong></p>
     <form method="POST" action="/api/review-claim" style="display:inline">

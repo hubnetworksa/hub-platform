@@ -145,6 +145,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
 
 <script>
   import { openStatus } from '../lib/openNow';
+  import { phoneHref } from '../lib/phone';
 
   // define:vars would force this script to skip TS compilation (it's
   // treated as inline HTML), which this whole file relies on — so the
@@ -242,7 +243,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     if (pinned) {
       const meta = [r.c, r.sb, r.a].filter(Boolean).join(' · ');
       const actions = [
-        r.p ? `<a href="tel:${escapeHtml(r.p)}" data-track="phone_click" data-track-slug="${escapeHtml(r.s)}" style="padding:10px 14px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:800;text-decoration:none">${escapeHtml(r.p)}</a>` : '',
+        r.p ? `<a href="${escapeHtml(phoneHref(r.p))}" data-track="phone_click" data-track-slug="${escapeHtml(r.s)}" style="padding:10px 14px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:800;text-decoration:none">${escapeHtml(r.p)}</a>` : '',
         r.w ? `<a href="${escapeHtml(r.w)}" target="_blank" rel="noopener noreferrer" style="padding:10px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">Website</a>` : '',
         `<a href="/business/${r.s}/#enquiry-form" style="padding:10px 14px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">Send enquiry</a>`,
       ].join('');

@@ -3,6 +3,7 @@ import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { logActivity } from '../../_lib/activity-log';
 import { triggerRebuild, rebuildTarget } from '../../_lib/deploy-hook';
 import { generateUniqueSlug, insertApprovedBusiness } from '../../../src/lib/business-submission';
+import { formatPhoneZA } from '../../../src/lib/phone';
 
 interface Env {
   DB: D1Database;
@@ -130,7 +131,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const name = clean(body.name, 120);
   const categoryInput = clean(body.category, 120);
   const suburbInput = clean(body.suburb, 120);
-  const phone = clean(body.phone, 30);
+  const phone = formatPhoneZA(clean(body.phone, 30)) || null;
   const description = clean(body.description, 600);
   const tier = parsePlan(body.plan) ?? 0;
 

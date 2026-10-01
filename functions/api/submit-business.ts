@@ -6,6 +6,7 @@ import { signFields, buildCheckoutParams, payfastConfigured, checkoutFrequency, 
 import { TIER_NAMES, tierPriceCents, centsToRand, parseBillingPeriod } from '../_lib/pricing';
 import { sendEmail } from '../_lib/send-email';
 import { escapeHtml } from '../../src/lib/business-submission';
+import { formatPhoneZA } from '../../src/lib/phone';
 
 interface Env extends PayfastEnv {
   DB: D1Database;
@@ -75,7 +76,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   const address = clean(body.address, 'address');
-  const phone = clean(body.phone, 'phone');
+  const phone = formatPhoneZA(clean(body.phone, 'phone')) || null;
   const email = clean(body.email, 'email');
   const website = clean(body.website, 'website');
   const description = clean(body.description, 'description') ?? `${name} is a business in ${suburbSlug.replace(/-/g, ' ')}, part of the Greater ${site.cityLabel} area.`;

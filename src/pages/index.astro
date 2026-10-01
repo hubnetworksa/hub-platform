@@ -9,6 +9,7 @@ import { sponsorFor, withoutSponsors, eventsSorted, eventDateParts } from '../li
 import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory, suburbFor, categoriesFor, FEATURED_TIER, newsSorted, newsDateShort, latestFuel, fuelPeriodLabel } from '../lib/data';
 import { CATEGORY_GROUPS } from '../lib/categoryGroups';
 import site from '../site';
+import { formatPhoneZA, phoneHref } from '../lib/phone';
 import AdUnit from '../components/AdUnit.astro';
 
 const groupCount = (group: (typeof CATEGORY_GROUPS)[number]) =>
@@ -163,7 +164,7 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
                   <p style="margin:0;font-size:14px;line-height:1.55;color:var(--text)">{b.description}</p>
                   <div style="display:flex;gap:8px;margin-top:auto;padding-top:6px">
                     <a href={`/business/${b.slug}/`} style="flex:1;padding:10px 12px;border-radius:9px;background:var(--navy);color:#fff;font-size:13px;font-weight:800;text-decoration:none;text-align:center">View profile</a>
-                    {b.phone && <a href={`tel:${b.phone}`} data-track="phone_click" data-track-slug={b.slug} style="padding:10px 12px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">{b.phone}</a>}
+                    {b.phone && <a href={phoneHref(b.phone)} data-track="phone_click" data-track-slug={b.slug} style="padding:10px 12px;border-radius:9px;border:2px solid var(--border);color:var(--navy);font-size:13px;font-weight:800;text-decoration:none">{formatPhoneZA(b.phone)}</a>}
                   </div>
                 </div>
               </article>

@@ -4,6 +4,7 @@ import { sendEmail } from '../_lib/send-email';
 import { getSite } from '../_lib/site';
 import { rateLimited } from '../_lib/messages';
 import { escapeHtml } from '../../src/lib/business-submission';
+import { formatPhoneZA } from '../../src/lib/phone';
 
 interface Env {
   DB: D1Database;
@@ -76,7 +77,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!businessId) return json({ ok: false, error: 'Choose a business to claim.' }, 400);
 
   const contactName = String(body.contactName ?? '').trim();
-  const contactPhone = String(body.contactPhone ?? '').trim();
+  const contactPhone = formatPhoneZA(String(body.contactPhone ?? ''));
   const contactEmail = String(body.contactEmail ?? '').trim();
   const role = clean(body.roleNote, 60);
   if (!contactName) return json({ ok: false, error: 'Please enter your name.' }, 400);

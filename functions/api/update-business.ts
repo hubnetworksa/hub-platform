@@ -3,6 +3,7 @@ import { getSessionUser, isAdminEmail } from '../_lib/auth';
 import { SOCIAL_KINDS, SOCIAL_LABELS, normalizeSocial } from '../_lib/social';
 import { requestRebuild } from '../_lib/deploy-hook';
 import { looksLikeEmail } from '../_lib/messages';
+import { formatPhoneZA } from '../../src/lib/phone';
 
 interface Env {
   DB: D1Database;
@@ -205,7 +206,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!business || (business.owner_user_id !== user.id && !isAdminEmail(user.email))) return json({ ok: false, error: 'You do not own this business.' }, 403);
 
   const address = clean(body.address, 200);
-  const phone = clean(body.phone, 30);
+  const phone = formatPhoneZA(clean(body.phone, 30)) || null;
   const website = clean(body.website, 200);
   const description = clean(body.description, 600);
   const hours = clean(body.hours, 400);

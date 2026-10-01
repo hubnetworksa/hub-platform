@@ -26,6 +26,7 @@ import AdminShell from '../../components/AdminShell.astro';
 
 <script>
   import { esc, TIER_NAMES, requireAdmin, showContent } from '../../lib/admin-html';
+  import { formatPhoneZA } from '../../lib/phone';
 
   // The review endpoint answers with a small HTML page whose <h1> is the
   // outcome, and reports some failures ("Already handled", "This link has
@@ -58,7 +59,7 @@ import AdminShell from '../../components/AdminShell.astro';
   function renderSubmission(s: Submission): string {
     const canAct = s.status === 'Pending your approval';
     const meta = [s.category_name ?? s.category_slug, s.suburb_name ?? s.suburb_slug].filter(Boolean).join(' · ');
-    const contact = [s.address, s.phone, s.email, s.website].filter(Boolean).join(' · ');
+    const contact = [s.address, formatPhoneZA(s.phone), s.email, s.website].filter(Boolean).join(' · ');
     const plan = TIER_NAMES[s.chosen_tier] ?? 'Basic';
     return `
       <div style="padding:18px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;">

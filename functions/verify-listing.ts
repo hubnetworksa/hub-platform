@@ -1,5 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { escapeHtml, findMergeTarget } from '../src/lib/business-submission';
+import { formatPhoneZA } from '../src/lib/phone';
 import { TIER_NAMES } from './_lib/pricing';
 import { getSite } from './_lib/site';
 
@@ -45,7 +46,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     ['Category', row.category_slug],
     ['Suburb', row.suburb_slug],
     ['Address', row.address],
-    ['Phone', row.phone],
+    ['Phone', formatPhoneZA(row.phone)],
     ['Email', row.email],
     ['Website', row.website],
   ]
