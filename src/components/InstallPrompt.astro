@@ -1,0 +1,278 @@
+---
+// Mobile "Get the app" bottom sheet. Included from BaseLayout; BaseLayout
+// leaves it out of admin, account, checkout and other noindex pages. All the
+// install plumbing (the deferred `beforeinstallprompt`, tracking) lives in
+// lib/pwa-install.ts, shared with the footer's "Install the app" button.
+import { siteName } from '../lib/site-overrides';
+---
+
+<div id="install-sheet" class="ip-root" hidden>
+  <div class="ip-backdrop" data-ip-close></div>
+  <div class="ip-sheet" role="dialog" aria-modal="true" aria-labelledby="ip-title" aria-describedby="ip-body">
+    <button type="button" class="ip-x" data-ip-close aria-label="Close">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    </button>
+    <div class="ip-head">
+      <img src="/logo-icon.png" width="52" height="52" alt="" class="ip-icon" />
+      <h2 id="ip-title" class="ip-title">Get the {siteName} app</h2>
+    </div>
+    <p id="ip-body" class="ip-text">Install {siteName} on your phone for faster access and custom notifications about local events, news and deals.</p>
+    <p id="ip-ios" class="ip-text ip-ios" hidden>
+      <span class="ip-share" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12" /><path d="m7.5 7.5 4.5-4.5 4.5 4.5" /><path d="M7 11H5.5A1.5 1.5 0 0 0 4 12.5v7A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-7a1.5 1.5 0 0 0-1.5-1.5H17" /></svg>
+      </span>
+      <span>Tap the Share button, then 'Add to Home Screen'.</span>
+    </p>
+    <div class="ip-actions">
+      <button type="button" id="ip-later" class="ip-btn ip-btn-ghost" data-ip-close>Not now</button>
+      <button type="button" id="ip-install" class="ip-btn ip-btn-primary">Install</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ip-root[hidden],
+  .ip-root [hidden] {
+    display: none !important;
+  }
+  .ip-root {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    font-family: 'Archivo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  .ip-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(var(--navy-rgb, 15, 30, 60), 0.45);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .ip-sheet {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 520px;
+    background: var(--bg-card, #fff);
+    color: var(--text, #14213d);
+    border-radius: 20px 20px 0 0;
+    border-top: 4px solid var(--accent);
+    box-shadow: 0 -12px 40px rgba(var(--navy-rgb, 15, 30, 60), 0.25);
+    padding: 22px 20px calc(18px + env(safe-area-inset-bottom, 0px));
+    transform: translateY(105%);
+    transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .ip-root.is-open .ip-backdrop {
+    opacity: 1;
+  }
+  .ip-root.is-open .ip-sheet {
+    transform: translateY(0);
+  }
+  .ip-x {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 999px;
+    background: var(--bg-subtle, #f2f4f8);
+    color: var(--navy);
+    cursor: pointer;
+  }
+  .ip-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-right: 40px;
+  }
+  .ip-icon {
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    border: 2px solid var(--border, #e3e7ef);
+    background: #fff;
+  }
+  .ip-title {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--navy);
+    overflow-wrap: anywhere;
+  }
+  .ip-text {
+    margin: 14px 0 0;
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--text-muted, #5b6478);
+  }
+  .ip-ios {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--navy);
+    font-weight: 700;
+  }
+  .ip-share {
+    flex: none;
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: rgba(var(--accent-rgb, 0, 120, 255), 0.12);
+    color: var(--accent);
+  }
+  .ip-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .ip-btn {
+    flex: 1;
+    min-height: 46px;
+    padding: 11px 16px;
+    border-radius: 12px;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .ip-btn-ghost {
+    border: 2px solid var(--border, #e3e7ef);
+    background: transparent;
+    color: var(--navy);
+  }
+  .ip-btn-primary {
+    border: 0;
+    background: var(--accent);
+    color: var(--accent-contrast, #fff);
+  }
+  .ip-btn:focus-visible,
+  .ip-x:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ip-backdrop,
+    .ip-sheet {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { onInstallable, onInstalled, canPrompt, promptInstall, isStandalone, isIOSSafari, isSnoozed, snooze, wasInstalled } from '../lib/pwa-install';
+
+  const root = document.getElementById('install-sheet');
+  const IOS_DELAY_MS = 1500;
+  const WAIT_FOR_PROMPT_MS = 4000;
+
+  function eligible(): boolean {
+    return (
+      window.matchMedia('(pointer: coarse)').matches &&
+      window.matchMedia('(max-width: 760px)').matches &&
+      !isStandalone() &&
+      !wasInstalled() &&
+      !isSnoozed()
+    );
+  }
+
+  if (root && eligible()) {
+    const sheet = root.querySelector<HTMLElement>('.ip-sheet')!;
+    const installBtn = document.getElementById('ip-install') as HTMLButtonElement;
+    const bodyText = document.getElementById('ip-body')!;
+    const iosText = document.getElementById('ip-ios')!;
+    const ios = isIOSSafari();
+    let shown = false;
+    let returnFocus: Element | null = null;
+
+    const focusables = () => Array.from(sheet.querySelectorAll<HTMLElement>('button:not([hidden])'));
+
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close(true);
+      } else if (e.key === 'Tab') {
+        const items = focusables();
+        if (items.length === 0) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+
+    function open() {
+      if (shown || !eligible()) return;
+      if (!ios && !canPrompt()) return;
+      shown = true;
+      returnFocus = document.activeElement;
+      root!.hidden = false;
+      // Next frame so the slide-up transition runs from the hidden position.
+      requestAnimationFrame(() => requestAnimationFrame(() => root!.classList.add('is-open')));
+      document.addEventListener('keydown', onKey);
+      installBtn.focus({ preventScroll: true });
+    }
+
+    function close(snoozeIt: boolean) {
+      if (snoozeIt) snooze();
+      root!.classList.remove('is-open');
+      root!.hidden = true;
+      document.removeEventListener('keydown', onKey);
+      if (returnFocus instanceof HTMLElement) returnFocus.focus({ preventScroll: true });
+    }
+
+    root.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('[data-ip-close]')) close(true);
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (ios) {
+        // Safari has no install API: show how to do it by hand.
+        bodyText.hidden = true;
+        iosText.hidden = false;
+        installBtn.hidden = true;
+        document.getElementById('ip-later')!.focus({ preventScroll: true });
+        return;
+      }
+      const outcome = await promptInstall();
+      // 'accepted' is followed by `appinstalled`, which records the install.
+      close(outcome !== 'accepted');
+    });
+
+    onInstalled(() => {
+      if (shown) close(false);
+    });
+
+    const start = () => {
+      if (ios) {
+        window.setTimeout(open, IOS_DELAY_MS);
+        return;
+      }
+      let waiting = true;
+      onInstallable(() => {
+        if (waiting) open();
+      });
+      window.setTimeout(() => {
+        waiting = false;
+      }, WAIT_FOR_PROMPT_MS);
+    };
+    if (document.readyState === 'complete') start();
+    else window.addEventListener('load', start, { once: true });
+  }
+</script>

@@ -470,7 +470,7 @@ export function legalDocs(site: LegalSite): LegalDoc[] {
         {
           heading: 'Managing cookies',
           paragraphs: [
-            'You can delete or block cookies in your browser settings at any time. Blocking the session cookie means you cannot stay signed in; blocking the Google cookies does not affect anything else on the site. We do not use any other tracking: the only cookies we set ourselves are the essential ones above.',
+            'If you install the site as an app on your phone, it keeps an anonymous random device id in your browser’s local storage, used only to count app installs and opens; it is not linked to you or your account, and clearing your browser data removes it. You can delete or block cookies in your browser settings at any time. Blocking the session cookie means you cannot stay signed in; blocking the Google cookies does not affect anything else on the site. We do not use any other tracking: the only cookies we set ourselves are the essential ones above.',
           ],
         },
       ],

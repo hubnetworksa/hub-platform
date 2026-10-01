@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Icon from '../components/Icon.astro';
+import InstallPrompt from '../components/InstallPrompt.astro';
 import site from '../site';
 import { siteName, cityLabel, footerTagline, adsEnabled } from '../lib/site-overrides';
 
@@ -45,6 +46,10 @@ const shareImage = ogImage ? (/^https?:\/\//i.test(ogImage) ? ogImage : siteUrl 
 // The 404 page is served for any missing URL, so it must not claim /404/ as its own address.
 const isNotFoundPage = Astro.url.pathname.replace(/\/$/, '') === '/404';
 const canonicalUrl = isNotFoundPage ? undefined : (canonical ?? (siteUrl + Astro.url.pathname));
+// The mobile "Get the app" sheet stays off admin, sign-in, checkout and
+// account/billing flows, and off every noindex page (which covers most of those).
+const NO_INSTALL_PROMPT = ['/admin', '/login', '/register', '/forgot-password', '/reset-password', '/list-your-business/checkout', '/my-businesses/', '/my-events/'];
+const showInstallPrompt = !noindex && !isNotFoundPage && !NO_INSTALL_PROMPT.some((p) => Astro.url.pathname.startsWith(p));
 
 const ICONS = {
   home: '<path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v10h12V10"/>',
@@ -317,34 +322,32 @@ const themeCss = `:root {
       </div>
     </footer>
 
+    {showInstallPrompt && <InstallPrompt />}
+
     <script>
       // Installable web app: register the service worker (also what makes
       // Chrome on Android offer "Install app"), and show the footer's
       // "Install the app" button once the browser says the site is installable.
+      // The deferred install prompt (and the anonymous install/open counter)
+      // live in lib/pwa-install.ts, shared with components/InstallPrompt.astro.
+      import { onInstallable, onInstalled, onPromptUsed, promptInstall } from '../lib/pwa-install';
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/service-worker.js', { scope: '/' }).catch(() => {});
         });
       }
-      interface InstallPromptEvent extends Event {
-        prompt: () => Promise<void>;
-        userChoice: Promise<{ outcome: string }>;
-      }
-      let installPrompt: InstallPromptEvent | null = null;
       const installBtn = document.getElementById('install-app-btn') as HTMLButtonElement | null;
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        installPrompt = e as InstallPromptEvent;
+      onInstallable(() => {
         if (installBtn) installBtn.hidden = false;
       });
       installBtn?.addEventListener('click', async () => {
-        if (!installPrompt) return;
-        await installPrompt.prompt();
-        await installPrompt.userChoice;
-        installPrompt = null;
         installBtn.hidden = true;
+        await promptInstall();
       });
-      window.addEventListener('appinstalled', () => {
+      onPromptUsed(() => {
+        if (installBtn) installBtn.hidden = true;
+      });
+      onInstalled(() => {
         if (installBtn) installBtn.hidden = true;
       });
 
