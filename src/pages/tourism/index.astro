@@ -185,7 +185,7 @@ const showsPaid = picks.some((p) => p.sponsored);
             <p style="margin:0 0 12px;font-size:13.5px;line-height:1.55;color:var(--text)">Check what's on while you're here — markets, sport and live music with ticket prices.</p>
             <a href="/events/" style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--navy);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-align:center;text-decoration:none">See events</a>
           </div>
-          {adsEnabled && !showsPaid && <AdUnit placement="tourismSidebar" />}
+          {adsEnabled && !showsPaid && <AdUnit placement="tourismSidebar" gap={14} />}
         </aside>
       </div>
     </section>

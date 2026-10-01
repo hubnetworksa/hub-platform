@@ -167,7 +167,7 @@ const showsPaid = !!e.featured;
               <a href={`/my-events/claim/?eventId=${e.id}&name=${encodeURIComponent(e.title)}`} style="display:block;padding:11px 14px;border-radius:9px;border:2px solid var(--navy);color:var(--navy);font-size:13.5px;font-weight:800;background:#fff;text-align:center;text-decoration:none">Claim this event</a>
             </div>
           )}
-          {adsEnabled && !showsPaid && <AdUnit placement="eventSidebar" />}
+          {adsEnabled && !showsPaid && <AdUnit placement="eventSidebar" gap={14} />}
         </aside>
       </div>
     </section>

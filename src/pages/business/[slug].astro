@@ -229,7 +229,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
           </div>
         </div>
 
-        {!showsPaid && <div style="margin-top:22px"><AdUnit placement="businessInContent" /></div>}
+        {!showsPaid && <AdUnit placement="businessInContent" style="margin-top:22px" />}
 
         {photos.length > 0 && (
           <>
@@ -409,7 +409,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
             <a href={`/my-businesses/claim/?businessId=${business.id}&name=${encodeURIComponent(business.name)}`} style="display:block;padding:11px 14px;border-radius:9px;background:var(--navy);color:#fff;font-size:13.5px;font-weight:800;text-decoration:none;text-align:center">Claim this listing — it's free</a>
           </div>
         )}
-        {!showsPaid && <AdUnit placement="businessSidebar" />}
+        {!showsPaid && <AdUnit placement="businessSidebar" gap={14} />}
       </aside>
     </div>
   </main>

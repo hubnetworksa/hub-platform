@@ -181,7 +181,7 @@ const asideHasContent = (adsEnabled && !showsPaid) || !suburbSponsor || nearbySu
 
         {asideHasContent && (
           <aside style="display:flex;flex-direction:column;gap:14px">
-            {adsEnabled && !showsPaid && <AdUnit placement="suburbSidebar" />}
+            {adsEnabled && !showsPaid && <AdUnit placement="suburbSidebar" gap={14} />}
             <SponsorSlot
               productType="suburb_sponsor"
               target={suburb.slug}

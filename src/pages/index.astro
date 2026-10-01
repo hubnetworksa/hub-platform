@@ -202,10 +202,8 @@ const showsPaid = featuredBusinesses.length > 0 || !!bannerSponsor || featuredEv
       </div>
     </section>
 
-    {adsEnabled && !showsPaid && site.adsensePublisherId && site.adsenseSlots?.homeInContent && (
-      <section style="max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,44px) 20px 0">
-        <AdUnit placement="homeInContent" />
-      </section>
+    {adsEnabled && !showsPaid && (
+      <AdUnit placement="homeInContent" style="max-width:1200px;margin:0 auto;padding:clamp(28px,4vw,44px) 20px 0" />
     )}
 
     {featuredEvents.length > 0 && (

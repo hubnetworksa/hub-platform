@@ -1,23 +1,36 @@
 ---
-// One real Google AdSense display unit. Renders nothing unless the site has
-// a publisher ID, ads are switched on in admin Site settings, and this
-// placement has an ad-unit slot ID in sites/<city>.json ("adsenseSlots").
-// With no slot ID, Google's Auto ads (switched on in the AdSense dashboard)
-// can still fill the page, since the loader script is on it.
+// One real Google AdSense display unit. Renders nothing at all (no wrapper,
+// no <ins>) unless the site has a publisher ID, ads are switched on in admin
+// Site settings, and this placement has an ad-unit slot ID in
+// sites/<city>.json ("adsenseSlots").
+//
+// Until Google actually fills the unit it takes no space and shows nothing:
+// the wrapper is collapsed by the .ad-unit rules in BaseLayout (no label, no
+// margin/padding, <ins> held at height 0) and only gets .ad-filled once the
+// <ins> carries data-ad-status="filled" (the observer next to those rules).
+// It is collapsed rather than display:none on purpose: AdSense measures the
+// <ins> width when the unit is pushed, and a display:none ancestor makes that
+// 0 ("No slot size for availableWidth=0"), so the unit would never fill.
+//
+// `style` is spacing that should exist only once an ad shows (it is
+// overridden while collapsed). `gap` is the parent's flex/grid gap in px:
+// a collapsed item still gets one, so it is cancelled with a negative margin.
 import site, { type AdPlacement } from '../site';
 import { adsEnabled } from '../lib/site-overrides';
 
 interface Props {
   placement: AdPlacement;
+  style?: string;
+  gap?: number;
 }
-const { placement } = Astro.props;
-const slot = site.adsenseSlots?.[placement] ?? null;
+const { placement, style = '', gap = 0 } = Astro.props;
+const slot = site.adsenseSlots?.[placement] || null;
 const show = Boolean(adsEnabled && site.adsensePublisherId && slot);
 ---
 
 {show && (
-  <div class="ad-unit" style="min-width:0">
-    <span style="display:block;margin-bottom:6px;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Advertisement</span>
+  <div class="ad-unit" data-ad-placement={placement} style={`min-width:0;--ad-gap:${gap}px;${style}`}>
+    <span class="ad-label">Advertisement</span>
     <ins
       class="adsbygoogle"
       style="display:block"

@@ -156,6 +156,24 @@ const themeCss = `:root {
       <Fragment>
         {noAds && <script is:inline>(adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1;</script>}
         <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${site.adsensePublisherId}`} crossorigin="anonymous"></script>
+        {/* Ad units (components/AdUnit.astro and search's in-feed unit) stay
+            collapsed - no label, no space, <ins> held at height 0 - until
+            Google marks the <ins> data-ad-status="filled". "unfilled", or
+            nothing at all (e.g. while AdSense is still "Getting ready"),
+            keeps them invisible. Collapsed rather than display:none because
+            AdSense needs the <ins> width when the unit is pushed. */}
+        <style is:inline>
+          .ad-unit:not(.ad-filled){margin:0 0 calc(-1 * var(--ad-gap,0px))!important;padding:0!important;border:0!important;background:none!important;min-height:0!important}
+          .ad-unit:not(.ad-filled) ins.adsbygoogle{height:0!important;min-height:0!important;overflow:hidden!important}
+          .ad-unit .ad-label{display:block;margin-bottom:6px;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+          .ad-unit:not(.ad-filled) .ad-label,ins.adsbygoogle[data-ad-status="unfilled"]{display:none!important}
+        </style>
+        <script is:inline>(function(){
+          function sync(ins){var w=ins.closest('.ad-unit');if(w)w.classList.toggle('ad-filled',ins.getAttribute('data-ad-status')==='filled');}
+          new MutationObserver(function(ms){for(var i=0;i<ms.length;i++){var t=ms[i].target;if(t.matches&&t.matches('ins.adsbygoogle'))sync(t);}}).observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['data-ad-status']});
+          function scan(){document.querySelectorAll('ins.adsbygoogle[data-ad-status]').forEach(sync);}
+          if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan);else scan();
+        })();</script>
       </Fragment>
     )}
     <title>{fullTitle}</title>
