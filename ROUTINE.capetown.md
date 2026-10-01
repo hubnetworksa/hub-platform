@@ -1,4 +1,4 @@
-# TheCapeTownHub daily research routine — runbook
+# TheCapeTownHub hourly research routine — runbook
 
 You are a scheduled cloud agent. You have **zero memory of previous runs** —
 everything you need to know is either in this file or in the repo's
@@ -24,12 +24,14 @@ never try to run `wrangler d1 execute` yourself.** Instead:
   then regenerates the snapshot. Your job ends at "commit and push the SQL
   file" — you never touch the database directly.
 
-**This site is brand new — expect near-empty runs at first.** Suburbs and
-categories are seeded, but there are zero businesses and zero shopping
-centres in D1 as of this routine's first run. Jobs 3, 4 and 5 all operate on
-data those earlier jobs (or earlier runs) produce, so early runs will mostly
-be job 1/2 suburb research with the other jobs quickly noting "nothing to do
-yet" — that's expected, not a bug.
+**This site is still early-stage — expect near-empty runs on jobs 3-5 for a
+while yet.** Suburbs and categories are seeded, and job 1/2 have started
+building up businesses and shopping centres, but coverage is still thin
+against the full suburb list (check `status/capetown/routine-state.json`'s
+`suburb_index` against `suburb_slugs.length` for exact progress). Jobs 3, 4
+and 5 all operate on data those earlier jobs (or earlier runs) produce, so
+early runs will mostly be job 1/2 suburb research with the other jobs
+quickly noting "nothing to do yet" — that's expected, not a bug.
 
 ## Your five jobs, every run
 
@@ -150,9 +152,9 @@ end of the whole run), advance `suburb_index` past it (wrapping modulo the
 length of `suburb_slugs`) and commit that change together with that
 suburb's SQL and log line — see "Committing". This is the entire mechanism
 that spreads coverage across all suburbs over time — `suburbs_per_run`
-suburbs per day, since this routine runs once daily. At 3 suburbs/run
-across the 168 seeded suburbs, a full first pass takes roughly two months —
-that's fine for a brand-new site; the owner can raise `suburbs_per_run` in
+suburbs per hour, since this routine now runs hourly. At 3 suburbs/run
+across the 168 seeded suburbs, a full first pass takes a bit over 2 days
+(56 runs at 24 runs/day) — the owner can raise `suburbs_per_run` in
 `status/capetown/routine-state.json` later if faster initial coverage is wanted.
 
 ## A known environment limitation — check this FIRST, don't rediscover it
@@ -335,8 +337,8 @@ see "Keeping `shopping_center_slugs` current" below),
    - If it hits `0`: this run's target is
      `shopping_center_slugs[shopping_center_index]` (wrapping modulo the
      list's length) — do one full sweep (steps 1-4 below) on it, then
-     reset `shopping_center_recheck_countdown` to `30` (roughly once a
-     month, since this job fires once a day) and advance
+     reset `shopping_center_recheck_countdown` to `24` (roughly once a
+     day, across 3 suburbs/run and this job firing every run) and advance
      `shopping_center_index` (wrapping). This is the only case that
      actually runs the sweep steps below.
 
@@ -418,7 +420,7 @@ all still needs `shopping_center_recheck_countdown`'s new value committed
 in `status/capetown/routine-state.json` (bundle it with whatever suburb/job-4
 commit this run already produces — it doesn't need a commit of its own).
 
-## New-mall discovery sweep (roughly once a month)
+## New-mall discovery sweep (roughly once a week)
 
 Job 2 only finds new shopping centres opportunistically — a mall in
 whatever suburb this run's suburb rotation happens to touch. This step
@@ -429,8 +431,8 @@ throttle (see "Trigger" below), not every run.
 **Trigger:** independent of job 3's own pending/recheck logic above —
 decrement `status/capetown/routine-state.json`'s `new_mall_discovery_countdown` by
 1 every run. When it hits `0`, do this discovery sweep now as an extra
-step in the same run, before you commit, then reset it to `30` (roughly
-once a month, since this job fires once a day). This runs on its own
+step in the same run, before you commit, then reset it to `168` (roughly
+once a week, at one run per hour). This runs on its own
 schedule so a long recheck countdown (job 3 above) never delays hunting
 for genuinely new malls.
 
