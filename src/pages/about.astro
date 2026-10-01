@@ -1,6 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import site from '../site';
+import site, { SITES } from '../site';
+import { operatorFacts } from '../lib/legal';
+
+// The same operator description the Contact page, the Privacy & POPIA notice
+// and the Terms of use use — one source (sites/<city>.json `legal`), so every
+// page names the same operator and the same contact email.
+const op = operatorFacts(site);
+const sisterNames = Object.values(SITES)
+  .filter((s) => s.slug !== site.slug)
+  .map((s) => s.siteName);
 
 const VALUES = [
   {
@@ -9,7 +18,7 @@ const VALUES = [
   },
   {
     lead: 'Privacy-respecting.',
-    body: "We publish business contact details only — never a business owner's personal name, phone number, or email.",
+    body: "We publish a business's trading contact details only — never the personal name, phone number or email of the person who submitted or claimed it.",
   },
   {
     lead: 'Built for the whole city.',
@@ -62,11 +71,20 @@ const VALUES = [
       ))}
     </ul>
 
+    <h2>Who runs {site.siteName}</h2>
+    <p>
+      {site.siteName} is operated by <strong>{op.name}</strong>{op.legalForm === 'sole proprietor' ? ', a sole proprietor' : ''}{op.operatorName ? ` (${op.operatorName})` : ''}, who also runs {sisterNames.join(' and ')} — one small, independent operator, not a franchise.
+      {op.vatRegistered ? 'We are registered for VAT.' : 'We are not registered for VAT, so no VAT is added to any price on this site.'}
+      The best way to reach us is <a href={`mailto:${op.email}`}>{op.email}</a> or the <a href="/contact/">contact page</a>.
+      How we handle personal information is set out in our <a href="/privacy/">Privacy &amp; POPIA notice</a>, and the rules for using the site and buying a plan are in our <a href="/terms/">Terms of use</a>.
+    </p>
+
     <h2>Sister sites</h2>
     <p>
       {site.siteName} is part of a small network of local directories, each built the same way for
-      its own city. See the full list on our <a href="/partners/">partner sites</a> page. Each site is
-      run independently, focused entirely on doing right by its own city.
+      its own city. See the full list on our <a href="/partners/">partner sites</a> page. Each site
+      is focused entirely on doing right by its own city, under the same operator and the same
+      privacy notice and terms.
     </p>
 
     <div class="cta">
