@@ -155,7 +155,7 @@ const cardBox = 'background:#fff;border:2px solid var(--border);border-radius:14
       featureBtn.hidden = false;
     }
 
-    if (params.get('featured')) featureNote.textContent = 'Thanks — your payment is being confirmed. It shows as featured as soon as PayFast confirms it (refresh in a minute).';
+    if (params.get('featured')) featureNote.textContent = 'Thanks — your payment is being confirmed. It switches to featured as soon as PayFast confirms it (refresh in a minute), and shows as featured on the public page within about 15–25 minutes of payment.';
     else if (params.get('feature_cancelled')) featureNote.textContent = 'Checkout cancelled — you have not been charged.';
   }
 
@@ -193,7 +193,7 @@ const cardBox = 'background:#fff;border:2px solid var(--border);border-radius:14
         body: JSON.stringify({ eventId: Number(eventId), ...data }),
       });
       const result = await res.json();
-      saveStatus.textContent = result.ok ? 'Saved.' : result.error || 'Could not save changes.';
+      saveStatus.textContent = result.ok ? 'Saved. Your event page will update within about 15–25 minutes.' : result.error || 'Could not save changes.';
     } catch {
       saveStatus.textContent = 'Could not save changes.';
     }

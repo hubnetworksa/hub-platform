@@ -70,7 +70,7 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
         <div id="done-view" hidden>
           <span style="font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)">Step 3 of 3</span>
           <h1 style="margin:12px 0 10px;font-size:clamp(26px,4.2vw,42px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);max-width:20ch">Sent to review</h1>
-          <p style="margin:0 0 22px;font-size:16px;line-height:1.6;color:var(--text);max-width:50ch">We check every submission by hand — usually live within 48 hours.</p>
+          <p style="margin:0 0 22px;font-size:16px;line-height:1.6;color:var(--text);max-width:50ch">We check every submission by hand — usually approved within 48 hours, and on the site within about 15–25 minutes of approval.</p>
           <FlowProgress step={3} />
           <div style="border:2px solid var(--navy);border-radius:16px;overflow:hidden;background:#fff">
             <div style="padding:10px 16px;background:var(--bg-subtle);font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Submitted</div>
@@ -91,7 +91,7 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
           <h2 style="margin:0 0 10px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">What happens next</h2>
           <ol style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px;font-size:13.5px;line-height:1.5;color:var(--text)">
             <li>We check details against public records.</li>
-            <li>You get an email when it's live — usually 48 hours.</li>
+            <li>We approve it, usually within 48 hours, and email you. It appears on the site within about 15–25 minutes of approval.</li>
             <li>Paid plans apply once the listing publishes. If we can't publish it, you're refunded.</li>
           </ol>
         </div>
@@ -227,7 +227,7 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
       $('done-meta').textContent = `${categoryName} · ${suburbName}`;
       const note = $('done-note');
       note.textContent = '';
-      note.textContent = "We've received your listing. Our team will review it and email you as soon as it's live.";
+      note.textContent = "We've received your listing. Our team will review it and email you once it's approved. It appears on the site within about 15–25 minutes of approval.";
       if (paid) {
         const p = document.createElement('span');
         p.style.display = 'block';

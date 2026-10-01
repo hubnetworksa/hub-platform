@@ -275,7 +275,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 
               <button type="submit" form="edit-form" class="owner-btn-primary" style="align-self:flex-start;padding:14px 22px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;cursor:pointer">Save changes</button>
               <p id="form-status" role="status" style="margin:0;font-size:13px;font-weight:700;color:var(--muted)"></p>
-              <p style="margin:0;font-size:12px;font-weight:600;color:var(--muted)">Changes to the description, phone, website, address and hours go live immediately. To change your business name or category, <a href="/contact/" style="color:var(--accent-hover);font-weight:800">contact us</a>.</p>
+              <p style="margin:0;font-size:12px;font-weight:600;color:var(--muted)">Changes are saved straight away and show on your public listing within about 15–25 minutes. To change your business name or category, <a href="/contact/" style="color:var(--accent-hover);font-weight:800">contact us</a>.</p>
             </div>
           </section>
 
@@ -658,7 +658,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       buttons.appendChild(cancelBtn);
     }
 
-    if (params.get('upgraded') && !planStatus.textContent) planStatus.textContent = 'Thanks — your payment is being confirmed. Your plan switches on as soon as PayFast confirms it (refresh in a minute), and your public page shows it within about 15 minutes.';
+    if (params.get('upgraded') && !planStatus.textContent) planStatus.textContent = 'Thanks — your payment is being confirmed. Your plan switches on as soon as PayFast confirms it (refresh in a minute), and its perks (badge, logo, photos) show on your public listing within about 15–25 minutes of payment.';
     else if (params.get('upgrade_cancelled')) planStatus.textContent = 'Checkout cancelled — you have not been charged.';
   }
 
@@ -782,7 +782,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     }
 
     renderTourismPriceNote();
-    if (params.get('upgraded')) statusEl.textContent = 'Thanks — your payment is being confirmed (refresh in a minute). The sponsorship shows on the public page within about 15 minutes.';
+    if (params.get('upgraded')) statusEl.textContent = 'Thanks — your payment is being confirmed (refresh in a minute). The sponsorship shows on the public page within about 15–25 minutes of payment.';
     else if (params.get('upgrade_cancelled')) statusEl.textContent = 'Checkout cancelled — you have not been charged.';
   }
 
@@ -1053,7 +1053,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       if (result.ok) {
         photos = photos.filter((p) => p.id !== photoId);
         renderGrid();
-        setStatus('');
+        setStatus('Photo deleted. Your listing will update within about 15–25 minutes.');
       } else setStatus(result.error || 'Could not delete photo.');
     });
 
@@ -1069,7 +1069,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       const res = await fetch('/api/business-photos', { method: 'POST', body: fd });
       const result = await res.json();
       if (result.ok) {
-        setStatus('');
+        setStatus('Photo uploaded. Your listing will update within about 15–25 minutes.');
         uploadForm.reset();
         const refreshed = await fetch(`/api/business-photos?businessId=${businessId}`).then((r) => r.json());
         if (refreshed.ok) {
@@ -1184,7 +1184,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
         if (result.ok) {
           key = result.key;
           show();
-          setStatus('Saved. Your logo appears on your public listing after the next site update, usually within 25 minutes.');
+          setStatus('Saved. Your logo will appear on your public listing within about 15–25 minutes.');
         } else {
           setStatus(result.error || 'Could not upload logo.');
         }
@@ -1203,7 +1203,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       if (result.ok) {
         key = null;
         show();
-        setStatus('Logo removed. It disappears from your public listing after the next site update.');
+        setStatus('Logo removed. It will disappear from your public listing within about 15–25 minutes.');
       } else {
         setStatus(result.error || 'Could not remove logo.');
       }
@@ -1282,7 +1282,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       body: JSON.stringify({ ...data, businessId: Number(businessId) }),
     });
     const result = await res.json();
-    formStatus.textContent = result.ok ? 'Saved.' : result.error || 'Something went wrong.';
+    formStatus.textContent = result.ok ? 'Saved. Your listing will update within about 15–25 minutes.' : result.error || 'Something went wrong.';
   });
 
   init();
