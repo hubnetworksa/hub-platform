@@ -50,7 +50,7 @@ export function legalDocs(site: Pick<Site, 'siteName' | 'contactEmail'>): LegalD
         {
           heading: 'Why we collect it',
           paragraphs: [
-            'Business details are published so customers can find you. Contact details are used to verify the listing, send enquiry notifications and bill you if you are on a paid plan. We do not sell personal information to third parties.',
+            'Business details are published so customers can find you. Contact details are used to verify the listing, send enquiry notifications and bill you if you are on a paid plan. We may also send you occasional service announcements about the website itself (for example when we launch new features); every one of these carries an unsubscribe link, and opting out never affects the emails about your own account or billing. We do not sell personal information to third parties.',
           ],
         },
         {
@@ -112,7 +112,7 @@ export function legalDocs(site: Pick<Site, 'siteName' | 'contactEmail'>): LegalD
         {
           heading: 'Billing',
           paragraphs: [
-            'Paid plans are month to month and renew automatically until cancelled. Cancel any time from your dashboard; the plan runs to the end of the paid month.',
+            'Paid plans are billed monthly or yearly in advance and renew automatically until cancelled. Cancel any time from your dashboard; that stops the next renewal and the plan runs to the end of the period already paid for.',
           ],
         },
         {
