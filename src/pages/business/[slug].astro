@@ -37,7 +37,7 @@ const labelSources = sourceUrls.filter((u) => !/^https?:\/\//.test(u)).map((u) =
 const center = shoppingCenterFor(business);
 const isFeatured = business.subscription_tier >= FEATURED_TIER;
 // Ads run only on free (Basic) listings. Any paid plan makes the page
-// ad-free: no units and no AdSense script, so Auto ads can't appear either.
+// ad-free: no units, and ad requests are paused so Auto ads can't appear either.
 const isPaying = business.subscription_tier >= 1;
 // Featured-plan perk: links to the business's own social pages (https only).
 const SOCIAL_ICONS: Record<string, string> = {
@@ -78,7 +78,7 @@ function shortDate(iso: string): string {
 // (a Basic listing that sponsors a category/suburb/centre/guide/banner is
 // still a paying customer) — or when a paid business is shown in the
 // "similar" list on this page. Both AdUnit placements below use this same
-// gate, as does BaseLayout's noAds (which also drops the AdSense loader).
+// gate, as does BaseLayout's noAds (which also pauses AdSense ad requests).
 const showsPaid = isPaying || sponsorshipsHeldBy(business).length > 0 || similar.some(isPaidListing);
 
 const keywords = [

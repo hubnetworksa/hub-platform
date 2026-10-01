@@ -27,9 +27,11 @@ interface Props {
   ogImage?: string | null;
   /** og:type — 'article' for news/guides, 'website' otherwise. */
   ogType?: 'website' | 'article';
-  /** Ad-free page: the AdSense script isn't loaded at all, so neither
-   *  manual units nor Google's Auto ads can appear. Used for paying
-   *  businesses' pages. */
+  /** No ads may show on this page: ad requests are paused (Google's
+   *  pauseAdRequests switch) before the AdSense loader runs, so neither
+   *  manual units nor Google's Auto ads can appear. The loader itself is
+   *  still emitted so AdSense can verify the site. Used for pages that
+   *  show paying businesses' placements. */
   noAds?: boolean;
 }
 
@@ -135,9 +137,18 @@ const themeCss = `:root {
 
     <!-- AdSense loader. Needed by the manual units (components/AdUnit.astro)
          and by Auto ads, which are switched on per site in the AdSense
-         dashboard. Left off ad-free pages (noAds), e.g. a paying business. -->
-    {site.adsensePublisherId && !noAds && (
-      <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${site.adsensePublisherId}`} crossorigin="anonymous"></script>
+         dashboard. Emitted on EVERY public (indexable) page, ad-free ones
+         included: AdSense site verification looks for this script on the
+         homepage, which always shows paid placements, so dropping it there
+         left the sites stuck on "Getting ready". On ad-free pages (noAds)
+         ad requests are paused BEFORE the loader runs (Google's documented
+         pause-ad-requests switch), so no manual unit or Auto ad can ever
+         render there. Noindex pages (admin, account, 404) get neither. -->
+    {site.adsensePublisherId && !noindex && (
+      <Fragment>
+        {noAds && <script is:inline>(adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1;</script>}
+        <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${site.adsensePublisherId}`} crossorigin="anonymous"></script>
+      </Fragment>
     )}
     <title>{fullTitle}</title>
     <meta name="description" content={description} />

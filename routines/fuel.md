@@ -69,7 +69,7 @@ Append one line to `status/fuel-agent-log.jsonl` every run, including runs that 
 {"date": "2026-10-07T06:00:00Z", "action_taken": "fuel_prices", "period": "2026-10", "cities": ["capetown", "pretoria", "polokwane"], "loaded": 8, "short_summary": "Loaded October coastal and inland prices from the CEF announcement and AA; check-news ok for all three files."}
 ```
 
-A "not due" run logs `"action_taken": "fuel_not_due"` with a one-line reason. Commit the SQL files (only if at least one passed) together with the log line, and push to `main`.
+A "not due" run logs `"action_taken": "fuel_not_due"` with a one-line reason. Commit the SQL files (only if at least one passed) together with the log line, and push to `main` (push with the "How to push" procedure in `routines/_shared.md`).
 
 ## Schedule
 

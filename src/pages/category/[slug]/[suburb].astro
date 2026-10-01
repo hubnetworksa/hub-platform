@@ -49,8 +49,8 @@ const categorySponsor = sponsorFor('category_sponsor', category.slug);
 // back to back. The card list below is the ordinary listing, so a sponsor
 // still appears there once like any business.
 const sameSponsor = !!suburbSponsor && !!categorySponsor && suburbSponsor.business_id === categorySponsor.business_id;
-// No Google ads anywhere a paid listing or sponsor is shown (see
-// BaseLayout's noAds): this page shows one if this is true.
+// No Google ads anywhere a paid listing or sponsor is shown (BaseLayout's
+// noAds pauses AdSense ad requests): this page shows one if this is true.
 const showsPaid = businesses.some(isPaidListing) || !!categorySponsor || !!suburbSponsor;
 ---
 

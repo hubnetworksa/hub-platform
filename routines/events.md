@@ -65,7 +65,7 @@ This gate confirms the file only inserts events, every required field is present
 
 ## Logging and committing
 
-Append one line to `status/<city>/events-agent-log.jsonl` every run, even a quiet one, then commit the SQL file (only if at least one event cleared the bar) with the log line and push to `main`:
+Append one line to `status/<city>/events-agent-log.jsonl` every run, even a quiet one, then commit the SQL file (only if at least one event cleared the bar) with the log line and push to `main` (push with the "How to push" procedure in `routines/_shared.md`):
 
 ```json
 {"date": "2026-10-01T09:00:00Z", "action_taken": "event_discovery", "found": 6, "published": 3, "rejected_unverified": 3, "short_summary": "Found 6 candidate events; 3 cleared the 3-source non-resale bar and were published, 3 discarded for lacking independent corroboration."}

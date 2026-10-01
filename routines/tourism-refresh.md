@@ -42,7 +42,7 @@ node scripts/routines/check-tourism.mjs --city <city> --online
 
 It confirms the section has the three headings, at most 3 suggestions, each suggestion in the "(Category, area, price, time)" shape with an allowed category and at least 2 readable https sources on different sites, nothing already on the page, and a source for every stated change or closure. **Never push a proposal that fails.**
 
-Then append one line to `status/<city>/tourism-agent-log.jsonl`, commit only those two files, and push to `main`:
+Then append one line to `status/<city>/tourism-agent-log.jsonl`, commit only those two files, and push to `main` (push with the "How to push" procedure in `routines/_shared.md`):
 
 ```json
 {"date": "2026-10-01T06:00:00Z", "action_taken": "tourism_refresh", "checked": 6, "changes": 1, "closures": 1, "suggested_new": 1, "short_summary": "Checked 6 attractions: 1 price change, 1 upcoming closure, 1 new attraction suggested. Proposals in status/capetown/tourism-proposals.md for review."}
