@@ -28,6 +28,27 @@ export interface SiteFeatures {
   tourism: boolean;
 }
 
+/** The operator's identity, shown on About, Contact, the Privacy & POPIA
+ *  notice and the Terms of use (POPIA s18, ECTA s43). The operator is a sole
+ *  proprietor trading as "Hub Network SA" across all three sites; the only
+ *  published contact is contactEmail. Any field may be null — the pages fall
+ *  back to a truthful generic sentence ("the operator of <siteName>, a sole
+ *  proprietor") and never render a placeholder. */
+export interface SiteLegal {
+  /** Trading name, e.g. "Hub Network SA". */
+  legalName: string | null;
+  legalForm: 'private company' | 'sole proprietor' | null;
+  /** The natural person's full name behind a sole proprietorship (ECTA
+   *  s43(1)(a)); rendered only when set. */
+  operatorName: string | null;
+  /** CIPC registration number (private company only). */
+  registrationNumber: string | null;
+  /** false = not registered for VAT: prices are shown and charged without VAT. */
+  vatRegistered: boolean;
+  /** Public URL of the PAIA s51 manual once one is published. */
+  paiaManualUrl: string | null;
+}
+
 /** Every place the site can show a Google AdSense display unit. Each one
  *  renders nothing unless sites/<city>.json names an ad-unit slot ID for it
  *  (see AdUnit.astro), so an unset placement is invisible — never a dashed
@@ -93,6 +114,13 @@ export interface Site {
   adsenseSlots?: Partial<Record<AdPlacement, string | null>>;
   features: SiteFeatures;
   theme: SiteTheme;
+  /** Invoice header details — see functions/_lib/invoicing.ts. */
+  invoicing?: {
+    registeredAddress: string | null;
+    vatNumber: string | null;
+    registrationNumber: string | null;
+  };
+  legal?: SiteLegal;
 }
 
 export const SITES: Record<string, Site> = { polokwane, pretoria, capetown };

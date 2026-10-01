@@ -1,12 +1,18 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import site from '../site';
+import { operatorFacts } from '../lib/legal';
+
+// Same operator description as About, Privacy and Terms (sites/<city>.json
+// `legal` via operatorFacts) so every page names the same operator and inbox.
+const op = operatorFacts(site);
 
 const TOPICS = [
   'A listing that needs fixing',
   'Advertising and sponsorship',
   'Billing or an invoice',
   'Report incorrect or spam content',
+  'POPIA request',
   'Something else',
 ];
 
@@ -16,7 +22,8 @@ const TOPICS = [
 const LINES = [
   { label: 'Listings', subject: 'Listings' },
   { label: 'Advertising', subject: 'Advertising' },
-  { label: 'POPIA requests', subject: 'POPIA request' },
+  { label: 'Billing & invoices', subject: 'Billing' },
+  { label: 'POPIA & PAIA requests', subject: 'POPIA request' },
 ];
 
 const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)';
@@ -52,6 +59,7 @@ const fieldStyle = 'padding:13px;border:2px solid var(--border);border-radius:11
             </select></label>
           <label style={labelStyle}>Message
             <textarea name="message" rows="6" required maxlength="4000" class="contact-field" style={`${fieldStyle};resize:vertical`}></textarea></label>
+          <p style="margin:0;font-size:12.5px;line-height:1.5;color:var(--muted)">We use what you send only to answer you, and keep it for up to 24 months — see our <a href="/privacy/" style="color:var(--accent-hover);font-weight:700">Privacy &amp; POPIA notice</a>.</p>
           <button type="submit" class="contact-send" style="align-self:flex-start;padding:14px 22px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;cursor:pointer">Send message</button>
           <p id="contact-status" role="status" style="font-size:13.5px;font-weight:600;color:var(--muted);margin:0"></p>
         </form>
@@ -62,10 +70,20 @@ const fieldStyle = 'padding:13px;border:2px solid var(--border);border-radius:11
               {LINES.map((l) => (
                 <div>
                   <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">{l.label}</div>
-                  <div style="font-size:14.5px;font-weight:700;margin-top:4px;overflow-wrap:anywhere">{site.contactEmail}</div>
+                  <a href={`mailto:${site.contactEmail}?subject=${encodeURIComponent(l.subject)}`} style="display:block;font-size:14.5px;font-weight:700;margin-top:4px;overflow-wrap:anywhere;color:var(--navy);text-decoration:none">{site.contactEmail}</a>
                 </div>
               ))}
             </div>
+          </div>
+          <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:#fff">
+            <h3 style="margin:0 0 8px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Who you're writing to</h3>
+            <p style="margin:0 0 8px;font-size:13.5px;line-height:1.55;color:var(--text)">
+              {site.siteName} is operated by <strong>{op.name}</strong>{op.legalForm === 'sole proprietor' ? ', a sole proprietor' : ''}{op.operatorName ? ` (${op.operatorName})` : ''}.
+              {op.vatRegistered ? 'Registered for VAT.' : 'Not registered for VAT — no VAT is charged.'}
+            </p>
+            <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text)">
+              Privacy and POPIA requests (access, correction, deletion, objection) go to the same address with “POPIA request” in the subject line; the operator answers within 30 days. Our PAIA manual is {op.paiaManualUrl ? <a href={op.paiaManualUrl} target="_blank" rel="noopener noreferrer" style="color:var(--accent-hover);font-weight:700">published here</a> : 'available on request'}. Full details are in our <a href="/privacy/" style="color:var(--accent-hover);font-weight:700">Privacy &amp; POPIA notice</a> and <a href="/terms/" style="color:var(--accent-hover);font-weight:700">Terms of use</a>.
+            </p>
           </div>
           <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
             <h3 style="margin:0 0 8px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Faster than emailing</h3>
