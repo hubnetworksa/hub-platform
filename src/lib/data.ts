@@ -10,6 +10,7 @@ import siteSettingsRaw from '../data/site-settings.json';
 import eventsRaw from '../data/events.json';
 import newsRaw from '../data/news.json';
 import fuelRaw from '../data/fuel-prices.json';
+import { canFormatDescription, renderRichText, plainHtml } from './rich-text';
 import { centsToRand, monthlyAndYearly } from '../../functions/_lib/pricing';
 
 export interface Suburb {
@@ -95,9 +96,18 @@ export function isPaidListing(b: { subscription_tier: number }): boolean {
  *  site path (the preview's demo placeholder) and is used as is. */
 export function logoFor(b: { logo_key?: string | null; subscription_tier: number; subscription_status: string | null }): string | null {
   if (!b.logo_key) return null;
-  if ((b.subscription_tier ?? 0) < 1) return null;
-  if (b.subscription_status !== 'active' && b.subscription_status !== 'cancelled') return null;
+  if (!canFormatDescription(b)) return null;
   return b.logo_key.startsWith('/') ? b.logo_key : `/media/${b.logo_key}`;
+}
+
+/** Safe HTML for a business's description on its own page. Formatting (bold,
+ *  italic, lists — src/lib/rich-text.ts) shows only under the same paid-plan
+ *  rule as logoFor; a Basic or lapsed listing gets plain paragraphs with the
+ *  markers stripped and list items on their own lines. The stored text keeps
+ *  its formatting, so it comes back at the next build after they renew.
+ *  Snippets (cards, search index, meta, JSON-LD) always use plainLine. */
+export function descriptionHtmlFor(b: { description?: string | null; subscription_tier: number; subscription_status: string | null }): string {
+  return canFormatDescription(b) ? renderRichText(b.description) : plainHtml(b.description);
 }
 
 /** Listing order everywhere a plan should count: Featured, then Verified,

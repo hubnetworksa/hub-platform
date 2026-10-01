@@ -27,6 +27,7 @@ import AdminShell from '../../components/AdminShell.astro';
 <script>
   import { esc, TIER_NAMES, requireAdmin, showContent } from '../../lib/admin-html';
   import { formatPhoneZA } from '../../lib/phone';
+  import { plainText } from '../../lib/rich-text';
 
   // The review endpoint answers with a small HTML page whose <h1> is the
   // outcome, and reports some failures ("Already handled", "This link has
@@ -73,7 +74,7 @@ import AdminShell from '../../components/AdminShell.astro';
             </div>
             <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:4px;overflow-wrap:break-word;">${esc(meta)}</div>
             ${contact ? `<div style="font-size:12.5px;font-weight:600;color:var(--muted);margin-top:2px;overflow-wrap:break-word;">${esc(contact)}</div>` : ''}
-            <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);max-width:64ch;overflow-wrap:break-word;">${esc(s.description)}</p>
+            <p style="margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--text);max-width:64ch;overflow-wrap:break-word;white-space:pre-line;">${esc(plainText(s.description))}</p>
           </div>
         </div>
         ${canAct

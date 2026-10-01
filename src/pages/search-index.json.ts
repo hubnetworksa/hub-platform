@@ -3,6 +3,7 @@ import { businesses, suburbFor, categoriesFor, websiteUrl, logoFor } from '../li
 import { groupForCategory } from '../lib/categoryGroups';
 import { synonymsFor, locationSynonymsFor } from '../lib/categorySynonyms';
 import { formatPhoneZA } from '../lib/phone';
+import { plainLine } from '../lib/rich-text';
 import site from '../site';
 
 export const GET: APIRoute = () => {
@@ -36,7 +37,8 @@ export const GET: APIRoute = () => {
       p: formatPhoneZA(b.phone),
       w: websiteUrl(b.website) ?? '',
       a: b.address ?? '',
-      d: b.description ?? '',
+      // Markers stripped — the formatted version is only on the business page.
+      d: plainLine(b.description),
       // Logo URL — only on paid listings that have one (see logoFor), so
       // the key is simply absent for nearly every row.
       ...(logo ? { l: logo } : {}),

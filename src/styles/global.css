@@ -352,3 +352,28 @@ main {
     border-radius: 14px;
   }
 }
+
+/* Formatted descriptions (src/lib/rich-text.ts output: p/strong/em/ul/ol/li/br
+   only). The wrapper carries the font size/colour; this just spaces blocks. */
+.rich-text > :first-child { margin-top: 0; }
+.rich-text > :last-child { margin-bottom: 0; }
+.rich-text p { margin: 0 0 .7em; }
+.rich-text ul, .rich-text ol { margin: 0 0 .7em; padding-left: 1.35em; }
+.rich-text li { margin: .2em 0; padding-left: .15em; }
+.rich-text li::marker { color: var(--accent); font-weight: 800; }
+.rich-text strong { font-weight: 800; }
+
+/* Description formatting toolbar + live preview (src/lib/rich-text-editor.ts). */
+.rte-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 -2px; }
+.rte-btn { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; padding: 0 10px; border: 2px solid var(--border); border-radius: 10px; background: #fff; color: var(--navy); font: inherit; font-size: 15px; font-weight: 700; line-height: 1; cursor: pointer; transition: border-color .12s, background .12s; }
+.rte-btn strong { font-weight: 900; }
+.rte-btn em { font-style: italic; font-family: Georgia, 'Times New Roman', serif; font-weight: 700; font-size: 16px; }
+.rte-btn:hover:not(:disabled) { border-color: var(--accent); background: var(--bg-subtle); }
+.rte-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rte-btn:disabled { cursor: not-allowed; opacity: .45; background: var(--bg-subtle); }
+.rte-lock { display: inline-flex; align-items: center; gap: 5px; margin-left: 4px; padding: 3px 9px; border-radius: 999px; background: var(--navy); color: #fff; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; white-space: nowrap; }
+.rte-lock[hidden], .rte-preview[hidden] { display: none !important; }
+.rte-preview { border: 2px dashed var(--border); border-radius: 11px; padding: 10px 14px 12px; background: var(--bg-subtle); min-width: 0; overflow-wrap: anywhere; }
+.rte-preview-label { margin: 0 0 5px; font-size: 10.5px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.rte-preview-body { font-size: 14.5px; font-weight: 500; line-height: 1.6; color: var(--text); }
+.rte-preview-body.is-empty { color: var(--muted); font-style: italic; }

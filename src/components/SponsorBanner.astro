@@ -5,6 +5,7 @@
 // button in that case.
 import { sponsorFor, businesses, categoriesFor, suburbFor, logoFor, type Sponsorship } from '../lib/data';
 import BusinessLogo from './BusinessLogo.astro';
+import { plainLine } from '../lib/rich-text';
 
 interface Props {
   productType: Sponsorship['product_type'];
@@ -16,7 +17,8 @@ const { productType, target, context } = Astro.props;
 const sponsor = sponsorFor(productType, target);
 const business = sponsor ? businesses.find((b) => b.id === sponsor.business_id) : undefined;
 const meta = business ? [categoriesFor(business)[0]?.name, suburbFor(business)?.name].filter(Boolean).join(' · ') : '';
-const blurb = business?.description ? business.description.slice(0, 160) + (business.description.length > 160 ? '…' : '') : '';
+const plainDesc = plainLine(business?.description);
+const blurb = plainDesc ? plainDesc.slice(0, 160) + (plainDesc.length > 160 ? '…' : '') : '';
 // The sponsor's logo (Verified/Featured perk) is a left column with the
 // pill, name, meta and blurb all beside it; without one the card is exactly
 // as before.

@@ -4,13 +4,14 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
 import PlanBadge from '../../components/PlanBadge.astro';
 import AdUnit from '../../components/AdUnit.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, websiteUrl, isPaidListing, sponsorshipsHeldBy, reviewsFor, averageRating, reviewCount, logoFor } from '../../lib/data';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, websiteUrl, isPaidListing, sponsorshipsHeldBy, reviewsFor, averageRating, reviewCount, logoFor, descriptionHtmlFor } from '../../lib/data';
 import { synonymsFor, locationSynonymsFor } from '../../lib/categorySynonyms';
 import { schemaTypeFor } from '../../lib/categorySchemaTypes';
 import Icon from '../../components/Icon.astro';
 import BusinessLogo from '../../components/BusinessLogo.astro';
 import site from '../../site';
 import { formatPhoneZA, phoneHref, phoneInternationalZA } from '../../lib/phone';
+import { plainLine } from '../../lib/rich-text';
 
 export function getStaticPaths() {
   return businesses.map((business) => ({ params: { slug: business.slug }, props: { business } }));
@@ -24,8 +25,11 @@ const cats = categoriesFor(business);
 // title (bare names collide across cities and say nothing to a searcher),
 // and a listing with no description still gets a real meta description.
 const pageTitle = [business.name, cats[0] && suburb ? `${cats[0].name} in ${suburb.name}` : suburb?.name].filter(Boolean).join(' – ');
+// Formatted (bold, italic, lists) only while a Verified/Featured plan is
+// live; Basic or lapsed listings get plain paragraphs — see descriptionHtmlFor.
+const descriptionHtml = descriptionHtmlFor(business);
 const metaDescription = (
-  business.description?.trim() ||
+  plainLine(business.description) ||
   `${business.name}${cats[0] ? `, ${cats[0].name.toLowerCase()}` : ''}${suburb ? ` in ${suburb.name}` : ''}. Address, phone, hours and directions.`
 ).slice(0, 155);
 const sourceUrls = parseSourceUrls(business);
@@ -105,7 +109,7 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': schemaType,
   name: business.name,
-  description: business.description,
+  description: plainLine(business.description),
   url: canonicalUrl,
   ...(logoUrl ? { logo: logoUrl, image: logoUrl } : {}),
   ...(business.address ? { address: { '@type': 'PostalAddress', streetAddress: business.address, addressLocality: suburb?.name, addressRegion: site.province, addressCountry: 'ZA' } } : {}),
@@ -173,7 +177,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
             </div>
             </HeadText>
             <HeadRest {...(logo ? { class: 'biz-head-rest' } : {})}>
-            <p style="margin:0 0 20px;font-size:16px;line-height:1.62;max-width:62ch">{business.description}</p>
+            {descriptionHtml && <div class="rich-text" style="margin:0 0 20px;font-size:16px;line-height:1.62;max-width:62ch" set:html={descriptionHtml} />}
             {center && (
               <p style="margin:0 0 16px;">
                 <a href={`/shopping-center/${center.slug}/`} style="display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-weight:700;font-size:14px;text-decoration:none">

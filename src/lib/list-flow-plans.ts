@@ -53,7 +53,7 @@ export function getFlowPlans(): FlowPlan[] {
       yearlyAmount: verifiedYearly,
       yearlyNote: yearlyNote('price_verified_cents'),
       note: 'Badge, logo, website link, photos, enquiries',
-      summary: 'Badge, logo, website link, photos, enquiries, stats',
+      summary: 'Badge, logo, website link, photos, enquiries, stats, bold, bullets and formatted description',
     },
     {
       tier: 2,

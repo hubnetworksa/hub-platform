@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdUnit from '../../components/AdUnit.astro';
 import { events, eventDetail, eventDateLong, todaySast } from '../../lib/data';
 import site from '../../site';
+import { renderRichText, plainLine } from '../../lib/rich-text';
 
 export function getStaticPaths() {
   return events.map((e) => ({ params: { slug: e.slug }, props: { event: e } }));
@@ -29,7 +30,7 @@ const eventLd = {
   startDate: e.event_date,
   eventStatus: 'https://schema.org/EventScheduled',
   eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-  ...(e.description ? { description: e.description } : {}),
+  ...(e.description ? { description: plainLine(e.description) } : {}),
   ...(e.image_url ? { image: new URL(e.image_url, `https://${site.domain}`).toString() } : {}),
   location: {
     '@type': 'Place',
@@ -45,7 +46,7 @@ const eventLdJson = JSON.stringify(eventLd).replace(/</g, '\\u003c');
 const showsPaid = !!e.featured;
 ---
 
-<BaseLayout noAds={showsPaid} title={e.title} description={e.description || `${e.title} — ${dateLong} at ${e.venue ?? 'TBC'}, ${site.cityLabel}.`} ogImage={e.image_url && /^(https?:\/\/|\/media\/)/i.test(e.image_url) ? e.image_url : null}>
+<BaseLayout noAds={showsPaid} title={e.title} description={plainLine(e.description) || `${e.title} — ${dateLong} at ${e.venue ?? 'TBC'}, ${site.cityLabel}.`} ogImage={e.image_url && /^(https?:\/\/|\/media\/)/i.test(e.image_url) ? e.image_url : null}>
   <script type="application/ld+json" set:html={eventLdJson} />
   <main>
     <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">
@@ -86,7 +87,7 @@ const showsPaid = !!e.featured;
             </p>
           )}
           <h1 style="margin:12px 0 10px;font-size:clamp(26px,4.2vw,42px);letter-spacing:-.03em;line-height:1.05;color:var(--navy)">{e.title}</h1>
-          {e.description && <p style="margin:0 0 20px;font-size:16.5px;line-height:1.6;color:var(--text);max-width:62ch">{e.description}</p>}
+          {e.description && <div class="rich-text" style="margin:0 0 20px;font-size:16.5px;line-height:1.6;color:var(--text);max-width:62ch" set:html={renderRichText(e.description)} />}
 
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:2px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden">
             <div style="background:#fff;padding:14px 16px">

@@ -65,6 +65,7 @@ const cardBox = 'background:#fff;border:2px solid var(--border);border-radius:14
 </style>
 
 <script>
+  import { attachRichTextEditor } from '../../lib/rich-text-editor';
   const main = document.querySelector('main') as HTMLElement;
   const featurePrice = main.dataset.priceFeature ?? '—';
   const params = new URLSearchParams(window.location.search);
@@ -76,6 +77,7 @@ const cardBox = 'background:#fff;border:2px solid var(--border);border-radius:14
   const featureBtn = document.getElementById('feature-btn') as HTMLButtonElement;
   const featureNote = document.getElementById('feature-note')!;
   const form = document.getElementById('event-form') as HTMLFormElement;
+  const descEditor = attachRichTextEditor(form.elements.namedItem('description') as HTMLTextAreaElement);
   const saveStatus = document.getElementById('save-status')!;
 
   function dateLabel(d: string): string {
@@ -146,6 +148,7 @@ const cardBox = 'background:#fff;border:2px solid var(--border);border-radius:14
     (form.elements.namedItem('ticketUrl') as HTMLInputElement).value = e.ticket_url === '#' ? '' : (e.ticket_url ?? '');
     (form.elements.namedItem('host') as HTMLInputElement).value = e.host ?? '';
     (form.elements.namedItem('description') as HTMLTextAreaElement).value = e.description ?? '';
+    descEditor.refresh();
 
     if (e.featured) {
       featureStatus.textContent = 'This event is featured — top of the Events page until the date passes.';

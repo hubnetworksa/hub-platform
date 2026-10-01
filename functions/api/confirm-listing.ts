@@ -7,6 +7,7 @@ import { ownerConfirmEmailHtml } from '../_lib/email-template';
 import { logActivity } from '../_lib/activity-log';
 import { closePaidSubmission } from '../_lib/paid-submission';
 import { formatPhoneZA } from '../../src/lib/phone';
+import { plainLine } from '../../src/lib/rich-text';
 
 interface Env {
   DB: D1Database;
@@ -126,7 +127,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     row.address && `Address: ${row.address}`,
     row.phone && `Phone: ${formatPhoneZA(row.phone)}`,
     row.website && `Website: ${row.website}`,
-    `Description: ${row.description}`,
+    `Description: ${plainLine(row.description)}`,
   ].filter(Boolean);
   const bodyText = [
     `Hi,`,

@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdUnit from '../../components/AdUnit.astro';
 import { eventsSorted, eventTypeCounts, eventDateParts, priceRand } from '../../lib/data';
 import site from '../../site';
+import { plainLine } from '../../lib/rich-text';
 
 // Free/no-link events store '#' as the ticket URL — don't render a
 // "Buy tickets" button that goes nowhere.
@@ -86,7 +87,7 @@ const showsPaid = sorted.some((e) => !!e.featured);
                 </div>
                 <h2 style="margin:0;font-size:20px;line-height:1.2;letter-spacing:-.02em;color:var(--navy)"><a href={`/events/${e.slug}/`} style="color:inherit;text-decoration:none">{e.title}</a></h2>
                 {(e.venue || e.suburb) && <p style="margin:0;font-size:13.5px;font-weight:700;color:var(--muted)">{[e.venue, e.suburb].filter(Boolean).join(' · ')}</p>}
-                {e.description && <p style="margin:0;font-size:14px;line-height:1.55;color:var(--text)">{e.description}</p>}
+                {e.description && <p style="margin:0;font-size:14px;line-height:1.55;color:var(--text)">{plainLine(e.description)}</p>}
                 <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:4px">
                   <div style="display:flex;flex-direction:column">
                     <span style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Tickets</span>

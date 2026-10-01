@@ -51,6 +51,7 @@ const billingNote = yearlyToggleNote(['price_verified_cents', 'price_featured_ce
           <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
             What do you do?
             <textarea name="description" class="fld" maxlength="600" rows="4" placeholder="A sentence or two customers would search for." style="padding:14px;border:2px solid var(--border);border-radius:11px;font-size:15px;font-weight:500;font-family:inherit;color:var(--text);outline:none;background:#fff;resize:vertical"></textarea>
+            <span id="desc-locked" hidden style="font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.5">Bold, italic and lists come with the Verified and Featured plans — choose one below to format your description.</span>
           </label>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px">
             <label style="display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:800;color:var(--navy)">
@@ -144,6 +145,7 @@ const billingNote = yearlyToggleNote(['price_verified_cents', 'price_featured_ce
 <script>
   import { loadDraft, saveDraft, readPlans } from '../lib/list-flow-client';
   import { currentBilling, onBillingChange, setBilling } from '../lib/billing-toggle';
+  import { attachRichTextEditor } from '../lib/rich-text-editor';
 
   const root = document.getElementById('flow-root') as HTMLElement;
   const form = document.getElementById('step1-form') as HTMLFormElement;
@@ -172,12 +174,21 @@ const billingNote = yearlyToggleNote(['price_verified_cents', 'price_featured_ce
     if (v) field(name).value = v;
   }
 
+  // Formatting is a paid-plan perk: the toolbar unlocks as soon as Verified
+  // or Featured is picked below (a Basic listing's text still saves as-is).
+  const descEditor = attachRichTextEditor(field('description') as HTMLTextAreaElement, {
+    locked: tier < 1,
+    lockLabel: 'Verified plan',
+    lockNote: document.getElementById('desc-locked'),
+  });
+
   function paintPlans() {
     planBtns.forEach((b) => {
       const on = Number(b.dataset.tier) === tier;
       b.classList.toggle('is-active', on);
       b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
+    descEditor.setLocked(tier < 1);
   }
   planBtns.forEach((b) =>
     b.addEventListener('click', () => {

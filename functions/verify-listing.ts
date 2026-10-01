@@ -1,6 +1,7 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { escapeHtml, findMergeTarget } from '../src/lib/business-submission';
 import { formatPhoneZA } from '../src/lib/phone';
+import { plainLine } from '../src/lib/rich-text';
 import { TIER_NAMES } from './_lib/pricing';
 import { getSite } from './_lib/site';
 
@@ -74,7 +75,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     <h1>New business listing submitted</h1>
     ${planNote}${mergeNote}
     <table class="data">${rowsHtml}</table>
-    <p><strong>Description</strong><br>${escapeHtml(row.description)}</p>
+    <p><strong>Description</strong><br>${escapeHtml(plainLine(row.description))}</p>
     <form method="POST" action="/api/confirm-listing" style="display:inline">
       <input type="hidden" name="token" value="${escapeHtml(token)}" />
       <input type="hidden" name="action" value="approve" />

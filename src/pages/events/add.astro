@@ -143,8 +143,10 @@ const featurePrice = priceRand('price_event_feature_cents').replace(/\.00$/, '')
 </style>
 
 <script>
+  import { attachRichTextEditor } from '../../lib/rich-text-editor';
   let loadedAt = Date.now();
   const form = document.getElementById('event-form') as HTMLFormElement;
+  attachRichTextEditor(form.elements.namedItem('description') as HTMLTextAreaElement);
   const authCheck = document.getElementById('auth-check')!;
   const status = document.getElementById('add-status')!;
   const submitBtn = document.getElementById('add-submit') as HTMLButtonElement;

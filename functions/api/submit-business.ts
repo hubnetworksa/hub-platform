@@ -7,6 +7,7 @@ import { TIER_NAMES, tierPriceCents, centsToRand, parseBillingPeriod } from '../
 import { sendEmail } from '../_lib/send-email';
 import { escapeHtml } from '../../src/lib/business-submission';
 import { formatPhoneZA } from '../../src/lib/phone';
+import { plainLine } from '../../src/lib/rich-text';
 
 interface Env extends PayfastEnv {
   DB: D1Database;
@@ -137,7 +138,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     ...(email ? [`Email: ${email}`] : []),
     ...(website ? [`Website: ${website}`] : []),
     ...(hours ? [`Trading hours: ${hours}`] : []),
-    ...(description ? [`Description: ${description}`] : []),
+    ...(description ? [`Description: ${plainLine(description)}`] : []),
     `Plan chosen: ${TIER_NAMES[chosenTier]}${yearly ? ' (billed yearly)' : ''}`,
     ...(sessionUser ? [`Submitted by account: ${sessionUser.email}`] : []),
   ];

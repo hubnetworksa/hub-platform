@@ -163,7 +163,8 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
                   <input type="text" name="name" id="field-name" disabled class="owner-input" style={`${fieldInput};background:var(--bg-subtle);color:var(--muted)`} />
                 </label>
                 <label style={fieldLabel}>Description
-                  <textarea name="description" maxlength="600" rows="4" class="owner-input" style={`${fieldInput};resize:vertical`}></textarea>
+                  <textarea name="description" id="field-description" maxlength="600" rows="4" class="owner-input" style={`${fieldInput};resize:vertical`}></textarea>
+                  <span id="desc-locked" hidden style="font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.5"><span id="desc-locked-text">Bold, italic and lists come with the Verified and Featured plans.</span> <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a>.</span>
                 </label>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px">
                   <label style={fieldLabel}>Phone
@@ -397,7 +398,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   .logo-btn { padding: 9px 14px; border: 2px solid var(--border); border-radius: 9px; background: #fff; color: var(--navy); font-family: inherit; font-size: 12.5px; font-weight: 800; cursor: pointer; }
   .logo-btn-quiet { color: var(--muted); }
   .logo-btn:disabled { background: var(--bg-subtle); color: var(--muted); cursor: not-allowed; }
-  #logo-lock[hidden], #logo-locked[hidden], #logo-status[hidden], #logo-remove[hidden], #logo-preview-lg[hidden], #logo-preview-sm[hidden], #logo-empty-lg[hidden], #logo-empty-sm[hidden] { display: none !important; }
+  #desc-locked[hidden], #logo-lock[hidden], #logo-locked[hidden], #logo-status[hidden], #logo-remove[hidden], #logo-preview-lg[hidden], #logo-preview-sm[hidden], #logo-empty-lg[hidden], #logo-empty-sm[hidden] { display: none !important; }
   @media (min-width: 760px) {
     .owner-shell { grid-template-columns: 210px minmax(0, 1fr); }
     .owner-nav { flex-direction: column; }
@@ -417,6 +418,8 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 
 <script>
   import { currentBilling, onBillingChange } from '../../lib/billing-toggle';
+  import { attachRichTextEditor } from '../../lib/rich-text-editor';
+  import { canFormatDescription } from '../../lib/rich-text';
   const params = new URLSearchParams(window.location.search);
   const businessId = params.get('id');
   const main = document.getElementById('owner-main')!;
@@ -424,6 +427,13 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   const dashboard = document.getElementById('dashboard')!;
   const form = document.getElementById('edit-form') as HTMLFormElement;
   const formStatus = document.getElementById('form-status')!;
+  // Formatting toolbar: locked until the listing's plan is known (and on Basic).
+  const descEditor = attachRichTextEditor(document.getElementById('field-description') as HTMLTextAreaElement, {
+    locked: true,
+    lockLabel: 'Verified plan',
+    lockNote: document.getElementById('desc-locked'),
+  });
+  document.getElementById('desc-locked')!.hidden = true;
 
   const TIER_NAMES: Record<number, string> = { 0: 'Basic', 1: 'Verified', 2: 'Featured' };
   const TIER_PRICE: Record<number, string> = { 1: main.dataset.priceVerified ?? '—', 2: main.dataset.priceFeatured ?? '—' };
@@ -1288,6 +1298,17 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     (form.elements.namedItem('website') as HTMLInputElement).value = b.website ?? '';
     (form.elements.namedItem('email') as HTMLInputElement).value = b.email ?? '';
     (form.elements.namedItem('description') as HTMLTextAreaElement).value = b.description ?? '';
+    // Basic or lapsed: the toolbar locks, the textarea stays a plain box. The
+    // stored text (markers and all) is loaded and saved back untouched, so a
+    // lapsed listing's formatting isn't lost — it just shows as plain text
+    // on the site until the plan is live again.
+    const descLocked = !canFormatDescription(b);
+    descEditor.setLocked(descLocked);
+    descEditor.refresh();
+    const hasMarkers = /\*\S|^\s*(?:[-*•]|\d{1,3}[.)])\s/m.test(b.description ?? '');
+    document.getElementById('desc-locked-text')!.textContent = descLocked && hasMarkers
+      ? "Your formatting is saved, but shows as plain text until your listing is on Verified or Featured again."
+      : 'Bold, italic and lists come with the Verified and Featured plans.';
     (form.elements.namedItem('hours') as HTMLTextAreaElement).value = b.hours ?? '';
 
     const socialOn = (b.subscription_status === 'active' || b.subscription_status === 'cancelled') && b.subscription_tier >= FEATURED_TIER;

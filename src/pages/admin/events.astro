@@ -113,6 +113,8 @@ import AdminShell from '../../components/AdminShell.astro';
 
 <script>
   import { formatPhoneZA } from '../../lib/phone';
+  import { attachRichTextEditor } from '../../lib/rich-text-editor';
+  import { plainText } from '../../lib/rich-text';
   interface EventRow {
     id: number;
     title: string;
@@ -171,6 +173,7 @@ import AdminShell from '../../components/AdminShell.astro';
   const panel = document.getElementById('event-form-panel')!;
   const formTitle = document.getElementById('event-form-title')!;
   const formStatus = document.getElementById('event-form-status')!;
+  const descEditor = attachRichTextEditor(form.elements.namedItem('description') as HTMLTextAreaElement);
 
   function openForm(row?: EventRow) {
     form.reset();
@@ -188,6 +191,7 @@ import AdminShell from '../../components/AdminShell.astro';
       (form.elements.namedItem('imageUrl') as HTMLInputElement).value = row.image_url ?? '';
       (form.elements.namedItem('ticketUrl') as HTMLInputElement).value = row.ticket_url;
       (form.elements.namedItem('description') as HTMLTextAreaElement).value = row.description;
+      descEditor.refresh();
     } else {
       formTitle.textContent = 'New event';
     }
@@ -294,7 +298,7 @@ import AdminShell from '../../components/AdminShell.astro';
           </div>
         </div>
         <div style="font-size:13px;font-weight:700;color:var(--navy)">${esc(s.price)}${s.host ? ` <span style="font-weight:600;color:var(--muted)">· ${esc(s.host)}</span>` : ''}</div>
-        ${s.description ? `<div style="font-size:13.5px;line-height:1.5;color:var(--text)">${esc(s.description)}</div>` : ''}
+        ${s.description ? `<div style="font-size:13.5px;line-height:1.5;color:var(--text);white-space:pre-line">${esc(plainText(s.description))}</div>` : ''}
         <div style="font-size:12.5px;font-weight:600;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap">
           ${ticket ? link(ticket, 'Check the ticket link ↗') : '<span>No ticket link given</span>'}
           ${poster ? link(poster, 'Check the poster ↗') : ''}

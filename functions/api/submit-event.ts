@@ -5,6 +5,7 @@ import { getSessionUser } from '../_lib/auth';
 import { isEventType, isHttpUrl } from '../_lib/events';
 import { sendEmail } from '../_lib/send-email';
 import { escapeHtml } from '../../src/lib/business-submission';
+import { plainLine } from '../../src/lib/rich-text';
 import { signFields, buildCheckoutParams, payfastConfigured, type PayfastEnv } from '../_lib/payfast';
 import { eventFeaturePriceCents, centsToRand } from '../_lib/pricing';
 
@@ -203,7 +204,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     ...(fields.host ? [`Seller: ${fields.host}`] : []),
     ...(ticketUrl ? [`Ticket URL: ${ticketUrl}`] : []),
     ...(imageUrl ? [`Poster: ${imageUrl}`] : []),
-    ...(fields.description ? [`Description: ${fields.description}`] : []),
+    ...(fields.description ? [`Description: ${plainLine(fields.description)}`] : []),
     ...(fields.contactName ? [`Contact: ${fields.contactName}`] : []),
     ...((contactEmail ?? sessionUser?.email) ? [`Contact email: ${contactEmail ?? sessionUser?.email}`] : []),
     ...(fields.contactPhone ? [`Contact phone: ${fields.contactPhone}`] : []),
