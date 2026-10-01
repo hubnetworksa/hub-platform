@@ -65,7 +65,7 @@ This gate confirms the file only inserts news rows, every field is well formed, 
 
 ## Logging and committing
 
-Append one line to `status/<city>/news-agent-log.jsonl` every run (a quiet run still logs zero counts), commit the SQL file (only if at least one article passed) with the log line, and push to `main`:
+Append one line to `status/<city>/news-agent-log.jsonl` every run (a quiet run still logs zero counts), commit the SQL file (only if at least one article passed) with the log line, and push to `main` (push with the "How to push" procedure in `routines/_shared.md`):
 
 ```json
 {"date": "2026-10-01T06:00:00Z", "action_taken": "news_discovery", "found": 8, "published": 4, "rejected": 4, "short_summary": "Found 8 candidate stories; 4 passed two-source verification and check-news; 4 discarded (single source, older than 7 days, or could not verify)."}

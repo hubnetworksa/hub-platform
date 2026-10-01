@@ -84,9 +84,30 @@ VALUES (
 ## Logging and committing
 
 - Append one JSON line per checkpoint to `status/<city>/agent-log.jsonl` (create it if missing). Each runbook gives the exact line for its routine. `short_summary` is plain language, for a human skimming the log: what changed and why, no housekeeping narration.
-- Commit exactly these files and nothing else: the checkpoint's SQL file(s), `status/<city>/agent-log.jsonl`, and any `status/<city>/state/*.json` that `done.mjs` changed. One-line commit message describing the checkpoint. Push to `main`.
+- Commit exactly these files and nothing else: the checkpoint's SQL file(s), `status/<city>/agent-log.jsonl`, and any `status/<city>/state/*.json` that `done.mjs` changed. One-line commit message describing the checkpoint. Push to `main` with the "How to push" procedure below, exactly as written.
 - **Commit at every checkpoint, and never let more than the routine's record cap go uncommitted** (the cap is in the packet as `maxRecordsPerFile`; `validate.mjs` enforces it). A run can be cut short at any time, so work that cleared verification must already be saved.
 - A checkpoint with nothing worth publishing still gets its log line (zero counts) and its progress recorded. Do not skip the commit because the result was empty.
+
+### How to push
+
+The sandbox checks out a **shallow clone**, and up to 16 routines push to `main` within the same minute. A plain `git pull` fails there ("divergent branches", then "refusing to merge unrelated histories") and the run's work is lost when the sandbox is reclaimed. So every routine pushes with exactly this sequence, every checkpoint:
+
+1. Identity, then commit **only** the files listed above:
+   ```
+   git config user.name "Routine bot" && git config user.email "noreply@anthropic.com"
+   git add <only the files listed above>
+   git commit -m "<one line>"
+   ```
+2. Deepen the clone, rebase onto the latest `main`, push:
+   ```
+   git fetch --unshallow origin main 2>/dev/null || git fetch origin main
+   git pull --rebase origin main        # never --no-rebase, never a merge commit
+   git push origin HEAD:main
+   ```
+3. If the push is rejected (someone else pushed in between), repeat the `fetch` / `pull --rebase` / `push` lines of step 2; up to 5 attempts, a few seconds apart.
+4. If the rebase reports a conflict in a file you did not change this run, it is another routine's log or state: take the version from `main` (`git checkout --ours <file>`; during a rebase `--ours` means `main`), then `git add <file> && git rebase --continue`. If the conflict is in a `.jsonl` log that you and another routine both appended to, keep **both** sides: delete only the `<<<<<<<`, `=======` and `>>>>>>>` marker lines, then `git add <file> && git rebase --continue`.
+5. Do **not** run `git pull` without `--rebase`, and do not use `git merge`. Never `git push --force`, never rewrite history, never amend other people's commits.
+6. If after 5 attempts the push still fails, leave the commit in place, write the failure in your final message and stop.
 
 ## Where this runs
 
