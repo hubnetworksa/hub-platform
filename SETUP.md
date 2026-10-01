@@ -201,6 +201,43 @@ dev:<site>` and `build:<site>` are shortcuts for `SITE=<site> npm run
 dev`/`build`; use the `SITE=<site> npm run <script>` form directly for
 anything else (`db:migrate:local`, `db:migrate:remote`, etc.).
 
+## 9. Launch checks
+
+Four commands cover a release, from the repo to the live site. All of them are
+read-only against production except `launch-test.mjs`, which creates clearly
+named `LAUNCH TEST` rows and deletes them again.
+
+```
+# 1. Typecheck, build all three cities, check links, open every page type in a
+#    headless browser at 1280px and 390px (needs `npx playwright install chromium`
+#    once). Builds go to .build-<city> and are removed afterwards.
+bash scripts/launch-check.sh                 # CITIES="polokwane" to do one city
+
+# 2. Row counts of every table, before and after anything risky (read-only).
+node scripts/db-rowcounts.mjs --site polokwane --json before.json
+node scripts/db-rowcounts.mjs --site polokwane --json after.json
+node scripts/compare-rowcounts.mjs before.json after.json --allow-decrease sessions,rate_limits
+
+# 3. Exercise every /api route on a LIVE deployment with a disposable account
+#    (register, forms, owner dashboard, PayFast redirect, admin approve/hide/
+#    delete, cleanup) and print a coverage table of functions/api/**.
+#    On the Ethan preview the demo admin works; on production pass the session
+#    cookie of a signed-in admin and --allow-production.
+node scripts/launch-test.mjs --base https://ethan-kp7p.polokwanehub-49u.pages.dev   --admin-email admin@admin.com --admin-password admin --json launch.json
+node scripts/launch-test.mjs --base https://polokwanehub.com --allow-production   --admin-session <session cookie> --json launch.json
+
+# 4. Browser smoke test on its own, against any URL (signed-in passes optional).
+node scripts/smoke-test.mjs https://ethan-kp7p.polokwanehub-49u.pages.dev   --email owner@example.com --password ... --admin-email admin@admin.com --admin-password admin
+```
+
+Things to know before running `launch-test.mjs`: it sends real emails to the
+site's contact address (new-account, contact, report, removal, claim notices);
+it counts against the per-IP form rate limits (5 an hour for sign-up, business
+and event submissions, claims), so two runs inside an hour can hit 429s; the
+test account it creates cannot be deleted through the API (the SQL to remove it
+is printed at the end); and admin actions on a preview deploy dispatch the
+preview's own rebuild workflow when `GITHUB_DISPATCH_TOKEN` is set there.
+
 ## Migrating a site to the shared Cloudflare account
 
 Only needed if a site's D1/R2/domain currently live under a *different*
