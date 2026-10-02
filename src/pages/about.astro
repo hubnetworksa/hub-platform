@@ -11,18 +11,19 @@ import { ATTRACTIONS as PRETORIA_ATTRACTIONS } from '../site-content/pretoria/to
 import { ATTRACTIONS as POLOKWANE_ATTRACTIONS } from '../site-content/polokwane/tourism';
 import type { Attraction } from '../site-content/attraction-types';
 
-// The same operator description the Contact page, the Privacy & POPIA notice
-// and the Terms of use use — one source (sites/<city>.json `legal`), so every
-// page names the same operator and the same contact email.
+// Structure, headings and wording follow the owner's About document (written
+// for Polokwane). Every number, name and list on the page is counted from
+// this city's own build data (src/lib/city-facts.ts), so each site's About
+// page describes what is actually in its directory. No figure is estimated.
+//
+// The operator paragraph names the trading name only. The owner has asked
+// that no page describe the operator's legal form or registration, so this
+// page deliberately does not read `legalForm` or `registrationNumber`.
 const op = operatorFacts(site);
 const sisterNames = Object.values(SITES)
   .filter((s) => s.slug !== site.slug)
   .map((s) => s.siteName);
 
-// Everything below the operator paragraph is counted from this city's own
-// build data (src/lib/city-facts.ts), so each site's About page describes
-// what is actually in its directory rather than one text with the city name
-// swapped in. No figure here is estimated.
 const stats = directoryStats();
 const cats = topCategories(8);
 const busiestSuburbs = topSuburbs(businesses, 6);
@@ -30,15 +31,40 @@ const regions = topRegions(businesses, 8);
 const malls = topShoppingCentres(4);
 const events = upcomingEvents();
 const latestNews = newsSorted()[0];
-const newsCount = newsSorted().length;
 const guides = guidesFor(site.slug);
 const tourism = site.features.tourism ? TOURISM[site.slug] : undefined;
 const attractionsBySite: Record<string, Attraction[]> = { capetown: CAPETOWN_ATTRACTIONS, pretoria: PRETORIA_ATTRACTIONS, polokwane: POLOKWANE_ATTRACTIONS };
 const attractions = tourism ? (attractionsBySite[site.slug] ?? []).slice(0, 4) : [];
 
+// The owner's own wording of the Things to Do line, for the city the document
+// was written for. Other cities use their tourism page's intro (TOURISM blurb).
+const THINGS_TO_DO_LINE: Record<string, string> = {
+  polokwane:
+    "Explore Limpopo's gateway city—from game reserves and the Bushveld to the routes leading to Mapungubwe and northern Kruger National Park.",
+};
+const thingsToDoLine = tourism ? (THINGS_TO_DO_LINE[site.slug] ?? tourism.blurb) : '';
+
 const plural = (n: number, one: string, many = `${one}s`) => `${fmt(n)} ${n === 1 ? one : many}`;
+/** "a, b, and c" — the document's serial-comma lists. */
+const serialList = (items: string[]): string =>
+  items.length <= 2 ? items.join(' and ') : `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
+/** Separator before item i of a serial-comma list of n items. */
+const sep = (i: number, n: number) => (i === 0 ? '' : n === 2 ? ' and ' : i === n - 1 ? ', and ' : ', ');
+
 const top3Suburbs = andList(busiestSuburbs.slice(0, 3).map((s) => s.item.name));
 const hoursShare = stats.businesses ? Math.round((stats.withHours / stats.businesses) * 100) : 0;
+
+// "How to choose a builder or renovator in Polokwane" -> "builders or renovators".
+const pluralWord = (w: string) =>
+  /[^aeiou]y$/i.test(w) ? `${w.slice(0, -1)}ies` : /(s|sh|ch|x|z)$/i.test(w) ? `${w}es` : `${w}s`;
+const guideTopic = (title: string) =>
+  title
+    .replace(/^How to choose (an? )?/i, '')
+    .replace(new RegExp(` in ${site.cityLabel}$`), '')
+    .split(' or ')
+    .map((part) => part.replace(/(\S+)$/, (w) => pluralWord(w)).replace(/^(an?) /i, ''))
+    .join(' or ');
+const guideTopics = serialList(guides.slice(0, 3).map((g) => guideTopic(g.title)));
 
 const metaDescription =
   `${site.siteName} lists ${plural(stats.businesses, 'business', 'businesses')} across ${plural(stats.suburbsWithBusinesses, 'suburb')} of ${site.cityLabel}` +
@@ -54,32 +80,34 @@ const metaDescription =
   <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 760px;">
     <h1>About {site.siteName}</h1>
     <p class="lede">
-      {site.siteName} is a directory of local businesses in {site.cityLabel}, {site.province}. Right now it
-      lists <strong>{plural(stats.businesses, 'business', 'businesses')}</strong> in {plural(stats.suburbsWithBusinesses, 'suburb')},
-      filed under {plural(stats.categoriesWithBusinesses, 'category', 'categories')}{cats.length >= 3 && (
-        <>, the largest being {cats[0].item.name} ({fmt(cats[0].count)}), {cats[1].item.name} ({fmt(cats[1].count)}) and {cats[2].item.name} ({fmt(cats[2].count)})</>
-      )}.
+      {site.siteName} is a local business directory for {site.cityLabel}, {site.province}. It currently features{' '}
+      <strong>{plural(stats.businesses, 'business', 'businesses')}</strong> across{' '}
+      <strong>{plural(stats.suburbsWithBusinesses, 'suburb')}</strong>, organized into{' '}
+      <strong>{plural(stats.categoriesWithBusinesses, 'category', 'categories')}</strong>.
+      {cats.length >= 3 && (
+        <> The largest categories include {cats[0].item.name} ({fmt(cats[0].count)}), {cats[1].item.name} ({fmt(cats[1].count)}), and {cats[2].item.name} ({fmt(cats[2].count)}).</>
+      )}
     </p>
 
     <ul class="stats" aria-label={`${site.siteName} in numbers`}>
-      <li><strong>{fmt(stats.businesses)}</strong><span>businesses</span></li>
-      <li><strong>{fmt(stats.suburbsWithBusinesses)}</strong><span>suburbs with listings</span></li>
-      <li><strong>{fmt(stats.categoriesWithBusinesses)}</strong><span>categories</span></li>
-      <li><strong>{fmt(stats.mallsWithBusinesses)}</strong><span>shopping centres</span></li>
+      <li><strong>{fmt(stats.businesses)}</strong><span>Businesses</span></li>
+      <li><strong>{fmt(stats.suburbsWithBusinesses)}</strong><span>Suburbs with listings</span></li>
+      <li><strong>{fmt(stats.categoriesWithBusinesses)}</strong><span>Categories</span></li>
+      <li><strong>{fmt(stats.mallsWithBusinesses)}</strong><span>Shopping centres</span></li>
     </ul>
 
     {busiestSuburbs.length > 0 && (
       <>
-        <h2>Where the listings are</h2>
+        <h2>Where the Listings Are Located</h2>
         <p>
           The suburbs with the most listings are{' '}
           {busiestSuburbs.map((s, i) => (
-            <>{i > 0 && (i === busiestSuburbs.length - 1 ? ' and ' : ', ')}<a href={`/suburb/${s.item.slug}/`}>{s.item.name}</a> ({fmt(s.count)})</>
+            <>{sep(i, busiestSuburbs.length)}<a href={`/suburb/${s.item.slug}/`}>{s.item.name}</a> ({fmt(s.count)})</>
           ))}.
           {regions.length > 1 && (
-            <> By area, {andList(regions.map((r) => `${fmt(r.count)} are ${r.item}`))}.</>
+            <> By area, {serialList(regions.map((r) => `${fmt(r.count)} are ${r.item}`))}.</>
           )}
-          {' '}Every suburb has its own page, and you can narrow any category to a single suburb from there, or
+          {' '}Every suburb has its own dedicated page, allowing you to filter categories down to a single area or
           browse the full <a href="/suburb/">list of {site.cityLabel} suburbs</a>.
         </p>
       </>
@@ -87,46 +115,46 @@ const metaDescription =
 
     {malls.length > 0 && (
       <p>
-        {plural(stats.inShoppingCentres, 'listing')} trade from inside a shopping centre or forecourt. The
-        malls with the most listed tenants are{' '}
+        A total of {plural(stats.inShoppingCentres, 'listing')} trade from within shopping centres or forecourts. The
+        shopping centres with the most listed tenants are{' '}
         {malls.map((m, i) => (
-          <>{i > 0 && (i === malls.length - 1 ? ' and ' : ', ')}<a href={`/shopping-center/${m.item.slug}/`}>{m.item.name}</a> ({fmt(m.count)})</>
-        ))}; each centre's page lists who trades there.
+          <>{sep(i, malls.length)}<a href={`/shopping-center/${m.item.slug}/`}>{m.item.name}</a> ({fmt(m.count)})</>
+        ))}. Each centre's page details every business trading on-site.
       </p>
     )}
 
     {cats.length > 0 && (
       <>
-        <h2>The biggest categories in {site.cityLabel}</h2>
+        <h2>Top Categories in {site.cityLabel}</h2>
         <ul class="cats">
           {cats.map((c) => (
-            <li><a href={`/category/${c.item.slug}/`}>{c.item.name}</a><span>{fmt(c.count)}</span></li>
+            <li><strong><a href={`/category/${c.item.slug}/`}>{c.item.name}</a>:</strong>{' '}<span>{fmt(c.count)}</span></li>
           ))}
         </ul>
         <p class="small">
-          Counts are the directory as it stood at the last rebuild; they change as businesses are added,
-          claimed or closed. See <a href="/category/">every category</a>.
+          Note: Listing counts reflect the directory as of the last update; numbers change as businesses are added,
+          claimed, or closed. <a href="/category/">Explore all categories</a>
         </p>
       </>
     )}
 
-    {(events.length > 0 || newsCount > 0 || guides.length > 0 || attractions.length > 0) && (
+    {(events.length > 0 || latestNews || guides.length > 0 || attractions.length > 0) && (
       <>
-        <h2>Beyond the listings</h2>
+        <h2>Beyond the Listings</h2>
         <ul class="values">
           {events.length > 0 && (
-            <li><strong><a href="/events/">Events</a>:</strong> {plural(events.length, 'upcoming event')} in and around {site.cityLabel}, each with its date, venue and ticket link.</li>
+            <li><strong><a href="/events/">Events</a>:</strong> Discover upcoming events in and around {site.cityLabel}, complete with dates, venues, and ticket links.</li>
           )}
           {latestNews && (
-            <li><strong><a href="/news/">Local news</a>:</strong> {plural(newsCount, 'short local story', 'short local stories')}, each linked to its sources. The latest: <a href={`/news/${latestNews.slug}/`}>{latestNews.title}</a>.</li>
+            <li><strong><a href="/news/">Local News</a>:</strong> Short summaries of key local stories with direct links to their original sources. (Latest update: <a href={`/news/${latestNews.slug}/`}>{latestNews.title}</a>).</li>
           )}
           {guides.length > 0 && (
-            <li><strong><a href="/guides/">Buyer's guides</a>:</strong> {guides.length} written for {site.cityLabel}, including how to choose {andList(guides.slice(0, 3).map((g) => g.title.replace(/^How to choose /, '').replace(new RegExp(` in ${site.cityLabel}$`), '')))}.</li>
+            <li><strong><a href="/guides/">Buyer's Guides</a>:</strong> Tailored guides for {site.cityLabel} residents, including tips on choosing {guideTopics}.</li>
           )}
           {attractions.length > 0 && tourism && (
-            <li><strong><a href="/tourism/">Things to do</a>:</strong> {tourism.blurb} Pages include{' '}
+            <li><strong><a href="/tourism/">Things to Do</a>:</strong> {thingsToDoLine} Featured destinations include the{' '}
               {attractions.map((a, i) => (
-                <>{i > 0 && (i === attractions.length - 1 ? ' and ' : ', ')}<a href={`/tourism/${a.slug}/`}>{a.name}</a></>
+                <>{sep(i, attractions.length)}<a href={`/tourism/${a.slug}/`}>{a.name}</a></>
               ))}.
             </li>
           )}
@@ -134,30 +162,28 @@ const metaDescription =
       </>
     )}
 
-    <h2>How listings get here</h2>
+    <h2>How Listings Are Sourced &amp; Managed</h2>
     <ul class="values">
-      <li><strong>Sources noted.</strong> Where we have one, a listing notes where its details came from: the owner, an OpenStreetMap record or a public listing. Owners can claim their listing free to correct it.</li>
-      <li><strong>Privacy-respecting.</strong> We publish a business's trading contact details only — never the personal name, phone number or email of the person who submitted or claimed it.</li>
-      <li><strong>Open about gaps.</strong> {hoursShare}% of {site.cityLabel} listings have trading hours so far; where we don't know something, the page says so instead of guessing.</li>
-      <li><strong>Easy to correct.</strong> Every business page has a link to report a mistake or ask for the listing to be removed.</li>
+      <li><strong>Transparent Sources:</strong> Where available, each listing attributes its data source—whether provided directly by the business owner, an OpenStreetMap record, or a public entry. Business owners can claim their listing for free to update their details.</li>
+      <li><strong>Privacy First:</strong> We publish business contact details only. We never display the personal name, phone number, or email address of the individual who submitted or claimed the listing.</li>
+      <li><strong>Honest Data:</strong> Currently, {hoursShare}% of {site.cityLabel} listings include trading hours. Where information is unverified, we leave it blank rather than guess.</li>
+      <li><strong>Easy Corrections:</strong> Every business page features a direct link to report errors or request removal.</li>
     </ul>
 
-    <h2>Who runs {site.siteName}</h2>
+    <h2>Who Runs {site.siteName}</h2>
     <p>
-      {site.siteName} is operated by <strong>{op.name}</strong>{op.legalForm === 'sole proprietor' ? ', a sole proprietor' : ''}{op.operatorName ? ` (${op.operatorName})` : ''}, who also runs {sisterNames.join(' and ')} — one small, independent operator, not a franchise.
-      {' '}{op.vatRegistered ? 'We are registered for VAT.' : 'We are not registered for VAT, so no VAT is added to any price on this site.'}
-      {' '}The best way to reach us is <a href={`mailto:${op.email}`}>{op.email}</a> or the <a href="/contact/">contact page</a>.
-      How we handle personal information is set out in our <a href="/privacy/">Privacy &amp; POPIA notice</a>, and the rules for using the site and buying a plan are in our <a href="/terms/">Terms of use</a>.
+      {site.siteName} is operated by <strong>{op.name}</strong>, which also runs{' '}
+      {sisterNames.map((n, i) => (
+        <>{sep(i, sisterNames.length)}<strong>{n}</strong></>
+      ))}. We are an independent, small-scale operator—not a franchise.
+      {' '}{op.vatRegistered ? 'We are registered for VAT.' : 'As we are not VAT-registered, no VAT is added to any prices on this site.'}
     </p>
-    <p class="small">See the other cities on our <a href="/partners/">partner sites</a> page.</p>
-
-    <div class="cta">
-      <p>
-        Own a business in {site.cityLabel}{busiestSuburbs[0] ? ` — in ${busiestSuburbs[0].item.name} or anywhere else` : ''}? Add your listing free and get
-        found by people searching for exactly what you offer.
-      </p>
-      <a href="/list-your-business/" class="btn btn-primary">Add your business</a>
-    </div>
+    <p>
+      For inquiries, reach us at <a href={`mailto:${op.email}`}><strong>{op.email}</strong></a> or via our <a href="/contact/">contact page</a>.
+      Details on how we handle personal information are outlined in our <a href="/privacy/"><strong>Privacy &amp; POPIA Notice</strong></a>,
+      and guidelines for site usage or plan purchases are available in our <a href="/terms/"><strong>Terms of Use</strong></a>.
+    </p>
+    <p>To view our other location guides, visit our <a href="/partners/">Partner Sites</a> page.</p>
   </section>
 </BaseLayout>
 
@@ -227,8 +253,10 @@ const metaDescription =
     padding: 8px 0;
     border-bottom: 1px solid var(--border);
   }
-  .cats a {
+  .cats strong {
     font-weight: 700;
+  }
+  .cats a {
     text-decoration: none;
   }
   .cats span {
@@ -261,15 +289,5 @@ const metaDescription =
   }
   .values strong {
     color: var(--navy);
-  }
-  .cta {
-    margin-top: 2.5rem;
-    padding: 1.5rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--bg-subtle);
-  }
-  .cta p {
-    margin: 0 0 1rem;
   }
 </style>

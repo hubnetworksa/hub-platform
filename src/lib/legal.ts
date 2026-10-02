@@ -6,12 +6,14 @@
 // the sections each one answers. Strings are trusted, hand-written constants
 // (some contain inline <a>/<strong> markup) rendered with set:html.
 //
-// Operator facts (trading name, legal form, VAT status) come from
-// sites/<city>.json `legal`. The operator is a sole proprietor trading as
-// "Hub Network SA" on all three sites, not VAT registered, with no company
-// registration number and no published address — so nothing here renders an
-// address line. Every field may be null; the wording falls back to a truthful
-// generic sentence so the live site never shows a placeholder. operatorFacts()
+// Operator facts (trading name, VAT status) come from sites/<city>.json
+// `legal`. The operator trades as "Hub Network SA" on all three sites, is not
+// VAT registered and has no published address — so nothing here renders an
+// address line. The owner has asked that no page describe the operator's
+// legal form or registration, so `legalForm` and `registrationNumber` in that
+// block are deliberately not read here. Every field may be null; the wording
+// falls back to a truthful generic sentence so the live site never shows a
+// placeholder. operatorFacts()
 // is shared with the About and Contact pages so all of them name the same
 // operator and the same contact email.
 
@@ -78,16 +80,14 @@ export interface OperatorFacts {
   /** The trading name ("Hub Network SA"), or "the operator of <siteName>" when unknown. */
   name: string;
   hasLegalName: boolean;
-  /** Full plain-text description, e.g. "Hub Network SA, a sole proprietor
-   *  trading as PretoriaHub" or "the operator of PretoriaHub, a sole
-   *  proprietor" — never empty, never a placeholder. */
+  /** Plain-text description: "Hub Network SA", or "the operator of
+   *  PretoriaHub" — never empty, never a placeholder, and never a statement
+   *  of legal form. */
   description: string;
-  /** Same as `description` with the trading name in <strong>. */
+  /** Same as `description` in <strong>. */
   descriptionHtml: string;
-  legalForm: 'private company' | 'sole proprietor' | null;
   /** The natural person's full name, when the owner has chosen to publish it. */
   operatorName: string | null;
-  registrationNumber: string | null;
   /** The one address for every request, notice and complaint. */
   email: string;
   vatRegistered: boolean;
@@ -99,33 +99,17 @@ export interface OperatorFacts {
 export function operatorFacts(site: LegalSite): OperatorFacts {
   const legal = site.legal;
   const legalName = legal?.legalName?.trim() || null;
-  const form = legal?.legalForm ?? null;
   const operatorName = legal?.operatorName?.trim() || null;
-  const registrationNumber = legal?.registrationNumber?.trim() || null;
 
-  const describe = (strong: (s: string) => string): string => {
-    if (legalName) {
-      const who = strong(legalName) + (form === 'sole proprietor' && operatorName ? ` (sole proprietor: ${operatorName})` : '');
-      const what =
-        form === 'sole proprietor'
-          ? `a sole proprietor trading as ${site.siteName}`
-          : form === 'private company'
-            ? `a private company registered in South Africa${registrationNumber ? ` (registration number ${registrationNumber})` : ''}`
-            : `the business behind ${site.siteName}`;
-      return `${who}, ${what}`;
-    }
-    const who = strong(`the operator of ${site.siteName}`);
-    return form === 'sole proprietor' ? `${who}, a sole proprietor` : form === 'private company' ? `${who}, a private company registered in South Africa` : who;
-  };
+  const describe = (strong: (s: string) => string): string =>
+    strong(legalName ?? `the operator of ${site.siteName}`) + (operatorName ? ` (${operatorName})` : '');
 
   return {
     name: legalName ?? `the operator of ${site.siteName}`,
     hasLegalName: legalName !== null,
     description: describe((s) => s),
     descriptionHtml: describe((s) => `<strong>${s}</strong>`),
-    legalForm: form,
     operatorName,
-    registrationNumber,
     email: site.contactEmail,
     vatRegistered: legal?.vatRegistered === true,
     paiaManualUrl: legal?.paiaManualUrl?.trim() || null,
@@ -143,18 +127,17 @@ export function legalDocs(site: LegalSite): LegalDoc[] {
   const R = RETENTION;
   const IR = INFORMATION_REGULATOR;
 
-  // "PretoriaHub (pretoriahub.com) is operated by Hub Network SA, a sole
-  // proprietor trading as PretoriaHub." — or, if the trading name were ever
-  // unset, "…by the operator of PretoriaHub, a sole proprietor."
+  // "PretoriaHub (pretoriahub.com) is operated by Hub Network SA." — or, if
+  // the trading name were ever unset, "…by the operator of PretoriaHub."
   const operatorSentence = `${site.siteName} (${site.domain}) is operated by ${op.descriptionHtml}.`;
   const vatSentence = op.vatRegistered
     ? 'We are registered for VAT and the prices shown include VAT at the current rate.'
     : 'We are <strong>not registered for VAT</strong>. No VAT is added to or included in any price shown on this site: the price you see is the full amount you pay.';
-  // PAIA s1 defines a "private body" to include a natural person carrying on a
-  // trade or business, so s51 applies to a sole proprietor; the 2021 exemption
-  // for small private bodies ended on 31 December 2021.
+  // PAIA s1 defines a "private body" to include anyone carrying on a trade or
+  // business; the 2021 exemption for small private bodies ended on
+  // 31 December 2021.
   const paiaSentence =
-    'The Promotion of Access to Information Act 2 of 2000 (PAIA) treats anyone carrying on a business — a sole proprietor included — as a “private body”, and section 51 requires every private body to keep a manual explaining what records it holds and how to ask for them. ' +
+    'The Promotion of Access to Information Act 2 of 2000 (PAIA) treats anyone carrying on a business as a “private body”, and section 51 requires every private body to keep a manual explaining what records it holds and how to ask for them. ' +
     (op.paiaManualUrl
       ? `Our PAIA manual is published at ${ext(op.paiaManualUrl, op.paiaManualUrl)}.`
       : `Our PAIA manual is available on request: email <strong>${site.contactEmail}</strong> with “PAIA manual” in the subject line and we will send you a copy free of charge.`);
@@ -287,7 +270,7 @@ export function legalDocs(site: LegalSite): LegalDoc[] {
         {
           heading: 'Who you are dealing with',
           paragraphs: [
-            `${operatorSentence} Email: <strong>${site.contactEmail}</strong>; website: <strong>https://${site.domain}/</strong>. ${op.legalForm === 'sole proprietor' ? 'As a sole proprietorship there is no company registration number. ' : ''}${vatSentence}`,
+            `${operatorSentence} Email: <strong>${site.contactEmail}</strong>; website: <strong>https://${site.domain}/</strong>. ${vatSentence}`,
             'These terms, together with the Listing rules, the Privacy & POPIA notice and the Cookies notice, are the whole agreement between you and us for using the site and buying anything on it. They are written to be read in plain language, as the Consumer Protection Act 68 of 2008 (CPA) requires. The information in this section and in the sections on paying, billing and refunds is the information section 43 of the Electronic Communications and Transactions Act 25 of 2002 (ECTA) requires an online supplier to give you. We are not a member of any self-regulatory or accreditation body and do not subscribe to an industry code of conduct. Email is our channel for notices: anything you need to send us in writing can be sent to the email address above.',
             'You can save or print this page at any time for your records; the date at the top shows the version that applies.',
           ],
