@@ -23,7 +23,9 @@ interface Env {
 export const onRequest: PagesFunction<Env> = async (context) => {
   const site = getSite(context.env.SITE);
   const url = new URL(context.request.url);
-  if (site.domainLive && url.hostname === site.pagesDevHost) {
+  // Same for www.<domain>: once www is attached to the Pages project it would
+  // otherwise serve a full duplicate copy of the site.
+  if (site.domainLive && (url.hostname === site.pagesDevHost || url.hostname === `www.${site.domain}`)) {
     url.hostname = site.domain;
     return Response.redirect(url.toString(), 301);
   }
