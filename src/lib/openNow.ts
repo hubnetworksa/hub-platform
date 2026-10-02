@@ -183,3 +183,85 @@ export function openStatus(hours: string | null | undefined, now: Date = new Dat
   }
   return { open: false };
 }
+
+// ---- Static metadata helpers (titles, meta descriptions, JSON-LD). ----
+
+const DAY_SCHEMA = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const ALL_DAY_RE = /^(?:open\s+)?(?:24\s*(?:hours|hrs|h)(?:\s+a\s+day)?(?:,?\s*7\s+days(?:\s+a\s+week)?)?|24\/7)$/i;
+
+/** Parsed week for static metadata, the same all-or-nothing parse as
+ *  openStatus, plus a plain "Open 24 hours" / "24/7". Never used for the
+ *  visible open-now badge, so that keeps its exact current behaviour. */
+function metaWeek(hours: string | null | undefined): Week | null {
+  const text = (hours ?? '').trim();
+  if (!text) return null;
+  if (ALL_DAY_RE.test(text)) return [0, 1, 2, 3, 4, 5, 6].map(() => [[0, 1440] as Interval]);
+  return parseWeek(text);
+}
+
+/** Runs of consecutive days with identical sessions, Monday first. */
+function dayGroups(week: Week): { days: number[]; ranges: Interval[] }[] {
+  const key = (d: number) => week[d].map(([s, e]) => `${s}-${e}`).join(',');
+  const groups: { days: number[]; ranges: Interval[] }[] = [];
+  for (let d = 0; d < 7; d++) {
+    if (week[d].length === 0) continue;
+    const last = groups[groups.length - 1];
+    if (last && last.days[last.days.length - 1] === d - 1 && key(last.days[0]) === key(d)) last.days.push(d);
+    else groups.push({ days: [d], ranges: week[d] });
+  }
+  return groups;
+}
+
+/** Static one-line hours for a meta description, e.g.
+ *  "Mon–Fri 08:00–17:00, Sat 08:00–13:00" or "Open 24 hours, 7 days".
+ *  null when the hours don't parse cleanly. Not time-dependent. */
+export function hoursCompact(hours: string | null | undefined): string | null {
+  const week = metaWeek(hours);
+  if (!week) return null;
+  const groups = dayGroups(week);
+  const fmt = ([s, e]: Interval) => `${hhmm(s)}–${e === 1440 ? '24:00' : hhmm(e)}`;
+  if (groups.length === 1 && groups[0].days.length === 7) {
+    const r = groups[0].ranges;
+    if (r.length === 1 && r[0][0] === 0 && r[0][1] === 1440) return 'Open 24 hours, 7 days';
+    return `Daily ${r.map(fmt).join(' & ')}`;
+  }
+  return groups
+    .map((g) => {
+      const label = g.days.length === 1 ? DAY_LABEL[g.days[0]] : `${DAY_LABEL[g.days[0]]}–${DAY_LABEL[g.days[g.days.length - 1]]}`;
+      return `${label} ${g.ranges.map(fmt).join(' & ')}`;
+    })
+    .join(', ');
+}
+
+export interface OpeningHoursSpecification {
+  '@type': 'OpeningHoursSpecification';
+  dayOfWeek: string[];
+  opens: string;
+  closes: string;
+}
+
+/** schema.org openingHoursSpecification entries for the hours text, or null
+ *  when it doesn't parse cleanly (never guessed). Closed days are omitted;
+ *  an overnight session closes at the next day's clock time, and one ending
+ *  at midnight closes at "23:59". */
+export function openingHoursSpecification(hours: string | null | undefined): OpeningHoursSpecification[] | null {
+  const week = metaWeek(hours);
+  if (!week) return null;
+  const out: OpeningHoursSpecification[] = [];
+  const byRange = new Map<string, OpeningHoursSpecification>();
+  for (let d = 0; d < 7; d++) {
+    for (const [s, e] of week[d]) {
+      const opens = hhmm(s);
+      const closes = e === 1440 ? '23:59' : hhmm(e);
+      const k = `${opens}-${closes}`;
+      let spec = byRange.get(k);
+      if (!spec) {
+        spec = { '@type': 'OpeningHoursSpecification', dayOfWeek: [], opens, closes };
+        byRange.set(k, spec);
+        out.push(spec);
+      }
+      spec.dayOfWeek.push(DAY_SCHEMA[d]);
+    }
+  }
+  return out.length ? out : null;
+}

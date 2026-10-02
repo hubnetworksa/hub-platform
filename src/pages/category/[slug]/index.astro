@@ -62,7 +62,7 @@ const showsPaid = businesses.some(isPaidListing) || !!categorySponsor;
 ---
 
 <BaseLayout noAds={showsPaid}
-  title={category.name}
+  title={`${category.name} in ${site.cityLabel}`}
   description={`${businesses.length} ${category.name} listed across ${site.cityLabel}, by suburb.${synonymLine}`}
   noindex={isEmpty}
 >

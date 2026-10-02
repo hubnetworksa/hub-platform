@@ -87,7 +87,7 @@ const showsPaid = businesses.some(isPaidListing) || !!suburbSponsor;
 const asideHasContent = (adsEnabled && !showsPaid) || !suburbSponsor || nearbySuburbs.length > 0;
 ---
 
-<BaseLayout noAds={showsPaid} title={suburb.name} description={description}>
+<BaseLayout noAds={showsPaid} title={`Businesses in ${suburb.name}, ${site.cityLabel}`} description={description}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
   {collectionJsonLd && <script type="application/ld+json" set:html={JSON.stringify(collectionJsonLd).replace(/</g, '\\u003c')} />}
 

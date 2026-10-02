@@ -39,8 +39,8 @@ const showsPaid = centres.some((c) => c.sponsored);
 ---
 
 <BaseLayout noAds={showsPaid}
-  title="Shopping Centres & Malls"
-  description={`Browse ${site.cityLabel} shopping centres and malls — malls, retail parks and village centres, with every store inside them listed and searchable.`}
+  title={`${site.cityLabel} Shopping Centres & Malls – Store Directory`}
+  description={`${centres.length} ${site.cityLabel} shopping centres and malls${centres.length > 0 ? `, including ${centres.slice(0, 3).map((c) => c.center.name).join(', ')}` : ''}, with every store inside them listed: phone numbers, trading hours and directions.`}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
