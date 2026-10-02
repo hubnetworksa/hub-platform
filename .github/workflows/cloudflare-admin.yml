@@ -1,0 +1,36 @@
+name: Cloudflare admin
+
+# Manual zone checks and fixes with the CI Cloudflare token, so the token
+# never leaves GitHub. See scripts/cloudflare-admin.mjs.
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "audit (read-only) or fix-www"
+        required: true
+        default: audit
+        type: choice
+        options:
+          - audit
+          - fix-www
+      sites:
+        description: "Comma-separated cities (polokwane,pretoria,capetown)"
+        required: false
+        default: polokwane,pretoria,capetown
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: node scripts/cloudflare-admin.mjs "${{ inputs.action }}" "${{ inputs.sites }}"
