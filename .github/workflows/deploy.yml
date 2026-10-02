@@ -223,6 +223,17 @@ jobs:
             -H "Content-Type: application/json" \
             --data '{"purge_everything":true}'
 
+      # Ping IndexNow (Bing, Yandex, Seznam, ...) with the URLs this deploy
+      # added or changed: the fresh dist/ sitemap compared with
+      # status/<site>/indexnow-state.json, which the next step commits along
+      # with the DB snapshot. The key file it points engines at is
+      # public/<key>.txt (scripts/indexnow-key.mjs). continue-on-error: an
+      # IndexNow outage or rejection only leaves a warning on the run; the
+      # state file isn't updated then, so the next deploy retries.
+      - name: Submit changed URLs to IndexNow
+        continue-on-error: true
+        run: node scripts/indexnow-submit.mjs --site ${{ matrix.site }}
+
       # Refresh the committed snapshot the routine reads
       # (status/<site>/db-snapshot.json) from the same data the build just
       # fetched, so the next routine run sees today's real state. [skip ci]
@@ -233,6 +244,9 @@ jobs:
           git config user.name "hub-platform-bot"
           git config user.email "actions@github.com"
           git add status/${{ matrix.site }}/db-snapshot.json
+          if [ -f status/${{ matrix.site }}/indexnow-state.json ]; then
+            git add status/${{ matrix.site }}/indexnow-state.json
+          fi
           if git diff --staged --quiet; then
             echo "No snapshot changes"
           else

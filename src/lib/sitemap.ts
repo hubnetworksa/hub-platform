@@ -23,6 +23,8 @@ import {
   type Business,
 } from './data';
 import { CATEGORY_GROUPS } from './categoryGroups';
+// @ts-ignore: plain .mjs shared with astro.config.mjs and the prebuild scripts
+import { NOINDEX_PATH_PREFIXES } from '../../scripts/noindex-paths.mjs';
 
 /** A category x suburb page listing fewer businesses than this stays out of
  *  the sitemap (73-85% of them list only one or two). */
@@ -83,9 +85,11 @@ const eventBySlug = new Map(events.map((e) => [e.slug, e]));
 const newsBySlug = new Map(news.map((n) => [n.slug, n]));
 const groupBySlug = new Map(CATEGORY_GROUPS.map((g) => [g.slug, g]));
 
-/** Pages that are pure forms or utilities: never in the sitemap, on top of
- *  scripts/noindex-paths.mjs's account/admin prefixes. */
-const NON_CONTENT_PATHS = new Set(['/events/add/']);
+/** Account, admin, form and utility pages (login, report-listing, the
+ *  list-your-business flow, /events/add/, ...): they all carry noindex, so
+ *  they never go in the sitemap. */
+const isNoindexPath = (path: string): boolean =>
+  (NOINDEX_PATH_PREFIXES as string[]).some((prefix) => path.startsWith(prefix));
 
 /** Static pages whose content comes from the build data, so the build date is a real "last changed". */
 const DATA_DRIVEN_STATIC = new Set(['/', '/about/']);
@@ -96,7 +100,7 @@ const DATA_DRIVEN_STATIC = new Set(['/', '/about/']);
  */
 export function sitemapEntryFor(pathname: string): SitemapEntry | null {
   const path = pathname.endsWith('/') ? pathname : `${pathname}/`;
-  if (NON_CONTENT_PATHS.has(path)) return null;
+  if (isNoindexPath(path)) return null;
   const parts = path.split('/').filter(Boolean);
   const [section, slug, sub] = parts;
 

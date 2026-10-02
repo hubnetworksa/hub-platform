@@ -8,7 +8,8 @@
 import { readFile, writeFile, copyFile, readdir, mkdir, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { NOINDEX_PATH_PREFIXES } from './noindex-paths.mjs';
+import { ROBOTS_DISALLOW_PREFIXES } from './noindex-paths.mjs';
+import { INDEXNOW_KEY } from './indexnow-key.mjs';
 
 const SITE = process.env.SITE;
 if (!SITE) {
@@ -52,10 +53,14 @@ await writeFile(
     : ''
 );
 
-const disallowLines = NOINDEX_PATH_PREFIXES.map((p) => `Disallow: ${p}\n`).join('');
+const disallowLines = ROBOTS_DISALLOW_PREFIXES.map((p) => `Disallow: ${p}\n`).join('');
 await writeFile(
   path.join(publicDir, 'robots.txt'),
   `User-agent: *\nAllow: /\n${disallowLines}\nSitemap: https://${site.domain}/sitemap-index.xml\n`
 );
 
-process.stderr.write(`[${SITE}] Copied ${files.length} asset(s) into public/, generated ads.txt + robots.txt.\n`);
+// IndexNow key-verification file: scripts/indexnow-submit.mjs submits with
+// keyLocation https://<domain>/<key>.txt, and the body must be the key.
+await writeFile(path.join(publicDir, `${INDEXNOW_KEY}.txt`), INDEXNOW_KEY);
+
+process.stderr.write(`[${SITE}] Copied ${files.length} asset(s) into public/, generated ads.txt + robots.txt + IndexNow key file.\n`);
