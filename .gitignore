@@ -49,3 +49,6 @@ pnpm-debug.log*
 
 # graphify (knowledge-graph tool) output — local analysis only
 graphify-out/
+
+# Local API credentials (Google OAuth client, tokens) - never commit
+.secrets/
