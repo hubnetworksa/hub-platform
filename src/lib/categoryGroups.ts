@@ -3,6 +3,8 @@
 // category URLs (keeps existing SEO equity), just organizes how they're
 // browsed: the flat 57-item list was the #1 complaint about site structure.
 
+import { slugify } from './slug';
+
 export interface CategoryGroup {
   slug: string;
   name: string;
@@ -94,4 +96,70 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
 
 export function groupForCategory(categorySlug: string): CategoryGroup | undefined {
   return CATEGORY_GROUPS.find((g) => g.categorySlugs.includes(categorySlug));
+}
+
+/** Generic folder/tag icon for a group the admin typed in free-hand (see
+ *  functions/api/admin/categories.ts) — it has no hand-drawn icon of its
+ *  own until a developer adds one here, same honesty as the group picker
+ *  on the admin Categories page. */
+export const DEFAULT_GROUP_ICON = '<path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Z"/>';
+
+/** A category row shaped enough to resolve its group — just the two
+ *  columns resolveCategoryGroups() needs, so it isn't coupled to the full
+ *  Category type in src/lib/data.ts (which imports this module). */
+export interface GroupableCategory {
+  slug: string;
+  /** NULL/absent for every category created before the admin "Add
+   *  category" feature (db/migrations/<city>/*_category_group_schema.sql)
+   *  — those fall back to the hardcoded categorySlugs lists above. */
+  group_name?: string | null;
+}
+
+/**
+ * The effective groups for a live category list: CATEGORY_GROUPS' hardcoded
+ * sections, each rebuilt with only the categories that actually belong to it
+ * right now (by DB group_name when a category has one, else by the
+ * hardcoded categorySlugs membership), PLUS a freshly synthesized group for
+ * any DB group_name that doesn't match an existing section's name — e.g. an
+ * admin typing a brand-new group on the admin Categories page. A synthesized
+ * group gets a slugified-name URL and the generic icon above; a developer
+ * can later promote it into CATEGORY_GROUPS with a real icon/order without
+ * changing any URL (the slug is the same either way).
+ *
+ * This is the single place DB group_name is allowed to override the
+ * hardcoded TS map — every page/script that groups categories should go
+ * through this (or src/lib/data.ts's groupForCategory(), which wraps it)
+ * rather than reading CATEGORY_GROUPS' categorySlugs directly.
+ */
+export function resolveCategoryGroups<C extends GroupableCategory>(categoryList: C[]): CategoryGroup[] {
+  const byNameKey = new Map<string, CategoryGroup>();
+  const order: CategoryGroup[] = [];
+
+  for (const hardcoded of CATEGORY_GROUPS) {
+    const group: CategoryGroup = { ...hardcoded, categorySlugs: [] };
+    byNameKey.set(hardcoded.name.trim().toLowerCase(), group);
+    order.push(group);
+  }
+
+  for (const category of categoryList) {
+    const dbGroupName = category.group_name?.trim();
+    if (dbGroupName) {
+      const key = dbGroupName.toLowerCase();
+      let group = byNameKey.get(key);
+      if (!group) {
+        group = { slug: slugify(dbGroupName), name: dbGroupName, iconPath: DEFAULT_GROUP_ICON, categorySlugs: [] };
+        byNameKey.set(key, group);
+        order.push(group);
+      }
+      group.categorySlugs.push(category.slug);
+      continue;
+    }
+    // No DB override: fall back to whichever hardcoded group already
+    // listed this slug (unchanged pre-admin-feature behaviour). A category
+    // in neither place is simply ungrouped, same as today.
+    const fallback = CATEGORY_GROUPS.find((g) => g.categorySlugs.includes(category.slug));
+    if (fallback) byNameKey.get(fallback.name.trim().toLowerCase())!.categorySlugs.push(category.slug);
+  }
+
+  return order;
 }

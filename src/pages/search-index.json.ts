@@ -1,6 +1,5 @@
 import type { APIRoute } from 'astro';
-import { businesses, suburbFor, categoriesFor, websiteUrl, logoFor, whatsappFor } from '../lib/data';
-import { groupForCategory } from '../lib/categoryGroups';
+import { businesses, suburbFor, categoriesFor, websiteUrl, logoFor, whatsappFor, groupForCategory } from '../lib/data';
 import { synonymsFor, locationSynonymsFor } from '../lib/categorySynonyms';
 import { formatPhoneZA } from '../lib/phone';
 import { plainLine } from '../lib/rich-text';

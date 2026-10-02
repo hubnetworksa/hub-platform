@@ -63,7 +63,19 @@ async function main() {
   await mkdir(OUT_DIR, { recursive: true });
 
   const suburbs = query('SELECT id, slug, name, region, bio, landmarks, lat, lng, image_key FROM suburbs ORDER BY name;');
-  const categories = query('SELECT id, slug, name FROM categories ORDER BY name;');
+  // group_name/schema_type arrived with the admin "Add category" feature's
+  // migration (db/migrations/<city>/*_category_group_schema.sql) — a
+  // database that hasn't had it applied yet just builds with every
+  // category falling back to categoryGroups.ts/categorySchemaTypes.ts's
+  // hardcoded tables, same tolerant-optional-column pattern as businesses'
+  // logo_key/short_description/whatsapp below.
+  let categories;
+  try {
+    categories = query('SELECT id, slug, name, group_name, schema_type FROM categories ORDER BY name;');
+  } catch (e) {
+    process.stderr.write(`[${SITE}] categories.group_name/schema_type not available yet — building without them.\n`);
+    categories = query('SELECT id, slug, name FROM categories ORDER BY name;');
+  }
   // logo_key arrived with the business-logo migration; a database that
   // hasn't had it applied yet just builds without logos. Same for
   // short_description: without it the cards fall back to the description.

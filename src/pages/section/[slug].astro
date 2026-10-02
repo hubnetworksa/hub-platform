@@ -3,13 +3,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import BusinessCard from '../../components/BusinessCard.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Icon from '../../components/Icon.astro';
-import { categories, businessesInCategory, type Business, isPaidListing } from '../../lib/data';
-import { CATEGORY_GROUPS } from '../../lib/categoryGroups';
+import { categories, businessesInCategory, type Business, isPaidListing, CATEGORY_GROUPS_RESOLVED } from '../../lib/data';
 import { collectionPageJsonLd } from '../../lib/seo';
 import site from '../../site';
 
+// CATEGORY_GROUPS_RESOLVED so a brand-new group name typed into the admin
+// Categories page (functions/api/admin/categories.ts) gets its own
+// /section/<slug>/ page too, not just the hardcoded sections in
+// categoryGroups.ts.
 export function getStaticPaths() {
-  return CATEGORY_GROUPS.map((group) => ({ params: { slug: group.slug }, props: { group } }));
+  return CATEGORY_GROUPS_RESOLVED.map((group) => ({ params: { slug: group.slug }, props: { group } }));
 }
 
 const { group } = Astro.props;
