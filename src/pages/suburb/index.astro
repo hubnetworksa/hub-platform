@@ -33,7 +33,7 @@ const jsonLd = collectionPageJsonLd({
 
 <BaseLayout
   title="Suburbs"
-  description={`Browse ${site.cityLabel} area by area, suburb by suburb — local businesses across ${suburbs.length} areas.`}
+  description={`Browse ${site.cityLabel} area by area, suburb by suburb — local businesses across ${suburbs.length} areas, grouped into ${regions.length} ${regionWord}, with listing counts for each.`}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 

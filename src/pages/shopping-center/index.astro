@@ -36,11 +36,20 @@ const jsonLd = collectionPageJsonLd({
 // No Google ads anywhere a paid listing or sponsor is shown (see
 // BaseLayout's noAds): this page shows one if this is true.
 const showsPaid = centres.some((c) => c.sponsored);
+// Head-only: as many example centres as fit in 160 characters.
+const centreNames = centres.map((c) => c.center.name);
+const metaDescription = [3, 2, 1, 0]
+  .map((n) => {
+    const names = centreNames.slice(0, n);
+    const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0];
+    return `${centres.length} ${site.cityLabel} shopping centres and malls${list ? `, including ${list}` : ''}, with every store listed: phone numbers, trading hours and directions.`;
+  })
+  .find((d) => d.length <= 160) ?? `${centres.length} ${site.cityLabel} shopping centres and malls, with every store listed.`;
 ---
 
 <BaseLayout noAds={showsPaid}
   title={`${site.cityLabel} Shopping Centres & Malls – Store Directory`}
-  description={`${centres.length} ${site.cityLabel} shopping centres and malls${centres.length > 0 ? `, including ${centres.slice(0, 3).map((c) => c.center.name).join(', ')}` : ''}, with every store inside them listed: phone numbers, trading hours and directions.`}
+  description={metaDescription}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 

@@ -53,17 +53,17 @@ export interface SitemapEntry {
   lastmod?: string;
 }
 
-const BUILD_DATE = new Date().toISOString();
+export const BUILD_DATE = new Date().toISOString();
 
 /** D1's datetime('now') text ("2026-09-21 04:27:50", UTC) as ISO 8601. */
-function isoFromD1(value: string | null | undefined): string | undefined {
+export function isoFromD1(value: string | null | undefined): string | undefined {
   if (!value) return undefined;
   const d = new Date(/T/.test(value) ? value : `${value.replace(' ', 'T')}Z`);
   return Number.isNaN(d.getTime()) ? undefined : d.toISOString();
 }
 
 /** A YYYY-MM-DD date as ISO 8601 (midnight UTC). */
-function isoFromDate(value: string | null | undefined): string | undefined {
+export function isoFromDate(value: string | null | undefined): string | undefined {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return undefined;
   return `${value}T00:00:00.000Z`;
 }
@@ -170,4 +170,15 @@ export function sitemapEntryFor(pathname: string): SitemapEntry | null {
     default:
       return DATA_DRIVEN_STATIC.has(path) ? { chunk: 'pages', lastmod: BUILD_DATE } : { chunk: 'pages' };
   }
+}
+
+/**
+ * The dateModified a page's JSON-LD carries: the same date as its sitemap
+ * <lastmod>, falling back to the build date for static and list pages with
+ * no data-driven date of their own (the build is when they last changed).
+ */
+export function lastModifiedFor(pathname: string): string {
+  const path = pathname.endsWith('/') ? pathname : `${pathname}/`;
+  if (isNoindexPath(path)) return BUILD_DATE;
+  return sitemapEntryFor(path)?.lastmod ?? BUILD_DATE;
 }

@@ -35,7 +35,8 @@ const showsPaid = !!sponsorFor('homepage_banner');
 
 <BaseLayout noAds={showsPaid}
   title="Plans & pricing"
-  description={`See ${site.siteName}'s plans for business listings, plus exclusive sponsorship spots across the site.`}
+  pageSchema={{}}
+  description={`See ${site.siteName}'s plans for business listings, plus exclusive sponsorship spots across the site: ${categories.length} categories and ${suburbs.length} suburb pages.`}
 >
   <main>
     <section style="background:var(--navy);color:#fff">

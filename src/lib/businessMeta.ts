@@ -7,7 +7,8 @@
 import { hoursCompact } from './openNow';
 import { formatPhoneZA } from './phone';
 
-const MAX_TITLE = 65;
+import { clipWords, MAX_TITLE } from './metaText';
+
 const MAX_DESCRIPTION = 160;
 
 function words(s: string): string[] {
@@ -93,7 +94,16 @@ export function businessTitle(b: BusinessMetaInput, qualifier?: string): string 
     `${head} – ${short}`,
     `${head} – ${facts[0]}`,
   ];
-  return candidates.find((c) => c.length <= MAX_TITLE) ?? (candidates[candidates.length - 1].length <= 72 ? candidates[candidates.length - 1] : head);
+  const fit = candidates.find((c) => c.length <= MAX_TITLE);
+  if (fit) return fit;
+  if (head.length <= MAX_TITLE) return head;
+  // Very long names: keep the qualifier (it is what keeps the title unique)
+  // and cut the name at a word boundary, never mid-word.
+  if (qualifier) {
+    const tail = ` (${qualifier})`;
+    if (tail.length < MAX_TITLE / 2) return `${clipWords(place, MAX_TITLE - tail.length)}${tail}`;
+  }
+  return clipWords(head, MAX_TITLE);
 }
 
 function clip(text: string, max: number): string {
@@ -122,5 +132,18 @@ export function businessDescription(b: BusinessMetaInput): string {
   if (summary && room >= 40) out += ` ${clip(summary, room)}`;
   else if (generic.length <= room) out += ` ${generic}`;
   else if (`Directions on ${b.siteName}.`.length <= room) out += ` Directions on ${b.siteName}.`;
+  // Still under ~120 characters: add facts the page itself shows (the
+  // street address, then what else is on the page) to reach a useful length.
+  const address = (b.address ?? '').replace(/\s+/g, ' ').trim();
+  const extras = [
+    address && address.length <= 70 ? `Address: ${address}.` : null,
+    out.includes(generic) ? null : generic,
+    `Directions and contact details on ${b.siteName}.`,
+    `Listed on ${b.siteName}, the ${b.cityLabel} business directory.`,
+  ];
+  for (const extra of extras) {
+    if (out.length >= 120) break;
+    if (extra && out.length + 1 + extra.length <= MAX_DESCRIPTION) out += ` ${extra}`;
+  }
   return out;
 }

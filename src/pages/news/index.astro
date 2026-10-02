@@ -2,6 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { newsSorted, newsDateShort } from '../../lib/data';
 import site from '../../site';
+import { organizationRef, websiteRef } from '../../lib/schema';
+import { lastModifiedFor } from '../../lib/sitemap';
 
 const articles = newsSorted();
 const categories = ['All', ...new Set(articles.map((a) => a.category))];
@@ -11,6 +13,10 @@ const jsonLd = {
   '@type': 'CollectionPage',
   name: `${site.cityLabel} local news`,
   url: `${siteUrl}/news/`,
+  inLanguage: 'en-ZA',
+  isPartOf: websiteRef(),
+  publisher: organizationRef(),
+  dateModified: lastModifiedFor('/news/'),
   hasPart: articles.slice(0, 20).map((a) => ({ '@type': 'NewsArticle', headline: a.title, url: `${siteUrl}/news/${a.slug}/`, datePublished: a.published_date })),
 };
 ---

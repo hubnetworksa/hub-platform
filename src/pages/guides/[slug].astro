@@ -6,6 +6,7 @@ import { categoryBySlug, businessesInCategory, suburbFor, sponsorFor, priceRand,
 import BusinessLogo from '../../components/BusinessLogo.astro';
 import { topSuburbs, topRegions, topShoppingCentres, andList, fmt } from '../../lib/city-facts';
 import site from '../../site';
+import { organizationRef } from '../../lib/schema';
 
 export function getStaticPaths() {
   return guidesFor(site.slug).map((guide) => ({ params: { slug: guide.slug }, props: { guide } }));
@@ -77,8 +78,8 @@ const articleJsonLd = {
   dateModified: guide.updatedIso,
   inLanguage: 'en-ZA',
   image: `https://${site.domain}${guide.imageUrl ?? site.sectionBannerImage}`,
-  author: { '@type': 'Organization', name: site.siteName, url: `https://${site.domain}/` },
-  publisher: { '@type': 'Organization', name: site.siteName, url: `https://${site.domain}/` },
+  author: organizationRef(),
+  publisher: organizationRef(),
   articleSection: guide.categoryLabel,
 };
 import { sponsorHref } from '../../lib/sponsor-link';

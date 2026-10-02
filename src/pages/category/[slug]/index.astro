@@ -8,6 +8,7 @@ import { categories, businessesInCategory, categoryHasBusinesses, suburbFor, typ
 import { synonymsFor, locationSynonymsFor } from '../../../lib/categorySynonyms';
 import { collectionPageJsonLd } from '../../../lib/seo';
 import site from '../../../site';
+import { describeWithSynonyms } from '../../../lib/metaText';
 
 export function getStaticPaths() {
   return categories.map((category) => ({ params: { slug: category.slug }, props: { category } }));
@@ -44,7 +45,11 @@ const relatedCategories = (group?.categorySlugs ?? [])
   .filter((c): c is NonNullable<typeof c> => Boolean(c) && categoryHasBusinesses(c.id))
   .sort((a, b) => a.name.localeCompare(b.name));
 const synonyms = [...synonymsFor(category.slug), ...locationSynonymsFor(category.name, site.cityLabel)];
-const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0, 4).join(', ')}.` : '';
+const topSuburbNames = suburbGroups.slice(0, 2).map((g) => g.name);
+const metaDescription = describeWithSynonyms(`${businesses.length} ${category.name} listed across ${site.cityLabel}, by suburb.`, synonyms, [
+  suburbGroups.length > 1 ? `${suburbGroups.length} suburbs, most in ${topSuburbNames.join(' and ')}.` : null,
+  'Addresses and directions for each listing.',
+]);
 
 const h1Title = `${category.name} in ${site.cityLabel}`;
 
@@ -63,7 +68,7 @@ const showsPaid = businesses.some(isPaidListing) || !!categorySponsor;
 
 <BaseLayout noAds={showsPaid}
   title={`${category.name} in ${site.cityLabel}`}
-  description={`${businesses.length} ${category.name} listed across ${site.cityLabel}, by suburb.${synonymLine}`}
+  description={metaDescription}
   noindex={isEmpty}
 >
   {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />}

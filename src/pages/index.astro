@@ -13,6 +13,7 @@ import { CATEGORY_GROUPS } from '../lib/categoryGroups';
 import site from '../site';
 import { formatPhoneZA, phoneHref } from '../lib/phone';
 import AdUnit from '../components/AdUnit.astro';
+import { organizationRef, WEBSITE_ID } from '../lib/schema';
 
 const groupCount = (group: (typeof CATEGORY_GROUPS)[number]) =>
   categories
@@ -68,8 +69,11 @@ const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
+    '@id': WEBSITE_ID,
     name: site.siteName,
     url: `https://${site.domain}/`,
+    inLanguage: 'en-ZA',
+    publisher: organizationRef(),
     // Sitelinks search box: the site's own search page reads ?q=.
     potentialAction: {
       '@type': 'SearchAction',
@@ -77,13 +81,7 @@ const jsonLd = [
       'query-input': 'required name=search_term_string',
     },
   },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: site.siteName,
-    url: `https://${site.domain}/`,
-    logo: `https://${site.domain}/logo-icon.png`,
-  },
+  // The Organization node itself is emitted site-wide by BaseLayout.
 ];
 // No Google ads anywhere a paid listing or sponsor is shown (BaseLayout's
 // noAds pauses AdSense ad requests): this page shows one if this is true.
@@ -94,7 +92,7 @@ const homeTitleCandidates = [
   `${site.cityLabel} Business Directory – ${businesses.length.toLocaleString('en-US')} Local Businesses & Trading Hours`,
   `${site.cityLabel} Business Directory – ${businesses.length.toLocaleString('en-US')} Local Businesses`,
 ];
-const homeTitle = homeTitleCandidates.find((t) => t.length <= 70) ?? homeTitleCandidates[homeTitleCandidates.length - 1];
+const homeTitle = homeTitleCandidates.find((t) => t.length <= 60) ?? homeTitleCandidates[homeTitleCandidates.length - 1];
 ---
 
 <BaseLayout noAds={showsPaid}
@@ -102,6 +100,7 @@ const homeTitle = homeTitleCandidates.find((t) => t.length <= 70) ?? homeTitleCa
   titleOverride={homeTitle}
   description={`${site.cityLabel} business directory: ${businesses.length.toLocaleString('en-US')} local businesses across ${suburbs.length} suburbs and ${categories.length} categories. Trading hours, phone numbers, addresses and directions.`}
   impactVerification
+  pageSchema={{}}
 >
   {jsonLd.map((d) => <script type="application/ld+json" set:html={JSON.stringify(d).replace(/</g, '\\u003c')} />)}
 

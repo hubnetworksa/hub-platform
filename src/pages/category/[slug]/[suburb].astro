@@ -7,6 +7,7 @@ import SponsorBanner from '../../../components/SponsorBanner.astro';
 import { synonymsFor, locationSynonymsFor, suburbSynonymsFor } from '../../../lib/categorySynonyms';
 import { collectionPageJsonLd } from '../../../lib/seo';
 import site from '../../../site';
+import { describeWithSynonyms, fitTitle, MAX_TITLE } from '../../../lib/metaText';
 
 export function getStaticPaths() {
   const paths = [];
@@ -31,9 +32,16 @@ const synonyms = [
   ...locationSynonymsFor(category.name, site.cityLabel),
   ...suburbSynonymsFor(category.name, suburb.name),
 ];
-const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0, 4).join(', ')}.` : '';
+const metaDescription = describeWithSynonyms(`${businesses.length} ${category.name} in ${suburb.name} — part of the Greater ${site.cityLabel} area.`, synonyms, [
+  'Addresses, phone numbers and directions for each listing.',
+  `Listed on ${site.siteName}.`,
+]);
 
 const h1Title = `${category.name} in ${suburb.name}, ${site.cityLabel}`;
+// Head-only <title>: a long category name loses its "& ..." tail before
+// anything is cut, so "X & Y in Long Suburb Name" stays distinct.
+const shortCategory = category.name.split(" & ")[0];
+const metaTitle = [`${category.name} in ${suburb.name} | ${site.siteName}`, `${category.name} in ${suburb.name}`, `${shortCategory} in ${suburb.name}`].find((t) => t.length <= MAX_TITLE) ?? fitTitle(`${shortCategory} in ${suburb.name}`);
 
 const jsonLd = collectionPageJsonLd({
   name: h1Title,
@@ -55,7 +63,8 @@ const showsPaid = businesses.some(isPaidListing) || !!categorySponsor || !!subur
 
 <BaseLayout noAds={showsPaid}
   title={`${category.name} in ${suburb.name}`}
-  description={`${businesses.length} ${category.name} in ${suburb.name} — part of the Greater ${site.cityLabel} area.${synonymLine}`}
+  titleOverride={metaTitle}
+  description={metaDescription}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 

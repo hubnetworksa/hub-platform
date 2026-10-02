@@ -3,6 +3,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { news, newsSorted, newsDateLong, newsSources, newsParagraphs } from '../../lib/data';
 import site from '../../site';
+import { organizationRef } from '../../lib/schema';
+import { isoFromDate } from '../../lib/sitemap';
+import { padDescription } from '../../lib/metaText';
 
 export function getStaticPaths() {
   return news.map((n) => ({ params: { slug: n.slug }, props: { article: n } }));
@@ -19,16 +22,21 @@ const jsonLd = {
   headline: a.title,
   description: a.summary,
   datePublished: a.published_date,
+  // Articles aren't edited after publishing, so the publish date is also
+  // the last-modified date (same as the sitemap <lastmod>).
+  dateModified: a.published_date,
   mainEntityOfPage: `${siteUrl}/news/${a.slug}/`,
   articleSection: a.category,
+  inLanguage: 'en-ZA',
   ...(a.image_url ? { image: [a.image_url] } : {}),
-  author: { '@type': 'Organization', name: site.siteName },
-  publisher: { '@type': 'Organization', name: site.siteName, url: siteUrl },
+  author: organizationRef(),
+  publisher: organizationRef(),
   isBasedOn: [a.source_url, ...sources.map((s) => s.url)],
 };
+const articleTime = isoFromDate(a.published_date);
 ---
 
-<BaseLayout title={a.title} description={a.summary} ogType="article">
+<BaseLayout title={a.title} description={padDescription(a.summary, [`Published ${newsDateLong(a)}.`, a.source_name ? `Source: ${a.source_name}.` : null])}ogType="article" articlePublishedTime={articleTime} articleModifiedTime={articleTime}>
   <main>
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
     <section style="max-width:1200px;margin:0 auto;padding:18px 20px 0">

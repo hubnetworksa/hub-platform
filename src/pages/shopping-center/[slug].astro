@@ -8,6 +8,7 @@ import { shoppingCenters, suburbs, businessesInShoppingCenter, categoriesFor, FE
 import { collectionPageJsonLd } from '../../lib/seo';
 import { synonymsFor } from '../../lib/categorySynonyms';
 import site from '../../site';
+import { fitTitle, MAX_TITLE, MAX_DESCRIPTION } from '../../lib/metaText';
 
 export function getStaticPaths() {
   return shoppingCenters
@@ -71,19 +72,26 @@ const centreLabel = nameShared ? `${center.name}, ${suburb!.name}` : center.name
 const titleCandidates = [
   `${centreLabel} – ${center.type === 'mall' ? 'Shops & Store Directory' : 'Shops & Services'} | ${site.siteName}`,
   `${centreLabel} – ${center.type === 'mall' ? 'Shops & Store Directory' : 'Shops & Services'}`,
+  `${centreLabel} – Shops & Stores`,
   `${centreLabel} – Shops`,
 ];
-const centreTitle = titleCandidates.find((t) => t.length <= 65) ?? titleCandidates[titleCandidates.length - 1];
+const centreTitle = titleCandidates.find((t) => t.length <= MAX_TITLE) ?? fitTitle(centreLabel);
 // "A few anchor stores": the big national chains when present, else the
 // first stores in the page's own order.
 const ANCHOR_RE = /\b(woolworths|checkers|pick n pay|shoprite|spar|game|makro|dis-chem|clicks|mr price|edgars|ackermans|pep|truworths|foschini|builders|boxer|usave|food lover)/i;
 const ordered = [...(pinned ? [pinned] : []), ...rest];
 const anchorNames = [...new Set([...ordered.filter((b) => ANCHOR_RE.test(b.name)), ...ordered].map((b) => b.name))].slice(0, 3);
 const anchorList = anchorNames.length > 1 ? `${anchorNames.slice(0, -1).join(', ')} and ${anchorNames[anchorNames.length - 1]}` : anchorNames[0] ?? '';
-const centreDescriptionFull = `${center.name}${suburb ? `, ${suburb.name}` : ''}, ${site.cityLabel}: ${businesses.length} ${storeWord} listed${anchorList ? `, including ${anchorList}` : ''}. Phone numbers, trading hours and directions for each store.`;
-const centreDescription = centreDescriptionFull.length <= 165
-  ? centreDescriptionFull
-  : `${center.name}${suburb ? `, ${suburb.name}` : ''}: ${businesses.length} ${storeWord} listed${anchorNames[0] ? `, including ${anchorNames[0]}` : ''}. Phone numbers, trading hours and directions for each store.`;
+const centreWhere = `${center.name}${suburb ? `, ${suburb.name}` : ''}`;
+const centreStores = `${businesses.length} ${storeWord} listed`;
+const centreDescriptionCandidates = [
+  `${centreWhere}, ${site.cityLabel}: ${centreStores}${anchorList ? `, including ${anchorList}` : ''}. Phone numbers, trading hours and directions for each store.`,
+  `${centreWhere}: ${centreStores}${anchorList ? `, including ${anchorList}` : ''}. Phone numbers, trading hours and directions for each store.`,
+  `${centreWhere}: ${centreStores}${anchorNames[0] ? `, including ${anchorNames[0]}` : ''}. Phone numbers, trading hours and directions for each store.`,
+  `${centreWhere}: ${centreStores}${anchorNames[0] ? `, including ${anchorNames[0]}` : ''}. Phone numbers, hours and directions.`,
+  `${centreWhere}: ${centreStores}. Phone numbers, trading hours and directions for each store.`,
+];
+const centreDescription = centreDescriptionCandidates.find((d) => d.length <= MAX_DESCRIPTION) ?? centreDescriptionCandidates[centreDescriptionCandidates.length - 1];
 ---
 
 <BaseLayout noAds={showsPaid}
