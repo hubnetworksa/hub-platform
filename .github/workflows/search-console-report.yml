@@ -1,0 +1,68 @@
+name: Search Console report
+
+# Weekly Google Search Console indexing report for every live site
+# (scripts/search-console-report.mjs): search performance (28 days vs the 28
+# before), pages with impressions per page type, sitemap status, a URL
+# Inspection sample per sitemap type and AdSense site state. Commits
+# status/seo/report.md, status/seo/<date>.json and status/seo/latest.json.
+#
+# Needs repo secrets GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET and
+# GOOGLE_REFRESH_TOKEN (an OAuth refresh token with the webmasters and
+# adsense.readonly scopes).
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      sample:
+        description: "URLs to inspect per sitemap type"
+        required: false
+        default: "8"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: search-console-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # No npm install: the script only uses Node built-ins and fetch.
+      - name: Build report
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+        run: |
+          node scripts/search-console-report.mjs --sample "${{ github.event.inputs.sample || '8' }}"
+          cat status/seo/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      # [skip ci] stops this push from triggering the deploy workflow; the
+      # retry with a rebase pull handles a concurrent push to main.
+      - name: Commit report
+        run: |
+          git config user.name "hub-platform-bot"
+          git config user.email "actions@github.com"
+          git add status/seo
+          if git diff --staged --quiet; then
+            echo "No report changes"
+          else
+            git commit -m "Search Console report $(date -u +%Y-%m-%d) [skip ci]"
+            for i in 1 2 3 4 5; do
+              git pull --rebase origin main && git push && break
+              echo "Push attempt $i failed, retrying..."; sleep $((RANDOM % 5 + 1))
+            done
+          fi
