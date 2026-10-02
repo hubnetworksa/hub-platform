@@ -32,7 +32,12 @@
 # 3. Baseline security headers on everything: no framing by other sites
 #    (clickjacking on the login/admin/checkout forms), no MIME sniffing of
 #    uploaded media, and no full URLs (tokens in review/confirm links) leaked
-#    to third parties through the Referer header.
+#    to third parties through the Referer header. HSTS pins HTTPS for a
+#    year; COOP is same-origin-allow-popups so the PayFast and Google
+#    sign-in popups keep working. No strict Content-Security-Policy on
+#    purpose (AdSense, analytics, PayFast and Google sign-in would break):
+#    only frame-ancestors. functions/_middleware.ts sets the same baseline
+#    on Function responses.
 
 /*
   Cache-Control: public, max-age=0, must-revalidate
@@ -41,6 +46,8 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), payment=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
 
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable

@@ -9,6 +9,7 @@ import { ATTRACTIONS as PRETORIA_ATTRACTIONS } from '../../site-content/pretoria
 import { ATTRACTIONS as POLOKWANE_ATTRACTIONS } from '../../site-content/polokwane/tourism';
 import type { Attraction } from '../../site-content/attraction-types';
 import site from '../../site';
+import { padDescription } from '../../lib/metaText';
 
 // Port of the mockup's "Things to do" screen. Every site has one; a site with no
 // content block yet sends visitors home rather than showing an empty page.
@@ -59,9 +60,14 @@ const jsonLd = {
 // No Google ads anywhere a paid listing or sponsor is shown (see
 // BaseLayout's noAds): this page shows one if this is true.
 const showsPaid = picks.some((p) => p.sponsored);
+// Head-only meta description: the blurb, padded with the page's own counts.
+const metaDescription = padDescription(content.blurb, [
+  `${picks.length} things to do${content.itineraries.length > 0 ? ` and ${content.itineraries.length} ${content.itineraries.length === 1 ? 'itinerary' : 'itineraries'}` : ''}.`,
+  `Things to do in ${site.cityLabel}.`,
+]);
 ---
 
-<BaseLayout noAds={showsPaid} title={`Things to do in ${site.cityLabel}`} description={content.blurb}>
+<BaseLayout noAds={showsPaid} pageSchema={{}} title={`Things to do in ${site.cityLabel}`} description={metaDescription}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
   <main>
     <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">

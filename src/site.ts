@@ -29,11 +29,13 @@ export interface SiteFeatures {
 }
 
 /** The operator's identity, shown on About, Contact, the Privacy & POPIA
- *  notice and the Terms of use (POPIA s18, ECTA s43). The operator is a sole
- *  proprietor trading as "Hub Network SA" across all three sites; the only
- *  published contact is contactEmail. Any field may be null — the pages fall
- *  back to a truthful generic sentence ("the operator of <siteName>, a sole
- *  proprietor") and never render a placeholder. */
+ *  notice and the Terms of use (POPIA s18, ECTA s43). The operator trades as
+ *  "Hub Network SA" across all three sites; the only published contact is
+ *  contactEmail. Any field may be null — the pages fall back to a truthful
+ *  generic sentence ("the operator of <siteName>") and never render a
+ *  placeholder. `legalForm` and `registrationNumber` are kept as records but
+ *  are deliberately not rendered anywhere: the owner has asked that no page
+ *  describe the operator's legal form or registration. */
 export interface SiteLegal {
   /** Trading name, e.g. "Hub Network SA". */
   legalName: string | null;

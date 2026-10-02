@@ -59,4 +59,10 @@ const SECURITY_HEADERS: Record<string, string> = {
   'X-Frame-Options': 'SAMEORIGIN',
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'strict-origin-when-cross-origin',
+  // Same values as public/_headers (assets/sites/<city>/_headers). No strict
+  // Content-Security-Policy: AdSense, analytics, PayFast and Google sign-in
+  // load from too many origins. COOP keeps sign-in/payment popups working.
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'Permissions-Policy': 'camera=(), microphone=(), payment=()',
+  'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
 };

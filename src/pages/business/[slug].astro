@@ -6,13 +6,15 @@ import PlanBadge from '../../components/PlanBadge.astro';
 import AdUnit from '../../components/AdUnit.astro';
 import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, businessesInSuburbAndCategory, businessesInShoppingCenter, byPlanThenName, websiteUrl, isPaidListing, sponsorshipsHeldBy, reviewsFor, averageRating, reviewCount, logoFor, descriptionHtmlFor, summaryFor, whatsappFor, schemaTypeFor } from '../../lib/data';
 import { plainLine } from '../../lib/rich-text';
-import { hoursSummary } from '../../lib/openNow';
+import { hoursSummary, openingHoursSpecification } from '../../lib/openNow';
+import { businessTitle, businessDescription, titleIsShared } from '../../lib/businessMeta';
 import { regionLabel } from '../../site-content';
 import { WHATSAPP_ICON, WHATSAPP_GREEN } from '../../lib/whatsapp';
 import { synonymsFor, locationSynonymsFor } from '../../lib/categorySynonyms';
 import Icon from '../../components/Icon.astro';
 import BusinessLogo from '../../components/BusinessLogo.astro';
 import site from '../../site';
+import { isoFromD1 } from '../../lib/sitemap';
 import { formatPhoneZA, phoneHref, phoneInternationalZA } from '../../lib/phone';
 
 export function getStaticPaths() {
@@ -23,18 +25,9 @@ const { business } = Astro.props;
 const suburb = suburbFor(business);
 const cats = categoriesFor(business);
 
-// "Name – Category in Suburb" gives every listing a distinct, descriptive
-// title (bare names collide across cities and say nothing to a searcher),
-// and a listing with no description still gets a real meta description.
-const pageTitle = [business.name, cats[0] && suburb ? `${cats[0].name} in ${suburb.name}` : suburb?.name].filter(Boolean).join(' – ');
 // Formatted (bold, italic, lists) only while a Verified/Featured plan is
 // live; Basic or lapsed listings get plain paragraphs — see descriptionHtmlFor.
 const descriptionHtml = descriptionHtmlFor(business);
-const metaDescription = (
-  // The owner's short description when written, else the full one as a line.
-  summaryFor(business) ||
-  `${business.name}${cats[0] ? `, ${cats[0].name.toLowerCase()}` : ''}${suburb ? ` in ${suburb.name}` : ''}. Address, phone, hours and directions.`
-).slice(0, 155);
 const sourceUrls = parseSourceUrls(business);
 const isOsmSourced = sourceUrls.some((u) => u.includes('openstreetmap.org'));
 const SOURCE_LABELS: Record<string, string> = {
@@ -133,9 +126,12 @@ const logoUrl = logo ? siteUrl + logo : null;
 // the old Fragment-based version (an unclassed div behaves like a Fragment
 // for layout purposes).
 
+// Only when the hours text shown on the page parses cleanly; never guessed.
+const openingHours = openingHoursSpecification(business.hours);
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': schemaType,
+  '@id': `${canonicalUrl}#business`,
   name: business.name,
   description: summaryFor(business),
   url: canonicalUrl,
@@ -144,14 +140,52 @@ const jsonLd = {
   ...(business.phone ? { telephone: phoneInternationalZA(business.phone) } : {}),
   ...(business.lat && business.lng ? { geo: { '@type': 'GeoCoordinates', latitude: business.lat, longitude: business.lng } } : {}),
   ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
+  ...(openingHours ? { openingHoursSpecification: openingHours } : {}),
 };
 
 const mapsUrl = (business.address || (business.lat && business.lng))
   ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${business.name}${suburb ? `, ${suburb.name}` : ''}`)}`
   : null;
+
+// Search-intent metadata: people search "<store> <centre or suburb>" and
+// "<store> trading hours", so the title names the place and what the page
+// offers, and the description leads with the static facts the page shows
+// (see lib/businessMeta.ts). Head-only; nothing visible depends on these.
+function metaInputFor(b: typeof business) {
+  return {
+    name: b.name,
+    hours: b.hours,
+    phone: b.phone,
+    address: b.address,
+    // Same condition as mapsUrl (the Directions button).
+    hasDirections: !!(b.address || (b.lat && b.lng)),
+    centreName: shoppingCenterFor(b)?.name ?? null,
+    suburbName: suburbFor(b)?.name ?? null,
+    cityLabel: site.cityLabel,
+    siteName: site.siteName,
+    summary: summaryFor(b),
+  };
+}
+const metaInput = metaInputFor(business);
+const plainTitle = businessTitle(metaInput);
+// The same store listed twice at one place: tell the two apart by category,
+// then (if that still collides) by the first part of the street address.
+const shared = (title: string, qualify: (b: typeof business) => string | undefined, key: string) =>
+  titleIsShared(title, () => businesses.map((b) => businessTitle(metaInputFor(b), qualify(b))), key);
+const catQualifier = (b: typeof business) => categoriesFor(b)[0]?.name;
+const addressQualifier = (b: typeof business) => b.address?.split(',')[0].trim() || undefined;
+let pageTitle = plainTitle;
+if (shared(plainTitle, () => undefined, 'plain')) {
+  const byCat = cats[0] ? businessTitle(metaInput, cats[0].name) : plainTitle;
+  pageTitle = byCat;
+  if (shared(byCat, catQualifier, 'category') && addressQualifier(business)) {
+    pageTitle = businessTitle(metaInput, addressQualifier(business));
+  }
+}
+const metaDescription = businessDescription(metaInput);
 ---
 
-<BaseLayout title={pageTitle} description={metaDescription} canonical={canonicalUrl} noAds={showsPaid} ogImage={logo} ogImageSquare={!!logo}>
+<BaseLayout title={pageTitle} titleOverride={pageTitle} description={metaDescription} canonical={canonicalUrl} noAds={showsPaid} ogImage={logo} ogImageSquare={!!logo} pageSchema={{ dateModified: isoFromD1(business.updated_at), mainEntity: { '@id': `${canonicalUrl}#business` } }}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <main style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">

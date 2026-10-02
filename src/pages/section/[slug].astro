@@ -6,6 +6,7 @@ import Icon from '../../components/Icon.astro';
 import { categories, businessesInCategory, type Business, isPaidListing, CATEGORY_GROUPS_RESOLVED } from '../../lib/data';
 import { collectionPageJsonLd } from '../../lib/seo';
 import site from '../../site';
+import { padDescription } from '../../lib/metaText';
 
 // CATEGORY_GROUPS_RESOLVED so a brand-new group name typed into the admin
 // Categories page (functions/api/admin/categories.ts) gets its own
@@ -38,11 +39,25 @@ const jsonLd = collectionPageJsonLd({
 // No Google ads anywhere a paid listing or sponsor is shown (see
 // BaseLayout's noAds): this page shows one if this is true.
 const showsPaid = byCategory.some((c) => c.businesses.some(isPaidListing));
+// Head-only: the section's categories (largest first) pad the description.
+const biggest = [...byCategory].sort((a, b) => b.businesses.length - a.businesses.length);
+let metaDescription = `${total.toLocaleString('en-US')} ${group.name} businesses across ${site.cityLabel}, in ${byCategory.length} ${byCategory.length === 1 ? 'category' : 'categories'}`;
+for (let n = biggest.length; n > 0; n--) {
+  const names = biggest.slice(0, n).map((c) => c.name);
+  const list = n < biggest.length ? `${names.join(', ')} and more` : names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0];
+  const candidate = `${metaDescription}: ${list}.`;
+  if (candidate.length <= 160) {
+    metaDescription = candidate;
+    break;
+  }
+}
+if (!metaDescription.endsWith('.')) metaDescription += '.';
+metaDescription = padDescription(metaDescription, ['Addresses and directions for each listing.', `Listed on ${site.siteName}.`]);
 ---
 
 <BaseLayout noAds={showsPaid}
   title={group.name}
-  description={`${total} ${group.name} businesses across ${site.cityLabel}.`}
+  description={metaDescription}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 

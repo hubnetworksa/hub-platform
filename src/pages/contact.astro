@@ -32,6 +32,7 @@ const fieldStyle = 'padding:13px;border:2px solid var(--border);border-radius:11
 
 <BaseLayout
   title="Contact"
+  pageSchema={{ type: 'ContactPage' }}
   titleOverride={`Contact ${site.siteName} | ${site.cityLabel}'s Local Business Directory`}
   description={`Get in touch with ${site.siteName} — questions, listing corrections, advertising or POPIA requests, reach us at ${site.contactEmail}.`}
 >
@@ -78,7 +79,7 @@ const fieldStyle = 'padding:13px;border:2px solid var(--border);border-radius:11
           <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:#fff">
             <h3 style="margin:0 0 8px;font-size:15px;letter-spacing:-.01em;color:var(--navy)">Who you're writing to</h3>
             <p style="margin:0 0 8px;font-size:13.5px;line-height:1.55;color:var(--text)">
-              {site.siteName} is operated by <strong>{op.name}</strong>{op.legalForm === 'sole proprietor' ? ', a sole proprietor' : ''}{op.operatorName ? ` (${op.operatorName})` : ''}.
+              {site.siteName} is operated by <strong>{op.name}</strong>{op.operatorName ? ` (${op.operatorName})` : ''}.
               {op.vatRegistered ? 'Registered for VAT.' : 'Not registered for VAT — no VAT is charged.'}
             </p>
             <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text)">

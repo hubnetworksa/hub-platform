@@ -8,6 +8,7 @@ import { shoppingCenters, suburbs, businessesInShoppingCenter, categoriesFor, FE
 import { collectionPageJsonLd } from '../../lib/seo';
 import { synonymsFor } from '../../lib/categorySynonyms';
 import site from '../../site';
+import { fitTitle, MAX_TITLE, MAX_DESCRIPTION } from '../../lib/metaText';
 
 export function getStaticPaths() {
   return shoppingCenters
@@ -34,6 +35,10 @@ const centerJsonLd = {
     : {}),
   ...(center.lat && center.lng ? { geo: { '@type': 'GeoCoordinates', latitude: center.lat, longitude: center.lng } } : {}),
   ...(keywords.length > 0 ? { keywords: keywords.join(', ') } : {}),
+  // The stores listed on this page (capped for page weight).
+  ...(businesses.length > 0
+    ? { containsPlace: businesses.slice(0, 50).map((b) => ({ '@type': 'LocalBusiness', name: b.name, url: `https://${site.domain}/business/${b.slug}/` })) }
+    : {}),
 };
 
 const tenantsJsonLd = collectionPageJsonLd({
@@ -55,11 +60,44 @@ import { sponsorHref } from '../../lib/sponsor-link';
 // No Google ads anywhere a paid listing or sponsor is shown (see
 // BaseLayout's noAds): this page shows one if this is true.
 const showsPaid = businesses.some(isPaidListing) || !!centreSponsor;
+
+// Search-intent metadata (head-only): "<centre> shops", "<centre> stores".
+// The centre page itself lists the stores but not their hours, so the title
+// doesn't promise trading hours; each store's own page has them.
+const storeWord = businesses.length === 1 ? 'store' : 'stores';
+// Two listed centres with one name (e.g. Access Park in Kenilworth and in
+// Kuils River): name the suburb so the titles stay distinct.
+const nameShared = suburb && shoppingCenters.some((c) => c.id !== center.id && c.name === center.name && c.suburb_id !== center.suburb_id && businessesInShoppingCenter(c.id).length > 0);
+const centreLabel = nameShared ? `${center.name}, ${suburb!.name}` : center.name;
+const titleCandidates = [
+  `${centreLabel} – ${center.type === 'mall' ? 'Shops & Store Directory' : 'Shops & Services'} | ${site.siteName}`,
+  `${centreLabel} – ${center.type === 'mall' ? 'Shops & Store Directory' : 'Shops & Services'}`,
+  `${centreLabel} – Shops & Stores`,
+  `${centreLabel} – Shops`,
+];
+const centreTitle = titleCandidates.find((t) => t.length <= MAX_TITLE) ?? fitTitle(centreLabel);
+// "A few anchor stores": the big national chains when present, else the
+// first stores in the page's own order.
+const ANCHOR_RE = /\b(woolworths|checkers|pick n pay|shoprite|spar|game|makro|dis-chem|clicks|mr price|edgars|ackermans|pep|truworths|foschini|builders|boxer|usave|food lover)/i;
+const ordered = [...(pinned ? [pinned] : []), ...rest];
+const anchorNames = [...new Set([...ordered.filter((b) => ANCHOR_RE.test(b.name)), ...ordered].map((b) => b.name))].slice(0, 3);
+const anchorList = anchorNames.length > 1 ? `${anchorNames.slice(0, -1).join(', ')} and ${anchorNames[anchorNames.length - 1]}` : anchorNames[0] ?? '';
+const centreWhere = `${center.name}${suburb ? `, ${suburb.name}` : ''}`;
+const centreStores = `${businesses.length} ${storeWord} listed`;
+const centreDescriptionCandidates = [
+  `${centreWhere}, ${site.cityLabel}: ${centreStores}${anchorList ? `, including ${anchorList}` : ''}. Phone numbers, trading hours and directions for each store.`,
+  `${centreWhere}: ${centreStores}${anchorList ? `, including ${anchorList}` : ''}. Phone numbers, trading hours and directions for each store.`,
+  `${centreWhere}: ${centreStores}${anchorNames[0] ? `, including ${anchorNames[0]}` : ''}. Phone numbers, trading hours and directions for each store.`,
+  `${centreWhere}: ${centreStores}${anchorNames[0] ? `, including ${anchorNames[0]}` : ''}. Phone numbers, hours and directions.`,
+  `${centreWhere}: ${centreStores}. Phone numbers, trading hours and directions for each store.`,
+];
+const centreDescription = centreDescriptionCandidates.find((d) => d.length <= MAX_DESCRIPTION) ?? centreDescriptionCandidates[centreDescriptionCandidates.length - 1];
 ---
 
 <BaseLayout noAds={showsPaid}
   title={center.name}
-  description={center.description ?? `${businesses.length} businesses at ${center.name}, ${site.cityLabel}.`}
+  titleOverride={centreTitle}
+  description={centreDescription}
 >
   <script type="application/ld+json" set:html={JSON.stringify(centerJsonLd).replace(/</g, '\\u003c')} />
   <script type="application/ld+json" set:html={JSON.stringify(tenantsJsonLd).replace(/</g, '\\u003c')} />

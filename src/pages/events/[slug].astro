@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdUnit from '../../components/AdUnit.astro';
 import { events, eventDetail, eventDateLong, todaySast } from '../../lib/data';
 import site from '../../site';
+import { fitDescription, padDescription } from '../../lib/metaText';
 import { renderRichText, plainLine } from '../../lib/rich-text';
 
 export function getStaticPaths() {
@@ -44,9 +45,20 @@ const eventLdJson = JSON.stringify(eventLd).replace(/</g, '\\u003c');
 // No Google ads anywhere a paid listing or sponsor is shown (BaseLayout's
 // noAds pauses AdSense ad requests): this page shows one if this is true.
 const showsPaid = !!e.featured;
+// Head-only meta description: the event's own summary trimmed to 160 at a
+// word boundary, or padded with its date and venue (both on the page).
+// Two listed events with one name (a recurring market): date them so the
+// titles stay distinct.
+const eventTitle = events.some((o) => o.slug !== e.slug && o.title === e.title) ? `${e.title} – ${dateLong}` : e.title;
+const whenWhere = `${dateLong}${e.venue ? ` at ${e.venue}` : ''}, ${site.cityLabel}.`;
+const metaDescription = padDescription(fitDescription(plainLine(e.description) || `${e.title} — ${dateLong} at ${e.venue ?? 'TBC'}, ${site.cityLabel}.`), [
+  plainLine(e.description) ? whenWhere : null,
+  hasTicketLink(e.ticket_url) ? `Tickets via a direct link to the seller.` : null,
+  `Listed in ${site.siteName}'s ${site.cityLabel} events.`,
+]);
 ---
 
-<BaseLayout noAds={showsPaid} title={e.title} description={plainLine(e.description) || `${e.title} — ${dateLong} at ${e.venue ?? 'TBC'}, ${site.cityLabel}.`} ogImage={e.image_url && /^(https?:\/\/|\/media\/)/i.test(e.image_url) ? e.image_url : null}>
+<BaseLayout noAds={showsPaid} pageSchema={{}} title={eventTitle} description={metaDescription} ogImage={e.image_url && /^(https?:\/\/|\/media\/)/i.test(e.image_url) ? e.image_url : null}>
   <script type="application/ld+json" set:html={eventLdJson} />
   <main>
     <section style="position:relative;background:var(--navy);overflow:hidden;min-height:clamp(200px,26vw,320px)">

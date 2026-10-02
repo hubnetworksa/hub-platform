@@ -63,4 +63,14 @@ await writeFile(
 // keyLocation https://<domain>/<key>.txt, and the body must be the key.
 await writeFile(path.join(publicDir, `${INDEXNOW_KEY}.txt`), INDEXNOW_KEY);
 
-process.stderr.write(`[${SITE}] Copied ${files.length} asset(s) into public/, generated ads.txt + robots.txt + IndexNow key file.\n`);
+// RFC 9116 security.txt. Expires is a year from this build; every deploy
+// rebuilds, so it never lapses while the site is maintained.
+const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
+expires.setUTCMilliseconds(0);
+await mkdir(path.join(publicDir, '.well-known'), { recursive: true });
+await writeFile(
+  path.join(publicDir, '.well-known', 'security.txt'),
+  `Contact: mailto:${site.contactEmail}\nExpires: ${expires.toISOString().replace('.000Z', 'Z')}\nPreferred-Languages: en\nCanonical: https://${site.domain}/.well-known/security.txt\n`
+);
+
+process.stderr.write(`[${SITE}] Copied ${files.length} asset(s) into public/, generated ads.txt + robots.txt + IndexNow key file + .well-known/security.txt.\n`);

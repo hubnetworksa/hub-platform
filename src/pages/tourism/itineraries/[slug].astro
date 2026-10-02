@@ -4,6 +4,8 @@ import PageBanner from '../../../components/PageBanner.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import { TOURISM } from '../../../site-content/tourism';
 import site from '../../../site';
+import { padDescription } from '../../../lib/metaText';
+import { andList } from '../../../lib/city-facts';
 
 export function getStaticPaths() {
   if (!site.features.tourism) return [];
@@ -15,6 +17,14 @@ export function getStaticPaths() {
 const { itinerary } = Astro.props;
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
 const canonical = `${siteUrl}/tourism/itineraries/${itinerary.slug}/`;
+// Head-only meta description: the teaser, padded with the stops and time.
+const stopNames: string[] = itinerary.stops.map((s: { name: string }) => s.name);
+const allStops = `Stops: ${andList(stopNames)}.`;
+const metaDescription = padDescription(itinerary.teaser, [
+  itinerary.teaser.length + 1 + allStops.length <= 160 ? allStops : `Stops: ${andList(stopNames.slice(0, 2))} and more.`,
+  `Time needed: ${itinerary.time}.`,
+  `A ${site.cityLabel} itinerary.`,
+]);
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -28,7 +38,7 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={`${itinerary.name} | ${site.cityLabel} Itinerary`} description={itinerary.teaser} canonical={canonical}>
+<BaseLayout pageSchema={{}} title={`${itinerary.name} | ${site.cityLabel} Itinerary`} description={metaDescription} canonical={canonical}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <PageBanner title={itinerary.name} description={itinerary.teaser}>

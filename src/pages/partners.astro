@@ -11,7 +11,7 @@ import site, { SITES } from '../site';
 const partners = Object.values(SITES).filter((s) => s.slug !== site.slug);
 ---
 
-<BaseLayout title="Partner Sites" description={`${site.siteName}'s sister directory sites covering other South African cities.`}>
+<BaseLayout title="Partner Sites" pageSchema={{}} description={`${site.siteName}'s sister directory sites covering other South African cities: ${partners.map((p) => `${p.siteName} (${p.cityLabel})`).join(' and ')}. Verified local listings, built the same way.`}>
   <section class="container partners-page">
     <h1>Partner Sites</h1>
     <p>

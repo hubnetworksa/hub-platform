@@ -4,6 +4,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { guidesFor } from '../../lib/guides';
 import { collectionPageJsonLd } from '../../lib/seo';
 import site from '../../site';
+import { padDescription } from '../../lib/metaText';
 
 const guideRows = guidesFor(site.slug).map((g) => ({
   href: `/guides/${g.slug}/`,
@@ -24,7 +25,11 @@ const jsonLd = collectionPageJsonLd({
 
 <BaseLayout
   title="Guides"
-  description={`Plain-language buyer's guides for the trades people get burnt on most — written for ${site.cityLabel}.`}
+  description={padDescription(`Plain-language buyer's guides for the trades people get burnt on most — written for ${site.cityLabel}.`, [
+    guideRows.length > 2 ? `${guideRows.length} guides, covering ${guideRows.slice(0, 2).map((g) => g.cat).join(', ')} and more.` : null,
+    guideRows.length > 1 ? `${guideRows.length} guides, covering ${guideRows[0].cat} and more.` : null,
+    `${guideRows.length} ${guideRows.length === 1 ? 'guide' : 'guides'} so far.`,
+  ])}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
   <!-- The mockup's Guides hero has no visible breadcrumb; the component is
