@@ -4,7 +4,7 @@ import BusinessCard from '../../../components/BusinessCard.astro';
 import SponsorBanner from '../../../components/SponsorBanner.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import SponsorSlot from '../../../components/SponsorSlot.astro';
-import { categories, businessesInCategory, suburbFor, type Business, byPlanThenName, FEATURED_TIER, isPaidListing, sponsorFor, withoutSponsors } from '../../../lib/data';
+import { categories, businessesInCategory, categoryHasBusinesses, suburbFor, type Business, byPlanThenName, FEATURED_TIER, isPaidListing, sponsorFor, withoutSponsors } from '../../../lib/data';
 import { groupForCategory } from '../../../lib/categoryGroups';
 import { synonymsFor, locationSynonymsFor } from '../../../lib/categorySynonyms';
 import { collectionPageJsonLd } from '../../../lib/seo';
@@ -34,7 +34,7 @@ const suburbGroups = [...bySuburb.values()].sort((a, b) => b.businesses.length -
 const categorySponsor = sponsorFor('category_sponsor', category.slug);
 const featuredInCategory = withoutSponsors(businesses.filter((b) => b.subscription_tier >= FEATURED_TIER), categorySponsor).sort(byPlanThenName);
 const group = groupForCategory(category.slug);
-const isEmpty = businesses.length === 0;
+const isEmpty = !categoryHasBusinesses(category.id);
 
 // Sibling categories in the same group — only ones with real listings, so
 // this never sends someone to a thin/noindexed page (principle 2 of the
@@ -42,7 +42,7 @@ const isEmpty = businesses.length === 0;
 const relatedCategories = (group?.categorySlugs ?? [])
   .filter((slug) => slug !== category.slug)
   .map((slug) => categories.find((c) => c.slug === slug))
-  .filter((c): c is NonNullable<typeof c> => Boolean(c) && businessesInCategory(c.id).length > 0)
+  .filter((c): c is NonNullable<typeof c> => Boolean(c) && categoryHasBusinesses(c.id))
   .sort((a, b) => a.name.localeCompare(b.name));
 const synonyms = [...synonymsFor(category.slug), ...locationSynonymsFor(category.name, site.cityLabel)];
 const synonymLine = synonyms.length > 0 ? ` Also searched as: ${synonyms.slice(0, 4).join(', ')}.` : '';

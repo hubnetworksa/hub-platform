@@ -19,6 +19,7 @@ import {
   businessesInSuburb,
   businessesInSuburbAndCategory,
   businessesInShoppingCenter,
+  categoryHasBusinesses,
   todaySast,
   type Business,
 } from './data';
@@ -114,11 +115,12 @@ export function sitemapEntryFor(pathname: string): SitemapEntry | null {
       if (!slug) return { chunk: 'category', lastmod: newestUpdate(businesses) };
       const category = categoryBySlug.get(slug);
       if (!category) return { chunk: 'category' };
-      const inCategory = businessesInCategory(category.id);
       if (!sub) {
-        // Empty categories carry noindex (category/[slug]/index.astro).
-        if (inCategory.length === 0) return null;
-        return { chunk: 'category', lastmod: newestUpdate(inCategory) };
+        // Empty categories carry noindex (category/[slug]/index.astro) —
+        // categoryHasBusinesses() is the one shared check for both, so this
+        // can't drift from the page's own noindex condition again.
+        if (!categoryHasBusinesses(category.id)) return null;
+        return { chunk: 'category', lastmod: newestUpdate(businessesInCategory(category.id)) };
       }
       const suburb = suburbBySlug.get(sub);
       if (!suburb) return { chunk: 'category-suburb' };
