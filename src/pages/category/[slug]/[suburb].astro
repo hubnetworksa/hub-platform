@@ -2,9 +2,8 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import BusinessCard from '../../../components/BusinessCard.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
-import { categories, suburbs, businessesInSuburbAndCategory, byPlanThenName, isPaidListing, sponsorFor } from '../../../lib/data';
+import { categories, suburbs, businessesInSuburbAndCategory, byPlanThenName, isPaidListing, sponsorFor, groupForCategory } from '../../../lib/data';
 import SponsorBanner from '../../../components/SponsorBanner.astro';
-import { groupForCategory } from '../../../lib/categoryGroups';
 import { synonymsFor, locationSynonymsFor, suburbSynonymsFor } from '../../../lib/categorySynonyms';
 import { collectionPageJsonLd } from '../../../lib/seo';
 import site from '../../../site';

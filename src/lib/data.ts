@@ -13,6 +13,8 @@ import fuelRaw from '../data/fuel-prices.json';
 import { canFormatDescription, renderRichText, plainHtml, renderInline, plainLine } from './rich-text';
 import { centsToRand, monthlyAndYearly } from '../../functions/_lib/pricing';
 import { whatsappUrl } from './whatsapp';
+import { resolveCategoryGroups, type CategoryGroup } from './categoryGroups';
+import { CATEGORY_SCHEMA_TYPES, DEFAULT_SCHEMA_TYPE } from './categorySchemaTypes';
 import site from '../site';
 
 export interface Suburb {
@@ -34,6 +36,17 @@ export interface Category {
   id: number;
   slug: string;
   name: string;
+  /** Section this category displays under (see groupForCategory below) —
+   *  set only for a category added through the admin "Add category" page
+   *  (functions/api/admin/categories.ts). NULL/absent for every category
+   *  that predates that column, which falls back to the hardcoded
+   *  categorySlugs lists in categoryGroups.ts instead. Absent entirely
+   *  (rather than null) when scripts/fetch-d1-data.mjs built against a
+   *  database the group_name/schema_type migration hasn't reached yet. */
+  group_name?: string | null;
+  /** schema.org JSON-LD type override — same admin-only, same fallback
+   *  (to categorySchemaTypes.ts) as group_name above. */
+  schema_type?: string | null;
 }
 
 export interface ShoppingCenter {
@@ -274,6 +287,34 @@ const reviewsByBusinessId = new Map<number, Review[]>();
 for (const review of reviews) {
   if (!reviewsByBusinessId.has(review.business_id)) reviewsByBusinessId.set(review.business_id, []);
   reviewsByBusinessId.get(review.business_id)!.push(review);
+}
+
+// The effective section groupings for this build's live category list — a
+// category's own DB group_name (set via the admin Categories page) wins
+// over categoryGroups.ts's hardcoded categorySlugs lists, which stay the
+// fallback for every category that predates that column. See
+// resolveCategoryGroups() for exactly how the two are merged, and why this
+// (not CATEGORY_GROUPS directly) is what every category-grouping page
+// should read from.
+export const CATEGORY_GROUPS_RESOLVED: CategoryGroup[] = resolveCategoryGroups(categories);
+const groupByCategorySlug = new Map<string, CategoryGroup>();
+for (const group of CATEGORY_GROUPS_RESOLVED) {
+  for (const slug of group.categorySlugs) groupByCategorySlug.set(slug, group);
+}
+
+/** The section a category displays under, DB override included — use this
+ *  instead of categoryGroups.ts's groupForCategory() (which only ever sees
+ *  the hardcoded table) anywhere a category's group matters at build time. */
+export function groupForCategory(categorySlug: string): CategoryGroup | undefined {
+  return groupByCategorySlug.get(categorySlug);
+}
+
+/** schema.org JSON-LD type for a category: its own DB schema_type (admin
+ *  Categories page) first, else categorySchemaTypes.ts's hardcoded table,
+ *  else the same generic LocalBusiness fallback that table itself uses. */
+export function schemaTypeFor(categorySlug: string): string {
+  const category = categories.find((c) => c.slug === categorySlug);
+  return category?.schema_type || CATEGORY_SCHEMA_TYPES[categorySlug] || DEFAULT_SCHEMA_TYPE;
 }
 
 export const suburbBySlug = (slug: string) => suburbs.find((s) => s.slug === slug);

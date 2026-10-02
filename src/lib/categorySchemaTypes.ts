@@ -108,3 +108,20 @@ export const CATEGORY_SCHEMA_TYPES: Record<string, string> = {
 export function schemaTypeFor(categorySlug: string): string {
   return CATEGORY_SCHEMA_TYPES[categorySlug] ?? 'LocalBusiness';
 }
+
+/** The generic fallback used above for any category with no closer
+ *  schema.org subtype — also what a new admin-added category gets when
+ *  the admin leaves "Schema type" unset (see functions/api/admin/
+ *  categories.ts). */
+export const DEFAULT_SCHEMA_TYPE = 'LocalBusiness';
+
+/** Every schema.org type this table actually uses, plus the fallback
+ *  above — the finite set the admin "Add category" form is allowed to
+ *  pick from, so a category can never end up with a made-up type that
+ *  isn't one of the real, checked-against-schema.org values already
+ *  vetted for the rest of the site (see the file header comment). */
+export const KNOWN_SCHEMA_TYPES: string[] = [...new Set([DEFAULT_SCHEMA_TYPE, ...Object.values(CATEGORY_SCHEMA_TYPES)])].sort();
+
+export function isKnownSchemaType(value: string): boolean {
+  return KNOWN_SCHEMA_TYPES.includes(value);
+}

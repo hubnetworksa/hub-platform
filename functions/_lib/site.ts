@@ -52,6 +52,16 @@ export function getSite(slug: string | undefined): Site {
   return SITES[slug];
 }
 
+// All three sites — used where a Function fans a write out to every city's
+// own D1 via its own /api/admin/* endpoint (e.g. the admin Categories page
+// propagating a new category to the other two sites, see
+// functions/api/admin/categories.ts). Each site is a separate Cloudflare
+// Pages project with its own D1 and no shared admin session, so this is
+// server-to-server HTTPS, not a direct cross-database write.
+export function allSites(): Site[] {
+  return Object.values(SITES);
+}
+
 // A hostname allowed to hotlink this site's media (real domain, or any
 // Cloudflare Pages preview of this project). Cloudflare hands out a new
 // subdomain of pagesDevHost for every kind of preview — the hosted dev

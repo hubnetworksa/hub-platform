@@ -1,0 +1,246 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminShell from '../../components/AdminShell.astro';
+---
+
+<BaseLayout title="Categories" description="Add a new business category — no developer needed." noindex={true}>
+  <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
+
+  <div id="content" hidden>
+    <AdminShell active="categories" title="Categories" subtitle="Add a category businesses can list under — it goes to all 3 hubs automatically.">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="background:#fff;border:2px solid var(--border);border-radius:12px;padding:14px 18px;flex:1;min-width:150px">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Categories on this hub</div>
+          <div id="stat-total" style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px">—</div>
+        </div>
+        <div style="background:#fff;border:2px solid var(--border);border-radius:12px;padding:14px 18px;flex:1;min-width:150px">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Groups in use</div>
+          <div id="stat-groups" style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:6px">—</div>
+        </div>
+        <a href="/category/" style="padding:13px 18px;border:2px solid var(--navy);border-radius:11px;background:#fff;color:var(--navy);font-size:13.5px;font-weight:800;text-decoration:none">View public page</a>
+      </div>
+
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:20px">
+        <h2 style="margin:0 0 4px;font-size:16px;letter-spacing:-.02em;color:var(--navy)">Add a category</h2>
+        <p style="margin:0 0 16px;font-size:12.5px;font-weight:600;color:var(--muted);line-height:1.5">
+          Creates it on this hub and — if the form was submitted here, not propagated from another hub — on the other two hubs' own dashboards automatically, so you only do this once.
+        </p>
+        <form id="category-form" style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+              Name
+              <input type="text" name="name" id="category-name" required maxlength="80" placeholder="Rubbish &amp; Rubble Removal" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" />
+            </label>
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+              Slug <span style="font-weight:600;color:var(--muted);font-size:12px">auto-filled, editable</span>
+              <input type="text" name="slug" id="category-slug" maxlength="80" pattern="[a-z0-9\-]+" placeholder="rubbish-rubble-removal" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text);font-family:monospace" />
+            </label>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+            <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+              Group
+              <select name="group" id="category-group-select" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)">
+                <option value="">Loading…</option>
+              </select>
+            </label>
+            <label id="category-group-other-wrap" hidden style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+              New group name
+              <input type="text" name="groupOther" id="category-group-other" maxlength="80" placeholder="e.g. Pet Services" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)" />
+            </label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:800;color:var(--navy)">
+            Schema type <span style="font-weight:600;color:var(--muted);font-size:12px">optional — Google structured data; leave as Default if unsure</span>
+            <select name="schemaType" id="category-schema-select" style="padding:13px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text)">
+              <option value="">Default (LocalBusiness)</option>
+            </select>
+          </label>
+          <div style="display:flex;gap:9px;flex-wrap:wrap;padding-top:4px">
+            <button type="submit" id="category-form-submit" style="padding:13px 20px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;cursor:pointer">Add category</button>
+          </div>
+          <p id="category-form-status" role="status" style="margin:0;font-size:13px;font-weight:600;line-height:1.5;color:var(--muted);"></p>
+        </form>
+      </div>
+
+      <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+        <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.2fr) minmax(0,1.2fr);gap:12px;padding:12px 18px;border-bottom:2px solid var(--navy);font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">
+          <span>Category</span><span>Slug</span><span>Group</span>
+        </div>
+        <div id="categories-list"></div>
+        <p id="categories-empty" hidden style="padding:26px 18px;text-align:center;font-size:13.5px;font-weight:700;color:var(--muted);margin:0;">No categories yet.</p>
+      </div>
+    </AdminShell>
+  </div>
+</BaseLayout>
+
+<script>
+  import { esc, requireAdmin, showContent, postJson } from '../../lib/admin-html';
+
+  interface CategoryRow {
+    id: number;
+    slug: string;
+    name: string;
+    group_name: string | null;
+    schema_type: string | null;
+  }
+
+  // Fixed, display-only labels for the other two hubs — mirrors each
+  // sites/<slug>.json's siteName. Only used to word the per-site result of
+  // the cross-site propagation functions/api/admin/categories.ts does;
+  // never sent anywhere.
+  const SITE_LABELS: Record<string, string> = { polokwane: 'PolokwaneHub', pretoria: 'PretoriaHub', capetown: 'TheCapeTownHub' };
+  const siteLabel = (slug: string) => SITE_LABELS[slug] ?? slug;
+
+  function slugify(s: string): string {
+    return s
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 80);
+  }
+
+  function renderRow(c: CategoryRow): string {
+    return `
+      <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.2fr) minmax(0,1.2fr);gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);align-items:center">
+        <span style="font-size:13.5px;font-weight:800;color:var(--navy);overflow-wrap:anywhere">${esc(c.name)}</span>
+        <span style="font-size:12.5px;font-weight:600;color:var(--muted);font-family:monospace;overflow-wrap:anywhere">${esc(c.slug)}</span>
+        <span style="font-size:12.5px;font-weight:700;color:var(--text)">${esc(c.group_name ?? '—')}</span>
+      </div>`;
+  }
+
+  let slugTouched = false;
+  const nameInput = document.getElementById('category-name') as HTMLInputElement;
+  const slugInput = document.getElementById('category-slug') as HTMLInputElement;
+  const groupSelect = document.getElementById('category-group-select') as HTMLSelectElement;
+  const groupOtherWrap = document.getElementById('category-group-other-wrap') as HTMLLabelElement;
+  const groupOtherInput = document.getElementById('category-group-other') as HTMLInputElement;
+  const schemaSelect = document.getElementById('category-schema-select') as HTMLSelectElement;
+  const form = document.getElementById('category-form') as HTMLFormElement;
+  const submitBtn = document.getElementById('category-form-submit') as HTMLButtonElement;
+  const statusEl = document.getElementById('category-form-status')!;
+
+  nameInput.addEventListener('input', () => {
+    if (!slugTouched) slugInput.value = slugify(nameInput.value);
+  });
+  slugInput.addEventListener('input', () => {
+    slugTouched = true;
+  });
+
+  groupSelect.addEventListener('change', () => {
+    const isOther = groupSelect.value === '__other__';
+    groupOtherWrap.hidden = !isOther;
+    if (isOther) groupOtherInput.focus();
+  });
+
+  function populateSelects(groups: string[], schemaTypes: string[]) {
+    groupSelect.innerHTML =
+      '<option value="">Choose a group…</option>' +
+      groups.map((g) => `<option value="${esc(g)}">${esc(g)}</option>`).join('') +
+      '<option value="__other__">Other (type a new group)…</option>';
+    schemaSelect.innerHTML =
+      '<option value="">Default (LocalBusiness)</option>' +
+      schemaTypes.filter((t) => t !== 'LocalBusiness').map((t) => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+    document.getElementById('stat-groups')!.textContent = String(groups.length);
+  }
+
+  function renderList(categories: CategoryRow[]) {
+    document.getElementById('stat-total')!.textContent = String(categories.length);
+    const list = document.getElementById('categories-list')!;
+    const empty = document.getElementById('categories-empty')!;
+    if (categories.length === 0) {
+      empty.hidden = false;
+      list.innerHTML = '';
+      return;
+    }
+    empty.hidden = true;
+    list.innerHTML = [...categories].sort((a, b) => a.name.localeCompare(b.name)).map(renderRow).join('');
+  }
+
+  async function load() {
+    const res = await fetch('/api/admin/categories');
+    const data = await res.json();
+    if (!data.ok) {
+      statusEl.textContent = 'Could not load categories.';
+      return;
+    }
+    populateSelects(data.groups ?? [], data.schemaTypes ?? []);
+    renderList(data.categories ?? []);
+  }
+
+  function describePropagation(created: string, propagated: Record<string, string>): string {
+    const parts: string[] = [];
+    const warnings: string[] = [];
+    for (const [slug, outcome] of Object.entries(propagated)) {
+      if (outcome === 'created') parts.push(siteLabel(slug));
+      else if (outcome === 'already existed') parts.push(`${siteLabel(slug)} (already had it)`);
+      else warnings.push(`${siteLabel(slug)} — ${outcome.replace(/^failed: /, '')}`);
+    }
+    let msg = `Added on ${siteLabel(created)}.`;
+    if (parts.length) msg += ` Added on ${parts.join(' and ')} too.`;
+    if (warnings.length) {
+      msg += ` Could not add it on ${warnings.map((w) => w.split(' — ')[0]).join(' or ')} — add it there manually (Admin → Categories → Add category) or try again.`;
+    }
+    return msg;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    statusEl.textContent = '';
+    statusEl.style.color = 'var(--muted)';
+
+    const name = nameInput.value.trim();
+    if (!name) {
+      statusEl.style.color = 'var(--danger)';
+      statusEl.textContent = 'Name is required.';
+      return;
+    }
+    const slug = slugInput.value.trim().toLowerCase();
+    if (slug && !/^[a-z0-9-]+$/.test(slug)) {
+      statusEl.style.color = 'var(--danger)';
+      statusEl.textContent = 'Slug can only contain lowercase letters, numbers and hyphens.';
+      return;
+    }
+    const groupName = groupSelect.value === '__other__' ? groupOtherInput.value.trim() : groupSelect.value;
+    if (!groupName) {
+      statusEl.style.color = 'var(--danger)';
+      statusEl.textContent = 'Pick or type a group for this category.';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    const original = submitBtn.textContent;
+    submitBtn.textContent = 'Adding…';
+    const result = await postJson('/api/admin/categories', {
+      name,
+      slug: slug || undefined,
+      groupName,
+      schemaType: schemaSelect.value || undefined,
+    });
+    submitBtn.disabled = false;
+    submitBtn.textContent = original;
+
+    if (!result.ok) {
+      statusEl.style.color = 'var(--danger)';
+      statusEl.textContent = (result.error as string) || 'Could not add that category.';
+      return;
+    }
+
+    statusEl.style.color = 'var(--accent-hover)';
+    const propagationLine =
+      result.created && result.propagated
+        ? describePropagation(result.created as string, result.propagated as Record<string, string>)
+        : 'Added.';
+    statusEl.textContent = `${propagationLine} It'll appear on the site (category page, nav and dropdowns) after the next site update, within about 15–25 minutes.`;
+
+    form.reset();
+    slugTouched = false;
+    groupOtherWrap.hidden = true;
+    await load();
+  });
+
+  (async () => {
+    if (!(await requireAdmin('/admin/categories/'))) return;
+    showContent();
+    await load();
+  })();
+</script>
