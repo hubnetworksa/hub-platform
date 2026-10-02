@@ -325,7 +325,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 
               <button type="submit" form="edit-form" class="owner-btn-primary" style="align-self:flex-start;padding:14px 22px;border:0;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;cursor:pointer">Save changes</button>
               <p id="form-status" role="status" style="margin:0;font-size:13px;font-weight:700;color:var(--muted)"></p>
-              <p style="margin:0;font-size:12px;font-weight:600;color:var(--muted)">Changes are saved straight away and show on your public listing within about 15–25 minutes. To change your business name or category, <a href="/contact/" style="color:var(--accent-hover);font-weight:800">contact us</a>.</p>
+              <p style="margin:0;font-size:12px;font-weight:600;color:var(--muted)">Your description, opening hours and WhatsApp number show on your public listing right away. Everything else here (phone, website, email, address, social links) — and search and cards elsewhere on the site — catch up within about 15–25 minutes. To change your business name or category, <a href="/contact/" style="color:var(--accent-hover);font-weight:800">contact us</a>.</p>
             </div>
           </section>
 
@@ -1391,7 +1391,10 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
           render();
         }
       }
-      const live = `${done === 1 ? 'It' : 'They'} will appear on your public listing within about 15–25 minutes.`;
+      // Photos show on the business page itself right away (a live-patch
+      // script re-fetches them on load — see functions/api/business-live.ts);
+      // only the rest of the site (search, cards) still needs a rebuild.
+      const live = `${done === 1 ? 'It shows' : 'They show'} on your public listing right away — search and cards elsewhere on the site catch up within about 15–25 minutes.`;
       if (done && !failed) setStatus(`Saved ${done === 1 ? 'your photo' : `${done} photos`}. ${live}`);
       else if (done) setStatus(`Saved ${done} of ${files.length} photos — see below for the rest. ${live}`);
       else setStatus(files.length === 1 ? 'Your photo was not uploaded — see below.' : 'No photos were uploaded — see below.');
@@ -1417,7 +1420,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
         photos = photos.filter((p) => p.id !== photoId);
         progress.replaceChildren();
         progress.hidden = true;
-        setStatus('Photo removed. It will disappear from your public listing within about 15–25 minutes.');
+        setStatus('Photo removed. It no longer shows on your public listing — search and cards elsewhere on the site catch up within about 15–25 minutes.');
       } else {
         setStatus(result.error || 'Could not remove photo.');
       }
@@ -1576,7 +1579,10 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
         if (result.ok) {
           key = result.key;
           show();
-          setStatus('Saved. Your logo will appear on your public listing within about 15–25 minutes.');
+          // The logo shows on the business page itself right away (see
+          // functions/api/business-live.ts); only the rest of the site
+          // (search, cards) still needs a rebuild.
+          setStatus('Saved. Your logo shows on your public listing right away — search and cards elsewhere on the site catch up within about 15–25 minutes.');
         } else {
           show();
           setStatus(result.error || 'Could not upload logo.');
@@ -1596,7 +1602,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       if (result.ok) {
         key = null;
         show();
-        setStatus('Logo removed. It will disappear from your public listing within about 15–25 minutes.');
+        setStatus('Logo removed. It no longer shows on your public listing — search and cards elsewhere on the site catch up within about 15–25 minutes.');
       } else {
         setStatus(result.error || 'Could not remove logo.');
       }
@@ -1717,7 +1723,9 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
       body: JSON.stringify({ ...data, businessId: Number(businessId) }),
     });
     const result = await res.json();
-    formStatus.textContent = result.ok ? 'Saved. Your listing will update within about 15–25 minutes.' : result.error || 'Something went wrong.';
+    formStatus.textContent = result.ok
+      ? 'Saved. Your description, hours and WhatsApp number update on your public listing right away — the rest updates within about 15–25 minutes.'
+      : result.error || 'Something went wrong.';
   });
 
   init();

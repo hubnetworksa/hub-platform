@@ -125,10 +125,14 @@ const canonicalUrl = siteUrl + Astro.url.pathname;
 // listings render exactly as before.
 const logo = logoFor(business);
 const logoUrl = logo ? siteUrl + logo : null;
-// Only wraps the name/badges block when there's a logo to sit beside it.
-const HeadWrap = logo ? 'div' : Fragment;
-const HeadText = logo ? 'div' : Fragment;
-const HeadRest = logo ? 'div' : Fragment;
+// The header is always these three divs (#biz-header/-text/-rest), never a
+// Fragment: the live-patch script at the bottom of this file needs stable
+// elements to add/remove the biz-head/-text/-rest classes on if a logo
+// appears or disappears after a live refetch (a plan upgrade/downgrade since
+// the last rebuild — see logoFor in data.ts for the rule). At build time the
+// classes are only added when there's a logo to show, same visual result as
+// the old Fragment-based version (an unclassed div behaves like a Fragment
+// for layout purposes).
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -162,7 +166,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
       ]}
     />
 
-    <div id="profile-shell" style="display:grid;grid-template-columns:1fr;gap:24px;margin-top:16px">
+    <div id="profile-shell" data-business-id={business.id} style="display:grid;grid-template-columns:1fr;gap:24px;margin-top:16px">
       <div>
         <div class="biz-profile-card" style="border:2px solid var(--navy);border-radius:var(--radius-lg);background:#fff;box-shadow:var(--shadow)">
           {isFeatured && (
@@ -177,9 +181,9 @@ const mapsUrl = (business.address || (business.lat && business.lng))
             </div>
           )}
           <div style="padding:clamp(18px,3vw,28px)">
-            <HeadWrap {...(logo ? { class: 'biz-head' } : {})}>
+            <div id="biz-header" class={logo ? 'biz-head' : ''}>
             <BusinessLogo business={business} size="xl" eager />
-            <HeadText {...(logo ? { class: 'biz-head-text' } : {})}>
+            <div id="biz-header-text" class={logo ? 'biz-head-text' : ''}>
             <h1 style="margin:0 0 10px;font-size:clamp(26px,4vw,40px);letter-spacing:-.03em;line-height:1.05;color:var(--navy);overflow-wrap:break-word">{business.name}</h1>
             <div id="open-row" hidden data-hours={business.hours ?? ''} style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
               <span id="open-status" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--accent-hover)">
@@ -200,9 +204,9 @@ const mapsUrl = (business.address || (business.lat && business.lng))
               ))}
               {suburb && <span style="padding:6px 11px;border-radius:999px;border:1.5px solid var(--border);color:var(--muted);font-size:12.5px;font-weight:700">{suburb.name}</span>}
             </div>
-            </HeadText>
-            <HeadRest {...(logo ? { class: 'biz-head-rest' } : {})}>
-            {descriptionHtml && <div class="rich-text" style="margin:0 0 20px;font-size:16px;line-height:1.62;max-width:62ch" set:html={descriptionHtml} />}
+            </div>
+            <div id="biz-header-rest" class={logo ? 'biz-head-rest' : ''}>
+            <div id="biz-description" class="rich-text" style="margin:0 0 20px;font-size:16px;line-height:1.62;max-width:62ch" set:html={descriptionHtml} hidden={!descriptionHtml} />
             {center && (
               <p style="margin:0 0 16px;">
                 <a href={`/shopping-center/${center.slug}/`} style="display:inline-flex;align-items:center;gap:8px;color:var(--accent);font-weight:700;font-size:14px;text-decoration:none">
@@ -212,7 +216,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
               </p>
             )}
 
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px">
+            <div id="actions-row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px">
               {business.phone && (
                 <a href={phoneHref(business.phone)} data-track="phone_click" style="display:flex;align-items:center;gap:9px;padding:14px 16px;border-radius:11px;background:var(--accent);color:var(--contrast);font-size:14.5px;font-weight:800;text-decoration:none">
                   <Icon path="<path d='M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8Z'/>" size={17} />
@@ -220,7 +224,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
                 </a>
               )}
               {whatsapp && (
-                <a href={whatsapp} target="_blank" rel="noopener" data-track="whatsapp_click" aria-label={`Chat to ${business.name} on WhatsApp`} style={`display:flex;align-items:center;gap:9px;padding:14px 16px;border-radius:11px;background:${WHATSAPP_GREEN};color:#fff;font-size:14.5px;font-weight:800;text-decoration:none`}>
+                <a id="whatsapp-btn" href={whatsapp} target="_blank" rel="noopener" data-track="whatsapp_click" aria-label={`Chat to ${business.name} on WhatsApp`} style={`display:flex;align-items:center;gap:9px;padding:14px 16px;border-radius:11px;background:${WHATSAPP_GREEN};color:#fff;font-size:14.5px;font-weight:800;text-decoration:none`}>
                   <Icon path={WHATSAPP_ICON} size={18} />
                   WhatsApp
                 </a>
@@ -258,12 +262,12 @@ const mapsUrl = (business.address || (business.lat && business.lng))
               )}
               <div style="background:#fff;padding:14px 16px">
                 <div style="font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)">Trading hours</div>
-                <div style="font-size:14px;font-weight:600;margin-top:5px;line-height:1.45;white-space:pre-line">{business.hours ?? 'Not available'}</div>
+                <div id="hours-text" style="font-size:14px;font-weight:600;margin-top:5px;line-height:1.45;white-space:pre-line">{business.hours ?? 'Not available'}</div>
               </div>
             </div>
             <ListReturn />
-            </HeadRest>
-            </HeadWrap>
+            </div>
+            </div>
           </div>
         </div>
 
@@ -292,7 +296,7 @@ const mapsUrl = (business.address || (business.lat && business.lng))
               )}
               <div>
                 <dt>Trading hours</dt>
-                <dd>{hoursLine ?? (business.hours ? 'See the hours above' : 'Not listed yet')}</dd>
+                <dd id="hours-summary-text">{hoursLine ?? (business.hours ? 'See the hours above' : 'Not listed yet')}</dd>
               </div>
               {primaryCat && suburb && sameCatSuburb.length > 1 && (
                 <div>
@@ -316,39 +320,40 @@ const mapsUrl = (business.address || (business.lat && business.lng))
 
         {!showsPaid && <AdUnit placement="businessInContent" style="margin-top:22px" />}
 
-        {photos.length > 0 && (
-          <>
-            <div style="margin-top:26px;border-bottom:2px solid var(--navy);padding-bottom:10px;display:flex;align-items:center;gap:9px">
-              <span style="color:var(--accent)"><Icon path="<rect x='3' y='5' width='18' height='14' rx='2'/><circle cx='8.5' cy='10.5' r='1.5'/><path d='m21 16-5-4-4 3-3-2-4 3'/>" size={17} /></span>
-              <h2 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.015em;color:var(--navy)">Gallery</h2>
-            </div>
-            <div class="business-photo-grid">
-              {photos.map((p, i) => (
-                <button type="button" class="business-photo" data-photo-index={i} aria-label={`View photo ${i + 1} of ${photos.length} full screen`}>
-                  <img src={`/media/${p.r2_key}`} alt={p.caption ?? business.name} loading="lazy" />
-                </button>
-              ))}
-            </div>
-
-            <div id="lightbox" class="lightbox" hidden>
-              <button type="button" id="lightbox-close" class="lightbox-btn lightbox-close" aria-label="Close">
-                <Icon path="<path d='M18 6 6 18M6 6l12 12'/>" size={22} />
+        {/* Always rendered (just hidden when there are no photos at build
+            time), not a conditional Fragment: the live-patch script needs
+            stable elements to add/remove tiles on if the live photo count
+            differs from the build (new upload, or fewer after a downgrade —
+            see PHOTO_CAP_BY_TIER above). The nav/count elements are likewise
+            always present and hidden via JS, not Astro's `photos.length > 1`
+            check, for the same reason. */}
+        <div id="gallery-section" hidden={photos.length === 0}>
+          <div style="margin-top:26px;border-bottom:2px solid var(--navy);padding-bottom:10px;display:flex;align-items:center;gap:9px">
+            <span style="color:var(--accent)"><Icon path="<rect x='3' y='5' width='18' height='14' rx='2'/><circle cx='8.5' cy='10.5' r='1.5'/><path d='m21 16-5-4-4 3-3-2-4 3'/>" size={17} /></span>
+            <h2 style="margin:0;font-size:15px;font-weight:800;letter-spacing:-.015em;color:var(--navy)">Gallery</h2>
+          </div>
+          <div id="photo-grid" class="business-photo-grid">
+            {photos.map((p, i) => (
+              <button type="button" class="business-photo" data-photo-index={i} aria-label={`View photo ${i + 1} of ${photos.length} full screen`}>
+                <img src={`/media/${p.r2_key}`} alt={p.caption ?? business.name} loading="lazy" />
               </button>
-              {photos.length > 1 && (
-                <>
-                  <button type="button" id="lightbox-prev" class="lightbox-btn lightbox-nav lightbox-prev" aria-label="Previous photo">
-                    <Icon path="<path d='m15 18-6-6 6-6'/>" size={24} />
-                  </button>
-                  <button type="button" id="lightbox-next" class="lightbox-btn lightbox-nav lightbox-next" aria-label="Next photo">
-                    <Icon path="<path d='m9 18 6-6-6-6'/>" size={24} />
-                  </button>
-                </>
-              )}
-              <img id="lightbox-img" src="" alt="" />
-              {photos.length > 1 && <div id="lightbox-count" class="lightbox-count"></div>}
-            </div>
-          </>
-        )}
+            ))}
+          </div>
+
+          <div id="lightbox" class="lightbox" hidden>
+            <button type="button" id="lightbox-close" class="lightbox-btn lightbox-close" aria-label="Close">
+              <Icon path="<path d='M18 6 6 18M6 6l12 12'/>" size={22} />
+            </button>
+            <button type="button" id="lightbox-prev" class="lightbox-btn lightbox-nav lightbox-prev" aria-label="Previous photo" hidden={photos.length <= 1}>
+              <Icon path="<path d='m15 18-6-6 6-6'/>" size={24} />
+            </button>
+            <button type="button" id="lightbox-next" class="lightbox-btn lightbox-nav lightbox-next" aria-label="Next photo" hidden={photos.length <= 1}>
+              <Icon path="<path d='m9 18 6-6-6-6'/>" size={24} />
+            </button>
+            <img id="lightbox-img" src="" alt="" />
+            <div id="lightbox-count" class="lightbox-count" hidden={photos.length <= 1}></div>
+          </div>
+        </div>
 
         <div id="reviews" style="margin-top:26px;border-bottom:2px solid var(--navy);padding-bottom:10px;display:flex;align-items:center;gap:9px;scroll-margin-top:20px">
           <span style="color:var(--accent)"><Icon path="<path d='m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7Z'/>" size={17} /></span>
@@ -597,13 +602,20 @@ const mapsUrl = (business.address || (business.lat && business.lng))
      collapsed the empty tracks and stretched each photo across the whole
      page (one photo rendered 1160x870 on desktop). Tiles stay the same
      size however many photos there are; two per row on a phone. */
+  /* :global() on the tile/image rules below (not the grid container, which
+     is always server-rendered): the live-patch script's applyPhotos()
+     creates new .business-photo tiles with plain innerHTML, which don't
+     carry Astro's scoped data-astro-cid-* attribute — Astro's normal
+     per-page CSS scoping would silently not apply to them at all (an
+     unstyled button with a full-size <img> overflowing the page), so these
+     have to be real global rules to style a tile however it was added. */
   .business-photo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(200px, calc(50% - 5px)), 1fr));
     gap: 10px;
     margin-top: 14px;
   }
-  .business-photo {
+  :global(.business-photo) {
     display: block;
     aspect-ratio: 4 / 3;
     border-radius: var(--radius);
@@ -616,10 +628,10 @@ const mapsUrl = (business.address || (business.lat && business.lng))
     cursor: pointer;
     font: inherit;
   }
-  .business-photo:hover {
+  :global(.business-photo:hover) {
     transform: translateY(-2px);
   }
-  .business-photo img {
+  :global(.business-photo img) {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -700,72 +712,249 @@ const mapsUrl = (business.address || (business.lat && business.lng))
 </style>
 
 <script>
-  // "Open now · closes 17:00" — the current time only exists in the
-  // browser, so this is filled in client-side from the listing's own hours
-  // text. Shown only when that text parses cleanly (src/lib/openNow.ts);
-  // otherwise the row stays hidden rather than guessing.
-  import { openStatus } from '../../lib/openNow';
+  // Full-screen photo viewer for the Gallery section — click a thumbnail,
+  // flip through with the arrow buttons, arrow keys, or Escape to close.
+  // Delegated (queries the live DOM on every interaction, nothing cached at
+  // parse time) so it keeps working after the live-patch script below adds,
+  // removes or reorders tiles in #photo-grid — a plain querySelectorAll+
+  // forEach at load time would only ever know about the tiles the static
+  // build shipped with.
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement | null;
+  const closeBtn = document.getElementById('lightbox-close');
+  const prevBtn = document.getElementById('lightbox-prev') as HTMLElement | null;
+  const nextBtn = document.getElementById('lightbox-next') as HTMLElement | null;
+  const countEl = document.getElementById('lightbox-count') as HTMLElement | null;
+  let current = 0;
 
-  const row = document.getElementById('open-row');
-  if (row) {
-    const st = openStatus(row.dataset.hours);
-    if (st) {
-      const text = document.getElementById('open-status-text')!;
-      const badge = document.getElementById('open-status')!;
-      if (st.open) {
-        text.textContent = st.closesAt ? `Open now · closes ${st.closesAt}` : 'Open now';
-      } else {
-        text.textContent = st.opensAt ? `Closed now · opens ${st.opensAt}` : 'Closed now';
-        badge.style.color = 'var(--muted)';
-      }
-      row.hidden = false;
+  function tiles(): HTMLButtonElement[] {
+    return Array.from(document.querySelectorAll<HTMLButtonElement>('#photo-grid .business-photo'));
+  }
+  function show(index: number) {
+    const list = tiles();
+    if (!lightboxImg || list.length === 0) return;
+    current = (index + list.length) % list.length;
+    const img = list[current].querySelector('img')!;
+    lightboxImg.src = img.src;
+    lightboxImg.alt = img.alt;
+    const multi = list.length > 1;
+    if (prevBtn) prevBtn.hidden = !multi;
+    if (nextBtn) nextBtn.hidden = !multi;
+    if (countEl) {
+      countEl.hidden = !multi;
+      countEl.textContent = `${current + 1} / ${list.length}`;
     }
   }
+  function openLightbox(index: number) {
+    if (!lightbox) return;
+    show(index);
+    lightbox.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    if (!lightbox) return;
+    lightbox.hidden = true;
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const btn = target.closest<HTMLButtonElement>('.business-photo');
+    if (btn) {
+      openLightbox(tiles().indexOf(btn));
+      return;
+    }
+    if (target === lightbox) closeLightbox();
+  });
+  closeBtn?.addEventListener('click', closeLightbox);
+  prevBtn?.addEventListener('click', () => show(current - 1));
+  nextBtn?.addEventListener('click', () => show(current + 1));
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox || lightbox.hidden) return;
+    if (e.key === 'Escape') closeLightbox();
+    else if (e.key === 'ArrowLeft') show(current - 1);
+    else if (e.key === 'ArrowRight') show(current + 1);
+  });
 </script>
 
 <script>
-  // Full-screen photo viewer for the Gallery section — click a thumbnail,
-  // flip through with the arrow buttons, arrow keys, or Escape to close.
-  const photoButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('.business-photo'));
-  if (photoButtons.length > 0) {
-    const lightbox = document.getElementById('lightbox')!;
-    const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
-    const closeBtn = document.getElementById('lightbox-close')!;
-    const prevBtn = document.getElementById('lightbox-prev');
-    const nextBtn = document.getElementById('lightbox-next');
-    const countEl = document.getElementById('lightbox-count');
-    const urls = photoButtons.map((b) => b.querySelector('img')!.src);
-    let current = 0;
+  // Progressive live hydration for the five fields that can change on this
+  // business's dashboard and should show up on this static page straight
+  // away, not after the next ~15-25 minute rebuild: photos, logo, WhatsApp
+  // number, description and trading hours. The static markup above is the
+  // no-JS/first-paint/crawler fallback (last rebuild's data) and is left
+  // exactly as it was; this fetches /api/business-live once, and only
+  // touches an element when its live value actually differs from what's
+  // already on the page — the common case (nothing changed since the last
+  // rebuild) makes zero DOM changes, so there's never a flash on a page
+  // that hasn't actually changed. A network hiccup (or the fetch simply
+  // failing) leaves the static content showing, silently.
+  import { openStatus } from '../../lib/openNow';
+  import { WHATSAPP_ICON, WHATSAPP_GREEN } from '../../lib/whatsapp';
 
-    function show(index: number) {
-      current = (index + urls.length) % urls.length;
-      lightboxImg.src = urls[current];
-      lightboxImg.alt = photoButtons[current].querySelector('img')!.alt;
-      if (countEl) countEl.textContent = `${current + 1} / ${urls.length}`;
-    }
-    function open(index: number) {
-      show(index);
-      lightbox.hidden = false;
-      document.body.style.overflow = 'hidden';
-    }
-    function close() {
-      lightbox.hidden = true;
-      document.body.style.overflow = '';
-    }
-    photoButtons.forEach((btn, i) => btn.addEventListener('click', () => open(i)));
-    closeBtn.addEventListener('click', close);
-    prevBtn?.addEventListener('click', () => show(current - 1));
-    nextBtn?.addEventListener('click', () => show(current + 1));
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) close();
-    });
-    document.addEventListener('keydown', (e) => {
-      if (lightbox.hidden) return;
-      if (e.key === 'Escape') close();
-      else if (e.key === 'ArrowLeft') show(current - 1);
-      else if (e.key === 'ArrowRight') show(current + 1);
-    });
+  interface LivePhoto { url: string; caption: string | null }
+  interface LiveBusiness {
+    ok: boolean;
+    logo: string | null;
+    whatsapp: string | null;
+    descriptionHtml: string;
+    hoursText: string | null;
+    hoursSummaryText: string | null;
+    photos: LivePhoto[];
   }
+
+  const shell = document.getElementById('profile-shell');
+  const header = document.getElementById('biz-header');
+  const headerText = document.getElementById('biz-header-text');
+  const headerRest = document.getElementById('biz-header-rest');
+  const descEl = document.getElementById('biz-description');
+  const actionsRow = document.getElementById('actions-row');
+  const openRow = document.getElementById('open-row') as HTMLElement | null;
+  const openStatusEl = document.getElementById('open-status') as HTMLElement | null;
+  const openStatusText = document.getElementById('open-status-text');
+  const hoursTextEl = document.getElementById('hours-text');
+  const hoursSummaryEl = document.getElementById('hours-summary-text');
+  const gallerySection = document.getElementById('gallery-section') as HTMLElement | null;
+  const photoGrid = document.getElementById('photo-grid');
+
+  function escapeHtml(s: string): string {
+    return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+  }
+
+  // "Open now · closes 17:00" — the current time only exists in the
+  // browser, so it's filled in here from the listing's hours text, both on
+  // first paint (from the static data-hours) and again after a live patch
+  // (from whatever hours text the live endpoint sent back). Shown only when
+  // the text parses cleanly (src/lib/openNow.ts); otherwise the row stays
+  // hidden rather than guessing.
+  function applyOpenNow(hours: string | null) {
+    if (!openRow || !openStatusText || !openStatusEl) return;
+    openRow.dataset.hours = hours ?? '';
+    const st = hours ? openStatus(hours) : null;
+    if (!st) {
+      openRow.hidden = true;
+      return;
+    }
+    if (st.open) {
+      openStatusText.textContent = st.closesAt ? `Open now · closes ${st.closesAt}` : 'Open now';
+      openStatusEl.style.color = 'var(--accent-hover)';
+    } else {
+      openStatusText.textContent = st.opensAt ? `Closed now · opens ${st.opensAt}` : 'Closed now';
+      openStatusEl.style.color = 'var(--muted)';
+    }
+    openRow.hidden = false;
+  }
+  // First paint, from the static hours already on the page — unchanged
+  // behaviour from before this file had a live-patch script at all.
+  if (openRow) applyOpenNow(openRow.dataset.hours || null);
+
+  // Verified/Featured perk (logoFor in src/lib/data.ts): add/remove/update
+  // the logo tile, matching BusinessLogo.astro's own markup exactly (same
+  // classes) so it looks identical to a logo that was there at build time.
+  function applyLogo(url: string | null, name: string) {
+    if (!header) return;
+    const existing = header.querySelector<HTMLElement>(':scope > .biz-logo');
+    if (!url) {
+      if (!existing) return;
+      existing.remove();
+      header.classList.remove('biz-head');
+      headerText?.classList.remove('biz-head-text');
+      headerRest?.classList.remove('biz-head-rest');
+      return;
+    }
+    if (existing) {
+      const img = existing.querySelector('img');
+      if (img && img.getAttribute('src') !== url) img.setAttribute('src', url);
+      return;
+    }
+    header.classList.add('biz-head');
+    headerText?.classList.add('biz-head-text');
+    headerRest?.classList.add('biz-head-rest');
+    header.insertAdjacentHTML(
+      'afterbegin',
+      `<span class="biz-logo biz-logo--xl"><img src="${escapeHtml(url)}" alt="${escapeHtml(name)} logo" width="150" height="150" loading="eager" decoding="async"></span>`
+    );
+  }
+
+  // Featured-plan perk (whatsappFor in data.ts): add/remove/update the
+  // WhatsApp button beside the call button, matching the static markup.
+  function applyWhatsapp(url: string | null, name: string) {
+    if (!actionsRow) return;
+    const existing = document.getElementById('whatsapp-btn');
+    if (!url) {
+      existing?.remove();
+      return;
+    }
+    if (existing) {
+      if (existing.getAttribute('href') !== url) existing.setAttribute('href', url);
+      return;
+    }
+    const html = `<a id="whatsapp-btn" href="${escapeHtml(url)}" target="_blank" rel="noopener" data-track="whatsapp_click" aria-label="Chat to ${escapeHtml(name)} on WhatsApp" style="display:flex;align-items:center;gap:9px;padding:14px 16px;border-radius:11px;background:${WHATSAPP_GREEN};color:#fff;font-size:14.5px;font-weight:800;text-decoration:none"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="flex-shrink:0">${WHATSAPP_ICON}</svg>WhatsApp</a>`;
+    const phoneBtn = actionsRow.querySelector('[data-track="phone_click"]');
+    if (phoneBtn) phoneBtn.insertAdjacentHTML('afterend', html);
+    else actionsRow.insertAdjacentHTML('afterbegin', html);
+  }
+
+  // The already-sanitized HTML the server rendered (src/lib/rich-text.ts
+  // escapes all input and only ever emits a fixed set of attribute-free
+  // tags) — set via innerHTML just like set:html does server-side, so the
+  // risk profile is unchanged. Never built from raw text here.
+  function applyDescription(html: string) {
+    if (!descEl) return;
+    if (descEl.innerHTML !== (html || '')) descEl.innerHTML = html || '';
+    descEl.hidden = !html;
+  }
+
+  function applyHours(hoursText: string | null, summaryText: string | null) {
+    if (hoursTextEl) {
+      const text = hoursText || 'Not available';
+      if (hoursTextEl.textContent !== text) hoursTextEl.textContent = text;
+    }
+    if (hoursSummaryEl) {
+      const text = summaryText || (hoursText ? 'See the hours above' : 'Not listed yet');
+      if (hoursSummaryEl.textContent !== text) hoursSummaryEl.textContent = text;
+    }
+    applyOpenNow(hoursText || null);
+  }
+
+  // Featured-tier perk (photosFor + PHOTO_CAP_BY_TIER above): swap the whole
+  // grid in one go when the live photo list differs at all (reusing the
+  // exact tile markup/classes the lightbox script above expects), otherwise
+  // touch nothing — most page loads have no new photos since the rebuild.
+  function applyPhotos(photos: LivePhoto[], fallbackAlt: string) {
+    if (!gallerySection || !photoGrid) return;
+    const current = Array.from(photoGrid.querySelectorAll('img')).map((img) => img.getAttribute('src'));
+    const next = photos.map((p) => p.url);
+    const changed = current.length !== next.length || current.some((u, i) => u !== next[i]);
+    if (changed) {
+      photoGrid.innerHTML = photos
+        .map(
+          (p, i) =>
+            `<button type="button" class="business-photo" data-photo-index="${i}" aria-label="View photo ${i + 1} of ${photos.length} full screen"><img src="${escapeHtml(p.url)}" alt="${escapeHtml(p.caption || fallbackAlt)}" loading="lazy"></button>`
+        )
+        .join('');
+    }
+    gallerySection.hidden = photos.length === 0;
+  }
+
+  (async () => {
+    const businessId = shell?.dataset.businessId;
+    if (!header || !businessId) return;
+    let data: LiveBusiness | null = null;
+    try {
+      const res = await fetch(`/api/business-live?id=${encodeURIComponent(businessId)}`);
+      data = res.ok ? await res.json() : null;
+    } catch {
+      data = null; // offline / network error — keep the static content as-is
+    }
+    if (!data || !data.ok) return;
+
+    const name = header.querySelector('h1')?.textContent?.trim() || document.title;
+    applyLogo(data.logo, name);
+    applyWhatsapp(data.whatsapp, name);
+    applyDescription(data.descriptionHtml);
+    applyHours(data.hoursText, data.hoursSummaryText);
+    applyPhotos(data.photos || [], name);
+  })();
 </script>
 
 <script define:vars={{ businessSlug: business.slug }}>
