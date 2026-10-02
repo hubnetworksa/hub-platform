@@ -2,6 +2,14 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import site, { SITES } from '../site';
 import { operatorFacts } from '../lib/legal';
+import { upcomingEvents, newsSorted, businesses } from '../lib/data';
+import { directoryStats, topCategories, topSuburbs, topRegions, topShoppingCentres, andList, fmt } from '../lib/city-facts';
+import { guidesFor } from '../lib/guides';
+import { TOURISM } from '../site-content/tourism';
+import { ATTRACTIONS as CAPETOWN_ATTRACTIONS } from '../site-content/capetown/tourism';
+import { ATTRACTIONS as PRETORIA_ATTRACTIONS } from '../site-content/pretoria/tourism';
+import { ATTRACTIONS as POLOKWANE_ATTRACTIONS } from '../site-content/polokwane/tourism';
+import type { Attraction } from '../site-content/attraction-types';
 
 // The same operator description the Contact page, the Privacy & POPIA notice
 // and the Terms of use use — one source (sites/<city>.json `legal`), so every
@@ -11,86 +19,142 @@ const sisterNames = Object.values(SITES)
   .filter((s) => s.slug !== site.slug)
   .map((s) => s.siteName);
 
-const VALUES = [
-  {
-    lead: 'Verified, not scraped.',
-    body: 'Listings are checked, not auto-imported from stale databases.',
-  },
-  {
-    lead: 'Privacy-respecting.',
-    body: "We publish a business's trading contact details only — never the personal name, phone number or email of the person who submitted or claimed it.",
-  },
-  {
-    lead: 'Built for the whole city.',
-    body: 'Every suburb gets real coverage, not just the well-known ones.',
-  },
-  {
-    lead: 'Local first.',
-    body: `${site.siteName} is focused on ${site.cityLabel} specifically, not a generic template dropped onto a city name.`,
-  },
-];
+// Everything below the operator paragraph is counted from this city's own
+// build data (src/lib/city-facts.ts), so each site's About page describes
+// what is actually in its directory rather than one text with the city name
+// swapped in. No figure here is estimated.
+const stats = directoryStats();
+const cats = topCategories(8);
+const busiestSuburbs = topSuburbs(businesses, 6);
+const regions = topRegions(businesses, 8);
+const malls = topShoppingCentres(4);
+const events = upcomingEvents();
+const latestNews = newsSorted()[0];
+const newsCount = newsSorted().length;
+const guides = guidesFor(site.slug);
+const tourism = site.features.tourism ? TOURISM[site.slug] : undefined;
+const attractionsBySite: Record<string, Attraction[]> = { capetown: CAPETOWN_ATTRACTIONS, pretoria: PRETORIA_ATTRACTIONS, polokwane: POLOKWANE_ATTRACTIONS };
+const attractions = tourism ? (attractionsBySite[site.slug] ?? []).slice(0, 4) : [];
+
+const plural = (n: number, one: string, many = `${one}s`) => `${fmt(n)} ${n === 1 ? one : many}`;
+const top3Suburbs = andList(busiestSuburbs.slice(0, 3).map((s) => s.item.name));
+const hoursShare = stats.businesses ? Math.round((stats.withHours / stats.businesses) * 100) : 0;
+
+const metaDescription =
+  `${site.siteName} lists ${plural(stats.businesses, 'business', 'businesses')} across ${plural(stats.suburbsWithBusinesses, 'suburb')} of ${site.cityLabel}` +
+  (top3Suburbs ? `, most of them in ${top3Suburbs}` : '') +
+  `. Who runs it, what it covers and how listings get here.`;
 ---
 
 <BaseLayout
   title="About"
   titleOverride={`About ${site.siteName} | ${site.cityLabel}'s Local Business Directory`}
-  description={`${site.siteName} connects residents and visitors with verified local businesses across ${site.cityLabel} — real listings, no clutter, built for the community.`}
+  description={metaDescription}
 >
-  <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 680px;">
+  <section class="container" style="padding-top: 3rem; padding-bottom: 3rem; max-width: 760px;">
     <h1>About {site.siteName}</h1>
     <p class="lede">
-      {site.siteName} is {site.cityLabel}'s home for finding real, local businesses — restaurants, services,
-      shops, and everything in between. No fake listings, no outdated numbers, just a directory
-      built for people who actually live here and visitors trying to find their way around.
+      {site.siteName} is a directory of local businesses in {site.cityLabel}, {site.province}. Right now it
+      lists <strong>{plural(stats.businesses, 'business', 'businesses')}</strong> in {plural(stats.suburbsWithBusinesses, 'suburb')},
+      filed under {plural(stats.categoriesWithBusinesses, 'category', 'categories')}{cats.length >= 3 && (
+        <>, the largest being {cats[0].item.name} ({fmt(cats[0].count)}), {cats[1].item.name} ({fmt(cats[1].count)}) and {cats[2].item.name} ({fmt(cats[2].count)})</>
+      )}.
     </p>
 
-    <h2>Our story</h2>
-    <p>
-      {site.siteName} started with a simple frustration: searching online for a business in {site.cityLabel}
-      too often turns up outdated Google listings, dead phone numbers, or nothing at all. We built
-      this directory to fix that — a single, well-organised place where every listing is checked,
-      every category makes sense, and every suburb in the city has its own space. Whether you're
-      new to {site.cityLabel}, growing up here, or just passing through, {site.siteName} is built
-      to get you a real answer, fast.
-    </p>
+    <ul class="stats" aria-label={`${site.siteName} in numbers`}>
+      <li><strong>{fmt(stats.businesses)}</strong><span>businesses</span></li>
+      <li><strong>{fmt(stats.suburbsWithBusinesses)}</strong><span>suburbs with listings</span></li>
+      <li><strong>{fmt(stats.categoriesWithBusinesses)}</strong><span>categories</span></li>
+      <li><strong>{fmt(stats.mallsWithBusinesses)}</strong><span>shopping centres</span></li>
+    </ul>
 
-    <h2>What we do</h2>
-    <p>
-      We list businesses across {site.cityLabel} by category and by suburb so
-      you can search the way you actually think about the city, not just by keyword. Every listing
-      includes verified business contact details, trading hours, and a clear description of what
-      the business offers. We also cover things to do, local attractions, and day trips around
-      {site.cityLabel}, so {site.siteName} works as a starting point for exploring the city, not just
-      finding a plumber.
-    </p>
+    {busiestSuburbs.length > 0 && (
+      <>
+        <h2>Where the listings are</h2>
+        <p>
+          The suburbs with the most listings are{' '}
+          {busiestSuburbs.map((s, i) => (
+            <>{i > 0 && (i === busiestSuburbs.length - 1 ? ' and ' : ', ')}<a href={`/suburb/${s.item.slug}/`}>{s.item.name}</a> ({fmt(s.count)})</>
+          ))}.
+          {regions.length > 1 && (
+            <> By area, {andList(regions.map((r) => `${fmt(r.count)} are ${r.item}`))}.</>
+          )}
+          {' '}Every suburb has its own page, and you can narrow any category to a single suburb from there, or
+          browse the full <a href="/suburb/">list of {site.cityLabel} suburbs</a>.
+        </p>
+      </>
+    )}
 
-    <h2>Our values</h2>
+    {malls.length > 0 && (
+      <p>
+        {plural(stats.inShoppingCentres, 'listing')} trade from inside a shopping centre or forecourt. The
+        malls with the most listed tenants are{' '}
+        {malls.map((m, i) => (
+          <>{i > 0 && (i === malls.length - 1 ? ' and ' : ', ')}<a href={`/shopping-center/${m.item.slug}/`}>{m.item.name}</a> ({fmt(m.count)})</>
+        ))}; each centre's page lists who trades there.
+      </p>
+    )}
+
+    {cats.length > 0 && (
+      <>
+        <h2>The biggest categories in {site.cityLabel}</h2>
+        <ul class="cats">
+          {cats.map((c) => (
+            <li><a href={`/category/${c.item.slug}/`}>{c.item.name}</a><span>{fmt(c.count)}</span></li>
+          ))}
+        </ul>
+        <p class="small">
+          Counts are the directory as it stood at the last rebuild; they change as businesses are added,
+          claimed or closed. See <a href="/category/">every category</a>.
+        </p>
+      </>
+    )}
+
+    {(events.length > 0 || newsCount > 0 || guides.length > 0 || attractions.length > 0) && (
+      <>
+        <h2>Beyond the listings</h2>
+        <ul class="values">
+          {events.length > 0 && (
+            <li><strong><a href="/events/">Events</a>:</strong> {plural(events.length, 'upcoming event')} in and around {site.cityLabel}, each with its date, venue and ticket link.</li>
+          )}
+          {latestNews && (
+            <li><strong><a href="/news/">Local news</a>:</strong> {plural(newsCount, 'short local story', 'short local stories')}, each linked to its sources. The latest: <a href={`/news/${latestNews.slug}/`}>{latestNews.title}</a>.</li>
+          )}
+          {guides.length > 0 && (
+            <li><strong><a href="/guides/">Buyer's guides</a>:</strong> {guides.length} written for {site.cityLabel}, including how to choose {andList(guides.slice(0, 3).map((g) => g.title.replace(/^How to choose /, '').replace(new RegExp(` in ${site.cityLabel}$`), '')))}.</li>
+          )}
+          {attractions.length > 0 && tourism && (
+            <li><strong><a href="/tourism/">Things to do</a>:</strong> {tourism.blurb} Pages include{' '}
+              {attractions.map((a, i) => (
+                <>{i > 0 && (i === attractions.length - 1 ? ' and ' : ', ')}<a href={`/tourism/${a.slug}/`}>{a.name}</a></>
+              ))}.
+            </li>
+          )}
+        </ul>
+      </>
+    )}
+
+    <h2>How listings get here</h2>
     <ul class="values">
-      {VALUES.map((v) => (
-        <li><strong>{v.lead}</strong> {v.body}</li>
-      ))}
+      <li><strong>Sources noted.</strong> Where we have one, a listing notes where its details came from: the owner, an OpenStreetMap record or a public listing. Owners can claim their listing free to correct it.</li>
+      <li><strong>Privacy-respecting.</strong> We publish a business's trading contact details only — never the personal name, phone number or email of the person who submitted or claimed it.</li>
+      <li><strong>Open about gaps.</strong> {hoursShare}% of {site.cityLabel} listings have trading hours so far; where we don't know something, the page says so instead of guessing.</li>
+      <li><strong>Easy to correct.</strong> Every business page has a link to report a mistake or ask for the listing to be removed.</li>
     </ul>
 
     <h2>Who runs {site.siteName}</h2>
     <p>
       {site.siteName} is operated by <strong>{op.name}</strong>{op.legalForm === 'sole proprietor' ? ', a sole proprietor' : ''}{op.operatorName ? ` (${op.operatorName})` : ''}, who also runs {sisterNames.join(' and ')} — one small, independent operator, not a franchise.
-      {op.vatRegistered ? 'We are registered for VAT.' : 'We are not registered for VAT, so no VAT is added to any price on this site.'}
-      The best way to reach us is <a href={`mailto:${op.email}`}>{op.email}</a> or the <a href="/contact/">contact page</a>.
+      {' '}{op.vatRegistered ? 'We are registered for VAT.' : 'We are not registered for VAT, so no VAT is added to any price on this site.'}
+      {' '}The best way to reach us is <a href={`mailto:${op.email}`}>{op.email}</a> or the <a href="/contact/">contact page</a>.
       How we handle personal information is set out in our <a href="/privacy/">Privacy &amp; POPIA notice</a>, and the rules for using the site and buying a plan are in our <a href="/terms/">Terms of use</a>.
     </p>
-
-    <h2>Sister sites</h2>
-    <p>
-      {site.siteName} is part of a small network of local directories, each built the same way for
-      its own city. See the full list on our <a href="/partners/">partner sites</a> page. Each site
-      is focused entirely on doing right by its own city, under the same operator and the same
-      privacy notice and terms.
-    </p>
+    <p class="small">See the other cities on our <a href="/partners/">partner sites</a> page.</p>
 
     <div class="cta">
       <p>
-        Own a business in {site.cityLabel}? Add your listing and get found by people searching for exactly
-        what you offer — free to list, verified before it goes live.
+        Own a business in {site.cityLabel}{busiestSuburbs[0] ? ` — in ${busiestSuburbs[0].item.name} or anywhere else` : ''}? Add your listing free and get
+        found by people searching for exactly what you offer.
       </p>
       <a href="/list-your-business/" class="btn btn-primary">Add your business</a>
     </div>
@@ -110,6 +174,67 @@ const VALUES = [
   }
   p {
     line-height: 1.7;
+  }
+  .small {
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+  .stats {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .stats li {
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-subtle);
+    padding: 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .stats strong {
+    font-size: 1.6rem;
+    letter-spacing: -0.03em;
+    color: var(--navy);
+    line-height: 1.1;
+  }
+  .stats span {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  @media (max-width: 560px) {
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .cats {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+    gap: 6px 18px;
+  }
+  .cats li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .cats a {
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .cats span {
+    font-weight: 800;
+    color: var(--navy);
+    font-variant-numeric: tabular-nums;
   }
   .values {
     list-style: none;

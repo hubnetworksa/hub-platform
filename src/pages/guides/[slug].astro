@@ -4,6 +4,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import { guidesFor, type Guide } from '../../lib/guides';
 import { categoryBySlug, businessesInCategory, suburbFor, sponsorFor, priceRand, FEATURED_TIER, isPaidListing, byPlanThenName, logoFor } from '../../lib/data';
 import BusinessLogo from '../../components/BusinessLogo.astro';
+import { topSuburbs, topRegions, topShoppingCentres, andList, fmt } from '../../lib/city-facts';
 import site from '../../site';
 
 export function getStaticPaths() {
@@ -40,6 +41,23 @@ const listed = [...inCategory]
     business: b,
     hasLogo: !!logoFor(b),
   }));
+
+// "What the directory shows": this city's own listings for the guide's
+// category, counted (src/lib/city-facts.ts). It's the part of each guide
+// that can only be written for this city, and it's only as long as the
+// data supports — nothing here is estimated.
+const localSuburbs = topSuburbs(inCategory, 5);
+// "The most are in..." only means something for suburbs with 2+ listings;
+// when every suburb has one, the suburbs are just named.
+const localBusiest = localSuburbs.filter((s) => s.count >= 2);
+const localRegions = topRegions(inCategory, 4);
+const localCentres = topShoppingCentres(3, inCategory);
+const localSuburbCount = new Set(inCategory.map((b) => b.suburb_id)).size;
+const localWithHours = inCategory.filter((b) => (b.hours ?? '').trim()).length;
+const localInCentres = inCategory.filter((b) => b.shopping_center_id != null).length;
+const localId = 'in-the-directory';
+const localHeading = category && inCategory.length > 0 ? `${categoryName} in ${site.cityLabel}: what the directory shows` : null;
+const tocSections = [...guide.sections.map((s) => ({ id: s.id, tocLabel: s.tocLabel })), ...(localHeading ? [{ id: localId, tocLabel: `${categoryName} in ${site.cityLabel}` }] : [])];
 
 const sponsorPrice = priceRand('price_sponsor_guide_cents');
 const otherGuides = guidesFor(site.slug)
@@ -103,6 +121,37 @@ const showsPaid = !!guideSponsor || inCategory.some((b) => isPaidListing(b) && l
             </>
           ))}
 
+          {localHeading && category && (
+            <>
+              <h2 id={localId} class="guide-h2" style="margin:28px 0 10px;font-size:22px;letter-spacing:-.025em;color:var(--navy)">{localHeading}</h2>
+              <p class="guide-p">
+                {site.siteName} lists {fmt(inCategory.length)} {inCategory.length === 1 ? 'business' : 'businesses'} under {categoryName} in {site.cityLabel}{localSuburbCount > 1 ? `, spread over ${fmt(localSuburbCount)} suburbs` : localSuburbs[0] ? `, in ${localSuburbs[0].item.name}` : ''}.
+                {localSuburbCount > 1 && localSuburbs.length > 1 && (
+                  <>
+                    {' '}{localBusiest.length >= 2 ? 'The most are in' : localSuburbCount > localSuburbs.length ? 'They include' : 'They are in'}{' '}
+                    {(localBusiest.length >= 2 ? localBusiest : localSuburbs).map((s, i, all) => (
+                      <>{i > 0 && (i === all.length - 1 ? ' and ' : ', ')}<a href={`/category/${category.slug}/${s.item.slug}/`}>{s.item.name}</a>{localBusiest.length >= 2 ? ` (${fmt(s.count)})` : ''}</>
+                    ))}.
+                  </>
+                )}
+                {localRegions.length > 1 && <> By area, {andList(localRegions.map((r) => `${fmt(r.count)} are ${r.item}`))}.</>}
+              </p>
+              <p class="guide-p">
+                {localWithHours === 0
+                  ? `None of them list trading hours on ${site.siteName} yet, so confirm when they work, and whether they do after-hours call-outs, when you phone.`
+                  : `${fmt(localWithHours)} of the ${fmt(inCategory.length)} list their trading hours here; for the rest, confirm hours and after-hours availability when you phone.`}
+                {localInCentres > 0 && localCentres.length > 0 && (
+                  <>
+                    {' '}{fmt(localInCentres)} trade from a shopping centre, including{' '}
+                    {localCentres.map((c, i) => (
+                      <>{i > 0 && (i === localCentres.length - 1 ? ' and ' : ', ')}<a href={`/shopping-center/${c.item.slug}/`}>{c.item.name}</a></>
+                    ))}.
+                  </>
+                )}
+              </p>
+            </>
+          )}
+
           {category && (
             <>
               <div style="border-bottom:2px solid var(--navy);padding-bottom:12px;margin-top:30px">
@@ -147,7 +196,7 @@ const showsPaid = !!guideSponsor || inCategory.some((b) => isPaidListing(b) && l
           <div style="border:2px solid var(--border);border-radius:14px;padding:18px;background:var(--bg-subtle)">
             <h3 style="margin:0 0 10px;font-size:14px;letter-spacing:-.01em;color:var(--navy)">In this guide</h3>
             <div style="display:flex;flex-direction:column;gap:8px;font-size:13.5px;font-weight:700">
-              {guide.sections.map((s, i) => (
+              {tocSections.map((s, i) => (
                 <a href={`#${s.id}`} style={`color:${i === 0 ? 'var(--accent-hover)' : 'var(--text)'};text-decoration:none`}>{s.tocLabel}</a>
               ))}
             </div>
@@ -199,6 +248,17 @@ const showsPaid = !!guideSponsor || inCategory.some((b) => isPaidListing(b) && l
   }
   .guide-h2 {
     scroll-margin-top: 90px;
+  }
+  .guide-p {
+    margin: 0 0 16px;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--text);
+    max-width: 66ch;
+  }
+  .guide-p a {
+    color: var(--accent-hover);
+    font-weight: 700;
   }
   .guide-biz:hover {
     border-color: var(--navy) !important;

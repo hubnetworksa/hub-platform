@@ -131,6 +131,29 @@ function hhmm(mins: number): string {
   return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
 }
 
+const DAY_NAME = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+/** One line summing up a week's trading hours ("Open 7 days a week",
+ *  "Open Monday to Saturday, closed Sunday"), or null when the hours don't
+ *  parse cleanly — the same all-or-nothing rule as openStatus. */
+export function hoursSummary(hours: string | null | undefined): string | null {
+  if (!hours) return null;
+  const week = parseWeek(hours);
+  if (!week) return null;
+  const open = week.map((d) => d.length > 0);
+  const openCount = open.filter(Boolean).length;
+  if (openCount === 7) return 'Open 7 days a week';
+  const closedDays = DAY_NAME.filter((_, i) => !open[i]);
+  const closed = closedDays.length > 1 ? `${closedDays.slice(0, -1).join(', ')} and ${closedDays[closedDays.length - 1]}` : closedDays[0];
+  // A single run of open days (Monday to Friday, Monday to Saturday...).
+  const first = open.indexOf(true);
+  const last = open.lastIndexOf(true);
+  if (openCount >= 2 && open.slice(first, last + 1).every(Boolean)) {
+    return `Open ${DAY_NAME[first]} to ${DAY_NAME[last]}, closed ${closed}`;
+  }
+  return `Open ${openCount} day${openCount === 1 ? '' : 's'} a week, closed ${closed}`;
+}
+
 /** null = can't tell (unparseable or no hours). */
 export function openStatus(hours: string | null | undefined, now: Date = new Date()): OpenStatus | null {
   if (!hours) return null;

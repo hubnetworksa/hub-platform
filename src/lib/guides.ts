@@ -61,9 +61,9 @@ const capetown: Guide[] = [
     updatedLabel: UPDATED_LABEL,
     updatedIso: UPDATED_ISO,
     title: 'How to choose a plumber in Cape Town',
-    blurb: 'PIRB registration, itemised quotes, insurance claims and warranties — the checks worth doing before you phone anyone.',
+    blurb: 'PIRB registration, itemised quotes, insurance claims, and the pipe question older Cape Town homes raise.',
     intro:
-      'A burst geyser at 21:00 is the worst time to start comparing quotes. These are the checks worth doing now, while nothing is leaking — and the questions that separate a registered plumber from a man with a bakkie.',
+      "Plenty of Cape Town's homes — in the City Bowl, the southern suburbs and Bo-Kaap among them — are older than their plumbing should be. Do these checks while nothing is leaking, not when a geyser has burst and you're phoning whoever answers first.",
     sections: [
       {
         id: 'pirb-registration',
@@ -90,11 +90,12 @@ const capetown: Guide[] = [
         ],
       },
       {
-        id: 'warranty',
-        heading: '4. Ask what happens if it fails again',
-        tocLabel: '4. Ask about the warranty',
+        id: 'older-pipes',
+        heading: '4. In an older house, ask what the pipes are made of',
+        tocLabel: '4. Older pipework',
         paragraphs: [
-          "A reasonable workmanship warranty is six months on labour, with the manufacturer's warranty on the unit itself. Get both in writing on the invoice, not verbally on the day.",
+          "In an older Cape Town house, a single leak can be the first sign of ageing pipework elsewhere in the walls. Ask the plumber to tell you what the existing pipes are and whether they recommend a repair or a section replacement — and to price the two separately, so you can decide rather than being presented with a re-pipe on the day.",
+          "Whatever the job, get the workmanship warranty and the manufacturer's warranty on any new geyser written on the invoice, not agreed verbally.",
         ],
       },
     ],
@@ -358,9 +359,9 @@ const pretoria: Guide[] = [
     updatedLabel: UPDATED_LABEL,
     updatedIso: UPDATED_ISO,
     title: 'How to choose a plumber in Pretoria',
-    blurb: 'PIRB registration, itemised quotes, insurance claims and warranties — the checks worth doing before you phone anyone.',
+    blurb: 'PIRB registration, itemised quotes, insurance claims, and who pays when the leak is in a complex.',
     intro:
-      'A burst geyser at 21:00 is the worst time to start comparing quotes. These are the checks worth doing now, while nothing is leaking — and the questions that separate a registered plumber from a man with a bakkie.',
+      "A lot of Pretoria lives in sectional-title complexes and estates, where a leak raises a question before any plumber is called: is this pipe yours or the body corporate's? Settle that, then run the checks below while nothing is leaking.",
     sections: [
       {
         id: 'pirb-registration',
@@ -387,11 +388,12 @@ const pretoria: Guide[] = [
         ],
       },
       {
-        id: 'warranty',
-        heading: '4. Ask what happens if it fails again',
-        tocLabel: '4. Ask about the warranty',
+        id: 'body-corporate',
+        heading: '4. In a complex, check with the body corporate first',
+        tocLabel: '4. Body corporate first',
         paragraphs: [
-          "A reasonable workmanship warranty is six months on labour, with the manufacturer's warranty on the unit itself. Get both in writing on the invoice, not verbally on the day.",
+          "If you live in a sectional-title complex or estate, a leak in a shared line or in pipework outside your own unit is often the body corporate's to fix, through its own appointed plumber. Phone the managing agent before booking anyone: paying your own plumber for common-property work can be hard to recover later.",
+          "For work that is yours, get the workmanship warranty and the manufacturer's warranty on any new geyser written on the invoice, not agreed verbally.",
         ],
       },
     ],
@@ -603,9 +605,9 @@ const pretoria: Guide[] = [
     updatedLabel: UPDATED_LABEL,
     updatedIso: UPDATED_ISO,
     title: 'How to choose a locksmith in Pretoria',
-    blurb: 'Locked out at midnight is exactly when call-out overpricing happens — the two questions that stop it.',
+    blurb: "Door lock or gate motor? In a Pretoria complex the answer changes who you call — and the price check that stops call-out overpricing.",
     intro:
-      'The classic locksmith scam is a low quoted call-out fee that becomes a much larger cash-only bill once someone is standing outside your own front door. Two questions, asked on the phone before anyone drives out, close that gap.',
+      "In Pretoria's gated complexes and estates, being \"locked out\" is often a gate, remote or keypad problem rather than a door lock. Work out which it is, then get the full price on the phone before anyone drives out — that one habit avoids most call-out overpricing.",
     sections: [
       {
         id: 'quote-on-the-phone',

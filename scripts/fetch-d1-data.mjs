@@ -73,9 +73,10 @@ async function main() {
   // short_description (the business-short-description migration) is optional
   // the same way, and so is whatsapp (the business-whatsapp migration; without
   // it no WhatsApp buttons show): each missing column is dropped in turn,
-  // newest first.
+  // newest first. updated_at feeds the sitemap's <lastmod> (src/pages/
+  // sitemap-*.xml.ts); without it business URLs just carry no lastmod.
   let businesses;
-  const optional = [', logo_key', ', short_description', ', whatsapp'];
+  const optional = [', updated_at', ', logo_key', ', short_description', ', whatsapp'];
   for (;;) {
     try {
       businesses = query(businessesSql(optional.join('')));

@@ -4,7 +4,10 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
 import PlanBadge from '../../components/PlanBadge.astro';
 import AdUnit from '../../components/AdUnit.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, websiteUrl, isPaidListing, sponsorshipsHeldBy, reviewsFor, averageRating, reviewCount, logoFor, descriptionHtmlFor, summaryFor, whatsappFor } from '../../lib/data';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, businessesInSuburbAndCategory, businessesInShoppingCenter, byPlanThenName, websiteUrl, isPaidListing, sponsorshipsHeldBy, reviewsFor, averageRating, reviewCount, logoFor, descriptionHtmlFor, summaryFor, whatsappFor } from '../../lib/data';
+import { plainLine } from '../../lib/rich-text';
+import { hoursSummary } from '../../lib/openNow';
+import { regionLabel } from '../../site-content';
 import { WHATSAPP_ICON, WHATSAPP_GREEN } from '../../lib/whatsapp';
 import { synonymsFor, locationSynonymsFor } from '../../lib/categorySynonyms';
 import { schemaTypeFor } from '../../lib/categorySchemaTypes';
@@ -73,8 +76,27 @@ const socials = isFeatured
 const PHOTO_CAP_BY_TIER: Record<number, number> = { 1: 4, 2: 10 };
 const photos = photosFor(business).slice(0, PHOTO_CAP_BY_TIER[business.subscription_tier] ?? 0);
 
+// "About this listing" facts, all read from the listing's own row and the
+// build data — nothing generated. Competitor links (same category, same
+// suburb) only on free listings, the same rule as "Similar suppliers" below:
+// a paying business's page never sends visitors to its competitors.
+const primaryCat = cats[0];
+const sameCatSuburb = primaryCat && suburb ? businessesInSuburbAndCategory(suburb.id, primaryCat.id) : [];
+const nearby = isPaying ? [] : [...sameCatSuburb].filter((b) => b.id !== business.id).sort(byPlanThenName).slice(0, 6);
+const nearbyIds = new Set(nearby.map((b) => b.id));
+const hoursLine = hoursSummary(business.hours);
+const centreCount = center ? businessesInShoppingCenter(center.id).length : 0;
+// Only when the description says next to nothing: one plain sentence built
+// from the listing's own category and suburb (the stored description is
+// never changed).
+const VERY_SHORT_DESCRIPTION = 80;
+const contextSentence =
+  primaryCat && suburb && plainLine(business.description).length < VERY_SHORT_DESCRIPTION
+    ? `${business.name} is listed under ${primaryCat.name} in ${suburb.name}, ${site.cityLabel}${center ? `, at ${center.name}` : ''}.`
+    : null;
+
 const similar = cats[0]
-  ? businessesInCategory(cats[0].id).filter((b) => b.id !== business.id).slice(0, 4)
+  ? businessesInCategory(cats[0].id).filter((b) => b.id !== business.id && !nearbyIds.has(b.id)).slice(0, 4)
   : [];
 
 const businessReviews = reviewsFor(business);
@@ -88,7 +110,7 @@ function shortDate(iso: string): string {
 // still a paying customer) — or when a paid business is shown in the
 // "similar" list on this page. Both AdUnit placements below use this same
 // gate, as does BaseLayout's noAds (which also pauses AdSense ad requests).
-const showsPaid = isPaying || sponsorshipsHeldBy(business).length > 0 || similar.some(isPaidListing);
+const showsPaid = isPaying || sponsorshipsHeldBy(business).length > 0 || similar.some(isPaidListing) || nearby.some(isPaidListing);
 
 const keywords = [
   ...new Set(cats.flatMap((c) => [...synonymsFor(c.slug), ...locationSynonymsFor(c.name, site.cityLabel)])),
@@ -244,6 +266,53 @@ const mapsUrl = (business.address || (business.lat && business.lng))
             </HeadWrap>
           </div>
         </div>
+
+        {(primaryCat || suburb) && (
+          <section class="listing-facts" aria-labelledby="listing-facts-h">
+            <h2 id="listing-facts-h">About this listing</h2>
+            {contextSentence && <p class="listing-facts-lede">{contextSentence}</p>}
+            <dl>
+              {cats.length > 0 && (
+                <div>
+                  <dt>Category</dt>
+                  <dd>{cats.map((c, i) => <>{i > 0 && ', '}<a href={`/category/${c.slug}/`}>{c.name}</a></>)}</dd>
+                </div>
+              )}
+              {suburb && (
+                <div>
+                  <dt>Suburb</dt>
+                  <dd><a href={`/suburb/${suburb.slug}/`}>{suburb.name}</a>{suburb.region && regionLabel(suburb.region) !== suburb.name ? `, ${regionLabel(suburb.region)}` : ''}</dd>
+                </div>
+              )}
+              {center && (
+                <div>
+                  <dt>Shopping centre</dt>
+                  <dd><a href={`/shopping-center/${center.slug}/`}>{center.name}</a>{centreCount > 1 ? ` (one of ${centreCount} listed businesses there)` : ''}</dd>
+                </div>
+              )}
+              <div>
+                <dt>Trading hours</dt>
+                <dd>{hoursLine ?? (business.hours ? 'See the hours above' : 'Not listed yet')}</dd>
+              </div>
+              {primaryCat && suburb && sameCatSuburb.length > 1 && (
+                <div>
+                  <dt>In {suburb.name}</dt>
+                  <dd>One of <a href={`/category/${primaryCat.slug}/${suburb.slug}/`}>{sameCatSuburb.length} {primaryCat.name.toLowerCase()} listed in {suburb.name}</a></dd>
+                </div>
+              )}
+            </dl>
+            {nearby.length > 0 && primaryCat && suburb && (
+              <>
+                <h3>More {primaryCat.name.toLowerCase()} in {suburb.name}</h3>
+                <ul class="listing-facts-nearby">
+                  {nearby.map((b) => (
+                    <li><a href={`/business/${b.slug}/`}>{b.name}</a></li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </section>
+        )}
 
         {!showsPaid && <AdUnit placement="businessInContent" style="margin-top:22px" />}
 
@@ -436,6 +505,78 @@ const mapsUrl = (business.address || (business.lat && business.lng))
     #profile-shell {
       grid-template-columns: minmax(0, 1fr) 320px;
     }
+  }
+  .listing-facts {
+    margin-top: 22px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: #fff;
+    padding: clamp(16px, 2.5vw, 22px);
+  }
+  .listing-facts h2 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    color: var(--navy);
+  }
+  .listing-facts-lede {
+    margin: 0 0 12px;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .listing-facts dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+    gap: 10px 20px;
+  }
+  .listing-facts dl > div {
+    min-width: 0;
+  }
+  .listing-facts dt {
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .listing-facts dd {
+    margin: 3px 0 0;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.45;
+    overflow-wrap: break-word;
+  }
+  .listing-facts a {
+    color: var(--accent-hover);
+    font-weight: 700;
+  }
+  .listing-facts h3 {
+    margin: 16px 0 8px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--navy);
+  }
+  .listing-facts-nearby {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .listing-facts-nearby a {
+    display: inline-block;
+    padding: 6px 11px;
+    border-radius: 999px;
+    border: 1.5px solid var(--border);
+    font-size: 13px;
+    text-decoration: none;
+  }
+  .listing-facts-nearby a:hover {
+    border-color: var(--navy);
   }
   .similar-business-card:hover {
     border-color: var(--navy);

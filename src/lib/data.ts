@@ -82,6 +82,9 @@ export interface Business {
   /** Featured perk: SA mobile number for the WhatsApp button, stored formatted
    *  like phone ("082 123 4567"). Shown only via whatsappFor. */
   whatsapp?: string | null;
+  /** D1 datetime('now') text, UTC ("2026-09-21 04:27:50"). Optional: a
+   *  database without it builds with no business <lastmod> in the sitemap. */
+  updated_at?: string | null;
 }
 
 /** The Featured tier's numeric value — gates the Photos gallery and

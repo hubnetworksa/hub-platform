@@ -1,7 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { NOINDEX_PATH_PREFIXES } from './scripts/noindex-paths.mjs';
 
@@ -12,31 +12,20 @@ if (!slug) {
 const sitesDir = fileURLToPath(new URL('./sites/', import.meta.url));
 const site = JSON.parse(readFileSync(`${sitesDir}${slug}.json`, 'utf8'));
 
-// Category pages with 0 businesses get a `noindex` meta tag (see
-// BaseLayout.astro + src/pages/category/[slug]/index.astro) so Google
-// doesn't crawl/index a thin page. They must also be left out of the
-// sitemap, or we'd be inviting Google to crawl exactly the pages we just
-// told it not to index. Computed straight from the same prebuilt JSON
-// src/data/*.json (produced by `npm run fetch-data`, which always runs
-// before `astro build` — see package.json) rather than importing
-// src/lib/data.ts, to keep this file plain Node/JSON with no
-// TS-in-config surprises.
-function emptyCategorySlugs() {
-  try {
-    /** @type {{ id: number, slug: string }[]} */
-    const categories = JSON.parse(readFileSync('src/data/categories.json', 'utf8'));
-    /** @type {{ category_id: number }[]} */
-    const links = JSON.parse(readFileSync('src/data/business-categories.json', 'utf8'));
-    const withBusinesses = new Set(links.map((l) => l.category_id));
-    return new Set(categories.filter((c) => !withBusinesses.has(c.id)).map((c) => c.slug));
-  } catch {
-    // src/data/*.json not fetched yet (e.g. config loaded outside a real
-    // build) — fall back to excluding nothing rather than failing the build.
-    return new Set();
-  }
-}
+// Which URLs go in the sitemap, which child sitemap each lands in, and its
+// <lastmod> are decided in src/lib/sitemap.ts from the same build data the
+// pages are generated from (src/lib/data.ts): thin category x suburb pages
+// and empty categories are left out (the pages still build, without
+// noindex), form pages like /events/add/ are left out, and the rest is
+// split by page type under /sitemap-index.xml (the URL robots.txt names).
+// It needs src/data/*.json, which `npm run fetch-data` writes before every
+// build; without it (config loaded outside a build) only the path filter
+// below applies.
+/** @type {typeof import('./src/lib/sitemap') | null} */
+const rules = existsSync('src/data/businesses.json') ? await import('./src/lib/sitemap.ts') : null;
 
-const EMPTY_CATEGORIES = emptyCategorySlugs();
+/** @param {string} url */
+const entryFor = (url) => rules?.sitemapEntryFor(new URL(url).pathname) ?? null;
 
 // https://astro.build/config
 export default defineConfig({
@@ -47,10 +36,23 @@ export default defineConfig({
         const path = new URL(page).pathname;
         if (NOINDEX_PATH_PREFIXES.some((prefix) => path.startsWith(prefix))) return false;
         if (path === '/tourism/' && !site.features?.tourism) return false;
-        const match = path.match(/^\/category\/([^/]+)\/?$/);
-        if (match && EMPTY_CATEGORIES.has(match[1])) return false;
-        return true;
+        return !rules || entryFor(page) !== null;
       },
+      serialize: (item) => {
+        const lastmod = entryFor(item.url)?.lastmod;
+        return lastmod ? { ...item, lastmod } : item;
+      },
+      // One child sitemap per page type (sitemap-business-0.xml, ...) so
+      // Search Console reports indexing per type. Anything unclaimed (home,
+      // about, legal pages) lands in sitemap-pages-0.xml.
+      chunks: rules
+        ? Object.fromEntries(
+            rules.SITEMAP_CHUNKS.map((name) => [
+              name,
+              (/** @type {{ url: string }} */ item) => (entryFor(item.url)?.chunk === name ? item : undefined),
+            ])
+          )
+        : undefined,
     }),
   ],
 });
