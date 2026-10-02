@@ -1,1 +1,0 @@
--- Epping: no candidate cleared two-source verification this run
