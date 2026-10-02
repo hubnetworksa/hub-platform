@@ -1,7 +1,12 @@
-// Path prefixes with no public search value (account/admin/utility pages) —
-// these must never appear in robots.txt as an allowed path or in the
-// sitemap. Shared by select-site-assets.mjs (robots.txt) and
-// astro.config.mjs (sitemap filter) so the two lists can't drift apart.
+// Path prefixes with no public search value (account/admin/utility/form
+// pages). Every one of these pages carries <meta name="robots"
+// content="noindex"> (BaseLayout's `noindex` prop) and is left out of the
+// sitemap. Shared by astro.config.mjs (sitemap filter) so the list can't drift.
+//
+// These are deliberately NOT disallowed in robots.txt: Google never fetches a
+// disallowed URL, so it never sees the noindex tag and can still index the
+// bare URL from links pointing at it (which is how /login/, /report-listing/
+// etc. ended up in search results). Crawlable + noindex is what removes them.
 export const NOINDEX_PATH_PREFIXES = [
   '/admin/',
   '/my-businesses/',
@@ -13,11 +18,17 @@ export const NOINDEX_PATH_PREFIXES = [
   '/search/',
   '/report-listing/',
   '/request-removal/',
-  '/list-your-business/contact/',
-  '/list-your-business/review/',
-  '/list-your-business/checkout/',
+  // The whole list-your-business flow, step 1 included (contact, review,
+  // checkout are its later steps).
+  '/list-your-business/',
+  '/events/add/',
   // Kept in the codebase and still reachable by direct URL, but no longer
-  // linked from anywhere on the site — drop it from the sitemap/robots
-  // allow-list too since it's now an unlisted page.
+  // linked from anywhere on the site — an unlisted page.
   '/suburb/map/',
 ];
+
+// The only paths robots.txt disallows: the admin area and the
+// non-HTML/private endpoints (JSON APIs, uploaded claim documents), none of
+// which a crawler has any reason to fetch. Pages in NOINDEX_PATH_PREFIXES
+// must not be added here (see above).
+export const ROBOTS_DISALLOW_PREFIXES = ['/admin/', '/api/', '/claim-document/'];
