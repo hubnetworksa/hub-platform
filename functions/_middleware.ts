@@ -36,8 +36,24 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   for (const [k, v] of Object.entries(SECURITY_HEADERS)) {
     if (!out.headers.has(k)) out.headers.set(k, v);
   }
+  // The emailed one-off pages (claim/listing confirmations and reviews) and
+  // the APIs must never be indexed. robots.txt only disallows /api/, so the
+  // confirm pages stay crawlable and Google can see this header.
+  if (NOINDEX_FUNCTION_PATHS.some((p) => url.pathname.startsWith(p)) && !out.headers.has('X-Robots-Tag')) {
+    out.headers.set('X-Robots-Tag', 'noindex');
+  }
   return out;
 };
+
+const NOINDEX_FUNCTION_PATHS = [
+  '/api/',
+  '/claim-document/',
+  '/owner-confirm-listing',
+  '/review-claim',
+  '/review-event-claim',
+  '/verify-claim',
+  '/verify-listing',
+];
 
 const SECURITY_HEADERS: Record<string, string> = {
   'X-Frame-Options': 'SAMEORIGIN',
