@@ -1,6 +1,6 @@
 {
   "date": "2026-10-02",
-  "generatedAt": "2026-10-02T07:03:28.657Z",
+  "generatedAt": "2026-10-02T07:34:08.634Z",
   "samplePerType": 8,
   "windows": {
     "current": {
@@ -389,58 +389,55 @@
           "news": 12,
           "guides": 7,
           "tourism": 10,
-          "pages": 9
+          "pages": 8
         },
         "emptyOrMissingChildSitemaps": [],
         "tally": {
           "key-pages": {
             "sampled": 4,
-            "indexed": 3,
+            "indexed": 4,
             "states": {
-              "Crawled - currently not indexed": 1,
-              "Submitted and indexed": 3
+              "Submitted and indexed": 4
             }
           },
           "business": {
             "sampled": 8,
-            "indexed": 8,
+            "indexed": 7,
             "states": {
-              "Submitted and indexed": 8
+              "Submitted and indexed": 7,
+              "URL is unknown to Google": 1
             }
           },
           "category": {
             "sampled": 8,
-            "indexed": 1,
+            "indexed": 2,
             "states": {
-              "Excluded by ‘noindex’ tag": 2,
-              "Submitted and indexed": 1,
-              "Discovered - currently not indexed": 3,
-              "URL is unknown to Google": 2
+              "Discovered - currently not indexed": 6,
+              "Submitted and indexed": 2
             }
           },
           "category-suburb": {
             "sampled": 8,
-            "indexed": 3,
+            "indexed": 0,
             "states": {
-              "Discovered - currently not indexed": 2,
-              "URL is unknown to Google": 3,
-              "Submitted and indexed": 3
+              "Discovered - currently not indexed": 6,
+              "URL is unknown to Google": 2
             }
           },
           "suburb": {
             "sampled": 8,
-            "indexed": 4,
+            "indexed": 5,
             "states": {
               "Discovered - currently not indexed": 3,
-              "Submitted and indexed": 4,
-              "URL is unknown to Google": 1
+              "Submitted and indexed": 5
             }
           },
           "shopping-centre": {
             "sampled": 8,
-            "indexed": 8,
+            "indexed": 7,
             "states": {
-              "Submitted and indexed": 8
+              "Submitted and indexed": 7,
+              "Discovered - currently not indexed": 1
             }
           },
           "events": {
@@ -469,15 +466,14 @@
             "indexed": 6,
             "states": {
               "Submitted and indexed": 6,
-              "Discovered - currently not indexed": 2
+              "URL is unknown to Google": 2
             }
           },
           "pages": {
-            "sampled": 7,
+            "sampled": 6,
             "indexed": 6,
             "states": {
-              "Submitted and indexed": 6,
-              "URL is unknown to Google": 1
+              "Submitted and indexed": 6
             }
           }
         },
@@ -485,14 +481,14 @@
           {
             "group": "key-pages",
             "url": "https://thecapetownhub.com/",
-            "verdict": "NEUTRAL",
-            "coverageState": "Crawled - currently not indexed",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
             "lastCrawlTime": "2026-10-02T07:02:40Z",
-            "googleCanonical": null,
-            "userCanonical": null
+            "googleCanonical": "https://thecapetownhub.com/",
+            "userCanonical": "https://thecapetownhub.com/"
           },
           {
             "group": "key-pages",
@@ -532,123 +528,135 @@
           },
           {
             "group": "business",
-            "url": "https://thecapetownhub.com/business/free-range-farm-shop-and-deli-kommetjie/",
+            "url": "https://thecapetownhub.com/business/candy-cartel-lentegeur/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-21T19:35:35Z",
-            "googleCanonical": "https://thecapetownhub.com/business/free-range-farm-shop-and-deli-kommetjie/",
-            "userCanonical": "https://thecapetownhub.com/business/free-range-farm-shop-and-deli-kommetjie/"
+            "lastCrawlTime": "2026-09-20T12:06:03Z",
+            "googleCanonical": "https://thecapetownhub.com/business/candy-cartel-lentegeur/",
+            "userCanonical": "https://thecapetownhub.com/business/candy-cartel-lentegeur/"
           },
           {
             "group": "business",
-            "url": "https://thecapetownhub.com/business/arc-zonnebloem/",
+            "url": "https://thecapetownhub.com/business/mzansi-restaurant-langa/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-18T13:41:41Z",
-            "googleCanonical": "https://thecapetownhub.com/business/arc-zonnebloem/",
-            "userCanonical": "https://thecapetownhub.com/business/arc-zonnebloem/"
+            "lastCrawlTime": "2026-09-20T10:56:40Z",
+            "googleCanonical": "https://thecapetownhub.com/business/mzansi-restaurant-langa/",
+            "userCanonical": "https://thecapetownhub.com/business/mzansi-restaurant-langa/"
           },
           {
             "group": "business",
-            "url": "https://thecapetownhub.com/business/multiserv-maynard-mall-wynberg/",
+            "url": "https://thecapetownhub.com/business/terrys-beds-plumstead/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-28T01:59:17Z",
-            "googleCanonical": "https://thecapetownhub.com/business/multiserv-maynard-mall-wynberg/",
-            "userCanonical": "https://thecapetownhub.com/business/multiserv-maynard-mall-wynberg/"
+            "lastCrawlTime": "2026-09-30T13:50:16Z",
+            "googleCanonical": "https://thecapetownhub.com/business/terrys-beds-plumstead/",
+            "userCanonical": "https://thecapetownhub.com/business/terrys-beds-plumstead/"
           },
           {
             "group": "business",
-            "url": "https://thecapetownhub.com/business/shoprite-hanover-park/",
+            "url": "https://thecapetownhub.com/business/estora-home-woodstock/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-23T19:10:58Z",
-            "googleCanonical": "https://thecapetownhub.com/business/shoprite-hanover-park/",
-            "userCanonical": "https://thecapetownhub.com/business/shoprite-hanover-park/"
+            "lastCrawlTime": "2026-09-19T12:03:22Z",
+            "googleCanonical": "https://thecapetownhub.com/business/estora-home-woodstock/",
+            "userCanonical": "https://thecapetownhub.com/business/estora-home-woodstock/"
           },
           {
             "group": "business",
-            "url": "https://thecapetownhub.com/business/merrypak-and-print-ndabeni/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-23T18:09:10Z",
-            "googleCanonical": "https://thecapetownhub.com/business/merrypak-and-print-ndabeni/",
-            "userCanonical": "https://thecapetownhub.com/business/merrypak-and-print-ndabeni/"
-          },
-          {
-            "group": "business",
-            "url": "https://thecapetownhub.com/business/fish-on-the-rocks-hout-bay/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-21T17:15:36Z",
-            "googleCanonical": "https://thecapetownhub.com/business/fish-on-the-rocks-hout-bay/",
-            "userCanonical": "https://thecapetownhub.com/business/fish-on-the-rocks-hout-bay/"
-          },
-          {
-            "group": "business",
-            "url": "https://thecapetownhub.com/business/kfc-gugulethu-square-gugulethu/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-01T16:08:45Z",
-            "googleCanonical": "https://thecapetownhub.com/business/kfc-gugulethu-square-gugulethu/",
-            "userCanonical": "https://thecapetownhub.com/business/kfc-gugulethu-square-gugulethu/"
-          },
-          {
-            "group": "business",
-            "url": "https://thecapetownhub.com/business/blou-winkel-kraaifontein/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-30T14:00:54Z",
-            "googleCanonical": "https://thecapetownhub.com/business/blou-winkel-kraaifontein/",
-            "userCanonical": "https://thecapetownhub.com/business/blou-winkel-kraaifontein/"
-          },
-          {
-            "group": "category",
-            "url": "https://thecapetownhub.com/category/solar-renewable-energy/",
+            "url": "https://thecapetownhub.com/business/cape-hardware-goodwood/",
             "verdict": "NEUTRAL",
-            "coverageState": "Excluded by ‘noindex’ tag",
-            "indexingState": "BLOCKED_BY_META_TAG",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-18T14:10:32Z",
-            "googleCanonical": "https://thecapetownhub.com/category/solar-renewable-energy/",
-            "userCanonical": "https://thecapetownhub.com/category/solar-renewable-energy/"
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
           },
           {
-            "group": "category",
-            "url": "https://thecapetownhub.com/section/shopping-retail/",
+            "group": "business",
+            "url": "https://thecapetownhub.com/business/wimpy-melkbosstrand/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-20T07:28:47Z",
-            "googleCanonical": "https://thecapetownhub.com/section/shopping-retail/",
-            "userCanonical": "https://thecapetownhub.com/section/shopping-retail/"
+            "lastCrawlTime": "2026-09-26T23:17:19Z",
+            "googleCanonical": "https://thecapetownhub.com/business/wimpy-melkbosstrand/",
+            "userCanonical": "https://thecapetownhub.com/business/wimpy-melkbosstrand/"
+          },
+          {
+            "group": "business",
+            "url": "https://thecapetownhub.com/business/burger-king-3arts-drive-thru-plumstead/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-22T17:06:16Z",
+            "googleCanonical": "https://thecapetownhub.com/business/burger-king-3arts-drive-thru-plumstead/",
+            "userCanonical": "https://thecapetownhub.com/business/burger-king-3arts-drive-thru-plumstead/"
+          },
+          {
+            "group": "business",
+            "url": "https://thecapetownhub.com/business/woolworths-rondebosch-main-centre-rondebosch/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-30T14:49:39Z",
+            "googleCanonical": "https://thecapetownhub.com/business/woolworths-rondebosch-main-centre-rondebosch/",
+            "userCanonical": "https://thecapetownhub.com/business/woolworths-rondebosch-main-centre-rondebosch/"
+          },
+          {
+            "group": "category",
+            "url": "https://thecapetownhub.com/category/motor-spares/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "category",
+            "url": "https://thecapetownhub.com/category/pet-stores/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-01T14:42:04Z",
+            "googleCanonical": "https://thecapetownhub.com/category/pet-stores/",
+            "userCanonical": "https://thecapetownhub.com/category/pet-stores/"
+          },
+          {
+            "group": "category",
+            "url": "https://thecapetownhub.com/category/supermarkets-groceries/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-20T09:29:20Z",
+            "googleCanonical": "https://thecapetownhub.com/category/supermarkets-groceries/",
+            "userCanonical": "https://thecapetownhub.com/category/supermarkets-groceries/"
           },
           {
             "group": "category",
@@ -664,7 +672,7 @@
           },
           {
             "group": "category",
-            "url": "https://thecapetownhub.com/category/cleaning-services/",
+            "url": "https://thecapetownhub.com/category/wedding-services/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -676,7 +684,7 @@
           },
           {
             "group": "category",
-            "url": "https://thecapetownhub.com/category/museums-heritage-sites/",
+            "url": "https://thecapetownhub.com/category/printing-services/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -688,9 +696,9 @@
           },
           {
             "group": "category",
-            "url": "https://thecapetownhub.com/category/toy-stores/",
+            "url": "https://thecapetownhub.com/category/fuel-stations/",
             "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
+            "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
             "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
             "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
@@ -700,31 +708,7 @@
           },
           {
             "group": "category",
-            "url": "https://thecapetownhub.com/category/attorneys-legal/",
-            "verdict": "NEUTRAL",
-            "coverageState": "Excluded by ‘noindex’ tag",
-            "indexingState": "BLOCKED_BY_META_TAG",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-18T13:45:41Z",
-            "googleCanonical": "https://thecapetownhub.com/category/attorneys-legal/",
-            "userCanonical": "https://thecapetownhub.com/category/attorneys-legal/"
-          },
-          {
-            "group": "category",
-            "url": "https://thecapetownhub.com/category/insurance/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "category-suburb",
-            "url": "https://thecapetownhub.com/category/fashion-clothing/lansdowne/",
+            "url": "https://thecapetownhub.com/category/jewellers/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -736,7 +720,7 @@
           },
           {
             "group": "category-suburb",
-            "url": "https://thecapetownhub.com/category/pharmacies/bloubergstrand/",
+            "url": "https://thecapetownhub.com/category/restaurants-takeaways/khayelitsha/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -748,7 +732,7 @@
           },
           {
             "group": "category-suburb",
-            "url": "https://thecapetownhub.com/category/restaurants-takeaways/kuils-river/",
+            "url": "https://thecapetownhub.com/category/restaurants-takeaways/crawford/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -760,7 +744,19 @@
           },
           {
             "group": "category-suburb",
-            "url": "https://thecapetownhub.com/category/restaurants-takeaways/richwood/",
+            "url": "https://thecapetownhub.com/category/restaurants-takeaways/lakeside/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "category-suburb",
+            "url": "https://thecapetownhub.com/category/dentists/kenridge/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -772,21 +768,9 @@
           },
           {
             "group": "category-suburb",
-            "url": "https://thecapetownhub.com/category/jewellers/va-waterfront/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-19T02:20:14Z",
-            "googleCanonical": "https://thecapetownhub.com/category/jewellers/va-waterfront/",
-            "userCanonical": "https://thecapetownhub.com/category/jewellers/va-waterfront/"
-          },
-          {
-            "group": "category-suburb",
-            "url": "https://thecapetownhub.com/category/restaurants-takeaways/delft/",
+            "url": "https://thecapetownhub.com/category/accommodation/bishopscourt/",
             "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
+            "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
             "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
             "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
@@ -796,31 +780,31 @@
           },
           {
             "group": "category-suburb",
-            "url": "https://thecapetownhub.com/category/supermarkets-groceries/bothasig/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-21T03:03:31Z",
-            "googleCanonical": "https://thecapetownhub.com/category/supermarkets-groceries/bothasig/",
-            "userCanonical": "https://thecapetownhub.com/category/supermarkets-groceries/bothasig/"
+            "url": "https://thecapetownhub.com/category/schools-education/kenridge/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
           },
           {
             "group": "category-suburb",
-            "url": "https://thecapetownhub.com/category/restaurants-takeaways/green-point/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-18T22:18:55Z",
-            "googleCanonical": "https://thecapetownhub.com/category/restaurants-takeaways/green-point/",
-            "userCanonical": "https://thecapetownhub.com/category/restaurants-takeaways/green-point/"
+            "url": "https://thecapetownhub.com/category/supermarkets-groceries/plattekloof/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
           },
           {
-            "group": "suburb",
-            "url": "https://thecapetownhub.com/suburb/dennendal/",
+            "group": "category-suburb",
+            "url": "https://thecapetownhub.com/category/restaurants-takeaways/kommetjie/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -832,27 +816,27 @@
           },
           {
             "group": "suburb",
-            "url": "https://thecapetownhub.com/suburb/rondebosch/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-24T22:43:02Z",
-            "googleCanonical": "https://thecapetownhub.com/suburb/rondebosch/",
-            "userCanonical": "https://thecapetownhub.com/suburb/rondebosch/"
-          },
-          {
-            "group": "suburb",
-            "url": "https://thecapetownhub.com/suburb/clovelly/",
+            "url": "https://thecapetownhub.com/suburb/macassar/",
             "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
+            "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
             "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
             "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
             "lastCrawlTime": null,
             "googleCanonical": null,
             "userCanonical": null
+          },
+          {
+            "group": "suburb",
+            "url": "https://thecapetownhub.com/suburb/parklands/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-23T19:23:48Z",
+            "googleCanonical": "https://thecapetownhub.com/suburb/parklands/",
+            "userCanonical": "https://thecapetownhub.com/suburb/parklands/"
           },
           {
             "group": "suburb",
@@ -868,19 +852,19 @@
           },
           {
             "group": "suburb",
-            "url": "https://thecapetownhub.com/suburb/ocean-view/",
+            "url": "https://thecapetownhub.com/suburb/diep-river/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-24T20:21:47Z",
-            "googleCanonical": "https://thecapetownhub.com/suburb/ocean-view/",
-            "userCanonical": "https://thecapetownhub.com/suburb/ocean-view/"
+            "lastCrawlTime": "2026-09-22T20:46:37Z",
+            "googleCanonical": "https://thecapetownhub.com/suburb/diep-river/",
+            "userCanonical": "https://thecapetownhub.com/suburb/diep-river/"
           },
           {
             "group": "suburb",
-            "url": "https://thecapetownhub.com/suburb/goodwood/",
+            "url": "https://thecapetownhub.com/suburb/vredehoek/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -892,7 +876,31 @@
           },
           {
             "group": "suburb",
-            "url": "https://thecapetownhub.com/suburb/blue-downs/",
+            "url": "https://thecapetownhub.com/suburb/kensington/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-23T22:04:35Z",
+            "googleCanonical": "https://thecapetownhub.com/suburb/kensington/",
+            "userCanonical": "https://thecapetownhub.com/suburb/kensington/"
+          },
+          {
+            "group": "suburb",
+            "url": "https://thecapetownhub.com/suburb/beacon-valley/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-01T15:08:14Z",
+            "googleCanonical": "https://thecapetownhub.com/suburb/beacon-valley/",
+            "userCanonical": "https://thecapetownhub.com/suburb/beacon-valley/"
+          },
+          {
+            "group": "suburb",
+            "url": "https://thecapetownhub.com/suburb/gardens/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -903,16 +911,64 @@
             "userCanonical": null
           },
           {
-            "group": "suburb",
-            "url": "https://thecapetownhub.com/suburb/observatory/",
+            "group": "shopping-centre",
+            "url": "https://thecapetownhub.com/shopping-center/kromboom-gardens-centre-rondebosch-east/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-18T20:56:18Z",
-            "googleCanonical": "https://thecapetownhub.com/suburb/observatory/",
-            "userCanonical": "https://thecapetownhub.com/suburb/observatory/"
+            "lastCrawlTime": "2026-09-22T17:40:36Z",
+            "googleCanonical": "https://thecapetownhub.com/shopping-center/kromboom-gardens-centre-rondebosch-east/",
+            "userCanonical": "https://thecapetownhub.com/shopping-center/kromboom-gardens-centre-rondebosch-east/"
+          },
+          {
+            "group": "shopping-centre",
+            "url": "https://thecapetownhub.com/shopping-center/the-old-biscuit-mill-woodstock/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-21T00:21:29Z",
+            "googleCanonical": "https://thecapetownhub.com/shopping-center/the-old-biscuit-mill-woodstock/",
+            "userCanonical": "https://thecapetownhub.com/shopping-center/the-old-biscuit-mill-woodstock/"
+          },
+          {
+            "group": "shopping-centre",
+            "url": "https://thecapetownhub.com/shopping-center/westlake-shopping-centre-westlake/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-21T21:04:02Z",
+            "googleCanonical": "https://thecapetownhub.com/shopping-center/westlake-shopping-centre-westlake/",
+            "userCanonical": "https://thecapetownhub.com/shopping-center/westlake-shopping-centre-westlake/"
+          },
+          {
+            "group": "shopping-centre",
+            "url": "https://thecapetownhub.com/shopping-center/harbour-bay-mall-simons-town/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-20T15:06:10Z",
+            "googleCanonical": "https://thecapetownhub.com/shopping-center/harbour-bay-mall-simons-town/",
+            "userCanonical": "https://thecapetownhub.com/shopping-center/harbour-bay-mall-simons-town/"
+          },
+          {
+            "group": "shopping-centre",
+            "url": "https://thecapetownhub.com/shopping-center/blue-downs-shopping-centre-blue-downs/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-20T18:10:46Z",
+            "googleCanonical": "https://thecapetownhub.com/shopping-center/blue-downs-shopping-centre-blue-downs/",
+            "userCanonical": "https://thecapetownhub.com/shopping-center/blue-downs-shopping-centre-blue-downs/"
           },
           {
             "group": "shopping-centre",
@@ -928,99 +984,111 @@
           },
           {
             "group": "shopping-centre",
-            "url": "https://thecapetownhub.com/shopping-center/philippi-shopping-centre-philippi/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-20T18:00:08Z",
-            "googleCanonical": "https://thecapetownhub.com/shopping-center/philippi-shopping-centre-philippi/",
-            "userCanonical": "https://thecapetownhub.com/shopping-center/philippi-shopping-centre-philippi/"
+            "url": "https://thecapetownhub.com/shopping-center/khayelitsha-mall-khayelitsha/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
           },
           {
             "group": "shopping-centre",
-            "url": "https://thecapetownhub.com/shopping-center/portside-shopping-centre-green-point/",
+            "url": "https://thecapetownhub.com/shopping-center/capricorn-square-muizenberg/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-24T20:37:50Z",
-            "googleCanonical": "https://thecapetownhub.com/shopping-center/portside-shopping-centre-green-point/",
-            "userCanonical": "https://thecapetownhub.com/shopping-center/portside-shopping-centre-green-point/"
-          },
-          {
-            "group": "shopping-centre",
-            "url": "https://thecapetownhub.com/shopping-center/langverwacht-plein-kuils-river/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-30T15:12:04Z",
-            "googleCanonical": "https://thecapetownhub.com/shopping-center/langverwacht-plein-kuils-river/",
-            "userCanonical": "https://thecapetownhub.com/shopping-center/langverwacht-plein-kuils-river/"
-          },
-          {
-            "group": "shopping-centre",
-            "url": "https://thecapetownhub.com/shopping-center/bellville-mall-bellville/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-28T16:11:03Z",
-            "googleCanonical": "https://thecapetownhub.com/shopping-center/bellville-mall-bellville/",
-            "userCanonical": "https://thecapetownhub.com/shopping-center/bellville-mall-bellville/"
-          },
-          {
-            "group": "shopping-centre",
-            "url": "https://thecapetownhub.com/shopping-center/table-bay-mall-bloubergstrand/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-21T20:47:41Z",
-            "googleCanonical": "https://thecapetownhub.com/shopping-center/table-bay-mall-bloubergstrand/",
-            "userCanonical": "https://thecapetownhub.com/shopping-center/table-bay-mall-bloubergstrand/"
-          },
-          {
-            "group": "shopping-centre",
-            "url": "https://thecapetownhub.com/shopping-center/fountain-square-somerset-west/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-29T15:03:12Z",
-            "googleCanonical": "https://thecapetownhub.com/shopping-center/fountain-square-somerset-west/",
-            "userCanonical": "https://thecapetownhub.com/shopping-center/fountain-square-somerset-west/"
-          },
-          {
-            "group": "shopping-centre",
-            "url": "https://thecapetownhub.com/shopping-center/prospur-shopping-centre-plumstead/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-27T18:33:21Z",
-            "googleCanonical": "https://thecapetownhub.com/shopping-center/prospur-shopping-centre-plumstead/",
-            "userCanonical": "https://thecapetownhub.com/shopping-center/prospur-shopping-centre-plumstead/"
+            "lastCrawlTime": "2026-09-20T18:54:15Z",
+            "googleCanonical": "https://thecapetownhub.com/shopping-center/capricorn-square-muizenberg/",
+            "userCanonical": "https://thecapetownhub.com/shopping-center/capricorn-square-muizenberg/"
           },
           {
             "group": "events",
-            "url": "https://thecapetownhub.com/events/bay-harbour-market-2026-09-26/",
+            "url": "https://thecapetownhub.com/events/killarney-motor-show-2026-2026-11-01/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-01T16:00:15Z",
-            "googleCanonical": "https://thecapetownhub.com/events/bay-harbour-market-2026-09-26/",
-            "userCanonical": "https://thecapetownhub.com/events/bay-harbour-market-2026-09-26/"
+            "lastCrawlTime": "2026-10-02T00:57:47Z",
+            "googleCanonical": "https://thecapetownhub.com/events/killarney-motor-show-2026-2026-11-01/",
+            "userCanonical": "https://thecapetownhub.com/events/killarney-motor-show-2026-2026-11-01/"
+          },
+          {
+            "group": "events",
+            "url": "https://thecapetownhub.com/events/dhl-stormers-vs-ulster-united-rugby-championship-2026-10-31/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-02T01:25:55Z",
+            "googleCanonical": "https://thecapetownhub.com/events/dhl-stormers-vs-ulster-united-rugby-championship-2026-10-31/",
+            "userCanonical": "https://thecapetownhub.com/events/dhl-stormers-vs-ulster-united-rugby-championship-2026-10-31/"
+          },
+          {
+            "group": "events",
+            "url": "https://thecapetownhub.com/events/kehlani-the-kehlani-world-tour-2026-12-17/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-01T16:24:37Z",
+            "googleCanonical": "https://thecapetownhub.com/events/kehlani-the-kehlani-world-tour-2026-12-17/",
+            "userCanonical": "https://thecapetownhub.com/events/kehlani-the-kehlani-world-tour-2026-12-17/"
+          },
+          {
+            "group": "events",
+            "url": "https://thecapetownhub.com/events/jill-scott-to-whom-this-may-concern-world-tour-2026-11-11/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-01T16:52:29Z",
+            "googleCanonical": "https://thecapetownhub.com/events/jill-scott-to-whom-this-may-concern-world-tour-2026-11-11/",
+            "userCanonical": "https://thecapetownhub.com/events/jill-scott-to-whom-this-may-concern-world-tour-2026-11-11/"
+          },
+          {
+            "group": "events",
+            "url": "https://thecapetownhub.com/events/oranjezicht-city-farm-market-2026-10-03/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-01T16:19:56Z",
+            "googleCanonical": "https://thecapetownhub.com/events/oranjezicht-city-farm-market-2026-10-03/",
+            "userCanonical": "https://thecapetownhub.com/events/oranjezicht-city-farm-market-2026-10-03/"
+          },
+          {
+            "group": "events",
+            "url": "https://thecapetownhub.com/events/south-market-christmas-market-2026-12-07/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-02T01:02:30Z",
+            "googleCanonical": "https://thecapetownhub.com/events/south-market-christmas-market-2026-12-07/",
+            "userCanonical": "https://thecapetownhub.com/events/south-market-christmas-market-2026-12-07/"
+          },
+          {
+            "group": "events",
+            "url": "https://thecapetownhub.com/events/ajabu-cocktail-spirits-festival-tasting-tables-2026-11-14/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-01T16:54:03Z",
+            "googleCanonical": "https://thecapetownhub.com/events/ajabu-cocktail-spirits-festival-tasting-tables-2026-11-14/",
+            "userCanonical": "https://thecapetownhub.com/events/ajabu-cocktail-spirits-festival-tasting-tables-2026-11-14/"
           },
           {
             "group": "events",
@@ -1033,102 +1101,6 @@
             "lastCrawlTime": "2026-10-02T02:21:19Z",
             "googleCanonical": "https://thecapetownhub.com/events/dhl-stormers-vs-hollywoodbets-sharks-united-rugby-championship-2026-10-10/",
             "userCanonical": "https://thecapetownhub.com/events/dhl-stormers-vs-hollywoodbets-sharks-united-rugby-championship-2026-10-10/"
-          },
-          {
-            "group": "events",
-            "url": "https://thecapetownhub.com/events/elysium-cape-ballet-africa-2026-10-03/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T01:53:32Z",
-            "googleCanonical": "https://thecapetownhub.com/events/elysium-cape-ballet-africa-2026-10-03/",
-            "userCanonical": "https://thecapetownhub.com/events/elysium-cape-ballet-africa-2026-10-03/"
-          },
-          {
-            "group": "events",
-            "url": "https://thecapetownhub.com/events/jack-white-south-african-tour-cape-town-2026-12-14/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-01T16:38:42Z",
-            "googleCanonical": "https://thecapetownhub.com/events/jack-white-south-african-tour-cape-town-2026-12-14/",
-            "userCanonical": "https://thecapetownhub.com/events/jack-white-south-african-tour-cape-town-2026-12-14/"
-          },
-          {
-            "group": "events",
-            "url": "https://thecapetownhub.com/events/neighbourgoods-market-2026-09-26/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-01T17:43:56Z",
-            "googleCanonical": "https://thecapetownhub.com/events/neighbourgoods-market-2026-09-26/",
-            "userCanonical": "https://thecapetownhub.com/events/neighbourgoods-market-2026-09-26/"
-          },
-          {
-            "group": "events",
-            "url": "https://thecapetownhub.com/events/the-nutcracker-cape-town-city-ballet-2026-12-11/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T02:02:40Z",
-            "googleCanonical": "https://thecapetownhub.com/events/the-nutcracker-cape-town-city-ballet-2026-12-11/",
-            "userCanonical": "https://thecapetownhub.com/events/the-nutcracker-cape-town-city-ballet-2026-12-11/"
-          },
-          {
-            "group": "events",
-            "url": "https://thecapetownhub.com/events/leon-bridges-the-happiness-anytime-tour-cape-town-2026-11-30/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T01:35:17Z",
-            "googleCanonical": "https://thecapetownhub.com/events/leon-bridges-the-happiness-anytime-tour-cape-town-2026-11-30/",
-            "userCanonical": "https://thecapetownhub.com/events/leon-bridges-the-happiness-anytime-tour-cape-town-2026-11-30/"
-          },
-          {
-            "group": "events",
-            "url": "https://thecapetownhub.com/events/nelson-mandela-marathon-inaugural-2026-10-18/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-01T16:30:52Z",
-            "googleCanonical": "https://thecapetownhub.com/events/nelson-mandela-marathon-inaugural-2026-10-18/",
-            "userCanonical": "https://thecapetownhub.com/events/nelson-mandela-marathon-inaugural-2026-10-18/"
-          },
-          {
-            "group": "news",
-            "url": "https://thecapetownhub.com/news/samora-machel-roadworks-until-mid-december-2026-09-30/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T02:10:13Z",
-            "googleCanonical": "https://thecapetownhub.com/news/samora-machel-roadworks-until-mid-december-2026-09-30/",
-            "userCanonical": "https://thecapetownhub.com/news/samora-machel-roadworks-until-mid-december-2026-09-30/"
-          },
-          {
-            "group": "news",
-            "url": "https://thecapetownhub.com/news/construction-starts-tutu-memorial-park-milnerton-2026-09-18/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-01T16:46:29Z",
-            "googleCanonical": "https://thecapetownhub.com/news/construction-starts-tutu-memorial-park-milnerton-2026-09-18/",
-            "userCanonical": "https://thecapetownhub.com/news/construction-starts-tutu-memorial-park-milnerton-2026-09-18/"
           },
           {
             "group": "news",
@@ -1144,30 +1116,6 @@
           },
           {
             "group": "news",
-            "url": "https://thecapetownhub.com/news/beach-lowering-muizenberg-fish-hoek-hout-bay-2026-09-25/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T01:16:36Z",
-            "googleCanonical": "https://thecapetownhub.com/news/beach-lowering-muizenberg-fish-hoek-hout-bay-2026-09-25/",
-            "userCanonical": "https://thecapetownhub.com/news/beach-lowering-muizenberg-fish-hoek-hout-bay-2026-09-25/"
-          },
-          {
-            "group": "news",
-            "url": "https://thecapetownhub.com/news/cape-town-weighs-summer-water-restrictions-2026-09-16/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-01T16:47:48Z",
-            "googleCanonical": "https://thecapetownhub.com/news/cape-town-weighs-summer-water-restrictions-2026-09-16/",
-            "userCanonical": "https://thecapetownhub.com/news/cape-town-weighs-summer-water-restrictions-2026-09-16/"
-          },
-          {
-            "group": "news",
             "url": "https://thecapetownhub.com/news/city-pools-open-daily-september-school-holidays-2026-09-19/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
@@ -1180,15 +1128,39 @@
           },
           {
             "group": "news",
-            "url": "https://thecapetownhub.com/news/far-south-overnight-power-cut-for-upgrades-2026-09-26/",
+            "url": "https://thecapetownhub.com/news/city-seeks-partner-faure-water-reuse-scheme-2026-09-29/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T02:15:46Z",
-            "googleCanonical": "https://thecapetownhub.com/news/far-south-overnight-power-cut-for-upgrades-2026-09-26/",
-            "userCanonical": "https://thecapetownhub.com/news/far-south-overnight-power-cut-for-upgrades-2026-09-26/"
+            "lastCrawlTime": "2026-10-02T07:08:50Z",
+            "googleCanonical": "https://thecapetownhub.com/news/city-seeks-partner-faure-water-reuse-scheme-2026-09-29/",
+            "userCanonical": "https://thecapetownhub.com/news/city-seeks-partner-faure-water-reuse-scheme-2026-09-29/"
+          },
+          {
+            "group": "news",
+            "url": "https://thecapetownhub.com/news/short-term-letting-bylaw-comment-closes-2026-09-28/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-02T02:05:27Z",
+            "googleCanonical": "https://thecapetownhub.com/news/short-term-letting-bylaw-comment-closes-2026-09-28/",
+            "userCanonical": "https://thecapetownhub.com/news/short-term-letting-bylaw-comment-closes-2026-09-28/"
+          },
+          {
+            "group": "news",
+            "url": "https://thecapetownhub.com/news/samora-machel-roadworks-until-mid-december-2026-09-30/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-02T02:10:13Z",
+            "googleCanonical": "https://thecapetownhub.com/news/samora-machel-roadworks-until-mid-december-2026-09-30/",
+            "userCanonical": "https://thecapetownhub.com/news/samora-machel-roadworks-until-mid-december-2026-09-30/"
           },
           {
             "group": "news",
@@ -1203,40 +1175,40 @@
             "userCanonical": "https://thecapetownhub.com/news/"
           },
           {
-            "group": "guides",
-            "url": "https://thecapetownhub.com/guides/how-to-choose-a-plumber/",
+            "group": "news",
+            "url": "https://thecapetownhub.com/news/fire-service-adds-wildland-vehicles-summer-2026-09-30/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-01T14:56:50Z",
-            "googleCanonical": "https://thecapetownhub.com/guides/how-to-choose-a-plumber/",
-            "userCanonical": "https://thecapetownhub.com/guides/how-to-choose-a-plumber/"
+            "lastCrawlTime": "2026-10-02T06:37:25Z",
+            "googleCanonical": "https://thecapetownhub.com/news/fire-service-adds-wildland-vehicles-summer-2026-09-30/",
+            "userCanonical": "https://thecapetownhub.com/news/fire-service-adds-wildland-vehicles-summer-2026-09-30/"
+          },
+          {
+            "group": "news",
+            "url": "https://thecapetownhub.com/news/cape-town-weighs-summer-water-restrictions-2026-09-16/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-01T16:47:48Z",
+            "googleCanonical": "https://thecapetownhub.com/news/cape-town-weighs-summer-water-restrictions-2026-09-16/",
+            "userCanonical": "https://thecapetownhub.com/news/cape-town-weighs-summer-water-restrictions-2026-09-16/"
           },
           {
             "group": "guides",
-            "url": "https://thecapetownhub.com/guides/how-to-choose-a-mechanic/",
+            "url": "https://thecapetownhub.com/guides/how-to-choose-a-builder/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-01T15:28:56Z",
-            "googleCanonical": "https://thecapetownhub.com/guides/how-to-choose-a-mechanic/",
-            "userCanonical": "https://thecapetownhub.com/guides/how-to-choose-a-mechanic/"
-          },
-          {
-            "group": "guides",
-            "url": "https://thecapetownhub.com/guides/how-to-choose-an-electrician/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-01T12:39:27Z",
-            "googleCanonical": "https://thecapetownhub.com/guides/how-to-choose-an-electrician/",
-            "userCanonical": "https://thecapetownhub.com/guides/how-to-choose-an-electrician/"
+            "lastCrawlTime": "2026-10-01T13:48:07Z",
+            "googleCanonical": "https://thecapetownhub.com/guides/how-to-choose-a-builder/",
+            "userCanonical": "https://thecapetownhub.com/guides/how-to-choose-a-builder/"
           },
           {
             "group": "guides",
@@ -1264,15 +1236,27 @@
           },
           {
             "group": "guides",
-            "url": "https://thecapetownhub.com/guides/how-to-choose-a-builder/",
+            "url": "https://thecapetownhub.com/guides/how-to-choose-an-electrician/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-01T13:48:07Z",
-            "googleCanonical": "https://thecapetownhub.com/guides/how-to-choose-a-builder/",
-            "userCanonical": "https://thecapetownhub.com/guides/how-to-choose-a-builder/"
+            "lastCrawlTime": "2026-10-01T12:39:27Z",
+            "googleCanonical": "https://thecapetownhub.com/guides/how-to-choose-an-electrician/",
+            "userCanonical": "https://thecapetownhub.com/guides/how-to-choose-an-electrician/"
+          },
+          {
+            "group": "guides",
+            "url": "https://thecapetownhub.com/guides/how-to-choose-a-mechanic/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-01T15:28:56Z",
+            "googleCanonical": "https://thecapetownhub.com/guides/how-to-choose-a-mechanic/",
+            "userCanonical": "https://thecapetownhub.com/guides/how-to-choose-a-mechanic/"
           },
           {
             "group": "guides",
@@ -1285,6 +1269,42 @@
             "lastCrawlTime": "2026-10-01T20:39:06Z",
             "googleCanonical": "https://thecapetownhub.com/guides/",
             "userCanonical": "https://thecapetownhub.com/guides/"
+          },
+          {
+            "group": "guides",
+            "url": "https://thecapetownhub.com/guides/how-to-choose-a-plumber/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-01T14:56:50Z",
+            "googleCanonical": "https://thecapetownhub.com/guides/how-to-choose-a-plumber/",
+            "userCanonical": "https://thecapetownhub.com/guides/how-to-choose-a-plumber/"
+          },
+          {
+            "group": "tourism",
+            "url": "https://thecapetownhub.com/tourism/robben-island-museum/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-01T14:52:31Z",
+            "googleCanonical": "https://thecapetownhub.com/tourism/robben-island-museum/",
+            "userCanonical": "https://thecapetownhub.com/tourism/robben-island-museum/"
+          },
+          {
+            "group": "tourism",
+            "url": "https://thecapetownhub.com/tourism/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
           },
           {
             "group": "tourism",
@@ -1312,18 +1332,6 @@
           },
           {
             "group": "tourism",
-            "url": "https://thecapetownhub.com/tourism/itineraries/one-day-in-cape-town/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-01T16:48:03Z",
-            "googleCanonical": "https://thecapetownhub.com/tourism/itineraries/one-day-in-cape-town/",
-            "userCanonical": "https://thecapetownhub.com/tourism/itineraries/one-day-in-cape-town/"
-          },
-          {
-            "group": "tourism",
             "url": "https://thecapetownhub.com/tourism/itineraries/cape-winelands-trip/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
@@ -1333,6 +1341,18 @@
             "lastCrawlTime": "2026-10-01T17:01:51Z",
             "googleCanonical": "https://thecapetownhub.com/tourism/itineraries/cape-winelands-trip/",
             "userCanonical": "https://thecapetownhub.com/tourism/itineraries/cape-winelands-trip/"
+          },
+          {
+            "group": "tourism",
+            "url": "https://thecapetownhub.com/tourism/itineraries/cape-peninsula-loop/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
           },
           {
             "group": "tourism",
@@ -1348,18 +1368,6 @@
           },
           {
             "group": "tourism",
-            "url": "https://thecapetownhub.com/tourism/",
-            "verdict": "NEUTRAL",
-            "coverageState": "Discovered - currently not indexed",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "tourism",
             "url": "https://thecapetownhub.com/tourism/va-waterfront/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
@@ -1369,18 +1377,6 @@
             "lastCrawlTime": "2026-10-02T04:05:35Z",
             "googleCanonical": "https://thecapetownhub.com/tourism/va-waterfront/",
             "userCanonical": "https://thecapetownhub.com/tourism/va-waterfront/"
-          },
-          {
-            "group": "tourism",
-            "url": "https://thecapetownhub.com/tourism/itineraries/cape-peninsula-loop/",
-            "verdict": "NEUTRAL",
-            "coverageState": "Discovered - currently not indexed",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
           },
           {
             "group": "pages",
@@ -1396,15 +1392,15 @@
           },
           {
             "group": "pages",
-            "url": "https://thecapetownhub.com/list-your-business/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
+            "url": "https://thecapetownhub.com/advertise/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-01T18:09:58Z",
+            "googleCanonical": "https://thecapetownhub.com/advertise/",
+            "userCanonical": "https://thecapetownhub.com/advertise/"
           },
           {
             "group": "pages",
@@ -1453,18 +1449,6 @@
             "lastCrawlTime": "2026-09-18T11:58:14Z",
             "googleCanonical": "https://thecapetownhub.com/contact/",
             "userCanonical": "https://thecapetownhub.com/contact/"
-          },
-          {
-            "group": "pages",
-            "url": "https://thecapetownhub.com/advertise/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-01T18:09:58Z",
-            "googleCanonical": "https://thecapetownhub.com/advertise/",
-            "userCanonical": "https://thecapetownhub.com/advertise/"
           }
         ]
       }
@@ -1861,7 +1845,7 @@
           "news": 5,
           "guides": 7,
           "tourism": 14,
-          "pages": 9
+          "pages": 8
         },
         "emptyOrMissingChildSitemaps": [],
         "tally": {
@@ -1874,52 +1858,56 @@
           },
           "business": {
             "sampled": 8,
-            "indexed": 2,
+            "indexed": 1,
             "states": {
-              "URL is unknown to Google": 3,
-              "Submitted and indexed": 2,
-              "Discovered - currently not indexed": 3
+              "URL is unknown to Google": 1,
+              "Discovered - currently not indexed": 6,
+              "Submitted and indexed": 1
             }
           },
           "category": {
             "sampled": 8,
             "indexed": 3,
             "states": {
-              "URL is unknown to Google": 4,
-              "Submitted and indexed": 3,
-              "Discovered - currently not indexed": 1
+              "URL is unknown to Google": 1,
+              "Discovered - currently not indexed": 4,
+              "Submitted and indexed": 3
             }
           },
           "category-suburb": {
             "sampled": 8,
-            "indexed": 0,
+            "indexed": 1,
             "states": {
-              "Discovered - currently not indexed": 4,
-              "URL is unknown to Google": 4
+              "Crawled - currently not indexed": 1,
+              "URL is unknown to Google": 3,
+              "Discovered - currently not indexed": 3,
+              "Submitted and indexed": 1
             }
           },
           "suburb": {
             "sampled": 8,
-            "indexed": 7,
+            "indexed": 5,
             "states": {
+              "Submitted and indexed": 5,
               "Discovered - currently not indexed": 1,
-              "Submitted and indexed": 7
+              "Crawled - currently not indexed": 1,
+              "URL is unknown to Google": 1
             }
           },
           "shopping-centre": {
             "sampled": 8,
-            "indexed": 6,
+            "indexed": 3,
             "states": {
-              "Submitted and indexed": 6,
-              "Discovered - currently not indexed": 2
+              "Discovered - currently not indexed": 4,
+              "Submitted and indexed": 3,
+              "URL is unknown to Google": 1
             }
           },
           "events": {
             "sampled": 8,
-            "indexed": 6,
+            "indexed": 7,
             "states": {
-              "Submitted and indexed": 6,
-              "URL is unknown to Google": 1,
+              "Submitted and indexed": 7,
               "Discovered - currently not indexed": 1
             }
           },
@@ -1940,18 +1928,18 @@
           },
           "tourism": {
             "sampled": 8,
-            "indexed": 8,
+            "indexed": 7,
             "states": {
-              "Submitted and indexed": 8
+              "Submitted and indexed": 7,
+              "Discovered - currently not indexed": 1
             }
           },
           "pages": {
-            "sampled": 7,
-            "indexed": 4,
+            "sampled": 6,
+            "indexed": 3,
             "states": {
-              "Submitted and indexed": 4,
-              "URL is unknown to Google": 1,
-              "Discovered - currently not indexed": 2
+              "Discovered - currently not indexed": 3,
+              "Submitted and indexed": 3
             }
           }
         },
@@ -2006,7 +1994,7 @@
           },
           {
             "group": "business",
-            "url": "https://polokwanehub.com/business/maxis-game-centre-polokwane-central/",
+            "url": "https://polokwanehub.com/business/shoprite-schoeman-street-polokwane-central/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2018,55 +2006,7 @@
           },
           {
             "group": "business",
-            "url": "https://polokwanehub.com/business/arabela-legacy-lodge-makhadzi-cloud-lodge-dalmada/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "business",
-            "url": "https://polokwanehub.com/business/metropolitan-market-street-polokwane-central/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-22T16:26:40Z",
-            "googleCanonical": "https://polokwanehub.com/business/metropolitan-market-street-polokwane-central/",
-            "userCanonical": "https://polokwanehub.com/business/metropolitan-market-street-polokwane-central/"
-          },
-          {
-            "group": "business",
-            "url": "https://polokwanehub.com/business/city-medical-wholesalers-superbia/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-07T01:41:26Z",
-            "googleCanonical": "https://polokwanehub.com/business/city-medical-wholesalers-superbia/",
-            "userCanonical": "https://polokwanehub.com/business/city-medical-wholesalers-superbia/"
-          },
-          {
-            "group": "business",
-            "url": "https://polokwanehub.com/business/house-of-vallerie-bendor/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "business",
-            "url": "https://polokwanehub.com/business/wildman-hunting-outdoor-thornhill-estate/",
+            "url": "https://polokwanehub.com/business/head-recon-service-superbia/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2078,7 +2018,7 @@
           },
           {
             "group": "business",
-            "url": "https://polokwanehub.com/business/lepelle-nkumpi-local-municipality-lebowakgomo/",
+            "url": "https://polokwanehub.com/business/psg-wealth-polokwane-ismini-park-bendor/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2090,7 +2030,55 @@
           },
           {
             "group": "business",
-            "url": "https://polokwanehub.com/business/scrap-metal-lady-hospark/",
+            "url": "https://polokwanehub.com/business/mr-price-mall-lebo-lebowakgomo/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "business",
+            "url": "https://polokwanehub.com/business/zororo-lodge-dalmada/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-27T03:27:36Z",
+            "googleCanonical": "https://polokwanehub.com/business/zororo-lodge-dalmada/",
+            "userCanonical": "https://polokwanehub.com/business/zororo-lodge-dalmada/"
+          },
+          {
+            "group": "business",
+            "url": "https://polokwanehub.com/business/alexander-forbes-bendor/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "business",
+            "url": "https://polokwanehub.com/business/r-and-g-meat-supplier-dalmada/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "business",
+            "url": "https://polokwanehub.com/business/nedbank-paledi-mall-mankweng/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2102,7 +2090,7 @@
           },
           {
             "group": "category",
-            "url": "https://polokwanehub.com/category/beauty-hair-salons/",
+            "url": "https://polokwanehub.com/category/locksmiths/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2114,15 +2102,75 @@
           },
           {
             "group": "category",
-            "url": "https://polokwanehub.com/category/clinics-healthcare/",
+            "url": "https://polokwanehub.com/category/events-function-venues/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "category",
+            "url": "https://polokwanehub.com/category/painters-decorators/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "category",
+            "url": "https://polokwanehub.com/category/pharmacies/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-17T21:45:59Z",
-            "googleCanonical": "https://polokwanehub.com/category/clinics-healthcare/",
-            "userCanonical": "https://polokwanehub.com/category/clinics-healthcare/"
+            "lastCrawlTime": "2026-09-03T05:13:59Z",
+            "googleCanonical": "https://polokwanehub.com/category/pharmacies/",
+            "userCanonical": "https://polokwanehub.com/category/pharmacies/"
+          },
+          {
+            "group": "category",
+            "url": "https://polokwanehub.com/category/fencing-security-installations/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "category",
+            "url": "https://polokwanehub.com/category/butcheries/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "category",
+            "url": "https://polokwanehub.com/category/financial-investment-services/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-04T01:17:48Z",
+            "googleCanonical": "https://polokwanehub.com/category/financial-investment-services/",
+            "userCanonical": "https://polokwanehub.com/category/financial-investment-services/"
           },
           {
             "group": "category",
@@ -2137,56 +2185,20 @@
             "userCanonical": "https://polokwanehub.com/category/restaurants-takeaways/"
           },
           {
-            "group": "category",
-            "url": "https://polokwanehub.com/category/appliance-repairs/",
+            "group": "category-suburb",
+            "url": "https://polokwanehub.com/category/schools-education/flora-park/",
             "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
+            "coverageState": "Crawled - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "category",
-            "url": "https://polokwanehub.com/category/business-consulting/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "category",
-            "url": "https://polokwanehub.com/category/florists/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-09T02:49:41Z",
-            "googleCanonical": "https://polokwanehub.com/category/florists/",
-            "userCanonical": "https://polokwanehub.com/category/florists/"
-          },
-          {
-            "group": "category",
-            "url": "https://polokwanehub.com/category/vets-animal-care/",
-            "verdict": "NEUTRAL",
-            "coverageState": "Discovered - currently not indexed",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
+            "lastCrawlTime": "2026-09-21T08:31:52Z",
             "googleCanonical": null,
             "userCanonical": null
           },
           {
-            "group": "category",
-            "url": "https://polokwanehub.com/category/tyre-fitment-centres/",
+            "group": "category-suburb",
+            "url": "https://polokwanehub.com/category/supermarkets-groceries/bendor-park/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2198,7 +2210,7 @@
           },
           {
             "group": "category-suburb",
-            "url": "https://polokwanehub.com/category/spas-wellness/polokwane-central/",
+            "url": "https://polokwanehub.com/category/attorneys-legal/bendor-park/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2210,31 +2222,19 @@
           },
           {
             "group": "category-suburb",
-            "url": "https://polokwanehub.com/category/general-retail/fauna-park/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
+            "url": "https://polokwanehub.com/category/clinics-healthcare/fauna-park/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-21T08:44:04Z",
+            "googleCanonical": "https://polokwanehub.com/category/clinics-healthcare/fauna-park/",
+            "userCanonical": "https://polokwanehub.com/category/clinics-healthcare/fauna-park/"
           },
           {
             "group": "category-suburb",
-            "url": "https://polokwanehub.com/category/printing-services/bendor/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "category-suburb",
-            "url": "https://polokwanehub.com/category/mobile-phones/bendor/",
+            "url": "https://polokwanehub.com/category/furniture-homeware/mankweng/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2246,7 +2246,7 @@
           },
           {
             "group": "category-suburb",
-            "url": "https://polokwanehub.com/category/restaurants-takeaways/seshego/",
+            "url": "https://polokwanehub.com/category/insurance/bendor/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2258,19 +2258,7 @@
           },
           {
             "group": "category-suburb",
-            "url": "https://polokwanehub.com/category/wedding-services/polokwane-central/",
-            "verdict": "NEUTRAL",
-            "coverageState": "Discovered - currently not indexed",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "category-suburb",
-            "url": "https://polokwanehub.com/category/accommodation/lebowakgomo/",
+            "url": "https://polokwanehub.com/category/hardware-stores/thornhill-estate/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2282,7 +2270,7 @@
           },
           {
             "group": "category-suburb",
-            "url": "https://polokwanehub.com/category/car-dealerships/polokwane-central/",
+            "url": "https://polokwanehub.com/category/banks-atms/seshego/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2294,7 +2282,31 @@
           },
           {
             "group": "suburb",
-            "url": "https://polokwanehub.com/suburb/roodepoort-polokwane/",
+            "url": "https://polokwanehub.com/suburb/moregloed/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-03T23:40:21Z",
+            "googleCanonical": "https://polokwanehub.com/suburb/moregloed/",
+            "userCanonical": "https://polokwanehub.com/suburb/moregloed/"
+          },
+          {
+            "group": "suburb",
+            "url": "https://polokwanehub.com/suburb/sterpark/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-03T06:15:38Z",
+            "googleCanonical": "https://polokwanehub.com/suburb/sterpark/",
+            "userCanonical": "https://polokwanehub.com/suburb/sterpark/"
+          },
+          {
+            "group": "suburb",
+            "url": "https://polokwanehub.com/suburb/mankweng/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2306,75 +2318,27 @@
           },
           {
             "group": "suburb",
-            "url": "https://polokwanehub.com/suburb/hospark/",
+            "url": "https://polokwanehub.com/suburb/penina-park/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-21T11:08:13Z",
-            "googleCanonical": "https://polokwanehub.com/suburb/hospark/",
-            "userCanonical": "https://polokwanehub.com/suburb/hospark/"
+            "lastCrawlTime": "2026-09-09T19:39:31Z",
+            "googleCanonical": "https://polokwanehub.com/suburb/penina-park/",
+            "userCanonical": "https://polokwanehub.com/suburb/penina-park/"
           },
           {
             "group": "suburb",
-            "url": "https://polokwanehub.com/suburb/ext91-industrial/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
+            "url": "https://polokwanehub.com/suburb/thornhill-estate/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Crawled - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-26T20:50:13Z",
-            "googleCanonical": "https://polokwanehub.com/suburb/ext91-industrial/",
-            "userCanonical": "https://polokwanehub.com/suburb/ext91-industrial/"
-          },
-          {
-            "group": "suburb",
-            "url": "https://polokwanehub.com/suburb/southern-gateway/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-05T23:05:05Z",
-            "googleCanonical": "https://polokwanehub.com/suburb/southern-gateway/",
-            "userCanonical": "https://polokwanehub.com/suburb/southern-gateway/"
-          },
-          {
-            "group": "suburb",
-            "url": "https://polokwanehub.com/suburb/bendor-park/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-25T01:45:10Z",
-            "googleCanonical": "https://polokwanehub.com/suburb/bendor-park/",
-            "userCanonical": "https://polokwanehub.com/suburb/bendor-park/"
-          },
-          {
-            "group": "suburb",
-            "url": "https://polokwanehub.com/suburb/superbia/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-25T04:35:10Z",
-            "googleCanonical": "https://polokwanehub.com/suburb/superbia/",
-            "userCanonical": "https://polokwanehub.com/suburb/superbia/"
-          },
-          {
-            "group": "suburb",
-            "url": "https://polokwanehub.com/suburb/broadlands/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-25T22:20:57Z",
-            "googleCanonical": "https://polokwanehub.com/suburb/broadlands/",
-            "userCanonical": "https://polokwanehub.com/suburb/broadlands/"
+            "lastCrawlTime": "2026-09-09T04:07:16Z",
+            "googleCanonical": null,
+            "userCanonical": null
           },
           {
             "group": "suburb",
@@ -2389,40 +2353,52 @@
             "userCanonical": "https://polokwanehub.com/suburb/bendor/"
           },
           {
-            "group": "shopping-centre",
-            "url": "https://polokwanehub.com/shopping-center/",
+            "group": "suburb",
+            "url": "https://polokwanehub.com/suburb/welgelegen/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "suburb",
+            "url": "https://polokwanehub.com/suburb/nirvana/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-29T04:37:33Z",
-            "googleCanonical": "https://polokwanehub.com/shopping-center/",
-            "userCanonical": "https://polokwanehub.com/shopping-center/"
+            "lastCrawlTime": "2026-09-21T06:54:01Z",
+            "googleCanonical": "https://polokwanehub.com/suburb/nirvana/",
+            "userCanonical": "https://polokwanehub.com/suburb/nirvana/"
           },
           {
             "group": "shopping-centre",
-            "url": "https://polokwanehub.com/shopping-center/flora-park-shopping-centre-flora-park/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-03T11:32:51Z",
-            "googleCanonical": "https://polokwanehub.com/shopping-center/flora-park-shopping-centre-flora-park/",
-            "userCanonical": "https://polokwanehub.com/shopping-center/flora-park-shopping-centre-flora-park/"
+            "url": "https://polokwanehub.com/shopping-center/tropicana-centre-ladanna/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
           },
           {
             "group": "shopping-centre",
-            "url": "https://polokwanehub.com/shopping-center/mall-lebo-lebowakgomo/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-25T07:35:13Z",
-            "googleCanonical": "https://polokwanehub.com/shopping-center/mall-lebo-lebowakgomo/",
-            "userCanonical": "https://polokwanehub.com/shopping-center/mall-lebo-lebowakgomo/"
+            "url": "https://polokwanehub.com/shopping-center/phasha-shopping-centre-lebowakgomo/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
           },
           {
             "group": "shopping-centre",
@@ -2438,18 +2414,6 @@
           },
           {
             "group": "shopping-centre",
-            "url": "https://polokwanehub.com/shopping-center/palm-centre-moregloed/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-09T03:34:41Z",
-            "googleCanonical": "https://polokwanehub.com/shopping-center/palm-centre-moregloed/",
-            "userCanonical": "https://polokwanehub.com/shopping-center/palm-centre-moregloed/"
-          },
-          {
-            "group": "shopping-centre",
             "url": "https://polokwanehub.com/shopping-center/metlife-plaza-lebowakgomo/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
@@ -2462,19 +2426,19 @@
           },
           {
             "group": "shopping-centre",
-            "url": "https://polokwanehub.com/shopping-center/turfloop-plaza-mankweng/",
+            "url": "https://polokwanehub.com/shopping-center/checkers-centre-polokwane-central/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-03T22:15:10Z",
-            "googleCanonical": "https://polokwanehub.com/shopping-center/turfloop-plaza-mankweng/",
-            "userCanonical": "https://polokwanehub.com/shopping-center/turfloop-plaza-mankweng/"
+            "lastCrawlTime": "2026-09-07T14:46:01Z",
+            "googleCanonical": "https://polokwanehub.com/shopping-center/checkers-centre-polokwane-central/",
+            "userCanonical": "https://polokwanehub.com/shopping-center/checkers-centre-polokwane-central/"
           },
           {
             "group": "shopping-centre",
-            "url": "https://polokwanehub.com/shopping-center/seshego-plaza-seshego/",
+            "url": "https://polokwanehub.com/shopping-center/the-farmyard-trading-post-bendor/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2483,6 +2447,54 @@
             "lastCrawlTime": null,
             "googleCanonical": null,
             "userCanonical": null
+          },
+          {
+            "group": "shopping-centre",
+            "url": "https://polokwanehub.com/shopping-center/the-greenery-polokwane-central/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "shopping-centre",
+            "url": "https://polokwanehub.com/shopping-center/thornhill-shopping-centre-thornhill-estate/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-07T22:36:16Z",
+            "googleCanonical": "https://polokwanehub.com/shopping-center/thornhill-shopping-centre-thornhill-estate/",
+            "userCanonical": "https://polokwanehub.com/shopping-center/thornhill-shopping-centre-thornhill-estate/"
+          },
+          {
+            "group": "events",
+            "url": "https://polokwanehub.com/events/polokwane-parkrun-2026-09-26/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-02T04:59:51Z",
+            "googleCanonical": "https://polokwanehub.com/events/polokwane-parkrun-2026-09-26/",
+            "userCanonical": "https://polokwanehub.com/events/polokwane-parkrun-2026-09-26/"
+          },
+          {
+            "group": "events",
+            "url": "https://polokwanehub.com/events/polokwane-city-fc-vs-golden-arrows-betway-premiership-round-13-2026-12-16/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-02T04:17:17Z",
+            "googleCanonical": "https://polokwanehub.com/events/polokwane-city-fc-vs-golden-arrows-betway-premiership-round-13-2026-12-16/",
+            "userCanonical": "https://polokwanehub.com/events/polokwane-city-fc-vs-golden-arrows-betway-premiership-round-13-2026-12-16/"
           },
           {
             "group": "events",
@@ -2498,51 +2510,15 @@
           },
           {
             "group": "events",
-            "url": "https://polokwanehub.com/events/a2z-dynamic-marathon-2026-2026-11-15/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "events",
-            "url": "https://polokwanehub.com/events/sekhukhune-united-vs-amazulu-fc-betway-premiership-round-12-2026-12-05/",
+            "url": "https://polokwanehub.com/events/seshego-ultra-marathon-2026-2026-10-11/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T04:36:34Z",
-            "googleCanonical": "https://polokwanehub.com/events/sekhukhune-united-vs-amazulu-fc-betway-premiership-round-12-2026-12-05/",
-            "userCanonical": "https://polokwanehub.com/events/sekhukhune-united-vs-amazulu-fc-betway-premiership-round-12-2026-12-05/"
-          },
-          {
-            "group": "events",
-            "url": "https://polokwanehub.com/events/baobab-night-market-2026-10-30/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T04:47:37Z",
-            "googleCanonical": "https://polokwanehub.com/events/baobab-night-market-2026-10-30/",
-            "userCanonical": "https://polokwanehub.com/events/baobab-night-market-2026-10-30/"
-          },
-          {
-            "group": "events",
-            "url": "https://polokwanehub.com/events/",
-            "verdict": "NEUTRAL",
-            "coverageState": "Discovered - currently not indexed",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
+            "lastCrawlTime": "2026-10-02T06:46:12Z",
+            "googleCanonical": "https://polokwanehub.com/events/seshego-ultra-marathon-2026-2026-10-11/",
+            "userCanonical": "https://polokwanehub.com/events/seshego-ultra-marathon-2026-2026-10-11/"
           },
           {
             "group": "events",
@@ -2555,6 +2531,18 @@
             "lastCrawlTime": "2026-10-02T05:56:32Z",
             "googleCanonical": "https://polokwanehub.com/events/polokwane-city-fc-vs-ts-galaxy-fc-betway-premiership-round-9-2026-10-31/",
             "userCanonical": "https://polokwanehub.com/events/polokwane-city-fc-vs-ts-galaxy-fc-betway-premiership-round-9-2026-10-31/"
+          },
+          {
+            "group": "events",
+            "url": "https://polokwanehub.com/events/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
           },
           {
             "group": "events",
@@ -2594,6 +2582,18 @@
           },
           {
             "group": "news",
+            "url": "https://polokwanehub.com/news/ga-mphahlele-hosts-provincial-heritage-day-2026-09-28/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-02T04:36:34Z",
+            "googleCanonical": "https://polokwanehub.com/news/ga-mphahlele-hosts-provincial-heritage-day-2026-09-28/",
+            "userCanonical": "https://polokwanehub.com/news/ga-mphahlele-hosts-provincial-heritage-day-2026-09-28/"
+          },
+          {
+            "group": "news",
             "url": "https://polokwanehub.com/news/leeto-f5-route-links-cbd-and-meropa-2026-09-25/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
@@ -2629,40 +2629,16 @@
             "userCanonical": "https://polokwanehub.com/news/"
           },
           {
-            "group": "news",
-            "url": "https://polokwanehub.com/news/ga-mphahlele-hosts-provincial-heritage-day-2026-09-28/",
+            "group": "guides",
+            "url": "https://polokwanehub.com/guides/how-to-choose-a-builder/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T04:36:34Z",
-            "googleCanonical": "https://polokwanehub.com/news/ga-mphahlele-hosts-provincial-heritage-day-2026-09-28/",
-            "userCanonical": "https://polokwanehub.com/news/ga-mphahlele-hosts-provincial-heritage-day-2026-09-28/"
-          },
-          {
-            "group": "guides",
-            "url": "https://polokwanehub.com/guides/how-to-choose-a-security-company/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T04:55:43Z",
-            "googleCanonical": "https://polokwanehub.com/guides/how-to-choose-a-security-company/",
-            "userCanonical": "https://polokwanehub.com/guides/how-to-choose-a-security-company/"
-          },
-          {
-            "group": "guides",
-            "url": "https://polokwanehub.com/guides/",
-            "verdict": "NEUTRAL",
-            "coverageState": "Discovered - currently not indexed",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
+            "lastCrawlTime": "2026-10-02T04:32:26Z",
+            "googleCanonical": "https://polokwanehub.com/guides/how-to-choose-a-builder/",
+            "userCanonical": "https://polokwanehub.com/guides/how-to-choose-a-builder/"
           },
           {
             "group": "guides",
@@ -2678,27 +2654,15 @@
           },
           {
             "group": "guides",
-            "url": "https://polokwanehub.com/guides/how-to-choose-a-locksmith/",
+            "url": "https://polokwanehub.com/guides/how-to-choose-a-security-company/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T05:28:09Z",
-            "googleCanonical": "https://polokwanehub.com/guides/how-to-choose-a-locksmith/",
-            "userCanonical": null
-          },
-          {
-            "group": "guides",
-            "url": "https://polokwanehub.com/guides/how-to-choose-a-builder/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T04:32:26Z",
-            "googleCanonical": "https://polokwanehub.com/guides/how-to-choose-a-builder/",
-            "userCanonical": "https://polokwanehub.com/guides/how-to-choose-a-builder/"
+            "lastCrawlTime": "2026-10-02T04:55:43Z",
+            "googleCanonical": "https://polokwanehub.com/guides/how-to-choose-a-security-company/",
+            "userCanonical": "https://polokwanehub.com/guides/how-to-choose-a-security-company/"
           },
           {
             "group": "guides",
@@ -2714,6 +2678,30 @@
           },
           {
             "group": "guides",
+            "url": "https://polokwanehub.com/guides/how-to-choose-a-locksmith/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-02T05:28:09Z",
+            "googleCanonical": "https://polokwanehub.com/guides/how-to-choose-a-locksmith/",
+            "userCanonical": null
+          },
+          {
+            "group": "guides",
+            "url": "https://polokwanehub.com/guides/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "guides",
             "url": "https://polokwanehub.com/guides/how-to-choose-a-plumber/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
@@ -2726,75 +2714,15 @@
           },
           {
             "group": "tourism",
-            "url": "https://polokwanehub.com/tourism/modjadji-cycad-reserve/",
+            "url": "https://polokwanehub.com/tourism/polokwane-game-reserve/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T04:39:30Z",
-            "googleCanonical": "https://polokwanehub.com/tourism/modjadji-cycad-reserve/",
-            "userCanonical": "https://polokwanehub.com/tourism/modjadji-cycad-reserve/"
-          },
-          {
-            "group": "tourism",
-            "url": "https://polokwanehub.com/tourism/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-21T00:40:55Z",
-            "googleCanonical": "https://polokwanehub.com/tourism/",
-            "userCanonical": "https://polokwanehub.com/tourism/"
-          },
-          {
-            "group": "tourism",
-            "url": "https://polokwanehub.com/tourism/bakone-malapa-open-air-museum/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-09T17:56:07Z",
-            "googleCanonical": "https://polokwanehub.com/tourism/bakone-malapa-open-air-museum/",
-            "userCanonical": "https://polokwanehub.com/tourism/bakone-malapa-open-air-museum/"
-          },
-          {
-            "group": "tourism",
-            "url": "https://polokwanehub.com/tourism/itineraries/kruger-gateway-run/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T06:19:36Z",
-            "googleCanonical": "https://polokwanehub.com/tourism/itineraries/kruger-gateway-run/",
-            "userCanonical": "https://polokwanehub.com/tourism/itineraries/kruger-gateway-run/"
-          },
-          {
-            "group": "tourism",
-            "url": "https://polokwanehub.com/tourism/the-ranch-golf-course/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-07T11:34:39Z",
-            "googleCanonical": "https://polokwanehub.com/tourism/the-ranch-golf-course/",
-            "userCanonical": "https://polokwanehub.com/tourism/the-ranch-golf-course/"
-          },
-          {
-            "group": "tourism",
-            "url": "https://polokwanehub.com/tourism/polokwane-golf-club/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-10-02T04:01:53Z",
-            "googleCanonical": "https://polokwanehub.com/tourism/polokwane-golf-club/",
-            "userCanonical": "https://polokwanehub.com/tourism/polokwane-golf-club/"
+            "lastCrawlTime": "2026-09-07T11:24:21Z",
+            "googleCanonical": "https://polokwanehub.com/tourism/polokwane-game-reserve/",
+            "userCanonical": "https://polokwanehub.com/tourism/polokwane-game-reserve/"
           },
           {
             "group": "tourism",
@@ -2810,33 +2738,45 @@
           },
           {
             "group": "tourism",
-            "url": "https://polokwanehub.com/tourism/hugh-exton-photographic-museum/",
+            "url": "https://polokwanehub.com/tourism/polokwane-golf-club/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-07T13:00:21Z",
-            "googleCanonical": "https://polokwanehub.com/tourism/hugh-exton-photographic-museum/",
-            "userCanonical": "https://polokwanehub.com/tourism/hugh-exton-photographic-museum/"
+            "lastCrawlTime": "2026-10-02T04:01:53Z",
+            "googleCanonical": "https://polokwanehub.com/tourism/polokwane-golf-club/",
+            "userCanonical": "https://polokwanehub.com/tourism/polokwane-golf-club/"
           },
           {
-            "group": "pages",
-            "url": "https://polokwanehub.com/terms/",
+            "group": "tourism",
+            "url": "https://polokwanehub.com/tourism/itineraries/one-day-in-polokwane/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-03T05:06:05Z",
-            "googleCanonical": "https://polokwanehub.com/terms/",
-            "userCanonical": "https://polokwanehub.com/terms/"
+            "lastCrawlTime": "2026-10-02T04:16:16Z",
+            "googleCanonical": "https://polokwanehub.com/tourism/itineraries/one-day-in-polokwane/",
+            "userCanonical": "https://polokwanehub.com/tourism/itineraries/one-day-in-polokwane/"
           },
           {
-            "group": "pages",
-            "url": "https://polokwanehub.com/advertise/",
+            "group": "tourism",
+            "url": "https://polokwanehub.com/tourism/bakone-malapa-open-air-museum/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-09T17:56:07Z",
+            "googleCanonical": "https://polokwanehub.com/tourism/bakone-malapa-open-air-museum/",
+            "userCanonical": "https://polokwanehub.com/tourism/bakone-malapa-open-air-museum/"
+          },
+          {
+            "group": "tourism",
+            "url": "https://polokwanehub.com/tourism/mapungubwe-national-park/",
             "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
+            "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
             "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
             "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
@@ -2845,20 +2785,32 @@
             "userCanonical": null
           },
           {
-            "group": "pages",
-            "url": "https://polokwanehub.com/list-your-business/",
+            "group": "tourism",
+            "url": "https://polokwanehub.com/tourism/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-03T02:47:53Z",
-            "googleCanonical": "https://polokwanehub.com/list-your-business/",
-            "userCanonical": "https://polokwanehub.com/list-your-business/"
+            "lastCrawlTime": "2026-09-21T00:40:55Z",
+            "googleCanonical": "https://polokwanehub.com/tourism/",
+            "userCanonical": "https://polokwanehub.com/tourism/"
+          },
+          {
+            "group": "tourism",
+            "url": "https://polokwanehub.com/tourism/modjadji-cycad-reserve/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-10-02T04:39:30Z",
+            "googleCanonical": "https://polokwanehub.com/tourism/modjadji-cycad-reserve/",
+            "userCanonical": "https://polokwanehub.com/tourism/modjadji-cycad-reserve/"
           },
           {
             "group": "pages",
-            "url": "https://polokwanehub.com/pricing/",
+            "url": "https://polokwanehub.com/advertise/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2882,7 +2834,19 @@
           },
           {
             "group": "pages",
-            "url": "https://polokwanehub.com/partners/",
+            "url": "https://polokwanehub.com/terms/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-03T05:06:05Z",
+            "googleCanonical": "https://polokwanehub.com/terms/",
+            "userCanonical": "https://polokwanehub.com/terms/"
+          },
+          {
+            "group": "pages",
+            "url": "https://polokwanehub.com/pricing/",
             "verdict": "NEUTRAL",
             "coverageState": "Discovered - currently not indexed",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -2903,6 +2867,18 @@
             "lastCrawlTime": "2026-09-03T02:07:27Z",
             "googleCanonical": "https://polokwanehub.com/privacy/",
             "userCanonical": "https://polokwanehub.com/privacy/"
+          },
+          {
+            "group": "pages",
+            "url": "https://polokwanehub.com/partners/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Discovered - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
           }
         ]
       }
@@ -3332,45 +3308,45 @@
           },
           "business": {
             "sampled": 8,
-            "indexed": 4,
+            "indexed": 2,
             "states": {
-              "Submitted and indexed": 4,
-              "Crawled - currently not indexed": 2,
-              "URL is unknown to Google": 2
+              "URL is unknown to Google": 6,
+              "Submitted and indexed": 2
             }
           },
           "category": {
             "sampled": 8,
-            "indexed": 6,
+            "indexed": 4,
             "states": {
-              "Submitted and indexed": 6,
-              "URL is unknown to Google": 1,
-              "Crawled - currently not indexed": 1
+              "Crawled - currently not indexed": 2,
+              "Submitted and indexed": 4,
+              "URL is unknown to Google": 2
             }
           },
           "category-suburb": {
             "sampled": 8,
-            "indexed": 1,
+            "indexed": 2,
             "states": {
-              "Crawled - currently not indexed": 1,
               "URL is unknown to Google": 6,
-              "Submitted and indexed": 1
+              "Submitted and indexed": 2
             }
           },
           "suburb": {
             "sampled": 8,
-            "indexed": 4,
+            "indexed": 2,
             "states": {
-              "URL is unknown to Google": 4,
-              "Submitted and indexed": 4
+              "URL is unknown to Google": 5,
+              "Crawled - currently not indexed": 1,
+              "Submitted and indexed": 2
             }
           },
           "shopping-centre": {
             "sampled": 8,
             "indexed": 3,
             "states": {
-              "URL is unknown to Google": 5,
-              "Submitted and indexed": 3
+              "URL is unknown to Google": 3,
+              "Submitted and indexed": 3,
+              "Crawled - currently not indexed": 2
             }
           },
           "events": {
@@ -3461,55 +3437,7 @@
           },
           {
             "group": "business",
-            "url": "https://pretoriahub.com/business/gelah-health-beauty-villieria/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-06T12:06:12Z",
-            "googleCanonical": "https://pretoriahub.com/business/gelah-health-beauty-villieria/",
-            "userCanonical": "https://pretoriahub.com/business/gelah-health-beauty-villieria/"
-          },
-          {
-            "group": "business",
-            "url": "https://pretoriahub.com/business/de-souza-hardware-hesteapark/",
-            "verdict": "NEUTRAL",
-            "coverageState": "Crawled - currently not indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-10T01:21:56Z",
-            "googleCanonical": "https://pretoriahub.com/business/de-souza-hardware-hesteapark/",
-            "userCanonical": "https://pretoriahub.com/business/de-souza-hardware-hesteapark/"
-          },
-          {
-            "group": "business",
-            "url": "https://pretoriahub.com/business/enviro-bio-chem-pretoria-the-willows/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-03T13:08:19Z",
-            "googleCanonical": "https://pretoriahub.com/business/enviro-bio-chem-pretoria-the-willows/",
-            "userCanonical": "https://pretoriahub.com/business/enviro-bio-chem-pretoria-the-willows/"
-          },
-          {
-            "group": "business",
-            "url": "https://pretoriahub.com/business/waterkloof-waterkloof/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-06T13:36:10Z",
-            "googleCanonical": "https://pretoriahub.com/business/waterkloof-waterkloof/",
-            "userCanonical": "https://pretoriahub.com/business/waterkloof-waterkloof/"
-          },
-          {
-            "group": "business",
-            "url": "https://pretoriahub.com/business/computech-solutions-erasmuskloof/",
+            "url": "https://pretoriahub.com/business/chamberlain-centurion-famous-for-hardware-since-1903-hennopspark/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -3521,7 +3449,7 @@
           },
           {
             "group": "business",
-            "url": "https://pretoriahub.com/business/branch-out-tree-farms-donkerhoek/",
+            "url": "https://pretoriahub.com/business/koma-techs-and-financials-montana-park/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -3533,27 +3461,87 @@
           },
           {
             "group": "business",
-            "url": "https://pretoriahub.com/business/ben-s-self-storage-annlin/",
+            "url": "https://pretoriahub.com/business/covertech-sa-magalieskruin/",
             "verdict": "NEUTRAL",
-            "coverageState": "Crawled - currently not indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-25T23:08:51Z",
-            "googleCanonical": "https://pretoriahub.com/business/ben-s-self-storage-annlin/",
-            "userCanonical": "https://pretoriahub.com/business/ben-s-self-storage-annlin/"
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
           },
           {
             "group": "business",
-            "url": "https://pretoriahub.com/business/dr-ah-coetzee-waterkloof/",
+            "url": "https://pretoriahub.com/business/hedwol-consulting-projects-pty-ltd-daspoort/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "business",
+            "url": "https://pretoriahub.com/business/acmc-group-of-companies-proclamation-hill/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "business",
+            "url": "https://pretoriahub.com/business/spec-savers-waterkloof-ridge-waterkloof-ridge/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-07T12:17:56Z",
-            "googleCanonical": "https://pretoriahub.com/business/dr-ah-coetzee-waterkloof/",
-            "userCanonical": "https://pretoriahub.com/business/dr-ah-coetzee-waterkloof/"
+            "lastCrawlTime": "2026-09-07T03:17:16Z",
+            "googleCanonical": "https://pretoriahub.com/business/spec-savers-waterkloof-ridge-waterkloof-ridge/",
+            "userCanonical": "https://pretoriahub.com/business/spec-savers-waterkloof-ridge-waterkloof-ridge/"
+          },
+          {
+            "group": "business",
+            "url": "https://pretoriahub.com/business/fourie-badenhorst-inc-erasmuskloof/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "business",
+            "url": "https://pretoriahub.com/business/jdp-speed-kameeldrift/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-03T10:22:49Z",
+            "googleCanonical": "https://pretoriahub.com/business/jdp-speed-kameeldrift/",
+            "userCanonical": "https://pretoriahub.com/business/jdp-speed-kameeldrift/"
+          },
+          {
+            "group": "category",
+            "url": "https://pretoriahub.com/section/shopping-retail/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Crawled - currently not indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-15T00:03:50Z",
+            "googleCanonical": "https://pretoriahub.com/section/shopping-retail/",
+            "userCanonical": "https://pretoriahub.com/section/shopping-retail/"
           },
           {
             "group": "category",
@@ -3569,15 +3557,51 @@
           },
           {
             "group": "category",
-            "url": "https://pretoriahub.com/category/photographers/",
+            "url": "https://pretoriahub.com/category/locksmiths/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-10T18:22:20Z",
-            "googleCanonical": "https://pretoriahub.com/category/photographers/",
-            "userCanonical": "https://pretoriahub.com/category/photographers/"
+            "lastCrawlTime": "2026-09-09T18:04:49Z",
+            "googleCanonical": "https://pretoriahub.com/category/locksmiths/",
+            "userCanonical": "https://pretoriahub.com/category/locksmiths/"
+          },
+          {
+            "group": "category",
+            "url": "https://pretoriahub.com/category/electricians/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Crawled - currently not indexed",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-24T05:08:18Z",
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "category",
+            "url": "https://pretoriahub.com/category/pharmacies/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-03T15:32:42Z",
+            "googleCanonical": "https://pretoriahub.com/category/pharmacies/",
+            "userCanonical": "https://pretoriahub.com/category/pharmacies/"
+          },
+          {
+            "group": "category",
+            "url": "https://pretoriahub.com/section/professional-financial/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
           },
           {
             "group": "category",
@@ -3593,255 +3617,267 @@
           },
           {
             "group": "category",
-            "url": "https://pretoriahub.com/section/home-trade/",
+            "url": "https://pretoriahub.com/category/funeral-services/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-16T03:47:28Z",
+            "googleCanonical": "https://pretoriahub.com/category/funeral-services/",
+            "userCanonical": "https://pretoriahub.com/category/funeral-services/"
+          },
+          {
+            "group": "category-suburb",
+            "url": "https://pretoriahub.com/category/general-retail/equestria/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "category-suburb",
+            "url": "https://pretoriahub.com/category/industrial-suppliers-manufacturing/east-lynne/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "category-suburb",
+            "url": "https://pretoriahub.com/category/automotive-repairs/eloffsdal/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "category-suburb",
+            "url": "https://pretoriahub.com/category/business-consulting/centurion-golf-estate/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-04T22:53:59Z",
+            "googleCanonical": "https://pretoriahub.com/category/business-consulting/centurion-golf-estate/",
+            "userCanonical": "https://pretoriahub.com/category/business-consulting/centurion-golf-estate/"
+          },
+          {
+            "group": "category-suburb",
+            "url": "https://pretoriahub.com/category/building-construction/klerksoord/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "category-suburb",
+            "url": "https://pretoriahub.com/category/security-services/rietfontein/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "category-suburb",
+            "url": "https://pretoriahub.com/category/logistics-courier-transport/laudium/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "category-suburb",
+            "url": "https://pretoriahub.com/category/restaurants-takeaways/montana-gardens/",
+            "verdict": "PASS",
+            "coverageState": "Submitted and indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-03T14:40:58Z",
+            "googleCanonical": "https://pretoriahub.com/category/restaurants-takeaways/montana-gardens/",
+            "userCanonical": "https://pretoriahub.com/category/restaurants-takeaways/montana-gardens/"
+          },
+          {
+            "group": "suburb",
+            "url": "https://pretoriahub.com/suburb/atteridgeville/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "suburb",
+            "url": "https://pretoriahub.com/suburb/east-lynne/",
             "verdict": "NEUTRAL",
             "coverageState": "Crawled - currently not indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-21T09:04:51Z",
-            "googleCanonical": "https://pretoriahub.com/section/home-trade/",
-            "userCanonical": "https://pretoriahub.com/section/home-trade/"
+            "lastCrawlTime": "2026-09-26T00:17:57Z",
+            "googleCanonical": "https://pretoriahub.com/suburb/east-lynne/",
+            "userCanonical": "https://pretoriahub.com/suburb/east-lynne/"
           },
           {
-            "group": "category",
-            "url": "https://pretoriahub.com/category/car-dealerships/",
+            "group": "suburb",
+            "url": "https://pretoriahub.com/suburb/midstream-ridge/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "suburb",
+            "url": "https://pretoriahub.com/suburb/eldoraigne/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "suburb",
+            "url": "https://pretoriahub.com/suburb/erasmuskloof/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-07T15:32:55Z",
-            "googleCanonical": "https://pretoriahub.com/category/car-dealerships/",
-            "userCanonical": "https://pretoriahub.com/category/car-dealerships/"
+            "lastCrawlTime": "2026-09-03T09:27:03Z",
+            "googleCanonical": "https://pretoriahub.com/suburb/erasmuskloof/",
+            "userCanonical": "https://pretoriahub.com/suburb/erasmuskloof/"
           },
           {
-            "group": "category",
-            "url": "https://pretoriahub.com/category/physiotherapists/",
+            "group": "suburb",
+            "url": "https://pretoriahub.com/suburb/gezina/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "suburb",
+            "url": "https://pretoriahub.com/suburb/woodhill-golf-estate/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "suburb",
+            "url": "https://pretoriahub.com/suburb/derdepoort-smallholdings/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-14T02:05:57Z",
-            "googleCanonical": "https://pretoriahub.com/category/physiotherapists/",
-            "userCanonical": "https://pretoriahub.com/category/physiotherapists/"
+            "lastCrawlTime": "2026-09-03T10:22:21Z",
+            "googleCanonical": "https://pretoriahub.com/suburb/derdepoort-smallholdings/",
+            "userCanonical": "https://pretoriahub.com/suburb/derdepoort-smallholdings/"
           },
           {
-            "group": "category",
-            "url": "https://pretoriahub.com/category/nurseries-garden-centres/",
+            "group": "shopping-centre",
+            "url": "https://pretoriahub.com/shopping-center/southdowns-shopping-centre/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "shopping-centre",
+            "url": "https://pretoriahub.com/shopping-center/mayville-mall-eloffsdal/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "shopping-centre",
+            "url": "https://pretoriahub.com/shopping-center/menlyn-park-shopping-centre/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-08-31T15:34:36Z",
-            "googleCanonical": "https://pretoriahub.com/category/nurseries-garden-centres/",
-            "userCanonical": "https://pretoriahub.com/category/nurseries-garden-centres/"
+            "lastCrawlTime": "2026-09-03T17:33:01Z",
+            "googleCanonical": "https://pretoriahub.com/shopping-center/menlyn-park-shopping-centre/",
+            "userCanonical": "https://pretoriahub.com/shopping-center/menlyn-park-shopping-centre/"
           },
           {
-            "group": "category",
-            "url": "https://pretoriahub.com/category/restaurants-takeaways/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-15T00:20:12Z",
-            "googleCanonical": "https://pretoriahub.com/category/restaurants-takeaways/",
-            "userCanonical": "https://pretoriahub.com/category/restaurants-takeaways/"
-          },
-          {
-            "group": "category-suburb",
-            "url": "https://pretoriahub.com/category/industrial-suppliers-manufacturing/midfields-estate/",
+            "group": "shopping-centre",
+            "url": "https://pretoriahub.com/shopping-center/elardus-park-shopping-centre-elardus-park/",
             "verdict": "NEUTRAL",
             "coverageState": "Crawled - currently not indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-07T09:14:43Z",
-            "googleCanonical": "https://pretoriahub.com/category/industrial-suppliers-manufacturing/midfields-estate/",
-            "userCanonical": "https://pretoriahub.com/category/industrial-suppliers-manufacturing/midfields-estate/"
+            "lastCrawlTime": "2026-09-19T16:46:37Z",
+            "googleCanonical": "https://pretoriahub.com/shopping-center/elardus-park-shopping-centre-elardus-park/",
+            "userCanonical": "https://pretoriahub.com/shopping-center/elardus-park-shopping-centre-elardus-park/"
           },
           {
-            "group": "category-suburb",
-            "url": "https://pretoriahub.com/category/attorneys-legal/die-hoewes/",
+            "group": "shopping-centre",
+            "url": "https://pretoriahub.com/shopping-center/old-railroad-centre-lyttelton-manor/",
             "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "category-suburb",
-            "url": "https://pretoriahub.com/category/attorneys-legal/doornpoort/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "category-suburb",
-            "url": "https://pretoriahub.com/category/building-construction/highveld/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "category-suburb",
-            "url": "https://pretoriahub.com/category/building-construction/hennopspark/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "category-suburb",
-            "url": "https://pretoriahub.com/category/business-consulting/highveld/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
+            "coverageState": "Crawled - currently not indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-02T00:11:10Z",
-            "googleCanonical": "https://pretoriahub.com/category/business-consulting/highveld/",
-            "userCanonical": "https://pretoriahub.com/category/business-consulting/highveld/"
-          },
-          {
-            "group": "category-suburb",
-            "url": "https://pretoriahub.com/category/printing-services/kosmosdal/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "category-suburb",
-            "url": "https://pretoriahub.com/category/software-development/thatchfield-estate/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "suburb",
-            "url": "https://pretoriahub.com/suburb/barclay-square/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "suburb",
-            "url": "https://pretoriahub.com/suburb/zandfontein/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-07T02:02:51Z",
-            "googleCanonical": "https://pretoriahub.com/suburb/zandfontein/",
-            "userCanonical": "https://pretoriahub.com/suburb/zandfontein/"
-          },
-          {
-            "group": "suburb",
-            "url": "https://pretoriahub.com/suburb/wingate-park/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "suburb",
-            "url": "https://pretoriahub.com/suburb/heritage-hill-estate/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-03T12:36:59Z",
-            "googleCanonical": "https://pretoriahub.com/suburb/heritage-hill-estate/",
-            "userCanonical": "https://pretoriahub.com/suburb/heritage-hill-estate/"
-          },
-          {
-            "group": "suburb",
-            "url": "https://pretoriahub.com/suburb/bryntirion/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "suburb",
-            "url": "https://pretoriahub.com/suburb/wierdapark/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-09T18:09:30Z",
-            "googleCanonical": "https://pretoriahub.com/suburb/wierdapark/",
-            "userCanonical": "https://pretoriahub.com/suburb/wierdapark/"
-          },
-          {
-            "group": "suburb",
-            "url": "https://pretoriahub.com/suburb/doringkloof/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "suburb",
-            "url": "https://pretoriahub.com/suburb/proclamation-hill/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-03T11:28:56Z",
-            "googleCanonical": "https://pretoriahub.com/suburb/proclamation-hill/",
-            "userCanonical": "https://pretoriahub.com/suburb/proclamation-hill/"
+            "lastCrawlTime": "2026-09-03T13:48:20Z",
+            "googleCanonical": "https://pretoriahub.com/shopping-center/old-railroad-centre-lyttelton-manor/",
+            "userCanonical": "https://pretoriahub.com/shopping-center/old-railroad-centre-lyttelton-manor/"
           },
           {
             "group": "shopping-centre",
@@ -3857,79 +3893,31 @@
           },
           {
             "group": "shopping-centre",
-            "url": "https://pretoriahub.com/shopping-center/centurion-lifestyle-centre-hennopspark/",
+            "url": "https://pretoriahub.com/shopping-center/penny-farthing-shopping-centre-silverton/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-03T16:49:10Z",
-            "googleCanonical": "https://pretoriahub.com/shopping-center/centurion-lifestyle-centre-hennopspark/",
-            "userCanonical": "https://pretoriahub.com/shopping-center/centurion-lifestyle-centre-hennopspark/"
+            "lastCrawlTime": "2026-09-07T08:22:58Z",
+            "googleCanonical": "https://pretoriahub.com/shopping-center/penny-farthing-shopping-centre-silverton/",
+            "userCanonical": "https://pretoriahub.com/shopping-center/penny-farthing-shopping-centre-silverton/"
           },
           {
             "group": "shopping-centre",
-            "url": "https://pretoriahub.com/shopping-center/celtis-ridge-shopping-centre-heuwelsig-estate/",
+            "url": "https://pretoriahub.com/shopping-center/nina-park-square-shopping-centre-ninapark/",
             "verdict": "PASS",
             "coverageState": "Submitted and indexed",
             "indexingState": "INDEXING_ALLOWED",
             "robotsTxtState": "ALLOWED",
             "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-03T15:20:59Z",
-            "googleCanonical": "https://pretoriahub.com/shopping-center/celtis-ridge-shopping-centre-heuwelsig-estate/",
-            "userCanonical": "https://pretoriahub.com/shopping-center/celtis-ridge-shopping-centre-heuwelsig-estate/"
+            "lastCrawlTime": "2026-09-05T04:45:42Z",
+            "googleCanonical": "https://pretoriahub.com/shopping-center/nina-park-square-shopping-centre-ninapark/",
+            "userCanonical": "https://pretoriahub.com/shopping-center/nina-park-square-shopping-centre-ninapark/"
           },
           {
-            "group": "shopping-centre",
-            "url": "https://pretoriahub.com/shopping-center/sunnypark-shopping-centre-sunnyside/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "shopping-centre",
-            "url": "https://pretoriahub.com/shopping-center/constantia-park-shopping-centre-constantia-park/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "shopping-centre",
-            "url": "https://pretoriahub.com/shopping-center/kenny-shopping-centre-bronkhorstspruit/",
-            "verdict": "PASS",
-            "coverageState": "Submitted and indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-06T18:20:06Z",
-            "googleCanonical": "https://pretoriahub.com/shopping-center/kenny-shopping-centre-bronkhorstspruit/",
-            "userCanonical": "https://pretoriahub.com/shopping-center/kenny-shopping-centre-bronkhorstspruit/"
-          },
-          {
-            "group": "shopping-centre",
-            "url": "https://pretoriahub.com/shopping-center/in-shere-lifestyle-centre-shere/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "shopping-centre",
-            "url": "https://pretoriahub.com/shopping-center/forest-hill-city-monavoni/",
+            "group": "events",
+            "url": "https://pretoriahub.com/events/kloof-night-market-2026-10-09/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -3941,31 +3929,7 @@
           },
           {
             "group": "events",
-            "url": "https://pretoriahub.com/events/ultimate-rb-experience-tour-2026-10-30/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "events",
-            "url": "https://pretoriahub.com/events/wonderboom-airshow-2026-10-31/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "events",
-            "url": "https://pretoriahub.com/events/ne-yo-live-in-sa-2026-10-18/",
+            "url": "https://pretoriahub.com/events/bulls-vs-ulster-urc-2026-10-24/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -3989,7 +3953,7 @@
           },
           {
             "group": "events",
-            "url": "https://pretoriahub.com/events/kloof-night-market-2026-10-09/",
+            "url": "https://pretoriahub.com/events/irene-village-market-2026-11-07/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4001,7 +3965,7 @@
           },
           {
             "group": "events",
-            "url": "https://pretoriahub.com/events/afrikaans-is-groot-2026-2026-11-20/",
+            "url": "https://pretoriahub.com/events/bulls-vs-scarlets-urc-2026-10-31/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4013,7 +3977,7 @@
           },
           {
             "group": "events",
-            "url": "https://pretoriahub.com/events/pitori-kota-festival-2026-10-31/",
+            "url": "https://pretoriahub.com/events/jill-scott-to-whom-this-may-concern-2026-11-07/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4025,7 +3989,19 @@
           },
           {
             "group": "events",
-            "url": "https://pretoriahub.com/events/bulls-vs-lions-urc-2026-10-10/",
+            "url": "https://pretoriahub.com/events/francois-van-coke-vriende-2026-10-09/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "events",
+            "url": "https://pretoriahub.com/events/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4037,7 +4013,7 @@
           },
           {
             "group": "news",
-            "url": "https://pretoriahub.com/news/jacaranda-city-marathon-returns-pretoria-2026-10-01/",
+            "url": "https://pretoriahub.com/news/bulls-host-lions-loftus-versfeld-2026-10-01/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4061,6 +4037,30 @@
           },
           {
             "group": "news",
+            "url": "https://pretoriahub.com/news/francois-van-coke-vriende-sunbet-arena-2026-10-01/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "news",
+            "url": "https://pretoriahub.com/news/jacaranda-city-marathon-returns-pretoria-2026-10-01/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "news",
             "url": "https://pretoriahub.com/news/melkfest-2026-festival-returns-centurion-2026-10-01/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
@@ -4073,19 +4073,7 @@
           },
           {
             "group": "news",
-            "url": "https://pretoriahub.com/news/sundowns-beat-al-ahli-loftus-african-asian-pacific-cup-2026-09-19/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "news",
-            "url": "https://pretoriahub.com/news/gauteng-pupils-return-fourth-term-6-october-2026-09-29/",
+            "url": "https://pretoriahub.com/news/waltloo-substation-explosion-power-cut-east-pretoria-2026-09-29/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4109,7 +4097,7 @@
           },
           {
             "group": "news",
-            "url": "https://pretoriahub.com/news/francois-van-coke-vriende-sunbet-arena-2026-10-01/",
+            "url": "https://pretoriahub.com/news/gauteng-pupils-return-fourth-term-6-october-2026-09-29/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4120,8 +4108,32 @@
             "userCanonical": null
           },
           {
-            "group": "news",
-            "url": "https://pretoriahub.com/news/",
+            "group": "guides",
+            "url": "https://pretoriahub.com/guides/how-to-choose-an-electrician/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "guides",
+            "url": "https://pretoriahub.com/guides/",
+            "verdict": "NEUTRAL",
+            "coverageState": "URL is unknown to Google",
+            "indexingState": "INDEXING_STATE_UNSPECIFIED",
+            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
+            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
+            "lastCrawlTime": null,
+            "googleCanonical": null,
+            "userCanonical": null
+          },
+          {
+            "group": "guides",
+            "url": "https://pretoriahub.com/guides/how-to-choose-a-mechanic/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4157,19 +4169,7 @@
           },
           {
             "group": "guides",
-            "url": "https://pretoriahub.com/guides/how-to-choose-a-mechanic/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "guides",
-            "url": "https://pretoriahub.com/guides/",
+            "url": "https://pretoriahub.com/guides/how-to-choose-a-locksmith/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4192,8 +4192,8 @@
             "userCanonical": null
           },
           {
-            "group": "guides",
-            "url": "https://pretoriahub.com/guides/how-to-choose-a-locksmith/",
+            "group": "tourism",
+            "url": "https://pretoriahub.com/tourism/cullinan-diamond-mine-tour/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4204,8 +4204,8 @@
             "userCanonical": null
           },
           {
-            "group": "guides",
-            "url": "https://pretoriahub.com/guides/how-to-choose-an-electrician/",
+            "group": "tourism",
+            "url": "https://pretoriahub.com/tourism/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4241,19 +4241,7 @@
           },
           {
             "group": "tourism",
-            "url": "https://pretoriahub.com/tourism/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "tourism",
-            "url": "https://pretoriahub.com/tourism/itineraries/one-day-in-pretoria/",
+            "url": "https://pretoriahub.com/tourism/voortrekker-monument/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4277,7 +4265,7 @@
           },
           {
             "group": "tourism",
-            "url": "https://pretoriahub.com/tourism/cullinan-diamond-mine-tour/",
+            "url": "https://pretoriahub.com/tourism/freedom-park/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4289,7 +4277,7 @@
           },
           {
             "group": "tourism",
-            "url": "https://pretoriahub.com/tourism/rietvlei-nature-reserve/",
+            "url": "https://pretoriahub.com/tourism/itineraries/weekend-with-kids-pretoria/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4300,8 +4288,20 @@
             "userCanonical": null
           },
           {
-            "group": "tourism",
-            "url": "https://pretoriahub.com/tourism/voortrekker-monument/",
+            "group": "pages",
+            "url": "https://pretoriahub.com/privacy/",
+            "verdict": "NEUTRAL",
+            "coverageState": "Crawled - currently not indexed",
+            "indexingState": "INDEXING_ALLOWED",
+            "robotsTxtState": "ALLOWED",
+            "pageFetchState": "SUCCESSFUL",
+            "lastCrawlTime": "2026-09-27T01:14:33Z",
+            "googleCanonical": "https://pretoriahub.com/privacy/",
+            "userCanonical": "https://pretoriahub.com/privacy/"
+          },
+          {
+            "group": "pages",
+            "url": "https://pretoriahub.com/advertise/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4325,19 +4325,7 @@
           },
           {
             "group": "pages",
-            "url": "https://pretoriahub.com/privacy/",
-            "verdict": "NEUTRAL",
-            "coverageState": "Crawled - currently not indexed",
-            "indexingState": "INDEXING_ALLOWED",
-            "robotsTxtState": "ALLOWED",
-            "pageFetchState": "SUCCESSFUL",
-            "lastCrawlTime": "2026-09-27T01:14:33Z",
-            "googleCanonical": "https://pretoriahub.com/privacy/",
-            "userCanonical": "https://pretoriahub.com/privacy/"
-          },
-          {
-            "group": "pages",
-            "url": "https://pretoriahub.com/partners/",
+            "url": "https://pretoriahub.com/pricing/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",
@@ -4361,19 +4349,7 @@
           },
           {
             "group": "pages",
-            "url": "https://pretoriahub.com/pricing/",
-            "verdict": "NEUTRAL",
-            "coverageState": "URL is unknown to Google",
-            "indexingState": "INDEXING_STATE_UNSPECIFIED",
-            "robotsTxtState": "ROBOTS_TXT_STATE_UNSPECIFIED",
-            "pageFetchState": "PAGE_FETCH_STATE_UNSPECIFIED",
-            "lastCrawlTime": null,
-            "googleCanonical": null,
-            "userCanonical": null
-          },
-          {
-            "group": "pages",
-            "url": "https://pretoriahub.com/advertise/",
+            "url": "https://pretoriahub.com/partners/",
             "verdict": "NEUTRAL",
             "coverageState": "URL is unknown to Google",
             "indexingState": "INDEXING_STATE_UNSPECIFIED",

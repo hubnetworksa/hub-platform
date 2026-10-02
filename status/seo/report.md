@@ -1,27 +1,28 @@
 # Search Console indexing report
 
-Generated 2026-10-02T07:03:28.657Z by `scripts/search-console-report.mjs`. Search windows: last 28 days 2026-09-02 to 2026-09-29 vs previous 2026-08-05 to 2026-09-01 (data lags about 3 days). URL Inspection samples up to 8 URLs per sitemap type.
+Generated 2026-10-02T07:34:08.634Z by `scripts/search-console-report.mjs`. Search windows: last 28 days 2026-09-02 to 2026-09-29 vs previous 2026-08-05 to 2026-09-01 (data lags about 3 days). URL Inspection samples up to 8 URLs per sitemap type.
 
 ## Summary
 
 - **TheCapeTownHub**: 101 clicks (up from 0), 44,215 impressions (up from 0), 1,668 pages with impressions (was 0) over 28 days vs the 28 before.
-  - Mostly not indexed in the sample: category (1/8 indexed; mostly "Discovered - currently not indexed"), category-suburb (3/8 indexed; mostly "URL is unknown to Google").
-  - Key pages not indexed: / ("Crawled - currently not indexed").
+  - Mostly not indexed in the sample: category (2/8 indexed; mostly "Discovered - currently not indexed"), category-suburb (0/8 indexed; mostly "Discovered - currently not indexed").
 - **PolokwaneHub**: 174 clicks (up from 0), 28,778 impressions (up from 0), 507 pages with impressions (was 0) over 28 days vs the 28 before.
-  - Mostly not indexed in the sample: business (2/8 indexed; mostly "URL is unknown to Google"), category (3/8 indexed; mostly "URL is unknown to Google"), category-suburb (0/8 indexed; mostly "Discovered - currently not indexed").
+  - Mostly not indexed in the sample: business (1/8 indexed; mostly "Discovered - currently not indexed"), category (3/8 indexed; mostly "Discovered - currently not indexed"), category-suburb (1/8 indexed; mostly "URL is unknown to Google"), shopping-centre (3/8 indexed; mostly "Discovered - currently not indexed").
 - **PretoriaHub**: 770 clicks (up from 5), 139,610 impressions (up from 591), 5,434 pages with impressions (was 256) over 28 days vs the 28 before.
-  - Mostly not indexed in the sample: category-suburb (1/8 indexed; mostly "URL is unknown to Google"), shopping-centre (3/8 indexed; mostly "URL is unknown to Google"), events (0/8 indexed; mostly "URL is unknown to Google"), news (0/8 indexed; mostly "URL is unknown to Google"), guides (0/7 indexed; mostly "URL is unknown to Google"), tourism (0/8 indexed; mostly "URL is unknown to Google"), pages (0/6 indexed; mostly "URL is unknown to Google").
+  - Mostly not indexed in the sample: business (2/8 indexed; mostly "URL is unknown to Google"), category-suburb (2/8 indexed; mostly "URL is unknown to Google"), suburb (2/8 indexed; mostly "URL is unknown to Google"), shopping-centre (3/8 indexed; mostly "URL is unknown to Google"), events (0/8 indexed; mostly "URL is unknown to Google"), news (0/8 indexed; mostly "URL is unknown to Google"), guides (0/7 indexed; mostly "URL is unknown to Google"), tourism (0/8 indexed; mostly "URL is unknown to Google"), pages (0/6 indexed; mostly "URL is unknown to Google").
   - Key pages not indexed: /category/ ("Crawled - currently not indexed"), /suburb/ ("Crawled - currently not indexed"), /about/ ("Crawled - currently not indexed").
 
 **Suggested actions**
 
-- TheCapeTownHub: some sampled **category** URLs in the sitemap are noindexed — remove noindexed URLs from the sitemap.
-- PolokwaneHub: most sampled **category** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
-- PolokwaneHub: most sampled **category-suburb** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
-- PolokwaneHub: **category-suburb** pages are discovered but not crawled — crawl budget/priority issue; strengthen internal links to them and trim thin or near-duplicate pages of that type.
+- TheCapeTownHub: **category** pages are discovered but not crawled — crawl budget/priority issue; strengthen internal links to them and trim thin or near-duplicate pages of that type.
+- TheCapeTownHub: **category-suburb** pages are discovered but not crawled — crawl budget/priority issue; strengthen internal links to them and trim thin or near-duplicate pages of that type.
+- PolokwaneHub: **business** pages are discovered but not crawled — crawl budget/priority issue; strengthen internal links to them and trim thin or near-duplicate pages of that type.
+- PolokwaneHub: **category** pages are discovered but not crawled — crawl budget/priority issue; strengthen internal links to them and trim thin or near-duplicate pages of that type.
+- PolokwaneHub: **shopping-centre** pages are discovered but not crawled — crawl budget/priority issue; strengthen internal links to them and trim thin or near-duplicate pages of that type.
+- PolokwaneHub: **pages** pages are discovered but not crawled — crawl budget/priority issue; strengthen internal links to them and trim thin or near-duplicate pages of that type.
+- PretoriaHub: most sampled **business** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
 - PretoriaHub: most sampled **category-suburb** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
 - PretoriaHub: most sampled **suburb** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
-- PretoriaHub: most sampled **shopping-centre** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
 - PretoriaHub: most sampled **events** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
 - PretoriaHub: most sampled **news** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
 - PretoriaHub: most sampled **guides** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
@@ -63,23 +64,23 @@ Pages with impressions over 90 days: **1,668**.
 
 ### URL Inspection sample
 
-| Group | Sampled | Indexed | Crawled - currently not indexed | Discovered - currently not indexed | Excluded by ‘noindex’ tag | Submitted and indexed | URL is unknown to Google |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| key-pages | 4 | 3 | 1 |  |  | 3 |  |
-| business | 8 | 8 |  |  |  | 8 |  |
-| category | 8 | 1 |  | 3 | 2 | 1 | 2 |
-| category-suburb | 8 | 3 |  | 2 |  | 3 | 3 |
-| suburb | 8 | 4 |  | 3 |  | 4 | 1 |
-| shopping-centre | 8 | 8 |  |  |  | 8 |  |
-| events | 8 | 8 |  |  |  | 8 |  |
-| news | 8 | 8 |  |  |  | 8 |  |
-| guides | 7 | 7 |  |  |  | 7 |  |
-| tourism | 8 | 6 |  | 2 |  | 6 |  |
-| pages | 7 | 6 |  |  |  | 6 | 1 |
+| Group | Sampled | Indexed | Discovered - currently not indexed | Submitted and indexed | URL is unknown to Google |
+|---|---:|---:|---:|---:|---:|
+| key-pages | 4 | 4 |  | 4 |  |
+| business | 8 | 7 |  | 7 | 1 |
+| category | 8 | 2 | 6 | 2 |  |
+| category-suburb | 8 | 0 | 6 |  | 2 |
+| suburb | 8 | 5 | 3 | 5 |  |
+| shopping-centre | 8 | 7 | 1 | 7 |  |
+| events | 8 | 8 |  | 8 |  |
+| news | 8 | 8 |  | 8 |  |
+| guides | 7 | 7 |  | 7 |  |
+| tourism | 8 | 6 |  | 6 | 2 |
+| pages | 6 | 6 |  | 6 |  |
 
 <details><summary>Key pages</summary>
 
-- /: Crawled - currently not indexed (last crawl 2026-10-02)
+- /: Submitted and indexed (last crawl 2026-10-02)
 - /category/: Submitted and indexed (last crawl 2026-09-18)
 - /suburb/: Submitted and indexed (last crawl 2026-09-20)
 - /about/: Submitted and indexed (last crawl 2026-09-18)
@@ -166,19 +167,19 @@ Pages with impressions over 90 days: **507**.
 
 ### URL Inspection sample
 
-| Group | Sampled | Indexed | Discovered - currently not indexed | Submitted and indexed | URL is unknown to Google |
-|---|---:|---:|---:|---:|---:|
-| key-pages | 4 | 4 |  | 4 |  |
-| business | 8 | 2 | 3 | 2 | 3 |
-| category | 8 | 3 | 1 | 3 | 4 |
-| category-suburb | 8 | 0 | 4 |  | 4 |
-| suburb | 8 | 7 | 1 | 7 |  |
-| shopping-centre | 8 | 6 | 2 | 6 |  |
-| events | 8 | 6 | 1 | 6 | 1 |
-| news | 5 | 5 |  | 5 |  |
-| guides | 7 | 6 | 1 | 6 |  |
-| tourism | 8 | 8 |  | 8 |  |
-| pages | 7 | 4 | 2 | 4 | 1 |
+| Group | Sampled | Indexed | Crawled - currently not indexed | Discovered - currently not indexed | Submitted and indexed | URL is unknown to Google |
+|---|---:|---:|---:|---:|---:|---:|
+| key-pages | 4 | 4 |  |  | 4 |  |
+| business | 8 | 1 |  | 6 | 1 | 1 |
+| category | 8 | 3 |  | 4 | 3 | 1 |
+| category-suburb | 8 | 1 | 1 | 3 | 1 | 3 |
+| suburb | 8 | 5 | 1 | 1 | 5 | 1 |
+| shopping-centre | 8 | 3 |  | 4 | 3 | 1 |
+| events | 8 | 7 |  | 1 | 7 |  |
+| news | 5 | 5 |  |  | 5 |  |
+| guides | 7 | 6 |  | 1 | 6 |  |
+| tourism | 8 | 7 |  | 1 | 7 |  |
+| pages | 6 | 3 |  | 3 | 3 |  |
 
 <details><summary>Key pages</summary>
 
@@ -272,11 +273,11 @@ Pages with impressions over 90 days: **5,451**.
 | Group | Sampled | Indexed | Crawled - currently not indexed | Submitted and indexed | URL is unknown to Google |
 |---|---:|---:|---:|---:|---:|
 | key-pages | 4 | 1 | 3 | 1 |  |
-| business | 8 | 4 | 2 | 4 | 2 |
-| category | 8 | 6 | 1 | 6 | 1 |
-| category-suburb | 8 | 1 | 1 | 1 | 6 |
-| suburb | 8 | 4 |  | 4 | 4 |
-| shopping-centre | 8 | 3 |  | 3 | 5 |
+| business | 8 | 2 |  | 2 | 6 |
+| category | 8 | 4 | 2 | 4 | 2 |
+| category-suburb | 8 | 2 |  | 2 | 6 |
+| suburb | 8 | 2 | 1 | 2 | 5 |
+| shopping-centre | 8 | 3 | 2 | 3 | 3 |
 | events | 8 | 0 |  |  | 8 |
 | news | 8 | 0 |  |  | 8 |
 | guides | 7 | 0 |  |  | 7 |

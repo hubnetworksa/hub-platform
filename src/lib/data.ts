@@ -286,6 +286,14 @@ export const businessesInSuburb = (suburbId: number) => businessesBySuburbId.get
 export const businessesInCategory = (categoryId: number) => businessesByCategoryId.get(categoryId) ?? [];
 export const businessesInShoppingCenter = (id: number) => businessesByShoppingCenterId.get(id) ?? [];
 
+// Single source of truth for "is this category page empty" — used to decide
+// both the page's noindex (category/[slug]/index.astro) and whether the URL
+// belongs in the sitemap (sitemap.ts). Keeping both on this one function is
+// what stops them drifting apart: a category noindexed on the page but still
+// listed in the sitemap (or vice versa) is exactly the contradiction Google's
+// URL Inspection API flags.
+export const categoryHasBusinesses = (categoryId: number) => businessesInCategory(categoryId).length > 0;
+
 // Only meaningful when it actually has businesses linked — a shopping
 // centre imported from OSM with nothing nearby yet shouldn't be treated
 // as "real" for display/linking purposes.
