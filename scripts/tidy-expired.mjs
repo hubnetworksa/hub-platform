@@ -7,13 +7,16 @@
 //   - events that finished more than EVENT_GRACE_DAYS ago, except any event that an ownership
 //     claim or an event payment still points at (those rows are the audit trail for money and
 //     ownership, so the event stays);
-//   - news articles published more than NEWS_KEEP_DAYS ago.
+//   - news articles published more than NEWS_KEEP_DAYS ago;
+//   - email/password accounts that never confirmed their email within 7 days and have no
+//     businesses, claims, reviews or submissions (scripts/stale-unverified.mjs).
 // The events page already hides past events in the browser; this keeps the database, the
 // sitemap and the static build free of them too. Prints what it removed; exits 0 either way,
 // and prints REBUILD_NEEDED=1 when anything was removed so the workflow can redeploy.
 // Needs Cloudflare credentials (CLOUDFLARE_API_TOKEN in CI, or a local wrangler login).
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
+import { staleUnverifiedIds, deleteStaleUnverifiedStatements, STALE_UNVERIFIED_DAYS } from './stale-unverified.mjs';
 
 const EVENT_GRACE_DAYS = 14;
 const NEWS_KEEP_DAYS = 90;
@@ -52,16 +55,24 @@ const guards = ['event_claims', 'event_payments']
 const pastEvents = `SELECT e.id FROM events e WHERE e.event_date < date('now', '-${EVENT_GRACE_DAYS} days') ${guards}`;
 const oldNews = `SELECT n.id FROM news n WHERE n.published_date < date('now', '-${NEWS_KEEP_DAYS} days')`;
 const hasNews = tableExists('news');
+const hasVerification = rows(`SELECT count(*) AS n FROM pragma_table_info('users') WHERE name = 'email_verified_at'`)[0]?.n > 0;
 
 const events = rows(`SELECT e.slug, e.event_date FROM events e WHERE e.id IN (${pastEvents}) ORDER BY e.event_date`);
 const news = hasNews ? rows(`SELECT n.slug, n.published_date FROM news n WHERE n.id IN (${oldNews}) ORDER BY n.published_date`) : [];
 console.log(`${site}: ${events.length} event(s) ended more than ${EVENT_GRACE_DAYS} days ago, ${news.length} news article(s) older than ${NEWS_KEEP_DAYS} days.`);
 for (const e of events) console.log(`  event ${e.event_date} ${e.slug}`);
 for (const n of news) console.log(`  news  ${n.published_date} ${n.slug}`);
+const staleUsers = hasVerification ? rows(`SELECT u.id, u.email, u.created_at FROM users u WHERE u.id IN (${staleUnverifiedIds}) ORDER BY u.created_at`) : [];
+console.log(`${site}: ${staleUsers.length} unconfirmed account(s) older than ${STALE_UNVERIFIED_DAYS} days with no data.`);
+for (const u of staleUsers) console.log(`  user  ${u.created_at} #${u.id}`);
 
 if (dryRun) {
   console.log('Dry run: nothing removed.');
   process.exit(0);
+}
+if (staleUsers.length) {
+  d1(deleteStaleUnverifiedStatements.join(' '));
+  console.log(`${site}: removed ${staleUsers.length} unconfirmed account(s).`);
 }
 if (events.length + news.length === 0) process.exit(0);
 const statements = [];

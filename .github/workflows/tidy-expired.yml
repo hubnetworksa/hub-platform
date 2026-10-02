@@ -2,7 +2,8 @@ name: Tidy expired content
 
 # Every night: removes events that finished more than 14 days ago (except
 # events an ownership claim or payment still points at) and news older than
-# 90 days, from all three live databases (scripts/tidy-expired.mjs). When
+# 90 days, plus unconfirmed email/password accounts older than 7 days with no
+# data, from all three live databases (scripts/tidy-expired.mjs). When
 # anything was removed it starts a production deploy so the pages disappear
 # from the sites and the sitemap too.
 
@@ -40,7 +41,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Remove expired events and old news
+      - name: Remove expired events, old news and stale unconfirmed accounts
         id: tidy
         run: |
           flag=""

@@ -1,10 +1,13 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { verifyPassword, hashPassword, needsRehash, rotateSession, sessionCookie, isAdminEmail } from '../_lib/auth';
 import { rateLimited } from '../_lib/messages';
+import { sendVerificationEmail, safeNext } from '../_lib/email-verification';
+import { getSite } from '../_lib/site';
 
 interface Env {
   DB: D1Database;
   SITE: string;
+  RESEND_API_KEY?: string;
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -25,9 +28,25 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (await rateLimited(db, context.request, context.env.SITE ?? 'site', 'login', 10)) {
     return json({ ok: false, error: 'Too many sign-in attempts. Please wait an hour and try again.' }, 429);
   }
-  const user = await db.prepare('SELECT id, password_hash FROM users WHERE email = ?').bind(email).first<{ id: number; password_hash: string | null }>();
+  const user = await db.prepare('SELECT id, password_hash, email_verified_at FROM users WHERE email = ?').bind(email).first<{ id: number; password_hash: string | null; email_verified_at: string | null }>();
   if (!user || !user.password_hash || !(await verifyPassword(password, user.password_hash))) {
     return json({ ok: false, error: 'Incorrect email or password.' }, 401);
+  }
+
+  // Right password, but the address was never confirmed: no session. Send a
+  // fresh link (at most 1 per 2 minutes, 5 per day) and say so.
+  if (!user.email_verified_at) {
+    const sent = await sendVerificationEmail(context.env, db, getSite(context.env.SITE), { id: user.id, email }, safeNext(body.next));
+    return json(
+      {
+        ok: false,
+        unverified: true,
+        error: sent
+          ? "Please confirm your email first \u2014 we've sent you a new link."
+          : "Please confirm your email first. We've already sent you a link, so check your inbox (and spam folder). You can ask for another in a few minutes.",
+      },
+      403
+    );
   }
 
   if (needsRehash(user.password_hash)) {

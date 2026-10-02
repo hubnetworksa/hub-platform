@@ -125,6 +125,52 @@ export function listingLiveEmailHtml(site: Site, data: ListingLiveEmailData): st
 </html>`;
 }
 
+export interface VerifyEmailData {
+  confirmUrl: string;
+}
+
+export function verifyEmailHtml(site: Site, data: VerifyEmailData): string {
+  const t = site.theme;
+  const bannerUrl = `https://${site.domain}${site.bannerImage}`;
+  const logoUrl = `https://${site.domain}/logo-icon.png`;
+
+  return `<!doctype html>
+<html>
+<body style="margin:0;padding:0;background:${t.bgSubtle};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${t.bgSubtle};padding:24px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:${t.bgCard};border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);max-width:560px;">
+          <tr>
+            <td>
+              <img src="${bannerUrl}" width="560" alt="${escapeHtml(site.siteName)}" style="display:block;width:100%;max-width:560px;height:160px;object-fit:cover;">
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px 8px;">
+              <img src="${logoUrl}" width="36" height="41" alt="" style="display:block;margin-bottom:12px;">
+              <h1 style="margin:0 0 4px;font-size:20px;color:${t.navy};">Confirm your email</h1>
+              <p style="margin:0 0 20px;color:${t.textMuted};font-size:14px;line-height:1.5;">
+                Thanks for creating a ${escapeHtml(site.siteName)} account. Please confirm this is your email address to finish setting it up. The link works once and expires in 24 hours.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 32px 28px;">
+              <a href="${escapeHtml(data.confirmUrl)}" style="display:inline-block;background:${t.accent};color:${t.accentContrast};text-decoration:none;font-weight:700;font-size:15px;padding:12px 24px;border-radius:8px;">Confirm my email →</a>
+              <p style="margin:16px 0 0;color:${t.textMuted};font-size:12px;line-height:1.5;">Button not working? Paste this link into your browser:<br><span style="word-break:break-all;">${escapeHtml(data.confirmUrl)}</span></p>
+              <p style="margin:12px 0 0;color:${t.textMuted};font-size:12px;">If you didn't create an account, you can safely ignore this email.</p>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:20px 0 0;color:${t.textMuted};font-size:12px;">${escapeHtml(site.siteName)} · ${escapeHtml(site.contactEmail)}</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
 export interface OwnerReminderEmailData {
   businessName: string;
   confirmUrl: string;

@@ -1,5 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
-import { hashPassword, rotateSession, sessionCookie, isAdminEmail } from '../_lib/auth';
+import { hashPassword, isAdminEmail } from '../_lib/auth';
+import { sendVerificationEmail, takeVerificationSlot, safeNext } from '../_lib/email-verification';
 import { rateLimited } from '../_lib/messages';
 import { sendEmail } from '../_lib/send-email';
 import { getSite } from '../_lib/site';
@@ -38,23 +39,49 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (await rateLimited(db, context.request, site.slug, 'register', 5)) {
     return json({ ok: false, error: 'Too many sign-ups from your connection. Please try again in an hour.' }, 429);
   }
-  const existing = await db.prepare('SELECT 1 FROM users WHERE email = ?').bind(email).first();
-  if (existing) return json({ ok: false, error: 'An account with that email already exists.' }, 400);
+  const next = safeNext(body.next);
+  // The same answer whether or not the address already has an account, so
+  // this can't be used to find out who is registered.
+  const done = () => json({ ok: true, verify: true });
+
+  const existing = await db
+    .prepare('SELECT id, email_verified_at FROM users WHERE email = ?')
+    .bind(email)
+    .first<{ id: number; email_verified_at: string | null }>();
+  if (existing) {
+    if (!existing.email_verified_at) {
+      // A half-finished sign-up: send a fresh link (rate-limited). The password
+      // is never replaced, so whoever typed it first can't be overridden here.
+      await sendVerificationEmail(context.env, db, site, { id: existing.id, email }, next);
+    } else if (await takeVerificationSlot(db, existing.id)) {
+      await sendEmail(context.env, {
+        from: `${site.siteName} <${site.contactEmail}>`,
+        to: email,
+        subject: `You already have a ${site.siteName} account`,
+        text:
+          `Someone tried to create a ${site.siteName} account with this email address, but you already have one.\n\n` +
+          `Log in: https://${site.domain}/login/\nForgot your password? https://${site.domain}/forgot-password/\n\n` +
+          `If this wasn't you, you can ignore this email.`,
+      });
+    }
+    return done();
+  }
 
   const passwordHash = await hashPassword(password);
   const insert = await db.prepare('INSERT INTO users (email, password_hash) VALUES (?, ?)').bind(email, passwordHash).run();
-  const token = await rotateSession(db, context.request, insert.meta.last_row_id as number);
+  await sendVerificationEmail(context.env, db, site, { id: insert.meta.last_row_id as number, email }, next);
 
   await sendEmail(context.env, {
     from: `${site.siteName} <${site.contactEmail}>`,
     to: site.contactEmail,
     subject: `New account created: ${email}`,
-    text: `A new ${site.siteName} account was just created via email/password: ${email}`,
+    text: `A new ${site.siteName} account was just created via email/password (awaiting email confirmation): ${email}`,
   });
 
-  return json({ ok: true }, 200, { 'Set-Cookie': sessionCookie(token) });
+  // No session yet: the account is unusable until the emailed link is opened.
+  return done();
 };
 
-function json(data: unknown, status = 200, headers: Record<string, string> = {}): Response {
-  return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json', ...headers } });
+function json(data: unknown, status = 200): Response {
+  return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
 }

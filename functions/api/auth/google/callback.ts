@@ -64,10 +64,10 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const email = claims.email.toLowerCase();
   const db = context.env.DB;
 
-  let user = await db.prepare('SELECT id FROM users WHERE google_sub = ? OR email = ?').bind(claims.sub, email).first<{ id: number }>();
+  let user = await db.prepare('SELECT id, email_verified_at FROM users WHERE google_sub = ? OR email = ?').bind(claims.sub, email).first<{ id: number; email_verified_at: string | null }>();
   if (!user) {
-    const insert = await db.prepare('INSERT INTO users (email, google_sub) VALUES (?, ?)').bind(email, claims.sub).run();
-    user = { id: insert.meta.last_row_id };
+    const insert = await db.prepare('INSERT INTO users (email, google_sub, email_verified_at) VALUES (?, ?, CURRENT_TIMESTAMP)').bind(email, claims.sub).run();
+    user = { id: insert.meta.last_row_id, email_verified_at: 'now' };
     await sendEmail(context.env, {
       from: `${site.siteName} <${site.contactEmail}>`,
       to: site.contactEmail,
@@ -76,6 +76,17 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     });
   } else {
     await db.prepare('UPDATE users SET google_sub = ? WHERE id = ? AND google_sub IS NULL').bind(claims.sub, user.id).run();
+    if (!user.email_verified_at) {
+      // Google proved ownership of this address, so an unconfirmed
+      // email/password sign-up for it is now confirmed. Its password is
+      // cleared: whoever registered it first might not be the real owner, and
+      // the owner can set their own via "Forgot your password?".
+      await db.batch([
+        db.prepare(`UPDATE users SET email_verified_at = datetime('now'), password_hash = NULL WHERE id = ? AND email_verified_at IS NULL`).bind(user.id),
+        db.prepare(`DELETE FROM auth_tokens WHERE user_id = ? AND purpose = 'email_verify'`).bind(user.id),
+        db.prepare('DELETE FROM sessions WHERE user_id = ?').bind(user.id),
+      ]);
+    }
   }
 
   const token = await rotateSession(db, context.request, user.id);

@@ -136,11 +136,14 @@ export async function getSessionUser(request: Request, db: D1Database): Promise<
   if (!token) return null;
 
   const row = await db
-    .prepare('SELECT users.id AS id, users.email AS email, sessions.expires_at AS expires_at FROM sessions JOIN users ON users.id = sessions.user_id WHERE sessions.token = ?')
+    .prepare('SELECT users.id AS id, users.email AS email, sessions.expires_at AS expires_at, users.email_verified_at AS email_verified_at FROM sessions JOIN users ON users.id = sessions.user_id WHERE sessions.token = ?')
     .bind(token)
-    .first<{ id: number; email: string; expires_at: string }>();
+    .first<{ id: number; email: string; expires_at: string; email_verified_at: string | null }>();
 
   if (!row) return null;
+  // Defence in depth: an unconfirmed email/password account is never signed in,
+  // even if a session row somehow exists for it.
+  if (!row.email_verified_at) return null;
   if (new Date(row.expires_at).getTime() < Date.now()) {
     await db.prepare('DELETE FROM sessions WHERE token = ?').bind(token).run();
     return null;

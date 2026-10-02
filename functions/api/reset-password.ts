@@ -44,7 +44,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const live = await db.prepare(`SELECT datetime(?) > datetime('now') AS ok`).bind(row.expires_at).first<{ ok: number }>();
   if (!live?.ok) return json({ ok: false, error: 'This reset link has expired. Ask for a new one.' }, 400);
 
-  await db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').bind(await hashPassword(password), row.user_id).run();
+  await db.prepare('UPDATE users SET password_hash = ?, email_verified_at = COALESCE(email_verified_at, CURRENT_TIMESTAMP) WHERE id = ?').bind(await hashPassword(password), row.user_id).run();
   await db.prepare('DELETE FROM sessions WHERE user_id = ?').bind(row.user_id).run();
 
   const session = await createSession(db, row.user_id);

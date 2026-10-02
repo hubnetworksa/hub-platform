@@ -35,6 +35,7 @@ import ShowPassword from '../components/ShowPassword.astro';
         <button type="submit" class="btn btn-primary">Log in</button>
         <a href="/forgot-password/" style="align-self:flex-end;margin-top:-0.4rem;font-size:0.85rem;font-weight:600">Forgot your password?</a>
         <p id="form-status" role="status"></p>
+        <button type="button" id="resend-btn" class="btn btn-outline" hidden>Resend email</button>
       </form>
 
       <p class="switch-link">Don't have an account? <a href="/register/">Create one</a></p>
@@ -52,21 +53,41 @@ import ShowPassword from '../components/ShowPassword.astro';
     if (other) other.href = `${other.pathname}?next=${encodeURIComponent(next)}`;
   }
 
+  const resendBtn = document.getElementById('resend-btn') as HTMLButtonElement;
+  resendBtn.addEventListener('click', async () => {
+    resendBtn.disabled = true;
+    status.textContent = 'Sending…';
+    try {
+      const res = await fetch('/api/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: (form.elements.namedItem('email') as HTMLInputElement).value, next: next || undefined }),
+      });
+      const result = await res.json();
+      status.textContent = result.ok ? 'If that address is waiting for confirmation, a new link is on its way. Check your spam folder too.' : result.error || 'Something went wrong — please try again.';
+    } catch {
+      status.textContent = 'Something went wrong — please try again.';
+    }
+    setTimeout(() => { resendBtn.disabled = false; }, 30000);
+  });
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    resendBtn.hidden = true;
     status.textContent = 'Logging in…';
     const data = Object.fromEntries(new FormData(form).entries());
     try {
       const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, next: next || undefined }),
       });
       const result = await res.json();
       if (result.ok) {
         window.location.href = result.isAdmin ? '/admin/' : next && /^\/(?![\/\\])/.test(next) ? next : '/my-businesses/';
       } else {
         status.textContent = result.error || 'Something went wrong — please try again.';
+        resendBtn.hidden = !result.unverified;
       }
     } catch {
       status.textContent = 'Something went wrong — please try again.';
@@ -176,5 +197,16 @@ import ShowPassword from '../components/ShowPassword.astro';
     margin: 1.5rem 0 0;
     font-size: 0.9rem;
     color: var(--text-muted);
+  }
+  #resend-btn {
+    border: 1px solid var(--border);
+    cursor: pointer;
+    width: 100%;
+    padding: 0.7rem 1rem;
+    font-weight: 700;
+  }
+  #resend-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
   }
 </style>

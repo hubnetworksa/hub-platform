@@ -13,17 +13,18 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   // closest real signal we keep to "last active".
   const rows = await context.env.DB
     .prepare(
-      `SELECT u.id, u.email, u.created_at, COUNT(DISTINCT b.id) AS owned_count,
+      `SELECT u.id, u.email, u.created_at, u.email_verified_at, COUNT(DISTINCT b.id) AS owned_count,
               (SELECT MAX(s.created_at) FROM sessions s WHERE s.user_id = u.id) AS last_seen
        FROM users u LEFT JOIN businesses b ON b.owner_user_id = u.id
        GROUP BY u.id ORDER BY u.created_at DESC`
     )
-    .all<{ id: number; email: string; created_at: string; owned_count: number; last_seen: string | null }>();
+    .all<{ id: number; email: string; created_at: string; email_verified_at: string | null; owned_count: number; last_seen: string | null }>();
 
   return json({
     ok: true,
     users: rows.results.map((u) => ({
       ...u,
+      verified: Boolean(u.email_verified_at),
       role: isAdminEmail(u.email) ? 'Admin' : u.owned_count > 0 ? 'Owner' : 'Member',
     })),
   });

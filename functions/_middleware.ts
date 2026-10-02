@@ -52,6 +52,7 @@ const NOINDEX_FUNCTION_PATHS = [
   '/review-claim',
   '/review-event-claim',
   '/verify-claim',
+  '/verify-email',
   '/verify-listing',
 ];
 

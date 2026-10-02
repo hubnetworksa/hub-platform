@@ -36,6 +36,12 @@ import ShowPassword from '../components/ShowPassword.astro';
         <p id="form-status" role="status"></p>
       </form>
 
+      <div id="check-inbox" hidden>
+        <p class="ok-note">Check your inbox to confirm your email. The link expires in 24 hours.</p>
+        <button type="button" id="resend-btn" class="btn btn-primary">Resend email</button>
+        <p id="resend-status" role="status"></p>
+      </div>
+
       <p class="switch-link">Already have an account? <a href="/login/">Log in</a></p>
     </div>
   </section>
@@ -59,17 +65,40 @@ import ShowPassword from '../components/ShowPassword.astro';
       const res = await fetch('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, next: next || undefined }),
       });
       const result = await res.json();
       if (result.ok) {
-        window.location.href = next && /^\/(?![\/\\])/.test(next) ? next : '/my-businesses/';
+        form.style.display = 'none';
+        (document.querySelector('.divider') as HTMLElement).style.display = 'none';
+        document.getElementById('google-btn')!.style.display = 'none';
+        document.querySelector('.subtitle')!.textContent = 'One more step.';
+        document.getElementById('check-inbox')!.hidden = false;
       } else {
         status.textContent = result.error || 'Something went wrong — please try again.';
       }
     } catch {
       status.textContent = 'Something went wrong — please try again.';
     }
+  });
+
+  const resendBtn = document.getElementById('resend-btn') as HTMLButtonElement;
+  const resendStatus = document.getElementById('resend-status')!;
+  resendBtn.addEventListener('click', async () => {
+    resendBtn.disabled = true;
+    resendStatus.textContent = 'Sending…';
+    try {
+      const res = await fetch('/api/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: (form.elements.namedItem('email') as HTMLInputElement).value, next: next || undefined }),
+      });
+      const result = await res.json();
+      resendStatus.textContent = result.ok ? 'If that address is waiting for confirmation, a new link is on its way. Check your spam folder too.' : result.error || 'Something went wrong — please try again.';
+    } catch {
+      resendStatus.textContent = 'Something went wrong — please try again.';
+    }
+    setTimeout(() => { resendBtn.disabled = false; }, 30000);
   });
 </script>
 
@@ -175,5 +204,32 @@ import ShowPassword from '../components/ShowPassword.astro';
     margin: 1.5rem 0 0;
     font-size: 0.9rem;
     color: var(--text-muted);
+  }
+  .ok-note {
+    margin: 0 0 1rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-subtle);
+    color: var(--text);
+    font-size: 0.92rem;
+    line-height: 1.5;
+  }
+  #check-inbox button {
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-weight: 700;
+  }
+  #check-inbox button:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+  #resend-status {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin: 0.75rem 0 0;
+    min-height: 1.2em;
   }
 </style>
