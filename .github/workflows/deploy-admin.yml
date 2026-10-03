@@ -30,6 +30,7 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       HAS_SETUP_CODE: ${{ secrets.HUB_ADMIN_SETUP_CODE != '' }}
+      HAS_ANTHROPIC_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -90,6 +91,15 @@ jobs:
         env:
           SETUP_CODE: ${{ secrets.HUB_ADMIN_SETUP_CODE }}
         run: printf '%s' "$SETUP_CODE" | ../node_modules/.bin/wrangler pages secret put SETUP_CODE --project-name=hub-admin
+
+      # The Anthropic API key for the AI morning briefing (optional: without it
+      # the briefing is a plain summary). Encrypted Pages secret, never logged.
+      - name: Set the Anthropic API key
+        if: env.HAS_ANTHROPIC_KEY == 'true'
+        working-directory: admin-app
+        env:
+          KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: printf '%s' "$KEY" | ../node_modules/.bin/wrangler pages secret put ANTHROPIC_API_KEY --project-name=hub-admin
 
       # Run from admin-app/ so wrangler picks up admin-app/wrangler.jsonc
       # (bindings and vars) and admin-app/functions/.

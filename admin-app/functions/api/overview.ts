@@ -1,5 +1,5 @@
 import type { PagesFunction } from '@cloudflare/workers-types';
-import { hubSites, count, json, type Env, type HubSite } from '../_lib/sites';
+import { hubSites, count, json, checkSite, type Env, type HubSite } from '../_lib/sites';
 import { siteQueue } from '../_lib/queues';
 
 // The "All sites" home screen: per-site headline numbers and one combined
@@ -39,16 +39,6 @@ async function siteSummary(site: HubSite) {
     health,
     items,
   };
-}
-
-async function checkSite(domain: string): Promise<{ ok: boolean; status: number; ms: number }> {
-  const start = Date.now();
-  try {
-    const res = await fetch(`https://${domain}/`, { method: 'HEAD', redirect: 'manual', cf: { cacheTtl: 0 } } as RequestInit);
-    return { ok: res.status >= 200 && res.status < 400, status: res.status, ms: Date.now() - start };
-  } catch {
-    return { ok: false, status: 0, ms: Date.now() - start };
-  }
 }
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {

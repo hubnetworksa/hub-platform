@@ -24,6 +24,10 @@ const h = (tag, attrs = {}, ...children) => {
   return el;
 };
 
+// Replaces an element's contents, skipping empty slots (null/undefined/false)
+// so an optional part never shows up as the text "null".
+const fill = (el, ...kids) => el.replaceChildren(...kids.flat(Infinity).filter((k) => k !== null && k !== undefined && k !== false));
+
 const ICON = {
   home: 'M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
   chart: 'M4 20V10M10 20V4M16 20v-7M22 20H2',
@@ -200,7 +204,7 @@ function buildShell() {
   const navLinks = (cls) =>
     ROUTES.map(([href, label, ic]) => h('a', { class: cls, href, 'data-route': href }, icon(ic), h('span', {}, label), href === '#/' ? h('span', { class: 'nav-badge', 'data-badge': '', hidden: true }) : null));
   const app = $('#app');
-  app.replaceChildren(
+  fill(app, 
     h(
       'div',
       { class: 'shell' },
@@ -278,12 +282,12 @@ async function loadOverview(force) {
 }
 
 async function renderOverview(view) {
-  view.replaceChildren(mobileHead('Overview'), pageHead('Overview', 'Everything across your sites that needs you, and how each site is doing.'), h('div', { class: 'skeleton' }));
+  fill(view, mobileHead('Overview'), pageHead('Overview', 'Everything across your sites that needs you, and how each site is doing.'), h('div', { class: 'skeleton' }));
   let data;
   try {
     data = await loadOverview();
   } catch (e) {
-    view.replaceChildren(mobileHead('Overview'), pageHead('Overview'), errorBox(e));
+    fill(view, mobileHead('Overview'), pageHead('Overview'), errorBox(e));
     return;
   }
   const sum = (k) => data.sites.reduce((a, s) => a + (s[k] || 0), 0);
@@ -318,16 +322,81 @@ async function renderOverview(view) {
 
   const siteCards = h('div', { class: 'three' }, data.sites.map(siteCard));
 
-  view.replaceChildren(
+  fill(view, 
     mobileHead('Overview'),
     heroBanner(data, refresh),
     ...[await passkeyNudge()].filter(Boolean),
+    briefingCard(),
     tiles,
     h('div', { class: 'section-title' }, 'Your sites'),
     siteCards,
     h('div', { class: 'section-title' }, 'Needs attention'),
     queueCard(data)
   );
+}
+
+// Today's AI briefing: loads on its own so the Overview never waits for it.
+let briefingCache = null;
+function briefingCard() {
+  const card = h('section', { class: 'card briefing', 'aria-label': 'Today’s briefing', 'aria-live': 'polite' });
+  const head = (b) =>
+    h(
+      'div',
+      { class: 'card-head' },
+      h(
+        'div',
+        {},
+        h('h2', {}, 'Today’s briefing'),
+        h(
+          'p',
+          { class: 'sub' },
+          b ? (b.ai ? h('span', { class: 'ai-badge' }, '✦ Written by Claude') : h('span', { class: 'ai-badge plain' }, 'Summary')) : null,
+          b ? ` · ${b.regenerations ? 'updated' : 'written'} ${ago(b.created_at)}` : 'Reading all three sites…'
+        )
+      ),
+      b ? h('button', { class: 'btn', type: 'button', onclick: refresh, 'aria-label': 'Refresh the briefing' }, icon('refresh', 15), 'Refresh') : null
+    );
+  const msg = h('p', { class: 'msg err', role: 'status' });
+  const draw = (b) => {
+    const x = b.briefing;
+    fill(card, 
+      head(b),
+      h('p', { class: 'brief-headline' }, x.headline),
+      x.needs_you.length
+        ? h('div', { class: 'brief-block' }, h('h3', {}, 'Needs you today'), h('ul', { class: 'brief-list' }, x.needs_you.map((n) => h('li', {}, n.site && n.site !== 'all' ? h('span', { class: 'city-dot', style: `background:${siteColor(n.site)}` }) : h('span', { class: 'city-dot', style: 'background:var(--muted)' }), h('span', {}, n.text)))))
+        : null,
+      h('div', { class: 'brief-block' }, h('h3', {}, 'Your sites'), h('ul', { class: 'brief-list' }, x.sites.map((s) => h('li', {}, h('span', { class: 'city-dot', style: `background:${siteColor(s.slug)}` }), h('span', {}, h('b', {}, siteName(s.slug)), ` ${s.summary}`))))),
+      x.worth_knowing.length ? h('div', { class: 'brief-block' }, h('h3', {}, 'Worth knowing'), h('ul', { class: 'brief-list dots' }, x.worth_knowing.map((w) => h('li', {}, h('span', { class: 'bullet' }), h('span', {}, w))))) : null,
+      b.ai ? null : h('p', { class: 'note' }, 'Add an Anthropic API key to have Claude write this briefing (see the Hub Admin README).'),
+      msg
+    );
+    motion.brief(card);
+  };
+  async function refresh(e) {
+    const btn = e.currentTarget;
+    btn.disabled = true;
+    card.classList.add('writing');
+    try {
+      briefingCache = await api('/api/briefing/refresh', 'POST', {});
+      draw(briefingCache);
+    } catch (err) {
+      msg.textContent = err.message;
+      btn.disabled = false;
+    } finally {
+      card.classList.remove('writing');
+    }
+  }
+  if (briefingCache && briefingCache.day === new Date(Date.now() + 2 * 3600000).toISOString().slice(0, 10)) draw(briefingCache);
+  else {
+    fill(card, head(null), h('div', { class: 'brief-loading' }, h('span'), h('span'), h('span')), h('p', { class: 'sub' }, 'Writing today’s briefing. This takes a few seconds the first time each day.'));
+    api('/api/briefing')
+      .then((b) => {
+        briefingCache = b;
+        draw(b);
+      })
+      .catch((err) => fill(card, head(null), h('p', { class: 'msg err' }, `The briefing couldn’t be loaded: ${err.message}`)));
+  }
+  return card;
 }
 
 // The Overview's header: the three-city banner with a greeting.
@@ -444,7 +513,7 @@ function queueCard(data) {
       items.length > shown.length
         ? h('div', { style: 'text-align:center;margin-top:12px' }, h('button', { class: 'btn', type: 'button', onclick: () => ((state.queueShown += 20), draw()) }, `Show more (${items.length - shown.length} left)`))
         : null;
-    card.replaceChildren(h('div', { class: 'filters' }, seg, siteSel), list, more);
+    fill(card, h('div', { class: 'filters' }, seg, siteSel), list, more);
   };
   draw();
   return card;
@@ -476,7 +545,7 @@ async function renderStats(view) {
         (state.stats?.sites ?? state.overview?.sites ?? []).map((s) => h('option', { value: s.slug, selected: state.site === s.slug }, s.name))
       )
     );
-  view.replaceChildren(mobileHead('Stats'), head(), filters(), h('div', { id: 'stats-body' }, h('div', { class: 'skeleton' })));
+  fill(view, mobileHead('Stats'), head(), filters(), h('div', { id: 'stats-body' }, h('div', { class: 'skeleton' })));
   view._statsHead = head;
   view._statsFilters = filters;
   await loadStats(view);
@@ -490,11 +559,11 @@ async function loadStats(view) {
     state.stats = await api(`/api/stats?range=${state.range}&site=${encodeURIComponent(state.site)}`);
   } catch (e) {
     body.style.opacity = '';
-    body.replaceChildren(errorBox(e));
+    fill(body, errorBox(e));
     return;
   }
   if (!state.stats.selected.includes(state.site) && state.site !== 'all') state.site = 'all';
-  view.replaceChildren(mobileHead('Stats'), view._statsHead(), view._statsFilters(), drawStats());
+  fill(view, mobileHead('Stats'), view._statsHead(), view._statsFilters(), drawStats());
 }
 
 function drawStats() {
@@ -527,7 +596,7 @@ function drawStats() {
     let showTable = false;
     const btn = h('button', { type: 'button', class: 'toggle-table', 'aria-pressed': 'false' }, 'Show table');
     const render = () => {
-      holder.replaceChildren();
+      fill(holder, );
       if (showTable) holder.appendChild(table());
       else draw(holder);
       btn.textContent = showTable ? 'Show chart' : 'Show table';
@@ -709,15 +778,15 @@ function seoSection(d) {
 
 // ── Manage ─────────────────────────────────────────────────────────────────
 async function renderManage(view) {
-  view.replaceChildren(mobileHead('Manage'), pageHead('Manage', 'Jump straight into any screen of any site’s admin.'), h('div', { class: 'skeleton' }));
+  fill(view, mobileHead('Manage'), pageHead('Manage', 'Jump straight into any screen of any site’s admin.'), h('div', { class: 'skeleton' }));
   let data;
   try {
     data = await loadOverview();
   } catch (e) {
-    view.replaceChildren(mobileHead('Manage'), pageHead('Manage'), errorBox(e));
+    fill(view, mobileHead('Manage'), pageHead('Manage'), errorBox(e));
     return;
   }
-  view.replaceChildren(
+  fill(view, 
     mobileHead('Manage'),
     pageHead('Manage', 'Jump straight into any screen of any site’s admin. Each opens in a new tab, already on that site.'),
     h(
@@ -827,13 +896,13 @@ function upgradeForm(sites, initial, onSaved, onCancel) {
 
 async function renderUpgrades(view) {
   const head = pageHead('Upgrades', 'Improvements to build on the sites. Add an idea, choose which sites it’s for, and move it along as it gets done.');
-  view.replaceChildren(mobileHead('Upgrades'), head, h('div', { class: 'skeleton' }));
+  fill(view, mobileHead('Upgrades'), head, h('div', { class: 'skeleton' }));
   let sites;
   let list;
   try {
     [sites, list] = await Promise.all([sitesList(), api('/api/upgrades').then((r) => r.upgrades)]);
   } catch (e) {
-    view.replaceChildren(mobileHead('Upgrades'), head, errorBox(e));
+    fill(view, mobileHead('Upgrades'), head, errorBox(e));
     return;
   }
   const listCard = h('section', { class: 'card', 'aria-label': 'Upgrades list' });
@@ -964,14 +1033,14 @@ async function renderUpgrades(view) {
           return [h('div', { class: 'group-title' }, l, h('b', {}, String(items.length))), h('div', { class: 'up-list' }, items.map(item))];
         })
       : [h('div', { class: 'empty' }, h('b', {}, list.length ? 'Nothing matches' : 'No upgrades yet'), list.length ? 'Try another filter.' : 'Add the first one above.')];
-    listCard.replaceChildren(h('div', { class: 'filters' }, seg, siteSel, search), ...body);
+    fill(listCard, h('div', { class: 'filters' }, seg, siteSel, search), ...body);
   };
   draw();
-  view.replaceChildren(mobileHead('Upgrades'), head, h('div', { class: 'grid' }, addCard, listCard));
+  fill(view, mobileHead('Upgrades'), head, h('div', { class: 'grid' }, addCard, listCard));
 }
 
 // ── Alerts (push notifications) ────────────────────────────────────────────
-const ALERT_TYPES = QUEUE_TYPES.filter(([k]) => k !== 'all');
+const ALERT_TYPES = [...QUEUE_TYPES.filter(([k]) => k !== 'all'), ['briefing', 'Morning briefing']];
 
 function pushSupport() {
   const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -1005,7 +1074,7 @@ async function currentSubscription() {
 
 async function renderAlerts(view) {
   const head = pageHead('Settings', 'Sign-in, password and notifications.');
-  view.replaceChildren(mobileHead('Settings'), head, h('div', { class: 'skeleton' }));
+  fill(view, mobileHead('Settings'), head, h('div', { class: 'skeleton' }));
   const account = await accountCards(view);
   const support = pushSupport();
   let sub = support === 'ok' ? await currentSubscription().catch(() => null) : null;
@@ -1017,7 +1086,7 @@ async function renderAlerts(view) {
       api('/api/notifications').then((r) => r.notifications),
     ]);
   } catch (e) {
-    view.replaceChildren(mobileHead('Settings'), head, errorBox(e));
+    fill(view, mobileHead('Settings'), head, errorBox(e));
     return;
   }
   const mine = devices.find((d) => d.current);
@@ -1165,7 +1234,7 @@ async function renderAlerts(view) {
       )
     : h('p', { class: 'empty' }, 'No alerts yet. They appear here as new items arrive.');
 
-  view.replaceChildren(
+  fill(view, 
     mobileHead('Settings'),
     head,
     h(
@@ -1193,7 +1262,7 @@ async function platformPasskeyAvailable() {
 }
 
 function authScreen(title, sub, ...body) {
-  $('#app').replaceChildren(
+  fill($('#app'), 
     h(
       'div',
       { class: 'auth' },
@@ -1528,7 +1597,7 @@ async function adminsCard(view) {
       const share = navigator.share
         ? h('button', { class: 'btn primary', type: 'button', onclick: () => navigator.share({ title: 'Hub Admin invite', text: `Your Hub Admin invite (${who}). It works once and expires in 48 hours.`, url: r.link }).catch(() => {}) }, 'Share…')
         : null;
-      linkBox.replaceChildren(
+      fill(linkBox, 
         h(
           'div',
           { class: 'banner', style: 'display:grid;gap:10px;margin-top:12px' },
@@ -1555,7 +1624,7 @@ async function adminsCard(view) {
     } catch {
       return;
     }
-    lists.replaceChildren(
+    fill(lists, 
       ...data.admins.map((a) =>
         h(
           'div',

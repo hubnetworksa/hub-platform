@@ -81,3 +81,6 @@ export async function siteQueue(site: HubSite): Promise<QueueItem[]> {
 }
 
 export const QUEUE_TYPES = QUEUES.map(([type]) => type);
+
+/** Everything a device can choose to be alerted about: the queues plus the morning briefing. */
+export const ALERT_TYPES = [...QUEUE_TYPES, 'briefing'];

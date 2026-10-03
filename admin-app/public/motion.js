@@ -93,6 +93,15 @@ export const motion = {
     gsap().from(el, { scale: 0.92, autoAlpha: 0, y: 8, duration: 0.5, ease: 'back.out(1.8)' });
   },
 
+  // The briefing writes itself in: headline, then each line.
+  brief(card) {
+    if (!on() || !card) return;
+    const g = gsap();
+    g.timeline({ defaults: { ease: EASE } })
+      .from(card.querySelector('.brief-headline'), { y: 10, autoAlpha: 0, duration: 0.6 })
+      .from(card.querySelectorAll('.brief-block h3, .brief-list li'), { y: 8, autoAlpha: 0, duration: 0.4, stagger: 0.06 }, 0.2);
+  },
+
   // A shake for a wrong password / refused form.
   shake(el) {
     if (!on() || !el) return;

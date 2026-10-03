@@ -30,6 +30,7 @@
     "check:all": "bash scripts/launch-check.sh"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.131.0",
     "@astrojs/sitemap": "^3.2.1",
     "astro": "^7.2.4",
     "fuse.js": "^7.5.0",
