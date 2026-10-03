@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Hub Admin app icon: a map pin (the hubs' shared mark) holding three
+       rising bars in the three cities' colours. Full-bleed square so it works
+       as a maskable icon; the pin sits inside the 80% safe zone.
+       Rendered to admin-app/public/icons/ by scripts/render-admin-icons.mjs. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a2d5c"/>
+      <stop offset="1" stop-color="#0a1430"/>
+    </linearGradient>
+    <linearGradient id="pin" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#dfe8f7"/>
+    </linearGradient>
+    <clipPath id="disc"><circle cx="256" cy="214" r="92"/></clipPath>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <path d="M256,420 L163.4,285.4 A128,128 0 1 1 348.6,285.4 Z" fill="url(#pin)"/>
+  <circle cx="256" cy="214" r="92" fill="#0f1b3d"/>
+  <g clip-path="url(#disc)">
+    <rect x="196" y="214" width="30" height="70" rx="6" fill="#2fa0ec"/>
+    <rect x="241" y="176" width="30" height="108" rx="6" fill="#4d9e2f"/>
+    <rect x="286" y="146" width="30" height="138" rx="6" fill="#1d6fe0"/>
+    <rect x="180" y="284" width="152" height="6" fill="#ffffff" opacity="0.55"/>
+  </g>
+</svg>
