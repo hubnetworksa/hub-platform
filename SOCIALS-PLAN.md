@@ -59,7 +59,7 @@ Handles: try the first one, then the fallbacks in order. Use the same handle on 
 - **Facebook intro (96 characters):** `Cape Town's free local business directory. Find shops, services, events and news in your suburb.`
 - **Facebook "About":** `TheCapeTownHub lists businesses across Cape Town, sorted by suburb and category, with opening hours, contact details and directions. We also post local events, news and the monthly fuel price. Business owners can claim or add their listing for free at thecapetownhub.com.`
 
-Note: Cape Town currently uses the same pin logo as Pretoria (blue, Pretoria skyline). A Cape Town version of the logo, with Table Mountain in the pin, would make the profile picture recognisably Cape Town. Polokwane already has its own.
+Cape Town's pin logo (Devil's Peak, Table Mountain and Lion's Head over the city and harbour) was added on 3 October 2026, so each site now has its own profile picture.
 
 ### Launch caption (all three; swap the city and domain)
 
