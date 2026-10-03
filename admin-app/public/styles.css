@@ -491,3 +491,13 @@ article.up, div.up:not(.delta) { border: 1px solid var(--border); border-radius:
 .caption { margin: 0; white-space: pre-wrap; font: inherit; font-size: 13.5px; line-height: 1.5; background: var(--surface-2); border-radius: 10px; padding: 10px 12px; color: var(--text-2); overflow-wrap: anywhere; }
 .idea .btn { justify-self: start; }
 @media (max-width: 400px) { .ideas { grid-template-columns: 1fr; } }
+.act { display: grid; gap: 10px; justify-self: stretch; }
+.act .row { align-items: center; }
+.reply { display: grid; gap: 8px; }
+.reply .textarea { width: 100%; }
+.btn.danger { color: var(--critical-text); border-color: rgba(208, 59, 59, 0.35); }
+.bulkbar { position: sticky; bottom: 12px; z-index: 5; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: var(--nav); color: #fff; padding: 10px 14px; border-radius: 12px; box-shadow: 0 8px 30px rgba(15, 27, 61, 0.3); margin-top: 12px; }
+.bulkbar .btn { background: #fff; }
+@media (max-width: 860px) { .bulkbar { bottom: 84px; } }
+.pick { display: inline-flex; align-items: center; margin-right: 6px; }
+.pick input { width: 16px; height: 16px; accent-color: var(--brand); }

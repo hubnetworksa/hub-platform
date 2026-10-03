@@ -21,6 +21,7 @@ const PUBLIC_API = new Set([
   '/api/auth/passkey/login',
   '/api/notify/run',
   '/api/notify/report',
+  '/api/city-key',
   '/api/briefing/facts',
   '/api/briefing/submit',
 ]);
