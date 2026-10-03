@@ -11,7 +11,7 @@
 // jumps to Listings and opens there — same as the mockup, which switches to
 // the Listings tab and opens the modal.
 import Icon from './Icon.astro';
-import { categories, suburbs } from '../lib/data';
+import { categories, suburbs, shoppingCenters } from '../lib/data';
 import { cityLabel, siteName } from '../lib/site-overrides';
 
 interface Props {
@@ -156,6 +156,63 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
         Short description <span style="font-weight:600;color:var(--muted)">(optional, cards and search, 160 characters)</span>
         <textarea name="short_description" rows="2" maxlength="400" style={`${fieldStyle};resize:vertical`}></textarea>
       </label>
+      <label style={labelStyle}>
+        Address
+        <input type="text" name="address" autocomplete="off" maxlength="200" style={fieldStyle} />
+      </label>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+        <label style={labelStyle}>
+          Website
+          <input type="text" name="website" autocomplete="off" placeholder="example.co.za" style={fieldStyle} />
+        </label>
+        <label style={labelStyle}>
+          WhatsApp <span style="font-weight:600;color:var(--muted)">(shown on Featured plans)</span>
+          <input type="tel" name="whatsapp" placeholder="082 123 4567" style={fieldStyle} />
+        </label>
+      </div>
+      <label style={labelStyle}>
+        Opening hours
+        <textarea name="hours" rows="2" maxlength="400" placeholder="Mon-Fri 08:00-17:00, Sat 08:00-13:00, Sun Closed" style={`${fieldStyle};resize:vertical`}></textarea>
+        <span style="font-weight:600;color:var(--muted)">Plain text in this format, e.g. Mon-Fri 08:00-17:00, Sat 08:00-13:00, Sun Closed. Anything else still shows, but "open now" won't work.</span>
+      </label>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+        <label style={labelStyle}>
+          Shopping centre <span style="font-weight:600;color:var(--muted)">(optional)</span>
+          <input type="text" name="shopping_center" list="listing-centres" autocomplete="off" style={fieldStyle} />
+        </label>
+        <label style={labelStyle}>
+          Other categories <span style="font-weight:600;color:var(--muted)">(comma separated)</span>
+          <input type="text" name="extra_categories" list="listing-categories" autocomplete="off" style={fieldStyle} />
+        </label>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+        <label style={labelStyle}>
+          Latitude
+          <input type="text" name="lat" inputmode="decimal" placeholder="-25.7479" style={fieldStyle} />
+        </label>
+        <label style={labelStyle}>
+          Longitude
+          <input type="text" name="lng" inputmode="decimal" placeholder="28.2293" style={fieldStyle} />
+        </label>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px">
+        <label style={labelStyle}>
+          Instagram
+          <input type="text" name="social_instagram" autocomplete="off" placeholder="instagram.com/..." style={fieldStyle} />
+        </label>
+        <label style={labelStyle}>
+          Facebook
+          <input type="text" name="social_facebook" autocomplete="off" placeholder="facebook.com/..." style={fieldStyle} />
+        </label>
+        <label style={labelStyle}>
+          LinkedIn
+          <input type="text" name="social_linkedin" autocomplete="off" placeholder="linkedin.com/company/..." style={fieldStyle} />
+        </label>
+        <label style={labelStyle}>
+          YouTube
+          <input type="text" name="social_youtube" autocomplete="off" placeholder="youtube.com/@..." style={fieldStyle} />
+        </label>
+      </div>
       <p id="listing-error" role="alert" hidden style="margin:0;font-size:13px;font-weight:700;color:var(--danger)"></p>
       <div style="display:flex;gap:9px;flex-wrap:wrap;padding-top:4px">
         <button id="listing-save" type="submit" class="admin-modal-save" style="padding:13px 20px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:14px;font-weight:800;cursor:pointer">Save listing</button>
@@ -164,11 +221,14 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
       <div id="listing-extras" class="admin-modal-extras" hidden>
         <button id="listing-toggle-visibility" type="button" class="admin-modal-link">Hide from site</button>
         <button id="listing-reassign" type="button" class="admin-modal-link">Reassign owner…</button>
-        <a id="listing-full-editor" href="/my-businesses/" class="admin-modal-link">Photos &amp; opening hours →</a>
+        <a id="listing-full-editor" href="/my-businesses/" class="admin-modal-link">Logo &amp; photos →</a>
       </div>
     </form>
     <datalist id="listing-categories">
       {categories.map((c) => <option value={c.name} />)}
+    </datalist>
+    <datalist id="listing-centres">
+      {shoppingCenters.map((c) => <option value={c.name} />)}
     </datalist>
     <datalist id="listing-suburbs">
       {suburbs.map((s) => <option value={s.name} />)}
@@ -440,6 +500,9 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
   const reassignBtn = document.getElementById('listing-reassign') as HTMLButtonElement;
   const fullEditor = document.getElementById('listing-full-editor') as HTMLAnchorElement;
 
+  // Plain-text columns the modal loads and saves as-is.
+  const EXTRA_FIELDS = ['address', 'website', 'whatsapp', 'hours', 'lat', 'lng', 'social_instagram', 'social_facebook', 'social_linkedin', 'social_youtube'];
+
   let editingId: number | null = null;
   let editingStatus = 'published';
   let editingName = '';
@@ -486,6 +549,9 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
         field('plan').value = String(l.subscription_tier ?? 0);
         field('description').value = l.description ?? '';
         field('short_description').value = l.short_description ?? '';
+        for (const k of EXTRA_FIELDS) field(k).value = l[k] ?? '';
+        field('shopping_center').value = l.shopping_center_name ?? '';
+        field('extra_categories').value = (l.extra_categories ?? []).join(', ');
         editingStatus = l.status;
         editingName = l.name;
         setVisibilityLabel();
@@ -536,6 +602,9 @@ const labelStyle = 'display:flex;flex-direction:column;gap:6px;font-size:12.5px;
           plan: Number(field('plan').value),
           description: field('description').value,
           short_description: field('short_description').value,
+          shopping_center: field('shopping_center').value,
+          extra_categories: field('extra_categories').value,
+          ...Object.fromEntries(EXTRA_FIELDS.map((k) => [k, field(k).value])),
         }),
       });
       const data = await res.json();
