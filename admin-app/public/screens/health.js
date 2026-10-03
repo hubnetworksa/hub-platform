@@ -50,7 +50,7 @@ function summary(ui, d) {
   const today = d.d1.today.reduce((a, r) => a + r.rows_read, 0);
   const usagePct = Math.round((today / d.d1.limits.rows_read) * 100);
   const issues = d.security.checks.filter((c) => c.result !== 'pass').length;
-  const late = d.routines.flatMap((s) => s.rows).filter((r) => r.status === 'late').length;
+  const late = routineRows(d.routines).filter((r) => r.status === 'late').length;
   const broken = d.links ? Object.values(d.links.sites ?? {}).reduce((a, s) => a + (s.broken?.length ?? 0), 0) : null;
   const tile = (label, value, note, bad) => h('div', { class: `tile${bad ? ' bad' : ''}` }, h('div', { class: 'label' }, label), h('div', { class: 'value' }, value), h('div', { class: 'delta' }, note));
   return h(
@@ -204,9 +204,12 @@ function usageCard(ui, d1) {
 
 const ROUTINE_NAMES = { discovery: 'New businesses', centres: 'Shopping centres', enrichment: 'Better descriptions', 'closed-check': 'Closed businesses', events: 'Events', news: 'News', tourism: 'Tourism', fuel: 'Fuel prices' };
 
+// Each city's list also carries the all-city fuel routine: keep it once.
+const routineRows = (routines) => routines.flatMap((s, i) => s.rows.filter((r) => r.city === s.site || (r.city === 'all' && i === 0)));
+
 function routinesCard(ui, routines) {
   const { h, siteName, siteColor } = ui;
-  const rows = routines.flatMap((s) => s.rows.filter((r) => r.city === s.site || (r.city === 'all' && s === routines[0])).map((r) => ({ ...r, site: s.site })));
+  const rows = routineRows(routines);
   if (!rows.length) return h('section', { class: 'card' }, h('div', { class: 'empty' }, h('b', {}, 'No routine health yet'), 'The daily routine health check (07:30 UTC) fills this in.'));
   const chip = (st) => h('span', { class: `pill ${st === 'ok' ? 'pass' : st === 'late' ? 'fail' : st === 'off' ? '' : 'warn'}` }, st === 'ok' ? 'On time' : st === 'late' ? 'Late' : st === 'off' ? 'Off' : 'Never ran');
   const checked = routines.map((s) => s.checkedAt).filter(Boolean).sort().pop();
