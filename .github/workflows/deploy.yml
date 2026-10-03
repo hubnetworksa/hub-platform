@@ -81,7 +81,7 @@ jobs:
             }
             // Hub Admin (admin-app/) deploys separately (deploy-admin.yml); its
             // files never need the city sites rebuilt.
-            const adminOnly = (f) => f.startsWith('admin-app/') || f === '.github/workflows/deploy-admin.yml' || f === 'assets/logo-src/hub-admin.svg' || f === 'scripts/render-admin-icons.mjs';
+            const adminOnly = (f) => f.startsWith('admin-app/') || f === '.github/workflows/deploy-admin.yml' || f === 'assets/logo-src/hub-admin.svg' || f === 'scripts/render-admin-icons.mjs' || f === 'scripts/admin-notify.mjs' || f === '.github/workflows/admin-notify.yml';
             const routineOnly = (f) => f.startsWith('db/routine-updates/') || f.startsWith('status/') || /^ROUTINE\.[a-z]+\.md$/.test(f) || adminOnly(f);
             if (files === null) chosen = names; // unknown range (new branch, force push): be safe
             else if (files.length > 0 && files.every(routineOnly)) chosen = [];

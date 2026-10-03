@@ -5,7 +5,8 @@
 //             installs, revenue and Google Search, per city or all together
 //   #/upgrades Upgrades: the list of improvements to build on the sites
 //   #/manage  Manage: shortcuts to every admin screen of every site
-//   #/alerts  Alerts: push notifications on this device, and recent alerts
+//   #/settings Settings: fingerprint/passkey sign-in, password, sign out,
+//             and push notifications on this device
 import { lineChart, columnChart, barList, dataTable, fmt } from './charts.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -142,8 +143,11 @@ async function api(path, method = 'GET', data) {
   const headers = { Accept: 'application/json' };
   if (method !== 'GET') Object.assign(headers, { 'Content-Type': 'application/json', 'X-Hub-Admin': '1' });
   const res = await fetch(path, { method, credentials: 'same-origin', headers, body: data === undefined ? undefined : JSON.stringify(data) });
-  if (res.status === 401) throw new Error('Your sign-in has expired. Reload the page to sign in again.');
   const body = await res.json().catch(() => null);
+  if (res.status === 401 && body?.signedOut) {
+    setTimeout(start, 0);
+    throw new Error('Please sign in again.');
+  }
   if (!res.ok || !body?.ok) throw new Error(body?.error || `Request failed (${res.status}).`);
   return body;
 }
@@ -163,10 +167,11 @@ const ROUTES = [
   ['#/stats', 'Stats', 'chart'],
   ['#/upgrades', 'Upgrades', 'bulb'],
   ['#/manage', 'Manage', 'grid'],
-  ['#/alerts', 'Alerts', 'bell'],
+  ['#/settings', 'Settings', 'settings'],
 ];
 const currentRoute = () => {
-  const hash = (location.hash || '#/').split('?')[0];
+  let hash = (location.hash || '#/').split('?')[0];
+  if (hash.startsWith('#/alerts')) hash = '#/settings'; // old links
   return ROUTES.find(([r]) => r !== '#/' && hash.startsWith(r))?.[0] ?? '#/';
 };
 const hashParams = () => new URLSearchParams((location.hash.split('?')[1] || ''));
@@ -246,7 +251,7 @@ async function loadOverview(force) {
     b.hidden = total === 0;
     b.textContent = total > 99 ? '99+' : String(total);
   });
-  document.querySelectorAll('[data-user]').forEach((u) => (u.textContent = state.overview.email || ''));
+  document.querySelectorAll('[data-user]').forEach((u) => (u.textContent = state.username || ''));
   return state.overview;
 }
 
@@ -294,6 +299,7 @@ async function renderOverview(view) {
   view.replaceChildren(
     mobileHead('Overview'),
     pageHead('Overview', 'Everything across your sites that needs you, and how each site is doing.', h('div', { style: 'display:flex;gap:10px;align-items:center' }, h('span', { class: 'updated' }, `Updated ${ago(data.generatedAt)}`), refresh)),
+    await passkeyNudge(),
     tiles,
     h('div', { class: 'section-title' }, 'Your sites'),
     siteCards,
@@ -955,8 +961,9 @@ async function currentSubscription() {
 }
 
 async function renderAlerts(view) {
-  const head = pageHead('Alerts', 'Get a notification on this phone or computer when something new needs you, on any site.');
-  view.replaceChildren(mobileHead('Alerts'), head, h('div', { class: 'skeleton' }));
+  const head = pageHead('Settings', 'Sign-in, password and notifications.');
+  view.replaceChildren(mobileHead('Settings'), head, h('div', { class: 'skeleton' }));
+  const account = await accountCards(view);
   const support = pushSupport();
   let sub = support === 'ok' ? await currentSubscription().catch(() => null) : null;
   let devices = [];
@@ -967,7 +974,7 @@ async function renderAlerts(view) {
       api('/api/notifications').then((r) => r.notifications),
     ]);
   } catch (e) {
-    view.replaceChildren(mobileHead('Alerts'), head, errorBox(e));
+    view.replaceChildren(mobileHead('Settings'), head, errorBox(e));
     return;
   }
   const mine = devices.find((d) => d.current);
@@ -1116,16 +1123,330 @@ async function renderAlerts(view) {
     : h('p', { class: 'empty' }, 'No alerts yet. They appear here as new items arrive.');
 
   view.replaceChildren(
-    mobileHead('Alerts'),
+    mobileHead('Settings'),
     head,
     h(
       'div',
       { class: 'grid' },
-      h('section', { class: 'card' }, h('div', { class: 'card-head' }, h('h2', {}, 'This device')), statusBody),
+      ...account,
+      h('div', { class: 'section-title', style: 'margin:10px 0 0' }, 'Notifications'),
+      h('section', { class: 'card' }, h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Notifications on this device'), h('p', { class: 'sub' }, 'Get an alert when something new needs you, on any site.'))), statusBody),
       h('section', { class: 'card' }, h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Devices with alerts on'), h('p', { class: 'sub' }, 'Every phone and computer that gets Hub Admin notifications.'))), deviceList),
       h('section', { class: 'card' }, h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Recent alerts'), h('p', { class: 'sub' }, 'The last 40 notifications, newest first.'))), historyList)
     )
   );
+}
+
+// ── Sign-in, first-time setup, passkeys ────────────────────────────────────
+const b64u = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const unb64u = (s) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(s.length / 4) * 4, '=')), (c) => c.charCodeAt(0));
+const passkeysSupported = () => !!(window.PublicKeyCredential && navigator.credentials);
+async function platformPasskeyAvailable() {
+  try {
+    return passkeysSupported() && (await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable());
+  } catch {
+    return false;
+  }
+}
+
+function authScreen(title, sub, ...body) {
+  $('#app').replaceChildren(
+    h(
+      'div',
+      { class: 'auth' },
+      h(
+        'div',
+        { class: 'auth-card' },
+        h('img', { src: '/icons/logo-rounded.png', alt: '', class: 'auth-logo' }),
+        h('h1', {}, title),
+        sub ? h('p', { class: 'auth-sub' }, sub) : null,
+        ...body
+      )
+    )
+  );
+}
+
+function field(label, attrs) {
+  const input = h('input', { class: 'input', ...attrs });
+  return [h('label', { class: 'field' }, h('span', {}, label), input), input];
+}
+
+async function passkeySignIn(msg) {
+  msg.className = 'msg';
+  msg.textContent = 'Waiting for your fingerprint…';
+  try {
+    const { options } = await api('/api/auth/passkey/login-options', 'POST', {});
+    const cred = await navigator.credentials.get({ publicKey: { ...options, challenge: unb64u(options.challenge) } });
+    if (!cred) throw new Error('Cancelled.');
+    await api('/api/auth/passkey/login', 'POST', {
+      id: cred.id,
+      clientDataJSON: b64u(cred.response.clientDataJSON),
+      authenticatorData: b64u(cred.response.authenticatorData),
+      signature: b64u(cred.response.signature),
+    });
+    store.set('hub.passkey', '1');
+    start();
+  } catch (e) {
+    msg.className = 'msg err';
+    msg.textContent = e.name === 'NotAllowedError' ? 'Fingerprint sign-in was cancelled or timed out.' : e.message;
+  }
+}
+
+function renderLogin(state) {
+  const msg = h('span', { class: 'msg', role: 'status' });
+  const [userField, user] = field('Username', { name: 'username', autocomplete: 'username webauthn', autocapitalize: 'none', spellcheck: 'false', required: true });
+  const [passField, pass] = field('Password', { name: 'password', type: 'password', autocomplete: 'current-password', required: true });
+  const submit = h('button', { class: 'btn primary wide', type: 'submit' }, 'Sign in');
+  const form = h('form', { class: 'form' }, userField, passField, submit, msg);
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submit.disabled = true;
+    msg.className = 'msg';
+    msg.textContent = 'Signing in…';
+    try {
+      await api('/api/auth/login', 'POST', { username: user.value, password: pass.value });
+      start();
+    } catch (err) {
+      msg.className = 'msg err';
+      msg.textContent = err.message;
+      submit.disabled = false;
+    }
+  });
+  const fp = passkeysSupported()
+    ? h('button', { class: 'btn wide', type: 'button', onclick: () => passkeySignIn(msg) }, '👆 Sign in with fingerprint or face')
+    : null;
+  authScreen(
+    'Hub Admin',
+    'Sign in to manage your sites.',
+    fp,
+    fp ? h('div', { class: 'or' }, h('span', {}, 'or use your password')) : null,
+    form,
+    state.recoveryAvailable ? h('button', { class: 'linkish', type: 'button', onclick: renderRecover }, 'Forgot your password?') : null
+  );
+  if (!fp) user.focus();
+}
+
+function renderRecover() {
+  const msg = h('span', { class: 'msg', role: 'status' });
+  const [codeField, code] = field('Setup code', { type: 'password', autocomplete: 'off', required: true });
+  const [userField, user] = field('Username', { autocomplete: 'username', autocapitalize: 'none', required: true });
+  const [passField, pass] = field('New password (at least 10 characters)', { type: 'password', autocomplete: 'new-password', required: true, minlength: '10' });
+  const submit = h('button', { class: 'btn primary wide', type: 'submit' }, 'Set new password');
+  const form = h('form', { class: 'form' }, codeField, userField, passField, submit, msg);
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submit.disabled = true;
+    try {
+      await api('/api/auth/recover', 'POST', { code: code.value, username: user.value, password: pass.value });
+      msg.className = 'msg ok';
+      msg.textContent = 'Password changed. You can sign in now.';
+      setTimeout(start, 1200);
+    } catch (err) {
+      msg.className = 'msg err';
+      msg.textContent = err.message;
+      submit.disabled = false;
+    }
+  });
+  authScreen('Reset password', 'Use the setup code you saved in GitHub (HUB_ADMIN_SETUP_CODE).', form, h('button', { class: 'linkish', type: 'button', onclick: start }, 'Back to sign in'));
+  code.focus();
+}
+
+function renderSetup(state) {
+  if (!state.setupAvailable) {
+    authScreen(
+      'Almost ready',
+      null,
+      h(
+        'div',
+        { class: 'banner', style: 'text-align:left' },
+        'To create your admin account, first add a setup code: in GitHub, open the hub-platform repository → Settings → Secrets and variables → Actions → New repository secret. Name it ',
+        h('b', {}, 'HUB_ADMIN_SETUP_CODE'),
+        ' and give it a long phrase only you know (at least 12 characters). Then run the “Deploy Hub Admin” workflow and come back here.'
+      )
+    );
+    return;
+  }
+  const msg = h('span', { class: 'msg', role: 'status' });
+  const [codeField, code] = field('Setup code', { type: 'password', autocomplete: 'off', required: true });
+  const [userField, user] = field('Choose a username', { autocomplete: 'username', autocapitalize: 'none', spellcheck: 'false', required: true });
+  const [passField, pass] = field('Choose a password (at least 10 characters)', { type: 'password', autocomplete: 'new-password', required: true, minlength: '10' });
+  const [againField, again] = field('Type the password again', { type: 'password', autocomplete: 'new-password', required: true });
+  const submit = h('button', { class: 'btn primary wide', type: 'submit' }, 'Create my account');
+  const form = h('form', { class: 'form' }, codeField, userField, passField, againField, submit, msg);
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (pass.value !== again.value) {
+      msg.className = 'msg err';
+      msg.textContent = 'The two passwords don’t match.';
+      return;
+    }
+    submit.disabled = true;
+    try {
+      await api('/api/auth/setup', 'POST', { code: code.value, username: user.value, password: pass.value });
+      start();
+    } catch (err) {
+      msg.className = 'msg err';
+      msg.textContent = err.message;
+      submit.disabled = false;
+    }
+  });
+  authScreen('Welcome to Hub Admin', 'Create your admin account. You only do this once.', form);
+  code.focus();
+}
+
+async function addPasskey(msg, onDone) {
+  msg.className = 'msg';
+  msg.textContent = 'Follow the prompt on your device…';
+  try {
+    const { options } = await api('/api/auth/passkey/register-options', 'POST', {});
+    const cred = await navigator.credentials.create({
+      publicKey: {
+        ...options,
+        challenge: unb64u(options.challenge),
+        user: { ...options.user, id: unb64u(options.user.id) },
+        excludeCredentials: options.excludeCredentials.map((c) => ({ ...c, id: unb64u(c.id) })),
+      },
+    });
+    if (!cred) throw new Error('Cancelled.');
+    const r = cred.response;
+    if (typeof r.getPublicKey !== 'function' || !r.getPublicKey()) throw new Error('This browser is too old for passkeys. Update it and try again.');
+    await api('/api/auth/passkey/register', 'POST', {
+      rawId: b64u(cred.rawId),
+      clientDataJSON: b64u(r.clientDataJSON),
+      authenticatorData: b64u(r.getAuthenticatorData()),
+      publicKey: b64u(r.getPublicKey()),
+      publicKeyAlgorithm: r.getPublicKeyAlgorithm(),
+      name: deviceName(),
+    });
+    store.set('hub.passkey', '1');
+    msg.className = 'msg ok';
+    msg.textContent = 'Done. Next time, sign in with your fingerprint or face.';
+    onDone?.();
+  } catch (e) {
+    msg.className = 'msg err';
+    msg.textContent =
+      e.name === 'InvalidStateError' ? 'This device already has a passkey for Hub Admin.' : e.name === 'NotAllowedError' ? 'Cancelled or timed out. Try again.' : e.message;
+  }
+}
+
+// Shown on the Overview after a password sign-in on a device that can do
+// fingerprint/face sign-in but hasn't been set up for it yet.
+async function passkeyNudge() {
+  if (store.get('hub.passkey', '') || store.get('hub.passkeyNudge', '') === 'no' || !(await platformPasskeyAvailable())) return null;
+  const msg = h('span', { class: 'msg' });
+  const box = h(
+    'div',
+    { class: 'banner', style: 'display:flex;gap:12px;align-items:center;flex-wrap:wrap' },
+    h('span', { style: 'flex:1;min-width:200px' }, h('b', {}, 'Sign in with your fingerprint next time. '), 'Set it up on this device in a few seconds.'),
+    h('button', { class: 'btn primary', type: 'button', onclick: () => addPasskey(msg, () => setTimeout(() => box.remove(), 2500)) }, 'Set up'),
+    h('button', { class: 'btn', type: 'button', onclick: () => (store.set('hub.passkeyNudge', 'no'), box.remove()) }, 'Not now'),
+    msg
+  );
+  return box;
+}
+
+async function accountCards(view) {
+  let keys = [];
+  try {
+    keys = (await api('/api/auth/passkeys')).passkeys;
+  } catch {
+    /* shown as empty */
+  }
+  const pkMsg = h('span', { class: 'msg', role: 'status' });
+  const passkeyCard = h(
+    'section',
+    { class: 'card' },
+    h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Fingerprint & face sign-in'), h('p', { class: 'sub' }, 'Passkeys let a device sign you in with its fingerprint, face or PIN instead of your password.'))),
+    passkeysSupported()
+      ? h('div', { class: 'row', style: 'align-items:center;margin-bottom:10px' }, h('button', { class: 'btn primary', type: 'button', onclick: () => addPasskey(pkMsg, () => renderAlerts(view)) }, '👆 Set up on this device'), pkMsg)
+      : h('p', { class: 'sub' }, 'This browser doesn’t support passkeys.'),
+    keys.length
+      ? keys.map((k) =>
+          h(
+            'div',
+            { class: 'device' },
+            h('span', { 'aria-hidden': 'true' }, '🔑'),
+            h('div', { class: 'grow' }, h('b', {}, k.name), h('small', {}, `added ${ago(k.created_at)}${k.last_used_at ? ` · last used ${ago(k.last_used_at)}` : ''}`)),
+            h(
+              'button',
+              {
+                class: 'btn',
+                type: 'button',
+                onclick: async () => {
+                  if (!confirm(`Remove the passkey “${k.name}”? That device will need your password again.`)) return;
+                  await api('/api/auth/passkeys', 'POST', { id: k.id }).catch((e) => alert(e.message));
+                  if (keys.length === 1) store.set('hub.passkey', '');
+                  renderAlerts(view);
+                },
+              },
+              'Remove'
+            )
+          )
+        )
+      : h('p', { class: 'sub', style: 'margin-top:6px' }, 'No passkeys yet.')
+  );
+
+  const pwMsg = h('span', { class: 'msg', role: 'status' });
+  const [curF, cur] = field('Current password', { type: 'password', autocomplete: 'current-password', required: true });
+  const [newF, nw] = field('New password (at least 10 characters)', { type: 'password', autocomplete: 'new-password', required: true });
+  const pwForm = h('form', { class: 'form' }, h('div', { class: 'row' }, curF, newF), h('div', { class: 'row', style: 'align-items:center' }, h('button', { class: 'btn', type: 'submit' }, 'Change password'), pwMsg));
+  pwForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await api('/api/auth/password', 'POST', { current: cur.value, password: nw.value });
+      pwForm.reset();
+      pwMsg.className = 'msg ok';
+      pwMsg.textContent = 'Password changed.';
+    } catch (err) {
+      pwMsg.className = 'msg err';
+      pwMsg.textContent = err.message;
+    }
+  });
+  const signOut = async (everywhere) => {
+    if (everywhere && !confirm('Sign out on every device, including this one?')) return;
+    await api('/api/auth/logout', 'POST', { everywhere }).catch(() => {});
+    state.overview = null;
+    state.stats = null;
+    start();
+  };
+  const accountCard = h(
+    'section',
+    { class: 'card' },
+    h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Account'), h('p', { class: 'sub' }, `Signed in as ${state.username || ''}`))),
+    pwForm,
+    h('div', { class: 'row', style: 'margin-top:14px' }, h('button', { class: 'btn', type: 'button', onclick: () => signOut(false) }, 'Sign out'), h('button', { class: 'btn', type: 'button', onclick: () => signOut(true) }, 'Sign out everywhere'))
+  );
+  return [passkeyCard, accountCard];
+}
+
+// Decides what to show: setup, sign-in, or the app.
+let appStarted = false;
+async function start() {
+  let s;
+  try {
+    s = await api('/api/auth/state');
+  } catch (e) {
+    authScreen('Hub Admin', null, errorBox(e), h('button', { class: 'btn', type: 'button', onclick: start }, 'Try again'));
+    return;
+  }
+  if (s.setupNeeded) return renderSetup(s);
+  if (!s.signedIn) return renderLogin(s);
+  state.username = s.username;
+  buildShell();
+  route();
+  if (!appStarted) {
+    appStarted = true;
+    window.addEventListener('hashchange', () => {
+      if (!$('#view')) return;
+      route();
+      $('#view')?.focus({ preventScroll: true });
+      window.scrollTo(0, 0);
+    });
+    // Keep the attention badge fresh while the app stays open.
+    setInterval(() => {
+      if (document.visibilityState === 'visible' && $('#view')) loadOverview(true).catch(() => {});
+    }, 5 * 60 * 1000);
+  }
 }
 
 // ── Router ─────────────────────────────────────────────────────────────────
@@ -1136,7 +1457,7 @@ function route() {
   if (r === '#/stats') renderStats(view);
   else if (r === '#/upgrades') renderUpgrades(view);
   else if (r === '#/manage') renderManage(view);
-  else if (r === '#/alerts') renderAlerts(view);
+  else if (r === '#/settings') renderAlerts(view);
   else {
     // A notification can open the Overview filtered to one kind of item.
     const t = hashParams().get('type');
@@ -1145,16 +1466,6 @@ function route() {
   }
 }
 
-buildShell();
-window.addEventListener('hashchange', () => {
-  route();
-  $('#view')?.focus({ preventScroll: true });
-  window.scrollTo(0, 0);
-});
-route();
-// Keep the attention badge fresh while the app stays open.
-setInterval(() => {
-  if (document.visibilityState === 'visible') loadOverview(true).catch(() => {});
-}, 5 * 60 * 1000);
+start();
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});

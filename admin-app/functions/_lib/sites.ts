@@ -25,9 +25,9 @@ export interface HubSite {
 
 export type Env = Record<string, unknown> & {
   ADMIN_DB: D1Database;
-  ACCESS_TEAM_DOMAIN?: string;
-  ACCESS_AUD?: string;
-  ADMIN_EMAILS?: string;
+  // The first-time setup / password reset code (Pages secret, from the
+  // GitHub secret HUB_ADMIN_SETUP_CODE).
+  SETUP_CODE?: string;
 };
 
 /** The managed sites whose database is bound in this deployment. */
