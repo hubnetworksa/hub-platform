@@ -28,10 +28,8 @@ export type Env = Record<string, unknown> & {
   // The first-time setup / password reset code (Pages secret, from the
   // GitHub secret HUB_ADMIN_SETUP_CODE).
   SETUP_CODE?: string;
-  // Anthropic API key for the AI morning briefing (Pages secret, from the
-  // GitHub secret ANTHROPIC_API_KEY). Optional: without it the briefing is a
-  // plain summary.
-  ANTHROPIC_API_KEY?: string;
+  // SHA-256 (base64url) of the morning-briefing routine's key (wrangler.jsonc vars).
+  BRIEFING_KEY_HASH?: string;
 };
 
 /** The managed sites whose database is bound in this deployment. */

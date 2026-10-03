@@ -7,6 +7,11 @@
   "compatibility_date": "2026-08-31",
   "pages_build_output_dir": "public",
 
+  // The morning-briefing routine's key, as a one-way hash (SHA-256, base64url):
+  // the key itself lives only in the private Claude routine that writes the
+  // briefing (see README, "Morning briefing").
+  "vars": { "BRIEFING_KEY_HASH": "WYLjvbJjL_1HSxM7FtedYEVUAnCAUAFS_K_X64OC7EI" },
+
   // ADMIN_DB is Hub Admin's own database (upgrades, push subscriptions,
   // notifications); the deploy workflow creates it on the first run and fills
   // in its id. Then one binding per city (see functions/_lib/sites.ts to add a city).
