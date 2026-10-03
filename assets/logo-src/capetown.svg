@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="540" height="620" viewBox="0 0 540 620">
+  <!-- TheCapeTownHub pin: Devil's Peak, Table Mountain, Lion's Head over the city and harbour.
+       Rendered to the site PNGs by: node scripts/render-logo.mjs capetown -->
+  <defs>
+    <linearGradient id="pin" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2fa0ec"/>
+      <stop offset="1" stop-color="#0b4fa8"/>
+    </linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e3eefb"/>
+    </linearGradient>
+    <clipPath id="disc"><circle cx="270" cy="250" r="150"/></clipPath>
+  </defs>
+  <ellipse cx="270" cy="590" rx="150" ry="20" fill="#9aa3ad" opacity="0.45"/>
+  <path d="M270,568 L112.9,396.7 A215,215 0 1 1 427.1,396.7 Z" fill="url(#pin)"/>
+  <circle cx="270" cy="250" r="163" fill="#ffffff"/>
+  <g clip-path="url(#disc)">
+    <rect x="100" y="90" width="340" height="330" fill="url(#sky)"/>
+    <!-- mountains -->
+    <path d="M100,312 L124,296 L146,270 L162,240 L176,210 L186,226 L196,240 L206,236 L214,214
+             L220,200 L338,197 L344,210 L350,236 L360,262 L366,264 L374,248 L382,226 L392,212
+             L402,210 L410,220 L418,240 L428,268 L440,282 L440,340 L100,340 Z" fill="#1d5aa6"/>
+    <!-- city -->
+    <path d="M100,340 L100,326 L140,326 L140,318 L156,318 L156,310 L170,310 L170,320 L186,320
+             L186,300 L200,300 L200,292 L212,292 L212,312 L224,312 L224,302 L238,302 L238,284
+             L248,280 L258,284 L258,306 L272,306 L272,294 L286,294 L286,314 L300,314 L300,302
+             L314,302 L314,318 L330,318 L330,308 L346,308 L346,322 L364,322 L364,316 L384,316
+             L384,328 L440,328 L440,340 Z" fill="#0a2540"/>
+    <!-- harbour -->
+    <rect x="100" y="338" width="340" height="90" fill="#0a2540"/>
+    <path d="M150,362 q15,-8 30,0 t30,0 t30,0 M250,362 q15,-8 30,0 t30,0 t30,0
+             M190,384 q15,-8 30,0 t30,0 t30,0 t30,0" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
+  </g>
+  <circle cx="270" cy="250" r="150" fill="none" stroke="#0b4fa8" stroke-width="4"/>
+</svg>
