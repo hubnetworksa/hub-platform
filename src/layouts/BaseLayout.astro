@@ -350,6 +350,7 @@ const themeCss = `:root {
         <a href="/guides/" class="nav-mob-link">Guides</a>
         <a href="/my-businesses/" id="mobile-login-link" style="padding:13px 6px;font-size:15.5px;font-weight:800;color:var(--muted)">Business log in</a>
         <a href="/my-businesses/" id="dashboard-mob-link" hidden style="margin-top:10px;padding:13px 16px;font-size:15px;font-weight:800;text-align:center;background:var(--navy);color:#fff;border-radius:10px">Business dashboard</a>
+        <a href="/admin/" id="admin-mob-link" hidden style="margin-top:8px;padding:13px 16px;font-size:15px;font-weight:800;text-align:center;color:var(--navy);border:2px solid var(--border);border-radius:10px">Admin</a>
       </div>
     </header>
 
@@ -463,7 +464,8 @@ const themeCss = `:root {
       // one /api/me call (401 when logged out) drives the header's
       // logged-in state: the "Business log in" links swap for a
       // "Business dashboard" button (desktop action row + mobile menu),
-      // and the Admin link is revealed only for the one admin account.
+      // and the Admin link (desktop action row + mobile menu) is revealed
+      // only for the one admin account.
       // Logged out, nothing changes.
       fetch('/api/me')
         .then((r) => (r.ok ? r.json() : null))
@@ -477,7 +479,12 @@ const themeCss = `:root {
             const el = document.getElementById(id);
             if (el) el.hidden = true;
           }
-          if (data.isAdmin) document.getElementById('admin-nav-link')!.hidden = false;
+          if (data.isAdmin) {
+            for (const id of ['admin-nav-link', 'admin-mob-link']) {
+              const el = document.getElementById(id);
+              if (el) el.hidden = false;
+            }
+          }
         })
         .catch(() => {});
     </script>
