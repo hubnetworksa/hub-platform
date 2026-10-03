@@ -2,12 +2,17 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { getSite } from '../../_lib/site';
 import { sendEmail } from '../../_lib/send-email';
-import { escapeHtml } from '../../../src/lib/business-submission';
+import { reportResolvedEmailHtml } from '../../_lib/email-template';
+
+// Gets a copy of every "your report has been fixed" email. Override per site
+// with the REPORT_COPY_EMAIL environment variable.
+const REPORT_COPY_EMAIL = 'ethanmglindeque@gmail.com';
 
 interface Env {
   DB: D1Database;
   SITE: string;
   RESEND_API_KEY?: string;
+  REPORT_COPY_EMAIL?: string;
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -58,7 +63,6 @@ async function notifyReporter(env: Env, reportId: number): Promise<void> {
 
   const site = getSite(env.SITE);
   const url = `https://${site.domain}/business/${row.business_slug}/`;
-  const t = site.theme;
 
   // Invite the reporter to claim the listing if nobody owns it yet — reporters
   // are often the owner. Same link as the listing page's claim button.
@@ -70,29 +74,22 @@ async function notifyReporter(env: Env, reportId: number): Promise<void> {
     ? `https://${site.domain}/my-businesses/claim/?businessId=${biz.id}&name=${encodeURIComponent(biz.name)}`
     : null;
   const claimText = claimUrl ? `\n\nIs this your business? Claim it for free to keep its details up to date: ${claimUrl}` : '';
-  const claimHtml = claimUrl
-    ? `<div style="margin:20px 0;padding:14px 16px;border:1px solid ${t.border};border-radius:10px">
-      <p style="margin:0 0 6px;font-weight:700;color:${t.navy}">Is this your business?</p>
-      <p style="margin:0 0 12px;font-size:14px;color:${t.textMuted}">Claim it for free to keep its details up to date.</p>
-      <a href="${claimUrl}" style="display:inline-block;padding:10px 16px;border-radius:8px;background:${t.navy};color:#fff;font-weight:700;text-decoration:none">Claim this listing</a>
-    </div>`
-    : '';
+  const from = `${site.siteName} <${site.contactEmail}>`;
+  const subject = `Your report about ${row.business_name} has been fixed`;
+  const text = `Hi,\n\nThanks for helping keep ${site.siteName} accurate. The problem you reported about ${row.business_name} has been fixed.\n\nYou reported:\n${row.reason}\n\nSee the updated listing: ${url}${claimText}\n\nThe ${site.siteName} team\nhttps://${site.domain}`;
+  const html = reportResolvedEmailHtml(site, { businessName: row.business_name, reason: row.reason, listingUrl: url, claimUrl });
 
-  const result = await sendEmail(env, {
-    from: `${site.siteName} <${site.contactEmail}>`,
-    to: row.requester_email,
-    subject: `Your report about ${row.business_name} has been fixed`,
-    text: `Hi,\n\nThanks for helping keep ${site.siteName} accurate. The problem you reported about ${row.business_name} has been fixed.\n\nYou reported:\n${row.reason}\n\nSee the updated listing: ${url}${claimText}\n\nThe ${site.siteName} team\nhttps://${site.domain}`,
-    html: `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:520px;color:${t.text};line-height:1.5">
-      <h2 style="color:${t.navy};margin:0 0 12px">Your report has been fixed</h2>
-      <p>Thanks for helping keep ${escapeHtml(site.siteName)} accurate. The problem you reported about <strong>${escapeHtml(row.business_name)}</strong> has been fixed.</p>
-      <p style="margin:16px 0 4px;color:${t.textMuted};font-size:13px">You reported:</p>
-      <blockquote style="margin:0;padding:8px 14px;border-left:3px solid ${t.border};color:${t.text}">${escapeHtml(row.reason).replace(/\n/g, '<br>')}</blockquote>
-      <p style="margin:20px 0"><a href="${url}" style="color:${t.navy};font-weight:700">View the updated listing</a></p>
-      ${claimHtml}
-      <p style="color:${t.textMuted};font-size:13px">The ${escapeHtml(site.siteName)} team &middot; <a href="https://${site.domain}" style="color:${t.textMuted}">${escapeHtml(site.domain)}</a></p>
-    </div>`,
-  });
+  const result = await sendEmail(env, { from, to: row.requester_email, subject, text, html });
+
+  // Identical copy for the site team, so they see exactly what went out.
+  const copyTo = env.REPORT_COPY_EMAIL || REPORT_COPY_EMAIL;
+  if (result.sent && copyTo) {
+    try {
+      await sendEmail(env, { from, to: copyTo, subject: `[Copy — sent to ${row.requester_email}] ${subject}`, text, html });
+    } catch (err) {
+      console.error('Report-resolved copy failed', err);
+    }
+  }
 
   if (!result.sent) {
     // Nothing went out (no API key, or Resend failed) — release the claim so

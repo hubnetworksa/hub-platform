@@ -471,6 +471,70 @@ export function enquiryEmailText(site: Site, data: EnquiryEmailData): string {
   ].join('\n');
 }
 
+export interface ReportResolvedEmailData {
+  businessName: string;
+  reason: string;
+  listingUrl: string;
+  claimUrl: string | null;
+}
+
+export function reportResolvedEmailHtml(site: Site, data: ReportResolvedEmailData): string {
+  const t = site.theme;
+  const bannerUrl = `https://${site.domain}${site.bannerImage}`;
+  const logoUrl = `https://${site.domain}/logo-icon.png`;
+  const claim = data.claimUrl
+    ? `<tr>
+            <td style="padding:0 32px 28px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border:1px solid ${t.border};border-radius:10px;">
+                <tr>
+                  <td style="padding:16px 18px;">
+                    <p style="margin:0 0 4px;font-size:15px;font-weight:700;color:${t.navy};">Is this your business?</p>
+                    <p style="margin:0 0 12px;color:${t.textMuted};font-size:13px;line-height:1.5;">Claim it for free to keep its details up to date.</p>
+                    <a href="${escapeHtml(data.claimUrl)}" style="display:inline-block;background:${t.navy};color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;padding:10px 18px;border-radius:8px;">Claim this listing →</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>`
+    : '';
+
+  return `<!doctype html>
+<html>
+<body style="margin:0;padding:0;background:${t.bgSubtle};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${t.bgSubtle};padding:24px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:${t.bgCard};border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);max-width:560px;">
+          <tr>
+            <td>
+              <img src="${bannerUrl}" width="560" alt="${escapeHtml(site.siteName)}" style="display:block;width:100%;max-width:560px;height:160px;object-fit:cover;">
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px 8px;">
+              <img src="${logoUrl}" width="36" height="41" alt="" style="display:block;margin-bottom:12px;">
+              <h1 style="margin:0 0 4px;font-size:20px;color:${t.navy};">Your report has been fixed ✅</h1>
+              <p style="margin:0 0 20px;color:${t.textMuted};font-size:14px;line-height:1.5;">
+                Thanks for helping keep ${escapeHtml(site.siteName)} accurate. The problem you reported about <strong style="color:${t.text};">${escapeHtml(data.businessName)}</strong> has been fixed.
+              </p>
+              <p style="margin:0 0 6px;color:${t.textMuted};font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">You reported</p>
+              <p style="margin:0 0 24px;padding:10px 14px;border-left:3px solid ${t.accent};background:${t.bgSubtle};color:${t.text};font-size:14px;line-height:1.5;border-radius:0 8px 8px 0;">${escapeHtml(data.reason).replace(/\n/g, '<br>')}</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 32px 24px;">
+              <a href="${escapeHtml(data.listingUrl)}" style="display:inline-block;background:${t.accent};color:${t.accentContrast};text-decoration:none;font-weight:700;font-size:15px;padding:12px 24px;border-radius:8px;">View the updated listing →</a>
+            </td>
+          </tr>
+          ${claim}
+        </table>
+        <p style="margin:20px 0 0;color:${t.textMuted};font-size:12px;">${escapeHtml(site.siteName)} · ${escapeHtml(site.contactEmail)}</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
 
 function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>)[c]!);
