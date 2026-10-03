@@ -243,6 +243,7 @@ const TIME = 'padding:9px 11px;border:2px solid var(--border);border-radius:9px;
 </BaseLayout>
 
 <script>
+  import { createListSearch } from '../../lib/fuzzy-search';
   interface IndexBusiness { id: number; s: string; n: string; sb: string; c: string; p: string; a: string; w: string; h: string; d: string; t: number; sc: number; o: number }
   interface ClaimIndex { b: IndexBusiness[]; c: { id: number; n: string }[]; plans: Record<string, { name: string; price: string; note: string }> }
 
@@ -272,6 +273,8 @@ const TIME = 'padding:9px 11px;border:2px solid var(--border);border-radius:9px;
 
   const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   const BUILDING_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16M6 21V7l6-4 6 4v14M9 21v-6h6v6"/></svg>`;
+
+  let findUnclaimed: ReturnType<typeof createListSearch<IndexBusiness>> | undefined;
 
   function loadIndex(): Promise<ClaimIndex | null> {
     if (!indexPromise) {
@@ -472,6 +475,8 @@ const TIME = 'padding:9px 11px;border:2px solid var(--border);border-radius:9px;
   }
   $('change-selection').addEventListener('click', clearSelection);
 
+  // Warm the index as soon as the box is focused.
+  searchInput.addEventListener('focus', () => void loadIndex(), { once: true });
   searchInput.addEventListener('input', () => {
     clearTimeout(debounceTimer);
     const q = searchInput.value.trim();
@@ -483,8 +488,12 @@ const TIME = 'padding:9px 11px;border:2px solid var(--border);border-radius:9px;
     spinner.hidden = false;
     debounceTimer = window.setTimeout(async () => {
       try {
-        const res = await fetch(`/api/search-businesses?q=${encodeURIComponent(q)}`);
-        const data = await res.json();
+        // Same fuzzy engine as the site search, over the claim index's
+        // still-unclaimed businesses (replaces the server-side LIKE search).
+        const idx = await loadIndex();
+        if (!idx) throw new Error('no index');
+        findUnclaimed ??= createListSearch(idx.b.filter((x) => !x.o), (x) => [x.n]);
+        const data = { results: findUnclaimed(q, 20).map((x) => ({ id: x.id, name: x.n })) };
         spinner.hidden = true;
         resultsList.hidden = false;
         searchInput.setAttribute('aria-expanded', 'true');

@@ -263,6 +263,7 @@ const mapJson = JSON.stringify(payload).replace(/</g, '\\u003c');
 </style>
 
 <script>
+  import { createListSearch } from '../../lib/fuzzy-search';
   declare const maplibregl: any;
 
   type Sub = { slug: string; name: string; region: string; color: string; count: number; lat: number | null; lng: number | null; sold: boolean; shape: boolean; cats: [number, number][] };
@@ -504,10 +505,12 @@ const mapJson = JSON.stringify(payload).replace(/</g, '\\u003c');
     // ---------- controls ----------
     const search = $<HTMLInputElement>('sub-search');
     const results = $('sub-results');
+    let findSub: ReturnType<typeof createListSearch<(typeof DATA.subs)[number]>> | undefined;
     function showResults() {
-      const q = search.value.trim().toLowerCase();
+      const q = search.value.trim();
       if (!q) { results.hidden = true; return; }
-      const m = DATA.subs.filter((s) => s.name.toLowerCase().includes(q)).sort((a, b) => Number(b.name.toLowerCase().startsWith(q)) - Number(a.name.toLowerCase().startsWith(q))).slice(0, 8);
+      findSub ??= createListSearch(DATA.subs, (s) => [s.name]);
+      const m = findSub(q, 8);
       results.innerHTML = m.map((s, i) => `<button type="button" data-slug="${esc(s.slug)}" class="${i === 0 ? 'on' : ''}">${esc(s.name)}<span>${esc(regionName.get(s.region) ?? '')}</span></button>`).join('') || '<button type="button" disabled>No suburb found</button>';
       results.hidden = false;
     }

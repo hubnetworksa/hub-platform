@@ -40,7 +40,7 @@ const stepStyle = 'flex-shrink:0;width:28px;height:28px;border-radius:8px;backgr
 const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.product_type === 'category_sponsor');
 ---
 
-<BaseLayout noAds={showsPaid} title="Search results" description={`Search ${site.siteName}'s directory.`} noindex={true}>
+<BaseLayout preloadSearchIndex noAds={showsPaid} title="Search results" description={`Search ${site.siteName}'s directory.`} noindex={true}>
   <main style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
     <div id="crumbs" style="display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--muted);flex-wrap:wrap">
       <a href="/" style="color:var(--muted)">Home</a><span>/</span><span style="color:var(--navy)">Search</span>
@@ -235,7 +235,8 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
 </style>
 
 <script>
-  import Fuse from 'fuse.js';
+  import { norm, STOP, type PackRow } from '../lib/fuzzy-search';
+  import { createSearchClient, type SearchResult } from '../lib/search-client';
   import { openStatus } from '../lib/openNow';
   import { phoneHref } from '../lib/phone';
   import { WHATSAPP_ICON, WHATSAPP_GREEN } from '../lib/whatsapp';
@@ -246,7 +247,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
   // BaseLayout.astro) rather than an Astro define:vars binding here.
   const cityLabel = document.body.dataset.cityLabel ?? '';
 
-  interface Row { n: string; s: string; sb: string; sbs: string; c: string; g: string; k: string; t: number; h: boolean; hr: string; p: string; w: string; a: string; d: string; sd?: string; l?: string; wa?: string }
+  interface Row extends PackRow { c: string; sb: string; sbs: string; h: boolean; hr: string; p?: string; w?: string; a?: string; d?: string; sd?: string; l?: string; wa?: string }
   interface Meta {
     cats: { n: string; s: string; c: number; k: string }[];
     subs: { n: string; s: string; c: number; g: string }[];
@@ -282,120 +283,25 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     suburbSelect.add(new Option(searchMeta.subs.find((x) => x.s === initialSuburb)?.n ?? initialSuburb, initialSuburb, true, true));
   }
 
-  // ---- Fuzzy search (Fuse.js) --------------------------------------------
-  // Fields and queries go through the same norm(): lowercase, no diacritics,
-  // "&" → "and", apostrophes dropped, punctuation → spaces ("spaced") or
-  // removed entirely ("compact"). So "Re/Max", "RE MAX", "Re-Max" and
-  // "remax" all meet. Each query word must match (AND); filler words
-  // ("plumber IN hatfield") don't have to. The whole query run together is
-  // also tried against the compact name ("pick n pay" → "picknpay").
-  // Normalised fields are precomputed once when the index loads (prep()).
+  // ---- Fuzzy search ---------------------------------------------------------
+  // The engine lives in src/lib/fuzzy-search.ts (Fuse.js, shared by every
+  // search on the site). The index is pre-normalised and its Fuse indexes
+  // are pre-built at build time (/search-index.<hash>.json), so the browser
+  // only parses them — no indexing work.
 
-  interface Prep {
-    row: Row;
-    nameSpaced: string;
-    nameCompact: string;
-    categorySpaced: string;
-    synonymsSpaced: string;
-    suburbSpaced: string;
-    otherSpaced: string; // address + descriptions
-  }
-
-  let fuse: Fuse<Prep> | null = null;
-
-  function prep(rows: Row[]) {
-    const docs: Prep[] = rows.map((row) => ({
-      row,
-      nameSpaced: norm(row.n),
-      nameCompact: norm(row.n, true),
-      categorySpaced: norm(row.c),
-      synonymsSpaced: norm(row.k),
-      suburbSpaced: norm(row.sb),
-      otherSpaced: norm(`${row.a} ${row.sd ?? ''} ${row.d}`),
-    }));
-    const keys = [
-      { name: 'nameCompact', weight: 0.35 },
-      { name: 'nameSpaced', weight: 0.35 },
-      { name: 'synonymsSpaced', weight: 0.15 },
-      { name: 'categorySpaced', weight: 0.1 },
-      { name: 'suburbSpaced', weight: 0.05 },
-      { name: 'otherSpaced', weight: 0.02 },
-    ];
-    const options = { keys, includeScore: true, ignoreLocation: true, threshold: 0.33, minMatchCharLength: 2, useExtendedSearch: false };
-    fuse = new Fuse(docs, options, Fuse.createIndex(keys, docs));
-  }
+  // Queries run in a Web Worker (see src/lib/search-client.ts).
+  const client = createSearchClient<Row>(document.body.dataset.searchIndex!);
 
   // Relevance bucket of each row in the latest results (for the pinned pick).
   let lastBucket = new Map<Row, number>();
 
-  /** Best (lowest) Fuse score per row for one pattern. */
-  function scoresFor(pattern: string): Map<Prep, number> {
-    const out = new Map<Prep, number>();
-    for (const r of fuse!.search(pattern)) out.set(r.item, r.score ?? 0);
+  async function search(_data: Row[], rawWords: string[], suburbSlug: string): Promise<Row[]> {
+    const res: SearchResult = await client.search(rawWords.join(' '), suburbSlug);
+    const rows = allRows!;
+    const out = Array.from(res.i, (k) => rows[k]);
+    if (rawWords.length) lastBucket = new Map(out.map((r, k) => [r, res.bucket[k]]));
+    else lastBucket = new Map();
     return out;
-  }
-
-  function search(data: Row[], rawWords: string[], suburbSlug: string): Row[] {
-    const q = norm(rawWords.join(' '));
-    const all = q ? q.split(' ') : [];
-    // Filler words don't have to match, unless that's all there is; stray
-    // single letters ("pick n pay") are covered by the compact query.
-    let words = all.filter((w) => !STOP.has(w) && w.length >= 2);
-    if (!words.length) words = all.filter((w) => w.length >= 2);
-    if (!words.length) words = all;
-    const qj = q.replace(/ /g, '');
-
-    const scored: { row: Row; bucket: number; score: number }[] = [];
-    if (!q) {
-      for (const row of data) {
-        if (suburbSlug && row.sbs !== suburbSlug) continue;
-        scored.push({ row, bucket: 0, score: 0 });
-      }
-    } else {
-      // AND across words: every word must match, scores averaged.
-      let merged: Map<Prep, number> | null = null;
-      for (const w of words) {
-        const m = scoresFor(w);
-        if (!merged) {
-          merged = m;
-          continue;
-        }
-        const next = new Map<Prep, number>();
-        for (const [p, s] of merged) {
-          const s2 = m.get(p);
-          if (s2 !== undefined) next.set(p, s + s2);
-        }
-        merged = next;
-      }
-      const best = new Map<Prep, number>();
-      for (const [p, s] of merged ?? []) best.set(p, s / words.length);
-      // The whole query run together, against the compact name.
-      if (qj.length >= 3 && words.length !== 1) {
-        for (const [p, s] of scoresFor(qj)) {
-          const prev = best.get(p);
-          if (prev === undefined || s < prev) best.set(p, s);
-        }
-      }
-      for (const [p, score] of best) {
-        const row = p.row;
-        if (suburbSlug && row.sbs !== suburbSlug) continue;
-        let bucket = score <= 0.1 ? 3 : score <= 0.2 ? 2 : 1;
-        if (p.nameSpaced === q || (qj.length >= 3 && p.nameCompact === qj)) bucket = 5;
-        else if (p.nameSpaced.startsWith(q) || (qj.length >= 3 && p.nameCompact.startsWith(qj))) bucket = 4;
-        scored.push({ row, bucket, score });
-      }
-    }
-    // Most relevant first; within equal relevance Featured (t>=2) first,
-    // then match strength (lower Fuse score = better), then alphabetically.
-    scored.sort(
-      (a, b) =>
-        b.bucket - a.bucket ||
-        (b.row.t >= 2 ? 1 : 0) - (a.row.t >= 2 ? 1 : 0) ||
-        a.score - b.score ||
-        a.row.n.localeCompare(b.row.n)
-    );
-    lastBucket = new Map(scored.map((s) => [s.row, s.bucket]));
-    return scored.map((s) => s.row);
   }
 
   function escapeHtml(s: string) {
@@ -499,20 +405,6 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
   // All computed from the real category/suburb lists embedded at build time
   // and the live search index — nothing is canned.
 
-  const STOP = new Set(['in', 'near', 'the', 'and', 'for', 'a', 'an', 'of', 'at', 'to', 'on', 'my', 'me']);
-
-  /** Shared by indexed fields and queries. Spaced: punctuation becomes a
-   *  single space. Compact: all non-alphanumerics (spaces too) removed. */
-  function norm(s: string, compact = false): string {
-    const base = s
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
-      .replace(/&/g, ' and ')
-      .replace(/['’‘`]/g, ''); // "Nando's" → "nandos"
-    return compact ? base.replace(/[^a-z0-9]+/g, '') : base.replace(/[^a-z0-9]+/g, ' ').trim();
-  }
-
   function lev(a: string, b: string): number {
     if (Math.abs(a.length - b.length) > 2) return 3;
     const prev = Array.from({ length: b.length + 1 }, (_, i) => i);
@@ -543,7 +435,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     return `<a href="${href}" class="suggest-chip" style="padding:9px 14px;border:2px solid var(--border);border-radius:999px;font-size:13.5px;font-weight:700;color:var(--navy);background:#fff;text-decoration:none">${escapeHtml(label)}</a>`;
   }
 
-  function showEmpty(q: string, suburbSlug: string, data: Row[]) {
+  async function showEmpty(q: string, suburbSlug: string, data: Row[]) {
     crumbs.hidden = true;
     resultsView.hidden = true;
     emptyView.hidden = false;
@@ -642,7 +534,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     // Single words from the query that DO match something on their own.
     for (const w of qWords) {
       if (consumed.has(w) || w.length < 3) continue;
-      const n = search(data, [w], '').length;
+      const n = (await search(data, [w], '')).length;
       if (n > 0) add(`/search/?q=${encodeURIComponent(w)}`, `“${w}” — ${n} ${n === 1 ? 'business' : 'businesses'}`);
     }
 
@@ -670,12 +562,24 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
   }
 
   let allRows: Row[] | null = null;
-  async function loadIndex(): Promise<Row[]> {
-    if (allRows) return allRows;
-    const res = await fetch('/search-index.json');
-    allRows = (await res.json()) as Row[];
-    prep(allRows);
-    return allRows;
+  let indexPromise: Promise<Row[]> | null = null;
+  // The fetch starts from the <link rel="preload"> in <head> (and the worker
+  // reads the same URL), so this usually just picks up a finished download.
+  function loadIndex(): Promise<Row[]> {
+    if (!indexPromise) {
+      indexPromise = client.load.then(({ pack, rows }) => {
+        const subSlug = pack.s.map((x) => x.s);
+        for (const r of rows) {
+          r.c = pack.c[r.ci]?.n ?? '';
+          r.sb = pack.s[r.si]?.n ?? '';
+          r.sbs = subSlug[r.si] ?? '';
+          r.hr = (r.hr as string | undefined) ?? '';
+          r.h = r.hr !== '';
+        }
+        return (allRows = rows);
+      });
+    }
+    return indexPromise;
   }
 
   const OPEN_NOTE_DEFAULT = 'Filter to businesses trading right now.';
@@ -687,17 +591,27 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     openLabel.textContent = filterOpen.checked ? 'Open now · on' : 'Open now';
   }
 
+  let runSeq = 0;
+  const PAGE = 50;
+  let limit = PAGE;
+  let lastKey = '';
+  let lastHtml = '';
+
   async function runSearch(track = true) {
     syncPills();
     const q = input.value.trim();
     const suburbSlug = new URLSearchParams(location.search).get('suburb') ?? '';
     const words = q.split(/\s+/).filter(Boolean);
-    const data = await loadIndex();
-    const base = search(data, words, suburbSlug);
+    const mySeq = ++runSeq; const data = await loadIndex();
+    const base = await search(data, words, suburbSlug);
+    if (mySeq !== runSeq) return; // a newer keystroke superseded this one
+    const key = [q, suburbSlug, filterOpen.checked, filterVerified.checked, filterHours.checked].join('|');
+    if (key !== lastKey) limit = PAGE;
+    lastKey = key;
 
     // Zero hits before any Refine filter: the full "Nothing matched" screen.
     if (base.length === 0 && (q || suburbSlug)) {
-      showEmpty(q, suburbSlug, data);
+      await showEmpty(q, suburbSlug, data);
       return;
     }
     showResultsView();
@@ -727,7 +641,8 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     // match) whenever direct matches exist.
     const strong = results.some((r) => (lastBucket.get(r) ?? 0) >= 2);
     const featured = results.find((r) => r.t >= 2 && r.s !== sponsorSlug && (!strong || (lastBucket.get(r) ?? 0) >= 2));
-    const rest = results.filter((r) => r !== featured).slice(0, 40);
+    const restAll = results.filter((r) => r !== featured);
+    const rest = restAll.slice(0, limit);
     // A real AdSense in-feed unit after the fifth result — only when this
     // site has a publisher ID and names a slot for it; otherwise nothing at
     // all (never a placeholder box). Like AdUnit.astro it stays collapsed
@@ -743,8 +658,14 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     const rows = rest.map((r) => renderRow(r, false));
     const showAd = adSlot !== '' && rows.length > 5 && document.body.dataset.ads !== '0';
     if (showAd) rows.splice(5, 0, adSlot);
-    list.innerHTML = (featured ? renderRow(featured, true) : '') + rows.join('');
-    if (showAd) {
+    const more = restAll.length > rest.length ? `<button type="button" id="show-more" style="align-self:center;padding:12px 22px;border-radius:10px;border:2px solid var(--border);background:#fff;color:var(--navy);font-size:14px;font-weight:800;cursor:pointer;font-family:inherit">Show more (${restAll.length - rest.length} more)</button>` : '';
+    const html = (featured ? renderRow(featured, true) : '') + rows.join('') + more;
+    // Only touch the DOM when the rendered result actually changed.
+    const changed = html !== lastHtml;
+    if (changed) list.innerHTML = html;
+    lastHtml = html;
+    // Never re-push the ad unit on a keystroke re-render.
+    if (showAd && track) {
       const w = window as unknown as { adsbygoogle?: unknown[] };
       (w.adsbygoogle = w.adsbygoogle || []).push({});
     }
@@ -771,6 +692,11 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
   // Phone clicks straight from a result card count too — otherwise the
   // owner's "Phone clicks" tile only sees calls started from the profile page.
   list.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('#show-more')) {
+      limit += PAGE;
+      runSearch(false);
+      return;
+    }
     const el = (e.target as HTMLElement).closest<HTMLElement>('[data-track]');
     if (!el?.dataset.trackSlug) return;
     try {
@@ -800,7 +726,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
       else params.delete('q');
       history.replaceState(null, '', `?${params.toString()}`);
       runSearch(false);
-    }, 80);
+    }, 50);
   });
   // Picking a suburb searches straight away, like pressing Search.
   suburbSelect.addEventListener('change', () => form.requestSubmit());

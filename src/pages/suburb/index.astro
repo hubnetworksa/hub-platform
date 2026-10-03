@@ -143,6 +143,8 @@ const jsonLd = collectionPageJsonLd({
 </style>
 
 <script>
+  import { createListSearch } from '../../lib/fuzzy-search';
+
   const input = document.getElementById('dir-query') as HTMLInputElement | null;
   const list = document.getElementById('dir-regions');
   const empty = document.getElementById('dir-empty');
@@ -154,14 +156,18 @@ const jsonLd = collectionPageJsonLd({
     row.querySelector('.dr-head')?.setAttribute('aria-expanded', open ? 'true' : 'false');
   }
 
+  const cardItems = Array.from(document.querySelectorAll<HTMLElement>('#dir-regions .dr-sub')).map((el) => ({ el, name: el.dataset.name ?? '' }));
+  const findCards = createListSearch(cardItems, (c) => [c.name]);
+
   function render() {
-    const q = (input?.value ?? '').trim().toLowerCase();
+    const q = (input?.value ?? '').trim();
+    const hits = new Set(q ? findCards(q).map((c) => c.el) : []);
     let visible = 0;
     for (const row of rows) {
       const cards = Array.from(row.querySelectorAll<HTMLElement>('.dr-sub'));
       let matched = 0;
       for (const c of cards) {
-        const hit = !q || (c.dataset.name ?? '').includes(q);
+        const hit = !q || hits.has(c);
         c.hidden = !hit;
         if (hit) matched++;
       }
@@ -173,7 +179,11 @@ const jsonLd = collectionPageJsonLd({
     if (empty) empty.hidden = visible > 0;
   }
 
-  input?.addEventListener('input', render);
+  let typing: number | undefined;
+  input?.addEventListener('input', () => {
+    clearTimeout(typing);
+    typing = window.setTimeout(render, 50);
+  });
   list?.addEventListener('click', (e) => {
     const head = (e.target as HTMLElement).closest('.dr-head');
     const row = head?.closest<HTMLElement>('.dr');

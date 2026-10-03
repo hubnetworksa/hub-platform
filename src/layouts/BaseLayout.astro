@@ -7,6 +7,7 @@ import { siteName, cityLabel, footerTagline, adsEnabled } from '../lib/site-over
 import { organizationJsonLd, webPageJsonLd, ldJson, type WebPageType } from '../lib/schema';
 import { fitTitle, fitDescription } from '../lib/metaText';
 import { lastModifiedFor } from '../lib/sitemap';
+import { searchIndexUrl } from '../lib/search-pack';
 
 interface Props {
   title: string;
@@ -22,6 +23,8 @@ interface Props {
    *  really the same non-content form, which wastes crawl budget on
    *  thousands of near-duplicate URLs. */
   noindex?: boolean;
+  /** Start fetching the business search index in <head> (the /search/ page). */
+  preloadSearchIndex?: boolean;
   /** Renders `site.impactSiteVerification` as a meta tag when set — only
    *  ever passed `true` from the homepage, per Impact.com's own
    *  instructions that this tag is homepage-only, not site-wide. */
@@ -54,7 +57,7 @@ interface Props {
   articleModifiedTime?: string;
 }
 
-const { title, description: rawDescription, canonical, titleOverride, noindex, impactVerification, ogImage, ogImageSquare = false, ogType = 'website', noAds: noAdsProp = false, pageSchema, articlePublishedTime, articleModifiedTime } = Astro.props;
+const { title, description: rawDescription, canonical, titleOverride, noindex, preloadSearchIndex = false, impactVerification, ogImage, ogImageSquare = false, ogType = 'website', noAds: noAdsProp = false, pageSchema, articlePublishedTime, articleModifiedTime } = Astro.props;
 // Account, admin and other noindex utility pages are ad-free too (an owner's
 // dashboard shows their own paid listing).
 const noAds = noAdsProp || Boolean(noindex);
@@ -278,8 +281,10 @@ const themeCss = `:root {
         }
       }
     </style>
+    {preloadSearchIndex && <link rel="preload" as="fetch" href={searchIndexUrl()} crossorigin="anonymous" />}
   </head>
-  <body data-city-label={cityLabel} data-ads={adsEnabled && !noAds ? '1' : '0'}>
+  <body data-city-label={cityLabel} data-ads={adsEnabled && !noAds ? '1' : '0'} data-search-index={searchIndexUrl()}>
+    <script is:inline>(function(){var u=document.body.dataset.searchIndex,done=false;function warm(e){if(done||!u)return;var t=e.target;if(t&&t.closest&&t.closest('input[type="search"],form[action="/search/"]')){done=true;try{fetch(u,{credentials:'same-origin'}).catch(function(){})}catch(_){}}}document.addEventListener('pointerover',warm,{passive:true});document.addEventListener('focusin',warm);})();</script>
     <a href="#main-content" class="skip-link">Skip to content</a>
 
     <div style="position:sticky;top:0;z-index:80;background:var(--navy);color:#fff">

@@ -124,20 +124,28 @@ const jsonLd = collectionPageJsonLd({
 </style>
 
 <script>
-  // Same filter as the mockup: a section matches if its name matches (show
-  // all of its categories) or any of its categories does (show just those).
+  // A section matches if its name matches (show all of its categories) or
+  // any of its categories does (show just those). Shared fuzzy engine.
+  import { createListSearch } from '../../lib/fuzzy-search';
+
   const input = document.getElementById('cat-query') as HTMLInputElement;
   const groups = document.querySelectorAll<HTMLElement>('.cat-group');
   const empty = document.getElementById('cat-empty')!;
 
-  input.addEventListener('input', () => {
-    const q = input.value.trim().toLowerCase();
+  const groupItems = Array.from(groups).map((el) => ({ el, name: el.dataset.groupName ?? '' }));
+  const subItems = Array.from(document.querySelectorAll<HTMLElement>('.cat-sub')).map((el) => ({ el, name: el.dataset.name ?? '' }));
+  const findGroups = createListSearch(groupItems, (g) => [g.name]);
+  const findSubs = createListSearch(subItems, (x) => [x.name]);
+
+  function apply() {
+    const q = input.value.trim();
+    const gm = new Set(q ? findGroups(q).map((g) => g.el) : []);
+    const sm = new Set(q ? findSubs(q).map((x) => x.el) : []);
     let visibleGroups = 0;
     groups.forEach((group) => {
-      const groupMatches = !q || (group.dataset.groupName ?? '').includes(q);
       let visibleSubs = 0;
       group.querySelectorAll<HTMLElement>('.cat-sub').forEach((sub) => {
-        const show = !q || groupMatches || (sub.dataset.name ?? '').includes(q);
+        const show = !q || gm.has(group) || sm.has(sub);
         sub.hidden = !show;
         if (show) visibleSubs++;
       });
@@ -145,5 +153,10 @@ const jsonLd = collectionPageJsonLd({
       if (visibleSubs > 0) visibleGroups++;
     });
     empty.hidden = visibleGroups > 0;
+  }
+  let typing: number | undefined;
+  input.addEventListener('input', () => {
+    clearTimeout(typing);
+    typing = window.setTimeout(apply, 50);
   });
 </script>

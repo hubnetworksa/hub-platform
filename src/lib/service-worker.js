@@ -93,7 +93,8 @@ self.addEventListener('fetch', (event) => {
 
   if (request.mode === 'navigate') {
     event.respondWith(networkFirst(request, true));
-  } else if (url.pathname.startsWith('/_astro/')) {
+  } else if (url.pathname.startsWith('/_astro/') || (url.pathname.startsWith('/search-index.') && url.pathname.endsWith('.json'))) {
+    // Content-hashed (a change always means a new URL), so cache-first is safe.
     event.respondWith(cacheFirst(request));
   } else {
     event.respondWith(networkFirst(request, false));
