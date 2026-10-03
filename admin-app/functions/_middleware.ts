@@ -20,6 +20,8 @@ const PUBLIC_API = new Set([
   '/api/auth/passkey/login-options',
   '/api/auth/passkey/login',
   '/api/notify/run',
+  '/api/briefing/facts',
+  '/api/briefing/submit',
 ]);
 
 export const onRequest: PagesFunction<Env> = async (context) => {

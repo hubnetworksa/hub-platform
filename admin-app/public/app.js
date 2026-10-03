@@ -335,7 +335,9 @@ async function renderOverview(view) {
   );
 }
 
-// Today's AI briefing: loads on its own so the Overview never waits for it.
+// Today's briefing: written each morning by a Claude routine (it posts to
+// /api/briefing/submit). Until it arrives, a plain summary of the numbers.
+// Loads on its own so the Overview never waits for it.
 let briefingCache = null;
 function briefingCard() {
   const card = h('section', { class: 'card briefing', 'aria-label': 'Today’s briefing', 'aria-live': 'polite' });
@@ -351,15 +353,13 @@ function briefingCard() {
           'p',
           { class: 'sub' },
           b ? (b.ai ? h('span', { class: 'ai-badge' }, '✦ Written by Claude') : h('span', { class: 'ai-badge plain' }, 'Summary')) : null,
-          b ? ` · ${b.regenerations ? 'updated' : 'written'} ${ago(b.created_at)}` : 'Reading all three sites…'
+          b ? (b.pending ? ' · from the numbers right now' : ` · morning routine, ${ago(b.created_at)}`) : 'Reading all three sites…'
         )
-      ),
-      b ? h('button', { class: 'btn', type: 'button', onclick: refresh, 'aria-label': 'Refresh the briefing' }, icon('refresh', 15), 'Refresh') : null
+      )
     );
-  const msg = h('p', { class: 'msg err', role: 'status' });
   const draw = (b) => {
     const x = b.briefing;
-    fill(card, 
+    fill(card,
       head(b),
       h('p', { class: 'brief-headline' }, x.headline),
       x.needs_you.length
@@ -367,28 +367,13 @@ function briefingCard() {
         : null,
       h('div', { class: 'brief-block' }, h('h3', {}, 'Your sites'), h('ul', { class: 'brief-list' }, x.sites.map((s) => h('li', {}, h('span', { class: 'city-dot', style: `background:${siteColor(s.slug)}` }), h('span', {}, h('b', {}, siteName(s.slug)), ` ${s.summary}`))))),
       x.worth_knowing.length ? h('div', { class: 'brief-block' }, h('h3', {}, 'Worth knowing'), h('ul', { class: 'brief-list dots' }, x.worth_knowing.map((w) => h('li', {}, h('span', { class: 'bullet' }), h('span', {}, w))))) : null,
-      b.ai ? null : h('p', { class: 'note' }, 'Add an Anthropic API key to have Claude write this briefing (see the Hub Admin README).'),
-      msg
+      b.pending ? h('p', { class: 'note' }, 'Claude’s briefing for today arrives at about 6am; this summary is built from the live numbers until then.') : null
     );
     motion.brief(card);
   };
-  async function refresh(e) {
-    const btn = e.currentTarget;
-    btn.disabled = true;
-    card.classList.add('writing');
-    try {
-      briefingCache = await api('/api/briefing/refresh', 'POST', {});
-      draw(briefingCache);
-    } catch (err) {
-      msg.textContent = err.message;
-      btn.disabled = false;
-    } finally {
-      card.classList.remove('writing');
-    }
-  }
-  if (briefingCache && briefingCache.day === new Date(Date.now() + 2 * 3600000).toISOString().slice(0, 10)) draw(briefingCache);
+  if (briefingCache && !briefingCache.pending && briefingCache.day === new Date(Date.now() + 2 * 3600000).toISOString().slice(0, 10)) draw(briefingCache);
   else {
-    fill(card, head(null), h('div', { class: 'brief-loading' }, h('span'), h('span'), h('span')), h('p', { class: 'sub' }, 'Writing today’s briefing. This takes a few seconds the first time each day.'));
+    fill(card, head(null), h('div', { class: 'brief-loading' }, h('span'), h('span'), h('span')));
     api('/api/briefing')
       .then((b) => {
         briefingCache = b;

@@ -1,18 +1,17 @@
-import Anthropic from '@anthropic-ai/sdk';
 import type { D1Database } from '@cloudflare/workers-types';
 import { hubSites, rows, count, checkSite, type Env, type HubSite } from './sites';
 import { siteQueue, QUEUES } from './queues';
 
-// The daily briefing on the Overview: Claude reads the morning's facts from
-// all three sites and writes a short "what's going on" for the admins.
+// The daily briefing on the Overview. Every morning a Claude routine (a
+// scheduled Claude Code session on the owner's account, no API key) fetches
+// the morning's facts from /api/briefing/facts, writes the briefing, and
+// posts it to /api/briefing/submit (both protected by the routine's own key).
+// Until it arrives, or on a morning it doesn't, the card shows a plain summary
+// computed from the same facts, so it is never empty.
 //
-// Only aggregated numbers and business names go to the model: no visitor
-// names, emails, phone numbers or message text. The exact facts are stored
-// with each briefing so any figure in it can be checked. Without an
-// ANTHROPIC_API_KEY (or if the request fails or is declined) a plain summary
-// is written from the same facts instead, so the card is never empty.
-
-export const MODEL = 'claude-opus-5-5';
+// The facts are aggregated numbers plus business names, searches and
+// upgrades: no visitor names, emails, phone numbers or message text. They are
+// stored with each briefing so any figure in it can be checked.
 const LABELS = Object.fromEntries(QUEUES.map(([type, label]) => [type, label]));
 
 /** Today's date in South Africa (the briefing's "day"). */
@@ -124,71 +123,6 @@ export interface Briefing {
   worth_knowing: string[];
 }
 
-const SCHEMA = {
-  type: 'object',
-  additionalProperties: false,
-  required: ['headline', 'needs_you', 'sites', 'worth_knowing'],
-  properties: {
-    headline: { type: 'string', description: 'One sentence, at most ~20 words: the single most important thing about today across all sites.' },
-    needs_you: {
-      type: 'array',
-      description: 'Concrete actions for the admins today, most urgent first (at most 5). Empty if nothing needs doing.',
-      items: {
-        type: 'object',
-        additionalProperties: false,
-        required: ['text', 'site'],
-        properties: { text: { type: 'string' }, site: { type: 'string', description: 'The site slug, or "all".' } },
-      },
-    },
-    sites: {
-      type: 'array',
-      description: 'One entry per site, in the order given: one or two sentences on how it is doing.',
-      items: { type: 'object', additionalProperties: false, required: ['slug', 'summary'], properties: { slug: { type: 'string' }, summary: { type: 'string' } } },
-    },
-    worth_knowing: { type: 'array', description: 'Up to 3 trends, wins or risks worth noticing.', items: { type: 'string' } },
-  },
-} as const;
-
-const SYSTEM = `You write the morning briefing in Hub Admin, the dashboard Ethan and Guy use to run three local business directory websites in South Africa: PretoriaHub, PolokwaneHub and TheCapeTownHub. They read it on their phones before starting the day.
-
-You get the morning's facts as JSON. Write what's going on and what needs their attention, like a sharp operations manager would.
-
-- Use only the facts given. Never invent or estimate a number, and don't claim causes the data doesn't show. If something can't be told from the data, leave it out.
-- Lead with what needs action: sites that are down, items waiting for an admin (especially ones waiting several days), payments, renewals.
-- Compare the last 24 hours with the previous 24 hours and the 7-day daily average when the change is meaningful; ignore tiny numbers and noise (for example 1 vs 2).
-- Name specific businesses, searches and upgrades when they matter.
-- Plain, friendly South African English. Rand as R1,250. Short sentences. No greeting (the app adds one), no sign-off, no emoji, no markdown.
-- When everything is quiet, say so briefly rather than padding.`;
-
-/** Writes the briefing with Claude; null if there's no API key or it didn't produce one. */
-async function aiBriefing(env: Env, facts: unknown): Promise<{ briefing: Briefing; model: string; input: number; output: number } | null> {
-  const key = typeof env.ANTHROPIC_API_KEY === 'string' ? env.ANTHROPIC_API_KEY : '';
-  if (!key) return null;
-  const client = new Anthropic({ apiKey: key, maxRetries: 2, timeout: 60_000 });
-  try {
-    const response = await client.beta.messages.create({
-      model: MODEL,
-      max_tokens: 4000,
-      betas: ['server-side-fallback-2026-07-01'],
-      fallbacks: 'default',
-      output_config: { effort: 'low', format: { type: 'json_schema', schema: SCHEMA } },
-      system: SYSTEM,
-      messages: [{ role: 'user', content: `Today's facts:\n${JSON.stringify(facts)}` }],
-    });
-    if (response.stop_reason !== 'end_turn') return null; // refusal, max_tokens, ...
-    const text = response.content.flatMap((b) => (b.type === 'text' ? [b.text] : [])).join('');
-    const parsed = JSON.parse(text) as Briefing;
-    if (!parsed.headline || !Array.isArray(parsed.sites)) return null;
-    return { briefing: parsed, model: response.model, input: response.usage.input_tokens, output: response.usage.output_tokens };
-  } catch (e) {
-    if (e instanceof Anthropic.AuthenticationError) console.error('briefing: the Anthropic API key was rejected');
-    else if (e instanceof Anthropic.RateLimitError) console.error('briefing: rate limited');
-    else if (e instanceof Anthropic.APIError) console.error(`briefing: API error ${e.status}`);
-    else console.error('briefing: failed', e instanceof Error ? e.message : e);
-    return null;
-  }
-}
-
 /** A plain summary from the same facts, for when the AI isn't available. */
 function plainBriefing(facts: Awaited<ReturnType<typeof gatherFacts>>): Briefing {
   const needs: Briefing['needs_you'] = [];
@@ -211,21 +145,37 @@ function plainBriefing(facts: Awaited<ReturnType<typeof gatherFacts>>): Briefing
   };
 }
 
-/** Writes today's briefing and stores it (replacing today's, if any). */
-export async function writeBriefing(env: Env): Promise<{ day: string; briefing: Briefing; ai: boolean }> {
-  const facts = await gatherFacts(env);
-  const ai = await aiBriefing(env, facts);
-  const briefing = ai?.briefing ?? plainBriefing(facts);
+export const plainSummary = plainBriefing;
+
+const str = (v: unknown, max: number) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
+
+/** Checks a briefing sent by the routine; returns it cleaned up, or an error to send back. */
+export function validateBriefing(raw: unknown, slugs: string[]): { briefing: Briefing } | { error: string } {
+  if (!raw || typeof raw !== 'object') return { error: 'Send a JSON object with headline, needs_you, sites and worth_knowing.' };
+  const r = raw as Record<string, unknown>;
+  const headline = str(r.headline, 300);
+  if (!headline) return { error: '"headline" is required (one sentence).' };
+  if (!Array.isArray(r.needs_you) || !Array.isArray(r.sites) || !Array.isArray(r.worth_knowing)) return { error: '"needs_you", "sites" and "worth_knowing" must be arrays.' };
+  const needs = r.needs_you.slice(0, 6).map((n) => ({ text: str((n as Record<string, unknown>)?.text, 300), site: str((n as Record<string, unknown>)?.site, 30) }));
+  if (needs.some((n) => !n.text || !(n.site === 'all' || slugs.includes(n.site)))) return { error: `Each "needs_you" item needs "text" and "site" (one of: ${[...slugs, 'all'].join(', ')}).` };
+  const sites = r.sites.map((x) => ({ slug: str((x as Record<string, unknown>)?.slug, 30), summary: str((x as Record<string, unknown>)?.summary, 400) }));
+  if (sites.length !== slugs.length || sites.some((x, i) => x.slug !== slugs[i] || !x.summary)) return { error: `"sites" must have one entry per site, in this order: ${slugs.join(', ')}, each with a "summary".` };
+  const worth = r.worth_knowing.slice(0, 4).map((w) => str(w, 300)).filter(Boolean);
+  return { briefing: { headline, needs_you: needs, sites, worth_knowing: worth } };
+}
+
+/** Saves today's briefing from the routine (replacing an earlier one today). */
+export async function storeBriefing(env: Env, briefing: Briefing, facts: unknown): Promise<string> {
   const day = saDay();
   await env.ADMIN_DB.prepare(
-    `INSERT INTO daily_briefings (day, content, facts, ai, model, input_tokens, output_tokens) VALUES (?, ?, ?, ?, ?, ?, ?)
-     ON CONFLICT(day) DO UPDATE SET content = excluded.content, facts = excluded.facts, ai = excluded.ai, model = excluded.model,
-       input_tokens = excluded.input_tokens, output_tokens = excluded.output_tokens, regenerations = regenerations + 1, created_at = datetime('now')`
+    `INSERT INTO daily_briefings (day, content, facts, ai, model) VALUES (?, ?, ?, 1, 'claude-routine')
+     ON CONFLICT(day) DO UPDATE SET content = excluded.content, facts = excluded.facts, ai = 1, model = 'claude-routine',
+       regenerations = regenerations + 1, created_at = datetime('now')`
   )
-    .bind(day, JSON.stringify(briefing), JSON.stringify(facts), ai ? 1 : 0, ai?.model ?? null, ai?.input ?? null, ai?.output ?? null)
+    .bind(day, JSON.stringify(briefing), JSON.stringify(facts))
     .run();
   await env.ADMIN_DB.prepare(`DELETE FROM daily_briefings WHERE day < ?`).bind(saDay(-90)).run();
-  return { day, briefing, ai: !!ai };
+  return day;
 }
 
 export async function readBriefing(db: D1Database, day = saDay()) {
