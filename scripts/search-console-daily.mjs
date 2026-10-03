@@ -10,8 +10,8 @@
 //               "indexed pages" trend (the coverage report itself isn't in it)
 //   gaps        searches where the site shows up but below the first page
 //   inspections Google's own verdict for the site's pages (URL Inspection),
-//               about 120 pages a day per site, oldest-checked first, so
-//               every sitemap page is re-checked every few weeks
+//               up to 150 pages a day per site (5 minutes each),
+//               never-checked and oldest-checked first
 //   adsense     estimated earnings, page views and clicks per day and site
 //
 // Same credentials as the weekly report (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET,
@@ -24,7 +24,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const { CLOUDFLARE_API_TOKEN: cfToken, CLOUDFLARE_ACCOUNT_ID: account, ADMIN_URL: adminUrl = 'https://hub-admin-b4x.pages.dev' } = process.env;
 if (!cfToken || !account) throw new Error('CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID are required.');
 const CITIES = ['pretoria', 'polokwane', 'capetown'];
-const INSPECT_PER_DAY = Number(process.env.INSPECT_PER_DAY || 120);
+const INSPECT_PER_DAY = Number(process.env.INSPECT_PER_DAY || 150);
+const INSPECT_MINUTES = Number(process.env.INSPECT_MINUTES || 5);
 const KEY_PAGES = ['/', '/category/', '/suburb/', '/events/', '/news/', '/search/'];
 
 const { GOOGLE_CLIENT_ID: id, GOOGLE_CLIENT_SECRET: secret, GOOGLE_REFRESH_TOKEN: refresh } = process.env;
@@ -130,20 +131,28 @@ async function inspections(site, prop, old) {
   // then the longest-ago checked.
   const order = (u) => (map[u] ? 2 : u.includes('/business/') ? 1 : 0);
   const queue = [...new Set([...keyUrls, ...urls])].sort((a, b) => order(a) - order(b) || (map[a]?.t ?? '').localeCompare(map[b]?.t ?? ''));
+  // Google answers each inspection slowly (several seconds), so five run at
+  // once and each site gets at most INSPECT_MINUTES; whatever isn't reached
+  // today is first in line tomorrow.
+  const todo = queue.filter((u) => map[u]?.t !== TODAY).slice(0, INSPECT_PER_DAY);
+  const deadline = Date.now() + INSPECT_MINUTES * 60_000;
   let n = 0;
-  for (const u of queue) {
-    if (n >= INSPECT_PER_DAY) break;
-    if (map[u]?.t === TODAY) continue;
-    await sleep(220);
-    const r = await g('https://searchconsole.googleapis.com/v1/urlInspection/index:inspect', { inspectionUrl: u, siteUrl: prop, languageCode: 'en-US' });
-    if (r.error) {
-      if (/quota|rate/i.test(r.error.message)) break;
-      continue;
-    }
-    const s = r.inspectionResult?.indexStatusResult ?? {};
-    map[u] = { s: s.coverageState ?? 'Unknown', v: s.verdict ?? null, c: s.lastCrawlTime ?? null, t: TODAY };
-    n++;
-  }
+  let stop = false;
+  await Promise.all(
+    Array.from({ length: 5 }, async () => {
+      while (todo.length && !stop && Date.now() < deadline) {
+        const u = todo.shift();
+        const r = await g('https://searchconsole.googleapis.com/v1/urlInspection/index:inspect', { inspectionUrl: u, siteUrl: prop, languageCode: 'en-US' });
+        if (r.error) {
+          if (/quota|rate/i.test(r.error.message)) stop = true;
+          continue;
+        }
+        const st = r.inspectionResult?.indexStatusResult ?? {};
+        map[u] = { s: st.coverageState ?? 'Unknown', v: st.verdict ?? null, c: st.lastCrawlTime ?? null, t: TODAY };
+        n++;
+      }
+    })
+  );
   const compact = Object.fromEntries(Object.entries(map).map(([u, v]) => [u.slice(origin.length) || '/', [v.s, v.v, v.c ? v.c.slice(0, 10) : null, v.t]]));
   return { map: compact, sitemapUrls: urls.length, inspectedToday: n };
 }
