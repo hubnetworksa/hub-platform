@@ -1,8 +1,9 @@
 // Listings: how good each city's listings are. A completeness score, what's
 // missing (phone, hours, description, map location, address, category),
 // likely duplicates, stale listings, listings nobody has viewed, and thin
-// category-in-suburb pages. Each listing opens on the site; editing happens
-// in that city's admin (Businesses).
+// category-in-suburb pages. Each listing opens on the site; tick listings to
+// hide them in bulk (api/bulk-listings.ts); editing happens in that city's
+// admin (Businesses).
 
 let current = null;
 
@@ -39,7 +40,46 @@ export async function render(view, ui, refresh) {
 function cityReport(ui, r) {
   const { h } = ui;
   const site = `https://${r.domain}`;
-  const listingLink = (l) => h('li', {}, h('a', { href: `${site}/business/${l.slug}/`, target: '_blank', rel: 'noopener' }, l.name), h('span', { class: 'meta' }, [l.suburb, l.detail].filter(Boolean).map((x) => ` · ${x}`).join('')));
+  // Ticked listings, for "Hide selected".
+  const picked = new Set();
+  const bar = h('div', { class: 'bulkbar', hidden: true });
+  const syncBar = () => {
+    bar.hidden = picked.size === 0;
+    if (!picked.size) return;
+    const msg = h('span', { role: 'status' }, `${picked.size} selected`);
+    const hide = h(
+      'button',
+      {
+        class: 'btn small',
+        type: 'button',
+        onclick: async () => {
+          if (!confirm(`Hide ${picked.size} listing${picked.size === 1 ? '' : 's'} from ${ui.siteName(r.site)}? They stay in the database and can be published again from the site’s admin.`)) return;
+          hide.disabled = true;
+          const slugs = [...picked];
+          let done = 0;
+          const errors = [];
+          for (let i = 0; i < slugs.length; i += 25) {
+            msg.textContent = `Hiding… ${done}/${slugs.length}`;
+            try {
+              const out = await ui.api('/api/bulk-listings', 'POST', { site: r.site, slugs: slugs.slice(i, i + 25), status: 'hidden' });
+              done += out.done.length;
+            } catch (e) {
+              errors.push(e.message);
+            }
+          }
+          msg.textContent = errors.length ? `Hid ${done}; ${errors[0]}` : `Hid ${done}. The site updates after its next rebuild (a few minutes). Recheck to refresh this list.`;
+          picked.clear();
+          document.querySelectorAll('.pick input:checked').forEach((c) => ((c.checked = false), (c.disabled = true)));
+        },
+      },
+      'Hide selected'
+    );
+    const clear = h('button', { class: 'btn small', type: 'button', onclick: () => (picked.clear(), document.querySelectorAll('.pick input').forEach((c) => (c.checked = false)), syncBar()) }, 'Clear');
+    bar.replaceChildren(msg, hide, clear);
+  };
+  const pick = (slug) =>
+    h('label', { class: 'pick', title: 'Select' }, h('input', { type: 'checkbox', 'aria-label': 'Select listing', checked: picked.has(slug), onchange: (e) => (e.target.checked ? picked.add(slug) : picked.delete(slug), syncBar()) }));
+  const listingLink = (l) => h('li', {}, pick(l.slug), h('a', { href: `${site}/business/${l.slug}/`, target: '_blank', rel: 'noopener' }, l.name), h('span', { class: 'meta' }, [l.suburb, l.detail].filter(Boolean).map((x) => ` · ${x}`).join('')));
   const more = (count, shown) => (count > shown ? h('li', { class: 'meta' }, `…and ${count - shown} more`) : null);
   const tone = r.score >= 85 ? 'good' : r.score >= 65 ? 'ok' : 'bad';
   return h(
@@ -116,7 +156,8 @@ function cityReport(ui, r) {
       { class: 'card' },
       h('p', { class: 'sub', style: 'margin-top:0' }, `${r.thin.count} of ${r.thin.pages} “category in suburb” pages list only one or two businesses. Google often skips pages like these. Adding a few more businesses to the busiest ones (or better descriptions) helps the whole site.`),
       r.thin.list.length ? h('ul', { class: 'linklist cols' }, r.thin.list.slice(0, 120).map((t) => h('li', {}, h('a', { href: `${site}${t.path}`, target: '_blank', rel: 'noopener' }, t.label), h('span', { class: 'meta' }, ` · ${t.n}`))), more(r.thin.count, Math.min(120, r.thin.list.length))) : null
-    )
+    ),
+    bar
   );
 }
 
