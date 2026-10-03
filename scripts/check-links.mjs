@@ -123,14 +123,19 @@ for (const [p, from] of badAnchors) {
 }
 
 // Search index and sitemap must only point at pages that exist.
-const indexFile = path.join(dist, 'search-index.json');
-if (existsSync(indexFile)) {
-  const idx = JSON.parse(readFileSync(indexFile, 'utf8'));
+// Content-hashed packed file: search-index.<hash>.json = { d: rows, s: suburb table, ... }
+// where each row has n/s (name, slug) and si (index into the suburb table).
+const indexName = readdirSync(dist).find((n) => /^search-index\.[0-9a-f]+\.json$/.test(n));
+const indexFile = indexName ? path.join(dist, indexName) : '';
+if (indexFile && existsSync(indexFile)) {
+  const pack = JSON.parse(readFileSync(indexFile, 'utf8'));
+  const idx = pack.d;
   let missing = 0;
   for (const r of idx) {
-    if (!has(`/business/${r.s}`) || (r.sbs && !has(`/suburb/${r.sbs}`))) {
+    const sbs = pack.s[r.si]?.s ?? '';
+    if (!has(`/business/${r.s}`) || (sbs && !has(`/suburb/${sbs}`))) {
       missing++;
-      if (missing <= 5) console.log(`SEARCH-INDEX  no page for ${r.s} / ${r.sbs}`);
+      if (missing <= 5) console.log(`SEARCH-INDEX  no page for ${r.s} / ${sbs}`);
     }
   }
   problems += missing;

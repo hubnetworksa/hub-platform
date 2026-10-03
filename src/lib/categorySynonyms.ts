@@ -3,7 +3,7 @@
 // formal category name (e.g. "junk removal" for Rubbish & Rubble Removal).
 // Shared across all sites, same as categoryGroups.ts — purely additive,
 // never changes a category's actual slug/name/URL. Used to:
-//  - widen on-site search matching (search-index.json.ts / SearchBox.astro)
+//  - widen on-site search matching (src/lib/search-pack.ts / SearchBox.astro)
 //  - enrich category page meta descriptions and on-page copy
 //  - populate `keywords` in business/category JSON-LD structured data
 //

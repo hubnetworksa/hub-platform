@@ -60,3 +60,8 @@
   Cache-Control: public, max-age=86400
   Access-Control-Allow-Origin: *
   Cross-Origin-Resource-Policy: cross-origin
+
+# 5. The business search index is content-hashed (/search-index.<hash>.json), so it
+#    is safe to cache forever; a data change always produces a new filename.
+/search-index.*
+  Cache-Control: public, max-age=31536000, immutable

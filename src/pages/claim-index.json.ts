@@ -6,7 +6,7 @@ import { businesses, suburbFor, categoriesFor, shoppingCenters, businessesInShop
 // Build-time snapshot used by the claim page (src/pages/my-businesses/claim.astro)
 // to show the chosen business's real details (category, suburb, phone, plan,
 // address, hours ...) without an extra API call. Same rebuild-to-refresh
-// pattern as search-index.json.
+// pattern as the search index (src/lib/search-pack.ts).
 export const GET: APIRoute = () => {
   const b = businesses.map((biz) => ({
     id: biz.id,

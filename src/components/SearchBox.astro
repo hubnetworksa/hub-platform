@@ -3,7 +3,7 @@
 // a keyword row on top and a suburb-select + Search button row below.
 // Submitting navigates to /search/ (the mockup's "Results" screen) with
 // ?q=&suburb= — that page does the actual client-side fuzzy search against
-// /search-index.json (same index/matching logic this component used to run
+// the hashed /search-index.<hash>.json (same index/matching logic this component used to run
 // inline in a dropdown; centralized there now instead of duplicated).
 import { suburbs, businessesInSuburb } from '../lib/data';
 

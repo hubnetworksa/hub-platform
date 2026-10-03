@@ -394,15 +394,22 @@ console.log(`Admin flows: ${haveAdminCreds ? 'yes' : 'no (pass --admin-email/--a
 console.log(`Cleanup: ${args.keep ? 'OFF (--keep)' : 'on'}`);
 
 await section('Static and meta routes', async () => {
-  const idx = await step(anon, 'GET', '/search-index.json', {}, contentTypeIs(/json/), 'search index');
-  if (Array.isArray(idx.json) && idx.json.length) {
-    const withSuburb = idx.json.find((b) => b.sbs && b.s) ?? idx.json[0];
+  // The index is content-hashed (/search-index.<hash>.json); its URL is the
+  // preload link on the search page. Packed: { d: rows (n, s, si), s: suburbs }.
+  const searchPage = await step(anon, 'GET', '/search/', {}, contentTypeIs(/text\/html/), 'search page');
+  const idxUrl = searchPage.text?.match(/href="(\/search-index\.[0-9a-f]+\.json)"/)?.[1];
+  if (!idxUrl) fail('search index url', 'no search-index preload link on /search/');
+  const idx = idxUrl ? await step(anon, 'GET', idxUrl, {}, contentTypeIs(/json/), 'search index') : { json: null };
+  if (Array.isArray(idx.json?.d) && idx.json.d.length) {
+    const rows = idx.json.d;
+    const withSuburb = rows.find((b) => idx.json.s[b.si]?.s && b.s) ?? rows[0];
+    const sub = idx.json.s[withSuburb.si];
     site.anyBiz = withSuburb;
-    site.suburbSlug = withSuburb.sbs || null;
-    site.suburbName = withSuburb.sb || null;
-    ok('search-index.json', `${idx.json.length} businesses; using "${withSuburb.n}" (${withSuburb.s}) as a real listing`);
+    site.suburbSlug = sub?.s || null;
+    site.suburbName = sub?.n || null;
+    ok('search-index', `${rows.length} businesses; using "${withSuburb.n}" (${withSuburb.s}) as a real listing`);
   } else {
-    fail('search-index.json', 'empty or not an array — later steps need a real business slug');
+    fail('search-index', 'empty or not a packed index — later steps need a real business slug');
   }
   const claimIdx = await step(anon, 'GET', '/claim-index.json', {}, contentTypeIs(/json/), 'claim index');
   if (claimIdx.json?.b?.length && site.anyBiz) {
