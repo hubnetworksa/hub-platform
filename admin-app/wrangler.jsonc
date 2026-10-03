@@ -1,21 +1,11 @@
 {
   "$schema": "../node_modules/wrangler/config-schema.json",
-  // Hub Admin: one dashboard for every city site, at hub-admin.pages.dev.
+  // Hub Admin: one dashboard for every city site, at hub-admin-b4x.pages.dev.
   // Deployed by .github/workflows/deploy-admin.yml (wrangler pages deploy
   // public, run from this folder, reads this file for its bindings).
   "name": "hub-admin",
   "compatibility_date": "2026-08-31",
   "pages_build_output_dir": "public",
-
-  "vars": {
-    // Cloudflare Access (Zero Trust) settings. The app serves nothing but a
-    // "locked" notice until all three are filled in — see admin-app/README.md.
-    // Neither the team domain nor the AUD tag is a secret.
-    "ACCESS_TEAM_DOMAIN": "",
-    "ACCESS_AUD": "",
-    // Second allow-list, checked against the verified Access login.
-    "ADMIN_EMAILS": "hubnetworksa@gmail.com"
-  },
 
   // ADMIN_DB is Hub Admin's own database (upgrades, push subscriptions,
   // notifications); the deploy workflow creates it on the first run and fills

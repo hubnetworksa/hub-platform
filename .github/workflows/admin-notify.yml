@@ -1,0 +1,39 @@
+name: Hub Admin notifications
+
+# Every 5 minutes: asks Hub Admin to check every city for new items and send
+# push notifications (scripts/admin-notify.mjs). GitHub may start scheduled
+# runs a few minutes late at busy times.
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: admin-notify
+  cancel-in-progress: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout the script
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/admin-notify.mjs
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Check for new items and notify
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/admin-notify.mjs
