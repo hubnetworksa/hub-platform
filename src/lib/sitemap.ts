@@ -1,12 +1,11 @@
-// What goes in the sitemap, which child sitemap each URL belongs to, and its
-// <lastmod>. Read by astro.config.mjs (the @astrojs/sitemap filter/serialize/
-// chunks hooks), so the sitemap is decided from the same build data the pages
+// What goes in the sitemap and each URL's <lastmod> (plus a page-type
+// `chunk` label; the sitemap itself is one file). Read by astro.config.mjs
+// (the @astrojs/sitemap filter/serialize hooks), so the sitemap is decided from the same build data the pages
 // are generated from (src/lib/data.ts), never a second copy of the rules.
 //
-// The pages themselves are untouched: a URL left out here still builds, is
-// still linked, and carries no noindex (the owner prefers that to hiding
-// pages, see commit 375d2875). Leaving a thin page out of the sitemap only
-// stops us actively asking Google to crawl it.
+// Every public page goes in, thin ones included (the owner wants all pages
+// in the sitemap so Google can find them); only noindex pages are left out,
+// since listing a noindex URL asks Google to crawl a page it must not index.
 
 import {
   businesses,
@@ -27,13 +26,7 @@ import { CATEGORY_GROUPS } from './categoryGroups';
 // @ts-ignore: plain .mjs shared with astro.config.mjs and the prebuild scripts
 import { NOINDEX_PATH_PREFIXES } from '../../scripts/noindex-paths.mjs';
 
-/** A category x suburb page listing fewer businesses than this stays out of
- *  the sitemap (73-85% of them list only one or two). */
-export const MIN_CATEGORY_SUBURB_BUSINESSES = 3;
-
-/** Child sitemap names, in index order. Each becomes sitemap-<name>-0.xml.
- *  @astrojs/sitemap adds a final "pages" chunk for everything not claimed
- *  here (the static and legal pages). */
+/** Page types, used to label sitemap entries; anything else is "pages". */
 export const SITEMAP_CHUNKS = [
   'business',
   'category',
@@ -125,7 +118,6 @@ export function sitemapEntryFor(pathname: string): SitemapEntry | null {
       const suburb = suburbBySlug.get(sub);
       if (!suburb) return { chunk: 'category-suburb' };
       const listed = businessesInSuburbAndCategory(suburb.id, category.id);
-      if (listed.length < MIN_CATEGORY_SUBURB_BUSINESSES) return null;
       return { chunk: 'category-suburb', lastmod: newestUpdate(listed) };
     }
     case 'section': {

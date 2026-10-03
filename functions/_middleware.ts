@@ -29,6 +29,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     url.hostname = site.domain;
     return Response.redirect(url.toString(), 301);
   }
+  // The sitemap is one file (sitemap-0.xml) under /sitemap-index.xml. Send
+  // the commonly guessed /sitemap.xml and the per-type files it was briefly
+  // split into (sitemap-business-0.xml, ...) to the index rather than a 404.
+  if (url.pathname === '/sitemap.xml' || /^\/sitemap-[a-z-]+-\d+\.xml$/.test(url.pathname)) {
+    url.pathname = '/sitemap-index.xml';
+    return Response.redirect(url.toString(), 301);
+  }
   const res = await context.next();
   // public/_headers only covers static assets; Function responses (the
   // emailed confirm/review pages, APIs, /media/) get the same baseline here.

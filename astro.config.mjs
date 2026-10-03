@@ -12,12 +12,12 @@ if (!slug) {
 const sitesDir = fileURLToPath(new URL('./sites/', import.meta.url));
 const site = JSON.parse(readFileSync(`${sitesDir}${slug}.json`, 'utf8'));
 
-// Which URLs go in the sitemap, which child sitemap each lands in, and its
-// <lastmod> are decided in src/lib/sitemap.ts from the same build data the
-// pages are generated from (src/lib/data.ts): thin category x suburb pages
-// and empty categories are left out (the pages still build, without
-// noindex), form pages like /events/add/ are left out, and the rest is
-// split by page type under /sitemap-index.xml (the URL robots.txt names).
+// Which URLs go in the sitemap and their <lastmod> are decided in
+// src/lib/sitemap.ts from the same build data the pages are generated from
+// (src/lib/data.ts): every public page goes in, and only noindex pages
+// (account/form pages, empty categories) are left out. All of them land in
+// one file, sitemap-0.xml, under /sitemap-index.xml (the URL robots.txt
+// names) — the owner wants every page in a single sitemap.
 // It needs src/data/*.json, which `npm run fetch-data` writes before every
 // build; without it (config loaded outside a build) only the path filter
 // below applies.
@@ -42,17 +42,6 @@ export default defineConfig({
         const lastmod = entryFor(item.url)?.lastmod;
         return lastmod ? { ...item, lastmod } : item;
       },
-      // One child sitemap per page type (sitemap-business-0.xml, ...) so
-      // Search Console reports indexing per type. Anything unclaimed (home,
-      // about, legal pages) lands in sitemap-pages-0.xml.
-      chunks: rules
-        ? Object.fromEntries(
-            rules.SITEMAP_CHUNKS.map((name) => [
-              name,
-              (/** @type {{ url: string }} */ item) => (entryFor(item.url)?.chunk === name ? item : undefined),
-            ])
-          )
-        : undefined,
     }),
   ],
 });

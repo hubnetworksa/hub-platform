@@ -252,8 +252,20 @@ function sampleOf(arr, n) {
   return a.slice(0, n);
 }
 
-// Child sitemap name -> sample group, e.g. sitemap-category-suburb-0.xml -> category-suburb.
-const groupFromSitemap = (u) => (u.match(/sitemap-(.+?)-\d+\.xml$/) || [])[1] || 'other';
+// Page URL -> sample group by path (the sitemap is one file, so the type
+// comes from the URL), e.g. /category/plumbers/hatfield/ -> category-suburb.
+function groupFromUrl(u) {
+  const [section, slug, sub] = new URL(u).pathname.split('/').filter(Boolean);
+  switch (section) {
+    case 'business': return 'business';
+    case 'category': return sub ? 'category-suburb' : 'category';
+    case 'section': return 'category';
+    case 'suburb': return slug === 'map' ? 'pages' : 'suburb';
+    case 'shopping-center': return 'shopping-centre';
+    case 'events': case 'news': case 'guides': case 'tourism': return section;
+    default: return 'pages';
+  }
+}
 
 let lastInspect = 0;
 async function inspect(url, prop) {
@@ -289,10 +301,12 @@ async function inspectionSample(domain, prop) {
   for (const child of locs(index)) {
     const urls = locs(await fetchText(child));
     if (!urls.length) childErrors.push(child);
-    const grp = groupFromSitemap(child);
-    groups[grp] ||= { total: 0, urls: [] };
-    groups[grp].total += urls.length;
-    groups[grp].urls.push(...urls);
+    for (const u of urls) {
+      const grp = groupFromUrl(u);
+      groups[grp] ||= { total: 0, urls: [] };
+      groups[grp].total++;
+      groups[grp].urls.push(u);
+    }
   }
   const fixed = ALWAYS_INSPECT.map((p) => origin + p);
   const plan = [{ group: 'key-pages', urls: fixed }];
