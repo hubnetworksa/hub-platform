@@ -235,6 +235,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
 </style>
 
 <script>
+  import Fuse from 'fuse.js';
   import { openStatus } from '../lib/openNow';
   import { phoneHref } from '../lib/phone';
   import { WHATSAPP_ICON, WHATSAPP_GREEN } from '../lib/whatsapp';
@@ -281,129 +282,116 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     suburbSelect.add(new Option(searchMeta.subs.find((x) => x.s === initialSuburb)?.n ?? initialSuburb, initialSuburb, true, true));
   }
 
-  // ---- Ranked search ------------------------------------------------------
-  // Every query word must match somewhere (AND), as a word-prefix or a
-  // substring of the name/category/synonyms/suburb, so partial words work
-  // ("optom" → Optometrists, "pick n" → Pick n Pay). Words of 5+ letters
-  // that match nothing directly fall back to typo-tolerant matching
-  // (1 edit, 2 for 8+ letters), ranked below every direct match.
-  //
-  // Normalised fields are precomputed once when the index loads (prep()),
-  // so each search is one plain loop over the rows.
+  // ---- Fuzzy search (Fuse.js) --------------------------------------------
+  // Fields and queries go through the same norm(): lowercase, no diacritics,
+  // "&" → "and", apostrophes dropped, punctuation → spaces ("spaced") or
+  // removed entirely ("compact"). So "Re/Max", "RE MAX", "Re-Max" and
+  // "remax" all meet. Each query word must match (AND); filler words
+  // ("plumber IN hatfield") don't have to. The whole query run together is
+  // also tried against the compact name ("pick n pay" → "picknpay").
+  // Normalised fields are precomputed once when the index loads (prep()).
 
   interface Prep {
-    n: string; // name, normalised
-    nj: string; // name with spaces removed ("picknpay")
-    // Space-padded fields, so ' ' + word finds a word-prefix with includes().
-    pn: string;
-    pc: string; // category
-    pk: string; // keywords/synonyms
-    ps: string; // suburb
-    po: string; // address + description
-    toks: string[]; // unique name/category/synonym/suburb words, for typo matching
+    row: Row;
+    nameSpaced: string;
+    nameCompact: string;
+    categorySpaced: string;
+    synonymsSpaced: string;
+    suburbSpaced: string;
+    otherSpaced: string; // address + descriptions
   }
 
-  const prepMap = new Map<Row, Prep>();
-  const vocab = new Set<string>();
+  let fuse: Fuse<Prep> | null = null;
 
   function prep(rows: Row[]) {
-    for (const r of rows) {
-      const n = norm(r.n);
-      const c = norm(r.c);
-      const k = norm(r.k);
-      const s = norm(r.sb);
-      const toks = [...new Set(`${n} ${c} ${k} ${s}`.split(' ').filter((t) => t.length >= 3))];
-      toks.forEach((t) => vocab.add(t));
-      prepMap.set(r, { n, nj: n.replace(/ /g, ''), pn: ` ${n} `, pc: ` ${c} `, pk: ` ${k} `, ps: ` ${s} `, po: ` ${norm(`${r.a} ${r.sd ?? ''} ${r.d}`)} `, toks });
-    }
-  }
-
-  /** Vocabulary words within typo distance of `w` (whole word, or the
-   *  same-length start of a longer word: "plumbr" ≈ "plumbe|rs"). Once per query. */
-  function fuzzyVocab(w: string): Set<string> {
-    const out = new Set<string>();
-    if (w.length < 5) return out;
-    const max = w.length >= 8 ? 2 : 1;
-    for (const t of vocab) {
-      if (t.length < w.length - max) continue;
-      if (lev(w, t) <= max || (t.length > w.length && lev(w, t.slice(0, w.length)) <= max)) out.add(t);
-    }
-    return out;
-  }
-
-  // Per-word match strength. Tier 3 = word-start match in name/category/
-  // synonyms/suburb; 2 = substring, or a word in the address/description;
-  // 1 = typo match. Score orders matches within a tier.
-  function matchWord(p: Prep, w: string, fz: Set<string> | null): { tier: number; score: number } {
-    const sw = ' ' + w;
-    if (p.pn.startsWith(sw)) return { tier: 3, score: p.pn.startsWith(sw + ' ') ? 10 : 9 }; // name starts with
-    if (p.pc.includes(sw) || p.pk.includes(sw)) return { tier: 3, score: 8 }; // category / synonym
-    if (p.pn.includes(sw)) return { tier: 3, score: 7 }; // a later word of the name
-    if (p.ps.includes(sw)) return { tier: 3, score: 6 }; // suburb
-    if (w.length >= 3) {
-      if (p.pn.includes(w)) return { tier: 2, score: 5 }; // name contains
-      if (p.pc.includes(w) || p.pk.includes(w)) return { tier: 2, score: 4 };
-      if (p.po.includes(sw)) return { tier: 2, score: 3 }; // address / description
-    }
-    if (fz && fz.size) {
-      for (const t of p.toks) if (fz.has(t)) return { tier: 1, score: p.pn.includes(' ' + t) ? 2 : 1 };
-    }
-    return { tier: 0, score: 0 };
+    const docs: Prep[] = rows.map((row) => ({
+      row,
+      nameSpaced: norm(row.n),
+      nameCompact: norm(row.n, true),
+      categorySpaced: norm(row.c),
+      synonymsSpaced: norm(row.k),
+      suburbSpaced: norm(row.sb),
+      otherSpaced: norm(`${row.a} ${row.sd ?? ''} ${row.d}`),
+    }));
+    const keys = [
+      { name: 'nameCompact', weight: 0.35 },
+      { name: 'nameSpaced', weight: 0.35 },
+      { name: 'synonymsSpaced', weight: 0.15 },
+      { name: 'categorySpaced', weight: 0.1 },
+      { name: 'suburbSpaced', weight: 0.05 },
+      { name: 'otherSpaced', weight: 0.02 },
+    ];
+    const options = { keys, includeScore: true, ignoreLocation: true, threshold: 0.33, minMatchCharLength: 2, useExtendedSearch: false };
+    fuse = new Fuse(docs, options, Fuse.createIndex(keys, docs));
   }
 
   // Relevance bucket of each row in the latest results (for the pinned pick).
   let lastBucket = new Map<Row, number>();
 
+  /** Best (lowest) Fuse score per row for one pattern. */
+  function scoresFor(pattern: string): Map<Prep, number> {
+    const out = new Map<Prep, number>();
+    for (const r of fuse!.search(pattern)) out.set(r.item, r.score ?? 0);
+    return out;
+  }
+
   function search(data: Row[], rawWords: string[], suburbSlug: string): Row[] {
     const q = norm(rawWords.join(' '));
     const all = q ? q.split(' ') : [];
-    // Filler words ("plumber in hatfield") don't have to match, unless
-    // that's all there is.
-    const content = all.filter((w) => !STOP.has(w));
-    const words = content.length ? content : all;
+    // Filler words don't have to match, unless that's all there is; stray
+    // single letters ("pick n pay") are covered by the compact query.
+    let words = all.filter((w) => !STOP.has(w) && w.length >= 2);
+    if (!words.length) words = all.filter((w) => w.length >= 2);
+    if (!words.length) words = all;
     const qj = q.replace(/ /g, '');
-    // A plural typed in full also finds the singular ("plumbers" → "plumber").
-    const alts = words.map((w) => (w.length > 4 && w.endsWith('s') ? w.slice(0, -1) : ''));
-    const fuzzy = words.map((w, i) => (w.length >= 5 ? fuzzyVocab(alts[i] || w) : null));
+
     const scored: { row: Row; bucket: number; score: number }[] = [];
-    for (const row of data) {
-      if (suburbSlug && row.sbs !== suburbSlug) continue;
-      if (words.length === 0) {
+    if (!q) {
+      for (const row of data) {
+        if (suburbSlug && row.sbs !== suburbSlug) continue;
         scored.push({ row, bucket: 0, score: 0 });
-        continue;
       }
-      const p = prepMap.get(row)!;
-      let minTier = 3;
-      let score = 0;
-      let ok = true;
-      for (let i = 0; i < words.length; i++) {
-        let m = matchWord(p, words[i], null);
-        if (alts[i]) {
-          const m2 = matchWord(p, alts[i], null);
-          if (m2.tier > m.tier || (m2.tier === m.tier && m2.score > m.score)) m = m2;
+    } else {
+      // AND across words: every word must match, scores averaged.
+      let merged: Map<Prep, number> | null = null;
+      for (const w of words) {
+        const m = scoresFor(w);
+        if (!merged) {
+          merged = m;
+          continue;
         }
-        if (!m.tier) m = matchWord(p, words[i], fuzzy[i]);
-        if (!m.tier) {
-          ok = false;
-          break;
+        const next = new Map<Prep, number>();
+        for (const [p, s] of merged) {
+          const s2 = m.get(p);
+          if (s2 !== undefined) next.set(p, s + s2);
         }
-        if (m.tier < minTier) minTier = m.tier;
-        score += m.score;
+        merged = next;
       }
-      if (!ok) continue;
-      // Whole-query name matches rank above everything else.
-      let bucket = minTier;
-      if (p.n === q || (qj.length >= 3 && p.nj === qj)) bucket = 5;
-      else if (p.n.startsWith(q) || (qj.length >= 3 && p.nj.startsWith(qj))) bucket = 4;
-      scored.push({ row, bucket, score });
+      const best = new Map<Prep, number>();
+      for (const [p, s] of merged ?? []) best.set(p, s / words.length);
+      // The whole query run together, against the compact name.
+      if (qj.length >= 3 && words.length !== 1) {
+        for (const [p, s] of scoresFor(qj)) {
+          const prev = best.get(p);
+          if (prev === undefined || s < prev) best.set(p, s);
+        }
+      }
+      for (const [p, score] of best) {
+        const row = p.row;
+        if (suburbSlug && row.sbs !== suburbSlug) continue;
+        let bucket = score <= 0.1 ? 3 : score <= 0.2 ? 2 : 1;
+        if (p.nameSpaced === q || (qj.length >= 3 && p.nameCompact === qj)) bucket = 5;
+        else if (p.nameSpaced.startsWith(q) || (qj.length >= 3 && p.nameCompact.startsWith(qj))) bucket = 4;
+        scored.push({ row, bucket, score });
+      }
     }
     // Most relevant first; within equal relevance Featured (t>=2) first,
-    // then match strength, then alphabetically.
+    // then match strength (lower Fuse score = better), then alphabetically.
     scored.sort(
       (a, b) =>
         b.bucket - a.bucket ||
         (b.row.t >= 2 ? 1 : 0) - (a.row.t >= 2 ? 1 : 0) ||
-        b.score - a.score ||
+        a.score - b.score ||
         a.row.n.localeCompare(b.row.n)
     );
     lastBucket = new Map(scored.map((s) => [s.row, s.bucket]));
@@ -513,14 +501,16 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
 
   const STOP = new Set(['in', 'near', 'the', 'and', 'for', 'a', 'an', 'of', 'at', 'to', 'on', 'my', 'me']);
 
-  function norm(s: string): string {
-    return s
+  /** Shared by indexed fields and queries. Spaced: punctuation becomes a
+   *  single space. Compact: all non-alphanumerics (spaces too) removed. */
+  function norm(s: string, compact = false): string {
+    const base = s
       .toLowerCase()
       .normalize('NFD')
       .replace(/[̀-ͯ]/g, '')
-      .replace(/['’‘`]/g, '') // "Nando's" → "nandos"
-      .replace(/[^a-z0-9]+/g, ' ')
-      .trim();
+      .replace(/&/g, ' and ')
+      .replace(/['’‘`]/g, ''); // "Nando's" → "nandos"
+    return compact ? base.replace(/[^a-z0-9]+/g, '') : base.replace(/[^a-z0-9]+/g, ' ').trim();
   }
 
   function lev(a: string, b: string): number {
@@ -697,7 +687,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     openLabel.textContent = filterOpen.checked ? 'Open now · on' : 'Open now';
   }
 
-  async function runSearch() {
+  async function runSearch(track = true) {
     syncPills();
     const q = input.value.trim();
     const suburbSlug = new URLSearchParams(location.search).get('suburb') ?? '';
@@ -767,7 +757,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     // one request per row. Only sent for a search that means something
     // (a typed term or a suburb), so idly loading /search/ with nothing
     // typed doesn't count as every listed business "appearing".
-    if (q || suburbSlug) {
+    if (track && (q || suburbSlug)) {
       const shown = [...(featured ? [featured] : []), ...rest].map((r) => r.s);
       const query = q.toLowerCase().replace(/\s+/g, ' ').slice(0, 80);
       try {
@@ -800,11 +790,23 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     history.replaceState(null, '', `?${params.toString()}`);
     runSearch();
   });
+  // Search as you type, debounced; never beacons per keystroke.
+  let typingTimer: number | undefined;
+  input.addEventListener('input', () => {
+    clearTimeout(typingTimer);
+    typingTimer = window.setTimeout(() => {
+      const params = new URLSearchParams(location.search);
+      if (input.value.trim()) params.set('q', input.value.trim());
+      else params.delete('q');
+      history.replaceState(null, '', `?${params.toString()}`);
+      runSearch(false);
+    }, 80);
+  });
   // Picking a suburb searches straight away, like pressing Search.
   suburbSelect.addEventListener('change', () => form.requestSubmit());
-  filterVerified.addEventListener('change', runSearch);
-  filterHours.addEventListener('change', runSearch);
-  filterOpen.addEventListener('change', runSearch);
+  filterVerified.addEventListener('change', () => runSearch());
+  filterHours.addEventListener('change', () => runSearch());
+  filterOpen.addEventListener('change', () => runSearch());
   openBtn.addEventListener('click', () => {
     filterOpen.checked = !filterOpen.checked;
     runSearch();
