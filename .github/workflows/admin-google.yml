@@ -1,0 +1,50 @@
+name: Hub Admin Google data
+
+# Every morning: Search Console clicks and impressions per day, how many pages
+# Google shows, search gaps, Google's indexing verdict for ~120 pages per site
+# (rotating through the sitemap) and AdSense earnings, sent to Hub Admin's
+# Google and Money screens (scripts/search-console-daily.mjs). Nothing is
+# committed: the data is kept in Hub Admin's own database.
+#
+# Needs the same secrets as the weekly Search Console report (GOOGLE_CLIENT_ID,
+# GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN) plus the Cloudflare pair, to read
+# Hub Admin's key.
+
+on:
+  schedule:
+    - cron: "41 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: admin-google
+  cancel-in-progress: false
+
+jobs:
+  google:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts/search-console-daily.mjs
+            sites
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Fetch Google data and send it to Hub Admin
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/search-console-daily.mjs

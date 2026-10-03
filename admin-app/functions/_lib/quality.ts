@@ -126,8 +126,31 @@ export async function qualityReport(site: HubSite) {
   );
   const thin = combos.filter((c) => c.n <= 2).sort((a, b) => a.n - b.n || a.cname.localeCompare(b.cname));
 
+  // Owners and enquiries: enquiries that never reached the business (no email
+  // on file), unclaimed businesses that get enquiries, and approved listings
+  // whose owner never confirmed.
+  const unreached = await rows<{ slug: string; name: string; n: number; last: string }>(
+    site.db,
+    `SELECT business_slug AS slug, COALESCE(business_name, business_slug) AS name, COUNT(*) AS n, MAX(created_at) AS last FROM messages
+     WHERE kind = 'enquiry' AND emailed = 0 AND business_slug IS NOT NULL AND created_at >= datetime('now', '-60 days')
+     GROUP BY business_slug ORDER BY n DESC LIMIT 50`
+  );
+  const unclaimed = await rows<{ slug: string; name: string; n: number }>(
+    site.db,
+    `SELECT b.slug, b.name, COUNT(*) AS n FROM messages m JOIN businesses b ON b.slug = m.business_slug
+     WHERE m.kind = 'enquiry' AND m.created_at >= datetime('now', '-60 days') AND b.owner_user_id IS NULL
+     GROUP BY b.id ORDER BY n DESC LIMIT 30`
+  );
+  const unconfirmed = await rows<{ name: string; approved: string; reminded: string | null }>(
+    site.db,
+    `SELECT name, admin_approved_at AS approved, reminder_sent_at AS reminded FROM pending_submissions
+     WHERE owner_confirm_token IS NOT NULL AND admin_approved_at IS NOT NULL AND admin_approved_at < datetime('now', '-3 days')
+     ORDER BY admin_approved_at LIMIT 50`
+  );
+
   return {
     site: site.slug,
+    owners: { unreached, unclaimed, unconfirmed },
     total,
     score,
     complete,

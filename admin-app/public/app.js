@@ -1,12 +1,14 @@
 // Hub Admin: one dashboard for every city site.
-//   #/        Overview: every site's health and headline numbers, plus one
-//             combined "needs attention" queue (opens the item in that site's admin)
-//   #/stats   Stats: traffic, contact taps, enquiries, searches, sign-ups,
-//             installs, revenue and Google Search, per city or all together
+//   #/         Overview: today's briefing, every site's health and headline
+//              numbers, and one combined "needs attention" queue
+//   #/stats    Stats: traffic, contact taps, enquiries, searches, sign-ups,
+//              installs, revenue and Google Search, per city or all together
 //   #/upgrades Upgrades: the list of improvements to build on the sites
-//   #/manage  Manage: shortcuts to every admin screen of every site
-//   #/settings Settings: fingerprint/passkey sign-in, password, sign out,
-//             and push notifications on this device
+//   #/manage   Manage: shortcuts to every admin screen of every site
+//   #/settings Settings: sign-in, password, weekly email, admins and push
+//              notifications on this device
+// The other screens are separate modules in screens/, loaded when opened:
+//   #/inbox, #/health, #/listings, #/google, #/money, #/activity, #/social
 import { lineChart, columnChart, barList, dataTable, fmt } from './charts.js';
 import { motion } from './motion.js';
 
@@ -963,12 +965,50 @@ async function renderUpgrades(view) {
       { class: `up${u.status === 'done' ? ' done' : ''}` },
       h('div', { class: 'up-top' }, h('div', { class: 'up-title' }, u.title), h('span', { class: `prio ${u.priority}` }, prioLabel)),
       u.details ? h('p', { class: 'up-details' }, u.details) : null,
-      h('div', { class: 'up-meta' }, siteTags(u), h('span', {}, `· added ${ago(u.created_at)}`), u.done_at ? h('span', {}, `· done ${ago(u.done_at)}`) : null),
+      h('div', { class: 'up-meta' }, siteTags(u), h('span', {}, `· added ${ago(u.created_at)}`), u.done_at ? h('span', {}, `· done ${ago(u.done_at)}`) : null, u.code_link ? h('a', { href: u.code_link, target: '_blank', rel: 'noopener' }, `· ${/\/pull\//.test(u.code_link) ? 'pull request' : /\/commit\//.test(u.code_link) ? 'commit' : 'code'}`) : null),
       h(
         'div',
         { class: 'up-actions' },
         statusSel,
         h('button', { class: 'btn', type: 'button', onclick: () => ((upState.editing = u.id), draw()) }, icon('edit', 14), 'Edit'),
+        // Ready to paste into a Claude Code session on the hub-platform repo.
+        h(
+          'button',
+          {
+            class: 'btn',
+            type: 'button',
+            onclick: async (e) => {
+              const btn = e.currentTarget;
+              const where = u.sites.includes('all') ? 'all sites' : u.sites.map(siteName).join(', ');
+              const text = `Hub Admin upgrade #${u.id} (${Object.fromEntries(PRIORITY)[u.priority]} priority, for ${where}):\n\n${u.title}\n\n${u.details || ''}\n\nPlease build this in the hub-platform repo, test it, and tell me the commit or pull request link so I can attach it to the upgrade in Hub Admin.`.replace(/\n{3,}/g, '\n\n');
+              try {
+                await navigator.clipboard.writeText(text);
+                btn.textContent = 'Copied ✓';
+              } catch {
+                prompt('Copy this for Claude:', text);
+              }
+            },
+          },
+          'Copy for Claude'
+        ),
+        h(
+          'button',
+          {
+            class: 'btn',
+            type: 'button',
+            onclick: async () => {
+              const link = prompt('Link to the GitHub pull request or commit that builds this (leave empty to remove):', u.code_link || '');
+              if (link === null) return;
+              try {
+                Object.assign(u, (await api(`/api/upgrades/${u.id}`, 'PATCH', { code_link: link.trim() })).upgrade);
+                draw();
+              } catch (err) {
+                alert(err.message);
+              }
+            },
+          },
+          u.code_link ? 'Change code link' : 'Link code'
+        ),
         h(
           'button',
           {
@@ -1040,7 +1080,15 @@ async function renderUpgrades(view) {
 }
 
 // ── Alerts (push notifications) ────────────────────────────────────────────
-const ALERT_TYPES = [...QUEUE_TYPES.filter(([k]) => k !== 'all'), ['briefing', 'Morning briefing']];
+const ALERT_TYPES = [
+  ...QUEUE_TYPES.filter(([k]) => k !== 'all'),
+  ['briefing', 'Morning briefing'],
+  ['weekly', 'Weekly summary'],
+  ['health', 'Site down / back up'],
+  ['deploy', 'Failed deploy or job'],
+  ['usage', 'Database near its limit'],
+  ['routine', 'Late routine'],
+];
 
 function pushSupport() {
   const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -1532,7 +1580,7 @@ async function accountCards(view) {
     pwForm,
     h('div', { class: 'row', style: 'margin-top:14px' }, h('button', { class: 'btn', type: 'button', onclick: () => signOut(false) }, 'Sign out'), h('button', { class: 'btn', type: 'button', onclick: () => signOut(true) }, 'Sign out everywhere'))
   );
-  return [passkeyCard, accountCard, await adminsCard(view)];
+  return [passkeyCard, accountCard, await weeklyEmailCard(), await adminsCard(view)];
 }
 
 // Decides what to show: setup, sign-in, or the app.
@@ -1570,6 +1618,48 @@ async function start() {
 }
 
 // ── Admins (invite links) ──────────────────────────────────────────────────
+// The Monday weekly summary by email, per admin.
+async function weeklyEmailCard() {
+  let cur;
+  try {
+    cur = await api('/api/account/weekly');
+  } catch {
+    return null;
+  }
+  const email = h('input', { class: 'input', type: 'email', value: cur.email, placeholder: 'you@example.com', autocomplete: 'email', style: 'max-width:320px' });
+  const box = h('input', { type: 'checkbox', checked: cur.weekly });
+  const msg = h('p', { class: 'msg', role: 'status' });
+  return h(
+    'section',
+    { class: 'card' },
+    h('h2', { class: 'card-sub' }, 'Weekly summary email'),
+    h('p', { class: 'sub', style: 'margin-top:0' }, 'Every Monday morning: last week’s traffic, contact taps, enquiries, new listings, income, problems and finished upgrades for every site. It’s also on the Activity log screen and sent as a notification.'),
+    cur.can_send ? null : h('p', { class: 'banner' }, 'Email isn’t switched on yet: add a Resend API key as the GitHub secret HUB_ADMIN_RESEND_KEY and run Deploy Hub Admin. Until then the summary comes as a notification only.'),
+    h(
+      'form',
+      {
+        class: 'form',
+        onsubmit: async (e) => {
+          e.preventDefault();
+          try {
+            const r = await api('/api/account/weekly', 'POST', { email: email.value.trim(), weekly: box.checked });
+            box.checked = r.weekly;
+            msg.className = 'msg ok';
+            msg.textContent = r.weekly ? `Saved. The summary goes to ${r.email} every Monday.` : 'Saved. No weekly email.';
+          } catch (err) {
+            msg.className = 'msg err';
+            msg.textContent = err.message;
+          }
+        },
+      },
+      h('label', { class: 'field' }, h('span', {}, 'Your email address'), email),
+      h('label', { class: 'check', style: 'justify-self:start' }, box, 'Email me the weekly summary'),
+      h('div', {}, h('button', { class: 'btn primary', type: 'submit' }, 'Save')),
+      msg
+    )
+  );
+}
+
 async function adminsCard(view) {
   let data = { admins: [], invites: [] };
   try {

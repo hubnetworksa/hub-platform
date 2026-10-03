@@ -109,12 +109,33 @@ function cityReport(ui, r) {
       h('section', { class: 'card' }, h('h3', { class: 'card-sub' }, `Not updated in ${r.stale.days} days (${r.stale.count})`), r.stale.count ? h('ul', { class: 'linklist' }, r.stale.listings.slice(0, 50).map(listingLink), more(r.stale.count, 50)) : h('p', { class: 'msg ok' }, 'None.'), h('p', { class: 'note' }, 'Worth checking these are still open: the closed-business routine also looks for them.')),
       h('section', { class: 'card' }, h('h3', { class: 'card-sub' }, `No views in 90 days (${r.no_views.count})`), r.no_views.count ? h('ul', { class: 'linklist' }, r.no_views.listings.slice(0, 50).map(listingLink), more(r.no_views.count, 50)) : h('p', { class: 'msg ok' }, 'None.'), h('p', { class: 'note' }, 'Listed for more than 90 days with no visits at all: usually a missing description or a very niche category.'))
     ),
+    ownersSection(ui, r, site, listingLink),
     h('h2', { class: 'section-title' }, 'Thin pages'),
     h(
       'section',
       { class: 'card' },
       h('p', { class: 'sub', style: 'margin-top:0' }, `${r.thin.count} of ${r.thin.pages} “category in suburb” pages list only one or two businesses. Google often skips pages like these. Adding a few more businesses to the busiest ones (or better descriptions) helps the whole site.`),
       r.thin.list.length ? h('ul', { class: 'linklist cols' }, r.thin.list.slice(0, 120).map((t) => h('li', {}, h('a', { href: `${site}${t.path}`, target: '_blank', rel: 'noopener' }, t.label), h('span', { class: 'meta' }, ` · ${t.n}`))), more(r.thin.count, Math.min(120, r.thin.list.length))) : null
+    )
+  );
+}
+
+function ownersSection(ui, r, site, listingLink) {
+  const { h } = ui;
+  const o = r.owners;
+  if (!o) return null;
+  const card = (title, items, row, empty, note) =>
+    h('section', { class: 'card' }, h('h3', { class: 'card-sub' }, `${title} (${items.length})`), items.length ? h('ul', { class: 'linklist' }, items.map(row)) : h('p', { class: 'msg ok' }, empty), note ? h('p', { class: 'note' }, note) : null);
+  return h(
+    'div',
+    {},
+    h('h2', { class: 'section-title' }, 'Owners and enquiries'),
+    h(
+      'div',
+      { class: 'three' },
+      card('Enquiries that never reached the business', o.unreached, (x) => listingLink({ slug: x.slug, name: x.name, detail: `${x.n} enquir${x.n === 1 ? 'y' : 'ies'}, last ${ui.ago(x.last)}` }), 'None: every enquiry was emailed on.', 'No email address on file, so visitors’ enquiries went nowhere (last 60 days). Find an email for these, or the business loses customers.'),
+      card('Unclaimed businesses getting enquiries', o.unclaimed, (x) => listingLink({ slug: x.slug, name: x.name, detail: `${x.n} enquir${x.n === 1 ? 'y' : 'ies'}` }), 'None.', 'Good candidates to contact: invite them to claim their free listing (and later, a paid plan).'),
+      card('Owners who never confirmed', o.unconfirmed, (x) => h('li', {}, h('b', {}, x.name), h('span', { class: 'meta' }, ` · approved ${ui.ago(x.approved)}${x.reminded ? `, reminded ${ui.ago(x.reminded)}` : ''}`)), 'None waiting.', 'Approved listings still waiting for the owner to confirm by email. Resend the email from the site’s Submissions screen.')
     )
   );
 }

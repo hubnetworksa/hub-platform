@@ -3,6 +3,7 @@ import { json, type Env } from '../../_lib/sites';
 import { notifyKeyOk } from '../../_lib/notify-key';
 import { checkAndNotify } from '../../_lib/notifier';
 import { checkRoutines, ingestD1, ingestRuns, runHealthChecks } from '../../_lib/health';
+import { maybeSendWeekly } from '../../_lib/weekly';
 
 // The 5-minute run, called by .github/workflows/admin-notify.yml with
 // X-Notify-Key (see _lib/notify-key.ts). It:
@@ -11,6 +12,7 @@ import { checkRoutines, ingestD1, ingestRuns, runHealthChecks } from '../../_lib
 //   - stores the GitHub workflow runs and Cloudflare D1 usage the workflow
 //     sends in the body ({ runs, d1 }), alerting on failures / high usage
 //   - alerts when a routine becomes late
+//   - on Monday morning, sends the weekly summary (_lib/weekly.ts)
 // Each part runs even if another fails, so one problem never hides the rest.
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const env = context.env;
@@ -39,6 +41,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (body.runs !== undefined) await step('runs', () => ingestRuns(env, body.runs));
   if (body.d1 !== undefined) await step('d1', () => ingestD1(env, body.d1));
   await step('routines', () => checkRoutines(env));
+  await step('weekly', () => maybeSendWeekly(env));
   const q = (out.queues ?? { newItems: 0, sent: 0 }) as { newItems: number; sent: number };
   return json({ ok: errors.length === 0, newItems: q.newItems, sent: q.sent, ...out, errors });
 };

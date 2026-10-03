@@ -51,7 +51,10 @@ CREATE INDEX activity_time ON activity (created_at);
 ALTER TABLE admin_users ADD COLUMN email TEXT;
 ALTER TABLE admin_users ADD COLUMN weekly_email INTEGER NOT NULL DEFAULT 0;
 
--- Devices that already have alerts on also get the new kinds: a site going
--- down, a failed deploy, the database nearing its daily limit and a late
--- routine (each can be turned off again in Settings).
-UPDATE push_subscriptions SET types = json_insert(types, '$[#]', 'health', '$[#]', 'deploy', '$[#]', 'usage', '$[#]', 'routine');
+-- Devices that already have alerts on also get the new kinds: the weekly
+-- summary, a site going down, a failed deploy, the database nearing its daily
+-- limit and a late routine (each can be turned off again in Settings).
+UPDATE push_subscriptions SET types = json_insert(types, '$[#]', 'weekly', '$[#]', 'health', '$[#]', 'deploy', '$[#]', 'usage', '$[#]', 'routine');
+
+-- An upgrade can point at the code that built it (GitHub commit or pull request).
+ALTER TABLE upgrades ADD COLUMN code_link TEXT;

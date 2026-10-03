@@ -83,6 +83,6 @@ export async function siteQueue(site: HubSite): Promise<QueueItem[]> {
 export const QUEUE_TYPES = QUEUES.map(([type]) => type);
 
 /** Everything a device can choose to be alerted about: the queues, the
- *  morning briefing, and problems (site down, failed workflow run, database
+ *  morning briefing, the Monday weekly summary, and problems (site down, failed workflow run, database
  *  usage near the free limit, a late routine). */
-export const ALERT_TYPES = [...QUEUE_TYPES, 'briefing', 'health', 'deploy', 'usage', 'routine'];
+export const ALERT_TYPES = [...QUEUE_TYPES, 'briefing', 'weekly', 'health', 'deploy', 'usage', 'routine'];
