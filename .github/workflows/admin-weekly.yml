@@ -1,0 +1,42 @@
+name: Hub Admin weekly checks
+
+# Every Sunday night: the broken-links report for Hub Admin's Health screen
+# (scripts/admin-links.mjs): every sitemap page and internal link on each
+# city site, plus every business's own website. Read-only: it changes
+# nothing on the sites.
+
+on:
+  schedule:
+    - cron: "17 22 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: admin-weekly
+  cancel-in-progress: false
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            scripts/admin-links.mjs
+            sites
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Check links and send the report
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/admin-links.mjs

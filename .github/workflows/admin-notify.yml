@@ -1,7 +1,8 @@
 name: Hub Admin notifications
 
-# Every 5 minutes: asks Hub Admin to check every city for new items and send
-# push notifications (scripts/admin-notify.mjs). GitHub may start scheduled
+# Every 5 minutes: asks Hub Admin to check every city for new items, check
+# each site is up, and send push notifications; it also passes on the latest
+# GitHub workflow runs and Cloudflare D1 usage (scripts/admin-notify.mjs). GitHub may start scheduled
 # runs a few minutes late at busy times.
 
 on:
@@ -11,6 +12,8 @@ on:
 
 permissions:
   contents: read
+  actions: read
+  checks: read
 
 concurrency:
   group: admin-notify
@@ -36,4 +39,5 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: node scripts/admin-notify.mjs

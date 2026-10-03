@@ -392,3 +392,59 @@ main:focus { outline: none; }
 .brief-loading span:nth-child(3) { animation-delay: 0.3s; }
 @keyframes brief-dot { 0%, 80%, 100% { opacity: 0.25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-4px); } }
 @media (prefers-reduced-motion: reduce) { .brief-loading span { animation: none; opacity: 0.6; } }
+
+/* ── Screens added with Health / Inbox / Listings / Google / Money ───────── */
+.more-list { display: grid; padding: 6px; }
+.more-list a { display: flex; align-items: center; gap: 12px; padding: 14px 12px; border-radius: 10px; color: var(--text); font-weight: 650; }
+.more-list a:hover { background: var(--surface-2); text-decoration: none; }
+.more-list a + a { border-top: 1px solid var(--border); }
+.more-list a svg:last-child { margin-left: auto; color: var(--muted); }
+.tile.bad .value { color: var(--critical-text); }
+.status.warn::before { background: var(--warning); }
+.card-sub { font-size: 14px; font-weight: 750; margin: 18px 0 10px; }
+.card-sub:first-child { margin-top: 0; }
+.meta { color: var(--muted); font-size: 12.5px; font-weight: 500; }
+.inline-city { display: inline-flex; align-items: center; gap: 6px; }
+.pill { display: inline-flex; align-items: center; font-size: 12px; font-weight: 750; padding: 3px 9px; border-radius: 999px; background: var(--surface-2); color: var(--text-2); white-space: nowrap; }
+.pill.pass { background: rgba(12, 163, 12, 0.12); color: var(--good-text); }
+.pill.warn { background: rgba(250, 178, 25, 0.18); color: #7a5200; }
+.pill.fail { background: rgba(208, 59, 59, 0.12); color: var(--critical-text); }
+.pill.info { background: rgba(29, 111, 224, 0.12); color: var(--brand); }
+.btn.small { padding: 5px 10px; font-size: 12.5px; gap: 5px; }
+.btn.danger { color: var(--critical-text); }
+.kv { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 14px 0 12px; }
+.kv dt { color: var(--muted); font-size: 12px; font-weight: 650; }
+.kv dd { margin: 2px 0 0; font-size: 17px; font-weight: 750; font-variant-numeric: tabular-nums; }
+.hourstrip { display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; height: 26px; }
+.hourstrip span { border-radius: 3px; background: var(--good); opacity: 0.85; }
+.hourstrip .none { background: var(--surface-2); opacity: 1; }
+.hourstrip .slow, .hourstrip .part { background: var(--warning); }
+.hourstrip .bad { background: var(--critical); }
+.strip-legend { display: flex; justify-content: space-between; color: var(--muted); font-size: 11.5px; margin-top: 4px; }
+.incidents { margin-top: 10px; font-size: 13px; }
+.incidents summary, details > summary { cursor: pointer; font-weight: 650; padding: 4px 0; }
+.incidents ul { margin: 6px 0 0; padding-left: 18px; color: var(--text-2); }
+.rows { list-style: none; margin: 0; padding: 0; }
+.rows > li { display: flex; align-items: flex-start; gap: 10px; padding: 12px 0; }
+.rows > li + li { border-top: 1px solid var(--border); }
+.row-main { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.row-main .msg { font-weight: 500; font-size: 12.5px; overflow-wrap: anywhere; }
+.meter-row { margin: 12px 0; }
+.meter-top { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; margin-bottom: 6px; flex-wrap: wrap; }
+.meter-top span { color: var(--text-2); font-variant-numeric: tabular-nums; }
+.meter { height: 12px; border-radius: 999px; background: var(--surface-2); overflow: hidden; border: 1px solid var(--border); }
+.meter span { display: block; height: 100%; background: var(--good); border-radius: 999px; }
+.meter span.warn { background: var(--warning); }
+.meter span.bad { background: var(--critical); }
+.steps { margin: 0; padding-left: 20px; line-height: 1.7; font-size: 14px; }
+.sec-group + .sec-group { margin-top: 8px; border-top: 1px solid var(--border); }
+.checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.checklist li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; }
+.checklist .mark { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 800; color: #fff; background: var(--good); }
+.checklist .warn .mark { background: var(--warning); color: #3d2a00; }
+.checklist .fail .mark { background: var(--critical); }
+.checklist .fix { font-size: 12.5px; color: var(--text-2); margin-top: 3px; padding: 6px 9px; background: var(--surface-2); border-radius: 8px; }
+.linklist { margin: 6px 0 10px; padding-left: 18px; font-size: 13.5px; display: grid; gap: 4px; overflow-wrap: anywhere; }
+@media (max-width: 520px) { .kv dd { font-size: 15px; } }
+@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .pill.warn { color: #ffd27a; } }
+:root[data-theme='dark'] .pill.warn { color: #ffd27a; }

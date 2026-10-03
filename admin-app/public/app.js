@@ -167,16 +167,27 @@ function ago(iso) {
 }
 
 // ── Shell ──────────────────────────────────────────────────────────────────
+// [hash, label, icon, on the phone tab bar]. Screens not on the tab bar are
+// under "More" on phones; the computer sidebar shows them all.
 const ROUTES = [
-  ['#/', 'Overview', 'home'],
-  ['#/stats', 'Stats', 'chart'],
+  ['#/', 'Overview', 'home', true],
+  ['#/inbox', 'Inbox', 'inbox', true],
+  ['#/stats', 'Stats', 'chart', true],
+  ['#/health', 'Health', 'activity', true],
+  ['#/listings', 'Listings', 'layers'],
+  ['#/google', 'Google', 'globe'],
+  ['#/money', 'Money', 'receipt'],
+  ['#/activity', 'Activity log', 'news'],
   ['#/upgrades', 'Upgrades', 'bulb'],
+  ['#/social', 'Social', 'megaphone'],
   ['#/manage', 'Manage', 'grid'],
   ['#/settings', 'Settings', 'settings'],
 ];
+const TAB_ROUTES = ROUTES.filter((r) => r[3]).map((r) => r[0]);
 const currentRoute = () => {
   let hash = (location.hash || '#/').split('?')[0];
   if (hash.startsWith('#/alerts')) hash = '#/settings'; // old links
+  if (hash.startsWith('#/more')) return '#/more';
   return ROUTES.find(([r]) => r !== '#/' && hash.startsWith(r))?.[0] ?? '#/';
 };
 const hashParams = () => new URLSearchParams((location.hash.split('?')[1] || ''));
@@ -201,8 +212,10 @@ function cycleTheme() {
 
 function buildShell() {
   applyTheme();
-  const navLinks = (cls) =>
-    ROUTES.map(([href, label, ic]) => h('a', { class: cls, href, 'data-route': href }, icon(ic), h('span', {}, label), href === '#/' ? h('span', { class: 'nav-badge', 'data-badge': '', hidden: true }) : null));
+  const link = (cls, [href, label, ic]) =>
+    h('a', { class: cls, href, 'data-route': href }, icon(ic), h('span', {}, label), href === '#/inbox' ? h('span', { class: 'nav-badge', 'data-badge': '', hidden: true }) : null);
+  const navLinks = (cls) => ROUTES.map((r) => link(cls, r));
+  const tabLinks = () => [...ROUTES.filter((r) => r[3]).map((r) => link('', r)), link('', ['#/more', 'More', 'grid'])];
   const app = $('#app');
   fill(app, 
     h(
@@ -217,14 +230,16 @@ function buildShell() {
       ),
       h('main', { id: 'view', tabindex: '-1' })
     ),
-    h('nav', { class: 'tabbar', 'aria-label': 'Main' }, navLinks(''))
+    h('nav', { class: 'tabbar', 'aria-label': 'Main' }, tabLinks())
   );
 }
 
 function setActive() {
   const cur = currentRoute();
   document.querySelectorAll('[data-route]').forEach((a) => {
-    const on = a.getAttribute('data-route') === cur;
+    const r = a.getAttribute('data-route');
+    // On phones, a screen that isn't on the tab bar lights up "More".
+    const on = r === cur || (r === '#/more' && a.closest('.tabbar') && !TAB_ROUTES.includes(cur));
     if (on) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   });
@@ -1694,11 +1709,62 @@ function renderJoin(token) {
 }
 
 // ── Router ─────────────────────────────────────────────────────────────────
+// Helpers the screen modules (screens/*.js) use, so they draw exactly like
+// the rest of the app.
+const ui = {
+  h, fill, icon, api, ago, siteColor, siteName, mobileHead, pageHead, errorBox, hashParams, store, motion,
+  charts: { lineChart, columnChart, barList, dataTable, fmt },
+  get state() {
+    return state;
+  },
+  loadOverview,
+};
+const SCREENS = {
+  '#/inbox': 'inbox',
+  '#/health': 'health',
+  '#/listings': 'listings',
+  '#/google': 'google',
+  '#/money': 'money',
+  '#/activity': 'activity',
+  '#/social': 'social',
+};
+let routeSeq = 0;
+async function renderScreen(view, name) {
+  const seq = ++routeSeq;
+  fill(view, h('div', { class: 'skeleton' }));
+  try {
+    const mod = await import(`./screens/${name}.js`);
+    if (seq !== routeSeq) return; // the user has moved on
+    // Sites (names, colours) come from the Overview data.
+    await loadOverview().catch(() => {});
+    if (seq !== routeSeq) return;
+    await mod.render(view, ui);
+  } catch (e) {
+    if (seq === routeSeq) fill(view, mobileHead('Hub Admin'), pageHead('Something went wrong'), errorBox(e));
+  }
+}
+
+function renderMore(view) {
+  fill(
+    view,
+    mobileHead('More'),
+    pageHead('More', 'Everything else in Hub Admin.'),
+    h(
+      'nav',
+      { class: 'card more-list', 'aria-label': 'More screens' },
+      ROUTES.filter((r) => !r[3]).map(([href, label, ic]) => h('a', { href }, icon(ic), h('span', {}, label), icon('chevron', 16)))
+    )
+  );
+}
+
 function route() {
   setActive();
   const view = $('#view');
   const r = currentRoute();
-  if (r === '#/stats') renderStats(view);
+  routeSeq++;
+  if (SCREENS[r]) renderScreen(view, SCREENS[r]);
+  else if (r === '#/more') renderMore(view);
+  else if (r === '#/stats') renderStats(view);
   else if (r === '#/upgrades') renderUpgrades(view);
   else if (r === '#/manage') renderManage(view);
   else if (r === '#/settings') renderAlerts(view);

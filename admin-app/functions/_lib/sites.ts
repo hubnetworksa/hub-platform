@@ -20,6 +20,10 @@ export interface HubSite {
   city: string;
   domain: string;
   accent: string;
+  pagesProject: string;
+  pagesDevHost: string;
+  dbName: string;
+  domainLive: boolean;
   db: D1Database;
 }
 
@@ -37,7 +41,7 @@ export function hubSites(env: Env): HubSite[] {
   return REGISTRY.flatMap(({ config, binding }) => {
     const db = env[binding] as D1Database | undefined;
     if (!db) return [];
-    return [{ slug: config.slug, name: config.siteName, city: config.cityLabel, domain: config.domain, accent: config.theme.accent, db }];
+    return [{ slug: config.slug, name: config.siteName, city: config.cityLabel, domain: config.domain, accent: config.theme.accent, pagesProject: config.pagesProjectName, pagesDevHost: config.pagesDevHost, dbName: config.dbName, domainLive: !!config.domainLive, db }];
   });
 }
 
