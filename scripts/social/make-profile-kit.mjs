@@ -30,11 +30,7 @@ async function build(slug) {
   const out = path.join(ROOT, 'social', slug);
   await mkdir(out, { recursive: true });
   // The transparent pin (icon-512.png has a white square behind it).
-  // Polokwane's is cropped just below the pin's shadow: its source has a stray mark
-  // in its bottom-left corner.
-  const iconPath = path.join(ROOT, 'assets', 'sites', slug, 'logo-icon.png');
-  const { width: iw, height: ih } = await sharp(iconPath).metadata();
-  const icon = await sharp(iconPath).extract({ left: 0, top: 0, width: iw, height: slug === 'polokwane' ? Math.round(ih * 0.93) : ih }).png().toBuffer();
+  const icon = path.join(ROOT, 'assets', 'sites', slug, 'logo-icon.png');
   const hero = await heroFor(slug);
 
   // Profile picture: the pin logo centred on white, sized to sit inside the circle crop.
