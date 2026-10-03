@@ -40,8 +40,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Typecheck admin Functions
-        run: npx --yes -p typescript@5 tsc -p admin-app/tsconfig.json
+      - name: Typecheck admin Functions and notifier
+        run: |
+          npx --yes -p typescript@5 tsc -p admin-app/tsconfig.json
+          npx --yes -p typescript@5 tsc -p admin-app/notifier/tsconfig.json
 
       - name: Create the Pages project if it doesn't exist yet
         working-directory: admin-app
@@ -52,8 +54,40 @@ jobs:
             ../node_modules/.bin/wrangler pages project create hub-admin --production-branch=main
           fi
 
+      # Hub Admin's own database: created on the first run, then its id is
+      # written into both configs (it isn't committed, so the repo never has
+      # to be edited by hand after the database exists).
+      - name: Create the admin database if needed and fill in its id
+        working-directory: admin-app
+        run: |
+          db_id() {
+            ../node_modules/.bin/wrangler d1 list --json | node -e '
+              const t = require("fs").readFileSync(0, "utf8");
+              const list = JSON.parse(t.slice(t.indexOf("[")));
+              const d = list.find((x) => x.name === "hub-admin-db");
+              process.stdout.write(d ? d.uuid : "");'
+          }
+          ID=$(db_id)
+          if [ -z "$ID" ]; then
+            ../node_modules/.bin/wrangler d1 create hub-admin-db
+            ID=$(db_id)
+          fi
+          if [ -z "$ID" ]; then echo "Could not find or create hub-admin-db"; exit 1; fi
+          sed -i "s/__HUB_ADMIN_DB_ID__/$ID/" wrangler.jsonc notifier/wrangler.jsonc
+          echo "hub-admin-db: $ID"
+
+      - name: Apply admin database migrations
+        working-directory: admin-app
+        run: ../node_modules/.bin/wrangler d1 migrations apply hub-admin-db --remote
+
       # Run from admin-app/ so wrangler picks up admin-app/wrangler.jsonc
       # (bindings and vars) and admin-app/functions/.
       - name: Deploy
         working-directory: admin-app
         run: ../node_modules/.bin/wrangler pages deploy public --project-name=hub-admin --branch=main --commit-dirty=true
+
+      # The notifier Worker: checks every city for new items every 5 minutes
+      # and sends push notifications. No public URL.
+      - name: Deploy the notifier
+        working-directory: admin-app
+        run: ../node_modules/.bin/wrangler deploy -c notifier/wrangler.jsonc

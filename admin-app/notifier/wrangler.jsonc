@@ -1,0 +1,20 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  // The Hub Admin notifier Worker (see index.ts). Deployed by
+  // .github/workflows/deploy-admin.yml with: wrangler deploy -c notifier/wrangler.jsonc
+  "name": "hub-admin-notifier",
+  "main": "index.ts",
+  "compatibility_date": "2026-08-31",
+  "workers_dev": false,
+  "preview_urls": false,
+  "triggers": { "crons": ["*/5 * * * *"] },
+  "observability": { "enabled": true },
+  // Same bindings as the admin app (admin-app/wrangler.jsonc). The admin
+  // database id is filled in by the deploy workflow.
+  "d1_databases": [
+    { "binding": "ADMIN_DB", "database_name": "hub-admin-db", "database_id": "__HUB_ADMIN_DB_ID__" },
+    { "binding": "DB_PRETORIA", "database_name": "pretoriahub-db", "database_id": "0681593f-b710-402d-aae4-684be8302010" },
+    { "binding": "DB_POLOKWANE", "database_name": "polokwanehub-db", "database_id": "e1e3d9ce-5de2-4d88-ace5-aeb4ad6994c1" },
+    { "binding": "DB_CAPETOWN", "database_name": "thecapetownhub-db", "database_id": "12cf759f-20f6-41a1-a1a7-9ea6748c4b06" }
+  ]
+}
