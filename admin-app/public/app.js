@@ -3,7 +3,9 @@
 //             combined "needs attention" queue (opens the item in that site's admin)
 //   #/stats   Stats: traffic, contact taps, enquiries, searches, sign-ups,
 //             installs, revenue and Google Search, per city or all together
+//   #/upgrades Upgrades: the list of improvements to build on the sites
 //   #/manage  Manage: shortcuts to every admin screen of every site
+//   #/alerts  Alerts: push notifications on this device, and recent alerts
 import { lineChart, columnChart, barList, dataTable, fmt } from './charts.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -42,6 +44,11 @@ const ICON = {
   activity: 'M3 12h4l3-8 4 16 3-8h4',
   settings: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z',
   globe: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18',
+  bulb: 'M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z',
+  bell: 'M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0',
+  plus: 'M12 5v14M5 12h14',
+  trash: 'M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14',
+  edit: 'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z',
   refresh: 'M20 11a8 8 0 0 0-14.9-3.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.9 3.9L20 16M20 20v-4h-4',
 };
 function icon(name, size = 20) {
@@ -131,8 +138,10 @@ function siteName(slug) {
   return s ? s.city : slug;
 }
 
-async function api(path) {
-  const res = await fetch(path, { credentials: 'same-origin', headers: { Accept: 'application/json' } });
+async function api(path, method = 'GET', data) {
+  const headers = { Accept: 'application/json' };
+  if (method !== 'GET') Object.assign(headers, { 'Content-Type': 'application/json', 'X-Hub-Admin': '1' });
+  const res = await fetch(path, { method, credentials: 'same-origin', headers, body: data === undefined ? undefined : JSON.stringify(data) });
   if (res.status === 401) throw new Error('Your sign-in has expired. Reload the page to sign in again.');
   const body = await res.json().catch(() => null);
   if (!res.ok || !body?.ok) throw new Error(body?.error || `Request failed (${res.status}).`);
@@ -152,8 +161,15 @@ function ago(iso) {
 const ROUTES = [
   ['#/', 'Overview', 'home'],
   ['#/stats', 'Stats', 'chart'],
+  ['#/upgrades', 'Upgrades', 'bulb'],
   ['#/manage', 'Manage', 'grid'],
+  ['#/alerts', 'Alerts', 'bell'],
 ];
+const currentRoute = () => {
+  const hash = (location.hash || '#/').split('?')[0];
+  return ROUTES.find(([r]) => r !== '#/' && hash.startsWith(r))?.[0] ?? '#/';
+};
+const hashParams = () => new URLSearchParams((location.hash.split('?')[1] || ''));
 
 function themeLabel() {
   const t = store.get('hub.theme', 'auto');
@@ -196,9 +212,9 @@ function buildShell() {
 }
 
 function setActive() {
-  const hash = location.hash || '#/';
+  const cur = currentRoute();
   document.querySelectorAll('[data-route]').forEach((a) => {
-    const on = a.getAttribute('data-route') === (hash.startsWith('#/stats') ? '#/stats' : hash.startsWith('#/manage') ? '#/manage' : '#/');
+    const on = a.getAttribute('data-route') === cur;
     if (on) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   });
@@ -679,14 +695,454 @@ async function renderManage(view) {
   );
 }
 
+// ── Upgrades ───────────────────────────────────────────────────────────────
+const STATUS = [
+  ['idea', 'Idea'],
+  ['planned', 'Planned'],
+  ['in_progress', 'In progress'],
+  ['done', 'Done'],
+];
+const PRIORITY = [
+  ['urgent', 'Urgent'],
+  ['high', 'High'],
+  ['normal', 'Normal'],
+  ['low', 'Low'],
+];
+const upState = { status: 'open', site: 'all', q: '', editing: null };
+
+async function sitesList() {
+  return (await loadOverview()).sites;
+}
+
+function upgradeForm(sites, initial, onSaved, onCancel) {
+  const v = initial || { title: '', details: '', sites: ['all'], priority: 'normal', status: 'idea' };
+  const msg = h('span', { class: 'msg', role: 'status' });
+  const title = h('input', { class: 'input', name: 'title', maxlength: '160', required: true, placeholder: 'e.g. Let owners reply to reviews', value: v.title });
+  const details = h('textarea', { class: 'textarea', name: 'details', maxlength: '5000', placeholder: 'What should change, where, and why. Links, examples, anything that helps.' });
+  details.value = v.details || '';
+  const all = v.sites.includes('all');
+  const allBox = h('input', { type: 'checkbox', value: 'all', checked: all });
+  const siteBoxes = sites.map((s) => h('input', { type: 'checkbox', value: s.slug, checked: all || v.sites.includes(s.slug) }));
+  allBox.addEventListener('change', () => siteBoxes.forEach((b) => (b.checked = allBox.checked)));
+  siteBoxes.forEach((b) => b.addEventListener('change', () => (allBox.checked = siteBoxes.every((x) => x.checked))));
+  const priority = h('select', { class: 'select', name: 'priority' }, PRIORITY.map(([k, l]) => h('option', { value: k, selected: v.priority === k }, l)));
+  const status = h('select', { class: 'select', name: 'status' }, STATUS.map(([k, l]) => h('option', { value: k, selected: v.status === k }, l)));
+  const submit = h('button', { class: 'btn primary', type: 'submit' }, initial ? 'Save changes' : [icon('plus', 16), 'Add upgrade']);
+  const form = h(
+    'form',
+    { class: 'form', novalidate: true },
+    h('label', { class: 'field' }, h('span', {}, 'Upgrade'), title),
+    h('label', { class: 'field' }, h('span', {}, 'Details (optional)'), details),
+    h(
+      'div',
+      { class: 'field' },
+      h('span', {}, 'Which sites?'),
+      h(
+        'div',
+        { class: 'checks' },
+        h('label', { class: 'check' }, allBox, 'All sites'),
+        sites.map((s, i) => h('label', { class: 'check' }, siteBoxes[i], h('span', { class: 'city-dot', style: `background:${siteColor(s.slug)}` }), s.city))
+      )
+    ),
+    h('div', { class: 'row' }, h('label', { class: 'field' }, h('span', {}, 'Priority'), priority), h('label', { class: 'field' }, h('span', {}, 'Status'), status)),
+    h('div', { class: 'row', style: 'align-items:center' }, submit, onCancel ? h('button', { class: 'btn', type: 'button', onclick: onCancel }, 'Cancel') : null, msg)
+  );
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const chosen = allBox.checked ? ['all'] : siteBoxes.filter((b) => b.checked).map((b) => b.value);
+    if (!title.value.trim()) return ((msg.className = 'msg err'), (msg.textContent = 'Give the upgrade a short title.'), title.focus());
+    if (!chosen.length) return ((msg.className = 'msg err'), (msg.textContent = 'Choose at least one site.'));
+    submit.disabled = true;
+    msg.className = 'msg';
+    msg.textContent = 'Saving…';
+    const data = { title: title.value, details: details.value, sites: chosen, priority: priority.value, status: status.value };
+    try {
+      const r = initial ? await api(`/api/upgrades/${initial.id}`, 'PATCH', data) : await api('/api/upgrades', 'POST', data);
+      onSaved(r.upgrade);
+      if (!initial) {
+        form.reset();
+        allBox.checked = true;
+        siteBoxes.forEach((b) => (b.checked = true));
+        msg.className = 'msg ok';
+        msg.textContent = 'Added.';
+      }
+    } catch (err) {
+      msg.className = 'msg err';
+      msg.textContent = err.message;
+    } finally {
+      submit.disabled = false;
+    }
+  });
+  return form;
+}
+
+async function renderUpgrades(view) {
+  const head = pageHead('Upgrades', 'Improvements to build on the sites. Add an idea, choose which sites it’s for, and move it along as it gets done.');
+  view.replaceChildren(mobileHead('Upgrades'), head, h('div', { class: 'skeleton' }));
+  let sites;
+  let list;
+  try {
+    [sites, list] = await Promise.all([sitesList(), api('/api/upgrades').then((r) => r.upgrades)]);
+  } catch (e) {
+    view.replaceChildren(mobileHead('Upgrades'), head, errorBox(e));
+    return;
+  }
+  const listCard = h('section', { class: 'card', 'aria-label': 'Upgrades list' });
+  const addCard = h(
+    'section',
+    { class: 'card', 'aria-label': 'Add an upgrade' },
+    h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Add an upgrade'), h('p', { class: 'sub' }, 'Anything you want changed, fixed or added.'))),
+    upgradeForm(sites, null, (u) => {
+      list.unshift(u);
+      draw();
+    })
+  );
+
+  const siteTags = (u) =>
+    u.sites.includes('all')
+      ? [h('span', { class: 'site-tag' }, 'All sites')]
+      : u.sites.map((slug) => h('span', { class: 'site-tag' }, h('span', { class: 'city-dot', style: `background:${siteColor(slug)}` }), siteName(slug)));
+
+  const item = (u) => {
+    if (upState.editing === u.id) {
+      return h(
+        'div',
+        { class: 'up' },
+        upgradeForm(
+          sites,
+          u,
+          (saved) => {
+            Object.assign(u, saved);
+            upState.editing = null;
+            draw();
+          },
+          () => ((upState.editing = null), draw())
+        )
+      );
+    }
+    const statusSel = h(
+      'select',
+      {
+        class: 'select',
+        'aria-label': `Status of ${u.title}`,
+        onchange: async (e) => {
+          const prev = u.status;
+          u.status = e.target.value;
+          try {
+            Object.assign(u, (await api(`/api/upgrades/${u.id}`, 'PATCH', { status: u.status })).upgrade);
+          } catch (err) {
+            u.status = prev;
+            alert(err.message);
+          }
+          draw();
+        },
+      },
+      STATUS.map(([k, l]) => h('option', { value: k, selected: u.status === k }, l))
+    );
+    const prioLabel = Object.fromEntries(PRIORITY)[u.priority];
+    return h(
+      'article',
+      { class: `up${u.status === 'done' ? ' done' : ''}` },
+      h('div', { class: 'up-top' }, h('div', { class: 'up-title' }, u.title), h('span', { class: `prio ${u.priority}` }, prioLabel)),
+      u.details ? h('p', { class: 'up-details' }, u.details) : null,
+      h('div', { class: 'up-meta' }, siteTags(u), h('span', {}, `· added ${ago(u.created_at)}`), u.done_at ? h('span', {}, `· done ${ago(u.done_at)}`) : null),
+      h(
+        'div',
+        { class: 'up-actions' },
+        statusSel,
+        h('button', { class: 'btn', type: 'button', onclick: () => ((upState.editing = u.id), draw()) }, icon('edit', 14), 'Edit'),
+        h(
+          'button',
+          {
+            class: 'btn',
+            type: 'button',
+            onclick: async () => {
+              if (!confirm(`Delete “${u.title}”? This can’t be undone.`)) return;
+              try {
+                await api(`/api/upgrades/${u.id}`, 'DELETE');
+                list = list.filter((x) => x.id !== u.id);
+                draw();
+              } catch (err) {
+                alert(err.message);
+              }
+            },
+          },
+          icon('trash', 14),
+          'Delete'
+        )
+      )
+    );
+  };
+
+  const draw = () => {
+    const q = upState.q.toLowerCase();
+    const matches = (u) =>
+      (upState.site === 'all' || u.sites.includes('all') || u.sites.includes(upState.site)) &&
+      (!q || u.title.toLowerCase().includes(q) || (u.details || '').toLowerCase().includes(q));
+    const base = list.filter(matches);
+    const counts = { open: base.filter((u) => u.status !== 'done').length, done: base.filter((u) => u.status === 'done').length };
+    const shown = base.filter((u) => (upState.status === 'open' ? u.status !== 'done' : upState.status === 'done' ? u.status === 'done' : true));
+    const seg = h(
+      'div',
+      { class: 'seg', role: 'group', 'aria-label': 'Show' },
+      [
+        ['open', `To do (${counts.open})`],
+        ['done', `Done (${counts.done})`],
+        ['all', `All (${base.length})`],
+      ].map(([k, l]) => h('button', { type: 'button', 'aria-pressed': String(upState.status === k), onclick: () => ((upState.status = k), draw()) }, l))
+    );
+    const siteSel = h(
+      'select',
+      { class: 'select', 'aria-label': 'Site', onchange: (e) => ((upState.site = e.target.value), draw()) },
+      h('option', { value: 'all' }, 'All sites'),
+      sites.map((s) => h('option', { value: s.slug, selected: upState.site === s.slug }, s.city))
+    );
+    const search = h('input', { class: 'input', type: 'search', placeholder: 'Search upgrades', value: upState.q, style: 'max-width:240px', 'aria-label': 'Search upgrades' });
+    search.addEventListener('input', () => {
+      upState.q = search.value;
+      clearTimeout(search._t);
+      search._t = setTimeout(() => {
+        draw();
+        const s2 = $('input[type=search]', listCard);
+        s2?.focus();
+        s2?.setSelectionRange(s2.value.length, s2.value.length);
+      }, 200);
+    });
+    const groups = STATUS.filter(([k]) => shown.some((u) => u.status === k)).sort((a, b) => ['in_progress', 'planned', 'idea', 'done'].indexOf(a[0]) - ['in_progress', 'planned', 'idea', 'done'].indexOf(b[0]));
+    const body = shown.length
+      ? groups.flatMap(([k, l]) => {
+          const items = shown.filter((u) => u.status === k);
+          return [h('div', { class: 'group-title' }, l, h('b', {}, String(items.length))), h('div', { class: 'up-list' }, items.map(item))];
+        })
+      : [h('div', { class: 'empty' }, h('b', {}, list.length ? 'Nothing matches' : 'No upgrades yet'), list.length ? 'Try another filter.' : 'Add the first one above.')];
+    listCard.replaceChildren(h('div', { class: 'filters' }, seg, siteSel, search), ...body);
+  };
+  draw();
+  view.replaceChildren(mobileHead('Upgrades'), head, h('div', { class: 'grid' }, addCard, listCard));
+}
+
+// ── Alerts (push notifications) ────────────────────────────────────────────
+const ALERT_TYPES = QUEUE_TYPES.filter(([k]) => k !== 'all');
+
+function pushSupport() {
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  if (ios && !standalone) return 'ios-install';
+  if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return 'unsupported';
+  if (Notification.permission === 'denied') return 'denied';
+  return 'ok';
+}
+
+function deviceName() {
+  const ua = navigator.userAgent;
+  if (/iPhone/.test(ua)) return 'iPhone';
+  if (/iPad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) return 'iPad';
+  if (/Android/.test(ua)) return /Mobile/.test(ua) ? 'Android phone' : 'Android tablet';
+  if (/Windows/.test(ua)) return 'Windows computer';
+  if (/Mac/.test(ua)) return 'Mac';
+  return 'This device';
+}
+
+function keyBytes(b64url) {
+  const b64 = b64url.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(b64url.length / 4) * 4, '=');
+  return Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+}
+
+async function currentSubscription() {
+  if (!('serviceWorker' in navigator)) return null;
+  const reg = await navigator.serviceWorker.ready;
+  return reg.pushManager ? reg.pushManager.getSubscription() : null;
+}
+
+async function renderAlerts(view) {
+  const head = pageHead('Alerts', 'Get a notification on this phone or computer when something new needs you, on any site.');
+  view.replaceChildren(mobileHead('Alerts'), head, h('div', { class: 'skeleton' }));
+  const support = pushSupport();
+  let sub = support === 'ok' ? await currentSubscription().catch(() => null) : null;
+  let devices = [];
+  let history = [];
+  try {
+    [devices, history] = await Promise.all([
+      api(`/api/push/devices?endpoint=${encodeURIComponent(sub?.endpoint || '')}`).then((r) => r.devices),
+      api('/api/notifications').then((r) => r.notifications),
+    ]);
+  } catch (e) {
+    view.replaceChildren(mobileHead('Alerts'), head, errorBox(e));
+    return;
+  }
+  const mine = devices.find((d) => d.current);
+  const chosen = new Set(mine ? mine.types : ALERT_TYPES.map(([k]) => k));
+  const msg = h('span', { class: 'msg', role: 'status' });
+  const say = (text, kind = '') => ((msg.className = `msg ${kind}`), (msg.textContent = text));
+
+  const label = h('input', { class: 'input', value: mine?.label || deviceName(), maxlength: '60', style: 'max-width:260px', 'aria-label': 'Device name' });
+  const boxes = ALERT_TYPES.map(([k, l]) => {
+    const b = h('input', { type: 'checkbox', value: k, checked: chosen.has(k) });
+    b.addEventListener('change', async () => {
+      if (b.checked) chosen.add(k);
+      else chosen.delete(k);
+      if (sub) await save('Saved.');
+    });
+    return h('label', { class: 'check' }, b, l);
+  });
+
+  async function save(done) {
+    try {
+      await api('/api/push/subscribe', 'POST', { subscription: sub.toJSON(), types: [...chosen], label: label.value });
+      say(done, 'ok');
+    } catch (e) {
+      say(e.message, 'err');
+    }
+  }
+  label.addEventListener('change', () => sub && save('Saved.'));
+
+  async function turnOn() {
+    say('Turning on…');
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') return say('Notifications were not allowed. Allow them for this site in your browser settings, then try again.', 'err');
+      const reg = await navigator.serviceWorker.ready;
+      const { publicKey } = await api('/api/push/key');
+      sub = (await reg.pushManager.getSubscription()) || (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(publicKey) }));
+      await save('Notifications are on for this device.');
+      renderAlerts(view);
+    } catch (e) {
+      say(e.message || 'Could not turn notifications on.', 'err');
+    }
+  }
+  async function turnOff() {
+    try {
+      const endpoint = sub.endpoint;
+      await sub.unsubscribe().catch(() => {});
+      await api('/api/push/unsubscribe', 'POST', { endpoint });
+      sub = null;
+      renderAlerts(view);
+    } catch (e) {
+      say(e.message, 'err');
+    }
+  }
+  async function test() {
+    say('Sending…');
+    try {
+      await api('/api/push/test', 'POST', { endpoint: sub.endpoint });
+      say('Sent. It should appear within a few seconds.', 'ok');
+    } catch (e) {
+      say(e.message, 'err');
+    }
+  }
+
+  let statusBody;
+  if (support === 'ios-install') {
+    statusBody = h(
+      'div',
+      { class: 'banner' },
+      h('b', {}, 'One step first on iPhone and iPad: '),
+      'Apple only allows notifications from apps on your Home Screen. In Safari, tap the Share button, choose ',
+      h('b', {}, 'Add to Home Screen'),
+      ', then open Hub Admin from your Home Screen and come back to Alerts.'
+    );
+  } else if (support === 'unsupported') {
+    statusBody = h('div', { class: 'banner' }, 'This browser can’t receive notifications. Use Chrome, Edge, Firefox or Safari (on iPhone: from the Home Screen app).');
+  } else if (support === 'denied') {
+    statusBody = h('div', { class: 'banner' }, 'Notifications are blocked for Hub Admin in this browser. Allow them in the browser’s site settings (the icon left of the address), then reload this page.');
+  } else if (!sub) {
+    statusBody = h(
+      'div',
+      { class: 'form' },
+      h('p', { style: 'margin:0;color:var(--text-2)' }, 'Notifications are off on this device.'),
+      h('div', { class: 'row', style: 'align-items:center' }, h('button', { class: 'btn primary', type: 'button', onclick: turnOn }, icon('bell', 16), 'Turn on notifications'), msg)
+    );
+  } else {
+    statusBody = h(
+      'div',
+      { class: 'form' },
+      h('p', { style: 'margin:0' }, h('b', { style: 'color:var(--good-text)' }, '● On'), ' · this device gets an alert within about 5 minutes of something new arriving.'),
+      h('label', { class: 'field' }, h('span', {}, 'Device name'), label),
+      h('div', { class: 'field' }, h('span', {}, 'Alert me about'), h('div', { class: 'checks' }, boxes)),
+      h(
+        'div',
+        { class: 'row', style: 'align-items:center' },
+        h('button', { class: 'btn', type: 'button', onclick: test }, 'Send a test'),
+        h('button', { class: 'btn', type: 'button', onclick: turnOff }, 'Turn off'),
+        msg
+      )
+    );
+  }
+
+  const deviceList = devices.length
+    ? devices.map((d) =>
+        h(
+          'div',
+          { class: 'device' },
+          icon('bell', 18),
+          h('div', { class: 'grow' }, h('b', {}, d.label || 'Device', d.current ? ' (this device)' : ''), h('small', {}, `${d.email} · on since ${ago(d.created_at)}${d.last_sent_at ? ` · last alert ${ago(d.last_sent_at)}` : ''}`)),
+          d.current
+            ? null
+            : h(
+                'button',
+                {
+                  class: 'btn',
+                  type: 'button',
+                  onclick: async () => {
+                    if (!confirm(`Stop alerts on “${d.label || 'this device'}”?`)) return;
+                    await api('/api/push/unsubscribe', 'POST', { id: d.id }).catch((e) => alert(e.message));
+                    renderAlerts(view);
+                  },
+                },
+                'Remove'
+              )
+        )
+      )
+    : h('p', { class: 'empty' }, 'No devices have notifications on yet.');
+
+  const historyList = history.length
+    ? h(
+        'ul',
+        { class: 'queue' },
+        history.map((n) =>
+          h(
+            'li',
+            {},
+            h(
+              'a',
+              { href: n.url },
+              h('span', { class: 'type' }, 'Alert'),
+              h('span', { style: 'min-width:0' }, h('div', { class: 'title' }, n.title), h('div', { class: 'meta' }, n.body)),
+              h('span', { class: 'age' }, ago(n.created_at))
+            )
+          )
+        )
+      )
+    : h('p', { class: 'empty' }, 'No alerts yet. They appear here as new items arrive.');
+
+  view.replaceChildren(
+    mobileHead('Alerts'),
+    head,
+    h(
+      'div',
+      { class: 'grid' },
+      h('section', { class: 'card' }, h('div', { class: 'card-head' }, h('h2', {}, 'This device')), statusBody),
+      h('section', { class: 'card' }, h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Devices with alerts on'), h('p', { class: 'sub' }, 'Every phone and computer that gets Hub Admin notifications.'))), deviceList),
+      h('section', { class: 'card' }, h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Recent alerts'), h('p', { class: 'sub' }, 'The last 40 notifications, newest first.'))), historyList)
+    )
+  );
+}
+
 // ── Router ─────────────────────────────────────────────────────────────────
 function route() {
   setActive();
   const view = $('#view');
-  const hash = location.hash || '#/';
-  if (hash.startsWith('#/stats')) renderStats(view);
-  else if (hash.startsWith('#/manage')) renderManage(view);
-  else renderOverview(view);
+  const r = currentRoute();
+  if (r === '#/stats') renderStats(view);
+  else if (r === '#/upgrades') renderUpgrades(view);
+  else if (r === '#/manage') renderManage(view);
+  else if (r === '#/alerts') renderAlerts(view);
+  else {
+    // A notification can open the Overview filtered to one kind of item.
+    const t = hashParams().get('type');
+    if (t && QUEUE_TYPES.some(([k]) => k === t)) state.queueType = t;
+    renderOverview(view);
+  }
 }
 
 buildShell();

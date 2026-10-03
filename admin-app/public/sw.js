@@ -2,7 +2,7 @@
 // from cache and refreshed in the background; API data always comes from the
 // network, falling back to the last copy only when offline, so numbers are
 // never silently stale while online. Bump VERSION to force a fresh shell.
-const VERSION = 'hub-admin-v1';
+const VERSION = 'hub-admin-v2';
 const SHELL = ['/', '/styles.css', '/app.js', '/charts.js', '/manifest.webmanifest', '/icons/logo-rounded.png', '/icons/icon-192.png'];
 
 self.addEventListener('install', (event) => {
@@ -59,4 +59,46 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   event.respondWith(staleWhileRevalidate(req));
+});
+
+// ── Push notifications ─────────────────────────────────────────────────────
+// Pushes arrive empty (see functions/_lib/webpush.ts): ask the app what this
+// one is about, then show it. If the sign-in has expired the fetch fails and
+// a generic notification is shown instead, which opens the app to sign in.
+self.addEventListener('push', (event) => {
+  event.waitUntil(
+    (async () => {
+      let n = null;
+      try {
+        const sub = await self.registration.pushManager.getSubscription();
+        const res = await fetch(`/api/notifications/latest?endpoint=${encodeURIComponent(sub ? sub.endpoint : '')}`, { credentials: 'same-origin', cache: 'no-store' });
+        if (res.ok && !res.redirected) n = (await res.json()).notification;
+      } catch {
+        /* show the generic notification */
+      }
+      await self.registration.showNotification(n ? n.title : 'Hub Admin', {
+        body: n ? n.body : 'Something new needs your attention.',
+        icon: '/icons/icon-192.png',
+        badge: '/icons/badge-96.png',
+        tag: n ? `hub-${n.id}` : 'hub-generic',
+        data: { url: n ? n.url : '/#/' },
+      });
+    })()
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = new URL((event.notification.data && event.notification.data.url) || '/#/', self.location.origin).href;
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      for (const c of list) {
+        if (new URL(c.url).origin === self.location.origin && 'focus' in c) {
+          c.navigate(url).catch(() => {});
+          return c.focus();
+        }
+      }
+      return self.clients.openWindow(url);
+    })
+  );
 });

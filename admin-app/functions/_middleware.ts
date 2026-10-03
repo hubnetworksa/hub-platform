@@ -14,6 +14,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const email = await verifiedEmail(context.request, cfg);
   if (!email) return locked(isApi, 'You need to sign in with an allowed account to use Hub Admin.', 401);
 
+  // Anything that changes data must come from the app's own pages: they send
+  // this header, and another site can't add a custom header to a request
+  // without a CORS preflight this app never answers.
+  if (context.request.method !== 'GET' && context.request.method !== 'HEAD' && context.request.headers.get('X-Hub-Admin') !== '1') {
+    return new Response(JSON.stringify({ ok: false, error: 'Missing app header.' }), { status: 403, headers: { 'Content-Type': 'application/json' } });
+  }
+
   context.data.email = email;
   const res = await context.next();
   const out = new Response(res.body, res);

@@ -24,6 +24,7 @@ export interface HubSite {
 }
 
 export type Env = Record<string, unknown> & {
+  ADMIN_DB: D1Database;
   ACCESS_TEAM_DOMAIN?: string;
   ACCESS_AUD?: string;
   ADMIN_EMAILS?: string;

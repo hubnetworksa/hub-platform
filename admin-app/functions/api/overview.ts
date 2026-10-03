@@ -1,72 +1,9 @@
 import type { PagesFunction } from '@cloudflare/workers-types';
-import { hubSites, rows, count, json, type Env, type HubSite } from '../_lib/sites';
+import { hubSites, count, json, type Env, type HubSite } from '../_lib/sites';
+import { siteQueue } from '../_lib/queues';
 
 // The "All sites" home screen: per-site headline numbers and one combined
-// "needs attention" queue. Every item deep-links to the matching screen of
-// that site's own admin (/admin/... on its domain), where the action is taken.
-
-interface QueueItem {
-  site: string;
-  type: string;
-  label: string;
-  title: string;
-  detail: string;
-  created_at: string;
-  link: string;
-}
-
-// [type, label, admin path, SQL returning title, detail, created_at]
-const QUEUES: [string, string, string, string][] = [
-  [
-    'submission',
-    'New listing',
-    '/admin/submissions/',
-    `SELECT name AS title, COALESCE(suburb_slug, '') AS detail, created_at FROM pending_submissions
-     WHERE owner_confirm_token IS NULL AND admin_approved_at IS NULL ORDER BY created_at DESC LIMIT 25`,
-  ],
-  [
-    'claim',
-    'Business claim',
-    '/admin/claims/',
-    `SELECT b.name AS title, COALESCE(bc.contact_name, '') AS detail, bc.created_at FROM business_claims bc
-     JOIN businesses b ON b.id = bc.business_id WHERE bc.status = 'pending' ORDER BY bc.created_at DESC LIMIT 25`,
-  ],
-  [
-    'report',
-    'Report',
-    '/admin/reports/',
-    `SELECT business_name AS title, CASE kind WHEN 'removal' THEN 'Removal request' ELSE 'Problem report' END AS detail, created_at
-     FROM reports WHERE status = 'open' ORDER BY created_at DESC LIMIT 25`,
-  ],
-  [
-    'message',
-    'Message',
-    '/admin/enquiries/',
-    `SELECT COALESCE(business_name, name, 'Contact form') AS title, CASE kind WHEN 'enquiry' THEN 'Enquiry' ELSE 'Contact form' END AS detail, created_at
-     FROM messages WHERE status = 'open' ORDER BY created_at DESC LIMIT 25`,
-  ],
-  [
-    'review',
-    'Review',
-    '/admin/reviews/',
-    `SELECT b.name AS title, r.author_name AS detail, r.created_at FROM reviews r
-     JOIN businesses b ON b.id = r.business_id WHERE r.status = 'pending' ORDER BY r.created_at DESC LIMIT 25`,
-  ],
-  [
-    'event',
-    'Event',
-    '/admin/events/',
-    `SELECT title, COALESCE(contact_name, '') AS detail, created_at FROM event_submissions
-     WHERE status = 'pending' ORDER BY created_at DESC LIMIT 25`,
-  ],
-  [
-    'event-claim',
-    'Event claim',
-    '/admin/events/',
-    `SELECT e.title AS title, COALESCE(ec.contact_name, '') AS detail, ec.created_at FROM event_claims ec
-     JOIN events e ON e.id = ec.event_id WHERE ec.status = 'pending' ORDER BY ec.created_at DESC LIMIT 25`,
-  ],
-];
+// "needs attention" queue (see _lib/queues.ts).
 
 async function siteSummary(site: HubSite) {
   const db = site.db;
@@ -82,16 +19,10 @@ async function siteSummary(site: HubSite) {
          SELECT amount_cents FROM event_payments WHERE status = 'complete' AND paid_at >= date('now', 'start of month'))`
     ),
     count(db, `SELECT COUNT(*) FROM pending_submissions WHERE owner_confirm_token IS NOT NULL`),
-    Promise.all(
-      QUEUES.map(async ([type, label, path, sql]) =>
-        (await rows<{ title: string; detail: string; created_at: string }>(db, sql)).map(
-          (r): QueueItem => ({ site: site.slug, type, label, title: r.title, detail: r.detail, created_at: r.created_at, link: `https://${site.domain}${path}` })
-        )
-      )
-    ),
+    siteQueue(site),
     checkSite(site.domain),
   ]);
-  const items = queues.flat();
+  const items = queues;
   const pending: Record<string, number> = {};
   for (const it of items) pending[it.type] = (pending[it.type] ?? 0) + 1;
   return {
