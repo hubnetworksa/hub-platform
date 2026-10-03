@@ -3,6 +3,7 @@ import { json, type Env } from '../../_lib/sites';
 import { b64url, sha256, validUsername, type AdminUser } from '../../_lib/auth';
 import { jsonBody, str } from '../../_lib/body';
 import { originOf } from '../../_lib/request';
+import { logActivity } from '../../_lib/alerts';
 
 const INVITE_HOURS = 48;
 
@@ -30,5 +31,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     db.prepare('DELETE FROM admin_invites WHERE username = ? AND used_at IS NULL').bind(username),
     db.prepare('INSERT INTO admin_invites (token_hash, username, created_by, expires_at) VALUES (?, ?, ?, ?)').bind(b64url(await sha256(token)), username, me.id, expires),
   ]);
+  await logActivity(db, String(context.data.email), null, 'admin_invited', username);
   return json({ ok: true, link: `${originOf(context.request).origin}/#/join?t=${token}`, expires_at: expires });
 };

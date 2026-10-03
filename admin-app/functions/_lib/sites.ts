@@ -20,6 +20,11 @@ export interface HubSite {
   city: string;
   domain: string;
   accent: string;
+  pagesProject: string;
+  pagesDevHost: string;
+  dbName: string;
+  domainLive: boolean;
+  contactEmail: string;
   db: D1Database;
 }
 
@@ -30,6 +35,9 @@ export type Env = Record<string, unknown> & {
   SETUP_CODE?: string;
   // SHA-256 (base64url) of the morning-briefing routine's key (wrangler.jsonc vars).
   BRIEFING_KEY_HASH?: string;
+  // Resend key for the weekly summary email (Pages secret, from the GitHub
+  // secret HUB_ADMIN_RESEND_KEY). Optional: without it there's no email.
+  RESEND_API_KEY?: string;
 };
 
 /** The managed sites whose database is bound in this deployment. */
@@ -37,7 +45,7 @@ export function hubSites(env: Env): HubSite[] {
   return REGISTRY.flatMap(({ config, binding }) => {
     const db = env[binding] as D1Database | undefined;
     if (!db) return [];
-    return [{ slug: config.slug, name: config.siteName, city: config.cityLabel, domain: config.domain, accent: config.theme.accent, db }];
+    return [{ slug: config.slug, name: config.siteName, city: config.cityLabel, domain: config.domain, accent: config.theme.accent, pagesProject: config.pagesProjectName, pagesDevHost: config.pagesDevHost, dbName: config.dbName, domainLive: !!config.domainLive, contactEmail: config.contactEmail, db }];
   });
 }
 

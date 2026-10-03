@@ -11,6 +11,7 @@ export interface UpgradeInput {
   sites?: string[];
   priority?: string;
   status?: string;
+  code_link?: string | null;
 }
 
 /** Checks the fields present in `body`; `partial` allows leaving any out (edits). */
@@ -38,6 +39,11 @@ export function parseUpgrade(env: Env, body: Record<string, unknown>, partial: b
     const s = str(body.status, 20) || 'idea';
     if (!STATUSES.includes(s)) return { error: 'Unknown status.' };
     out.status = s;
+  }
+  if ('code_link' in body) {
+    const link = str(body.code_link, 300);
+    if (link && !/^https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/(pull|commit|issues|tree|blob)\//.test(link)) return { error: 'The code link must be a GitHub pull request, commit or issue link.' };
+    out.code_link = link || null;
   }
   return { value: out };
 }

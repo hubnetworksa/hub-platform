@@ -2,6 +2,7 @@ import type { PagesFunction } from '@cloudflare/workers-types';
 import { json, type Env } from '../../_lib/sites';
 import { jsonBody } from '../../_lib/body';
 import { parseUpgrade } from '../../_lib/upgrades';
+import { logActivity } from '../../_lib/alerts';
 
 interface Row {
   id: number;
@@ -44,5 +45,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   )
     .bind(u.title, u.details ?? '', JSON.stringify(u.sites), u.priority, u.status, String(context.data.email), u.status)
     .first<Row>();
+  await logActivity(context.env.ADMIN_DB, String(context.data.email), null, 'upgrade_added', u.title ?? null);
   return json({ ok: true, upgrade: toUpgrade(row!) });
 };
