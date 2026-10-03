@@ -8,6 +8,7 @@ import { organizationJsonLd, webPageJsonLd, ldJson, type WebPageType } from '../
 import { fitTitle, fitDescription } from '../lib/metaText';
 import { lastModifiedFor } from '../lib/sitemap';
 import { searchIndexUrl } from '../lib/search-pack';
+import { versioned } from '../lib/assetVersion';
 
 interface Props {
   title: string;
@@ -67,7 +68,7 @@ const noAds = noAdsProp || Boolean(noindex);
 const fullTitle = fitTitle(titleOverride ?? `${title} | ${site.siteName}`);
 const description = fitDescription(rawDescription);
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') ?? '';
-const shareImage = ogImage ? (/^https?:\/\//i.test(ogImage) ? ogImage : siteUrl + ogImage) : siteUrl + '/logo-icon.png';
+const shareImage = ogImage ? (/^https?:\/\//i.test(ogImage) ? ogImage : siteUrl + ogImage) : siteUrl + versioned('/logo-icon.png');
 // The 404 page is served for any missing URL, so it must not claim /404/ as its own address.
 const isNotFoundPage = Astro.url.pathname.replace(/\/$/, '') === '/404';
 const canonicalUrl = isNotFoundPage ? undefined : (canonical ?? (siteUrl + Astro.url.pathname));
@@ -258,9 +259,9 @@ const themeCss = `:root {
          favicon to show one at all instead of a generic globe; logo-icon.png
          itself is a tall (537x620) non-square crop of the pin mark, which is
          why it wasn't picked up. -->
-    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href={versioned('/favicon-48.png')} />
+    <link rel="icon" type="image/png" sizes="192x192" href={versioned('/favicon-192.png')} />
+    <link rel="apple-touch-icon" href={versioned('/apple-touch-icon.png')} />
     <meta name="theme-color" content={theme.navy} />
     <link rel="manifest" href="/manifest.webmanifest" />
 
@@ -307,7 +308,7 @@ const themeCss = `:root {
     <header style="position:sticky;top:34px;z-index:70;background:#fff;border-bottom:2px solid var(--navy)">
       <div style="max-width:1200px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap">
         <a href="/" style="display:flex;align-items:center;gap:10px;flex-shrink:0">
-          <img src="/logo-icon.png" alt={site.siteName} style="height:38px;width:auto;display:block" />
+          <img src={versioned('/logo-icon.png')} alt={site.siteName} style="height:38px;width:auto;display:block" />
           <span style="display:flex;flex-direction:column;line-height:1.05">
             <span style="font-weight:800;font-size:19px;letter-spacing:-.02em;color:var(--navy)">{cityLabel}<span style="color:var(--accent)">Hub</span></span>
             <span style="font-size:9px;font-weight:800;letter-spacing:.18em;color:var(--muted);margin-top:3px">BUSINESS DIRECTORY</span>
