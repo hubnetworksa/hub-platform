@@ -353,3 +353,23 @@ main:focus { outline: none; }
   .card, .tile, .launch a, .queue a { transition: transform 0.25s ease, box-shadow 0.25s ease; }
   .tile:hover, .site-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(15, 27, 61, 0.1); }
 }
+
+/* ── Overview banner (the three cities) ────────────────────────────────── */
+.hero { position: relative; overflow: hidden; border-radius: 18px; min-height: 230px; padding: clamp(20px, 3vw, 32px); margin-bottom: 18px; display: flex; align-items: flex-end; color: #fff; background: var(--nav); box-shadow: var(--shadow); }
+.hero-bg { position: absolute; inset: 0; background: url('/banner-wide.jpg') center / cover no-repeat; will-change: transform; }
+.hero-content { position: relative; display: grid; gap: 8px; max-width: 640px; }
+.hero h1 { margin: 0; font-size: clamp(26px, 4vw, 36px); letter-spacing: -0.02em; text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35); }
+.hero p { margin: 0; color: rgba(255, 255, 255, 0.86); font-size: 15.5px; text-shadow: 0 1px 10px rgba(0, 0, 0, 0.35); }
+.hero-cities { display: flex; gap: 6px; flex-wrap: wrap; }
+.hero-cities > span { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: rgba(255, 255, 255, 0.14); border: 1px solid rgba(255, 255, 255, 0.22); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+.hero-updated { font-size: 13px; color: rgba(255, 255, 255, 0.72); }
+.btn.glass { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.3); color: #fff; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.btn.glass:hover { background: rgba(255, 255, 255, 0.24); }
+@media (max-width: 760px) {
+  .hero { min-height: 250px; border-radius: 16px; }
+  .hero-bg { background-image: url('/banner-mobile.jpg'); }
+}
+/* Sign-in screens: the same banner, darkened, behind the card. */
+.auth { background: linear-gradient(180deg, rgba(15, 27, 61, 0.55), rgba(10, 16, 34, 0.9)), url('/banner-mobile.jpg') center / cover no-repeat, var(--nav); }
+@media (min-width: 761px) { .auth { background-image: linear-gradient(180deg, rgba(15, 27, 61, 0.55), rgba(10, 16, 34, 0.9)), url('/banner-wide.jpg'); } }

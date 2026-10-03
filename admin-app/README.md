@@ -18,7 +18,7 @@ One dashboard for every city site, at **https://hub-admin-b4x.pages.dev** (`hub-
 - `migrations/`: Hub Admin's own D1 database (`hub-admin-db`): accounts, sessions, passkeys, upgrades, push subscriptions, notifications and the push key pair (generated on first use, never committed). The deploy workflow creates the database on its first run and fills its id into `wrangler.jsonc` (`__HUB_ADMIN_DB_ID__`).
 - Notifications: `.github/workflows/admin-notify.yml` runs `scripts/admin-notify.mjs` every 5 minutes, which calls `/api/notify/run` with a random key kept only in the admin database (read through the Cloudflare API, never printed). The check finds new items in every city's queues and pushes an alert to subscribed devices. Pushes carry no content: the device fetches what each one is about from the app, behind the login. The first check only records a starting point, so nothing old is announced. GitHub can start scheduled runs a few minutes late.
 - Deployed by `.github/workflows/deploy-admin.yml` on every push to `main` that touches `admin-app/` (or by running it by hand).
-- Icon: `assets/logo-src/hub-admin.svg`, rendered by `node scripts/render-admin-icons.mjs`.
+- Icon: `assets/logo-src/hub-admin.svg`, rendered by `node scripts/render-admin-icons.mjs`. Banner (Overview header and sign-in background): the three cities' own hero photos, joined by `node scripts/render-admin-banner.mjs` into `public/banner-wide.jpg` and `public/banner-mobile.jpg`.
 
 Chart colours per city are the reference data-viz palette's first three slots (blue, orange, teal), checked for colour-blind separation in light and dark mode. The teal sits just under 3:1 contrast on white, which is why every chart has direct labels and a table view.
 

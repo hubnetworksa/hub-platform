@@ -46,6 +46,13 @@ export const motion = {
     const blocks = [...root.querySelectorAll('.card, .section-title, .group-title')].filter((el) => !el.closest('.tiles'));
     const tl = g.timeline({ defaults: { ease: EASE } });
     if (head.length) tl.from(head, { y: 14, autoAlpha: 0, duration: 0.45, stagger: 0.05 }, 0);
+    // The banner settles in (a slow zoom), then its text rises.
+    const hero = root.querySelector(':scope > .hero');
+    if (hero) {
+      tl.from(hero, { autoAlpha: 0, y: 12, duration: 0.5 }, 0)
+        .from(hero.querySelector('.hero-bg'), { scale: 1.14, duration: 1.8, ease: 'power2.out' }, 0)
+        .from(hero.querySelectorAll('.hero-content > *'), { y: 18, autoAlpha: 0, duration: 0.6, stagger: 0.08 }, 0.15);
+    }
     if (tiles.length) {
       tl.from(tiles, { y: 22, autoAlpha: 0, scale: 0.96, duration: 0.55, stagger: 0.06 }, 0.08);
       tiles.forEach((t, i) => {
