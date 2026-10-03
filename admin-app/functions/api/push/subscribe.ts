@@ -1,6 +1,6 @@
 import type { PagesFunction } from '@cloudflare/workers-types';
 import { json, type Env } from '../../_lib/sites';
-import { QUEUE_TYPES } from '../../_lib/queues';
+import { ALERT_TYPES } from '../../_lib/queues';
 import { jsonBody, str } from '../../_lib/body';
 
 // Saves (or updates) this device's push subscription and the alert types it
@@ -12,7 +12,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const p256dh = str(sub?.keys?.p256dh, 200);
   const auth = str(sub?.keys?.auth, 100);
   if (!endpoint.startsWith('https://') || !p256dh || !auth) return json({ ok: false, error: 'Invalid subscription.' }, 400);
-  const types = (Array.isArray(body?.types) ? body!.types : QUEUE_TYPES).filter((t): t is string => typeof t === 'string' && QUEUE_TYPES.includes(t));
+  const types = (Array.isArray(body?.types) ? body!.types : ALERT_TYPES).filter((t): t is string => typeof t === 'string' && ALERT_TYPES.includes(t));
   const label = str(body?.label, 60) || 'This device';
   await context.env.ADMIN_DB.prepare(
     `INSERT INTO push_subscriptions (endpoint, p256dh, auth, email, label, types) VALUES (?, ?, ?, ?, ?, ?)

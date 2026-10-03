@@ -373,3 +373,22 @@ main:focus { outline: none; }
 /* Sign-in screens: the same banner, darkened, behind the card. */
 .auth { background: linear-gradient(180deg, rgba(15, 27, 61, 0.55), rgba(10, 16, 34, 0.9)), url('/banner-mobile.jpg') center / cover no-repeat, var(--nav); }
 @media (min-width: 761px) { .auth { background-image: linear-gradient(180deg, rgba(15, 27, 61, 0.55), rgba(10, 16, 34, 0.9)), url('/banner-wide.jpg'); } }
+
+/* ── Today's briefing ──────────────────────────────────────────────────── */
+.briefing { margin-bottom: 18px; border-left: 4px solid var(--brand); }
+.briefing.writing { opacity: 0.6; transition: opacity 0.2s; }
+.ai-badge { display: inline-block; font-weight: 800; font-size: 12px; color: var(--brand); background: rgba(29, 111, 224, 0.1); padding: 1px 8px; border-radius: 999px; }
+.ai-badge.plain { color: var(--text-2); background: var(--surface-2); }
+.brief-headline { margin: 0 0 6px; font-size: clamp(17px, 2vw, 20px); font-weight: 750; line-height: 1.35; letter-spacing: -0.01em; }
+.brief-block { margin-top: 14px; }
+.brief-block h3 { margin: 0 0 6px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.brief-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.brief-list li { display: flex; gap: 10px; align-items: baseline; line-height: 1.45; color: var(--text); }
+.brief-list .city-dot { transform: translateY(1px); }
+.brief-list .bullet { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); flex: none; transform: translateY(-2px); }
+.brief-loading { display: flex; gap: 6px; padding: 8px 0; }
+.brief-loading span { width: 8px; height: 8px; border-radius: 50%; background: var(--brand); animation: brief-dot 1.2s infinite ease-in-out; }
+.brief-loading span:nth-child(2) { animation-delay: 0.15s; }
+.brief-loading span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes brief-dot { 0%, 80%, 100% { opacity: 0.25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-4px); } }
+@media (prefers-reduced-motion: reduce) { .brief-loading span { animation: none; opacity: 0.6; } }

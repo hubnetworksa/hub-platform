@@ -28,6 +28,10 @@ export type Env = Record<string, unknown> & {
   // The first-time setup / password reset code (Pages secret, from the
   // GitHub secret HUB_ADMIN_SETUP_CODE).
   SETUP_CODE?: string;
+  // Anthropic API key for the AI morning briefing (Pages secret, from the
+  // GitHub secret ANTHROPIC_API_KEY). Optional: without it the briefing is a
+  // plain summary.
+  ANTHROPIC_API_KEY?: string;
 };
 
 /** The managed sites whose database is bound in this deployment. */
@@ -69,4 +73,15 @@ export function json(data: unknown, status = 200, headers: Record<string, string
     status,
     headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...headers },
   });
+}
+
+/** Is the site up? One HEAD request to its homepage. */
+export async function checkSite(domain: string): Promise<{ ok: boolean; status: number; ms: number }> {
+  const start = Date.now();
+  try {
+    const res = await fetch(`https://${domain}/`, { method: 'HEAD', redirect: 'manual', cf: { cacheTtl: 0 } } as RequestInit);
+    return { ok: res.status >= 200 && res.status < 400, status: res.status, ms: Date.now() - start };
+  } catch {
+    return { ok: false, status: 0, ms: Date.now() - start };
+  }
 }
