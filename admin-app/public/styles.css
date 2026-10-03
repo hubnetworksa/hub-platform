@@ -338,3 +338,18 @@ main:focus { outline: none; }
 .or { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; }
 .or::before, .or::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 .linkish { background: none; border: 0; color: var(--brand); font-weight: 700; font-size: 14px; cursor: pointer; justify-self: center; padding: 4px; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--brand); color: #fff; font-weight: 800; flex: none; }
+.avatar.pending { background: var(--surface-2); color: var(--text-2); }
+
+/* ── Motion: sliding nav highlight (positioned by motion.js) ──────────── */
+.side, .tabbar { position: relative; }
+.side { position: sticky; }
+@media (max-width: 860px) { .tabbar { position: fixed; } }
+.nav-pill { position: absolute; top: 0; left: 0; border-radius: 10px; background: rgba(255, 255, 255, 0.1); pointer-events: none; z-index: 0; }
+.side .nav-link, .tabbar a { position: relative; z-index: 1; }
+.side .nav-link[aria-current='page'], .tabbar a[aria-current='page'] { background: transparent; }
+/* Cards lift a touch on hover (pointer devices only). */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .card, .tile, .launch a, .queue a { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+  .tile:hover, .site-card:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(15, 27, 61, 0.1); }
+}

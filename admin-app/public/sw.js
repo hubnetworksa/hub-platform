@@ -2,8 +2,8 @@
 // from cache and refreshed in the background; API data always comes from the
 // network, falling back to the last copy only when offline, so numbers are
 // never silently stale while online. Bump VERSION to force a fresh shell.
-const VERSION = 'hub-admin-v2';
-const SHELL = ['/', '/styles.css', '/app.js', '/charts.js', '/manifest.webmanifest', '/icons/logo-rounded.png', '/icons/icon-192.png'];
+const VERSION = 'hub-admin-v3';
+const SHELL = ['/', '/styles.css', '/app.js', '/charts.js', '/motion.js', '/vendor/gsap.min.js', '/vendor/ScrollTrigger.min.js', '/manifest.webmanifest', '/icons/logo-rounded.png', '/icons/icon-192.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

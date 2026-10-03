@@ -4,7 +4,16 @@
 // light/dark themes swap in one place. All labels go in with textContent:
 // business names and search queries are user data.
 
+import { motion } from './motion.js';
+
 const NS = 'http://www.w3.org/2000/svg';
+
+// Animate a chart only the first time it's drawn, not on every resize.
+function firstDraw(holder) {
+  if (holder.dataset.drawn) return false;
+  holder.dataset.drawn = '1';
+  return true;
+}
 
 function svgEl(tag, attrs = {}, parent) {
   const el = document.createElementNS(NS, tag);
@@ -168,6 +177,8 @@ export function lineChart(el, opts) {
       }
     }
 
+    if (firstDraw(holder)) motion.lines(svg);
+
     // Hover / keyboard layer: crosshair snaps to the nearest day.
     const cross = svgEl('line', { y1: m.t, y2: m.t + ih, stroke: 'var(--muted)', 'stroke-width': 1, visibility: 'hidden' }, svg);
     const dots = series.map((s) => svgEl('circle', { r: 4.5, fill: s.color, stroke: 'var(--surface)', 'stroke-width': 2, visibility: 'hidden' }, svg));
@@ -263,6 +274,7 @@ export function columnChart(el, opts) {
         hit.addEventListener('blur', hideTip);
       });
     });
+    if (firstDraw(holder)) motion.columns(svg);
   });
 }
 
@@ -308,6 +320,7 @@ export function barList(el, opts) {
     list.appendChild(row);
   }
   el.appendChild(list);
+  motion.bars(list);
 }
 
 // ── Data table (the accessible view of any chart) ──────────────────────────

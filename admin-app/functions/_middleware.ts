@@ -16,6 +16,7 @@ const PUBLIC_API = new Set([
   '/api/auth/setup',
   '/api/auth/login',
   '/api/auth/recover',
+  '/api/auth/join',
   '/api/auth/passkey/login-options',
   '/api/auth/passkey/login',
   '/api/notify/run',
