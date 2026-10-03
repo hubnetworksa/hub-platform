@@ -4,5 +4,5 @@
     "resolveJsonModule": true
   },
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"]
+  "exclude": ["dist", "admin-app"]
 }

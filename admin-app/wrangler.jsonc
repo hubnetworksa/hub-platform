@@ -1,0 +1,26 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  // Hub Admin: one dashboard for every city site, at hub-admin.pages.dev.
+  // Deployed by .github/workflows/deploy-admin.yml (wrangler pages deploy
+  // public, run from this folder, reads this file for its bindings).
+  "name": "hub-admin",
+  "compatibility_date": "2026-08-31",
+  "pages_build_output_dir": "public",
+
+  "vars": {
+    // Cloudflare Access (Zero Trust) settings. The app serves nothing but a
+    // "locked" notice until all three are filled in — see admin-app/README.md.
+    // Neither the team domain nor the AUD tag is a secret.
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": "",
+    // Second allow-list, checked against the verified Access login.
+    "ADMIN_EMAILS": "hubnetworksa@gmail.com"
+  },
+
+  // One binding per city (see functions/_lib/sites.ts to add a city).
+  "d1_databases": [
+    { "binding": "DB_PRETORIA", "database_name": "pretoriahub-db", "database_id": "0681593f-b710-402d-aae4-684be8302010" },
+    { "binding": "DB_POLOKWANE", "database_name": "polokwanehub-db", "database_id": "e1e3d9ce-5de2-4d88-ace5-aeb4ad6994c1" },
+    { "binding": "DB_CAPETOWN", "database_name": "thecapetownhub-db", "database_id": "12cf759f-20f6-41a1-a1a7-9ea6748c4b06" }
+  ]
+}
