@@ -59,17 +59,37 @@ async function notifyReporter(env: Env, reportId: number): Promise<void> {
   const site = getSite(env.SITE);
   const url = `https://${site.domain}/business/${row.business_slug}/`;
   const t = site.theme;
+
+  // Invite the reporter to claim the listing if nobody owns it yet — reporters
+  // are often the owner. Same link as the listing page's claim button.
+  const biz = await env.DB
+    .prepare('SELECT id, name FROM businesses WHERE slug = ? AND owner_user_id IS NULL')
+    .bind(row.business_slug)
+    .first<{ id: number; name: string }>();
+  const claimUrl = biz
+    ? `https://${site.domain}/my-businesses/claim/?businessId=${biz.id}&name=${encodeURIComponent(biz.name)}`
+    : null;
+  const claimText = claimUrl ? `\n\nIs this your business? Claim it for free to keep its details up to date: ${claimUrl}` : '';
+  const claimHtml = claimUrl
+    ? `<div style="margin:20px 0;padding:14px 16px;border:1px solid ${t.border};border-radius:10px">
+      <p style="margin:0 0 6px;font-weight:700;color:${t.navy}">Is this your business?</p>
+      <p style="margin:0 0 12px;font-size:14px;color:${t.textMuted}">Claim it for free to keep its details up to date.</p>
+      <a href="${claimUrl}" style="display:inline-block;padding:10px 16px;border-radius:8px;background:${t.navy};color:#fff;font-weight:700;text-decoration:none">Claim this listing</a>
+    </div>`
+    : '';
+
   const result = await sendEmail(env, {
     from: `${site.siteName} <${site.contactEmail}>`,
     to: row.requester_email,
     subject: `Your report about ${row.business_name} has been fixed`,
-    text: `Hi,\n\nThanks for helping keep ${site.siteName} accurate. The problem you reported about ${row.business_name} has been fixed.\n\nYou reported:\n${row.reason}\n\nSee the updated listing: ${url}\n\nThe ${site.siteName} team\nhttps://${site.domain}`,
+    text: `Hi,\n\nThanks for helping keep ${site.siteName} accurate. The problem you reported about ${row.business_name} has been fixed.\n\nYou reported:\n${row.reason}\n\nSee the updated listing: ${url}${claimText}\n\nThe ${site.siteName} team\nhttps://${site.domain}`,
     html: `<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:520px;color:${t.text};line-height:1.5">
       <h2 style="color:${t.navy};margin:0 0 12px">Your report has been fixed</h2>
       <p>Thanks for helping keep ${escapeHtml(site.siteName)} accurate. The problem you reported about <strong>${escapeHtml(row.business_name)}</strong> has been fixed.</p>
       <p style="margin:16px 0 4px;color:${t.textMuted};font-size:13px">You reported:</p>
       <blockquote style="margin:0;padding:8px 14px;border-left:3px solid ${t.border};color:${t.text}">${escapeHtml(row.reason).replace(/\n/g, '<br>')}</blockquote>
       <p style="margin:20px 0"><a href="${url}" style="color:${t.navy};font-weight:700">View the updated listing</a></p>
+      ${claimHtml}
       <p style="color:${t.textMuted};font-size:13px">The ${escapeHtml(site.siteName)} team &middot; <a href="https://${site.domain}" style="color:${t.textMuted}">${escapeHtml(site.domain)}</a></p>
     </div>`,
   });
