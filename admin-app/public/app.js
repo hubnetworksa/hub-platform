@@ -320,13 +320,34 @@ async function renderOverview(view) {
 
   view.replaceChildren(
     mobileHead('Overview'),
-    pageHead('Overview', 'Everything across your sites that needs you, and how each site is doing.', h('div', { style: 'display:flex;gap:10px;align-items:center' }, h('span', { class: 'updated' }, `Updated ${ago(data.generatedAt)}`), refresh)),
-    await passkeyNudge(),
+    heroBanner(data, refresh),
+    ...[await passkeyNudge()].filter(Boolean),
     tiles,
     h('div', { class: 'section-title' }, 'Your sites'),
     siteCards,
     h('div', { class: 'section-title' }, 'Needs attention'),
     queueCard(data)
+  );
+}
+
+// The Overview's header: the three-city banner with a greeting.
+function heroBanner(data, refresh) {
+  const hour = Number(new Date().toLocaleString('en-ZA', { hour: 'numeric', hour12: false, timeZone: 'Africa/Johannesburg' }));
+  const greeting = hour >= 5 && hour < 12 ? 'Good morning' : hour >= 12 && hour < 18 ? 'Good afternoon' : 'Good evening';
+  const waiting = data.queue.length;
+  refresh.classList.add('glass');
+  return h(
+    'section',
+    { class: 'hero', 'aria-label': 'Welcome' },
+    h('div', { class: 'hero-bg', 'aria-hidden': 'true' }),
+    h(
+      'div',
+      { class: 'hero-content' },
+      h('div', { class: 'hero-cities' }, data.sites.map((s) => h('span', {}, h('span', { class: 'city-dot', style: `background:${siteColor(s.slug)}` }), s.city))),
+      h('h1', {}, `${greeting}${state.username ? `, ${state.username}` : ''}`),
+      h('p', {}, waiting ? `${waiting} item${waiting === 1 ? '' : 's'} across your sites need${waiting === 1 ? 's' : ''} you.` : 'Everything across your sites is up to date.'),
+      h('div', { class: 'hero-actions' }, refresh, h('span', { class: 'hero-updated' }, `Updated ${ago(data.generatedAt)}`))
+    )
   );
 }
 
