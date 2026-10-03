@@ -1,7 +1,7 @@
 name: Hub Admin Google data
 
 # Every morning: Search Console clicks and impressions per day, how many pages
-# Google shows, search gaps, Google's indexing verdict for ~120 pages per site
+# Google shows, search gaps, Google's indexing verdict for up to 150 pages per site
 # (rotating through the sitemap) and AdSense earnings, sent to Hub Admin's
 # Google and Money screens (scripts/search-console-daily.mjs). Nothing is
 # committed: the data is kept in Hub Admin's own database.
@@ -25,7 +25,7 @@ concurrency:
 jobs:
   google:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - name: Checkout
         uses: actions/checkout@v4

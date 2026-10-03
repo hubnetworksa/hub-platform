@@ -115,7 +115,7 @@ function indexSection(ui, d) {
           'section',
           { class: 'card' },
           h('h3', { class: 'card-sub inline-city' }, h('span', { class: 'city-dot', style: `background:${ui.siteColor(s.slug)}` }), ui.siteName(s.slug)),
-          h('p', { class: 'sub', style: 'margin-top:0' }, `${i.indexed.toLocaleString('en-ZA')} of ${i.checked.toLocaleString('en-ZA')} pages checked are in Google (${i.sitemap_urls.toLocaleString('en-ZA')} in the sitemap; about 120 checked a day).`),
+          h('p', { class: 'sub', style: 'margin-top:0' }, `${i.indexed.toLocaleString('en-ZA')} of ${i.checked.toLocaleString('en-ZA')} pages checked are in Google (${i.sitemap_urls.toLocaleString('en-ZA')} in the sitemap; up to 150 checked a day).`),
           states,
           i.not_indexed_count
             ? h(
