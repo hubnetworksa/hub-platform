@@ -24,11 +24,47 @@ const isPast = e.event_date < todaySast();
 
 // schema.org Event, so the listing can show up in Google's event results.
 // `<` is escaped because organiser text ends up inside a <script> tag.
+// Only fields backed by real data are emitted. Times are South African
+// (+02:00, no DST) and only used when event_time is a clean "HH:MM" or
+// "HH:MM - HH:MM"; free-text values ("Doors 18:00, show 20:00") give a date only.
+const eventUrl = `https://${site.domain}/events/${e.slug}/`;
+const timeMatch = (e.event_time ?? '').trim().match(/^(\d{1,2}:\d{2})(?:\s*[-–]\s*(\d{1,2}:\d{2}))?$/);
+const hhmm = (t: string) => t.padStart(5, '0');
+const isMultiDay = /\d+\s*[-–]\s*\d+\s+[A-Za-z]+/.test(e.event_time ?? '');
+const startDate = timeMatch ? `${e.event_date}T${hhmm(timeMatch[1])}:00+02:00` : e.event_date;
+let endDate: string | undefined;
+if (timeMatch?.[2] && hhmm(timeMatch[2]) > hhmm(timeMatch[1])) endDate = `${e.event_date}T${hhmm(timeMatch[2])}:00+02:00`;
+else if (timeMatch?.[2]) {
+  // Ends after midnight: the next calendar day.
+  const next = new Date(`${e.event_date}T12:00:00Z`);
+  next.setUTCDate(next.getUTCDate() + 1);
+  endDate = `${next.toISOString().slice(0, 10)}T${hhmm(timeMatch[2])}:00+02:00`;
+} else if (!isMultiDay) endDate = e.event_date; // single-day event, no end time listed
+
+const isFree = /^free\b/i.test(e.price);
+const isSoldOut = /sold\s*out/i.test(`${e.price} ${e.host ?? ''}`);
+const priceNum = e.price.match(/R\s*(\d[\d,]*(?:\.\d+)?)/i)?.[1]?.replace(/,/g, '');
+const offers =
+  isFree || priceNum || hasTicketLink(e.ticket_url)
+    ? {
+        '@type': 'Offer',
+        url: hasTicketLink(e.ticket_url) ? e.ticket_url : eventUrl,
+        ...(isFree ? { price: '0' } : priceNum ? { price: priceNum } : {}),
+        ...(isFree || priceNum ? { priceCurrency: 'ZAR' } : {}),
+        availability: isSoldOut ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
+      }
+    : undefined;
+// When nobody sells tickets ("No ticket needed"), the link is the event's own
+// site, so it doubles as the organiser's website.
+const organizerUrl = /no ticket needed/i.test(e.host ?? '') && hasTicketLink(e.ticket_url) ? e.ticket_url : undefined;
+const performers = detail.lineup.filter((l) => l?.name).map((l) => ({ '@type': 'Person', name: l.name }));
 const eventLd = {
   '@context': 'https://schema.org',
   '@type': 'Event',
   name: e.title,
-  startDate: e.event_date,
+  url: eventUrl,
+  startDate,
+  ...(endDate ? { endDate } : {}),
   eventStatus: 'https://schema.org/EventScheduled',
   eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
   ...(e.description ? { description: plainLine(e.description) } : {}),
@@ -38,8 +74,9 @@ const eventLd = {
     name: e.venue ?? site.cityLabel,
     address: { '@type': 'PostalAddress', streetAddress: e.address ?? undefined, addressLocality: e.suburb ?? site.cityLabel, addressCountry: 'ZA' },
   },
-  ...(e.host || e.organiser ? { organizer: { '@type': 'Organization', name: e.organiser ?? e.host } } : {}),
-  ...(hasTicketLink(e.ticket_url) ? { offers: { '@type': 'Offer', url: e.ticket_url, priceCurrency: 'ZAR', availability: 'https://schema.org/InStock' } } : {}),
+  ...(e.organiser || e.host ? { organizer: { '@type': 'Organization', name: e.organiser ?? e.host, ...(organizerUrl ? { url: organizerUrl } : {}) } } : {}),
+  ...(performers.length ? { performer: performers } : {}),
+  ...(offers ? { offers } : {}),
 };
 const eventLdJson = JSON.stringify(eventLd).replace(/</g, '\\u003c');
 // No Google ads anywhere a paid listing or sponsor is shown (BaseLayout's
