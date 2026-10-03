@@ -4,6 +4,7 @@
 // only: nothing here renders in the page body.
 
 import site from '../site';
+import { versioned } from './assetVersion';
 
 const siteUrl = `https://${site.domain}`;
 
@@ -22,7 +23,7 @@ export function organizationJsonLd() {
     '@id': ORGANIZATION_ID,
     name: site.siteName,
     url: `${siteUrl}/`,
-    logo: { '@type': 'ImageObject', url: `${siteUrl}/logo-icon.png` },
+    logo: { '@type': 'ImageObject', url: `${siteUrl}${versioned('/logo-icon.png')}` },
     // Published on /contact/ and /advertise/.
     email: site.contactEmail,
     ...(tradingName ? { parentOrganization: { '@type': 'Organization', name: tradingName } } : {}),
@@ -37,7 +38,7 @@ export function organizationRef() {
     '@id': ORGANIZATION_ID,
     name: site.siteName,
     url: `${siteUrl}/`,
-    logo: { '@type': 'ImageObject', url: `${siteUrl}/logo-icon.png` },
+    logo: { '@type': 'ImageObject', url: `${siteUrl}${versioned('/logo-icon.png')}` },
   };
 }
 

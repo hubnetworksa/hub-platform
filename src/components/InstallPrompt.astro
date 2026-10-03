@@ -1,4 +1,5 @@
 ---
+import { versioned } from '../lib/assetVersion';
 // Mobile "Get the app" bottom sheet. Included from BaseLayout; BaseLayout
 // leaves it out of admin, account, checkout and other noindex pages. All the
 // install plumbing (the deferred `beforeinstallprompt`, tracking) lives in
@@ -13,7 +14,7 @@ import { siteName } from '../lib/site-overrides';
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
     </button>
     <div class="ip-head">
-      <img src="/logo-icon.png" width="52" height="52" alt="" class="ip-icon" />
+      <img src={versioned('/logo-icon.png')} width="52" height="52" alt="" class="ip-icon" />
       <h2 id="ip-title" class="ip-title">Get the {siteName} app</h2>
     </div>
     <p id="ip-body" class="ip-text">Install {siteName} on your phone for faster access and custom notifications about local events, news and deals.</p>
