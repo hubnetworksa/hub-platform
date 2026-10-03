@@ -8,6 +8,7 @@
 //   #/settings Settings: fingerprint/passkey sign-in, password, sign out,
 //             and push notifications on this device
 import { lineChart, columnChart, barList, dataTable, fmt } from './charts.js';
+import { motion } from './motion.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const h = (tag, attrs = {}, ...children) => {
@@ -223,7 +224,25 @@ function setActive() {
     if (on) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   });
+  // The highlight slides to the active item (sidebar and phone tab bar).
+  requestAnimationFrame(() => {
+    for (const nav of document.querySelectorAll('.side, .tabbar')) {
+      const active = nav.querySelector('[aria-current="page"]');
+      if (active && active.offsetParent) motion.nav(nav, active);
+    }
+  });
 }
+
+// Each time a screen finishes rendering (its loading placeholder is gone),
+// play its entrance.
+function watchView() {
+  const view = $('#view');
+  if (!view) return;
+  new MutationObserver(() => {
+    if (!view.querySelector(':scope > .skeleton')) motion.page(view);
+  }).observe(view, { childList: true });
+}
+window.addEventListener('resize', () => setActive());
 
 function mobileHead(title) {
   return h(
@@ -248,8 +267,11 @@ async function loadOverview(force) {
   if (!state.overview || force) state.overview = await api('/api/overview');
   const total = state.overview.queue.length;
   document.querySelectorAll('[data-badge]').forEach((b) => {
+    const text = total > 99 ? '99+' : String(total);
+    const changed = b.textContent !== text;
     b.hidden = total === 0;
-    b.textContent = total > 99 ? '99+' : String(total);
+    b.textContent = text;
+    if (changed) motion.badge(b);
   });
   document.querySelectorAll('[data-user]').forEach((u) => (u.textContent = state.username || ''));
   return state.overview;
@@ -1164,6 +1186,7 @@ function authScreen(title, sub, ...body) {
       )
     )
   );
+  motion.auth($('.auth-card'));
 }
 
 function field(label, attrs) {
@@ -1210,6 +1233,7 @@ function renderLogin(state) {
       msg.className = 'msg err';
       msg.textContent = err.message;
       submit.disabled = false;
+      motion.shake(form);
     }
   });
   const fp = passkeysSupported()
@@ -1245,6 +1269,7 @@ function renderRecover() {
       msg.className = 'msg err';
       msg.textContent = err.message;
       submit.disabled = false;
+      motion.shake(form);
     }
   });
   authScreen('Reset password', 'Use the setup code you saved in GitHub (HUB_ADMIN_SETUP_CODE).', form, h('button', { class: 'linkish', type: 'button', onclick: start }, 'Back to sign in'));
@@ -1288,6 +1313,7 @@ function renderSetup(state) {
       msg.className = 'msg err';
       msg.textContent = err.message;
       submit.disabled = false;
+      motion.shake(form);
     }
   });
   authScreen('Welcome to Hub Admin', 'Create your admin account. You only do this once.', form);
@@ -1416,7 +1442,7 @@ async function accountCards(view) {
     pwForm,
     h('div', { class: 'row', style: 'margin-top:14px' }, h('button', { class: 'btn', type: 'button', onclick: () => signOut(false) }, 'Sign out'), h('button', { class: 'btn', type: 'button', onclick: () => signOut(true) }, 'Sign out everywhere'))
   );
-  return [passkeyCard, accountCard];
+  return [passkeyCard, accountCard, await adminsCard(view)];
 }
 
 // Decides what to show: setup, sign-in, or the app.
@@ -1430,9 +1456,13 @@ async function start() {
     return;
   }
   if (s.setupNeeded) return renderSetup(s);
+  const invite = location.hash.startsWith('#/join') ? hashParams().get('t') : null;
+  if (invite && !s.signedIn) return renderJoin(invite);
+  if (invite) history.replaceState(null, '', '/#/');
   if (!s.signedIn) return renderLogin(s);
   state.username = s.username;
   buildShell();
+  watchView();
   route();
   if (!appStarted) {
     appStarted = true;
@@ -1447,6 +1477,145 @@ async function start() {
       if (document.visibilityState === 'visible' && $('#view')) loadOverview(true).catch(() => {});
     }, 5 * 60 * 1000);
   }
+}
+
+// ── Admins (invite links) ──────────────────────────────────────────────────
+async function adminsCard(view) {
+  let data = { admins: [], invites: [] };
+  try {
+    data = await api('/api/admins');
+  } catch {
+    /* card shows empty */
+  }
+  const msg = h('span', { class: 'msg', role: 'status' });
+  const linkBox = h('div');
+  const [nameField, name] = field('Username for the new admin', { placeholder: 'e.g. guy', autocapitalize: 'none', spellcheck: 'false', maxlength: '60' });
+  const create = h('button', { class: 'btn primary', type: 'submit' }, icon('plus', 16), 'Create invite link');
+  const form = h('form', { class: 'form' }, nameField, h('div', { class: 'row', style: 'align-items:center' }, create, msg));
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    create.disabled = true;
+    msg.className = 'msg';
+    msg.textContent = '';
+    try {
+      const r = await api('/api/admins/invite', 'POST', { username: name.value.trim() });
+      const who = name.value.trim();
+      const input = h('input', { class: 'input', readonly: true, value: r.link, 'aria-label': 'Invite link' });
+      const copy = h('button', { class: 'btn', type: 'button', onclick: async () => {
+        try { await navigator.clipboard.writeText(r.link); copy.textContent = 'Copied ✓'; } catch { input.select(); }
+      } }, 'Copy link');
+      const share = navigator.share
+        ? h('button', { class: 'btn primary', type: 'button', onclick: () => navigator.share({ title: 'Hub Admin invite', text: `Your Hub Admin invite (${who}). It works once and expires in 48 hours.`, url: r.link }).catch(() => {}) }, 'Share…')
+        : null;
+      linkBox.replaceChildren(
+        h(
+          'div',
+          { class: 'banner', style: 'display:grid;gap:10px;margin-top:12px' },
+          h('div', {}, h('b', {}, `Invite for ${who} is ready. `), 'Send this link to them privately (WhatsApp, SMS or email). It works once and expires in 48 hours. They choose their own password, then can set up their fingerprint.'),
+          input,
+          h('div', { class: 'row' }, share, copy)
+        )
+      );
+      motion.pop(linkBox.firstChild);
+      form.reset();
+      refreshLists();
+    } catch (err) {
+      msg.className = 'msg err';
+      msg.textContent = err.message;
+    } finally {
+      create.disabled = false;
+    }
+  });
+
+  const lists = h('div');
+  const refreshLists = async () => {
+    try {
+      data = await api('/api/admins');
+    } catch {
+      return;
+    }
+    lists.replaceChildren(
+      ...data.admins.map((a) =>
+        h(
+          'div',
+          { class: 'device' },
+          h('span', { class: 'avatar', 'aria-hidden': 'true' }, a.username.slice(0, 1).toUpperCase()),
+          h(
+            'div',
+            { class: 'grow' },
+            h('b', {}, a.username, a.me ? ' (you)' : ''),
+            h('small', {}, `${a.last_login_at ? `last signed in ${ago(a.last_login_at)}` : 'not signed in yet'} · ${a.passkeys ? `${a.passkeys} passkey${a.passkeys > 1 ? 's' : ''}` : 'no fingerprint yet'}`)
+          ),
+          a.me
+            ? null
+            : h(
+                'button',
+                {
+                  class: 'btn',
+                  type: 'button',
+                  onclick: async () => {
+                    if (!confirm(`Remove ${a.username} as an admin? They’ll be signed out everywhere and can’t sign in again.`)) return;
+                    await api('/api/admins/remove', 'POST', { id: a.id }).catch((e) => alert(e.message));
+                    refreshLists();
+                  },
+                },
+                'Remove'
+              )
+        )
+      ),
+      ...data.invites.map((i) =>
+        h(
+          'div',
+          { class: 'device' },
+          h('span', { class: 'avatar pending', 'aria-hidden': 'true' }, '✉'),
+          h('div', { class: 'grow' }, h('b', {}, i.username), h('small', {}, `invite sent ${ago(i.created_at)} · waiting for them to join`)),
+          h('button', { class: 'btn', type: 'button', onclick: async () => (await api('/api/admins/invite', 'POST', { username: i.username, revoke: true }).catch(() => {}), refreshLists()) }, 'Cancel invite')
+        )
+      )
+    );
+  };
+  await refreshLists();
+  return h(
+    'section',
+    { class: 'card' },
+    h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Admins'), h('p', { class: 'sub' }, 'Everyone who can sign in to Hub Admin. All admins can do everything.'))),
+    lists,
+    h('div', { class: 'section-title', style: 'margin:18px 0 10px' }, 'Add an admin'),
+    form,
+    linkBox
+  );
+}
+
+function renderJoin(token) {
+  const msg = h('span', { class: 'msg', role: 'status' });
+  authScreen('Checking your invite…', null, msg);
+  api('/api/auth/join', 'POST', { token })
+    .then(({ username }) => {
+      const [passField, pass] = field('Choose a password (at least 10 characters)', { type: 'password', autocomplete: 'new-password', required: true, minlength: '10' });
+      const [againField, again] = field('Type it again', { type: 'password', autocomplete: 'new-password', required: true });
+      const userHint = h('input', { type: 'text', name: 'username', autocomplete: 'username', value: username, hidden: true, readonly: true });
+      const submit = h('button', { class: 'btn primary wide', type: 'submit' }, 'Create my account');
+      const m2 = h('span', { class: 'msg', role: 'status' });
+      const form = h('form', { class: 'form' }, userHint, passField, againField, submit, m2);
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (pass.value !== again.value) return ((m2.className = 'msg err'), (m2.textContent = 'The two passwords don’t match.'));
+        submit.disabled = true;
+        try {
+          await api('/api/auth/join', 'POST', { token, password: pass.value });
+          history.replaceState(null, '', '/#/');
+          start();
+        } catch (err) {
+          m2.className = 'msg err';
+          m2.textContent = err.message;
+          submit.disabled = false;
+          motion.shake(form);
+        }
+      });
+      authScreen(`Welcome, ${username}`, 'You’ve been invited to Hub Admin. Choose your password to finish. You can add your fingerprint right after.', form);
+      pass.focus();
+    })
+    .catch((e) => authScreen('Invite link', null, h('div', { class: 'banner' }, e.message), h('button', { class: 'linkish', type: 'button', onclick: () => (history.replaceState(null, '', '/#/'), start()) }, 'Go to sign in')));
 }
 
 // ── Router ─────────────────────────────────────────────────────────────────

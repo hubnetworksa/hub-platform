@@ -37,6 +37,10 @@ Username and password, or a passkey (fingerprint, face or device PIN) on each ph
 2. Run the **Deploy Hub Admin** workflow (Actions tab → Deploy Hub Admin → Run workflow). It stores the code as an encrypted Cloudflare secret.
 3. Open the app, enter the setup code, and choose your username and password. Setup then closes for good: it only works while no account exists.
 
+### Adding another admin (e.g. Guy)
+
+Settings → **Admins** → type their username → **Create invite link**, then send them the link privately (WhatsApp, SMS, email). It works once and expires in 48 hours. They open it, choose their own password, and can then set up their own fingerprint. Every admin has full access. Remove an admin from the same list; that signs them out everywhere. You can't remove yourself or the last admin.
+
 ### Forgot your password
 
 On the sign-in screen, **Forgot your password?** → the setup code, your username and a new password. That also signs the account out everywhere.
@@ -49,3 +53,7 @@ On the sign-in screen, **Forgot your password?** → the setup code, your userna
 ## Notifications on iPhone and iPad
 
 Apple only delivers web notifications to apps added to the Home Screen: open the app in Safari, tap Share → **Add to Home Screen**, open it from there, then go to **Settings** → **Turn on notifications**. Android, Windows and Mac work straight from the browser or the installed app.
+
+## Animations
+
+`public/motion.js` (GSAP 3.15.0 and ScrollTrigger, in `public/vendor/`, copied from the `gsap` npm package: free for commercial use under GreenSock's Standard license, https://gsap.com/standard-license). They're served from the app itself because its Content-Security-Policy only allows its own scripts. Everything is skipped for people with "reduce motion" turned on.
