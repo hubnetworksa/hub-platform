@@ -6,15 +6,19 @@
 //   { "items": [ { "slug": "...", "description": "...", "status": "researched", "sources": ["https://..."] }, ... ] }
 //
 // This script checks every item (all listings in the chunk present once,
-// 100-250 words and at most 1,500 characters (the site's description limit,
-// LONG_DESC_MAX in src/lib/rich-text.ts), no phone/email/link in the text,
-// no sales filler) and
+// researched: 100-250 words (target 110-150); from_known_details: 50-120 words
+// (target 50-80, only what is known, no padding); both at most 1,500 characters
+// (the site's description limit, LONG_DESC_MAX in src/lib/rich-text.ts), no
+// phone/email/link in the text, no sales filler) and
 // writes db/routine-updates/<city>/content-NNN.sql: one UPDATE per listing
 // behind the guard that leaves owned, claimed, paid and hand-curated listings
 // alone. It uses the existing description_enriched_at column, which the
 // content-upgrade migration cleared for every listing: a listing is changed
 // only while that is empty, and the update sets it to now, so a file applied
 // twice changes nothing.
+// It also writes content-upgrade/<city>/done-NNN.json (slug, status, sources
+// per listing): there is no database column for researched/from_known_details,
+// so this sidecar is how a later pass lists the from_known_details listings.
 // No schema change; the undo point is the database backup taken before the
 // run (see scripts/content-upgrade/undo.mjs).
 //
@@ -53,8 +57,13 @@ for (const [i, it] of items.entries()) {
   seen.add(it.slug);
   const d = typeof it.description === 'string' ? it.description.trim() : '';
   const w = words(d);
-  if (w < 100) errors.push(`${at}: only ${w} words: rewrite it to 110-150 words (more sourced detail, more on what it offers and the area) and run this again`);
-  if (w > 250) errors.push(`${at}: ${w} words: trim it to 110-150 words and run this again`);
+  if (it.status === 'from_known_details') {
+    if (w < 50) errors.push(`${at}: only ${w} words: from_known_details needs at least 50 (target 50-80): state the category, address, centre and suburb, no padding`);
+    if (w > 120) errors.push(`${at}: ${w} words: from_known_details is at most 120 (target 50-80); write only what is known, don't pad`);
+  } else {
+    if (w < 100) errors.push(`${at}: only ${w} words: rewrite it to 110-150 words (more sourced detail, more on what it offers and the area) and run this again`);
+    if (w > 250) errors.push(`${at}: ${w} words: trim it to 110-150 words and run this again`);
+  }
   if (d.length > 1500) errors.push(`${at}: ${d.length} characters (the site's limit is 1,500)`);
   if (PHONE.test(d)) errors.push(`${at}: phone number in the text`);
   if (EMAIL.test(d)) errors.push(`${at}: email address in the text`);
@@ -75,7 +84,16 @@ if (errors.length) {
 const q = (s) => `'${String(s).replace(/'/g, "''")}'`;
 // Owned, claimed, paid, owner-submitted, photographed or hand-built listings
 // never change; a listing is upgraded once, and only while its text is short.
-const guard = (slug) => `slug = ${q(slug)} AND description_enriched_at IS NULL AND length(COALESCE(description, '')) < 700
+// The text-unchanged condition (description = the batch file's
+// current_description) matters because admin edits made through the Edit modal
+// don't stamp description_enriched_at, so without it a hand-written rewrite made
+// after the batch was prepared would be overwritten by this update.
+const current = new Map(chunk.listings.map((l) => [l.slug, l.current_description]));
+const sameText = (slug) => {
+  const c = current.get(slug);
+  return c == null || String(c) === '' ? `COALESCE(description, '') = ''` : `description = ${q(c)}`;
+};
+const guard = (slug) => `slug = ${q(slug)} AND ${sameText(slug)} AND description_enriched_at IS NULL AND length(COALESCE(description, '')) < 700
   AND owner_user_id IS NULL AND COALESCE(subscription_tier, 0) = 0 AND COALESCE(origin, '') != 'owner_submitted'
   AND status = 'published' AND closed_at IS NULL AND is_test = 0
   AND custom_blocks IS NULL AND page_html IS NULL
@@ -95,4 +113,8 @@ for (const it of items) {
 mkdirSync(`db/routine-updates/${city}`, { recursive: true });
 writeFileSync(`db/routine-updates/${city}/content-${nnn}.sql`, sql.join('\n') + '\n');
 const researched = items.filter((i) => i.status === 'researched').length;
+writeFileSync(`content-upgrade/${city}/done-${nnn}.json`, JSON.stringify({
+  city, chunk: Number(nnn), generated_at: new Date().toISOString(),
+  items: items.map((i) => ({ slug: i.slug, status: i.status, sources: i.sources ?? [] })),
+}, null, 2) + '\n');
 console.log(`ok: db/routine-updates/${city}/content-${nnn}.sql (${items.length} listings: ${researched} researched, ${items.length - researched} from known details)`);

@@ -36,7 +36,7 @@ Why it works:
 
 Write every description like that:
 
-- **Write 110–150 words for every listing.** The hard minimum is 100 words, and the site's limit for the field is 1,500 characters including spaces. Count before you save. If a draft is short, add more sourced detail about what the business offers and more about the area, never filler. That's 4–7 flowing sentences in plain South African English, warm and professional, like a short "About us". The RE/MAX example above shows the quality to match; yours must be longer (100+ words). Use the extra room only for real, sourced detail, never padding.
+- **Length depends on the status.** `researched` (you found facts about this business): **100–250 words allowed, target 110–150**. `from_known_details` (nothing found): **50–120 words allowed, target 50–80**. Both: at most 1,500 characters including spaces (the site's limit for the field). Count before you save. If a researched draft is short, add more sourced detail about what the business offers and more about the area, never filler. That's 4–7 flowing sentences in plain South African English, warm and professional, like a short "About us". The RE/MAX example above shows the quality to match; yours must be longer (100+ words when researched). Use the extra room only for real, sourced detail, never padding.
 - **Third person** ("the team", "the practice", "the store"), never "we" or "our". The business didn't write it, so don't speak for it.
 - **Cover, in this order:**
   1. **What it is and what it does:** the specific services, products, brands and specialities you read about.
@@ -50,7 +50,7 @@ Write every description like that:
   - make up claims ("award-winning", "the best", "leading") unless a source says so;
   - use sales filler ("one-stop shop", "look no further");
   - use HTML.
-- **If your research adds nothing about the business itself** (rare), still write a full, natural introduction (at least 100 words) from the batch data: what kind of business it is, where it is with that area context, the centre it's in, and who it serves (only if that's obvious from the category). Never invent services. Mark it `"from_known_details"`.
+- **If your research adds nothing about the business itself** (rare), mark it `"from_known_details"` and write **50–120 words, target 50–80**. Write ONLY what is actually known: the category, address, centre, suburb and trading pattern if it is in the data. One sentence of area context at most. Never pad with generic text about the suburb or the category, and never invent services. It's fine to be short. Why: the same padding repeated across many listings in one suburb is near-duplicate thin content, which is the exact problem this upgrade is meant to fix.
 
 ## Output: one JSON file, then one command
 
@@ -58,8 +58,8 @@ Write `content-upgrade/out/<city>/chunk-NNN.json`:
 
 ```json
 { "items": [
-  { "slug": "<slug>", "description": "<100-150 words, max 1,500 characters>", "status": "researched", "sources": ["https://page-you-used"] },
-  { "slug": "<slug>", "description": "<100-150 words, max 1,500 characters>", "status": "from_known_details", "sources": [] }
+  { "slug": "<slug>", "description": "<110-150 words, max 1,500 characters>", "status": "researched", "sources": ["https://page-you-used"] },
+  { "slug": "<slug>", "description": "<50-80 words, only what is known, max 1,500 characters>", "status": "from_known_details", "sources": [] }
 ] }
 ```
 
@@ -72,8 +72,17 @@ Then run:
 node scripts/content-upgrade/to-sql.mjs <city> <NNN>
 ```
 
-It checks everything (at least 100 words, the 1,500-character limit) and writes the guarded SQL to `db/routine-updates/<city>/content-NNN.sql`. The SQL leaves any owned, claimed or paid listing untouched (the database also blocks those), and the old text can be restored from the backup taken before the run.
-- **If it lists descriptions to fix** (e.g. one under 100 words), rewrite each one to 110–150 words in your JSON and run it again. Repeat until it prints `ok`. Every listing must end up with a 100+ word description; never drop one from the file.
-- **When it prints `ok`:** commit both files and push to `main` with the message `content-upgrade <city> chunk <NNN>`. If the push is rejected, run `git pull --rebase` and push again.
+It checks everything (researched at least 100 words, from_known_details at least 50, the 1,500-character limit) and writes the guarded SQL to `db/routine-updates/<city>/content-NNN.sql`, plus a small sidecar `content-upgrade/<city>/done-NNN.json` (`{ city, chunk, generated_at, items: [{slug, status, sources}] }`). The status (`researched` / `from_known_details`) is **not stored in the database** (there is no column); it exists only in that sidecar and as a comment in the SQL, so a later pass can list the `from_known_details` listings from `done-NNN.json`. Each UPDATE only applies if the listing's description is still exactly the `current_description` from the batch file, so a hand-written rewrite made after the batch was prepared is never overwritten. The SQL leaves any owned, claimed or paid listing untouched (the database also blocks those), and the old text can be restored from the backup taken before the run.
+- **If it lists descriptions to fix** (e.g. a researched one under 100 words, or a from_known_details one outside 50–120), rewrite each in your JSON and run it again. Repeat until it prints `ok`. Never drop a listing from the file.
+- **Trial mode:** if you are told "trial", do NOT push. Commit locally only, and also append each listing's before/after to `status/content-upgrade-trial.md` in this format:
+
+  ```
+  ### <name> (<city>, <suburb>)
+  status: <researched|from_known_details>
+  sources: <urls, or none>
+  **Before:** <current_description>
+  **After:** <new description>
+  ```
+- **When it prints `ok` (and you were not told "trial"):** commit the JSON, the SQL and `done-NNN.json`, and push to `main` with the message `content-upgrade <city> chunk <NNN>`. If the push is rejected, run `git pull --rebase` and push again.
 
 Done. Don't do another batch unless you were asked to.

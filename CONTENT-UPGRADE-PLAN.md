@@ -1,15 +1,14 @@
 # Content upgrade plan: low-content listings and pages
 
-Status: **plan, not started**. Written 4 October 2026, updated the same day for the all-at-once agent approach (section 9). Scope: PretoriaHub, PolokwaneHub and TheCapeTownHub.
+Status: **migration deployed (4 October 2026); trial next**. Written 4 October 2026, updated the same day for the all-at-once agent approach (section 9). Scope: PretoriaHub, PolokwaneHub and TheCapeTownHub.
 
 > **Current approach (latest decisions, 4 October 2026):**
 > - **Scope:** descriptions only. No hours, emails or short descriptions.
-> - **Coverage:** every eligible listing (9,408) gets a description of at least 100 words (never less), ideally 100–150 (at most 1,500 characters, the site's limit for the field since 4 October); there is no "skip".
+> - **Coverage:** every eligible listing (9,408) gets a description: at least 100 words (never less) when researched, ideally 100–150, or 50–80 words (never under 50) for listings with no sources found (at most 1,500 characters, the site's limit for the field since 4 October); there is no "skip".
 > - **How:** all at once, by agents working in parallel on 50-listing batches (section 9). The agent brief is `content-upgrade/README.md`.
 > - **Keeping it cheap:** about 2 tool calls per listing. Agents only write a small JSON file; `scripts/content-upgrade/to-sql.mjs` checks it and generates the guarded SQL.
 > - **Quality bar:** owner-quality, third-person introductions, modelled on RE/MAX Northland Realty's own description (`content-upgrade/README.md`).
 > - **Marking upgraded listings:** the existing `description_enriched_at`. The content-upgrade migration clears it on every listing and narrows the 1 October lock to owner-managed and claimed listings. The upgrade stamps it again as each description is written. The undo point is a database backup taken just before the agents start (`scripts/content-upgrade/undo.mjs`).
-> - **Marking upgraded listings:** the existing `description_enriched_at` column, set to the time of the upgrade. There are no new columns or tables. The undo point is a database backup taken just before the agents start (`scripts/content-upgrade/undo.mjs`).
 > - **The database lock:** the 1 October lock that blocks every enrichment write is narrowed to owner-managed and claimed listings (migration `*_content_upgrade_enrichment_guard.sql`), so those stay locked at database level.
 >
 > Where older sections below mention hours, emails, short descriptions, a slow routine or a "no sources" list, this box overrides them.
@@ -67,10 +66,10 @@ The last two lines mean a listing is upgraded once only, and a description that 
 |---|---|
 | Under 50 words | **Thin**: one or two generic sentences. |
 | 50–79 words | **Still thin** for a business page: a short paragraph. |
-| **80–100 words** | **Not thin (the target):** 3–6 specific, sourced sentences. |
+| **100–150 words** | **Not thin (the target for researched listings):** 4–7 specific, sourced sentences. Listings with no sources found (`from_known_details`) are 50–80 words of only what is known; padding them would create near-duplicate text across a suburb. |
 | Over 150 words | Fine, but not needed. Don't pad to get there. |
 
-Google sets no official word count. The rule of thumb for a directory listing is to say enough to be clearly more useful than the bare name/phone/address card every other directory shows. 80+ specific words, plus hours and a one-line summary, does that.
+Google sets no official word count. The rule of thumb for a directory listing is to say enough to be clearly more useful than the bare name/phone/address card every other directory shows. 100+ specific words (researched), plus hours and a one-line summary, does that.
 
 **Exact counts:** every live listing's description, read through the sites' own listing API on 4 October 2026.
 
@@ -120,7 +119,7 @@ Map location, address, phone and category gaps are **not** in scope. Those need 
 
 These rules go into the new runbook, `routines/content-upgrade.md`. It replaces the disabled `routines/enrichment.md`, which was switched off because it rewrote a paying owner's description.
 
-**Business description: 80–100 words (3–6 sentences), in plain South African English.**
+**Business description: researched 100–150 words (minimum 100); `from_known_details` 50–80 words (minimum 50); both at most 1,500 characters; plain South African English.**
 
 - **What it does:** say what the business actually does, and what it specialises in.
 - **Specifics, only if sourced:** how long it has operated, brands stocked, services, who it serves.
@@ -139,7 +138,7 @@ These rules go into the new runbook, `routines/content-upgrade.md`. It replaces 
 - Each source URL is appended to `source_urls`.
 - Facts we already hold (name, category, suburb, centre) need no new source.
 
-**Every listing gets a full description; there is no "skip" outcome.** Research comes first: existing sources, website, Google listing, social pages, directories, the centre's site, and the chain's own site for chain branches. If that adds nothing about the business itself, the agent writes the 80–100 words from the details we already hold: category, full address, the centre and what it is, the suburb and where it sits in the city, access and hours. Nothing is invented. Those listings are marked `content_upgrade_status = 'from_known_details'` (the others `researched`), so a later pass can look for more online. They never stay as one-liners. The full rules and an example are in `content-upgrade/README.md`.
+**Every listing gets a full description; there is no "skip" outcome.** Research comes first: existing sources, website, Google listing, social pages, directories, the centre's site, and the chain's own site for chain branches. If that adds nothing about the business itself, the agent writes 50–80 words from only the details we already hold: category, address, the centre, the suburb, trading pattern if known, and at most one sentence of area context. Nothing is invented and nothing is padded (identical filler across a suburb is near-duplicate thin content). The status (`from_known_details`, the others `researched`) is **not stored in the database**; it is written to `content-upgrade/<city>/done-NNN.json` and as a comment in the SQL, so a later pass can list those listings and look for more online. They never stay as one-liners. The full rules and an example are in `content-upgrade/README.md`.
 
 **Never** shorten a description, change the business name, phone, address or category, or upgrade a protected listing.
 
@@ -181,7 +180,7 @@ Each run takes the next batch from one queue, ordered by:
 4. **`next.mjs content-upgrade`:** builds the queue (sections 2 and 4) and leaves protected listings out. Each batch carries the current description text, so the update can check that it hasn't changed since.
 5. **`validate.mjs`** rejects any statement that:
    - lacks the full guard from section 1;
-   - writes a description outside 80–100 words (a little slack allowed) or a short description over 160 characters;
+   - writes a description outside the word rules (researched 100–250, from_known_details 50–120, both at most 1,500 characters) or a short description over 160 characters;
    - contains a phone number, email address or URL in the text;
    - matches the generic "X is a Y in Z" pattern with nothing else added;
    - adds a fact without appending a new source URL;
@@ -239,7 +238,7 @@ Busiest-first means most of the traffic gain comes in the first month.
 
 ## 8. Decisions for you
 
-1. **Length:** 80–100 words for descriptions. More, less, or fine?
+1. **Length:** researched 100–150 words, from_known_details 50–80 words. More, less, or fine?
 2. **Hours and email:** fill these too while researching (recommended), or descriptions only?
 3. **Decided:** every listing gets a full description; nothing is left as is.
 4. **Pace:** decided: all at once with agents (section 9).
@@ -275,17 +274,17 @@ Batches don't overlap, so any number of agents can work on the same city at once
 
 ### What must be in place before the first agent runs
 
-1. **Done: `scripts/content-upgrade/to-sql.mjs`.** It checks an agent's JSON: every listing present once, 80–100 words, no phone/email/link/HTML/sales filler, valid statuses and sources. It then writes one guarded `UPDATE` per listing, which also stamps `description_enriched_at`.
-2. **Done: content-upgrade migration** (`pretoria/0070`, `polokwane/0073`, `capetown/0071`). It clears every `description_enriched_at` and narrows the lock as described in section 1.
+1. **Done: `scripts/content-upgrade/to-sql.mjs`.** It checks an agent's JSON: every listing present once, researched 100–250 words (target 110–150) or from_known_details 50–120 words (target 50–80), both at most 1,500 characters, no phone/email/link/HTML/sales filler, valid statuses and sources. It then writes one guarded `UPDATE` per listing, which also stamps `description_enriched_at`. The guard includes a text-unchanged condition (`description` must still equal the batch file's `current_description`), because admin edits through the Edit modal don't stamp `description_enriched_at`. It also writes the sidecar `content-upgrade/<city>/done-NNN.json` (slug, status, sources), the only record of researched vs from_known_details.
+2. **Done and DEPLOYED (live 2026-10-04 ~06:15 UTC; `description_enriched_at` is already cleared on all three sites): content-upgrade migration** (`pretoria/0070`, `polokwane/0073`, `capetown/0071`). It clears every `description_enriched_at` and narrows the lock as described in section 1.
    - **Tested on a copy of the database with the original lock:**
      - every date was cleared;
      - the batch upgraded the unclaimed listings and left the owned and claimed ones alone;
      - a direct overwrite of the owned listing (as the old routine would have done) was still dropped;
      - re-applying the batch changed nothing.
 3. **Done: undo.** `node scripts/content-upgrade/undo.mjs <city> <backup.sql> <NNN|all>`.
-4. **Before starting: take the undo point.** Run GitHub → Actions → "Weekly database backup" → Run workflow. Its artifact is the backup (kept 90 days).
-5. **With the push to main: deploy filter.** `content-upgrade/` and `scripts/content-upgrade/` are added to the deploy workflow's routine-only paths, so agent pushes don't each rebuild all three sites. The push that brings the migration rebuilds once; that's what applies it.
-6. **Trial:** chunk-001 for each city first, then check before running the rest.
+4. **Before the first agent runs: take the backup FIRST (the undo point).** Done: triggered 2026-10-04 06:24 UTC via the "Weekly database backup" workflow, run 37182710594. Keep the artifact (90 days).
+5. **DONE: deploy filter.** It is already in `.github/workflows/deploy.yml`: the contentUpgrade paths are routine-only, so agent pushes don't each rebuild all three sites.
+6. **Trial review:** chunk-001 for each city is written but NOT pushed (agents told "trial" commit locally only). The before/after text is in `status/content-upgrade-trial.md`. The owner fact-checks 10–15 listings against sources before the rest runs.
 
 ### How long "all at once" takes
 
@@ -300,4 +299,4 @@ All 9,408 upgrades write about 9,400 rows in total, one update each. The free li
 
 ### Every listing is upgraded
 
-Many small businesses have nothing online beyond a directory card, and the agents' sandbox can't open every website. Expect perhaps 20–40% of listings to be written `from_known_details` (location, centre, category and access details we already hold) rather than `researched`. Every one still ends up at 80–100 words, with no invented facts. The marker lets a later pass add more detail when the business appears online.
+Many small businesses have nothing online beyond a directory card, and the agents' sandbox can't open every website. Expect perhaps 20–40% of listings to be written `from_known_details` (location, centre, category and access details we already hold) rather than `researched`. Every one still gets a real description (50–80 words, only what is known, no padding), with no invented facts. The `done-NNN.json` sidecar lets a later pass add more detail when the business appears online.
