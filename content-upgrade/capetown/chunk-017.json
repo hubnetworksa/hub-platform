@@ -5,10 +5,20 @@
   {
    "slug": "claremont-dental-claremont",
    "name": "Claremont Dental",
-   "category": "dentists",
-   "suburb": "claremont",
+   "category": "Dentists",
+   "suburb": "Claremont",
+   "region": "southern-suburbs",
+   "address": "Shop A1, Ground Floor, Protea Place, 40 Dreyer Street, Claremont, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.medpages.info/sf/index.php?page=person&personcode=1917841",
+    "https://www.recomed.co.za/dentist/cape-town/shadley-bruintjies/27498/35309/",
+    "https://capedentists.co.za/dentist-open-in-claremont/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:00, Sat 09:00-13:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "Claremont Dental is a general and cosmetic dental practice in Protea Place, Claremont, offering teeth cleaning, fillings, extractions, teeth whitening and sedation dentistry."
@@ -16,10 +26,19 @@
   {
    "slug": "clicks-central-square-pinelands",
    "name": "Clicks Central Square Pinelands",
-   "category": "pharmacies",
-   "suburb": "pinelands",
+   "category": "Pharmacies",
+   "suburb": "Pinelands",
+   "region": "northern-suburbs",
+   "address": "Shop 6, Central Buildings, Central Square, Forrest Drive, Pinelands, Cape Town, 7405",
+   "shopping_centre": "Central Square",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://clicks.co.za/store/Central-Square-%E2%80%93-Pinelands/1522",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=257317"
+   ],
    "has_hours": true,
+   "hours": "Mon-Tue 08:00-19:00, Wed 09:00-19:00, Thu-Fri 08:00-19:00, Sat 08:00-18:00, Sun 09:00-17:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "Clicks Central Square Pinelands is a branch of the Clicks pharmacy and health, beauty and baby-care retail chain, located in Central Square, Pinelands."
@@ -27,10 +46,19 @@
   {
    "slug": "clicks-cobble-walk-durbanville",
    "name": "Clicks",
-   "category": "pharmacies",
-   "suburb": "durbanville",
+   "category": "Pharmacies",
+   "suburb": "Durbanville",
+   "region": "northern-suburbs",
+   "address": "Shop 55, Cobble Walk Shopping Centre, Cnr Legato Dr & Verdi Blvd, Sonstraal Heights, Durbanville, Cape Town, 7550",
+   "shopping_centre": "Cobble Walk",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://clicks.co.za/store/Cobble-Walk/1537",
+    "https://www.yellowpages.net.za/amp/phone,27-219794277,Store,Durbanville,ZA31128.html"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-19:00, Sat 08:00-17:00, Sun 09:00-14:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "Clicks is a pharmacy and health and beauty retailer located within Cobble Walk Shopping Centre in Durbanville, part of the national Clicks chain."
@@ -38,10 +66,19 @@
   {
    "slug": "clicks-lansdowne-corner-lansdowne",
    "name": "Clicks Lansdowne Corner",
-   "category": "pharmacies",
-   "suburb": "lansdowne",
+   "category": "Pharmacies",
+   "suburb": "Lansdowne",
+   "region": "cape-flats",
+   "address": "Shop 4, Lansdowne Corner, Cnr Govan Mbeki Road & Jan Smuts Drive, Lansdowne, Cape Town, 7780",
+   "shopping_centre": "Lansdowne Corner Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://clicks.co.za/store/Lansdowne/1646",
+    "https://www.guzzle.co.za/clicks/lansdowne/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sat 09:00-17:00, Sun 09:00-14:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "Clicks Lansdowne Corner is a pharmacy and health, beauty and homeware retailer at Lansdowne Corner Shopping Centre, part of the national Clicks chain."
@@ -49,10 +86,19 @@
   {
    "slug": "clicks-meadowridge-meadowridge",
    "name": "Clicks Meadowridge",
-   "category": "pharmacies",
-   "suburb": "meadowridge",
+   "category": "Pharmacies",
+   "suburb": "Meadowridge",
+   "region": "southern-suburbs",
+   "address": "Park 'N Shop, Firgrove Way, Meadowridge, Cape Town, 7806",
+   "shopping_centre": "Meadowridge Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://clicks.co.za/store/Meadowridge/113",
+    "https://za.polomap.com/cape-town/85360"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-18:00, Sat 08:00-17:00, Sun 09:00-15:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "Clicks Meadowridge is a branch of the Clicks pharmacy, health and beauty retail chain, located in the Park 'N Shop centre in Meadowridge."
@@ -60,10 +106,19 @@
   {
    "slug": "cocoa-cha-chi-observatory",
    "name": "Cocoa Cha Chi",
-   "category": "restaurants-takeaways",
-   "suburb": "observatory",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Observatory",
+   "region": "city-bowl",
+   "address": "Shop 20, Lower Main Road, Observatory, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.cocoa.co.za/",
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/cocoa-cha-chi-18477",
+    "https://www.eatout.co.za/venue/cocoa-cha-chi/"
+   ],
    "has_hours": true,
+   "hours": "Open daily 07:00-23:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "Cocoa Cha Chi is a cafe on Lower Main Road in Observatory serving coffee, all-day breakfasts, sandwiches and pizzas, open long hours daily."
@@ -71,10 +126,19 @@
   {
    "slug": "colcacchio-go-westlake-westlake",
    "name": "Col'Cacchio GO Westlake",
-   "category": "restaurants-takeaways",
-   "suburb": "westlake",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Westlake",
+   "region": "south-peninsula",
+   "address": "Unit F43, Westlake Shopping Centre, Westlake Drive, Westlake, Cape Town, 7945",
+   "shopping_centre": "Westlake Shopping Centre",
+   "phone_on_file": true,
    "website": "https://www.colcacchio.co.za/go/westlake",
+   "existing_sources": [
+    "https://www.colcacchio.co.za/go/westlake",
+    "https://www.facebook.com/ColCacchioGOWestlake/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 10:30-21:30",
    "has_email": true,
    "current_words": 23,
    "current_description": "Col'Cacchio GO Westlake is a click-and-collect pizzeria of the Col'Cacchio chain, based in Westlake Shopping Centre and offering pizza for collection and delivery."
@@ -82,10 +146,19 @@
   {
    "slug": "crossroads-cdc-crossroads",
    "name": "Crossroads CDC",
-   "category": "clinics-healthcare",
-   "suburb": "crossroads",
+   "category": "Clinics & Healthcare",
+   "suburb": "Crossroads",
+   "region": "cape-flats",
+   "address": "Cwayi Street, Crossroads, Cape Town, 7750",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.westerncape.gov.za/health-wellness/facility/crossroads-cdc",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=94628"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-16:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "Crossroads CDC is a public primary healthcare clinic on Cwayi Street operated by the Western Cape Department of Health, serving the Crossroads community."
@@ -93,10 +166,19 @@
   {
    "slug": "cuthills-hair-design-panorama",
    "name": "Cuthill's Hair Design",
-   "category": "beauty-hair-salons",
-   "suburb": "panorama",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Panorama",
+   "region": "northern-suburbs",
+   "address": "80 Panorama Road, Panorama, Cape Town, 7500",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/lvp/cuthills-hair-design-panorama-road-cape-town-loP9JM",
+    "https://www.facebook.com/Cuthills"
+   ],
    "has_hours": true,
+   "hours": "Mon Closed, Tue-Fri 10:00-17:00, Sat 09:30-13:00, Sun Closed",
    "has_email": false,
    "current_words": 23,
    "current_description": "Cuthill's Hair Design is a hair salon on Panorama Road in Panorama, offering cuts, styling, colour and keratin treatments, including specialist curly-hair services."
@@ -104,10 +186,20 @@
   {
    "slug": "damhuis-restaurant-melkbosstrand",
    "name": "Damhuis Restaurant",
-   "category": "restaurants-takeaways",
-   "suburb": "melkbosstrand",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Melkbosstrand",
+   "region": "west-coast",
+   "address": "32 Beach Road, Melkbosstrand, Cape Town, 7441",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.diedamhuis.co.za",
+   "existing_sources": [
+    "https://www.diedamhuis.co.za/contact/",
+    "https://www.tripadvisor.com/Restaurant_Review-g667022-d2535230-Reviews-or75-Damhuis_Restaurant-Melkbosstrand_Western_Cape.html",
+    "https://www.diedamhuis.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Tue-Sun 09:00-23:00, Mon Closed",
    "has_email": false,
    "current_words": 23,
    "current_description": "Damhuis Restaurant (Die Damhuis) is a seafood and South African cuisine restaurant on the Melkbosstrand beachfront, recommending advance bookings for its regular sittings."
@@ -115,10 +207,19 @@
   {
    "slug": "debonairs-pizza-bothasig-bothasig",
    "name": "Debonairs Pizza Bothasig",
-   "category": "restaurants-takeaways",
-   "suburb": "bothasig",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Bothasig",
+   "region": "northern-suburbs",
+   "address": "Shop 53, Bothasig Square, Cnr Vryburger Avenue & Tafelberg Street, Bothasig, Cape Town, 7441",
+   "shopping_centre": "Bothasig Square",
+   "phone_on_file": true,
    "website": "https://location.debonairspizza.co.za/bothasig",
+   "existing_sources": [
+    "https://location.debonairspizza.co.za/bothasig",
+    "https://www.cylex.net.za/company/debonairs-pizza-23692766.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Debonairs Pizza Bothasig is a pizza delivery and takeaway outlet located within Bothasig Square in Bothasig, part of the national Debonairs Pizza chain."
@@ -126,10 +227,21 @@
   {
    "slug": "dr-r-lalloo-matroosfontein",
    "name": "Dr R Lalloo",
-   "category": "dentists",
-   "suburb": "matroosfontein",
+   "category": "Dentists",
+   "suburb": "Matroosfontein",
+   "region": "cape-flats",
+   "address": "22 Valhalla Road, 4A Metropolitan Centre, Charlesville, Matroosfontein, Cape Town, 7490",
+   "shopping_centre": "Charlesville Mall",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.brabys.com/za/western-cape/bonteheuwel/charlesville/dentists/dr-r-lalloo",
+    "https://www.searchinafrica.com/business/5816671/south-africa/western-cape/bonteheuwel/charlesville/valhalla-dve/dentists/dental-surgeons/dr-r-lalloo",
+    "https://www.africanadvice.com/1248821/Dentists/Western_Cape/Dr_R_Lalloo/",
+    "https://www.recomed.co.za/dentist/cape-town/ro-lalloo/16728/22757/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 10:00-18:00, Sat 10:00-13:00, Sun Closed",
    "has_email": false,
    "current_words": 23,
    "current_description": "Dr R Lalloo is a dental practice in the Charlesville Mall complex in Matroosfontein, offering general dentistry including preventive, cosmetic and restorative treatment."
@@ -137,10 +249,19 @@
   {
    "slug": "faulls-pharmacy-parow",
    "name": "Faull's Pharmacy",
-   "category": "pharmacies",
-   "suburb": "parow",
+   "category": "Pharmacies",
+   "suburb": "Parow",
+   "region": "northern-suburbs",
+   "address": "169 Voortrekker Road, Parow, Cape Town, 7500",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.yellosa.co.za/company/489875/faulls-pharmacy",
+    "https://vymaps.com/ZA/Faulls-Pharmacy-Parow-378257082233224/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Faull's Pharmacy is a retail pharmacy on Voortrekker Road in Parow, offering dispensing and everyday health and wellness services to the local community."
@@ -148,10 +269,20 @@
   {
    "slug": "fish-hoek-veterinary-clinic-fish-hoek",
    "name": "Fish Hoek Veterinary Clinic",
-   "category": "vets-animal-care",
-   "suburb": "fish-hoek",
+   "category": "Vets & Animal Care",
+   "suburb": "Fish Hoek",
+   "region": "south-peninsula",
+   "address": "77 Kommetjie Road, Fish Hoek, Cape Town, 7975",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://savet.co.za/vet/fish-hoek-veterinary-clinic",
+    "https://topvet.net/practices/south-africa/western-cape/cape-town/fish-hoek-veterinary-clinic-26581",
+    "https://veterinary.co.za/find-a-vet/fish-hoek-veterinary-clinic-two-oceans-veterinary-group/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-12:00, 15:00-18:00, Sat 09:00-12:00, Sun Closed",
    "has_email": false,
    "current_words": 23,
    "current_description": "Fish Hoek Veterinary Clinic, part of the Two Oceans Veterinary Group, provides check-ups, dental care and surgical procedures for pets in Fish Hoek."
@@ -159,10 +290,19 @@
   {
    "slug": "food-lovers-market-parklands",
    "name": "Food Lover's Market Parklands",
-   "category": "supermarkets-groceries",
-   "suburb": "parklands",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Parklands",
+   "region": "west-coast",
+   "address": "Shop 33, Emporium Centre, Sandown Road, Parklands, Cape Town, 7441",
+   "shopping_centre": "The Emporium Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://foodloversmarket.co.za/stores/parklands/",
+    "https://emporiumcentre.co.za/directory/food-lovers-market/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Food Lover's Market Parklands is a branch of the Food Lover's Market fresh produce and grocery chain inside the Emporium Centre in Parklands."
@@ -170,10 +310,20 @@
   {
    "slug": "foragers-deli-wholefoods-scarborough",
    "name": "Foragers Deli & Wholefoods",
-   "category": "general-retail",
-   "suburb": "scarborough",
+   "category": "General Retail",
+   "suburb": "Scarborough",
+   "region": "south-peninsula",
+   "address": "2 Watsonia Lane, The Village Hub, Scarborough, Cape Town, 7975",
+   "shopping_centre": "The Village Hub",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.thevillagehub.co.za/foragers",
+    "https://foursquare.com/v/foragers-deli--wholefoods/56eff97d498e9b717c5854e2",
+    "https://www.tripadvisor.com/Restaurant_Review-g1722390-d19249873-Reviews-Foragers_Deli_Whole_Foods_Store-Cape_Town_Western_Cape.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Foragers Deli & Wholefoods is a deli and whole foods store inside The Village Hub in Scarborough, stocking fresh and packaged wholefood groceries."
@@ -181,10 +331,20 @@
   {
    "slug": "game-kenilworth",
    "name": "GAME",
-   "category": "general-retail",
-   "suburb": "kenilworth",
+   "category": "General Retail",
+   "suburb": "Kenilworth",
+   "region": "southern-suburbs",
+   "address": "Shop 62 & 63, Kenilworth Centre, Doncaster Road, Kenilworth, Cape Town, 7708",
+   "shopping_centre": "Kenilworth Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://kenilworthcentre.co.za/stores/store-list/game/",
+    "https://za.africabz.com/western-cape/game-46351",
+    "https://my-catalogue.co.za/stores/kenilworth/game/kenilworth-centre-doncastor-road"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-19:00, Sat 08:00-18:00, Sun 09:00-17:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "GAME at Kenilworth Centre is a general merchandise retailer stocking electronics, appliances, homeware and more, at Shop 62 & 63 of the centre."
@@ -192,10 +352,19 @@
   {
    "slug": "gamo-hair-beauty-salon-spa-rondebosch",
    "name": "Gamo Hair Beauty Salon & SPA",
-   "category": "beauty-hair-salons",
-   "suburb": "rondebosch",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Rondebosch",
+   "region": "southern-suburbs",
+   "address": "18 Main Road, Rondebosch, Cape Town, 7700",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.facebook.com/GamoHairandBeauty/",
+    "https://www.beautynailhairsalons.com/ZA/Cape-Town/123580145001326/Gamo-Hair-Beauty-Salon-&-SPa"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Gamo Hair Beauty Salon & SPA is a unisex hair and beauty salon in Rondebosch offering hair styling, beauty treatments and massage services."
@@ -203,10 +372,19 @@
   {
    "slug": "gelato-mania-camps-bay",
    "name": "Gelato Mania",
-   "category": "restaurants-takeaways",
-   "suburb": "camps-bay",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Camps Bay",
+   "region": "atlantic-seaboard",
+   "address": "Shop 11, Ground Floor, The Promenade, Victoria Road, Camps Bay, Cape Town",
+   "shopping_centre": "The Promenade",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://gelatomania.co.za/camps-bay/",
+    "https://za.africabz.com/western-cape/gelato-mania-183447"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 09:00-22:30",
    "has_email": false,
    "current_words": 23,
    "current_description": "Gelato Mania at The Promenade in Camps Bay is a gelato and ice cream parlour on Victoria Road, open daily including public holidays."
@@ -214,10 +392,19 @@
   {
    "slug": "going-under-clothing-nyanga-junction-manenberg",
    "name": "Going Under Clothing",
-   "category": "fashion-clothing",
-   "suburb": "manenberg",
+   "category": "Fashion & Clothing",
+   "suburb": "Manenberg",
+   "region": "cape-flats",
+   "address": "Shop 35, Nyanga Junction Shopping Centre, Duinefontein Road, Manenberg, Cape Town, 7764",
+   "shopping_centre": "Nyanga Junction Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.goingunder.co.za/find-our-stores/",
+    "https://m.guzzle.co.za/retailer/1752/nyanga/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Going Under Clothing is a South African fashion retailer offering affordable, on-trend clothing; this branch trades from Nyanga Junction Shopping Centre in Manenberg."
@@ -225,10 +412,19 @@
   {
    "slug": "golden-acre-dental-practice-cape-town-cbd",
    "name": "Golden Acre Dental Practice",
-   "category": "dentists",
-   "suburb": "cape-town-cbd",
+   "category": "Dentists",
+   "suburb": "Cape Town CBD",
+   "region": "city-bowl",
+   "address": "Golden Acre Shopping Centre, Shop 21A, 9 Adderley St, Cape Town",
+   "shopping_centre": "Golden Acre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.recomed.co.za/dentist/cape-town/a-a-mia/5543/5336/",
+    "https://nearbyza.com/medical-specialists/dentists/9-adderley-street-shop-21a-golden-acre-cbd-cape-town-city-centre-cape-town-8001-south-africa"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Golden Acre Dental Practice is a dental practice located within the Golden Acre shopping centre on Adderley Street in the Cape Town CBD."
@@ -236,10 +432,19 @@
   {
    "slug": "goodwood-dental-studio-goodwood",
    "name": "Goodwood Dental Studio",
-   "category": "dentists",
-   "suburb": "goodwood",
+   "category": "Dentists",
+   "suburb": "Goodwood",
+   "region": "northern-suburbs",
+   "address": "1st Floor, Voortrekker Centre, 100 Voortrekker Road, Goodwood, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.goodwooddentalstudio.co.za/",
+   "existing_sources": [
+    "https://www.goodwooddentalstudio.co.za/contact-us/",
+    "https://www.facebook.com/GoodwoodDentalStudio/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Goodwood Dental Studio is a dental practice in Voortrekker Centre, Goodwood, offering services ranging from routine check-ups to cosmetic, implant and orthodontic dentistry."
@@ -247,10 +452,20 @@
   {
    "slug": "hang-ten-cafe-muizenberg",
    "name": "Hang Ten Cafe",
-   "category": "restaurants-takeaways",
-   "suburb": "muizenberg",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Muizenberg",
+   "region": "south-peninsula",
+   "address": "Balmoral Building, 62 Beach Road, Muizenberg, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tripadvisor.com/Restaurant_Review-g1509162-d10067431-Reviews-Hang_Ten_Cafe-Muizenberg_Western_Cape.html",
+    "https://www.eatout.co.za/venue/hang-ten-cafe/",
+    "https://www.novacircle.com/spots/africa/south-africa/western-cape/city-of-cape-town-metropolitan-municipality/muizenberg/hang-ten-cafe-430d80/opening-hours"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 06:30-18:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "Hang Ten Cafe is a creperie and coffee bar at Muizenberg's Surfers Corner beachfront, serving crepes, breakfast and coffee to surfers and beachgoers."
@@ -258,10 +473,19 @@
   {
    "slug": "hanover-park-dental-clinic-hanover-park",
    "name": "Hanover Park Dental Clinic",
-   "category": "dentists",
-   "suburb": "hanover-park",
+   "category": "Dentists",
+   "suburb": "Hanover Park",
+   "region": "cape-flats",
+   "address": "Cnr Hanlyn Walk & Hanover Park Avenue, Hanover Park, Cape Town, 7780",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.readymap.info/4/22040",
+    "https://za.polomap.com/windsor-park/27920"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "A dental clinic in Hanover Park offering general dental care from its premises on the corner of Hanlyn Walk and Hanover Park Avenue."
@@ -269,10 +493,19 @@
   {
    "slug": "j-s-sushi-claremont-claremont",
    "name": "J&S Sushi Claremont",
-   "category": "restaurants-takeaways",
-   "suburb": "claremont",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Claremont",
+   "region": "southern-suburbs",
+   "address": "227C Main Rd, Claremont, Cape Town, 7708",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.mrdfood.com/food-delivery/restaurant/jands-sushi-claremont_claremont/22835",
+    "https://www.ubereats.com/za/store/j&s-sushi-claremont/q_zWjJa5UearC-Rgm1eCvw"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "J&S Sushi Claremont is a sushi restaurant on Main Road, Claremont, serving sushi rolls, stir-fried noodles and rice dishes for eat-in and delivery."
@@ -280,10 +513,19 @@
   {
    "slug": "jason-sushi-restaurant-welgemoed",
    "name": "Jason Sushi & Restaurant",
-   "category": "restaurants-takeaways",
-   "suburb": "welgemoed",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Welgemoed",
+   "region": "northern-suburbs",
+   "address": "Shop 10F, Welgemoed Plaza, 23 Kommissaris Street, Welgemoed, Cape Town, 7530",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.jasonsushi.co.za",
+   "existing_sources": [
+    "https://www.jasonsushi.co.za/",
+    "https://www.yep.co.za/biz/store/jason-sushi-restaurant/522607"
+   ],
    "has_hours": true,
+   "hours": "Open daily 11:00-22:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "Jason Sushi & Restaurant is a Chinese and sushi restaurant in Welgemoed Plaza, serving sushi platters and Chinese dishes including an all-you-can-eat option."
@@ -291,10 +533,20 @@
   {
    "slug": "kauai-plumstead",
    "name": "Kauai",
-   "category": "restaurants-takeaways",
-   "suburb": "plumstead",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Plumstead",
+   "region": "southern-suburbs",
+   "address": "Shop GF-S09, 3 Arts Village, Main Road, Plumstead, Cape Town",
+   "shopping_centre": "3Arts Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://restaurants-in-cape-town.co.za/restaurants/kauai-3-arts/",
+    "https://www.sluurpy.co.za/plumstead/restaurant/8614218/kauai-3-arts",
+    "https://locations.kauai.co.za/HealthyFood-CapeTown-KAUAI3Arts"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 07:30-20:00, Fri 07:30-21:00, Sat 07:30-20:00, Sun 07:30-19:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "Kauai is a health-focused quick-service cafe inside 3 Arts Village in Plumstead, serving wraps, salads, smoothies and barista coffee alongside all-day breakfast options."
@@ -302,10 +554,19 @@
   {
    "slug": "kfc-golden-acre-cape-town-cbd",
    "name": "KFC",
-   "category": "restaurants-takeaways",
-   "suburb": "cape-town-cbd",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Cape Town CBD",
+   "region": "city-bowl",
+   "address": "Golden Acre Shopping Centre, 9 Adderley St, Cape Town",
+   "shopping_centre": "Golden Acre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://golden-acre.co.za/stores/",
+    "https://locations.kfc.co.za/western-cape/cape-town/shop-86-9-adderley-streets-golden-acre-shopping-centre"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "KFC Cape Town CBD (Golden Acre) is a fried chicken and fast-food outlet inside Golden Acre Shopping Centre in the Cape Town CBD."
@@ -313,10 +574,19 @@
   {
    "slug": "kfc-thornton",
    "name": "KFC Thornton",
-   "category": "restaurants-takeaways",
-   "suburb": "thornton",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Thornton",
+   "region": "northern-suburbs",
+   "address": "Corner Thornton Way and Odin Drive, Thornton, Cape Town, 7485",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.cylex.net.za/company/kfc-thornton-23806418.html",
+    "https://www.tiendeo.co.za/stores/cape-town/kfc-cnr-viking-way-odin-drive-thornton/75157"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "KFC Thornton is a fast-food restaurant serving the chain's fried chicken menu, on the corner of Thornton Way and Odin Drive in Thornton."
@@ -324,10 +594,19 @@
   {
    "slug": "kfc-total-rocklands-rocklands",
    "name": "KFC Total Rocklands",
-   "category": "restaurants-takeaways",
-   "suburb": "rocklands",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Rocklands",
+   "region": "cape-flats",
+   "address": "Cnr Spine Road & Weltevreden Road, Total Mitchells Plain, Rocklands, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tripadvisor.com/Restaurant_Review-g3175959-d24184351-Reviews-Kfc_Totalenergies_Rocklands-Mitchells_Plain_Western_Cape.html",
+    "https://www.cylex.net.za/company/kfc-total-rocklands-23708516.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "KFC Total Rocklands is a branch of the KFC fast-food chicken restaurant chain, located at the Total filling station in Rocklands, Mitchells Plain."
@@ -335,10 +614,19 @@
   {
    "slug": "langverwacht-dental-kuils-river",
    "name": "Langverwacht Dental",
-   "category": "dentists",
-   "suburb": "kuils-river",
+   "category": "Dentists",
+   "suburb": "Kuils River",
+   "region": "northern-suburbs",
+   "address": "Shop 28, Langverwacht Plein, Langverwacht Road, Kuils River, Cape Town, 7580",
+   "shopping_centre": "Langverwacht Plein",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.yellosa.co.za/company/955879/langverwacht-dental",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=305057"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Langverwacht Dental is a dental practice located in Langverwacht Plein shopping centre in Kuils River, offering affordable general dental care to the community."
@@ -346,10 +634,19 @@
   {
    "slug": "magnolia-social-dining-lounge-somerset-west",
    "name": "Magnolia Social Dining Lounge",
-   "category": "restaurants-takeaways",
-   "suburb": "somerset-west",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Somerset West",
+   "region": "helderberg",
+   "address": "1 Erinvale Avenue, Somerset West, 7130",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.eatout.co.za/venue/magnolia-social-dining-lounge/",
+    "https://erinvale.co.za/restaurants/magnolia-social-dining-lounge"
+   ],
    "has_hours": true,
+   "hours": "Daily 11:00-23:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "Magnolia Social Dining Lounge is a tapas-style restaurant at the Erinvale Hotel and Spa in Somerset West, open daily with no reservations required."
@@ -357,10 +654,20 @@
   {
    "slug": "maitcomp-printers-maitland",
    "name": "Maitcomp Printers",
-   "category": "printing-services",
-   "suburb": "maitland",
+   "category": "Printing Services",
+   "suburb": "Maitland",
+   "region": "northern-suburbs",
+   "address": "179 Voortrekker Road, Maitland, Cape Town, 7405",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://maitcomp.co.za",
+   "existing_sources": [
+    "https://maitcomp.co.za/contact/",
+    "https://cape-town.infoisinfo.co.za/search/printing-services-and-others/b/maitland",
+    "https://www.findglocal.com/ZA/Cape-Town/1537267079863695/Maitcomp-Printers"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 23,
    "current_description": "Maitcomp Printers is a printing business offering business cards, signage, banners, stickers, vehicle branding, graphic design and computer sales and repair, in Maitland."
@@ -368,10 +675,19 @@
   {
    "slug": "mcdonalds-delft",
    "name": "McDonald's Delft",
-   "category": "restaurants-takeaways",
-   "suburb": "delft",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Delft",
+   "region": "cape-flats",
+   "address": "Delft Mall, Cnr Hindle Rd and Delft Main Rd, Delft, Cape Town, 7100",
+   "shopping_centre": "Delft Mall",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.mcdonalds.co.za/location/mcdonalds-delft",
+    "https://restaurantguru.com/McDonalds-Delft-Cape-Town"
+   ],
    "has_hours": true,
+   "hours": "Open daily 07:00-23:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "McDonald's Delft is a drive-thru fast-food restaurant inside Delft Mall, serving the chain's usual burger, chicken and breakfast menu to the Delft area."
@@ -379,10 +695,20 @@
   {
    "slug": "mr-k-rondebosch",
    "name": "Mr K (Rondebosch)",
-   "category": "jewellers",
-   "suburb": "rondebosch",
+   "category": "Jewellers",
+   "suburb": "Rondebosch",
+   "region": "southern-suburbs",
+   "address": "Shop 1.1A, Riverside Mall, 95 Main Road, Rondebosch, Cape Town, 7700",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.mrk.co.za",
+   "existing_sources": [
+    "https://www.mrk.co.za/get-in-touch/rondebosch/",
+    "https://www.rondeboschmain.co.za/stores/",
+    "https://jewellersnetwork.co.za/directory/mr-k-rondebosch/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:00, Sat 09:00-14:00, Sun Closed",
    "has_email": false,
    "current_words": 23,
    "current_description": "Mr K Rondebosch is a branch of the Mr K jewellery chain, specialising in gold and diamond jewellery and Krugerrand and precious-metal sales."
@@ -390,10 +716,19 @@
   {
    "slug": "namaste-noordhoek",
    "name": "Namaste",
-   "category": "general-retail",
-   "suburb": "noordhoek",
+   "category": "General Retail",
+   "suburb": "Noordhoek",
+   "region": "south-peninsula",
+   "address": "Noordhoek Farm Village, Cnr Noordhoek Main Road & Village Lane, Noordhoek, Cape Town, 7979",
+   "shopping_centre": "Noordhoek Farm Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.capetownmagazine.com/namaste",
+    "https://www.facebook.com/noordhoekfarmvillage/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Namaste is a gift and curio store at Noordhoek Farm Village stocking African crafts, jewellery, homeware and clothing from local and international designers."
@@ -401,10 +736,19 @@
   {
    "slug": "nandos-3arts-village-plumstead",
    "name": "Nando's 3Arts Village",
-   "category": "restaurants-takeaways",
-   "suburb": "plumstead",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Plumstead",
+   "region": "southern-suburbs",
+   "address": "Shop GF-S23, 260 Main Road, 3 Arts Village Shopping Centre, Plumstead, Cape Town, 7800",
+   "shopping_centre": "3Arts Village",
+   "phone_on_file": true,
    "website": "https://store.nandos.co.za/details/plumstead",
+   "existing_sources": [
+    "https://store.nandos.co.za/details/plumstead",
+    "https://za.africabz.com/western-cape/nandos-plumstead-27261"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Nando's 3Arts Village is a branch of the flame-grilled peri-peri chicken chain Nando's, located in the 3 Arts Village Shopping Centre in Plumstead."
@@ -412,10 +756,20 @@
   {
    "slug": "navaho-spur-brackenfell-shopping-centre-brackenfell",
    "name": "Navaho Spur",
-   "category": "restaurants-takeaways",
-   "suburb": "brackenfell",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Brackenfell",
+   "region": "northern-suburbs",
+   "address": "Shop 22, Brackenfell Shopping Centre, Old Paarl Road, Brackenfell, Cape Town, 7560",
+   "shopping_centre": "Brackenfell Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://magicpin.com/south-africa/Cape-Town/Brackenfell/Restaurant/Navaho-Spur/store/2362555",
+    "https://www.dining-out.co.za/md/Navaho-Spur-Steak-Ranch-Brackenfell/4297",
+    "https://www.spursteakranches.com/za/restaurant/western-cape/cape-town/brackenfell/navaho-spur"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 08:00-22:00, Fri-Sat 08:00-23:00, Sun 08:00-22:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "Navaho Spur is a family-style steakhouse inside Brackenfell Shopping Centre, part of the Spur Steak Ranches chain, serving steaks, ribs, burgers and seafood."
@@ -423,10 +777,19 @@
   {
    "slug": "neighbourgoods-market-woodstock",
    "name": "Neighbourgoods Market",
-   "category": "events-function-venues",
-   "suburb": "woodstock",
+   "category": "Events & Function Venues",
+   "suburb": "Woodstock",
+   "region": "city-bowl",
+   "address": "The Old Biscuit Mill, 373-375 Albert Road, Woodstock, Cape Town",
+   "shopping_centre": "The Old Biscuit Mill",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://insideguide.co.za/cape-town/things-to-do/neighbourgoods-market/",
+    "https://theoldbiscuitmill.co.za/contact/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 23,
    "current_description": "Neighbourgoods Market is a weekly food, drink and designer market held at The Old Biscuit Mill in Woodstock on Saturdays, with free entry."
@@ -434,10 +797,20 @@
   {
    "slug": "neovision-brackenfell-corner-brackenfell",
    "name": "Neovision Brackenfell Corner",
-   "category": "opticians",
-   "suburb": "brackenfell",
+   "category": "Opticians",
+   "suburb": "Brackenfell",
+   "region": "northern-suburbs",
+   "address": "Shop 14, Brackenfell Corner Shopping Centre, Corner Frans Conradie & Paradys Street, Brackenfell, Cape Town, 7560",
+   "shopping_centre": "Brackenfell Corner",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://brackenfellcorner.co.za/brackenfell-corner---stores.html",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=400160",
+    "https://www.neovision.co.za/stores/brackenfell-corner/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sat 09:00-14:00, Sun Closed",
    "has_email": false,
    "current_words": 23,
    "current_description": "Neovision Brackenfell Corner is an optometry practice inside Brackenfell Corner Shopping Centre, offering eye examinations, glaucoma screening and a range of prescription eyewear."
@@ -445,10 +818,19 @@
   {
    "slug": "neovision-welgemoed",
    "name": "Neovision Welgemoed",
-   "category": "opticians",
-   "suburb": "welgemoed",
+   "category": "Opticians",
+   "suburb": "Welgemoed",
+   "region": "northern-suburbs",
+   "address": "Shop 18A, Welgemoed Forum, Cnr Jip De Jager & Kommissaris Street, Welgemoed, Cape Town, 7530",
+   "shopping_centre": "Welgemoed Forum",
+   "phone_on_file": true,
    "website": "https://www.neovision.co.za/stores/welgemoed-forum/",
+   "existing_sources": [
+    "https://www.neovision.co.za/stores/welgemoed-forum/",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=1946779"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Neovision Welgemoed is an optometry practice in Welgemoed Forum offering eye tests, glaucoma screening and a range of designer frames and contact lenses."
@@ -456,10 +838,21 @@
   {
    "slug": "new-york-bagels-zonnebloem",
    "name": "New York Bagels",
-   "category": "bakeries",
-   "suburb": "zonnebloem",
+   "category": "Bakeries",
+   "suburb": "Zonnebloem",
+   "region": "city-bowl",
+   "address": "44 Harrington Street, Zonnebloem, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.capetownccid.com/explore/eat/new-york-bagels",
+    "https://www.facebook.com/NYBCT/",
+    "https://bicyclesouth.co.za/listings/new-york-bagels/",
+    "https://www.openhours-southafrica.com/en/cape-town/new-york-bagels"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-16:00, Sat-Sun 07:00-14:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "New York Bagels is a dedicated bagel bakery in Zonnebloem, hand-rolling, boiling and baking traditional New York-style bagels in a range of varieties."
@@ -467,10 +860,20 @@
   {
    "slug": "newport-market-and-deli-mouille-point",
    "name": "Newport Market & Deli",
-   "category": "bakeries",
-   "suburb": "mouille-point",
+   "category": "Bakeries",
+   "suburb": "Mouille Point",
+   "region": "atlantic-seaboard",
+   "address": "125 Beach Road, Mouille Point, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.newportdeli.co.za/",
+   "existing_sources": [
+    "https://www.newportdeli.co.za/contact-us/",
+    "https://www.sa-venues.com/things-to-do/westerncape/coffee-and-breakfast-at-newport-deli/",
+    "https://www.capetownmagazine.com/deli/fresh-food-and-yummy-coffees-at-newport-deli/156_22_17574"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 23,
    "current_description": "Newport Market & Deli is a deli and cafe on Beach Road, Mouille Point, known for its sea views, fresh food and coffee."
@@ -478,10 +881,20 @@
   {
    "slug": "nibbly-bits-de-waterkant",
    "name": "Nibbly Bits",
-   "category": "bakeries",
-   "suburb": "de-waterkant",
+   "category": "Bakeries",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "Cape Quarter, 27 Somerset Road, De Waterkant, Cape Town",
+   "shopping_centre": "Cape Quarter Lifestyle Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://capequarter.co.za/shops/",
+    "https://www.dining-out.co.za/restaurant-index.aspx?MemberID=11107&SiteVersion=desktop",
+    "https://wanderlog.com/place/details/12305517/nibbly-bits-cape-quarter"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Nibbly Bits is a gourmet food and gift shop in Cape Quarter, De Waterkant, selling handmade biscuits, cakes, dried fruit, nuts and preserves."
@@ -489,10 +902,19 @@
   {
    "slug": "nicol-coachworks-diep-river",
    "name": "Nicol Coachworks",
-   "category": "panel-beaters-spray-painters",
-   "suburb": "diep-river",
+   "category": "Panel Beaters & Spray Painters",
+   "suburb": "Diep River",
+   "region": "southern-suburbs",
+   "address": "Unit 34, River Park, 77 De Waal Road, Diep River, 7800",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.nicolcw.co.za",
+   "existing_sources": [
+    "https://www.nicolcw.co.za/",
+    "https://cape-town.infoisinfo.co.za/card/nicol-coachworks/414006"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 23,
    "current_description": "Nicol Coachworks is a panelbeating and spray-painting workshop in Diep River, approved by SAMBRA and several major insurers, with a five-year workmanship guarantee."
@@ -500,10 +922,20 @@
   {
    "slug": "ou-kaapse-vet-tokai",
    "name": "Ou Kaapse Vet",
-   "category": "vets-animal-care",
-   "suburb": "tokai",
+   "category": "Vets & Animal Care",
+   "suburb": "Tokai",
+   "region": "southern-suburbs",
+   "address": "15 Keyser River Drive, Tokai, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://oukaapsevet.co.za",
+   "existing_sources": [
+    "https://oukaapsevet.co.za/contact-us/",
+    "https://za.africabz.com/western-cape/ou-kaapse-vet-178678",
+    "https://www.facebook.com/oukaapsevettokai/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Ou Kaapse Vet is a companion animal hospital in Tokai offering consultations, vaccinations, dental care, surgery and diagnostic imaging for cats and dogs."
@@ -511,10 +943,20 @@
   {
    "slug": "panorama-veterinary-clinic-specialist-centre-panorama",
    "name": "Panorama Veterinary Clinic & Specialist Centre",
-   "category": "vets-animal-care",
-   "suburb": "panorama",
+   "category": "Vets & Animal Care",
+   "suburb": "Panorama",
+   "region": "northern-suburbs",
+   "address": "1 Uys Krige Drive, Panorama, Cape Town, 7500",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://panoramavet.co.za",
+   "existing_sources": [
+    "https://panoramavet.co.za/contact/",
+    "http://textmap.co.za/3/15042",
+    "https://savet.co.za/vet/panorama-veterinary-clinic-and-specialist-centre"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-19:00, Sat 08:00-13:00, Sun Closed (24-hour emergency service available)",
    "has_email": false,
    "current_words": 23,
    "current_description": "Panorama Veterinary Clinic & Specialist Centre is a veterinary practice on Uys Krige Drive in Panorama, providing consultations and round-the-clock emergency veterinary care."
@@ -522,10 +964,19 @@
   {
    "slug": "pep-cape-town-cbd",
    "name": "PEP",
-   "category": "fashion-clothing",
-   "suburb": "cape-town-cbd",
+   "category": "Fashion & Clothing",
+   "suburb": "Cape Town CBD",
+   "region": "city-bowl",
+   "address": "Golden Acre Shopping Centre, 9 Adderley St, Cape Town",
+   "shopping_centre": "Golden Acre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://golden-acre.co.za/stores/",
+    "https://www.tiendeo.co.za/stores/cape-town/pep-stores-shop--golden-acre-adderley-street-cape-town-cbd-cape-town-western-cape/11875"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "PEP is a branch of the South African budget clothing, footwear and homeware retail chain in Golden Acre Shopping Centre, Cape Town CBD."
@@ -533,10 +984,21 @@
   {
    "slug": "pick-n-pay-big-bay-bloubergstrand",
    "name": "Pick n Pay Big Bay",
-   "category": "supermarkets-groceries",
-   "suburb": "bloubergstrand",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Bloubergstrand",
+   "region": "west-coast",
+   "address": "Shop 1, Eden on the Bay Mall, Cnr Sir David Baird & Otto du Plessis Drives, Big Bay, Bloubergstrand, Cape Town, 7441",
+   "shopping_centre": "Eden on the Bay Mall",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.shopshours.co.za/pick-n-pay/cape-town/c-57f3cac247d677c3b27e5ca0",
+    "https://www.yep.co.za/biz/store/big-bay-family-store-pty-ltd-t-or-a-pick-n-pay/493445",
+    "https://www.pukkapure.co.za/outlets/pick-n-pay-local-big-bay/",
+    "https://www.edenonthebaymall.co.za/pick-n-pay/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 08:00-20:00, Sun 09:00-20:00",
    "has_email": false,
    "current_words": 23,
    "current_description": "Pick n Pay Big Bay is a supermarket at Eden on the Bay Mall in Big Bay, Bloubergstrand, offering groceries and household essentials."
@@ -544,10 +1006,19 @@
   {
    "slug": "pick-n-pay-richmond-corner-richwood",
    "name": "Pick n Pay Richmond Corner",
-   "category": "supermarkets-groceries",
-   "suburb": "richwood",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Richwood",
+   "region": "northern-suburbs",
+   "address": "Shop 23, Richmond Corner, Corner Plattekloof & Tygerberg Valley Roads, Richwood, Milnerton, Cape Town, 7441",
+   "shopping_centre": "Richmond Corner",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://foursquare.com/v/pick-n-pay-richmond-corner/5f2d53ecf1198f2ea40f3bc0",
+    "https://www.medpages.info/sf/index.php?orgcode=416818&page=organisation"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 23,
    "current_description": "Pick n Pay Richmond Corner is a branch of the Pick n Pay supermarket chain, in Richmond Corner shopping centre in Richwood, Milnerton."

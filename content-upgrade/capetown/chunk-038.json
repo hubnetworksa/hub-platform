@@ -5,10 +5,19 @@
   {
    "slug": "doodles-beachfront-restaurant-bloubergstrand",
    "name": "Doodles Beachfront Restaurant",
-   "category": "restaurants-takeaways",
-   "suburb": "bloubergstrand",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Bloubergstrand",
+   "region": "west-coast",
+   "address": "110 Beach Blvd, Bloubergstrand, Cape Town, 7441",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://doodles.co.za/",
+    "https://www.capetownwithkids.com/places/doodles-beachfront/"
+   ],
    "has_hours": true,
+   "hours": "Breakfast 09:00-11:30, Lunch/Dinner 12:00-23:00, daily",
    "has_email": true,
    "current_words": 34,
    "current_description": "Doodles Beachfront Restaurant is a family-friendly restaurant in Bloubergstrand open since 1991, serving seafood, steaks and pizzas with panoramic views of Table Mountain and the Atlantic Ocean, plus an indoor play area for children."
@@ -16,10 +25,19 @@
   {
    "slug": "engen-false-bay-1-stop-macassar",
    "name": "Engen False Bay 1 Stop",
-   "category": "fuel-stations",
-   "suburb": "macassar",
+   "category": "Fuel Stations & Garages",
+   "suburb": "Macassar",
+   "region": "helderberg",
+   "address": "N2 Highway, Macassar, 7130",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/engen-false-bay-1-stop-7575",
+    "https://www.fueldirectory.co.za/listing-contact.php?listings_id=5972"
+   ],
    "has_hours": true,
+   "hours": "Open 24 hours",
    "has_email": false,
    "current_words": 34,
    "current_description": "Engen False Bay 1 Stop is a fuel station and convenience-store forecourt on the N2 at Macassar, on the route toward Somerset West, housing a Woolworths Food and a Wimpy alongside its fuel bays."
@@ -27,10 +45,20 @@
   {
    "slug": "eversdal-pre-primary-school-eversdal",
    "name": "Eversdal Pre-Primary School",
-   "category": "schools-education",
-   "suburb": "eversdal",
+   "category": "Schools & Education",
+   "suburb": "Eversdal",
+   "region": "northern-suburbs",
+   "address": "Mountainview Road, Eversdal, Durbanville, Cape Town, 7551",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://durbanvillehub.com/directory/schools/eversdal-pre-primary-school",
+    "https://www.holakids.co.za/centre/eversdal-pre-primary-school/",
+    "https://www.schoolguide.co.za/schools/pre-primary-schools/eversdal-pre-primary-school.html"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-17:30",
    "has_email": false,
    "current_words": 34,
    "current_description": "Eversdal Pre-Primary School runs a Grade R programme taught in English for children aged five to six, with pre-care available from 07:00 and aftercare, including a meal, until 17:30, in Eversdal, Durbanville."
@@ -38,10 +66,20 @@
   {
    "slug": "franco-ceccato-cape-town-cbd",
    "name": "Franco Ceccato",
-   "category": "shoe-stores",
-   "suburb": "cape-town-cbd",
+   "category": "Shoe Stores",
+   "suburb": "Cape Town CBD",
+   "region": "city-bowl",
+   "address": "Golden Acre Shopping Centre, 9 Adderley St, Cape Town",
+   "shopping_centre": "Golden Acre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://golden-acre.co.za/stores/",
+    "https://www.yep.co.za/biz/store/iyp/12964730_2",
+    "https://francoceccato.co.za/about-us/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Franco Ceccato is a footwear retailer in Golden Acre, part of a national chain of around 80 stores selling men's, women's and children's shoes across a range of styles from classic to high fashion."
@@ -49,10 +87,19 @@
   {
    "slug": "freshstop-delft",
    "name": "FreshStop Delft",
-   "category": "convenience-stores",
-   "suburb": "delft",
+   "category": "Convenience Stores",
+   "suburb": "Delft",
+   "region": "cape-flats",
+   "address": "Cnr Main Road & Vuurlelie Crescent, Roosendal, Delft, Cape Town, 7100",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/freshstop-at-caltex-delft-353121",
+    "https://www.waze.com/live-map/directions/za/wc/cape-town/freshstop-delft"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "FreshStop Delft is a forecourt convenience store operating at the Caltex service station on the corner of Main Road and Vuurlelie Crescent in Roosendal, Delft, offering quick meals, coffee and grocery essentials for motorists."
@@ -60,10 +107,21 @@
   {
    "slug": "harlequin-restaurant-parow",
    "name": "Harlequin Restaurant",
-   "category": "restaurants-takeaways",
-   "suburb": "parow",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Parow",
+   "region": "northern-suburbs",
+   "address": "281 Voortrekker Road, Parow, Cape Town, 7500",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.harlequinrestaurant.co.za",
+   "existing_sources": [
+    "https://www.eatout.co.za/venue/harlequin/",
+    "https://www.capetownetc.com/cape-town/harlequin-restaurant-on-voortrekker-road-remains-open-for-business/",
+    "https://vrcid.co.za/2019/08/29/to-harlequin-restaurant-54-years-and-counting/",
+    "https://www.dining-out.co.za/md/Harlequin-Restaurant/821"
+   ],
    "has_hours": true,
+   "hours": "Mon 12:00-16:00, Tue-Fri 12:00-21:30, Sat 18:00-21:30, Sun Closed",
    "has_email": false,
    "current_words": 34,
    "current_description": "Harlequin Restaurant is a long-standing Italian restaurant on Voortrekker Road in Parow that has been trading since 1965, known for pastas, seafood and grills alongside dishes such as spinach and ricotta cannelloni and tiramisu."
@@ -71,10 +129,20 @@
   {
    "slug": "harringtons-cocktail-lounge-district-six",
    "name": "Harringtons Cocktail Lounge",
-   "category": "restaurants-takeaways",
-   "suburb": "district-six",
+   "category": "Restaurants & Takeaways",
+   "suburb": "District Six",
+   "region": "city-bowl",
+   "address": "61B Harrington Street, District Six, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/harringtons-cocktail-lounge-231210",
+    "https://www.harringtonstreet.co.za/harringtons",
+    "https://insideguide.co.za/cape-town/specials/harringtons-happy-hour-special/"
+   ],
    "has_hours": true,
+   "hours": "Wed 17:00-00:00, Thu-Sat 17:00-04:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Harringtons Cocktail Lounge is an upstairs cocktail bar and global tapas venue on Harrington Street in Cape Town's East City district, known for its happy-hour specials and a late-night atmosphere from Wednesday to Saturday."
@@ -82,10 +150,19 @@
   {
    "slug": "holy-trinity-rc-primary-school-matroosfontein",
    "name": "Holy Trinity RC Primary School",
-   "category": "schools-education",
-   "suburb": "matroosfontein",
+   "category": "Schools & Education",
+   "suburb": "Matroosfontein",
+   "region": "cape-flats",
+   "address": "St Dominic Street, Matroosfontein, Cape Town, 7490",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.westerncape.gov.za/education/facility/matroosberg-holy-trinity-rc-primary-school",
+    "https://www.callupcontact.com/b/Public_Primary_Elementary_Schools/MATROOS_HOLY_TRINITY_RC_PRIMARY_SCHOOL/7388"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Holy Trinity RC Primary School is a public Roman Catholic primary school on St Dominic Street, Matroosfontein, with around 786 learners and 25 teachers, part of the Western Cape Education Department's Metro North district."
@@ -93,10 +170,19 @@
   {
    "slug": "jem-hair-and-beauty-studio-plumstead",
    "name": "JEM Hair and Beauty Studio",
-   "category": "beauty-hair-salons",
-   "suburb": "plumstead",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Plumstead",
+   "region": "southern-suburbs",
+   "address": "Shop 11, Ground Floor, 3 Arts Village, 260 Main Road, Plumstead, Cape Town, 7800",
+   "shopping_centre": "3Arts Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/a/jem-3-arts-village-cape-town-jem-hair-and-beauty-studio-3-arts-village-260-main-road-ntdbrrkt",
+    "https://epilfree.co.za/jem-hair-beauty-studio-plumstead/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "JEM Hair and Beauty Studio is a hair and beauty salon in 3 Arts Village, Plumstead, offering hair treatments such as Hair Botox and Mycro Keratin alongside waxing, lash extensions, facials and nail services."
@@ -104,10 +190,19 @@
   {
    "slug": "kommetjie-surf-shop-kommetjie",
    "name": "Kommetjie Surf Shop",
-   "category": "general-retail",
-   "suburb": "kommetjie",
+   "category": "General Retail",
+   "suburb": "Kommetjie",
+   "region": "south-peninsula",
+   "address": "1 Erika Road, Kommetjie, Cape Town, 7975",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://komsurf.com/pages/contact-us",
+    "https://www.safarinow.com/destinations/kommetjie/shops/kommetjie-surf-shop.aspx"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Kommetjie Surf Shop (Komsurf) is a big-wave, cold-water surf shop on Erika Road offering surf, skate and lifestyle gear, surf lessons and board rentals, plus its own Komsurf apparel and an in-house coffee shop."
@@ -115,10 +210,20 @@
   {
    "slug": "kromboom-dental-centre-rondebosch-east",
    "name": "Kromboom Dental Centre",
-   "category": "dentists",
-   "suburb": "rondebosch-east",
+   "category": "Dentists",
+   "suburb": "Rondebosch East",
+   "region": "southern-suburbs",
+   "address": "Cnr Kromboom & Burwood Road, Rondebosch East, Cape Town, 7780",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.kromboomdental.co.za",
+   "existing_sources": [
+    "https://www.kromboomdental.co.za/contact/",
+    "https://www.whatclinic.com/dentists/south-africa/cape-town/kromboom-dental-centre",
+    "https://www.kromboomdental.co.za/services/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-19:00, Sat 08:00-13:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Kromboom Dental Centre is a Rondebosch East dental practice offering general and cosmetic dentistry -- including fillings, root canals, crowns, implants, veneers and teeth whitening -- plus paediatric dentistry and 24-hour emergency on-call treatment."
@@ -126,10 +231,20 @@
   {
    "slug": "lakeside-clothing-lakeside",
    "name": "Lakeside Clothing",
-   "category": "fashion-clothing",
-   "suburb": "lakeside",
+   "category": "Fashion & Clothing",
+   "suburb": "Lakeside",
+   "region": "south-peninsula",
+   "address": "105 Main Road, Lakeside, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://2pos.co.za/2/5338",
+    "https://www.brabys.com/za/western-cape/cape-town/lakeside/clothes-second-hand/lakeside-clothing",
+    "https://blog.sa-venues.com/provinces/western-cape/second-hand-fashion-shops/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Lakeside Clothing is a small, mother-and-son-run second-hand clothing shop on Main Road, restocked with seasonal clothing donated by locals from Lakeside and Muizenberg, with a colourful interior of hats, scarves, bags and other finds."
@@ -137,10 +252,20 @@
   {
    "slug": "las-paletas-killarney-gardens",
    "name": "Las Paletas",
-   "category": "catering",
-   "suburb": "killarney-gardens",
+   "category": "Catering",
+   "suburb": "Killarney Gardens",
+   "region": "west-coast",
+   "address": "Unit 2, Ebenezer Park, 71 Killarney Avenue, Killarney Gardens, Cape Town, 7441",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.bestdirectory.co.za/las-paletas-ice-cream-ice-cream-dairy-food-and-related-products-in-milnerton-cape-town-western-cape.html",
+    "https://2pos.co.za/2/14734",
+    "https://laspaletas.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Las Paletas makes handmade sorbet and dairy ice lollies in small batches from real fruit, herbs, spices, nuts and dairy, with no artificial colours, flavours, preservatives or additives; orders must be placed in advance."
@@ -148,10 +273,19 @@
   {
    "slug": "louis-on-the-block-bergvliet",
    "name": "Louis' On The Block",
-   "category": "restaurants-takeaways",
-   "suburb": "bergvliet",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Bergvliet",
+   "region": "southern-suburbs",
+   "address": "Corner Children's Way & Hiddingh Road, Bergvliet, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.louis-on-the-block.co.za/",
+   "existing_sources": [
+    "https://www.tripadvisor.co.za/Restaurant_Review-g6857443-d2706567-Reviews-Louis_On_The_Block-Bergvliet_Western_Cape.html",
+    "https://www.seeff.com/news/spotlight-on-louis-on-the-block-family-restaurant-in-bergvliet/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 17:00-20:30, Sat 14:00-20:30, Sun Closed",
    "has_email": false,
    "current_words": 34,
    "current_description": "Louis' On The Block is a family-run steakhouse and pizzeria on the corner of Children's Way and Hiddingh Road in Bergvliet, serving grilled steaks, fresh seafood and wood-fired pizzas alongside a dedicated kids' menu."
@@ -159,10 +293,19 @@
   {
    "slug": "lume-beauty-atelier-de-waterkant",
    "name": "Lume Beauty Atelier",
-   "category": "spas-wellness",
-   "suburb": "de-waterkant",
+   "category": "Spas & Wellness",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "40 Chiappini Street, De Waterkant, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.africabizinfo.com/ZA/lume-beauty-atelier",
+    "https://www.capetownmagazine.com/lume-beauty-atelier"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Lume Beauty Atelier on Chiappini Street is a medispa offering hair styling, a nail bar, skin rejuvenation and body treatments across several private treatment rooms, using premium product lines including Biologique Recherche and Oribe."
@@ -170,10 +313,19 @@
   {
    "slug": "mantellis-direct-westlake",
    "name": "Mantelli's Direct",
-   "category": "bakeries",
-   "suburb": "westlake",
+   "category": "Bakeries",
+   "suburb": "Westlake",
+   "region": "south-peninsula",
+   "address": "9A Bell Crescent, Westlake Business Park, Westlake, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://mantellisdirect.com/stores",
+    "https://www.facebook.com/MantellisDirectWestlake/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 08:30-16:30",
    "has_email": true,
    "current_words": 34,
    "current_description": "Mantelli's Direct Westlake is a factory-direct outlet of the Mantelli's biscuit and rusk brand, selling individually wrapped biscuits, rusks and cookies at factory prices in food-service and retail packs, including Kosher and Halal options."
@@ -181,10 +333,20 @@
   {
    "slug": "mouille-point-village-mouille-point",
    "name": "Mouille Point Village",
-   "category": "accommodation",
-   "suburb": "mouille-point",
+   "category": "Accommodation",
+   "suburb": "Mouille Point",
+   "region": "atlantic-seaboard",
+   "address": "Westridge, 93 Beach Road, Mouille Point, Cape Town, 8001",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://mouillepoint.com/contact/",
+    "https://www.booking.com/hotel/za/mouille-point-village.en-gb.html",
+    "https://www.rhinoafrica.com/en/accommodation/mouille-point-village-apartment/24954"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Mouille Point Village is a self-catering apartment complex on Beach Road in Mouille Point offering studio, one-, two-, and three-bedroom units with sea, Signal Hill, or Lion's Head views and an on-site swimming pool."
@@ -192,10 +354,19 @@
   {
    "slug": "mr-price-home-3-arts-plumstead",
    "name": "Mr Price Home 3 Arts Plumstead",
-   "category": "furniture-homeware",
-   "suburb": "plumstead",
+   "category": "Furniture & Homeware",
+   "suburb": "Plumstead",
+   "region": "southern-suburbs",
+   "address": "260 Main Road, 3Arts Village, Plumstead, Cape Town",
+   "shopping_centre": "3Arts Village",
+   "phone_on_file": true,
    "website": "https://www.mrphome.com",
+   "existing_sources": [
+    "https://www.mrphome.com/en_za/store/mr-price-home-3-arts-plumstead",
+    "https://www.africabizinfo.com/ZA/mr-price-home-arts-plumstead-080-021-2535"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sat 09:00-17:00, Sun 09:00-14:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Mr Price Home 3 Arts Plumstead is a homeware and decor store in the 3 Arts Village Shopping Centre, part of the Mr Price Home retail chain, stocking furniture, home decor and soft furnishings."
@@ -203,10 +374,20 @@
   {
    "slug": "much-asphalt-eerste-river",
    "name": "Much Asphalt",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "eerste-river",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Eerste River",
+   "region": "northern-suburbs",
+   "address": "3 Ryneveld Street corner Stasie Rd, Penhill, Eerste River, Cape Town, 7103",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.muchasphalt.com",
+   "existing_sources": [
+    "https://www.sayellow.com/view/south-africa/much-asphalt-eerste-river-in-cape-town",
+    "https://tlb.co.za/company/much-asphalt-eerste-river/",
+    "https://www.muchasphalt.com/about-us/locations/eerste-river/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-16:30",
    "has_email": false,
    "current_words": 34,
    "current_description": "Much Asphalt is the largest commercial asphalt producer in Southern Africa, and this Eerste River plant in Penhill serves as its head office, supplying hot and cold asphalt products to the road construction industry."
@@ -214,10 +395,20 @@
   {
    "slug": "mugg-bean-paddocks-milnerton",
    "name": "Mugg & Bean Paddocks",
-   "category": "restaurants-takeaways",
-   "suburb": "milnerton",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Milnerton",
+   "region": "west-coast",
+   "address": "Shop 19-20, The Paddocks Shopping Centre, Racecourse Road, Milnerton, Cape Town, 7441",
+   "shopping_centre": "The Paddocks Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://locations.muggandbean.co.za/restaurants-PaddocksShoppingCentre-MuggBeanPaddocks",
+    "https://www.thinklocal.co.za/biz/mugg-n-bean-paddocks-shopping-centre-milnerton",
+    "https://location.muggandbean.co.za/paddocks"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 07:30-18:00, Sun 08:00-16:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Mugg & Bean Paddocks is a casual dining restaurant and coffee shop at The Paddocks Shopping Centre in Milnerton, part of the Mugg & Bean chain known for all-day breakfasts, coffee and light meals."
@@ -225,10 +416,20 @@
   {
    "slug": "mussel-monger-oyster-bar-sea-point",
    "name": "The Mussel Monger & Oyster Bar",
-   "category": "restaurants-takeaways",
-   "suburb": "sea-point",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Sea Point",
+   "region": "atlantic-seaboard",
+   "address": "Mojo Market, 30 Regent Road, Sea Point, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://themusselmonger.co.za/contact-us/",
+    "https://mojomarket.co.za/vendors/the-mussel-monger",
+    "https://www.capetourism.com/mojo-market/"
+   ],
    "has_hours": true,
+   "hours": "Sun-Thu 11:00-22:00, Fri-Sat 11:00-23:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "The Mussel Monger & Oyster Bar is a seafood stall inside Mojo Market in Sea Point specialising in fresh oysters and mussels sourced from the West Coast and Saldanha Bay, served with champagne pairings."
@@ -236,10 +437,20 @@
   {
    "slug": "news-cafe-firgrove",
    "name": "News Cafe",
-   "category": "restaurants-takeaways",
-   "suburb": "firgrove",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Firgrove",
+   "region": "helderberg",
+   "address": "Shop G14, The Sanctuary Shopping Centre, Niblick Way, Firgrove Rural, 7110",
+   "shopping_centre": "The Sanctuary Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.newscafe.co.za/stores/south-africa/somerset-west/",
+    "https://www.facebook.com/alexandrajohn.dahlia/posts/news-cafe-somerset-westshop-g14-the-sanctuary-shopping-centre-niblick-way-firgro/4628730487413534/",
+    "https://www.newscafe.co.za/about/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 07:30-22:00, Fri 07:30-02:00, Sat 08:30-02:00, Sun 08:30-22:00",
    "has_email": true,
    "current_words": 34,
    "current_description": "News Cafe in The Sanctuary Shopping Centre is the Firgrove branch of a South African all-day cafe, cocktail bar and entertainment venue chain, serving breakfast, lunch and cocktails into the early hours on weekends."
@@ -247,10 +458,19 @@
   {
    "slug": "old-cape-wine-shop-kommetjie",
    "name": "Old Cape Wine Shop",
-   "category": "liquor-stores",
-   "suburb": "kommetjie",
+   "category": "Liquor Stores",
+   "suburb": "Kommetjie",
+   "region": "south-peninsula",
+   "address": "Imhoff Farm, Kommetjie Road, Kommetjie, Cape Town, 7975",
+   "shopping_centre": "Imhoff Farm",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "http://imhofffarm.co.za/old-cape-wine-shop/",
+    "https://blog.sa-venues.com/provinces/western-cape/the-imhoff-farm/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Old Cape Wine Shop is a boutique wine store at Imhoff Farm in Kommetjie, stocking a curated selection of close to 1,000 bottles spanning a wide range of Cape wine regions and cultivars."
@@ -258,10 +478,20 @@
   {
    "slug": "palm-tyre-service-maitland",
    "name": "Palm Tyre Service",
-   "category": "automotive-repairs",
-   "suburb": "maitland",
+   "category": "Automotive & Repairs",
+   "suburb": "Maitland",
+   "region": "northern-suburbs",
+   "address": "10 Cannon Street, Maitland, Cape Town, 7405",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.pirelli.com/tyres/en-za/car/find-your-dealer/dealer-locator/south-africa/maitland/za0002400268",
+    "https://www.brabys.com/business/5285097/south-africa/western-cape/cape-town/maitland/cannon-st/tyre-dealers/palm-tyre-service-cc",
+    "http://www.palmtyreservice.co.za/index.php/aboutus"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00, Sat 08:00-15:00, Sun Closed",
    "has_email": false,
    "current_words": 34,
    "current_description": "Palm Tyre Service is a family-owned tyre and wheel specialist on Cannon Street, Maitland, operating since 1946, offering tyre fitment, balancing, wheel alignment and puncture repair, including specialist fitment for all-terrain and cross-ply tyres."
@@ -269,10 +499,19 @@
   {
    "slug": "petworld-xxl-diep-river",
    "name": "Petworld XXL Diep River",
-   "category": "pet-stores",
-   "suburb": "diep-river",
+   "category": "Pet Stores & Supplies",
+   "suburb": "Diep River",
+   "region": "southern-suburbs",
+   "address": "89 Main Road, Diep River, Cape Town, 7800",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://petworld.co.za/pages/petworld-xxl-diep-river",
+   "existing_sources": [
+    "https://petworld.co.za/pages/petworld-xxl-diep-river",
+    "https://www.cybo.com/ZA-biz/petworld-xxl-diep-rivier"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sat 09:00-17:00, Sun 09:00-15:00",
    "has_email": true,
    "current_words": 34,
    "current_description": "Petworld XXL Diep River is a large-format branch of the national pet retail chain on Main Road, Diep River, stocking a wide range of pet food, supplies and accessories for a variety of animals."
@@ -280,10 +519,20 @@
   {
    "slug": "philippi-groente-verpakkers-philippi-horticultural",
    "name": "Philippi Groente Verpakkers",
-   "category": "agricultural-farming-supplies",
-   "suburb": "philippi-horticultural",
+   "category": "Agricultural & Farming Supplies",
+   "suburb": "Philippi Horticultural Area",
+   "region": "cape-flats",
+   "address": "Olieboom Road, Schaapkraal, Philippi Horticultural Area, Cape Town, 7941",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.brabys.com/za/western-cape/cape-town/schaapkraal/vegetable-farmers/philippi-groente-verpakkers",
+    "https://www.netpages.co.za/Cape+Town/Philippi+Groente+Verpakkers-122703.html",
+    "https://www.dnb.com/business-directory/company-profiles.philippi_groente_verpakkers_(pty)_ltd.67d52d599370c036bbe7a68624d1eff1.html"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-17:00, Sat 07:00-13:00, Sun Closed",
    "has_email": true,
    "current_words": 34,
    "current_description": "Philippi Groente Verpakkers is a fresh produce packing and distribution business in the Philippi Horticultural Area, supplying fruit and vegetables to retailers and traders while also selling directly to the public from its premises."
@@ -291,10 +540,20 @@
   {
    "slug": "pick-n-pay-local-boston-boston",
    "name": "Pick n Pay Local Boston",
-   "category": "supermarkets-groceries",
-   "suburb": "boston",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Boston",
+   "region": "northern-suburbs",
+   "address": "45 Twelfth Avenue, Boston, Bellville, Cape Town, 7530",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.picknpay.co.za",
+   "existing_sources": [
+    "https://my-catalogue.co.za/stores/bellville/pick-n-pay-local/45-12th-avenue-boston",
+    "https://www.yellosa.co.za/company/484076/pick-n-pay-family-store-boston",
+    "https://www.tiendeo.co.za/stores/bellville/pick-n-pay---th-avenue-boston/27545"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-19:00, Sat 08:00-18:00, Sun 08:00-17:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Pick n Pay Local Boston is a neighbourhood branch of the Pick n Pay grocery chain on Twelfth Avenue in Boston, Bellville, stocking a wide range of everyday groceries and offering freshly prepared pancakes."
@@ -302,10 +561,19 @@
   {
    "slug": "rhog-engineering-killarney-gardens",
    "name": "RHOG Engineering",
-   "category": "engineering-surveying",
-   "suburb": "killarney-gardens",
+   "category": "Engineering & Surveying Services",
+   "suburb": "Killarney Gardens",
+   "region": "west-coast",
+   "address": "Unit 9, 11 Donnington Rd, Killarney Gardens, 7441",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://rhogengineering.wordpress.com/",
+    "https://www.biznizdirectory.co.za/businesses-in-western-cape/cape-town/killarney-gardens.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "RHOG Engineering is a precision engineering workshop in Killarney Gardens specialising in machining and producing spares, along with the servicing and maintenance of factory machinery and equipment to keep client downtime to a minimum."
@@ -313,10 +581,19 @@
   {
    "slug": "salon-jean-paul-belhar",
    "name": "Salon Jean Paul",
-   "category": "beauty-hair-salons",
-   "suburb": "belhar",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Belhar",
+   "region": "cape-flats",
+   "address": "Shop 9, Cavalier Shopping Centre, Robert Sobukwe Road, Belhar, Cape Town, 7493",
+   "shopping_centre": "Cavalier Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/lvp/salon-jean-paul-belhar-robert-sobukwe-road-cape-town-30Ar44",
+    "https://www.brabys.com/za/western-cape/bonteheuwel/belhar/unisex-hairdressers/salon-jean-paul-unisex"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sat 08:00-17:00, Sun 08:00-14:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Salon Jean Paul is a hair salon at Shop 9 in Cavalier Shopping Centre on Robert Sobukwe Road, Belhar, offering services including hair braiding, colouring, extensions, keratin treatment, perms, permanent straightening and women's haircuts."
@@ -324,10 +601,20 @@
   {
    "slug": "shimansky-victoria-wharf-va-waterfront",
    "name": "Shimansky (Victoria Wharf)",
-   "category": "jewellers",
-   "suburb": "va-waterfront",
+   "category": "Jewellers",
+   "suburb": "V&A Waterfront",
+   "region": "city-bowl",
+   "address": "Shop 7228, Upper Level, Victoria Wharf Shopping Centre, 3 Dock Rd, V&A Waterfront, Cape Town",
+   "shopping_centre": "Victoria Wharf Shopping Centre",
+   "phone_on_file": true,
    "website": "https://shimansky.com",
+   "existing_sources": [
+    "https://www.waterfront.co.za/stores/shimansky-boutique-victoria-wharf",
+    "https://www.capetown.travel/listing/shimansky",
+    "https://www.capetownmagazine.com/diamond-store"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 09:00-21:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Shimansky is a diamond and fine jewellery boutique in Victoria Wharf Shopping Centre, V&A Waterfront, offering bespoke pieces crafted from GIA-certified diamonds with an on-site view of master diamond cutters and goldsmiths at work."
@@ -335,10 +622,20 @@
   {
    "slug": "shopmate-fish-traders-retreat",
    "name": "Shopmate Fish Traders",
-   "category": "general-retail",
-   "suburb": "retreat",
+   "category": "General Retail",
+   "suburb": "Retreat",
+   "region": "cape-flats",
+   "address": "11 Joseph Anderson Street, Retreat, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.shopmate.co.za",
+   "existing_sources": [
+    "https://www.hotfrog.co.za/company/1099862268551168/shopmate/retreat/foods",
+    "https://cape-town.infoisinfo.co.za/card/shopmate/517122",
+    "https://www.facebook.com/Shopmatefishtraders/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Shopmate Fish Traders is a fresh and frozen seafood supplier based in Retreat, established in 2007, delivering daily to restaurants and retail stores across the Western Cape and sourcing stock from sustainable fishing operations."
@@ -346,10 +643,19 @@
   {
    "slug": "shoprite-rocklands-rocklands",
    "name": "Shoprite Rocklands",
-   "category": "supermarkets-groceries",
-   "suburb": "rocklands",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Rocklands",
+   "region": "cape-flats",
+   "address": "Cnr Park Avenue & Caravelle Street, Rocklands Shopping Centre, Mitchells Plain, Cape Town, 7785",
+   "shopping_centre": "Rocklands Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.callupcontact.com/b/Supermarkets/Shoprite_Rocklands/4807",
+    "https://www.sayellow.com/shoprite-rocklands-mitchells-plain"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 09:00-18:00, Fri 09:00-19:30, Sat 08:00-18:00, Sun 09:00-14:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Shoprite Rocklands is a supermarket branch of the Shoprite chain at Rocklands Shopping Centre, on the corner of Park Avenue and Caravelle Street in Rocklands, Mitchells Plain, selling groceries, fresh produce, and household essentials."
@@ -357,10 +663,20 @@
   {
    "slug": "silvan-de-waterkant",
    "name": "Silvan",
-   "category": "fashion-clothing",
-   "suburb": "de-waterkant",
+   "category": "Fashion & Clothing",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "Shop 32, Cape Quarter Lifestyle Village, 27 Somerset Road, De Waterkant, Cape Town",
+   "shopping_centre": "Cape Quarter Lifestyle Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://capequarter.co.za/shops/",
+    "https://silvan.co.za/pages/our-story",
+    "https://m.facebook.com/silvan.capetown/photos/-we-are-inlove-with-our-flagship-store-at-cape-quarter-visit-us-in-the-heart-of-/1064828365757251/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Silvan is a Cape Town gifting and lifestyle brand's flagship store in Cape Quarter Lifestyle Village, De Waterkant, selling locally made botanical products including silk scarves, homeware, scented body products and bamboo cotton knitwear."
@@ -368,10 +684,19 @@
   {
    "slug": "smart-laser-skin-and-body-aesthetics-brackenfell",
    "name": "Smart Laser Skin & Body Aesthetics",
-   "category": "beauty-hair-salons",
-   "suburb": "brackenfell",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Brackenfell",
+   "region": "northern-suburbs",
+   "address": "Brackenfell Corner Shopping Centre, Paradys Street, Brackenfell, Cape Town, 7560",
+   "shopping_centre": "Brackenfell Corner",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://brackenfellcorner.co.za/brackenfell-corner---stores.html",
+    "https://www.facebook.com/smartlaserskinandbody/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Smart Laser Skin & Body Aesthetics is an aesthetic clinic in Brackenfell Corner, Brackenfell, one of several branches across Cape Town, offering laser hair removal, medical-grade skin peels, non-surgical fat-freezing and facial rejuvenation treatments."
@@ -379,10 +704,20 @@
   {
    "slug": "snow-white-laundry-service-diep-river",
    "name": "Snow White Laundry Service",
-   "category": "cleaning-services",
-   "suburb": "diep-river",
+   "category": "Cleaning Services",
+   "suburb": "Diep River",
+   "region": "southern-suburbs",
+   "address": "185 Main Road, Diep River, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.snowwhite.co.za/contact-us.html",
+    "https://za.africabz.com/western-cape/snow-white-laundry-294666",
+    "https://www.snowwhite.co.za/services.html"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00, Sat 08:00-14:00, Sun Closed",
    "has_email": false,
    "current_words": 34,
    "current_description": "Snow White Laundry Service is a drop-and-go laundromat in Diep River that also handles bulky items such as duvets and blankets, serving households as well as Airbnb hosts, schools and clinics in the area."
@@ -390,10 +725,21 @@
   {
    "slug": "stud-the-burger-shop-sea-point",
    "name": "Stud. The Burger Shop",
-   "category": "restaurants-takeaways",
-   "suburb": "sea-point",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Sea Point",
+   "region": "atlantic-seaboard",
+   "address": "315 Main Road, Sea Point, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tripadvisor.com/Restaurant_Review-g15134971-d25180343-Reviews-Stud-Sea_Point_Western_Cape.html",
+    "https://www.foodandhome.co.za/entertaining/stud-the-burger-shop-sea-point",
+    "https://www.ubereats.com/za/store/stud-the-burger-shop-sea-point/1rJF4bRORe2q2sHtu3A5pA",
+    "https://www.studtheburgershop.co.za/branches"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 12:00-22:00, Fri-Sat 12:00-00:00, Sun 12:00-22:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Stud. The Burger Shop is a burger restaurant in Sea Point, part of a small chain with branches elsewhere in the Western Cape, serving burgers made from high-quality ingredients including a fully plant-based option."
@@ -401,10 +747,21 @@
   {
    "slug": "superette-woodstock",
    "name": "Superette",
-   "category": "restaurants-takeaways",
-   "suburb": "woodstock",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Woodstock",
+   "region": "city-bowl",
+   "address": "66 Albert Road, Woodstock, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://foursquare.com/v/superette/4c1b9f0b624b9c74b4a41204",
+    "https://www.eatout.co.za/venue/superette/",
+    "https://www.tripadvisor.co.za/Restaurant_Review-g312659-d1596127-Reviews-Superette-Cape_Town_Central_Western_Cape.html",
+    "https://www.capetownmagazine.com/cafes/superette-my-favourite-cafe/93_22_17265"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Superette is a neighbourhood cafe and restaurant at 66 Albert Road in the Woodstock Exchange building, known for all-day breakfasts and light meals made with seasonal, locally sourced produce from small Cape Town suppliers."
@@ -412,10 +769,19 @@
   {
    "slug": "tafelsig-community-centre-tafelsig",
    "name": "Tafelsig Community Centre",
-   "category": "events-function-venues",
-   "suburb": "tafelsig",
+   "category": "Events & Function Venues",
+   "suburb": "Tafelsig",
+   "region": "cape-flats",
+   "address": "1 Olifantshoek Street, Tafelsig, Mitchells Plain, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.capetown.gov.za/Family%20and%20home/see-all-city-facilities/our-recreational-facilities/Community%20centres/Tafelsig%20Community%20Centre",
+    "https://community-services.blaauwberg.net/halls-venue-hire/halls-and-venues-for-hire-cape-town/Tafelsig-Community-Centre"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Tafelsig Community Centre is a City of Cape Town-run hall-hire venue with a capacity of around 130, offering a stage, shared kitchen, ablutions and parking for weddings, birthday parties, corporate meetings and other functions."
@@ -423,10 +789,19 @@
   {
    "slug": "tai-chi-restaurant-tokai",
    "name": "Tai Chi Restaurant",
-   "category": "restaurants-takeaways",
-   "suburb": "tokai",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Tokai",
+   "region": "southern-suburbs",
+   "address": "Shop 7, Forest Glade House, Tokai Road, Tokai, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://cape-town-south-africa.bizfax.co.za/tai-chi-restaurant.html",
+    "https://www.dining-out.co.za/md/Tai-Chi-Restaurant/9299"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 11:00-21:30, Sun 11:00-21:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Tai Chi Restaurant is a sushi, Chinese and Japanese restaurant in Forest Glade House on Tokai Road, known for its extensive half-price sushi menu available for sit-down dining alongside its regular light meals menu."
@@ -434,10 +809,20 @@
   {
    "slug": "the-clarendon-bantry-bay",
    "name": "The Clarendon Bantry Bay",
-   "category": "hotels",
-   "suburb": "bantry-bay",
+   "category": "Hotels",
+   "suburb": "Bantry Bay",
+   "region": "atlantic-seaboard",
+   "address": "158 Kloof Road, Bantry Bay, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.clarendon.co.za/",
+   "existing_sources": [
+    "https://www.clarendon.co.za/",
+    "https://www.tripadvisor.com/Hotel_Review-g312654-d1450363-Reviews-The_Clarendon_Bantry_Bay-Bantry_Bay_Western_Cape.html",
+    "https://www.clarendon.co.za/bantry-bay/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "The Clarendon Bantry Bay is a boutique hotel on the slopes of Lion's Head in Bantry Bay, with sea-view rooms, a restaurant, bar, spa and two swimming pools, within walking distance of Clifton beach."
@@ -445,10 +830,19 @@
   {
    "slug": "the-flower-supply-co-vredehoek",
    "name": "The Flower Supply Co",
-   "category": "florists",
-   "suburb": "vredehoek",
+   "category": "Florists",
+   "suburb": "Vredehoek",
+   "region": "city-bowl",
+   "address": "114 Upper Mill Street, Vredehoek, Cape Town, 8001",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.theflowersupplyco.co.za/",
+   "existing_sources": [
+    "https://www.theflowersupplyco.co.za/",
+    "https://www.facebook.com/theFlowerSupplyCo/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "A flower shop, pantry and cafe in Vredehoek selling fresh flowers and bouquets alongside coffee, pastries and a range of nuts and dried goods, with online bouquet ordering and delivery across greater Cape Town."
@@ -456,10 +850,20 @@
   {
    "slug": "the-mens-room-diep-river",
    "name": "The Men's Room",
-   "category": "beauty-hair-salons",
-   "suburb": "diep-river",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Diep River",
+   "region": "southern-suburbs",
+   "address": "1 Main Road, Diep River, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.hotfrog.co.za/company/1099855645999104",
+    "http://www.mensroom.co.za/Contact/",
+    "https://heyhairsalons.co.za/0406564/The_Mensroom"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 09:00-17:00, Fri 09:00-18:00, Sat-Sun 09:00-14:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "The Men's Room is a family-run, upscale barbershop on the corner of Alnwick and Main Road in Diep River, offering haircuts, straight-razor hot-towel shaves, hot-towel facials and scalp-massage shampoos in a relaxed, no-fuss setting."
@@ -467,10 +871,20 @@
   {
    "slug": "the-pool-team-tokai-kirstenhof",
    "name": "The Pool Team Tokai",
-   "category": "general-retail",
-   "suburb": "kirstenhof",
+   "category": "General Retail",
+   "suburb": "Kirstenhof",
+   "region": "southern-suburbs",
+   "address": "Unit 5, Kirstenhof Shopping Centre, 282 Main Road, Kirstenhof, Cape Town, 7945",
+   "shopping_centre": "Kirstenhof Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/the-pool-team-tokai-253184",
+    "https://www.facebook.com/ThePoolTeam/photos/weve-moved-visit-us-at-our-new-storethe-pool-team-tokaikirstenhof-shopping-centr/778577780938300/",
+    "https://thepoolteam.co.za/pool-equipment"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00, Sat 08:30-13:00, Sun Closed",
    "has_email": true,
    "current_words": 34,
    "current_description": "The Pool Team Tokai is a swimming pool equipment and chemical store in Kirstenhof Shopping Centre, Kirstenhof, part of South Africa's largest chain of independent pool stores, stocking pumps, filters, chemicals and maintenance equipment."
@@ -478,10 +892,20 @@
   {
    "slug": "thirsty-oyster-tavern-gordons-bay",
    "name": "The Thirsty Oyster Tavern",
-   "category": "restaurants-takeaways",
-   "suburb": "gordons-bay",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Gordon's Bay",
+   "region": "helderberg",
+   "address": "156 Beach Road, Old Harbour, Gordon's Bay, 7140",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "http://www.thethirstyoyster.co.za/",
+    "https://www.eatout.co.za/venue/thirsty-oyster-tavern-gordons-bay/",
+    "https://gordonsbay.travel/places/restaurant/the-thirsty-oyster-tavern/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "The Thirsty Oyster Tavern is a seafood-focused tavern in Old Harbour, Gordon's Bay, with a sun deck overlooking False Bay and Table Mountain, serving linefish, oysters and other seafood alongside peri-peri chicken and burgers."
@@ -489,10 +913,20 @@
   {
    "slug": "tokai-forest-guest-house-dennendal",
    "name": "Tokai Forest Guest House",
-   "category": "accommodation",
-   "suburb": "dennendal",
+   "category": "Accommodation",
+   "suburb": "Dennendal",
+   "region": "south-peninsula",
+   "address": "19 Dennendal East Avenue, Dennendal, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://tokaiforestguesthouse.co.za",
+   "existing_sources": [
+    "https://tokaiforestguesthouse.co.za/contact/",
+    "https://constantiavalley.com/tokai-forest-guest-house/",
+    "https://www.hotelplanner.com/Hotels/301096/Reservations-Tokai-Forest-Guest-House-Cape-Town-19-Dennendal-East-Ave-Tokai-7945"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 34,
    "current_description": "Tokai Forest Guest House is a guest house in Dennendal offering standard rooms, a family suite and a self-catering unit, set against Tokai Forest with an outdoor pool and views toward the Constantiaberg mountains."
@@ -500,10 +934,21 @@
   {
    "slug": "unframed-ice-cream-woodstock",
    "name": "Unframed Ice Cream",
-   "category": "restaurants-takeaways",
-   "suburb": "woodstock",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Woodstock",
+   "region": "city-bowl",
+   "address": "Woodstock Quarter, 187 Sir Lowry Road, Woodstock, Cape Town",
+   "shopping_centre": "Woodstock Quarter",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.woodstockquarter.co.za/tenant-directory/eateries/unframed-ice-cream",
+    "https://za.africabz.com/western-cape/unframed-ice-cream-286095",
+    "https://www.eatout.co.za/venue/unframed-ice-cream-woodstock/",
+    "https://crushmag-online.com/unframed-ice-cream-why-this-is-ice-cream-done-right/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 11:00-16:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Unframed Ice Cream is an artisanal ice-cream maker in the Woodstock Quarter on Sir Lowry Road, known for adventurous small-batch flavours, including vegan and dairy options such as blue coconut and dirty milk chocolate."
@@ -511,10 +956,19 @@
   {
    "slug": "walsh-fireplaces-retreat",
    "name": "Walsh Fireplaces",
-   "category": "furniture-homeware",
-   "suburb": "retreat",
+   "category": "Furniture & Homeware",
+   "suburb": "Retreat",
+   "region": "cape-flats",
+   "address": "23 Honeywell Road, Retreat, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.victorianfireplaces.co.za/fireplaces-cape-town/walsh-fireplaces/",
+    "https://www.bestdirectory.co.za/victorian-fireplaces-fireplaces-home-improvement-home-house-in-retreat-cape-town-western-cape.html"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Walsh Fireplaces is a Retreat-based business that has been making custom, built-to-order fireplaces for decades, specialising in traditional firebrick built-in fireplaces and mantle pieces, and in refurbishing and repairing Victorian fireplaces and marble mantlepieces."
@@ -522,10 +976,20 @@
   {
    "slug": "wills-cafe-deli-oranjezicht",
    "name": "Will's Cafe & Deli",
-   "category": "restaurants-takeaways",
-   "suburb": "oranjezicht",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Oranjezicht",
+   "region": "city-bowl",
+   "address": "22 Upper Orange Street, Oranjezicht, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.eatout.co.za/venue/carluccis-oranjezicht/",
+    "https://www.tripadvisor.com/Restaurant_Review-g312659-d10470572-Reviews-Will_s_Cafe_Deli-Cape_Town_Central_Western_Cape.html",
+    "https://www.facebook.com/WillsCafeDeli/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 07:00-20:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Will's Cafe & Deli is a delicatessen-style cafe in Oranjezicht serving freshly made sandwiches, salads and breakfasts throughout the day, with licensed service, WiFi and parking. It occupies the site previously home to Carlucci's."
@@ -533,10 +997,19 @@
   {
    "slug": "wunders-furniture-de-waterkant",
    "name": "Wunders Furniture",
-   "category": "furniture-homeware",
-   "suburb": "de-waterkant",
+   "category": "Furniture & Homeware",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "32 Napier Street, Cape Quarter, De Waterkant, Cape Town",
+   "shopping_centre": "Cape Quarter Lifestyle Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://capequarter.co.za/shops/",
+    "https://wunders.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Wunders Furniture is a family-run upholstered furniture business inside Cape Quarter in De Waterkant, with over 40 years of local manufacturing experience, offering custom-designed furniture for homes, the interior design trade and hotel groups."
@@ -544,10 +1017,19 @@
   {
    "slug": "26-sunset-villa-llandudno",
    "name": "26 Sunset Villa",
-   "category": "accommodation",
-   "suburb": "llandudno",
+   "category": "Accommodation",
+   "suburb": "Llandudno",
+   "region": "south-peninsula",
+   "address": "26 Sunset Avenue, Llandudno, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.26sunsetvilla.com",
+   "existing_sources": [
+    "http://www.26sunsetvilla.com",
+    "https://wetu.com/iBrochure/en/Information/24397/26_sunset_villa/Contact"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 35,
    "current_description": "26 Sunset Villa is a boutique guest villa on Sunset Avenue in Llandudno, offering six sea-facing suites with butler and chef service, an outdoor pool, gym and steam room, a short walk from Llandudno Beach."

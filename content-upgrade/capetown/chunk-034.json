@@ -5,10 +5,20 @@
   {
    "slug": "cosy-corner-wynberg",
    "name": "Cosy Corner",
-   "category": "restaurants-takeaways",
-   "suburb": "wynberg",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Wynberg",
+   "region": "southern-suburbs",
+   "address": "119 Ottery Road, Wynberg, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.eatout.co.za/venue/cosy-corner-wynberg/",
+    "https://www.yep.co.za/biz/store/iyp/15952704_2",
+    "https://winemag.co.za/food/restaurant-review/cosy-corner/"
+   ],
    "has_hours": true,
+   "hours": "Daily 10:00-17:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "Cosy Corner is a halaal Cape Malay eatery in Wynberg, established in 1973, known for its gatsbys, masala steak sandwiches, grills and curries, with a takeaway counter and no alcohol served."
@@ -16,10 +26,20 @@
   {
    "slug": "drifters-xtreme-sport-de-waterkant",
    "name": "Drifters Xtreme Sport",
-   "category": "general-retail",
-   "suburb": "de-waterkant",
+   "category": "General Retail",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "Cape Quarter Lifestyle Village, 27 Somerset Road, De Waterkant, Cape Town",
+   "shopping_centre": "Cape Quarter Lifestyle Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://capequarter.co.za/shops/",
+    "https://www.climbing.co.za/listing/drifters-xtreme-sport/",
+    "https://gpokcid.co.za/2016/06/06/drifters-xtreme-sport/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Drifters Xtreme Sport is an outdoor adventure specialist in Cape Quarter, De Waterkant, stocking camping, hiking and rock-climbing gear including tents, sleeping bags, boots, backpacks and technical accessories for outdoor pursuits."
@@ -27,10 +47,19 @@
   {
    "slug": "faeezas-home-kitchen-bo-kaap",
    "name": "Faeeza's Home Kitchen",
-   "category": "catering",
-   "suburb": "bo-kaap",
+   "category": "Catering",
+   "suburb": "Bo-Kaap",
+   "region": "city-bowl",
+   "address": "1 Chiappini Lane, Bo-Kaap, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://faeezashomekitchen.com",
+   "existing_sources": [
+    "https://faeezashomekitchen.com/contact-us/",
+    "https://www.capetownetc.com/things-to-do-cape-town/get-cooking-at-faeezas-home-kitchen-in-the-bo-kaap/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:00, Sat 09:00-16:00",
    "has_email": true,
    "current_words": 31,
    "current_description": "Faeeza's Home Kitchen is a family-run Cape Malay cooking school and restaurant in Bo-Kaap, offering hands-on classes in rolling rotis, frying samoosas and cooking traditional curries, finished with tea and koeksisters."
@@ -38,10 +67,20 @@
   {
    "slug": "for-the-love-of-silk-de-waterkant",
    "name": "For the Love of Silk",
-   "category": "fashion-clothing",
-   "suburb": "de-waterkant",
+   "category": "Fashion & Clothing",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "Shop 30, Cape Quarter Lifestyle Village, 27 Somerset Rd, De Waterkant, Cape Town",
+   "shopping_centre": "Cape Quarter Lifestyle Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://capequarter.co.za/shops/",
+    "https://fortheloveofsilk.co.za/",
+    "https://www.sayellow.com/view/south-africa/for-the-love-of-silk-in-cape-town"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "For the Love of Silk is a silk couture specialist in Cape Quarter, De Waterkant, making silk bridal and evening wear, sleepwear, scarves and pillowcases, with its showroom available by appointment."
@@ -49,10 +88,19 @@
   {
    "slug": "glen-country-club-clifton",
    "name": "Glen Country Club",
-   "category": "fitness-gyms",
-   "suburb": "clifton",
+   "category": "Fitness & Gyms",
+   "suburb": "Clifton",
+   "region": "atlantic-seaboard",
+   "address": "3 Victoria Road, Clifton, Cape Town, 8005",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.glenclub.co.za",
+   "existing_sources": [
+    "https://www.glenclub.co.za/contact",
+    "https://foursquare.com/v/glen-country-club/4ce54833ca41236af9677b4b"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Glen Country Club in Clifton is a private sports and social club offering tennis, padel and bowls facilities together with a clubhouse, set within the Clifton scenic reserve near Clifton Beach."
@@ -60,10 +108,20 @@
   {
    "slug": "ground-art-caffe-de-waterkant",
    "name": "Ground Art Caffe",
-   "category": "restaurants-takeaways",
-   "suburb": "de-waterkant",
+   "category": "Restaurants & Takeaways",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "160 Strand Street, De Waterkant, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/ground-art-caffe-1419",
+    "https://insideguide.co.za/cape-town/restaurants/ground-art-caffe/",
+    "https://www.groundartcaffe.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 07:00-15:00, Fri 08:00-15:00, Sat 07:30-14:00, Sun 08:00-13:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "Ground Art Caffe is a coffee bar and micro-gallery on Strand Street, pairing quality espresso from a barista trained by Truth Coffee Roasting Company with rotating local artwork that changes monthly."
@@ -71,10 +129,20 @@
   {
    "slug": "hawkes-and-findlay-observatory",
    "name": "Hawkes & Findlay",
-   "category": "hardware-stores",
-   "suburb": "observatory",
+   "category": "Hardware Stores",
+   "suburb": "Observatory",
+   "region": "city-bowl",
+   "address": "57 Station Road, cnr Station and Lower Main Roads, Observatory, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.facebook.com/HawkesAndFindlayHardware/",
+    "https://www.cybo.com/ZA-biz/hawkes-findlay",
+    "https://za.africabz.com/western-cape/hawkes-findlay-37786"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 08:00-17:30, Fri 08:00-17:00, Sat 08:00-13:00, Sun Closed",
    "has_email": false,
    "current_words": 31,
    "current_description": "Hawkes & Findlay is a long-standing hardware store in Observatory, trading since 1972, stocking paint, timber and roofing supplies, masonry materials, tools and general hardware with personalised advice from its staff."
@@ -82,10 +150,20 @@
   {
    "slug": "hci-sea-point",
    "name": "HCI (Hosken Consolidated Investments)",
-   "category": "financial-investment-services",
-   "suburb": "sea-point",
+   "category": "Financial & Investment Services",
+   "suburb": "Sea Point",
+   "region": "atlantic-seaboard",
+   "address": "Suite 801, 8th Floor, The Point, 76 Regent Road, Sea Point, Cape Town",
+   "shopping_centre": "The Point",
+   "phone_on_file": true,
    "website": "https://www.hci.co.za",
+   "existing_sources": [
+    "https://thepointmall.co.za/",
+    "https://www.hci.co.za/contact-us/",
+    "https://en.wikipedia.org/wiki/Hosken_Consolidated_Investments"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "HCI (Hosken Consolidated Investments) is a diversified investment holding company with interests spanning media and broadcasting, gaming, transport, property and coal mining, with a registered office in The Point, Sea Point."
@@ -93,10 +171,20 @@
   {
    "slug": "highlands-primary-school-woodlands",
    "name": "Highlands Primary School",
-   "category": "schools-education",
-   "suburb": "woodlands",
+   "category": "Schools & Education",
+   "suburb": "Woodlands",
+   "region": "cape-flats",
+   "address": "Corner Ajax Way & Highlands Drive, Woodlands, Mitchells Plain, Cape Town, 7785",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.brabys.com/za/western-cape/mitchells-plain/woodlands/primary-school/highlands-primary-school",
+    "https://www.africanadvice.com/1372585/Schools/Western_Cape/Highlands_Primary_School/",
+    "https://www.school-register.co.za/school/highlands-primary-school/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-14:15",
    "has_email": false,
    "current_words": 31,
    "current_description": "Highlands Primary School is a public primary school in Woodlands, Mitchells Plain, first opened in 1975 with 23 learners and grown since to more than 800 learners and around 28 educators."
@@ -104,10 +192,20 @@
   {
    "slug": "hugo-the-hair-company-panorama",
    "name": "Hugo The Hair Company",
-   "category": "beauty-hair-salons",
-   "suburb": "panorama",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Panorama",
+   "region": "northern-suburbs",
+   "address": "56 Panorama Road, Panorama, Cape Town, 7500",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/lvp/hugo-the-hair-company-panorama-road-cape-town-q8QyrD",
+    "https://www.brabys.com/za/western-cape/parow/panorama/hair-salons/hugo-the-hair-company",
+    "https://www.cylex.net.za/company/hugo-the-hair-company-23764196.html"
+   ],
    "has_hours": true,
+   "hours": "Tue-Fri 08:30-17:00, Sat 08:00-14:00, Sun-Mon Closed",
    "has_email": false,
    "current_words": 31,
    "current_description": "Hugo The Hair Company is a hair salon in Panorama offering cuts, colour, balayage and anti-frizz treatments, trading since 2005 and working with brands including Goldwell, Kevin.Murphy and Paul Mitchell."
@@ -115,10 +213,20 @@
   {
    "slug": "hybrid-composite-ndabeni",
    "name": "Hybrid Composite",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "ndabeni",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Ndabeni",
+   "region": "northern-suburbs",
+   "address": "Unit 7, 7 Inyoni Street, Ndabeni, Cape Town, 7405",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://hybridcomposite.co.za/contacts/",
+    "https://www.cylex.net.za/company/hybrid-composite-pty-ltd-23750199.html",
+    "https://hybridcomposite.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Hybrid Composite designs and manufactures semi-custom composite parts for the marine industry, specialising in super-yacht deck-access equipment, with in-house CAD design, CNC machining and composite curing capability at its Ndabeni workshop."
@@ -126,10 +234,19 @@
   {
    "slug": "innohealth-medical-centres-mitchells-plain",
    "name": "Innohealth Medical Centres",
-   "category": "clinics-healthcare",
-   "suburb": "mitchells-plain",
+   "category": "Clinics & Healthcare",
+   "suburb": "Mitchells Plain",
+   "region": "cape-flats",
+   "address": "Shop 6, Woolworths Arcade Building, Seventh Avenue, Mitchells Plain Town Centre, Cape Town, 7785",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.innohealthclinics.com/mitchells-plain",
+   "existing_sources": [
+    "https://www.fresha.com/lvp/innohealth-clinics-mitchells-plain-dr-clayton-mentoor-seventh-avenue-cape-town-ovL8rx",
+    "https://www.innohealthclinics.com/mitchells-plain"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Innohealth Medical Centres in Mitchells Plain Town Centre provides general practitioner consultations, nursing, and physiotherapy, including chronic condition management for diabetes, high blood pressure, arthritis and epilepsy, plus women's health services."
@@ -137,10 +254,20 @@
   {
    "slug": "ixia-street-animal-hospital-milnerton",
    "name": "Ixia Street Animal Hospital",
-   "category": "vets-animal-care",
-   "suburb": "milnerton",
+   "category": "Vets & Animal Care",
+   "suburb": "Milnerton",
+   "region": "west-coast",
+   "address": "9 Ixia Street, Milnerton, Cape Town, 7441",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.ixiastreetanimalhospital.co.za/",
+   "existing_sources": [
+    "https://www.pooh.co.za/listing/ixia-street-animal-hospital/",
+    "https://za.africabz.com/western-cape/ixia-street-animal-hospital-42006",
+    "https://ixiastreetanimalhospital.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:30-17:30, Sat 09:00-13:00, Sun and Public Holidays 10:00-11:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "Ixia Street Animal Hospital is a well-established veterinary hospital in Milnerton, in operation for over 18 years, offering medical, surgical, high-care and dental services for cats, dogs and other small pets."
@@ -148,10 +275,20 @@
   {
    "slug": "jack-black-brewing-company-diep-river",
    "name": "Jack Black Brewing Company",
-   "category": "restaurants-takeaways",
-   "suburb": "diep-river",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Diep River",
+   "region": "southern-suburbs",
+   "address": "10 Brigid Road, Diep River, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://constantiavalley.com/jack-black-brewing-company/",
+    "https://www.eatout.co.za/venue/jack-blacks-brewing-co/",
+    "https://jackblackbeer.com/pages/taproom"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Jack Black's Brewing Co. is an independently owned craft brewery in Diep River, with a year-round taproom offering tastings, a food menu, live music, brewery tours and a small retail shop."
@@ -159,10 +296,20 @@
   {
    "slug": "jakes-tokai",
    "name": "Jakes",
-   "category": "restaurants-takeaways",
-   "suburb": "tokai",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Tokai",
+   "region": "southern-suburbs",
+   "address": "A5, Steenberg Village Centre, Steenberg Road, Tokai, Cape Town",
+   "shopping_centre": "Steenberg Village",
+   "phone_on_file": true,
    "website": "https://jakes.co.za",
+   "existing_sources": [
+    "https://www.jakes.co.za/contact/",
+    "https://www.tripadvisor.com/Restaurant_Review-g1770549-d967411-Reviews-Jakes_in_the_Village-Tokai_Western_Cape.html",
+    "https://www.dineplan.com/restaurants/jakes-tokai"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 11:30-22:30",
    "has_email": true,
    "current_words": 31,
    "current_description": "Jakes in the Village is a restaurant at Steenberg Village Centre in Tokai serving global and Asian-influenced contemporary dishes, salads and burgers, with an extensive wine list and weekday lunchtime specials."
@@ -170,10 +317,19 @@
   {
    "slug": "jam-clothing-gugulethu-square-gugulethu",
    "name": "JAM Clothing",
-   "category": "fashion-clothing",
-   "suburb": "gugulethu",
+   "category": "Fashion & Clothing",
+   "suburb": "Gugulethu",
+   "region": "cape-flats",
+   "address": "Shop 15, Gugulethu Square, Cnr NY25 & Steve Biko Drive, Gugulethu, Cape Town, 7750",
+   "shopping_centre": "Gugulethu Square",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://jamclothing.co.za/stores/jam-gugulethu-gugulethu/",
+    "https://www.facebook.com/JAMClothingGugulethuSquare/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 09:00-18:00, Fri 09:00-19:00, Sat 09:00-17:00, Sun 09:00-15:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "JAM Clothing is a national discount fashion retailer that has traded for over 20 years; its Gugulethu Square branch stocks clothing and fashion brands from around the world at value prices."
@@ -181,10 +337,19 @@
   {
    "slug": "jordan-footwear-factory-outlet-goodwood",
    "name": "Jordan Footwear Factory Outlet",
-   "category": "shoe-stores",
-   "suburb": "goodwood",
+   "category": "Shoe Stores",
+   "suburb": "Goodwood",
+   "region": "northern-suburbs",
+   "address": "124 Voortrekker Road, Goodwood, Cape Town, 7460",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://factoryshops.co.za/jordan-footwear-factory-outlet-goodwood/",
+    "https://za.africabz.com/western-cape/jordan-footwear-69228"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:30, Sat 08:30-15:00, Sun 09:00-14:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "Jordan Footwear Factory Outlet is a footwear factory shop on Voortrekker Road in Goodwood, selling Jordan-branded stock alongside other footwear brands including Bolton, Barker and Watson for men, women and children."
@@ -192,10 +357,19 @@
   {
    "slug": "kenwyn-martial-arts-centre-kenwyn",
    "name": "Kenwyn Martial Arts Centre",
-   "category": "fitness-gyms",
-   "suburb": "kenwyn",
+   "category": "Fitness & Gyms",
+   "suburb": "Kenwyn",
+   "region": "southern-suburbs",
+   "address": "19 Civic Road, Kenwyn, Cape Town, 7780",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.kenwynmartialartscentre.com/",
+    "https://www.activeactivities.co.za/directory/kenwyn-martial-arts-centre-168491.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Kenwyn Martial Arts Centre is a dojo in Kenwyn that has offered Karate and Ryukyu Kobudo (Okinawan weaponry) instruction since 2001, running classes for fitness, self-defence and traditional martial arts training."
@@ -203,10 +377,20 @@
   {
    "slug": "kristens-kick-ass-ice-cream-newlands",
    "name": "Kristen's Kick-Ass Ice Cream",
-   "category": "restaurants-takeaways",
-   "suburb": "newlands",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Newlands",
+   "region": "southern-suburbs",
+   "address": "Shop 6, Cardiff Castle, Main Street, Newlands, Cape Town, 7700",
+   "shopping_centre": "Cardiff Castle Centre",
+   "phone_on_file": true,
    "website": "https://www.kristenskickass.co.za/contact-us",
+   "existing_sources": [
+    "https://www.kristenskickass.co.za/contact-us",
+    "https://cardiffcastle.co.za/portfolio_page/art-design-blvd/",
+    "https://www.capetownetc.com/cape-town/restaurants/have-you-heard-the-scoop-on-kirstens-kick-ass-ice-cream/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Kristen's Kick-Ass Ice Cream is an artisanal ice cream parlour in Cardiff Castle, Newlands, churning small-batch seasonal flavours on site, including xylitol-sweetened and vegan options, with custom flavours available for events."
@@ -214,10 +398,21 @@
   {
    "slug": "latelier-optometrist-de-waterkant",
    "name": "L'Atelier Optometrist",
-   "category": "opticians",
-   "suburb": "de-waterkant",
+   "category": "Opticians",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "27 Somerset Road, Cape Quarter Lifestyle Village, De Waterkant, Cape Town",
+   "shopping_centre": "Cape Quarter Lifestyle Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://capequarter.co.za/shops/",
+    "https://www.prjctwrks.com/portfolio/l-atelier-cape-quarter/",
+    "https://www.favrspecs.com/en/opticians/in/cape-town/373/latelier-optometrist/20776/",
+    "https://magicpin.com/south-africa/Cape-Town/De-Waterkant/Healthcare/Latelier-Optometrist/store/23248cc"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "L'Atelier Optometrist is a boutique vision and contact lens practice inside Cape Quarter Lifestyle Village in De Waterkant, with more than 17 years of experience in personalised eyewear and vision care."
@@ -225,10 +420,19 @@
   {
    "slug": "lotus-river-primary-school-lotus-river",
    "name": "Lotus River Primary School",
-   "category": "schools-education",
-   "suburb": "lotus-river",
+   "category": "Schools & Education",
+   "suburb": "Lotus River",
+   "region": "cape-flats",
+   "address": "Cnr Lake Road & 5th Avenue, Lotus River, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://educationsouthafrica.com/schools/western-cape/city-of-cape-town/lotus-river-primary-school",
+    "https://www.findmy.co.za/services/business/lotus-river-primary-school/8343"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Lotus River Primary School is a public primary school on the corner of Lake Road and 5th Avenue, serving around 600 learners with about 20 teaching staff on the CAPS curriculum."
@@ -236,10 +440,19 @@
   {
    "slug": "maphindis-braai-place-nyanga",
    "name": "Maphindi's Braai Place",
-   "category": "restaurants-takeaways",
-   "suburb": "nyanga",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Nyanga",
+   "region": "cape-flats",
+   "address": "3rd Avenue, Nyanga, Cape Town, 7750",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.eatout.co.za/venue/maphindis/",
+    "https://www.findmy.co.za/food/category-detail/maphindis-braai-place/22908"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 07:00-19:30",
    "has_email": false,
    "current_words": 31,
    "current_description": "Maphindi's Braai Place is a shisa nyama and butchery in Nyanga known for its flame-grilled meat and magwinya (vetkoek), with a lively township social atmosphere and a TV for watching sport."
@@ -247,10 +460,19 @@
   {
    "slug": "millers-thumb-restaurant-gardens",
    "name": "Miller's Thumb Restaurant",
-   "category": "restaurants-takeaways",
-   "suburb": "gardens",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Gardens",
+   "region": "city-bowl",
+   "address": "10B Kloof Nek Rd, Gardens, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://millersthumb.co.za",
+   "existing_sources": [
+    "https://www.sa-venues.com/things-to-do/westerncape/millers-thumb/",
+    "https://millersthumb.co.za"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Miller's Thumb is a long-standing seafood restaurant on Kloof Nek Road in Gardens, open since 1996 and known for fresh linefish, mussels, calamari and prawns prepared with Cajun and Creole influences."
@@ -258,10 +480,19 @@
   {
    "slug": "mitchells-plain-oral-health-centre-mitchells-plain",
    "name": "Mitchells Plain Oral Health Centre",
-   "category": "clinics-healthcare",
-   "suburb": "mitchells-plain",
+   "category": "Clinics & Healthcare",
+   "suburb": "Mitchells Plain",
+   "region": "cape-flats",
+   "address": "6th Floor, Melomed Mitchells Plain, Symphony Walk, Mitchells Plain, Cape Town, 7785",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.westerncape.gov.za/health-wellness/facility/mitchells-plain-oral-health-centre",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=148026"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-17:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "Mitchells Plain Oral Health Centre is a public dental and oral health facility operated by the Western Cape Department of Health, located within the Melomed Mitchells Plain building on Symphony Walk."
@@ -269,10 +500,20 @@
   {
    "slug": "mungo-constantia",
    "name": "Mungo",
-   "category": "furniture-homeware",
-   "suburb": "constantia",
+   "category": "Furniture & Homeware",
+   "suburb": "Constantia",
+   "region": "southern-suburbs",
+   "address": "High Constantia Centre, Main Road, Constantia, Cape Town",
+   "shopping_centre": "High Constantia Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://mungo.co.za/blog/meet-mungo-high-constantia/",
+    "https://www.tripadvisor.com/Attraction_Review-g1722390-d12163210-Reviews-Mungo-Cape_Town_Western_Cape.html",
+    "https://mungo.co.za/about-us/our-shops/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 09:00-17:00, Sun 09:00-14:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "Mungo's High Constantia store is a sister branch of the brand's Cape Town shops, stocking the full range of homeware textiles designed and woven at the company's mill in Plettenberg Bay."
@@ -280,10 +521,20 @@
   {
    "slug": "nandos-grassy-park",
    "name": "Nando's (Grassy Park)",
-   "category": "restaurants-takeaways",
-   "suburb": "grassy-park",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Grassy Park",
+   "region": "cape-flats",
+   "address": "Cnr Prince George Dr & 5th Ave, Grassy Park, Cape Town, 7888",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.brabys.com/za/western-cape/grassy-park/takeaway-foods/nandos",
+    "https://www.sayellow.com/view/south-africa/nandos-grassy-park-drive-thru-in-cape-town",
+    "https://store.nandos.co.za/details/grassy-park-drive-thru"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 10:00-22:00, Fri-Sat 10:00-23:00, Sun 10:00-22:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "Nando's Grassy Park is a drive-thru branch of the South African flame-grilled peri-peri chicken chain, offering dine-in, takeaway and drive-thru service on the corner of Prince George Drive and 5th Avenue."
@@ -291,10 +542,19 @@
   {
    "slug": "ndoro-noordhoek",
    "name": "Ndoro",
-   "category": "general-retail",
-   "suburb": "noordhoek",
+   "category": "General Retail",
+   "suburb": "Noordhoek",
+   "region": "south-peninsula",
+   "address": "Noordhoek Farm Village, Cnr Noordhoek Main Road & Village Lane, Noordhoek, Cape Town, 7979",
+   "shopping_centre": "Noordhoek Farm Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.capetownmagazine.com/ndoro",
+    "https://thefarmvillage.co.za/shops-and-services/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Ndoro is a craft and gift shop in Noordhoek Farm Village specialising in African arts and crafts, hand-painted ceramics, jewellery and beadwork sourced from Zimbabwe, South Africa and other African countries."
@@ -302,10 +562,19 @@
   {
    "slug": "norma-jeans-beauty-salon-and-tattoo-parlor-kuils-river",
    "name": "Norma-Jean's Beauty Salon and Tattoo Parlor",
-   "category": "beauty-hair-salons",
-   "suburb": "kuils-river",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Kuils River",
+   "region": "northern-suburbs",
+   "address": "43b Van Riebeeck Road, Kuils River, Cape Town, 7580",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/lvp/norma-jeans-beauty-salon-and-tattoo-parlor-van-riebeeck-road-cape-town-RvWXn6",
+    "https://booksy.com/en-za/39170_norma-jeans-beauty-salon-and-tattoo-studio_hair-salons_58144_kuils-river"
+   ],
    "has_hours": true,
+   "hours": "Tue-Fri 09:00-18:00, Sat 08:00-15:00, Sun-Mon Closed",
    "has_email": false,
    "current_words": 31,
    "current_description": "Norma-Jean's Beauty Salon and Tattoo Parlor is a beauty salon and tattoo studio on Van Riebeeck Road in Kuils River, offering hair removal, facials, skincare, makeup and threading alongside tattoo services."
@@ -313,10 +582,19 @@
   {
    "slug": "nv-80-grill-bar-sea-point",
    "name": "NV-80 Grill & Bar",
-   "category": "restaurants-takeaways",
-   "suburb": "sea-point",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Sea Point",
+   "region": "atlantic-seaboard",
+   "address": "Shop 08, 1st Floor, The Point, 76 Regent Road, Sea Point, Cape Town",
+   "shopping_centre": "The Point",
+   "phone_on_file": true,
    "website": "https://nv-80.co.za",
+   "existing_sources": [
+    "https://nv-80.co.za",
+    "https://thepointmall.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Sun-Thu 12:00-15:00 & 18:00-22:30, Fri-Sat 12:00-15:00 & 18:00-23:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "NV-80 Grill & Bar is a steakhouse and seafood restaurant on the first floor of The Point in Sea Point, specialising in 28-day aged prime steaks alongside fresh seafood and salads."
@@ -324,10 +602,20 @@
   {
    "slug": "oakhurst-farmstall-kenilworth",
    "name": "Oakhurst Farmstall",
-   "category": "bakeries",
-   "suburb": "kenilworth",
+   "category": "Bakeries",
+   "suburb": "Kenilworth",
+   "region": "southern-suburbs",
+   "address": "284A Main Road, Kenilworth, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/oakhurst-farmstall-27098",
+    "http://oakhurstfarmstallk.co.za/contact_us.html",
+    "https://www.eatout.co.za/venue/oakhurst-farm-stall/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 08:30-17:00, Sun Closed",
    "has_email": false,
    "current_words": 31,
    "current_description": "Oakhurst Farmstall is a farm stall and deli on Main Road, Kenilworth, selling fresh fruit and vegetables, homemade cakes and baked goods, imported chocolates and preserves, alongside a coffee shop counter."
@@ -335,10 +623,19 @@
   {
    "slug": "olympia-cafe-and-deli-kalk-bay",
    "name": "Olympia Cafe and Deli",
-   "category": "restaurants-takeaways",
-   "suburb": "kalk-bay",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Kalk Bay",
+   "region": "south-peninsula",
+   "address": "134 Main Road, Kalk Bay, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://olympiacafe.co.za",
+   "existing_sources": [
+    "https://olympiacafe.co.za",
+    "https://thehappytraveller.co.za/kalk-bay-guide/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Olympia Cafe and Deli is a casual all-day eatery and bakery across the road from Kalk Bay harbour, serving a daily blackboard menu built around fresh, locally caught fish and seafood."
@@ -346,10 +643,19 @@
   {
    "slug": "peacock-tea-coffee-rondebosch",
    "name": "Peacock Tea & Coffee",
-   "category": "restaurants-takeaways",
-   "suburb": "rondebosch",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Rondebosch",
+   "region": "southern-suburbs",
+   "address": "Shop 15, Rondebosch Main Centre, Main Road, Rondebosch, Cape Town, 7700",
+   "shopping_centre": "Rondebosch Main Centre",
+   "phone_on_file": true,
    "website": "https://www.peacockteaandcoffee.co.za/stores/",
+   "existing_sources": [
+    "https://www.rondeboschmain.co.za/divi_overlay/peacock-tea-coffee/",
+    "https://www.peacockteaandcoffee.co.za/stores/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-18:00, Sat 08:00-17:00, Sun 09:00-14:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "Peacock Tea & Coffee is a proudly South African coffee and tea shop in Rondebosch Main Centre, offering freshly ground coffee, a range of teas and a small selection of cakes."
@@ -357,10 +663,20 @@
   {
    "slug": "pep-home-durbanville-town-centre-durbanville",
    "name": "PEP Home Durbanville Town Centre",
-   "category": "furniture-homeware",
-   "suburb": "durbanville",
+   "category": "Furniture & Homeware",
+   "suburb": "Durbanville",
+   "region": "northern-suburbs",
+   "address": "Shop 6, Durbanville Town Centre, 33 Wellington Street, Durbanville, Cape Town, 7550",
+   "shopping_centre": "Durbanville Town Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/pep-home-durbanville-town-centre-175998",
+    "https://www.tiendeo.co.za/stores/durbanville/pep-home-durbanville-town-centre-wellington-street/71355",
+    "https://www.durbanvilletowncentre.co.za/stores/pep-home-2/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:30-17:30, Sat 08:30-14:30, Sun 09:00-13:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "PEP Home Durbanville Town Centre is a homeware and household goods store inside Durbanville Town Centre, part of the national PEP Home retail chain selling furniture, bedding, and other home essentials."
@@ -368,10 +684,20 @@
   {
    "slug": "petshop-science-plattekloof-shopping-centre-plattekloof",
    "name": "Petshop Science",
-   "category": "pet-stores",
-   "suburb": "plattekloof",
+   "category": "Pet Stores & Supplies",
+   "suburb": "Plattekloof",
+   "region": "northern-suburbs",
+   "address": "Shop 16, Plattekloof Shopping Centre, Corner Olienhout & Plattekloof Streets, Plattekloof, Cape Town, 7500",
+   "shopping_centre": "Plattekloof Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/petshop-science-plattekloof-639468",
+    "https://www.medpages.info/sf/index.php?page=listing&servicecode=870&suburbcode=5468",
+    "https://www.shopriteholdings.co.za/group/brands/petshop-science.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Petshop Science in Plattekloof Shopping Centre is a pet store stocking food, toys, accessories and care essentials for dogs, cats, birds and small animals, part of the science-focused Petshop Science chain."
@@ -379,10 +705,21 @@
   {
    "slug": "printech-engineering-killarney-gardens",
    "name": "Printech Engineering",
-   "category": "engineering-surveying",
-   "suburb": "killarney-gardens",
+   "category": "Engineering & Surveying Services",
+   "suburb": "Killarney Gardens",
+   "region": "west-coast",
+   "address": "43/45 Mansell Road, Killarney Gardens, Cape Town, 7441",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.printech.co.za/home/",
+    "http://inkillarneygardens.co.za/listing/printech-engineering/",
+    "https://www.brabys.com/za/western-cape/cape-town/killarney-gardens/printers-engineers/printech-engineering",
+    "https://za.linkedin.com/company/printech-engineering"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "Printech Engineering, founded in 1981, supplies Heidelberg offset printing presses and bindery, cutting and finishing equipment to the printing industry, along with after-sales service, maintenance and spare parts, in Killarney Gardens."
@@ -390,10 +727,20 @@
   {
    "slug": "rain-cape-quarter-de-waterkant",
    "name": "Rain",
-   "category": "mobile-phones",
-   "suburb": "de-waterkant",
+   "category": "Mobile Phones & Accessories",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "1st Floor, Cape Quarter Lifestyle Village, 27 Somerset Rd, De Waterkant, Cape Town",
+   "shopping_centre": "Cape Quarter Lifestyle Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://capequarter.co.za/shops/",
+    "https://www.rain.co.za/store-locator",
+    "https://wanderlog.com/place/details/15133323/rain-office-cape-quarter"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-18:00, Sat-Sun 08:00-14:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "Rain operates a store at Cape Quarter Lifestyle Village offering its uncapped 4G/5G mobile and home internet network services, including SIMs, devices and rainOne plans, to customers in De Waterkant."
@@ -401,10 +748,19 @@
   {
    "slug": "rheinmetall-denel-munition-firgrove",
    "name": "Rheinmetall Denel Munition",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "firgrove",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Firgrove",
+   "region": "helderberg",
+   "address": "1 Reeb Road, Firgrove, Somerset West, Cape Town, 7130",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.rheinmetall.com/en/company/subsidiaries/rheinmetall-denel-munition",
+    "http://www.denelproperties.co.za/property/Rheinmetall-Denel-Munition/Somerset-West/7"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Rheinmetall Denel Munition operates an explosives and munitions manufacturing facility in Firgrove, formed in 2008 from the former Denel Somchem division, with Rheinmetall holding a majority stake and Denel holding 49%."
@@ -412,10 +768,20 @@
   {
    "slug": "richelles-wedding-dresses-eversdal",
    "name": "Richelles Wedding Dresses",
-   "category": "wedding-services",
-   "suburb": "eversdal",
+   "category": "Wedding Services",
+   "suburb": "Eversdal",
+   "region": "northern-suburbs",
+   "address": "5 Amelia Street, Amanda Glen, Durbanville, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://richellesweddingdresses.wordpress.com/contact-us/",
+    "https://connecto.co.za/business/RICHELLEDRESS",
+    "https://www.weddingdirectory.co.za/wedding-guide-wedding-suppliers/richelles-wedding-dresses-bridal-dresses-flowergirl-dresses-in-western-cape-durbanville"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-20:00, Sat 09:00-18:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "Richelles Wedding Dresses is a bridal boutique with a collection of more than 100 wedding dresses available to try on, offering both dress hire and custom-designed gowns tailored for each bride."
@@ -423,10 +789,20 @@
   {
    "slug": "savoy-lodge-rondebosch-east",
    "name": "Savoy Lodge",
-   "category": "accommodation",
-   "suburb": "rondebosch-east",
+   "category": "Accommodation",
+   "suburb": "Rondebosch East",
+   "region": "southern-suburbs",
+   "address": "86 Kromboom Road & 3rd Avenue, Rondebosch East, Cape Town, 7764",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.savoylodge.co.za",
+   "existing_sources": [
+    "http://www.savoylodge.co.za/",
+    "https://holidays.africastay.com/accommodation/in-Cape_Town/South_Africa/savoy-lodge-rondebosch-east-south-africa/",
+    "https://www.tripadvisor.com/Hotel_Review-g2426452-d1745327-Reviews-Savoy_Lodge-Rondebosch_Western_Cape.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Savoy Lodge is a budget guesthouse in Rondebosch East offering en-suite rooms, an outdoor pool and jacuzzi, an event space for up to 180 guests, and a paid airport shuttle service."
@@ -434,10 +810,19 @@
   {
    "slug": "shoprite-macassar-macassar",
    "name": "Shoprite Macassar",
-   "category": "supermarkets-groceries",
-   "suburb": "macassar",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Macassar",
+   "region": "helderberg",
+   "address": "Corner of Hospital and Burg Streets, Macassar Shopping Centre, Macassar, 7130",
+   "shopping_centre": "Macassar Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.shoprite.co.za/Western-Cape/Somerset-West/Macassar/Shoprite-Macassar/store-details/48898",
+    "https://mydorpie.com/m/?page=chain_shoprite_macassar_somerset_west"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Shoprite Macassar is a branch of the Shoprite supermarket chain at the corner of Hospital and Burg Streets in Macassar Shopping Centre, stocking groceries and household essentials for the Macassar community."
@@ -445,10 +830,20 @@
   {
    "slug": "silulo-ulutho-technologies-town-1-village-1-khayelitsha",
    "name": "Silulo Ulutho Technologies (Town 1 Village 1)",
-   "category": "computer-it-services",
-   "suburb": "khayelitsha",
+   "category": "Computer & IT Services",
+   "suburb": "Khayelitsha",
+   "region": "cape-flats",
+   "address": "13 Makabeni Road, Khayelitsha Town 1 Village 1, Cape Town, 7784",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://siluloulutho.co.za/branches/",
+    "https://www.thinklocal.co.za/biz/silulo-ulutho-technologies-khayelitsha",
+    "https://siluloulutho.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Silulo Ulutho Technologies in Khayelitsha's Town 1 Village 1 is a one-stop technology outlet offering internet access, computer training, phone and computer sales and repairs, and printing, scanning and CV-writing services."
@@ -456,10 +851,19 @@
   {
    "slug": "site-b-youth-clinic-khayelitsha",
    "name": "Site B Youth Clinic",
-   "category": "clinics-healthcare",
-   "suburb": "khayelitsha",
+   "category": "Clinics & Healthcare",
+   "suburb": "Khayelitsha",
+   "region": "cape-flats",
+   "address": "Corner of Pama and Lwandle Road, Site B, Khayelitsha, Cape Town, 7784",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.capetown.gov.za/Family%20and%20home/See-all-city-facilities/Our-service-facilities/Clinics%20and%20healthcare%20facilities/site-b-youth-centre",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=161350"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:30-16:30",
    "has_email": false,
    "current_words": 31,
    "current_description": "Site B Youth Clinic is a City of Cape Town public health clinic in Khayelitsha, providing general primary healthcare including family planning, HIV testing and care, and STI assessment and treatment."
@@ -467,10 +871,20 @@
   {
    "slug": "spaces-century-city",
    "name": "Spaces Century City",
-   "category": "commercial-property-office-space",
-   "suburb": "century-city",
+   "category": "Commercial Property & Office Space",
+   "suburb": "Century City",
+   "region": "northern-suburbs",
+   "address": "1 Bridgeway Road, Bridgeways Precinct, Century City, Cape Town, 7441",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.regus.com/en-gb/south-africa/cape-town/1-bridgeway-road-4411",
+    "https://www.myspacesworks.com/centre/4411/details",
+    "https://www.spacesworks.com/cape-town/century-city/"
+   ],
    "has_hours": true,
+   "hours": "Reception Mon-Fri 08:00-17:30",
    "has_email": false,
    "current_words": 31,
    "current_description": "Spaces Century City is a coworking and serviced office centre in the Bridgeways Precinct, offering private offices, dedicated desks and meeting rooms, with 24-hour access for private-office and dedicated coworking members."
@@ -478,10 +892,20 @@
   {
    "slug": "starlings-locale-claremont",
    "name": "Starlings Locale",
-   "category": "restaurants-takeaways",
-   "suburb": "claremont",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Claremont",
+   "region": "southern-suburbs",
+   "address": "4 Mark Rd, Claremont, Cape Town, 7708",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.sluurpy.co.za/claremont/restaurant/5032164/starlings-locale",
+    "https://insideguide.co.za/cape-town/restaurants/starlings-locale/",
+    "https://www.eatout.co.za/venue/starlings-locale/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 08:00-17:00",
    "has_email": false,
    "current_words": 31,
    "current_description": "Starlings Locale is a coffee shop and restaurant in a residential part of Claremont, the little sibling of Starlings Cafe, known for specialty coffee and indoor/outdoor seating with mountain views."
@@ -489,10 +913,20 @@
   {
    "slug": "the-brasserie-tokai",
    "name": "The Brasserie",
-   "category": "restaurants-takeaways",
-   "suburb": "tokai",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Tokai",
+   "region": "southern-suburbs",
+   "address": "Shop 1, Forest Glade House, Tokai Road, Tokai, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://brasseriect.co.za",
+   "existing_sources": [
+    "https://brasseriect.co.za/contact/",
+    "https://insideguide.co.za/cape-town/specials/brasserie-lunch-club/",
+    "https://brasseriect.co.za/about/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "The Brasserie is a French-Italian restaurant in Tokai, serving French classics such as fillet au poivre alongside Italian dishes like housemade spaghetti carbonara and salt-and-pepper squid, plus a dedicated breakfast menu."
@@ -500,10 +934,20 @@
   {
    "slug": "the-creamery-cafe-mouille-point",
    "name": "The Creamery Café",
-   "category": "restaurants-takeaways",
-   "suburb": "mouille-point",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Mouille Point",
+   "region": "atlantic-seaboard",
+   "address": "2 Park Road, Mouille Point, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.thecreamery.co.za/",
+   "existing_sources": [
+    "https://www.tripadvisor.com/Restaurant_Review-g312659-d8090934-Reviews-The_Creamery_Cafe_Mouille_Point-Cape_Town_Central_Western_Cape.html",
+    "http://www.thecreamery.co.za/",
+    "https://www.eatout.co.za/venue/creamery-mouille-point/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "The Creamery Café is an ice cream and coffee café in Mouille Point, its first branch on the Atlantic Seaboard, serving handmade, locally sourced ice cream alongside coffee, milkshakes and desserts."
@@ -511,10 +955,20 @@
   {
    "slug": "the-little-fisherman-newlands",
    "name": "The Little Fisherman",
-   "category": "butcheries",
-   "suburb": "newlands",
+   "category": "Butcheries",
+   "suburb": "Newlands",
+   "region": "southern-suburbs",
+   "address": "Shop 11, Dean Street Arcade, Dean St, Newlands, Cape Town, 7700",
+   "shopping_centre": "Dean Street Arcade",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.ypgo.net/The+Little+Fisherman+Newlands,+Western+Cape-51852928913",
+    "https://za.africabz.com/western-cape/the-little-fisherman-130016",
+    "https://thelittlefisherman.co.za/contact-the-little-fisherman.php"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "The Little Fisherman is a fresh fish and seafood retailer in Dean Street Arcade, Newlands, selling fresh fish and prawns with staff on hand to clean and prepare portions to order."
@@ -522,10 +976,19 @@
   {
    "slug": "the-live-edge-woodstock",
    "name": "The Live Edge",
-   "category": "furniture-homeware",
-   "suburb": "woodstock",
+   "category": "Furniture & Homeware",
+   "suburb": "Woodstock",
+   "region": "city-bowl",
+   "address": "373-375 Albert Road, Woodstock, Cape Town",
+   "shopping_centre": "The Old Biscuit Mill",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://theoldbiscuitmill.co.za/tenants/the-live-edge/",
+    "https://www.theliveedge.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "The Live Edge at The Old Biscuit Mill is a furniture studio in Woodstock making bespoke live-edge tables and décor from sustainably sourced wood, with customisable leg and base options."
@@ -533,10 +996,20 @@
   {
    "slug": "the-real-repair-company-gardens-shopping-centre-gardens",
    "name": "The Real Repair Company",
-   "category": "computer-it-services",
-   "suburb": "gardens",
+   "category": "Computer & IT Services",
+   "suburb": "Gardens",
+   "region": "city-bowl",
+   "address": "Shop 36A, Gardens Shopping Centre, Mill Street, Gardens, Cape Town",
+   "shopping_centre": "Gardens Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://therealrepaircompany.co.za/store-locator",
+    "https://za.africabz.com/western-cape/the-real-repair-company-353454",
+    "https://www.gardensshoppingcentre.co.za/stores/the-real-repair-company-pty-ltd/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:00, Sat-Sun Closed",
    "has_email": false,
    "current_words": 31,
    "current_description": "The Real Repair Company is a device repair specialist in Gardens Shopping Centre, fixing Apple, Samsung and Huawei smartphones, tablets and smartwatches with a typical one-hour turnaround and a parts-and-labour guarantee."
@@ -544,10 +1017,19 @@
   {
    "slug": "tile-factory-shop-paarden-eiland",
    "name": "Tile Factory Shop",
-   "category": "hardware-stores",
-   "suburb": "paarden-eiland",
+   "category": "Hardware Stores",
+   "suburb": "Paarden Eiland",
+   "region": "northern-suburbs",
+   "address": "49 Paarden Eiland Road, Paarden Eiland, Cape Town, 7405",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.instagram.com/kalestilesfactoryshop/",
+    "https://kalestiles.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 31,
    "current_description": "Tile Factory Shop, trading as Kales Tiles, is a Paarden Eiland tile retailer stocking ceramic and porcelain tiles, mosaics, cement pavers, brick tiles and cladding, established more than 20 years ago."

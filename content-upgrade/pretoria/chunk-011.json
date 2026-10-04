@@ -5,10 +5,19 @@
   {
    "slug": "golden-canyon-spur-pretoria-central",
    "name": "Golden Canyon Spur",
-   "category": "restaurants-takeaways",
-   "suburb": "trevenna",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Trevenna",
+   "region": "pretoria",
+   "address": "Robert Sobukwe Street",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.spursteakranches.com/za/restaurant/gauteng/pretoria/sunnyside/golden-canyon-spur",
+   "existing_sources": [
+    "https://www.openstreetmap.org/node/6439130947",
+    "https://www.spursteakranches.com/za/restaurant/gauteng/pretoria/sunnyside/golden-canyon-spur"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 08:00-23:00, Sun 08:00-22:00",
    "has_email": true,
    "current_words": 22,
    "current_description": "Golden Canyon Spur is a Spur Steak Ranch outlet serving the chain's signature steaks, ribs, burgers and wings in a family-friendly setting."
@@ -16,10 +25,19 @@
   {
    "slug": "good-cars-montana-gardens",
    "name": "Good Cars",
-   "category": "car-dealerships",
-   "suburb": "montana-gardens",
+   "category": "Car Dealerships",
+   "suburb": "Montana Gardens",
+   "region": "pretoria",
+   "address": "C/o Avocet and, Unit 6 Sefako Makgatho Dr, Montana Tuine, Pretoria, 0159",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.goodcars.co.za/",
+   "existing_sources": [
+    "http://www.goodcars.co.za/",
+    "https://pretoria.co.za/place/good-cars"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Good Cars is a used-vehicle dealership in Montana Tuine handling vehicle buying, selling and trade-ins, with online appointment scheduling and delivery options."
@@ -27,10 +45,19 @@
   {
    "slug": "grazia-realty-boardwalk-meander",
    "name": "Grazia Realty",
-   "category": "estate-agents",
-   "suburb": "boardwalk-meander",
+   "category": "Estate Agents",
+   "suburb": "Boardwalk Meander",
+   "region": "pretoria",
+   "address": "2 Valley Cl, Boardwalk Meander, Pretoria, 0044",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.graziarealty.co.za/",
+   "existing_sources": [
+    "https://www.graziarealty.co.za/",
+    "https://www.facebook.com/graziarealty/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Grazia Realty is an estate agency specialising in the sale and rental of sectional-title properties in Pretoria East, based in Boardwalk Meander."
@@ -38,10 +65,19 @@
   {
    "slug": "gsmop-gerhard-swart-medical-orthotist-and-prosthetist-waterkloof",
    "name": "GSMOP - Gerhard Swart Medical Orthotist and Prosthetist",
-   "category": "doctors-gps",
-   "suburb": "waterkloof",
+   "category": "Doctors & GPs",
+   "suburb": "Waterkloof",
+   "region": "pretoria",
+   "address": "199 Lange Street",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.openstreetmap.org/node/396010055",
+    "https://www.gsmop.co.za/about-us/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "This practice specialises in orthotics and prosthetics, providing devices for pre- and post-surgical recovery, sports bracing, home nursing aids and compression garments."
@@ -49,10 +85,19 @@
   {
    "slug": "h-w-buliders-zwartkop",
    "name": "H&W Buliders",
-   "category": "building-construction",
-   "suburb": "zwartkop",
+   "category": "Building & Construction",
+   "suburb": "Zwartkop",
+   "region": "centurion",
+   "address": "01 Grit Ave, Zwartkop, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://hwbuilders.co.za/",
+   "existing_sources": [
+    "http://hwbuilders.co.za/",
+    "https://hwbuilders.co.za/services.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "H&W Buliders is a construction company offering aluminium installations, roofing, painting and other residential and commercial building services in the Centurion area."
@@ -60,10 +105,18 @@
   {
    "slug": "handyman-pretoria-la-montagne",
    "name": "Handyman Pretoria",
-   "category": "building-construction",
-   "suburb": "la-montagne",
+   "category": "Building & Construction",
+   "suburb": "La Montagne",
+   "region": "pretoria",
+   "address": "32 The Woods, Kent Road, Meyerspark, Pretoria, 0184",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://handymaninpretoria.co.za/",
+   "existing_sources": [
+    "https://handymaninpretoria.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Handyman Pretoria offers plumbing, electrical, carpentry, painting and tiling repairs across Centurion, Brooklyn, Waterkloof and other Pretoria suburbs, from its Meyerspark base."
@@ -71,10 +124,18 @@
   {
    "slug": "harcourts-capital-midfields-estate",
    "name": "Harcourts Capital",
-   "category": "estate-agents",
-   "suburb": "midfields-estate",
+   "category": "Estate Agents",
+   "suburb": "Midfields Estate",
+   "region": "centurion",
+   "address": "46 13th St, Menlo Park, Pretoria, 0081",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://capital.harcourts.co.za/",
+   "existing_sources": [
+    "https://capital.harcourts.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "A Harcourts real estate agency office in Midfields Estate, offering residential, commercial and industrial property sales and rentals, along with property valuations."
@@ -82,10 +143,18 @@
   {
    "slug": "harvesthouse-consulting-training-south-africa-pty-ltd-salvokop",
    "name": "Harvesthouse Consulting & Training South Africa Pty Ltd",
-   "category": "schools-education",
-   "suburb": "salvokop",
+   "category": "Schools & Education",
+   "suburb": "Salvokop",
+   "region": "pretoria",
+   "address": "595 Thabo Sehume St, Pretoria Central, Pretoria, 0002",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://harvesthouse.co.za/",
+   "existing_sources": [
+    "https://harvesthouse.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "A training and consulting provider in Salvokop specialising in procurement, supply chain management, logistics and finance, offering CIPS-accredited qualifications and short courses."
@@ -93,10 +162,18 @@
   {
    "slug": "hassle-free-pool-services-centurion-heuweloord",
    "name": "Hassle-free Pool Services Centurion",
-   "category": "building-construction",
-   "suburb": "heuweloord",
+   "category": "Building & Construction",
+   "suburb": "Heuweloord",
+   "region": "centurion",
+   "address": "5 Tolbanie Ave, Heuweloord, Centurion, 0173",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.hasslefreepools.co.za/",
+   "existing_sources": [
+    "https://www.hasslefreepools.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "A pool service company in Heuweloord, Centurion, offering weekly cleaning and maintenance, chlorine-free treatment, equipment supply, repairs, resurfacing and pool heating installations."
@@ -104,10 +181,18 @@
   {
    "slug": "hazgen-group-klerksoord",
    "name": "Hazgen Group",
-   "category": "cleaning-services",
-   "suburb": "klerksoord",
+   "category": "Cleaning Services",
+   "suburb": "Klerksoord",
+   "region": "pretoria",
+   "address": "15 Akwamaryn St, Klerksoord AH, Pretoria, 0200",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.hazgengroup.co.za/",
+   "existing_sources": [
+    "https://www.hazgengroup.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Hazgen Group, in Klerksoord, offers smart, sustainable waste management and recycling solutions, including hazardous waste handling, recycling services and environmental compliance support."
@@ -115,10 +200,18 @@
   {
    "slug": "heart-an-home-pty-ltd-olievenhoutbosch",
    "name": "HEART AN HOME (PTY) LTD",
-   "category": "building-construction",
-   "suburb": "olievenhoutbosch",
+   "category": "Building & Construction",
+   "suburb": "Olievenhoutbosch",
+   "region": "centurion",
+   "address": "Extension 27, CM3329 FIRST STREET OLIVENHOUTBOSCH, RUA VISTA, Centurion, 0175",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.hearnhome.co.za/",
+   "existing_sources": [
+    "https://www.hearnhome.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "HEART AN HOME (PTY) LTD is a building and construction company based in Olievenhoutbosch, providing construction services to clients in the area."
@@ -126,10 +219,18 @@
   {
    "slug": "hiepgro-holdings-annlin",
    "name": "Hiepgro Holdings",
-   "category": "financial-investment-services",
-   "suburb": "annlin",
+   "category": "Financial & Investment Services",
+   "suburb": "Annlin",
+   "region": "pretoria",
+   "address": "9 Spies St, Annlin, Pretoria, 0066",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.hiepgro.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "A financial and accounting services firm in Annlin offering bookkeeping, tax, payroll and SARS compliance, alongside business rescue and fraud investigation services."
@@ -137,10 +238,19 @@
   {
    "slug": "hsc-manell-tradings-pty-ltd-eersterust",
    "name": "HSC MANELL TRADINGS (PTY) LTD",
-   "category": "general-retail",
-   "suburb": "eersterust",
+   "category": "General Retail",
+   "suburb": "Eersterust",
+   "region": "pretoria",
+   "address": "564 Langeberg Rd, Eersterust, Pretoria, 0022",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://houseofmosspta.online/",
+   "existing_sources": [
+    "https://houseofmosspta.online/",
+    "https://hscmanelltraders.trenzy.io/single-article/about-hsc-manell-traders"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "HSC MANELL TRADINGS (PTY) LTD trades online as an eco-friendly products retailer, having started as a home-office business in Eersterust in 2010."
@@ -148,10 +258,18 @@
   {
    "slug": "imagine-that-design-print-clubview",
    "name": "Imagine That Design & Print",
-   "category": "marketing-advertising",
-   "suburb": "clubview",
+   "category": "Marketing & Advertising",
+   "suburb": "Clubview",
+   "region": "centurion",
+   "address": "100 Golf Ave, Clubview, Centurion, 0159",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.imagine-that.co.za/",
+   "existing_sources": [
+    "http://www.imagine-that.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "A graphic design and printing studio in Clubview producing business cards, signage, flyers, posters, corporate branding and roll-up banners and pop-up displays."
@@ -159,10 +277,18 @@
   {
    "slug": "innotekso-theresapark",
    "name": "Innotekso",
-   "category": "software-development",
-   "suburb": "theresapark",
+   "category": "Software Development",
+   "suburb": "Theresapark",
+   "region": "pretoria",
+   "address": "1 Burning Bush St, Theresapark, Pretoria, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://innotekso.co.za/",
+   "existing_sources": [
+    "https://innotekso.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "A technology company in Theresapark and the wider Pretoria area offering smart home automation, software development and web and mobile app solutions."
@@ -170,10 +296,19 @@
   {
    "slug": "irene-business-network-irene",
    "name": "Irene Business Network",
-   "category": "business-consulting",
-   "suburb": "irene",
+   "category": "Business & Management Consulting",
+   "suburb": "Irene",
+   "region": "centurion",
+   "address": "47 Village Dr, Irene, Centurion, 0062",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://myibn.co.za/",
+   "existing_sources": [
+    "http://myibn.co.za/",
+    "https://myibn.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Irene Business Network is a free local networking initiative that connects residents of Irene with businesses and service providers in the area."
@@ -181,10 +316,18 @@
   {
    "slug": "isibonelo-property-services-midfields-estate",
    "name": "Isibonelo Property Services",
-   "category": "commercial-property-office-space",
-   "suburb": "midfields-estate",
+   "category": "Commercial Property & Office Space",
+   "suburb": "Midfields Estate",
+   "region": "centurion",
+   "address": "165 Silver Lakes Road, Unit 8, Hazeldean Office Park, Hazeldean, Tygervalley, Pretoria, 0126",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.isibonelo.co.za/",
+   "existing_sources": [
+    "http://www.isibonelo.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "A commercial property development firm in Midfields Estate specialising in retail transport nodes, retail parks, mixed-use developments, precinct developments and rural development."
@@ -192,10 +335,16 @@
   {
    "slug": "jovans-business-compliance-services-eersterust",
    "name": "Jovans Business Compliance Services",
-   "category": "business-consulting",
-   "suburb": "eersterust",
+   "category": "Business & Management Consulting",
+   "suburb": "Eersterust",
+   "region": "pretoria",
+   "address": "211 Rondebosch Ave, Eersterust, Pretoria, 0022",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Jovans Business Compliance Services is a business and management consulting firm based in Eersterust, Pretoria, focused on compliance-related services for local companies."
@@ -203,10 +352,20 @@
   {
    "slug": "jsdaav-internet-solutions-cc-valhalla",
    "name": "JSDAAV Internet Solutions CC",
-   "category": "computer-it-services",
-   "suburb": "valhalla",
+   "category": "Computer & IT Services",
+   "suburb": "Valhalla",
+   "region": "centurion",
+   "address": "34 Wodin Rd, Valhalla, Pretoria, 0185",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.jsdaav.com/",
+   "existing_sources": [
+    "http://www.jsdaav.com/",
+    "https://ipinfo.io/AS328039",
+    "https://rdpguard.com/free-whois.aspx?ip=45.222.45.96"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "JSDAAV Internet Solutions operates as an internet service provider from Valhalla, running its own network infrastructure to deliver connectivity in the area."
@@ -214,10 +373,19 @@
   {
    "slug": "kelly-industrial-kloofsig",
    "name": "Kelly Industrial",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "kloofsig",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Kloofsig",
+   "region": "centurion",
+   "address": "Buckley Ctr, Cantonments Rd, Lyttelton Manor, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.africanadvice.com/1175567/Recruitment_Consultants/Centurion/Kelly_Industrial/",
+   "existing_sources": [
+    "https://www.africanadvice.com/1175567/Recruitment_Consultants/Centurion/Kelly_Industrial/",
+    "https://www.sayellow.com/south-africa/kelly-industrial-branches-in-south-africa"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "This Centurion branch belongs to Kelly Industrial, a light industrial staffing specialist that has operated across South Africa since launching in 1984."
@@ -225,10 +393,20 @@
   {
    "slug": "kfc-blu-valley-mall-the-reeds",
    "name": "KFC (Blu Valley Mall)",
-   "category": "restaurants-takeaways",
-   "suburb": "the-reeds",
+   "category": "Restaurants & Takeaways",
+   "suburb": "The Reeds",
+   "region": "centurion",
+   "address": "Cnr Rooihuiskraal Rd & Bothrill St, Blu Valley Mall, The Reeds, Centurion, 0061",
+   "shopping_centre": "Blu Valley Mall",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://locations.kfc.co.za/gauteng/centurion/blue-valley-mall-cnr-rooihuiskraal-road-and-bothrill-street-the-reeds",
+    "https://www.mrd.com/delivery/restaurant/kfc-blu-valley-the-reeds/12210",
+    "https://promotheus.co.za/centurion/kfc/blue-valley-mall-cnr-rooihuiskraal-road-and-bothrill-street-the-reeds"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 09:00-20:00",
    "has_email": false,
    "current_words": 22,
    "current_description": "This KFC at Blu Valley Mall in The Reeds serves burgers, twisters, wings and family bucket meals for pick up or delivery."
@@ -236,10 +414,18 @@
   {
    "slug": "kirpal-attorneys-sable-hills-waterfront-estate",
    "name": "Kirpal Attorneys",
-   "category": "attorneys-legal",
-   "suburb": "sable-hills-waterfront-estate",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Sable Hills Waterfront Estate",
+   "region": "pretoria",
+   "address": "0083, 35 Minni St, Sunnyside, Pretoria, 0002",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://pretoria.co.za/listing/kirpal-attorneys/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Kirpal Attorneys is a Pretoria-based law firm that handles legal matters spanning family law, criminal law, and property law for its clients."
@@ -247,10 +433,18 @@
   {
    "slug": "koma-techs-and-financials-montana-park",
    "name": "koma Techs and financials",
-   "category": "accountants",
-   "suburb": "montana-park",
+   "category": "Accountants",
+   "suburb": "Montana Park",
+   "region": "pretoria",
+   "address": "790 Veda Ave, Montana Park, Pretoria, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.komabookkeepings.co.za/",
+   "existing_sources": [
+    "http://www.komabookkeepings.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "An accounting and bookkeeping firm in Montana Park offering corporate tax services, accounting, monthly bookkeeping and payroll for small and medium businesses."
@@ -258,10 +452,19 @@
   {
    "slug": "la-vita-living-products-muckleneuk",
    "name": "La Vita Living Products",
-   "category": "business-consulting",
-   "suburb": "muckleneuk",
+   "category": "Business & Management Consulting",
+   "suburb": "Muckleneuk",
+   "region": "pretoria",
+   "address": "175 John St, Muckleneuk, Pretoria, 0002",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.lavitaliving.co.za/",
+   "existing_sources": [
+    "https://www.lavitaliving.co.za/",
+    "https://za.linkedin.com/company/la-vita-living-products1"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:30-15:30",
    "has_email": false,
    "current_words": 22,
    "current_description": "La Vita Living Products is a manufacturing and network-marketing company in Muckleneuk founded in 1995, producing health products including aloe vera juice."
@@ -269,10 +472,18 @@
   {
    "slug": "laru-coffee-essentials-rietondale",
    "name": "LaRu Coffee Essentials",
-   "category": "electronics-appliances",
-   "suburb": "rietondale",
+   "category": "Electronics & Appliances",
+   "suburb": "Rietondale",
+   "region": "pretoria",
+   "address": "58 Van Der Merwe St, Rietondale, Pretoria, 0084",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "http://www.larucoffee.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "LaRu Coffee Essentials is a coffee shop and barista-training business in Rietondale, serving coffee to the local community while also training baristas."
@@ -280,10 +491,16 @@
   {
    "slug": "leisure-pools-spas-east-lynne",
    "name": "LEISURE POOLS & SPAS",
-   "category": "building-construction",
-   "suburb": "east-lynne",
+   "category": "Building & Construction",
+   "suburb": "East Lynne",
+   "region": "pretoria",
+   "address": "4, 724 Darling St, East Lynne, Pretoria, 0039",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "A manufacturer of pre-moulded fibreglass swimming pools and acrylic spas in East Lynne, developing and building pools for more than two decades."
@@ -291,10 +508,19 @@
   {
    "slug": "levi-s-centurion",
    "name": "Levi's",
-   "category": "fashion-clothing",
-   "suburb": "centurion",
+   "category": "Fashion & Clothing",
+   "suburb": "Centurion",
+   "region": "centurion",
+   "address": "Shop 259, Centurion Mall, Centurion",
+   "shopping_centre": "Centurion Mall",
+   "phone_on_file": true,
    "website": "https://liveinlevis.levi.co.za/stores/levis-store-centurion/",
+   "existing_sources": [
+    "https://blog.levi.co.za/stores/levis-store-centurion/",
+    "https://centurionmall.co.za/stores/store-list/levi-s/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-19:00, Sat 09:00-18:00, Sun 09:00-17:00",
    "has_email": false,
    "current_words": 22,
    "current_description": "A Levi's store at Centurion Mall selling denim and apparel including the brand's standard collections, Gold Tab and Made & Crafted ranges."
@@ -302,10 +528,18 @@
   {
    "slug": "lillie-s-sales-and-service-gp-pretoria-lyttelton-manor",
    "name": "Lillie's Sales And Service GP (Pretoria)",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "lyttelton-manor",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Lyttelton Manor",
+   "region": "centurion",
+   "address": "162 Cradock Ave, Lyttelton Manor, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.lillies.co.za/",
+   "existing_sources": [
+    "https://www.lillies.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Lillie's Sales And Service, founded in 2000, operates a network of branches across South Africa including a store serving the Centurion area."
@@ -313,10 +547,18 @@
   {
    "slug": "localz-trading-clothing-manufacturers-zwavelpoort",
    "name": "Localz Trading - Clothing Manufacturers",
-   "category": "fashion-clothing",
-   "suburb": "zwavelpoort",
+   "category": "Fashion & Clothing",
+   "suburb": "Zwavelpoort",
+   "region": "pretoria",
+   "address": "211 Lynnwood Ext, Graham Road, M6, Tiegerpoort, 0045, Tiegerpoort, Pretoria, 0045",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://local-z.co.za/contact-us/",
+   "existing_sources": [
+    "https://local-z.co.za/contact-us/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Localz Trading is a local clothing manufacturer that operates as a wholesale and supply business, producing garments for the South African market."
@@ -324,10 +566,19 @@
   {
    "slug": "lorenzo-bakery-akasia",
    "name": "Lorenzo Bakery",
-   "category": "bakeries",
-   "suburb": "akasia",
+   "category": "Bakeries",
+   "suburb": "Akasia",
+   "region": "pretoria",
+   "address": "1 Heinrich Ave, Karenpark, Akasia, 0118",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.africanadvice.com/1332772/Bakery_Pastry_Shops/Pretoria/Lorenzo_Bakery/",
+   "existing_sources": [
+    "https://www.africanadvice.com/1332772/Bakery_Pastry_Shops/Pretoria/Lorenzo_Bakery/",
+    "https://restaurantguru.com/Lorenzo-Bakery-Akasia"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Lorenzo Bakery in Karenpark, Akasia, bakes fresh bread, rolls, scones and buns alongside takeaway meals such as grilled chicken, fish and chips."
@@ -335,10 +586,16 @@
   {
    "slug": "lotus-internet-caf-key-cut-lotus-gardens",
    "name": "@LOTUS INTERNET CAFÉ&KEY CUT",
-   "category": "computer-it-services",
-   "suburb": "lotus-gardens",
+   "category": "Computer & IT Services",
+   "suburb": "Lotus Gardens",
+   "region": "pretoria",
+   "address": "778 Anthesis St, Lotus Gardens, Pretoria, 0025",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "@LOTUS INTERNET CAFÉ&KEY CUT is a computer and IT services business offering internet café and key-cutting services in Lotus Gardens, Pretoria."
@@ -346,10 +603,18 @@
   {
    "slug": "luminous-boards-boekenhoutskloof",
    "name": "Luminous Boards",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "boekenhoutskloof",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Boekenhoutskloof",
+   "region": "pretoria",
+   "address": "77, Silverton Business Park, 345 Derdepoort Rd, Silverton, Pretoria, 0081",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://ccbc.co.za/business-directory-2/rosslyn-improvement-district/luminous-boards"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "This Silverton Business Park manufacturer produces and retails high-gloss UV boards used for kitchens, built-in cupboards, furniture, shopfitting and decorative wall panels."
@@ -357,10 +622,18 @@
   {
    "slug": "magalieskruin-magalieskruin",
    "name": "Magalieskruin",
-   "category": "cleaning-services",
-   "suburb": "magalieskruin",
+   "category": "Cleaning Services",
+   "suburb": "Magalieskruin",
+   "region": "pretoria",
+   "address": "390 Braam Pretorius St, Magalieskruin, Pretoria, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/gauteng/magalieskruin-dry-cleaners-165889"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-17:00, Sat 07:00-13:00, Sun Closed",
    "has_email": false,
    "current_words": 22,
    "current_description": "Magalieskruin Dry Cleaners is a dry-cleaning business on Braam Pretorius Street offering dry cleaning, laundry, and carpet, curtain and upholstery cleaning services."
@@ -368,10 +641,19 @@
   {
    "slug": "mageu-number-one-pty-ltd-proclamation-hill",
    "name": "Mageu Number One (Pty) Ltd",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "proclamation-hill",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Proclamation Hill",
+   "region": "pretoria",
+   "address": "280 Edison Rd, Pretoria Industrial, Pretoria, 0002",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.callupcontact.com/b/business/Mageu_Number_One_Pty_Ltd/109059",
+   "existing_sources": [
+    "https://www.callupcontact.com/b/business/Mageu_Number_One_Pty_Ltd/109059",
+    "https://www.zawya.com/mena/en/company/Mageu_Number_1_Pty_Ltd-12624227/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00",
    "has_email": false,
    "current_words": 22,
    "current_description": "Mageu Number One (Pty) Ltd is an import, export and wholesale business dealing in food, beverages and tobacco, operating from Pretoria Industrial."
@@ -379,10 +661,18 @@
   {
    "slug": "majoko-electrical-monavoni",
    "name": "Majoko Electrical",
-   "category": "electricians",
-   "suburb": "monavoni",
+   "category": "Electricians",
+   "suburb": "Monavoni",
+   "region": "centurion",
+   "address": "4 Rocky Pl, Monavoni, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.procompare.co.za/providers/majoko-electrical"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Majoko Electrical is an electrician serving Centurion, offering services such as wifi geyser timer installations, network cabling and additional plug point installations."
@@ -390,10 +680,19 @@
   {
    "slug": "marketonline-lotus-gardens",
    "name": "Marketonline",
-   "category": "computer-it-services",
-   "suburb": "lotus-gardens",
+   "category": "Computer & IT Services",
+   "suburb": "Lotus Gardens",
+   "region": "pretoria",
+   "address": "7578 Tamarind St, Lotus Gardens, Pretoria, 0023",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.marketonline.co.za/",
+   "existing_sources": [
+    "http://www.marketonline.co.za/",
+    "https://pretoria.co.za/listing/marketonline/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Marketonline is an internet marketing company in Lotus Gardens, Pretoria, offering online marketing, website development, SEO, social media and email marketing services."
@@ -401,10 +700,16 @@
   {
    "slug": "mathison-hollidge-pty-ltd-kosmosdal",
    "name": "Mathison & Hollidge (Pty) Ltd",
-   "category": "financial-investment-services",
-   "suburb": "kosmosdal",
+   "category": "Financial & Investment Services",
+   "suburb": "Kosmosdal",
+   "region": "centurion",
+   "address": "Commercial & Industrial Prk Kosmosdal, 1 Samrand Ave, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Mathison & Hollidge (Pty) Ltd is a financial and investment services firm operating from the Kosmosdal Commercial & Industrial Park in Centurion."
@@ -412,10 +717,19 @@
   {
    "slug": "matla-construction-die-wilgers",
    "name": "MATLA CONSTRUCTION",
-   "category": "building-construction",
-   "suburb": "die-wilgers",
+   "category": "Building & Construction",
+   "suburb": "Die Wilgers",
+   "region": "pretoria",
+   "address": "472 Botterklapper St, Die Wilgers, Pretoria, 0184",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://matlaconstruction.org/",
+   "existing_sources": [
+    "http://matlaconstruction.org/",
+    "https://www.matlaconstruction.org/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Matla Construction serves the greater Pretoria area, planning and constructing turnkey residential and commercial property developments from its base in Die Wilgers."
@@ -423,10 +737,16 @@
   {
    "slug": "matlhanya-legal-practitioners-mayville",
    "name": "Matlhanya Legal Practitioners",
-   "category": "attorneys-legal",
-   "suburb": "mayville",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Mayville",
+   "region": "pretoria",
+   "address": "853 Mansfield Ave, Mayville, Pretoria, 0084",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Matlhanya Legal Practitioners is a firm of attorneys based in Mayville, Pretoria, offering legal services to individuals and businesses in the area."
@@ -434,10 +754,19 @@
   {
    "slug": "mcdonalds-mamelodi-mall-mamelodi",
    "name": "McDonald's Mamelodi Mall",
-   "category": "restaurants-takeaways",
-   "suburb": "mamelodi",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Mamelodi",
+   "region": "pretoria",
+   "address": "R54 Tsamaya Avenue, Mams Mall, Mamelodi, Pretoria, 0147",
+   "shopping_centre": "Mams Mall",
+   "phone_on_file": true,
    "website": "https://www.mcdonalds.co.za/location/mcdonalds-mamelodi-mall",
+   "existing_sources": [
+    "https://www.mcdonalds.co.za/location/mcdonalds-mamelodi-mall",
+    "https://restaurantguru.com/McDonalds-Mams-Mall-Pretoria"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "McDonald's Mamelodi Mall, inside Mams Mall, offers quick-service meals with in-restaurant seating and food delivery for shoppers and diners in the area."
@@ -445,10 +774,18 @@
   {
    "slug": "meintjes-catering-eloffsdal",
    "name": "MEINTJES CATERING",
-   "category": "catering",
-   "suburb": "eloffsdal",
+   "category": "Catering",
+   "suburb": "Eloffsdal",
+   "region": "pretoria",
+   "address": "Franzina St, Eloffsdal, Pretoria, 0084",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.facebook.com/WILYNdecor",
+   "existing_sources": [
+    "https://www.facebook.com/WILYNdecor"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Meintjes Catering provides catering alongside event decor services in Eloffsdal, Pretoria, helping clients plan and style their events from start to finish."
@@ -456,10 +793,19 @@
   {
    "slug": "montana-realty-magalieskruin",
    "name": "Montana Realty",
-   "category": "estate-agents",
-   "suburb": "magalieskruin",
+   "category": "Estate Agents",
+   "suburb": "Magalieskruin",
+   "region": "pretoria",
+   "address": "Montana Park, 317 Braam Pretorius St, Magalieskruin, Pretoria, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.montanarealty.co.za/",
+   "existing_sources": [
+    "http://www.montanarealty.co.za/",
+    "https://property.mg.co.za/property-for-sale-by-montana-realty-cc-ag13311"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Montana Realty is a real estate agency in Magalieskruin, Pretoria, listing residential properties for sale across Montana, Montana Tuine, Doornpoort and Magalieskruin."
@@ -467,10 +813,19 @@
   {
    "slug": "mookodi-enterprise-kosmosdal",
    "name": "Mookodi Enterprise",
-   "category": "business-consulting",
-   "suburb": "kosmosdal",
+   "category": "Business & Management Consulting",
+   "suburb": "Kosmosdal",
+   "region": "centurion",
+   "address": "Mookodi Pl, Kosmosdal, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://mookodienterprise.co.za/",
+   "existing_sources": [
+    "http://mookodienterprise.co.za/",
+    "https://www.zoominfo.com/pic/mookodi-ls-enterprise-pty-ltd/430166940"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Mookodi Enterprise is an energy consultancy based in Kosmosdal, Centurion, focused on helping organisations and communities across Africa navigate the energy landscape."
@@ -478,10 +833,19 @@
   {
    "slug": "mountain-estates-midfields-estate",
    "name": "Mountain Estates",
-   "category": "estate-agents",
-   "suburb": "midfields-estate",
+   "category": "Estate Agents",
+   "suburb": "Midfields Estate",
+   "region": "centurion",
+   "address": "720 Ella St, Rietfontein, Pretoria, 0084",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://mountainestates.co.za/",
+   "existing_sources": [
+    "http://mountainestates.co.za/",
+    "https://www.property24.com/for-sale/agency/mountain-estates/30912"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Mountain Estates is an independent real estate agency based in Rietfontein, handling residential property sales and rentals across multiple neighbourhoods in Pretoria."
@@ -489,10 +853,18 @@
   {
    "slug": "mozcater-willow-park-manor",
    "name": "Mozcater",
-   "category": "catering",
-   "suburb": "willow-park-manor",
+   "category": "Catering",
+   "suburb": "Willow Park Manor",
+   "region": "pretoria",
+   "address": "37 Amatole Rd N4 Gateway Park West Willow Park Manor, Pretoria, 0181",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://citionline.co.za/web-directory/mozcater/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Mozcater is a catering company based in Willow Park Manor's N4 Gateway Park, providing catering services for functions, events and tourism-related occasions."
@@ -500,10 +872,19 @@
   {
    "slug": "mr-price-hammanskraal",
    "name": "Mr Price",
-   "category": "fashion-clothing",
-   "suburb": "hammanskraal",
+   "category": "Fashion & Clothing",
+   "suburb": "Hammanskraal",
+   "region": "pretoria",
+   "address": "Shop 31, Jubilee Mall, Harry Gwala Road, Hammanskraal",
+   "shopping_centre": "Jubilee Mall",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.mrp.com/en_za/store/mr-price-hammanskraal",
+    "https://www.thinklocal.co.za/biz/mr-price-hammanskraal-hammanskraal"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "A Mr Price fashion & clothing store located in Jubilee Mall, Hammanskraal, offering apparel, footwear and accessories for men, women and children."
@@ -511,10 +892,18 @@
   {
    "slug": "mw-design-studio-murrayfield",
    "name": "MW Design Studio",
-   "category": "marketing-advertising",
-   "suburb": "murrayfield",
+   "category": "Marketing & Advertising",
+   "suburb": "Murrayfield",
+   "region": "pretoria",
+   "address": "362 Rossouw St, Murrayfield, Pretoria, 0184",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://pretoria.co.za/place/mw-design-studio"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "MW Design Studio in Murrayfield offers branding, graphic design, campaign design and digital advertising, helping local businesses run focused, professional marketing campaigns."
@@ -522,10 +911,19 @@
   {
    "slug": "natas-company-wierdapark",
    "name": "Natas & Company",
-   "category": "bakeries",
-   "suburb": "wierdapark",
+   "category": "Bakeries",
+   "suburb": "Wierdapark",
+   "region": "centurion",
+   "address": "186 Hendrik St, Wierdapark, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.instagram.com/natasandcompany/",
+    "https://www.facebook.com/p/Natas-and-Company-100064921830195/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "Natas & Company is a Halaal-certified bakery in Centurion specialising in authentic Portuguese pasteis de nata alongside other Portuguese and French pastries."
@@ -533,10 +931,19 @@
   {
    "slug": "nc-chemicals-val-de-grace",
    "name": "NC Chemicals",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "val-de-grace",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Val de Grace",
+   "region": "pretoria",
+   "address": "250 Van der Hoven Pl, Val-De-Grace, Pretoria, 0184",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://ncchemicals.co.za/",
+   "existing_sources": [
+    "http://ncchemicals.co.za/",
+    "https://ncchemicals.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "NC Chemicals has spent more than 20 years producing industrial, household and automotive chemical cleaning products from its Val de Grace base."
@@ -544,10 +951,19 @@
   {
    "slug": "nexo-consulting-erasmusrand",
    "name": "NEXO Consulting",
-   "category": "business-consulting",
-   "suburb": "erasmusrand",
+   "category": "Business & Management Consulting",
+   "suburb": "Erasmusrand",
+   "region": "pretoria",
+   "address": "5 Casorel, 830 Primula Rd, Moreleta Park, Pretoria, 0181",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://nexo-sa.co.za/",
+   "existing_sources": [
+    "http://nexo-sa.co.za/",
+    "https://www.nexo-sa.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 22,
    "current_description": "NEXO Consulting is a Gauteng-based professional capability development firm with experience in municipal governance, intergovernmental relations, and economic and international development cooperation."

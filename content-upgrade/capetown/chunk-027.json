@@ -5,10 +5,19 @@
   {
    "slug": "shoprite-westridge-westridge",
    "name": "Shoprite Westridge",
-   "category": "supermarkets-groceries",
-   "suburb": "westridge",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Westridge",
+   "region": "cape-flats",
+   "address": "Westridge Shopping Centre, Wespoort Drive, Mitchells Plain, Cape Town",
+   "shopping_centre": "Westridge Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.shoprite.co.za/Western-Cape/Mitchells-Plain/Shoprite-Westridge/store-details/54790",
+    "https://promotheus.co.za/mitchells-plain/shoprite/westridge-shopping-centre-wespoort-drive"
+   ],
    "has_hours": true,
+   "hours": "Mon 08:00-13:00, Tue-Sat 08:00-18:00, Sun 08:00-17:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "Shoprite Westridge is a supermarket anchoring Westridge Shopping Centre on Wespoort Drive, Mitchells Plain, with in-store bakery, meat market and deli counters alongside groceries and everyday essentials."
@@ -16,10 +25,20 @@
   {
    "slug": "sitari-health-shop-croydon",
    "name": "Sitari Health Shop",
-   "category": "general-retail",
-   "suburb": "croydon",
+   "category": "General Retail",
+   "suburb": "Croydon",
+   "region": "helderberg",
+   "address": "2 Sundarbans Drive, Sitari Village Centre, Croydon, 7130",
+   "shopping_centre": "Sitari Village Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.willowwellness.co.za/store-locator/1012/sitari-health-shop",
+    "https://waterstonehealthshop.co.za/contact-us/",
+    "https://www.facebook.com/SitariHealthShopOnline/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sat 09:00-16:00, Sun 09:00-15:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "Sitari Health Shop is a health and supplements shop in Sitari Village Centre stocking brands such as Solgar, Metagenics and Urban Vega alongside other natural health products."
@@ -27,10 +46,20 @@
   {
    "slug": "sonder-cafe-observatory",
    "name": "Sonder Cafe",
-   "category": "restaurants-takeaways",
-   "suburb": "observatory",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Observatory",
+   "region": "city-bowl",
+   "address": "79 Lower Main Road, Observatory, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.capetownmagazine.com/sonder-cafe",
+    "https://www.tripadvisor.com/Restaurant_Review-g2427107-d23165227-Reviews-Sonder_Cafe-Observatory_Western_Cape.html",
+    "https://www.novacircle.com/en-ZA/spots/africa/south-africa/western-cape/city-of-cape-town-metropolitan-municipality/cape-town/sonder-cafe-c63cf4/opening-hours"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:30-16:00, Sat 08:00-15:00, Sun Closed",
    "has_email": false,
    "current_words": 27,
    "current_description": "Sonder Café is a vintage-style coffee shop on Lower Main Road in Observatory serving New York-style boiled bagels, artisanal sourdough toasted sandwiches, smoothie bowls and cold-pressed juices."
@@ -38,10 +67,19 @@
   {
    "slug": "spar-fish-hoek-fish-hoek",
    "name": "SPAR Fish Hoek",
-   "category": "supermarkets-groceries",
-   "suburb": "fish-hoek",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Fish Hoek",
+   "region": "south-peninsula",
+   "address": "Valyland Centre, Recreation Road, Fish Hoek, Cape Town, 7974",
+   "shopping_centre": "Valyland Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://southafricafirm.com/western-cape/spar-fish-hoek-6940",
+    "https://za.africabz.com/western-cape/spar-fish-hoek-16175"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "SPAR Fish Hoek is a supermarket branch in the Valyland Centre on Recreation Road, Fish Hoek, offering groceries, fresh produce and everyday essentials to the surrounding community."
@@ -49,10 +87,20 @@
   {
    "slug": "spur-waterstone-somerset-west",
    "name": "Spur",
-   "category": "restaurants-takeaways",
-   "suburb": "somerset-west",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Somerset West",
+   "region": "helderberg",
+   "address": "Shop 19, Waterstone Village, Cnr of R44 & Main Road, Somerset West, 7130",
+   "shopping_centre": "Waterstone Village Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.waterstonevillage.co.za",
+    "https://getoccupi.com/malls/waterstone-village",
+    "https://www.spursteakranches.com/za/restaurant/western-cape/cape-town/somerset-west/indigo-spur"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Spur is a South African family steakhouse chain serving steaks, ribs, burgers and Tex-Mex-inspired dishes; this branch, known as Indigo Spur, trades from Waterstone Village, Somerset West."
@@ -60,10 +108,20 @@
   {
    "slug": "st-vincent-clinic-belhar",
    "name": "St Vincent Clinic",
-   "category": "clinics-healthcare",
-   "suburb": "belhar",
+   "category": "Clinics & Healthcare",
+   "suburb": "Belhar",
+   "region": "cape-flats",
+   "address": "St Vincent Drive, Belhar, Cape Town, 7493",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/st-vincent-clinic-143517",
+    "https://www.capetown.gov.za/Family%20and%20home/See-all-city-facilities/Our-service-facilities/Clinics%20and%20healthcare%20facilities/st-vincent-community-day-centre",
+    "https://d7.westerncape.gov.za/facility/st-vincent-community-health-clinic"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "St Vincent Clinic is a public healthcare clinic operated by the Western Cape Government on St Vincent Drive in Belhar, part of the Tygerberg Eastern Health District."
@@ -71,10 +129,20 @@
   {
    "slug": "tah-green-point-green-point",
    "name": "TAH Green Point",
-   "category": "vets-animal-care",
-   "suburb": "green-point",
+   "category": "Vets & Animal Care",
+   "suburb": "Green Point",
+   "region": "atlantic-seaboard",
+   "address": "86 High Level Road, Green Point, Cape Town, 8051",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://tah.co.za/green-point/",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=197021",
+    "https://veterinary.co.za/find-a-vet/tah-green-point/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-18:30, Sat 08:00-12:30, Sun Closed",
    "has_email": false,
    "current_words": 27,
    "current_description": "TAH Green Point is a veterinary hospital on High Level Road offering routine and emergency animal care, including vaccinations, dental care, surgery, radiology and round-the-clock emergency treatment."
@@ -82,10 +150,19 @@
   {
    "slug": "tears-animal-rescue-sunnydale",
    "name": "TEARS Animal Rescue",
-   "category": "vets-animal-care",
-   "suburb": "sunnydale",
+   "category": "Vets & Animal Care",
+   "suburb": "Sunnydale",
+   "region": "south-peninsula",
+   "address": "4 Lekkerwater Road, Sunnydale, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://tears.org.za",
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/tears-16141",
+    "https://tears.org.za/contact/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 27,
    "current_description": "TEARS Animal Rescue, also known as The Emma Animal Rescue Society, is an animal welfare organisation in Sunnydale that rescues, cares for and rehomes cats and dogs."
@@ -93,10 +170,20 @@
   {
    "slug": "the-crazy-store-3arts-village-plumstead",
    "name": "The Crazy Store",
-   "category": "general-retail",
-   "suburb": "plumstead",
+   "category": "General Retail",
+   "suburb": "Plumstead",
+   "region": "southern-suburbs",
+   "address": "Shop FF-S07, 3 Arts Village, 260 Main Road, Plumstead, Cape Town",
+   "shopping_centre": "3Arts Village",
+   "phone_on_file": true,
    "website": "https://www.crazystore.co.za",
+   "existing_sources": [
+    "https://www.biznizdirectory.co.za/crazy-store-3art-village-gift-store-retailers-retail-trade-in-plumstead-cape-town-western-cape-72341.html",
+    "https://www.tiendeo.co.za/stores/cape-town/crazy-store-main-rd-plumstead-cape-town-south-africa/73331",
+    "https://www.cylex.net.za/company/the-crazy-store---3art-village-23815895.html"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sat 09:00-17:00, Sun 09:00-12:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "The Crazy Store is a discount variety store in 3Arts Village, Plumstead, part of South Africa's largest discount variety chain and one of the centre's anchor tenants."
@@ -104,10 +191,20 @@
   {
    "slug": "the-fish-hoek-galley-fish-hoek",
    "name": "The Fish Hoek Galley",
-   "category": "restaurants-takeaways",
-   "suburb": "fish-hoek",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Fish Hoek",
+   "region": "south-peninsula",
+   "address": "Bayside on Fish Hoek Beach, Beach Road, Fish Hoek, Cape Town, 7975",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.fishhoekgalley.com/",
+   "existing_sources": [
+    "https://www.fishhoekgalley.com/contact/",
+    "https://www.tripadvisor.co.za/Restaurant_Review-g635515-d6714793-Reviews-The_Galley_Restaurant-Fish_Hoek_Western_Cape.html",
+    "https://www.capepointroute.co.za/moreinfoRestaurants.php?aID=74"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "The Fish Hoek Galley is a seafood restaurant at Bayside on Fish Hoek Beach, serving grilled prawns, linefish and a seafood platter alongside classic fish and chips."
@@ -115,10 +212,19 @@
   {
    "slug": "the-happy-uncles-salt-river",
    "name": "The Happy Uncles",
-   "category": "restaurants-takeaways",
-   "suburb": "salt-river",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Salt River",
+   "region": "city-bowl",
+   "address": "100 Voortrekker Road, Salt River, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.thehappyuncles.com",
+   "existing_sources": [
+    "https://www.thehappyuncles.com/",
+    "https://www.eatout.co.za/venue/happy-uncles/"
+   ],
    "has_hours": true,
+   "hours": "Wed-Sat 18:00-21:00",
    "has_email": true,
    "current_words": 27,
    "current_description": "The Happy Uncles is a halaal fine-dining restaurant in Salt River's Spice Yard on Voortrekker Road, offering four-, six- and eight-course tasting menus without pork or alcohol."
@@ -126,10 +232,20 @@
   {
    "slug": "the-raj-camps-bay",
    "name": "The Raj",
-   "category": "restaurants-takeaways",
-   "suburb": "camps-bay",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Camps Bay",
+   "region": "atlantic-seaboard",
+   "address": "Shop 4, The Promenade, Victoria Road, Camps Bay, Cape Town",
+   "shopping_centre": "The Promenade",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.eatout.co.za/venue/the-raj-camps-bay/",
+    "https://www.tripadvisor.com/Restaurant_Review-g312658-d2400415-Reviews-The_Raj-Camps_Bay_Western_Cape.html",
+    "https://homefoodandtravel.co.za/the-raj-indian-restaurant-offers-a-fine-dining-experience-in-camps-bay/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 27,
    "current_description": "The Raj is a long-running Indian restaurant on the Camps Bay Promenade, established in 1995, serving North Indian and Tandoori cuisine including seafood specialities, with ocean views."
@@ -137,10 +253,20 @@
   {
    "slug": "the-vet-store-muizenberg",
    "name": "The Vet Store",
-   "category": "vets-animal-care",
-   "suburb": "muizenberg",
+   "category": "Vets & Animal Care",
+   "suburb": "Muizenberg",
+   "region": "south-peninsula",
+   "address": "Capricorn Square, Prince George Drive, Muizenberg, Cape Town",
+   "shopping_centre": "Capricorn Square",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.capricornsquare.co.za/stores/",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=290669",
+    "https://thevetstoreonline.com/pages/our-team-capricorn-square-2"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:00, Sat-Sun 09:00-14:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "The Vet Store is a South African, vet-owned pet store inside Capricorn Square in Muizenberg, stocking pet food and accessories with staff trained as Veterinary Nutritional Advisors."
@@ -148,10 +274,19 @@
   {
    "slug": "threezero-cape-quarter-de-waterkant",
    "name": "ThreeZero",
-   "category": "fitness-gyms",
-   "suburb": "de-waterkant",
+   "category": "Fitness & Gyms",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "Cape Quarter, Dixon St entrance, 27 Somerset Rd, De Waterkant, Cape Town",
+   "shopping_centre": "Cape Quarter Lifestyle Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://capequarter.co.za/shops/",
+    "https://threezero.co.za/the-studio/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "ThreeZero is a boutique fitness studio in Cape Quarter, De Waterkant, built around a Technogym Biocircuit that delivers AI-personalised 30-minute full-body workouts with on-site qualified personal trainers."
@@ -159,10 +294,19 @@
   {
    "slug": "ulma-packaging-systems-killarney-gardens",
    "name": "ULMA Packaging Systems",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "killarney-gardens",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Killarney Gardens",
+   "region": "west-coast",
+   "address": "29D Mansell Road, Killarney Gardens, Cape Town, 7441",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.ulmapackaging.com/en/contact/africa-middle-east/south-africa/ulma-packaging-systems-sa-pty-ltd-cape-town",
+    "https://www.ivote.co.za/view/south-africa/ulma-packaging-systems-in-cape-town"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "ULMA Packaging Systems is part of the Spanish ULMA Group and supplies stainless steel and galvanised strapping, buckles, tensioning tools and clips from its Killarney Gardens office."
@@ -170,10 +314,19 @@
   {
    "slug": "virgin-active-waterstone-village-somerset-west",
    "name": "Virgin Active",
-   "category": "fitness-gyms",
-   "suburb": "somerset-west",
+   "category": "Fitness & Gyms",
+   "suburb": "Somerset West",
+   "region": "helderberg",
+   "address": "Ground Floor, Waterstone Village, Cnr of R44 & Main Road, Somerset West, 7130",
+   "shopping_centre": "Waterstone Village Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.waterstonevillage.co.za",
+    "https://www.virginactive.co.za/gyms/waterstone-village"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 05:00-21:00, Fri 05:00-20:00, Sat-Sun 06:00-20:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "Virgin Active Waterstone Village is a health club in Somerset West with a heated lap pool, sauna, steam room, group exercise classes and a supervised kids' club."
@@ -181,10 +334,19 @@
   {
    "slug": "wembley-meat-market-athlone",
    "name": "Wembley Meat Market",
-   "category": "butcheries",
-   "suburb": "athlone",
+   "category": "Butcheries",
+   "suburb": "Athlone",
+   "region": "cape-flats",
+   "address": "Wembley Building, 21 Belgravia Road, Athlone, Cape Town, 7764",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.wembley.co.za/meat-market/",
+    "https://www.thinklocal.co.za/biz/wembley-meat-market-athlone"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 08:30-18:00 (closed 13:00-14:00), Fri 08:00-18:00 (closed 12:15-14:00), Sat 08:00-16:00, Sun 09:00-13:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "Wembley Meat Market is a butchery in the Wembley Building on Belgravia Road, Athlone, part of the Wembley Group of Companies, selling fresh and prepared meat products."
@@ -192,10 +354,20 @@
   {
    "slug": "westpoint-properties-sunnydale",
    "name": "Westpoint Properties",
-   "category": "estate-agents",
-   "suburb": "sunnydale",
+   "category": "Estate Agents",
+   "suburb": "Sunnydale",
+   "region": "south-peninsula",
+   "address": "1 Carlton Close, Sunnydale, Cape Town, 7975",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://westpointproperties.co.za",
+   "existing_sources": [
+    "https://www.cybo.com/ZA-biz/westpoint-properties",
+    "https://southafricafirm.com/western-cape/westpoint-properties-38335",
+    "https://westpointproperties.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Westpoint Properties is an estate agency and property development company on Carlton Close in Sunnydale, specialising in residential property sales in the Sun Valley and Noordhoek area."
@@ -203,10 +375,19 @@
   {
    "slug": "zone-fitness-tokai-tokai",
    "name": "Zone Fitness Tokai",
-   "category": "fitness-gyms",
-   "suburb": "tokai",
+   "category": "Fitness & Gyms",
+   "suburb": "Tokai",
+   "region": "southern-suburbs",
+   "address": "Blue Route Mall, Tokai Road, Tokai, Cape Town",
+   "shopping_centre": "Blue Route Mall",
+   "phone_on_file": true,
    "website": "https://zonefitness.co.za/tokai/",
+   "existing_sources": [
+    "https://blueroutemall.co.za/stores/pick/zone-fitness/",
+    "https://zonefitness.co.za/tokai/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 05:30-21:00, Fri 05:30-20:00, Sat-Sun 07:00-17:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "Zone Fitness Tokai is a gym in Blue Route Mall, Tokai, part of the Zone Fitness chain, offering fitness equipment and group classes with extended weekday hours."
@@ -214,10 +395,20 @@
   {
    "slug": "a-j-north-thornton",
    "name": "A J North (Pty) Ltd",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "thornton",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Thornton",
+   "region": "northern-suburbs",
+   "address": "38 Thor Circle, Thornton, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://botswana.searchinafrica.com/business/5791738/south-africa/western-cape/cape-town/thornton/thor-cir/toiletries/a-j-north-pty-ltd",
+    "https://www.africanadvice.com/1006113/Toiletries/Cape_Town/A_J_North_(PTY)_Ltd/",
+    "https://sabusinesslistings.co.za/listing/a-j-north-pty-ltd-3/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 28,
    "current_description": "A J North (Pty) Ltd is a South African manufacturer of toiletries and toothbrushes, producing a range of affordable beauty, haircare and household products for over 100 years."
@@ -225,10 +416,19 @@
   {
    "slug": "akiya-sushi-century-city",
    "name": "Akiya Sushi",
-   "category": "restaurants-takeaways",
-   "suburb": "century-city",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Century City",
+   "region": "northern-suburbs",
+   "address": "Shop No.5, Axis Building, 9 Bridgeway, Century City, Cape Town, 7441",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tripadvisor.com/Restaurant_Review-g4464136-d17417604-Reviews-Akiya_Sushi-Century_City_Western_Cape.html",
+    "https://www.akiyasushi.co.za/new-shop"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 28,
    "current_description": "Akiya Sushi is a sushi and sashimi restaurant in Canal Walk Shopping Centre, Century City, also serving a range of Asian dishes including dim sum and Chinese specialities."
@@ -236,10 +436,19 @@
   {
    "slug": "american-swiss-golden-acre-cape-town-cbd",
    "name": "American Swiss",
-   "category": "jewellers",
-   "suburb": "cape-town-cbd",
+   "category": "Jewellers",
+   "suburb": "Cape Town CBD",
+   "region": "city-bowl",
+   "address": "Shop 56, Lower Concourse Level, Golden Acre Shopping Centre, 9 Adderley St, Cape Town",
+   "shopping_centre": "Golden Acre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://golden-acre.co.za/stores/",
+    "https://www.americanswiss.co.za/home/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 28,
    "current_description": "American Swiss is a national jewellery and watch retail chain, with this branch located on the lower concourse level of Golden Acre Shopping Centre in central Cape Town."
@@ -247,10 +456,20 @@
   {
    "slug": "ashleys-family-restaurant-goodwood",
    "name": "Ashley's Family Restaurant",
-   "category": "restaurants-takeaways",
-   "suburb": "goodwood",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Goodwood",
+   "region": "northern-suburbs",
+   "address": "123 Voortrekker Road, Goodwood, Cape Town, 7460",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tripadvisor.com/Restaurant_Review-g1841250-d3878588-Reviews-or45-Ashley_s_Family_Restaurant-Goodwood_Western_Cape.html",
+    "https://www.facebook.com/Ashleysfamilyrestaurant/",
+    "https://ashleysrestaurant.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 11:30 till late",
    "has_email": false,
    "current_words": 28,
    "current_description": "Ashley's Family Restaurant is a long-standing family restaurant in Goodwood serving seafood, steaks, burgers, pasta, pizzas, ribs and chicken, with a carvery on Wednesday evenings and Sunday lunchtimes."
@@ -258,10 +477,20 @@
   {
    "slug": "atlantic-view-pharmacy-melkbosstrand",
    "name": "Atlantic View Pharmacy",
-   "category": "pharmacies",
-   "suburb": "melkbosstrand",
+   "category": "Pharmacies",
+   "suburb": "Melkbosstrand",
+   "region": "west-coast",
+   "address": "Shop 2, Belzac Centre, 6th Ave, Melkbosstrand, Cape Town, 7441",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://2pos.co.za/2/52",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=193441",
+    "https://www.chemistatlanticview.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-19:00, Sat 09:00-16:30, Sun 09:00-13:30",
    "has_email": false,
    "current_words": 28,
    "current_description": "Atlantic View Pharmacy is a family-oriented pharmacy at the Belzac Centre in Melkbosstrand, offering chronic medication management, a daily dispensary and medical aid acceptance for the local community."
@@ -269,10 +498,20 @@
   {
    "slug": "authentic-aesthetics-sa-rondebosch-east",
    "name": "Authentic Aesthetics S.A",
-   "category": "spas-wellness",
-   "suburb": "rondebosch-east",
+   "category": "Spas & Wellness",
+   "suburb": "Rondebosch East",
+   "region": "southern-suburbs",
+   "address": "37 Ayrshire St, Rondebosch East, Cape Town, 7780",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/lvp/authentic-aesthetics-s-a-ayrshire-street-cape-town-P54oA",
+    "https://www.findmy.co.za/services/business/authentic-aesthetics-sa/1911",
+    "https://authenticaesthetics.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sat 08:00-15:00, Sun Closed",
    "has_email": false,
    "current_words": 28,
    "current_description": "Authentic Aesthetics S.A is a beauty and aesthetics salon on Ayrshire Street in Rondebosch East offering treatments such as laser hair removal and skin-lightening treatments by appointment."
@@ -280,10 +519,20 @@
   {
    "slug": "avbob-khayelitsha",
    "name": "AVBOB Khayelitsha",
-   "category": "funeral-services",
-   "suburb": "khayelitsha",
+   "category": "Funeral Services",
+   "suburb": "Khayelitsha",
+   "region": "cape-flats",
+   "address": "29156 Khwezi Crescent, Ilitha Park, Khayelitsha, Cape Town, 7784",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.avbob.co.za",
+   "existing_sources": [
+    "https://www.avbob.co.za/our-branches/branch-details?loc=AVBOB+Funeral+Service+Khayelitsha&locationid=ed34c35f-6ebf-4f0c-aa16-4acdab34ac17",
+    "https://nfda.org.za/business-directory/775/avbob-khayelitsha/",
+    "https://openhours-southafrica.com/en/khayelitsha/avbob-funeral-parlour-52"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-16:30, Sat 08:30-12:00, Sun Closed",
    "has_email": false,
    "current_words": 28,
    "current_description": "AVBOB Khayelitsha is a funeral parlour and insurance branch of the AVBOB Mutual Assurance Society, offering funeral policies and funeral services to the Ilitha Park community in Khayelitsha."
@@ -291,10 +540,19 @@
   {
    "slug": "basilico-steenberg-tokai",
    "name": "Basilico Steenberg",
-   "category": "restaurants-takeaways",
-   "suburb": "tokai",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Tokai",
+   "region": "southern-suburbs",
+   "address": "Shop B1, Steenberg Village, Reddam Avenue, Tokai, Cape Town",
+   "shopping_centre": "Steenberg Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://constantiavalley.com/basilico-steenberg/",
+    "https://www.sa-venues.com/things-to-do/westerncape/basilico-steenberg-restaurant/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 12:00-22:30, Sun 12:00-21:30",
    "has_email": false,
    "current_words": 28,
    "current_description": "Basilico Steenberg is an Italian restaurant in Steenberg Village, Tokai, known for its wood-fired pizzas and a wine list featuring Constantia Valley labels alongside other South African wines."
@@ -302,10 +560,20 @@
   {
    "slug": "bishop-lavis-secondary-school-bishop-lavis",
    "name": "Bishop Lavis Secondary School",
-   "category": "schools-education",
-   "suburb": "bishop-lavis",
+   "category": "Schools & Education",
+   "suburb": "Bishop Lavis",
+   "region": "cape-flats",
+   "address": "57 Helderberg Road, Bishop Lavis, Cape Town, 7490",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "bishoplavishigh.co.za",
+   "existing_sources": [
+    "https://www.mycomlink.co.za/organisation.php?i=86",
+    "https://bishoplavishigh.co.za/contact/",
+    "https://blhs.edupage.org/contact/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 28,
    "current_description": "Bishop Lavis Secondary School is a public secondary school at 57 Helderberg Road in Bishop Lavis, offering a holistic, learner-centred education alongside chess, rugby, netball and cross-country programmes."
@@ -313,10 +581,19 @@
   {
    "slug": "boa-beauty-bar-durbanville",
    "name": "BOA Beauty Bar",
-   "category": "beauty-hair-salons",
-   "suburb": "durbanville",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Durbanville",
+   "region": "northern-suburbs",
+   "address": "Shop 35, De Ville Shopping Centre, Wellington Road, Durbanville, 7550",
+   "shopping_centre": "De Ville Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/a/boa-beauty-bar-durbanville-cape-town-de-ville-centre-wellington-road-k3va3bse",
+    "https://www.devillecentre.co.za/categories.htm?category=Clothing"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:45-18:30, Sat 09:15-18:00, Sun 09:15-17:00",
    "has_email": false,
    "current_words": 28,
    "current_description": "BOA Beauty Bar is a nail and beauty salon inside De Ville Centre in Durbanville, offering treatments including gel manicures and pedicures alongside a dedicated men's pamper package."
@@ -324,10 +601,19 @@
   {
    "slug": "body-20-studio-durbanville",
    "name": "Body 20 Studio",
-   "category": "fitness-gyms",
-   "suburb": "durbanville",
+   "category": "Fitness & Gyms",
+   "suburb": "Durbanville",
+   "region": "northern-suburbs",
+   "address": "Shop 34, De Ville Shopping Centre, Corner Wellington and Main Street, Durbanville, 7551",
+   "shopping_centre": "De Ville Shopping Centre",
+   "phone_on_file": true,
    "website": "https://body20.co.za/studio-durbanville.php",
+   "existing_sources": [
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=383069",
+    "https://body20.co.za/studio-durbanville.php"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 28,
    "current_description": "Body 20 Studio is an EMS (electro-muscular stimulation) training studio inside De Ville Shopping Centre in Durbanville, offering coach-guided 20-minute workout sessions with weekly InBody body composition tracking."
@@ -335,10 +621,20 @@
   {
    "slug": "bp-wavecrest-motors-strandfontein",
    "name": "BP Wavecrest Motors",
-   "category": "fuel-stations",
-   "suburb": "strandfontein",
+   "category": "Fuel Stations & Garages",
+   "suburb": "Strandfontein",
+   "region": "cape-flats",
+   "address": "37 Wavecrest Avenue, Strandfontein, Cape Town, 7788",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fueldirectory.co.za/listing.php?listings_id=5356",
+    "https://vymaps.com/ZA/BP-Wavecrest-Motors-957846340978512/",
+    "https://map.bp.com/en-ZA/ZA/gas-station/strandfontein-village/wavecrest-motors/STRADENA1R"
+   ],
    "has_hours": true,
+   "hours": "Open 24 hours",
    "has_email": false,
    "current_words": 28,
    "current_description": "BP Wavecrest Motors is a 24-hour fuel station on the corner of Dennegeur Avenue and Agulhas Street in Strandfontein Village, Cape Town, offering round-the-clock fuel and forecourt services."
@@ -346,10 +642,20 @@
   {
    "slug": "bryan-capes-physiotherapy-panorama",
    "name": "Bryan Capes Physiotherapy",
-   "category": "physiotherapists",
-   "suburb": "panorama",
+   "category": "Physiotherapists",
+   "suburb": "Panorama",
+   "region": "northern-suburbs",
+   "address": "Shop 13, Panorama Healthcare Centre, 60 Hennie Winterbach Street, Panorama, Cape Town, 7500",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://bcphysiotherapy.co.za",
+   "existing_sources": [
+    "https://www.fresha.com/lvp/bryan-capes-physiotherapy-marine-drive-cape-town-znJNxn",
+    "https://bcphysiotherapy.co.za/",
+    "https://www.panoramahcc.co.za/tenants/bryan-capes-physiotherapist/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 09:00-19:00, Fri 09:00-18:00, Sat 08:00-14:00, Sun Closed",
    "has_email": false,
    "current_words": 28,
    "current_description": "Bryan Capes Physiotherapy is a sport and spine physiotherapy practice at Panorama Healthcare Centre, offering dry needling and rehabilitation with a focus on sports injuries and neuro-musculoskeletal conditions."
@@ -357,10 +663,20 @@
   {
    "slug": "cafe-extrablatt-green-point",
    "name": "Cafe Extrablatt",
-   "category": "restaurants-takeaways",
-   "suburb": "green-point",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Green Point",
+   "region": "atlantic-seaboard",
+   "address": "79 Main Road, Green Point, Cape Town, 8051",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.cafe-extrablatt.co.za/",
+   "existing_sources": [
+    "https://www.cafe-extrablatt.co.za/",
+    "https://www.sa-venues.com/things-to-do/westerncape/cafe-extrablatt/",
+    "https://www.capetownmagazine.com/cafe-extrablatt-green-point"
+   ],
    "has_hours": true,
+   "hours": "Sun-Thu 09:00-01:00, Fri-Sat 09:00-02:00",
    "has_email": false,
    "current_words": 28,
    "current_description": "Cafe Extrablatt is a German-style all-day cafe on Main Road in Green Point, inside the Exhibition Building near DHL Stadium, known for its breakfast buffet, pizzas and hamburgers."
@@ -368,10 +684,20 @@
   {
    "slug": "cafe-puka-tamboerskloof",
    "name": "Cafe Puka",
-   "category": "restaurants-takeaways",
-   "suburb": "tamboerskloof",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Tamboerskloof",
+   "region": "city-bowl",
+   "address": "Cnr Brunswick & Tamboerskloof Roads, Tamboerskloof",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://nearbyza.com/place/cafe-puka-1",
+    "http://www.cafepuka.co.za/",
+    "https://www.capetownmagazine.com/caf%C3%A9-puka-cape-town"
+   ],
    "has_hours": true,
+   "hours": "Open daily 08:00-18:00",
    "has_email": false,
    "current_words": 28,
    "current_description": "Cafe Puka is a neighbourhood coffee shop and restaurant on the corner of Brunswick and Tamboerskloof Roads, serving breakfast, lunch and coffee with both indoor and outdoor seating."
@@ -379,10 +705,19 @@
   {
    "slug": "caltex-lansdowne-corner-lansdowne",
    "name": "Caltex Lansdowne Corner",
-   "category": "fuel-stations",
-   "suburb": "lansdowne",
+   "category": "Fuel Stations & Garages",
+   "suburb": "Lansdowne",
+   "region": "cape-flats",
+   "address": "Corner Jan Smuts Drive & Govan Mbeki Road, Lansdowne Corner Shopping Centre, Lansdowne, Cape Town",
+   "shopping_centre": "Lansdowne Corner Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://westerncape.yalwa.co.za/ID_135427028/FreshStop-at-Caltex-Jan-Smuts.html",
+    "https://www.lansdownecorner.co.za/browse-directory/2151/caltex-service-stations/"
+   ],
    "has_hours": true,
+   "hours": "Open 24 hours",
    "has_email": false,
    "current_words": 28,
    "current_description": "Caltex Lansdowne Corner is a FreshStop-branded Caltex fuel station in the Lansdowne Corner Shopping Centre, trading around the clock with a FreshStop convenience store alongside its fuel pumps."
@@ -390,10 +725,20 @@
   {
    "slug": "cash-crusaders-avonwood-elsies-river",
    "name": "Cash Crusaders Avonwood",
-   "category": "general-retail",
-   "suburb": "elsies-river",
+   "category": "General Retail",
+   "suburb": "Elsie's River",
+   "region": "cape-flats",
+   "address": "Shop 2, Avonwood Square, Cnr 35th Avenue & Balvenie Avenue, Elsies River, Cape Town",
+   "shopping_centre": "Avonwood Square",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://my-catalogue.co.za/stores/cape-town/cash-crusaders/avonwood-centre-corner-35th-ave-balvenie-avenue-off-avonwood-avenue-elsies-river",
+    "https://www.cylex.net.za/company/cash-crusaders-elsies-river-23688318.html",
+    "https://www.cashcrusaders.co.za/locate-a-store/store/71/Cash-Crusaders-Elsies-River"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 28,
    "current_description": "Cash Crusaders Avonwood is a branch of the Cash Crusaders secondhand retail chain in Avonwood Square, Elsies River, buying and selling used electronics, appliances, tools and other goods."
@@ -401,10 +746,20 @@
   {
    "slug": "cashbuild-delft-mall-delft",
    "name": "Cashbuild",
-   "category": "hardware-stores",
-   "suburb": "delft",
+   "category": "Hardware Stores",
+   "suburb": "Delft",
+   "region": "cape-flats",
+   "address": "Shop V1, Delft Mall, Delft Main Road, Delft, Cape Town, 7100",
+   "shopping_centre": "Delft Mall",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://locations.cashbuild.co.za/Retail-DelftMall-CashbuildDelft",
+    "https://za.africabz.com/western-cape/cashbuild-368376",
+    "https://stores.cashbuild.co.za/za/delft/shop-v1-delft-mall"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 07:00-18:00, Fri 08:00-15:00, Sat 07:00-16:00, Sun 08:00-14:00",
    "has_email": false,
    "current_words": 28,
    "current_description": "Cashbuild is a South African hardware and building materials retailer chain; its Delft Mall branch stocks building supplies, tools and home-improvement essentials for local trade and DIY customers."
@@ -412,10 +767,19 @@
   {
    "slug": "cattle-baron-plattekloof",
    "name": "Cattle Baron Plattekloof",
-   "category": "restaurants-takeaways",
-   "suburb": "plattekloof",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Plattekloof",
+   "region": "northern-suburbs",
+   "address": "Shop 16, Plattekloof Shopping Centre, Plattekloof, Cape Town, 7500",
+   "shopping_centre": "Plattekloof Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.cattlebaron.co.za/plattekloof/",
+    "https://tableagent.com/cape-town/cattle-baron-plattekloof/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 11:30-15:30 & 17:30-23:30, Fri 11:30-15:30 & 17:30-24:00, Sat 17:30-24:00, Sun 11:30-15:30 & 18:00-22:30",
    "has_email": false,
    "current_words": 28,
    "current_description": "Cattle Baron Plattekloof is a steakhouse in Plattekloof Shopping Centre that has served the area for more than 20 years, with a buffet offered on Wednesdays and Fridays."
@@ -423,10 +787,20 @@
   {
    "slug": "cheynes-restaurant-hout-bay",
    "name": "Cheyne's Restaurant",
-   "category": "restaurants-takeaways",
-   "suburb": "hout-bay",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Hout Bay",
+   "region": "south-peninsula",
+   "address": "35 Main Road, Hout Bay, Cape Town, 7806",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tripadvisor.com/Restaurant_Review-g469392-d4737813-Reviews-Cheyne_s-Hout_Bay_Western_Cape.html",
+    "https://www.eatout.co.za/venue/cheynes1/",
+    "https://thevillagehoutbay.co.za/cheynes/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 28,
    "current_description": "Cheyne's Restaurant is an Asian-inspired eatery in Hout Bay serving Pacific Rim-influenced cuisine sourced from local suppliers, set around a Balinese-style garden used for both dining and cocktails."
@@ -434,10 +808,20 @@
   {
    "slug": "chiropractic-health-centre-sea-point",
    "name": "The Chiropractic Health Centre",
-   "category": "physiotherapists",
-   "suburb": "sea-point",
+   "category": "Physiotherapists",
+   "suburb": "Sea Point",
+   "region": "atlantic-seaboard",
+   "address": "3rd Floor, The Point, 76 Regent Road, Sea Point, Cape Town",
+   "shopping_centre": "The Point",
+   "phone_on_file": true,
    "website": "https://www.chiropractor.co.za",
+   "existing_sources": [
+    "https://www.chiropractor.co.za/location-atlantic-chiropractic/",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=200407",
+    "https://thepointmall.co.za/merchant/chiropractic-health-centre-sea-point/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:30-18:00",
    "has_email": true,
    "current_words": 28,
    "current_description": "The Chiropractic Health Centre is a chiropractic practice on the 3rd floor of The Point in Sea Point, offering chiropractic consultations, biokinetics, massage therapy and foot care treatments."
@@ -445,10 +829,20 @@
   {
    "slug": "citivet-gardens-vredehoek",
    "name": "Citivet Gardens",
-   "category": "vets-animal-care",
-   "suburb": "vredehoek",
+   "category": "Vets & Animal Care",
+   "suburb": "Vredehoek",
+   "region": "city-bowl",
+   "address": "7 Aandbloem Street, Vredehoek, Cape Town, 8001",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://citivetgardens.co.za/",
+   "existing_sources": [
+    "https://www.brabys.com/za/western-cape/cape-town/vredehoek/veterinary-clinics-hospitals/city-vet-gardens",
+    "https://za.africabz.com/western-cape/citi-vet-gardens-265479",
+    "https://citivetgardens.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 28,
    "current_description": "A veterinary clinic in Vredehoek offering full health checkups plus surgical and medical care with in-house hospital admission, and stocking prescription veterinary food ranges and other pet-care products."
@@ -456,10 +850,19 @@
   {
    "slug": "clicks-golden-acre-cape-town-cbd",
    "name": "Clicks Golden Acre",
-   "category": "pharmacies",
-   "suburb": "cape-town-cbd",
+   "category": "Pharmacies",
+   "suburb": "Cape Town CBD",
+   "region": "city-bowl",
+   "address": "Golden Acre, Castle Street entrance, Cape Town, 8001",
+   "shopping_centre": "Golden Acre",
+   "phone_on_file": true,
    "website": "https://clicks.co.za",
+   "existing_sources": [
+    "https://golden-acre.co.za/stores/",
+    "https://clicks.co.za/store/Golden-Acre/116"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-17:00, Sat 08:00-14:00",
    "has_email": false,
    "current_words": 28,
    "current_description": "Clicks Golden Acre is a pharmacy and health, beauty and homeware store inside the Golden Acre shopping centre in central Cape Town, accessible from the Castle Street entrance."
@@ -467,10 +870,20 @@
   {
    "slug": "clicks-longbeach-mall-noordhoek",
    "name": "Clicks Longbeach Mall",
-   "category": "pharmacies",
-   "suburb": "noordhoek",
+   "category": "Pharmacies",
+   "suburb": "Noordhoek",
+   "region": "south-peninsula",
+   "address": "Shop G15, Longbeach Mall, Cnr Buller Louw Drive & Sunnydale Road, Milkwood Park, Noordhoek, Cape Town, 7975",
+   "shopping_centre": "Longbeach Mall",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://longbeachmall.co.za/stores/clicks/",
+    "https://clicks.co.za/store/Long-Beach-Mall/148",
+    "https://my-catalogue.co.za/stores/cape-town/clicks/long-beach-mall-cnr-buller-louw-drive-sunnydale-roads-milkwood-park-noordhoek"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:00, Sat 08:00-17:00, Sun 09:00-15:00",
    "has_email": false,
    "current_words": 28,
    "current_description": "Clicks Longbeach Mall is a pharmacy and health, beauty and homeware store branch inside Longbeach Mall in Noordhoek, offering a pharmacy dispensary alongside health, beauty and household products."
@@ -478,10 +891,19 @@
   {
    "slug": "clicks-pharmacy-edgemead",
    "name": "Clicks Pharmacy Edgemead",
-   "category": "pharmacies",
-   "suburb": "edgemead",
+   "category": "Pharmacies",
+   "suburb": "Edgemead",
+   "region": "northern-suburbs",
+   "address": "Shop 14, Edgemead Village Centre, 50 Louis Thibault Drive, Edgemead, Cape Town, 7441",
+   "shopping_centre": "Edgemead Village Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://my-catalogue.co.za/stores/cape-town/clicks/14-edgemead-shopping-centre-50-louis-thibault-drive-edgemead",
+    "https://www.tiendeo.co.za/stores/cape-town/clicks-edgemead-shopping-centre-louis-thibault-drive/27781"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-20:00, Sat 08:00-20:00, Sun 09:00-19:00",
    "has_email": false,
    "current_words": 28,
    "current_description": "Clicks Pharmacy Edgemead is a branch of the Clicks pharmacy, health and beauty retail chain in Edgemead Shopping Centre, combining a dispensary with health, beauty and toiletry products."
@@ -489,10 +911,20 @@
   {
    "slug": "clicks-pharmacy-hout-bay",
    "name": "Clicks Pharmacy Hout Bay",
-   "category": "pharmacies",
-   "suburb": "hout-bay",
+   "category": "Pharmacies",
+   "suburb": "Hout Bay",
+   "region": "south-peninsula",
+   "address": "Mainstream Mall, Cnr Princess & Main Road, Hout Bay, Cape Town, 7806",
+   "shopping_centre": "Mainstream Mall",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/clicks-pharmacy-46814",
+    "https://za.textmap.info/3/444",
+    "https://www.mainstreammall.co.za/clicks/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Tue 08:00-18:00, Wed 09:00-18:00, Thu-Fri 08:00-18:00, Sat 08:30-17:00, Sun 09:00-15:00",
    "has_email": false,
    "current_words": 28,
    "current_description": "Clicks Pharmacy Hout Bay is a branch of the Clicks pharmacy and health chain inside Mainstream Mall in Hout Bay, offering a dispensary and health and beauty retail."
@@ -500,10 +932,20 @@
   {
    "slug": "county-fair-epping",
    "name": "County Fair",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "epping",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Epping",
+   "region": "northern-suburbs",
+   "address": "25 Bofors Circle, Epping Industria, Cape Town, 7460",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.countyfair.co.za",
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/county-fair-37960",
+    "https://www.ananzi.co.za/ads/za/western-cape/cape-town/epping-industria/poultry-products/county-fair-foods-pty-ltd",
+    "https://www.astralfoods.com/our-brands/county-fair/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00",
    "has_email": false,
    "current_words": 28,
    "current_description": "County Fair is an Astral Foods poultry brand producing fresh, frozen and value-added chicken products for the Western Cape market and beyond, operating from its Epping Industria site."
@@ -511,10 +953,19 @@
   {
    "slug": "crown-national-brackenfell",
    "name": "Crown National Factory Mart Brackenfell Corner",
-   "category": "fashion-clothing",
-   "suburb": "brackenfell",
+   "category": "Fashion & Clothing",
+   "suburb": "Brackenfell",
+   "region": "northern-suburbs",
+   "address": "Shop 4, Brackenfell Corner Shopping Centre, Corner Frans Conradie Drive & Paradys Street, Brackenfell, Cape Town, 7560",
+   "shopping_centre": "Brackenfell Corner",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://brackenfellcorner.co.za/brackenfell-corner---stores.html",
+    "https://www.crownnational.co.za/branches"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sat 09:00-14:00, Sun 09:00-13:00",
    "has_email": false,
    "current_words": 28,
    "current_description": "Crown National Factory Mart is a factory shop in Brackenfell Corner, Brackenfell, selling spices, herbs, seasonings, sauces and meat-processing supplies including packaging and casings for the food industry."
@@ -522,10 +973,21 @@
   {
    "slug": "de-abreu-cohen-attorneys-table-view",
    "name": "De Abreu & Cohen Attorneys",
-   "category": "attorneys-legal",
-   "suburb": "table-view",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Table View",
+   "region": "west-coast",
+   "address": "Unit 2, 42 Blaauwberg Road, Table View, Cape Town, 7441",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://deabreuandcohen.co.za",
+   "existing_sources": [
+    "https://www.cybo.com/ZA-biz/de-abreu-cohen-attorneys",
+    "https://zaf.soopage.com/company/DE-ABREU-COHEN-INC_4qn.html",
+    "https://www.southafricanlawyer.co.za/law-firm/de-abreu-cohen/table-view/",
+    "https://deabreuandcohen.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 28,
    "current_description": "De Abreu & Cohen Attorneys is a law firm in Table View established in 1999, offering conveyancing, commercial law, general litigation, family law, wills, trusts and notarial services."
@@ -533,10 +995,20 @@
   {
    "slug": "debonairs-pizza-elsies-river",
    "name": "Debonairs Pizza",
-   "category": "restaurants-takeaways",
-   "suburb": "elsies-river",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Elsie's River",
+   "region": "cape-flats",
+   "address": "Shop 25, Avonwood Square, Cnr 35th Avenue & Balvenie Road, Elsies River",
+   "shopping_centre": "Avonwood Square",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://foursquare.com/v/debonairs-pizza/5cc745e0c8b2fb002c847167",
+    "https://za.readymap.info/4/37244",
+    "https://app.debonairspizza.co.za/restaurants/avonwood"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 08:30-20:00, Fri-Sat 08:30-21:00, Sun 09:00-20:00",
    "has_email": false,
    "current_words": 28,
    "current_description": "Debonairs Pizza in Avonwood Square is a pizza takeaway outlet of the national Debonairs Pizza chain, serving pizza, pasta, chicken wings, submarine sandwiches and desserts in Elsies River."
@@ -544,10 +1016,20 @@
   {
    "slug": "debonairs-pizza-victoria-mall-grassy-park",
    "name": "Debonairs Pizza",
-   "category": "restaurants-takeaways",
-   "suburb": "grassy-park",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Grassy Park",
+   "region": "cape-flats",
+   "address": "Shop 2, Victoria Mall, 101 4th Avenue, Grassy Park, Cape Town, 7941",
+   "shopping_centre": "Victoria Mall",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://locations.debonairspizza.co.za/restaurants-VictoriaMall-DebonairsPizzaGrassyPark",
+    "https://www.tripadvisor.com/Restaurant_Review-g14251551-d17787063-Reviews-Debonairs_Pizza-Grassy_Park_Western_Cape.html",
+    "https://app.debonairspizza.co.za/restaurant/5350/debonairs-pizza-grassy-park"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 10:00-22:00, Fri-Sat 10:00-22:30, Sun 10:00-21:00",
    "has_email": true,
    "current_words": 28,
    "current_description": "Debonairs Pizza in Victoria Mall, Grassy Park is a branch of the national pizza chain, offering dine-in, takeaway and delivery, including its Triple-Decker and Real Deal pizza ranges."

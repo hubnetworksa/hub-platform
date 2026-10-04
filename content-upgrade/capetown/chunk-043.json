@@ -5,10 +5,19 @@
   {
    "slug": "the-italian-art-shop-rondebosch",
    "name": "The Italian Art Shop",
-   "category": "general-retail",
-   "suburb": "rondebosch",
+   "category": "General Retail",
+   "suburb": "Rondebosch",
+   "region": "southern-suburbs",
+   "address": "Ground Floor, Riverside Mall, cnr Main Road and Rosedale Road, Rondebosch, Cape Town, 7700",
+   "shopping_centre": "Riverside Mall",
+   "phone_on_file": true,
    "website": "https://www.italianartshop.co.za",
+   "existing_sources": [
+    "https://riversiderondebosch.co.za/store/italian-art-shop/",
+    "https://za.africabz.com/western-cape/italian-artshop-the-41848"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:00, Sat 09:00-13:00, Sun Closed",
    "has_email": true,
    "current_words": 40,
    "current_description": "The Italian Art Shop, also known as The Canvas Company, supplies artist-quality painting and art materials from Riverside Mall, Rondebosch, and is the sole South African importer of several leading international art-material brands; it also runs painting and drawing classes."
@@ -16,10 +25,20 @@
   {
    "slug": "the-marly-camps-bay",
    "name": "The Marly Boutique Hotel & Spa",
-   "category": "hotels",
-   "suburb": "camps-bay",
+   "category": "Hotels",
+   "suburb": "Camps Bay",
+   "region": "atlantic-seaboard",
+   "address": "201 The Promenade, Victoria Road, Camps Bay, Cape Town, 8005",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.themarly.co.za/",
+    "https://www.sa-venues.com/visit/themarly/",
+    "https://www.themarly.co.za/facilities/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "The Marly Boutique Hotel & Spa is a 38-room five-star hotel on the Camps Bay promenade between the Twelve Apostles and the beach, with mountain- and sea-facing suites, a boutique spa, gym and the rooftop pool bar and lounge, Baptiste."
@@ -27,10 +46,20 @@
   {
    "slug": "willoughby-and-co-va-waterfront",
    "name": "Willoughby & Co",
-   "category": "restaurants-takeaways",
-   "suburb": "va-waterfront",
+   "category": "Restaurants & Takeaways",
+   "suburb": "V&A Waterfront",
+   "region": "city-bowl",
+   "address": "Shop 6132, 19 Dock Rd, Victoria Wharf Shopping Centre, V&A Waterfront, Cape Town, 8001",
+   "shopping_centre": "Victoria Wharf Shopping Centre",
+   "phone_on_file": true,
    "website": "https://www.willoughbyandco.co.za/",
+   "existing_sources": [
+    "https://www.waterfront.co.za/eat-and-drink/willoughby-co",
+    "https://www.tripadvisor.com/ShowUserReviews-g312659-r51941936-Willoughby_Co-Cape_Town_Central_Western_Cape.html",
+    "https://willoughbyandco.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 12:00-22:00",
    "has_email": false,
    "current_words": 40,
    "current_description": "Willoughby & Co is a sushi and seafood restaurant at Victoria Wharf Shopping Centre in the V&A Waterfront, well known for its sushi rolls and seafood dishes; it does not take reservations, so queues are common especially at peak times."
@@ -38,10 +67,20 @@
   {
    "slug": "agrimark-philippi",
    "name": "Agrimark Philippi",
-   "category": "agricultural-farming-supplies",
-   "suburb": "philippi",
+   "category": "Agricultural & Farming Supplies",
+   "suburb": "Philippi",
+   "region": "cape-flats",
+   "address": "10 Olieboom Road, Philippi, Cape Town, 7785",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.agrimark.co.za/store/agrimark-philippi",
+   "existing_sources": [
+    "https://www.agrimark.co.za/store/agrimark-philippi",
+    "https://www.cybo.com/ZA-biz/agrimark-philippi",
+    "https://www.agrimark.co.za/article/helping-to-protect-cape-town-s-food-basket-agrimark-philippi-gets-a-facelift"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 41,
    "current_description": "Agrimark Philippi is an agricultural and farming supplies store on Olieboom Road, serving the farms and smallholdings of the Philippi Horticultural Area with irrigation equipment, animal feed, gardening tools and outdoor gear, plus diesel, gas swaps, paint mixing and delivery services."
@@ -49,10 +88,19 @@
   {
    "slug": "apnisleep-sea-point",
    "name": "Apnisleep",
-   "category": "clinics-healthcare",
-   "suburb": "sea-point",
+   "category": "Clinics & Healthcare",
+   "suburb": "Sea Point",
+   "region": "atlantic-seaboard",
+   "address": "Suite 304, 3rd Floor, The Point, 76 Regent Road, Sea Point, Cape Town",
+   "shopping_centre": "The Point",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "http://www.apnisleep.co.za/call-us/",
+    "https://www.cavaonline.org/listing/apnisleep-cape-town-snoring-and-sleep-apnea-solutions-2/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 41,
    "current_description": "Apnisleep is a dental sleep clinic inside The Point in Sea Point, treating snoring and obstructive sleep apnea with custom oral appliances using digital scans, CBCT imaging and 3D-printed devices, working alongside ENT surgeons, pulmonologists and sleep physicians across Cape Town."
@@ -60,10 +108,20 @@
   {
    "slug": "chamomile-farming-philippi-horticultural",
    "name": "Chamomile Farming",
-   "category": "agricultural-farming-supplies",
-   "suburb": "philippi-horticultural",
+   "category": "Agricultural & Farming Supplies",
+   "suburb": "Philippi Horticultural Area",
+   "region": "cape-flats",
+   "address": "Corner of Boom and Middel Avenue, Schaap Road, Schaapkraal, Philippi Horticultural Area, Cape Town, 8000",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://chamomilefarming.co.za/",
+    "https://www.facebook.com/chamomilefarmingsa/",
+    "https://iol.co.za/capeargus/news/2022-01-19-first-generation-farmers-expand-their-egg-farming-operation-in-philippi/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 41,
    "current_description": "Chamomile Farming is a poultry and vegetable farm in the Philippi Horticultural Area, supplying retailers such as Shoprite and Checkers with produce including coriander, chillies, lettuce and peppers in the warmer months and spinach, cabbage and turnips in the cooler months."
@@ -71,10 +129,20 @@
   {
    "slug": "collectables-hub-and-cafe-simons-town",
    "name": "Collectables Hub & Cafe",
-   "category": "general-retail",
-   "suburb": "simons-town",
+   "category": "General Retail",
+   "suburb": "Simon's Town",
+   "region": "south-peninsula",
+   "address": "Meeting Place Building, 98 St George's Street, Simon's Town, Cape Town, 7975",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.capetownmagazine.com/collectables-hub",
+    "https://www.tripadvisor.com/Restaurant_Review-g319718-d23888880-Reviews-Collectables_Hub_Cafe-Simon_s_Town_Western_Cape.html",
+    "https://www.foodandhome.co.za/entertaining/its-a-thrifters-paradise-at-collectables-hub-and-cafe-in-simons-town"
+   ],
    "has_hours": true,
+   "hours": "Fri-Mon 10:00-17:00, Tue-Thu Closed",
    "has_email": false,
    "current_words": 41,
    "current_description": "Collectables Hub & Cafe is an antiques and retro-memorabilia store combined with a cafe in Simon's Town, stocking vintage clothing, toys, vinyl records, militaria and other collectables alongside coffee, sandwiches, wraps and light meals, with a deck overlooking Simon's Town harbour."
@@ -82,10 +150,20 @@
   {
    "slug": "freeline-ndabeni",
    "name": "Freeline",
-   "category": "printing-services",
-   "suburb": "ndabeni",
+   "category": "Printing Services",
+   "suburb": "Ndabeni",
+   "region": "northern-suburbs",
+   "address": "1st Floor Sunrise Building, 55 Morningside Drive, Ndabeni, Cape Town, 7405",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://freeline.co.za/",
+   "existing_sources": [
+    "https://freeline.co.za/contact/",
+    "https://www.africanadvice.com/1258202/Screen_Printers/Cape_Town/Freeline_Screenprint/",
+    "https://freeline.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 08:30-16:30",
    "has_email": false,
    "current_words": 41,
    "current_description": "Freeline is a screen printing and garment decoration business in Ndabeni, trading since the early 1980s and under its current ownership since 1995. It offers textile screenprinting, digital print and transfer, vinyl cut and transfer, sublimation printing, sportswear manufacture and embroidery."
@@ -93,10 +171,20 @@
   {
    "slug": "pep-philippi-shopping-centre-philippi",
    "name": "PEP Philippi Shopping Centre",
-   "category": "fashion-clothing",
-   "suburb": "philippi",
+   "category": "Fashion & Clothing",
+   "suburb": "Philippi",
+   "region": "cape-flats",
+   "address": "Shop 13, Shoprite Centre, Cnr Lansdowne & New Eisleben, Philippi, Cape Town, 7758",
+   "shopping_centre": "Philippi Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tiendeo.co.za/stores/cape-town/pep-stores-shop-shoprite-centre-cnr-lansdowne-new-eisleben-philippi-cape-town-western-cape/12531",
+    "https://my-catalogue.co.za/stores/philippi/pep-stores/shoprite-centre-cnr-lansdowne-new-eisleben",
+    "https://en.wikipedia.org/wiki/Pep_(South_Africa)"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 41,
    "current_description": "PEP is a South African budget clothing and homeware retailer founded in Upington in 1965 by Renier van Rooyen; now a Pepkor subsidiary with around 1,800 stores across Southern Africa, this branch trades from the Philippi Shopping Centre in Philippi."
@@ -104,10 +192,19 @@
   {
    "slug": "safetop-wetton",
    "name": "SafeTop",
-   "category": "hardware-stores",
-   "suburb": "wetton",
+   "category": "Hardware Stores",
+   "suburb": "Wetton",
+   "region": "cape-flats",
+   "address": "Pride Park, Corner Dolphin & Wetwyn Road, Wetton, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.safetopdiy.co.za/",
+   "existing_sources": [
+    "https://www.safetopdiy.co.za/contact/",
+    "https://www.facebook.com/SafeTopdiy/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 41,
    "current_description": "SafeTop is a hardware and DIY retailer in Pride Park, Wetton, founded in 1989 and stocking fasteners, power tool accessories, adhesive tapes, paint aerosols and hand tools, with its own manufacturing division producing fasteners such as drive nails and wall plugs."
@@ -115,10 +212,20 @@
   {
    "slug": "superior-packaging-industries-ndabeni",
    "name": "Superior Packaging Industries",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "ndabeni",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Ndabeni",
+   "region": "northern-suburbs",
+   "address": "24 Old Mill Road, Ndabeni, Cape Town, 7405",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://superiorpackaging.co.za/",
+   "existing_sources": [
+    "https://superiorpackaging.co.za/contact/",
+    "https://www.brabys.com/za/western-cape/cape-town/ndabeni/packaging-companies/superior-packaging-industries",
+    "https://superiorpackaging.co.za/products/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 41,
    "current_description": "Superior Packaging Industries manufactures plastic packaging at its Ndabeni plant, handling extrusion, printing, laminating, bag-making and sheeting for the fresh produce, food, dairy, fertiliser and FMCG sectors. It holds BRC Global Standard certification at the highest AA grade for high-hygiene-risk packaging."
@@ -126,10 +233,20 @@
   {
    "slug": "the-spade-boutique-hotel-mandela-park",
    "name": "The Spade Boutique Hotel",
-   "category": "hotels",
-   "suburb": "mandela-park",
+   "category": "Hotels",
+   "suburb": "Mandela Park",
+   "region": "cape-flats",
+   "address": "8 Alfred Nzo Street, Mandela Park, Khayelitsha, Cape Town, 7784",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://thespadeboutiquehotel.co.za/",
+   "existing_sources": [
+    "https://thespadeboutiquehotel.co.za/contact-us/",
+    "https://www.tripadvisor.com/Hotel_Review-g2427234-d23829371-Reviews-The_Spade_Boutique_Hotel_And_Spa-Khayelitsha_Western_Cape.html",
+    "https://www.news24.com/citypress/trending/the-spade-boutique-hotel-an-oasis-in-khayelitsha-township-20220501"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 41,
    "current_description": "The Spade Boutique Hotel is a 13-suite four-star boutique hotel and spa in Mandela Park, Khayelitsha, reported as South Africa's first four-star boutique hotel located in a township, with a heated outdoor pool, gym, spa, restaurant and bar, and shuttle service."
@@ -137,10 +254,20 @@
   {
    "slug": "trevoyan-guesthouse-tamboerskloof",
    "name": "The Trevoyan Guesthouse",
-   "category": "accommodation",
-   "suburb": "tamboerskloof",
+   "category": "Accommodation",
+   "suburb": "Tamboerskloof",
+   "region": "city-bowl",
+   "address": "12 Gilmour Hill Road, Tamboerskloof, Cape Town, 8001",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.trevoyan.co.za/",
+   "existing_sources": [
+    "https://www.trevoyan.co.za/contact/",
+    "https://www.odunion.com/business-directory/profile/21/the-trevoyan-guesthouse",
+    "https://www.trevoyan.co.za/our-place/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 41,
    "current_description": "A Victorian-era guesthouse built in 1894 in Tamboerskloof at the foot of Table Mountain, with individually decorated rooms, a piano lounge, a garden with a pool, and a sun deck with views of Table Mountain, a short walk from Kloof Street."
@@ -148,10 +275,20 @@
   {
    "slug": "tsiba-business-school-ndabeni",
    "name": "TSIBA Business School",
-   "category": "schools-education",
-   "suburb": "ndabeni",
+   "category": "Schools & Education",
+   "suburb": "Ndabeni",
+   "region": "northern-suburbs",
+   "address": "51 Old Mill Road, Ndabeni, Cape Town, 7405",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.tsiba.ac.za",
+   "existing_sources": [
+    "https://www.tsiba.ac.za/contact-us/",
+    "https://www.waze.com/live-map/directions/za/wc/cape-town/tsiba-business-school",
+    "https://mg.co.za/partner-content/2024-01-26-tsiba-business-school-celebrates-its-20th-anniversary/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 41,
    "current_description": "TSIBA Business School is a CHE-accredited, DHET-registered private business school founded in 2004, offering a Higher Certificate in Business Administration, a Bachelor of Business Administration degree and a Postgraduate Diploma in Business Administration, with fees based on household income, in Ndabeni."
@@ -159,10 +296,19 @@
   {
    "slug": "two4one-kitchen-bar-observatory",
    "name": "Two4One Kitchen & Bar",
-   "category": "restaurants-takeaways",
-   "suburb": "observatory",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Observatory",
+   "region": "city-bowl",
+   "address": "90 Lower Main Road, Observatory, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.two4one.co.za",
+   "existing_sources": [
+    "https://www.two4one.co.za/",
+    "https://www.capetownetc.com/things-to-do-cape-town/restaurants/satisfy-your-hunger-with-unique-cuisines-at-two4one-kitchen-bar/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 41,
    "current_description": "Two4One Kitchen & Bar is a restaurant in Observatory built around a buy-one-get-one pricing concept, where every meal on the menu -- including burgers, pizzas and desserts -- comes with a second meal free or swappable for a beer or cocktail."
@@ -170,10 +316,20 @@
   {
    "slug": "baker-mcveigh-equine-hospital-milnerton",
    "name": "Baker & McVeigh Equine Hospital",
-   "category": "vets-animal-care",
-   "suburb": "milnerton",
+   "category": "Vets & Animal Care",
+   "suburb": "Milnerton",
+   "region": "west-coast",
+   "address": "Turf Club Road, off Koeberg Road, Milnerton, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.bakermcveigh.com/",
+   "existing_sources": [
+    "https://www.bakermcveigh.com/cape-town-za/baker-mcveigh/equine-hospital/vet",
+    "https://www.pooh.co.za/listing/baker-and-mcveigh-equine-hospital/",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=274544"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00, Sat 08:00-13:00",
    "has_email": false,
    "current_words": 42,
    "current_description": "Baker & McVeigh Equine Hospital is a fully equipped equine surgical hospital in Milnerton, established in 2002, offering emergency and elective surgery, dental care, reproduction services, and prepurchase examinations for racehorses, sport horses, polo ponies, and pleasure horses across the Western Cape."
@@ -181,10 +337,21 @@
   {
    "slug": "belhar-high-school-belhar",
    "name": "Belhar High School",
-   "category": "schools-education",
-   "suburb": "belhar",
+   "category": "Schools & Education",
+   "suburb": "Belhar",
+   "region": "cape-flats",
+   "address": "2 Suikerbossie Way, Belhar, Cape Town, 7493",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "belharhighschool.co.za",
+   "existing_sources": [
+    "https://educationsouthafrica.com/schools/western-cape/city-of-cape-town/belhar-sekondr",
+    "https://belharhighschool.co.za/contact-us/",
+    "https://schoolsdigest.co.za/listings/belhar-sekonder/",
+    "https://belharhighschool.co.za/about/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 42,
    "current_description": "Belhar High School is an English-medium public secondary school in Belhar, established in 1977 as the area's first high school and designated one of the Western Cape Education Department's Arts and Culture focus schools, offering Dance, Drama, Visual Art, Design and Music."
@@ -192,10 +359,19 @@
   {
    "slug": "club-kloof-tamboerskloof",
    "name": "Club Kloof",
-   "category": "restaurants-takeaways",
-   "suburb": "tamboerskloof",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Tamboerskloof",
+   "region": "city-bowl",
+   "address": "84 Kloof St, Tamboerskloof, Cape Town, 8001",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://clubkloof.com",
+   "existing_sources": [
+    "https://www.corner.inc/place/pkkuWKNDW9rD",
+    "https://mindtrip.ai/restaurant/cape-town-western/club-kloof/re-HEyes87q"
+   ],
    "has_hours": true,
+   "hours": "Sun 12:00-18:00, Mon Closed, Tue-Wed 18:00-23:30, Thu-Sat 12:00-23:30",
    "has_email": false,
    "current_words": 42,
    "current_description": "Club Kloof is an Italian-inspired restaurant and bar on Kloof Street, Tamboerskloof, set in a restored heritage building with a retro 1970s-style interior, serving dishes such as sourdough pizzettes, salads, grilled prawns and beef fillet, with a dog-friendly patio and upstairs balcony."
@@ -203,10 +379,19 @@
   {
    "slug": "guga-sthebe-arts-and-culture-centre-langa",
    "name": "Guga S'thebe Arts and Culture Centre",
-   "category": "museums-heritage-sites",
-   "suburb": "langa",
+   "category": "Museums & Heritage Sites",
+   "suburb": "Langa",
+   "region": "cape-flats",
+   "address": "Washington Street (King Langalibalele Avenue), Langa, Cape Town, 7455",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.musicinafrica.net/directory/guga-sthebe-cultural-centre",
+    "https://www.capetownmagazine.com/guga-sthebe"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 42,
    "current_description": "Guga S'thebe Arts and Culture Centre is a community arts and culture venue in Langa, established in the 1990s, offering programmes in dance, traditional dance, choir, music, poetry, pottery and metalwork, with an amphitheatre and, since 2015, its own Guga S'Thebe Theatre."
@@ -214,10 +399,20 @@
   {
    "slug": "lakeside-brewing-co-taproom-kommetjie",
    "name": "Lakeside Brewing Co Taproom",
-   "category": "restaurants-takeaways",
-   "suburb": "kommetjie",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Kommetjie",
+   "region": "south-peninsula",
+   "address": "Imhoff Farm, Kommetjie Road, Kommetjie, Cape Town, 7975",
+   "shopping_centre": "Imhoff Farm",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.eatplaydrink.capetown/play/imhoff-farm-in-kommetjie-revived-as-unique-retail-destination/",
+    "https://www.facebook.com/imhofffarm.co.za/posts/great-news-the-lakeside-beer-garden-is-finished-and-its-looking-very-coollakesid/3221476517964953/",
+    "https://www.tripadvisor.com/Attraction_Review-g1214290-d25966773-Reviews-Lakeside_Brewing_Co-Kommetjie_Western_Cape.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 42,
    "current_description": "Lakeside Brewing Co Taproom is a craft brewery and taproom at Imhoff Farm in Kommetjie, established in 2013, offering a range of house-brewed beer styles and a fully stocked bar with indoor and outdoor seating, run in collaboration with Blue Water Cafe."
@@ -225,10 +420,20 @@
   {
    "slug": "loaves-by-madame-baker-salt-river",
    "name": "Loaves by Madame Baker",
-   "category": "bakeries",
-   "suburb": "salt-river",
+   "category": "Bakeries",
+   "suburb": "Salt River",
+   "region": "city-bowl",
+   "address": "Unit B3, Salt Orchard, 12 Briar Road, Salt River, Cape Town, 8000",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.loaves.co.za",
+   "existing_sources": [
+    "https://www.eatout.co.za/venue/loaves-on-long/",
+    "https://www.loaves.co.za/contact.html",
+    "https://yourneighbourhood.co.za/loaves-by-madame-baker/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 42,
    "current_description": "Loaves by Madame Baker is an artisanal bakery in Salt River known for its scratch-made bread, bagels and croissants, plus a signature spicy chicken aioli sandwich. It opened on Long Street in 2015 before relocating to Salt River's Salt Orchard in 2018."
@@ -236,10 +441,19 @@
   {
    "slug": "morkel-de-villiers-inc-somerset-west",
    "name": "Morkel & De Villiers Inc",
-   "category": "attorneys-legal",
-   "suburb": "somerset-west",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Somerset West",
+   "region": "helderberg",
+   "address": "13 Drama Road, Somerset West, 7130",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://mdv.legal/",
+    "https://www.brabys.com/za/western-cape/somerset-west/attorneys/morkel-de-villiers-incorporated"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 42,
    "current_description": "Morkel & De Villiers Inc is a Somerset West law firm with a large conveyancing and litigation practice, including property transfers and bond registrations, deceased estate administration, commercial contract drafting, and litigation across the Magistrates Courts of the Helderberg and surrounding areas."
@@ -247,10 +461,20 @@
   {
    "slug": "mzamomhle-clinic-browns-farm",
    "name": "Mzamomhle Clinic",
-   "category": "clinics-healthcare",
-   "suburb": "browns-farm",
+   "category": "Clinics & Healthcare",
+   "suburb": "Brown's Farm",
+   "region": "cape-flats",
+   "address": "Sagwityi Road, Browns Farm, Philippi, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.capetown.gov.za/Family%20and%20home/see-all-city-facilities/our-service-facilities/Clinics%20and%20healthcare%20facilities/Mzamomhle%20Clinic",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=113301",
+    "https://d7.westerncape.gov.za/facility/mzamomhle-clinic"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 42,
    "current_description": "Mzamomhle Clinic is a public primary health care clinic on Sagwityi Road in Browns Farm, Philippi, part of the Nyanga Health District. It provides general healthcare services including child, women's and men's health, TB, HIV and STI care, and substance abuse support."
@@ -258,10 +482,20 @@
   {
    "slug": "pier-va-waterfront",
    "name": "Pier",
-   "category": "restaurants-takeaways",
-   "suburb": "va-waterfront",
+   "category": "Restaurants & Takeaways",
+   "suburb": "V&A Waterfront",
+   "region": "city-bowl",
+   "address": "Pierhead Building, Pierhead, V&A Waterfront, Cape Town, 8001",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.waterfront.co.za/eat-and-drink/pier",
+    "https://www.lacolombe.restaurant/pier",
+    "https://www.theworlds50best.com/discovery/Establishments/South-Africa/Cape-Town/Pier.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 42,
    "current_description": "Pier is a fine-dining restaurant in the Pierhead Building at the V&A Waterfront, from the team behind Constantia's La Colombe, serving a multi-course tasting menu built around fresh local seafood with global influences, including dishes such as tableside-poached oysters and crayfish tortellini."
@@ -269,10 +503,20 @@
   {
    "slug": "reverie-social-table-observatory",
    "name": "Reverie Social Table",
-   "category": "restaurants-takeaways",
-   "suburb": "observatory",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Observatory",
+   "region": "city-bowl",
+   "address": "226A Lower Main Road, Observatory, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://insideguide.co.za/cape-town/restaurants/reverie-social-table/",
+    "https://www.capetown.travel/listing/reverie-social-table/",
+    "https://www.reverie.capetown/"
+   ],
    "has_hours": true,
+   "hours": "Wed-Sat single seating 19:00 (arrival 18:30), booking required",
    "has_email": false,
    "current_words": 42,
    "current_description": "Reverie Social Table is an intimate 18-seat chef's table restaurant in Observatory where guests share a single communal table for a five-course, hyper-seasonal tasting menu with South African wine pairings; the menu changes daily based on what is delivered fresh that day."
@@ -280,10 +524,19 @@
   {
    "slug": "simons-town-boat-company-simons-town",
    "name": "Simon's Town Boat Company",
-   "category": "travel-agents",
-   "suburb": "simons-town",
+   "category": "Travel Agents",
+   "suburb": "Simon's Town",
+   "region": "south-peninsula",
+   "address": "2 Wharf Street, Simon's Town, Cape Town, 7975",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.boatcompany.co.za/contact-us/",
+    "https://www.simonstown.com/listing/simons-town-boat-company/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 42,
    "current_description": "Simon's Town Boat Company runs boat-based eco cruises from the Town Pier in Simon's Town, taking visitors past the Boulders penguin colony, a seal colony at Partridge Point and along the cliffs toward Cape Point, with whale and dolphin sightings in season."
@@ -291,10 +544,20 @@
   {
    "slug": "the-blue-cafe-tamboerskloof",
    "name": "The Blue Cafe",
-   "category": "restaurants-takeaways",
-   "suburb": "tamboerskloof",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Tamboerskloof",
+   "region": "city-bowl",
+   "address": "13 Brownlow Road, Tamboerskloof, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.capetownmagazine.com/blue-cafe",
+    "https://www.chrisvonulmenstein.com/blog/cape-town/neighbourhood-treasure-the-blue-cafe-opens-in-tamboerskloof-as-deli-and-general-dealer/",
+    "https://www.eatout.co.za/venue/blue-cafe/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 42,
    "current_description": "The Blue Cafe has traded as a neighbourhood general dealer and sidewalk cafe on this Brownlow Road corner since the early 1900s, known through the decades as \"The Bubby\" and \"Die Blou Kafee\" before reopening as a deli and cafe in 2014."
@@ -302,10 +565,20 @@
   {
    "slug": "the-village-vetshop-plattekloof-village-plattekloof",
    "name": "The Village Vetshop",
-   "category": "vets-animal-care",
-   "suburb": "plattekloof",
+   "category": "Vets & Animal Care",
+   "suburb": "Plattekloof",
+   "region": "northern-suburbs",
+   "address": "Shop 10b, Plattekloof Village Centre, Corner Plattekloof Road & Baronetcy Boulevard, Plattekloof, Cape Town, 7500",
+   "shopping_centre": "Plattekloof Village Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "http://plattekloofvillage.azurewebsites.net/shop/village-vetshop/",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=289686",
+    "https://www.plattekloofvillageshoppingcentre.co.za/shop/the-village-vetshop/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sat 08:30-16:00, Sun 09:00-13:00",
    "has_email": false,
    "current_words": 42,
    "current_description": "The Village Vetshop has operated in Plattekloof Village since 2005, offering veterinary retail products such as tick and flea treatments, de-wormers, shampoos and supplements, vet-approved diets including Hills and Royal Canin, pet beds, toys and accessories, with in-house vets available for advice."
@@ -313,10 +586,20 @@
   {
    "slug": "uwe-koetter-jewellers-cape-quarter-de-waterkant",
    "name": "Uwe Koetter Jewellers",
-   "category": "jewellers",
-   "suburb": "de-waterkant",
+   "category": "Jewellers",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "Shop 103A, Level 1, Cape Quarter, 27 Somerset Rd, De Waterkant",
+   "shopping_centre": "Cape Quarter Lifestyle Village",
+   "phone_on_file": true,
    "website": "https://uwekoetter.com",
+   "existing_sources": [
+    "https://capequarter.co.za/shops/",
+    "https://uwekoetter.com/pages/store-locator",
+    "https://uwekoetter.com/about-us/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 42,
    "current_description": "Uwe Koetter Jewellers is a Cape Town jewellery house founded in 1968, now based in Cape Quarter after moves from Adderley Street and St George's Mall, specialising in bespoke diamond and gemstone jewellery and regarded as one of South Africa's most-awarded jewellers."
@@ -324,10 +607,21 @@
   {
    "slug": "vergenoegd-low-wine-estate-faure",
    "name": "Vergenoegd Löw Wine Estate",
-   "category": "accommodation",
-   "suburb": "faure",
+   "category": "Accommodation",
+   "suburb": "Faure",
+   "region": "helderberg",
+   "address": "1 Vergenoegd Road, Faure, 7130",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://vergenoegd.co.za/contact-us/",
+    "https://www.africanadvice.com/1107275/Wine_Estates/Western_Cape/Faure_Wine_Farm/",
+    "https://wineroute.co.za/wineries/vergenoegd-low-wine-estate/",
+    "https://insideguide.co.za/cape-town/vergenoegd-low/"
+   ],
    "has_hours": true,
+   "hours": "Daily 10:00-17:00 (tasting room)",
    "has_email": false,
    "current_words": 42,
    "current_description": "Vergenoegd Löw Wine Estate is a historic wine farm on Faure Road dating back to 1820, known for its daily parade of Indian Runner ducks and geese through the vineyards and for wine tastings, dining and boutique accommodation on the estate."
@@ -335,10 +629,20 @@
   {
    "slug": "anchor-industries-ndabeni",
    "name": "Anchor Industries",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "ndabeni",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Ndabeni",
+   "region": "northern-suburbs",
+   "address": "Anchor House, 20 Old Mill Road, Ndabeni, Cape Town, 7405",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://anchors.co.za/",
+   "existing_sources": [
+    "https://anchors.co.za/contact/",
+    "https://za.africabz.com/western-cape/anchor-industries-145157",
+    "https://www.processregister.com/Anchor_Industries/Supplier/sid15994.htm"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 43,
    "current_description": "Anchor Industries is a marine and offshore mooring equipment supplier established in 1994 and based in Ndabeni. It supplies new and used mooring gear and buoys, and offers anchor and buoy rental along with rigging and testing services including onsite socketing and splicing."
@@ -346,10 +650,19 @@
   {
    "slug": "block-and-chisel-gardens",
    "name": "Block & Chisel",
-   "category": "furniture-homeware",
-   "suburb": "gardens",
+   "category": "Furniture & Homeware",
+   "suburb": "Gardens",
+   "region": "city-bowl",
+   "address": "122 Kloof Street, Gardens, 8001",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.blockandchisel.co.za/stores/p/city/Cape%20Town/store/Kloof%20Street",
+   "existing_sources": [
+    "https://www.blockandchisel.co.za/stores/p/city/Cape%20Town/store/Kloof%20Street",
+    "https://cfma.co.za/directory/block-and-chisel"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:00, Sat 09:00-13:30, Sun Closed",
    "has_email": false,
    "current_words": 43,
    "current_description": "Block & Chisel is a furniture and homeware store on Kloof Street in Gardens, offering indoor and outdoor furniture, rugs, mirrors and decor in contemporary, English country and French Provencal styles, from a brand that has been designing and manufacturing furniture since 1987."
@@ -357,10 +670,20 @@
   {
    "slug": "cafe-roux-noordhoek",
    "name": "Café Roux",
-   "category": "restaurants-takeaways",
-   "suburb": "noordhoek",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Noordhoek",
+   "region": "south-peninsula",
+   "address": "Noordhoek Main Road & Village Lane, Noordhoek Farm Village, Noordhoek",
+   "shopping_centre": "Noordhoek Farm Village",
+   "phone_on_file": true,
    "website": "https://www.caferoux.co.za",
+   "existing_sources": [
+    "https://www.caferoux.co.za",
+    "https://www.capetourism.com/noordhoek-farm-village/",
+    "https://www.caferoux.co.za/contact/"
+   ],
    "has_hours": true,
+   "hours": "Daily 08:30-17:00 (kitchen closes 15:30)",
    "has_email": false,
    "current_words": 43,
    "current_description": "Cafe Roux is a farm-style restaurant in Noordhoek Farm Village serving breakfast and lunch -- including its burgers, salads and wood-fired pizza -- with home-baked cakes, scones and tarts throughout the day, and it also hosts evening live music, comedy and film nights."
@@ -368,10 +691,20 @@
   {
    "slug": "canterbury-house-bishopscourt",
    "name": "Canterbury House",
-   "category": "accommodation",
-   "suburb": "bishopscourt",
+   "category": "Accommodation",
+   "suburb": "Bishopscourt",
+   "region": "southern-suburbs",
+   "address": "16 Canterbury Drive, Bishopscourt, Cape Town, 7708",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.afristay.com/p/2231",
+    "https://www.canterburyhouse.co.za/contact.php",
+    "https://www.canterburyhouse.co.za/accommodation.php"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 43,
    "current_description": "Canterbury House is a guesthouse in Bishopscourt offering B&B rooms and a self-catering cottage option, with guest use of a swimming pool, floodlit tennis court, snooker room and pub. It is a short drive from Kirstenbosch Gardens and the Cavendish Square shopping centre."
@@ -379,10 +712,20 @@
   {
    "slug": "crumbs-and-cream-sea-point",
    "name": "Crumbs & Cream",
-   "category": "restaurants-takeaways",
-   "suburb": "sea-point",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Sea Point",
+   "region": "atlantic-seaboard",
+   "address": "16 Regent Road, Sea Point, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.crumbsandcream.co.za",
+   "existing_sources": [
+    "https://insideguide.co.za/cape-town/restaurants/crumbs-cream-sea-point/",
+    "https://www.eatout.co.za/venue/crumbs-cream/",
+    "https://www.capetownmagazine.com/crumbs-and-cream"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 43,
    "current_description": "Crumbs & Cream is a family-run ice-cream parlour in Sea Point known for its build-your-own ice-cream sandwiches -- choose your cookies, gelato and toppings -- alongside milkshake creations. It was founded in 2016 and now also has a branch at the V&A Waterfront."
@@ -390,10 +733,20 @@
   {
    "slug": "lazari-vredehoek",
    "name": "Lazari",
-   "category": "restaurants-takeaways",
-   "suburb": "vredehoek",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Vredehoek",
+   "region": "city-bowl",
+   "address": "221 Upper Maynard Street, Vredehoek, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.sa-venues.com/things-to-do/westerncape/coffee-and-lunch-at-lazari/",
+    "https://www.eatout.co.za/venue/lazari-food-gallery/",
+    "https://www.tripadvisor.com/Restaurant_Review-g312659-d940411-Reviews-Lazari-Cape_Town_Central_Western_Cape.html"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:30-17:00, Sat-Sun 08:30-16:00",
    "has_email": false,
    "current_words": 43,
    "current_description": "Lazari is a neighbourhood cafe on the corner of Upper Maynard and Vredehoek Avenue serving a Cape Mediterranean menu of all-day breakfasts, lunches and baked goods. It is a pet-friendly local favourite with a cosy atmosphere and a good beer and wine list."
@@ -401,10 +754,20 @@
   {
    "slug": "origin-coffee-roasting-de-waterkant",
    "name": "Origin Coffee Roasting",
-   "category": "restaurants-takeaways",
-   "suburb": "de-waterkant",
+   "category": "Restaurants & Takeaways",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "28 Hudson Street, De Waterkant, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://originroasting.co.za",
+   "existing_sources": [
+    "https://originroasting.co.za/pages/contact",
+    "https://www.eatout.co.za/venue/origin-coffee-roasting/",
+    "https://originroasting.co.za/pages/about-us"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:30-16:00, Sat 08:00-15:00, Sun 08:00-14:00",
    "has_email": true,
    "current_words": 43,
    "current_description": "Origin Coffee Roasting is a specialty coffee roaster and cafe in De Waterkant, roasting and brewing coffee since 2006 using methods including espresso, V60, Chemex, siphon and Aeropress. It also supplies coffee, barista training and ongoing support to other cafes around the country."
@@ -412,10 +775,19 @@
   {
    "slug": "quince-diep-river",
    "name": "Quince",
-   "category": "restaurants-takeaways",
-   "suburb": "diep-river",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Diep River",
+   "region": "southern-suburbs",
+   "address": "Little Orchard Nursery, Massinger Road, Diep River, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.capetownmagazine.com/quince-restaurant-deli",
+    "https://www.capetownwithkids.com/quince-restaurant-deli-diep-river/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 43,
    "current_description": "Quince is a deli and restaurant inside Little Orchard Nursery in Diep River, opened in 2019 in a restored farmhouse, serving relaxed garden dining alongside a deli counter of pies, quiches and preserves; it is unlicensed, so patrons may bring their own wine."
@@ -423,10 +795,20 @@
   {
    "slug": "rocklands-clinic-rocklands",
    "name": "Rocklands Clinic",
-   "category": "clinics-healthcare",
-   "suburb": "rocklands",
+   "category": "Clinics & Healthcare",
+   "suburb": "Rocklands",
+   "region": "cape-flats",
+   "address": "Cnr Lancaster Road & Park Avenue, Rocklands, Mitchells Plain, Cape Town, 7785",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://d7.westerncape.gov.za/facility/rocklands-clinic",
+    "https://resource.capetown.gov.za/documentcentre/Documents/Forms,%20notices,%20tariffs%20and%20lists/Clinics%20Contact%20List.pdf",
+    "https://clinicfinder.co.za/clinics/western-cape/rocklands-community-clinic-rocklands"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 43,
    "current_description": "Rocklands Clinic is a City of Cape Town public primary healthcare facility on the corner of Lancaster Road and Park Avenue, offering child health, HIV care and testing, family planning, STI assessment and treatment, vaccinations and basic antenatal care on a walk-in basis."
@@ -434,10 +816,20 @@
   {
    "slug": "rocklands-pharmacy-rocklands",
    "name": "Rocklands Pharmacy",
-   "category": "pharmacies",
-   "suburb": "rocklands",
+   "category": "Pharmacies",
+   "suburb": "Rocklands",
+   "region": "cape-flats",
+   "address": "BP Garage, Cnr Caravelle Street & Handley-Page, Rocklands, Mitchells Plain, Cape Town, 7785",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.facebook.com/savemorepharmacies/",
+    "https://distributors.oxygenproducts.org/listing/rocklands-pharmacies/",
+    "https://www.wooltruhealthcarefund.co.za/static-assets/siteFiles/WHF_Pharmacy_WC_2025.pdf"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 43,
    "current_description": "Rocklands Pharmacy operates from the BP garage on the corner of Caravelle Street and Handley-Page in Rocklands, offering prescription dispensing and over-the-counter medicine with a focus on affordable pricing for the local community, and is registered on the Woolworths Healthcare Fund pharmacy network."
@@ -445,10 +837,20 @@
   {
    "slug": "southern-ropes-factory-shop-paarden-eiland",
    "name": "Southern Ropes Factory Shop",
-   "category": "general-retail",
-   "suburb": "paarden-eiland",
+   "category": "General Retail",
+   "suburb": "Paarden Eiland",
+   "region": "northern-suburbs",
+   "address": "48 Section Street, Paarden Eiland, Cape Town, 7405",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.cybo.com",
+    "https://www.netpages.co.za",
+    "https://www.southernropes.com/factoryshop"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 43,
    "current_description": "Southern Ropes Factory Shop is the retail outlet of Southern Ropes, a synthetic rope manufacturer founded in 1984, on Section Street in Paarden Eiland, selling rope, twine, braids and netting off the reel for marine, industrial, mining and defence use, including splicing assistance."
@@ -456,10 +858,20 @@
   {
    "slug": "the-hussar-grill-mouille-point",
    "name": "The Hussar Grill",
-   "category": "restaurants-takeaways",
-   "suburb": "mouille-point",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Mouille Point",
+   "region": "atlantic-seaboard",
+   "address": "163 Beach Road, New Cumberland Building, Mouille Point, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tripadvisor.co.za/Restaurant_Review-g312659-d1020422-Reviews-The_Hussar_Grill_Mouille_Point-Cape_Town_Central_Western_Cape.html",
+    "https://www.eatout.co.za/venue/hussar-grill-mouille-point/",
+    "https://www.weliveincapetown.com/restaurants-in-cape-town/steakhouses/hussar-grill-moullie-point/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 12:00-22:00",
    "has_email": false,
    "current_words": 43,
    "current_description": "The Hussar Grill is a steakhouse in Mouille Point, part of a South African chain running for over 55 years, specialising in aged steaks plus ostrich and game options such as springbok and kudu, with an award-winning wine list and a no-corkage policy."
@@ -467,10 +879,20 @@
   {
    "slug": "the-shop-restaurant-three-anchor-bay",
    "name": "The Shop Restaurant",
-   "category": "restaurants-takeaways",
-   "suburb": "three-anchor-bay",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Three Anchor Bay",
+   "region": "atlantic-seaboard",
+   "address": "3 Three Anchor Bay Road, Three Anchor Bay, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.theshoprestaurant.co.za",
+   "existing_sources": [
+    "https://www.eatout.co.za/venue/the-shop/",
+    "https://crushmag-online.com/the-shop-restaurant-sea-point/",
+    "https://www.capetownmagazine.com/the-shop-restaurant"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 43,
    "current_description": "The Shop Restaurant is a casual, chef-owned bistro in Three Anchor Bay serving simple, honest food built around meat, fish and vegetarian options with an emphasis on sustainably sourced produce; it opened in November 2017 in the space previously occupied by Buzbey Grill."
@@ -478,10 +900,20 @@
   {
    "slug": "wordsworth-books-gardens-shopping-centre-gardens",
    "name": "Wordsworth Books",
-   "category": "books-stationery",
-   "suburb": "gardens",
+   "category": "Books & Stationery",
+   "suburb": "Gardens",
+   "region": "city-bowl",
+   "address": "Shop 9, Gardens Shopping Centre, Upper Buitenkant Street, Gardens, Cape Town",
+   "shopping_centre": "Gardens Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/wordsworth-gardens-97091",
+    "https://www.xpose.co.za/listings/wordsworth-booksgardens-garden-centre/",
+    "https://www.gardensshoppingcentre.co.za/stores/wordsworth-books/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-19:00, Sat 09:00-17:00, Sun 09:00-14:00",
    "has_email": false,
    "current_words": 43,
    "current_description": "Wordsworth Books is an independent bookstore inside Gardens Shopping Centre in Gardens, part of a small Western Cape group of shops offering a wide range of books from popular titles to more niche picks, and hosting author events such as signings and launches."
@@ -489,10 +921,20 @@
   {
    "slug": "61-on-camps-bay-camps-bay",
    "name": "61 On Camps Bay",
-   "category": "accommodation",
-   "suburb": "camps-bay",
+   "category": "Accommodation",
+   "suburb": "Camps Bay",
+   "region": "atlantic-seaboard",
+   "address": "61 Camps Bay Drive, Camps Bay, Cape Town, 8040",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.61oncampsbay.co.za/contact/contact-us/",
+    "https://www.sa-venues.com/visit/61oncampsbaydrive/",
+    "https://www.tripadvisor.com/Hotel_Review-g312658-d2176298-Reviews-61_On_Camps_Bay-Camps_Bay_Western_Cape.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 44,
    "current_description": "61 On Camps Bay is a three-star luxury guest house with seven en-suite bedrooms -- several with sea-facing patios, others pool-facing with a kitchenette -- built around an outdoor plunge pool and terrace with panoramic Atlantic views, a short walk from Camps Bay beach."
@@ -500,10 +942,20 @@
   {
    "slug": "afrox-epping",
    "name": "Afrox",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "epping",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Epping",
+   "region": "northern-suburbs",
+   "address": "1 Jellicoe Avenue, Epping Industria, Cape Town, 7460",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.sayellow.com/view/south-africa/afrox-cape-town-gas-and-gear-in-cape-town",
+    "https://za.africabz.com/western-cape/afrox-epping-gas-and-gear-635351",
+    "https://www.afrox.co.za/en/contact/location_maps/western_cape/index.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 44,
    "current_description": "Afrox Epping Gas and Gear supplies industrial, medical and specialty gases -- including LPG, dry ice and food-grade CO2 for beverage dispensing -- along with welding and gas control equipment, as part of the Linde Group's South African gases and welding network, in Epping."
@@ -511,10 +963,20 @@
   {
    "slug": "alphen-boutique-hotel-and-spa-constantia",
    "name": "The Alphen Boutique Hotel & Spa",
-   "category": "accommodation",
-   "suburb": "constantia",
+   "category": "Accommodation",
+   "suburb": "Constantia",
+   "region": "southern-suburbs",
+   "address": "Alphen Drive, Constantia, Cape Town, 7806",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.alphen.co.za",
+   "existing_sources": [
+    "https://www.alphen.co.za/contact/",
+    "https://www.sa-venues.com/visit/alphenboutiquehotel/map.php",
+    "https://www.alphen.co.za/our-story/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 44,
    "current_description": "The Alphen Boutique Hotel & Spa is a boutique country hotel in Constantia built around an 18th-century manor house that originally formed part of the Groot Constantia estate, offering 19 luxury suites set across 11.5 acres of gardens on a Provincial Heritage site."
@@ -522,10 +984,19 @@
   {
    "slug": "blended-health-cafe-and-catering-glencairn",
    "name": "Blended Health Cafe & Catering",
-   "category": "restaurants-takeaways",
-   "suburb": "glencairn",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Glencairn",
+   "region": "south-peninsula",
+   "address": "13 Glen Road, Glencairn, Cape Town, 7975",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://blendedbar.co.za/contact-us/",
+    "https://www.tripadvisor.co.za/Restaurant_Review-g3250511-d15058299-Reviews-Blended-Glencairn_Western_Cape.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 44,
    "current_description": "Blended Health Cafe & Catering is a plant-based cafe inside the EAT.SURF.YOGA Lifestyle Centre in Glencairn, serving a mostly vegan breakfast, lunch and tea menu alongside fresh juices and smoothies, and providing catering for weddings, corporate functions and private events since 2014."
@@ -533,10 +1004,20 @@
   {
    "slug": "cape-union-mart-va-waterfront",
    "name": "Cape Union Mart",
-   "category": "fashion-clothing",
-   "suburb": "va-waterfront",
+   "category": "Fashion & Clothing",
+   "suburb": "V&A Waterfront",
+   "region": "city-bowl",
+   "address": "Shop 142, Victoria Wharf Shopping Centre, 3 Dock Rd, V&A Waterfront, Cape Town",
+   "shopping_centre": "Victoria Wharf Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tiendeo.co.za/stores/cape-town/cape-union-mart-shop-victoria-wharf-victoria-alfred-waterfront-cape-town/36351",
+    "https://www.guzzle.co.za/cape-union-mart/cape-town",
+    "https://www.waterfront.co.za/stores/cape-union-mart/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 44,
    "current_description": "Cape Union Mart at Victoria Wharf is South Africa's leading outdoor and adventure retailer, stocking clothing, footwear and gear for hiking, camping and trail running; the Cape Town brand was founded in 1933 and later launched its own K-Way outdoor equipment line in 1981."
@@ -544,10 +1025,20 @@
   {
    "slug": "clovelly-country-club-clovelly",
    "name": "Clovelly Country Club",
-   "category": "events-function-venues",
-   "suburb": "clovelly",
+   "category": "Events & Function Venues",
+   "suburb": "Clovelly",
+   "region": "south-peninsula",
+   "address": "177 Clovelly Road, Clovelly, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://clovellygolfclub.co.za/contact/",
+    "https://www.leadingcourses.com/clubs/africa+south-africa+western-cape/clovelly-country-club",
+    "https://www.top100golfcourses.com/golf-course/clovelly"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 44,
    "current_description": "Clovelly Country Club is an 18-hole golf course established in 1932 in the Silvermine Valley near Fish Hoek, with fairways routed among coastal sand dunes and water hazards fed by the Silvermine River, making it one of the oldest golf clubs in South Africa."

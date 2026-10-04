@@ -5,10 +5,18 @@
   {
    "slug": "struben-street-motors-mayville",
    "name": "Struben Street Motors",
-   "category": "car-dealerships",
-   "suburb": "mayville",
+   "category": "Car Dealerships",
+   "suburb": "Mayville",
+   "region": "pretoria",
+   "address": "220 Baan St, Mayville, Pretoria, 0084",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.ssm.co.za/",
+   "existing_sources": [
+    "http://www.ssm.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Struben Street Motors is a used-car dealership in Mayville, Pretoria, that has traded for over 35 years, stocking multiple marques including Toyota, Mercedes-Benz, Ford, and Volkswagen, with in-house multi-bank finance, trade-ins, and mechanical warranties."
@@ -16,10 +24,18 @@
   {
    "slug": "sum-boardwalk-manor",
    "name": "SUM",
-   "category": "software-development",
-   "suburb": "boardwalk-manor",
+   "category": "Software Development",
+   "suburb": "Boardwalk Manor",
+   "region": "pretoria",
+   "address": "Boardwalk Office Park, Blovk 12, 1st Floor, Eros Rd, Faerie Glen, Pretoria, 0043",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://sutility.co.za/",
+   "existing_sources": [
+    "http://sutility.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "SUM (Spectrum Utility Management) is a utility management company based in Boardwalk Office Park, Faerie Glen, Pretoria, providing water and electricity management solutions for municipalities, including streetlight monitoring and prepaid/postpaid electricity vending systems."
@@ -27,10 +43,19 @@
   {
    "slug": "summit-grill-and-skybar-menlyn-menlyn",
    "name": "Summit Grill and Skybar Menlyn",
-   "category": "restaurants-takeaways",
-   "suburb": "ashley-gardens",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Ashley Gardens",
+   "region": "pretoria",
+   "address": "221 Thys Street",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.summitgrill.co.za",
+   "existing_sources": [
+    "https://summitgrill.co.za/",
+    "https://www.dining-out.co.za/md/Summit-Grill-and-Skybar-Menlyn/9796"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 08:00-22:00, Fri-Sat 08:00-02:00, Sun 08:00-23:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Summit Grill and Skybar is a multi-level restaurant and rooftop bar in Menlyn offering grill-house fare, pasta, and sushi alongside a pool deck and skybar with city views, describing itself as a supper-club experience."
@@ -38,10 +63,18 @@
   {
    "slug": "superspar-monument-park-monument-park",
    "name": "SUPERSPAR - Monument Park",
-   "category": "supermarkets-groceries",
-   "suburb": "monument-park",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Monument Park",
+   "region": "pretoria",
+   "address": "Monument Park Shopping Centre, 73 Skilpad Rd, Monument Park, Pretoria, 0181",
+   "shopping_centre": "Monument Park Shopping Centre",
+   "phone_on_file": true,
    "website": "http://www.mpsuperspar.co.za/",
+   "existing_sources": [
+    "http://www.mpsuperspar.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 07:00-19:45",
    "has_email": false,
    "current_words": 34,
    "current_description": "SUPERSPAR Monument Park is a full-service SPAR supermarket in the Monument Park Shopping Centre, Pretoria, with in-house bakery, butchery and hot-food counters, fresh produce, sushi and floral departments, stocking over 24,000 product lines."
@@ -49,10 +82,19 @@
   {
    "slug": "supply-chain-partner-south-africa-southdowns",
    "name": "Supply Chain Partner - South Africa",
-   "category": "business-consulting",
-   "suburb": "southdowns",
+   "category": "Business & Management Consulting",
+   "suburb": "Southdowns",
+   "region": "centurion",
+   "address": "and, Southdowns Ridge Office Park Cnr John Vorster, Nellmapius Dr, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.supplychainpartner.com/",
+   "existing_sources": [
+    "http://www.supplychainpartner.com/",
+    "https://www.scp-worldwide.com/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Supply Chain Partner - South Africa is a procurement consultancy in Southdowns, Centurion, specialising in Coupa implementations, spend management and cloud ERP integration, and change management and post-implementation training for organisations adopting procurement systems."
@@ -60,10 +102,18 @@
   {
    "slug": "sure-guard-security-services-cc-laudium",
    "name": "Sure Guard Security Services CC",
-   "category": "security-services",
-   "suburb": "laudium",
+   "category": "Security Services",
+   "suburb": "Laudium",
+   "region": "centurion",
+   "address": "487 Mustard St, Laudium, Pretoria, 0037",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "http://sureguardcc.co.za/aboutus.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Sure Guard Security Services CC is a Laudium-based security company founded in 1985, offering guarding, armed response and monitoring services including construction, event, mobile patrol and school security, backed by a 24-hour control room."
@@ -71,10 +121,18 @@
   {
    "slug": "swartboer-business-enterprises-cc-silverton",
    "name": "Swartboer Business Enterprises CC",
-   "category": "logistics-courier-transport",
-   "suburb": "silverton",
+   "category": "Logistics, Courier & Transport",
+   "suburb": "Silverton",
+   "region": "pretoria",
+   "address": "516 Vlok St, Silverton, Pretoria, 0184",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://swartboerenterprise.co.za/",
+   "existing_sources": [
+    "https://swartboerenterprise.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Swartboer Business Enterprises CC is a Silverton-based shuttle, logistics and construction company with over 10 years' experience, offering courier services, car and mining vehicle fleet rentals, e-hailing and construction project services across South Africa."
@@ -82,10 +140,18 @@
   {
    "slug": "swordfish-software-waterkloof-glen",
    "name": "Swordfish Software",
-   "category": "software-development",
-   "suburb": "waterkloof-glen",
+   "category": "Software Development",
+   "suburb": "Waterkloof Glen",
+   "region": "pretoria",
+   "address": "Colab Office Space, 194 Bancor Ave, Waterkloof Glen, Pretoria, 0181",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.swordfish.co.za/",
+   "existing_sources": [
+    "https://www.swordfish.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Swordfish Software is a Waterkloof Glen-based debt collection and recovery software company, whose Swordfish platform and Smartfish, Goldfish, Linkfish and Filefish tools serve banks, law firms and collection agencies including FNB, Nedbank and ABSA."
@@ -93,10 +159,18 @@
   {
    "slug": "syncro-dynamics-zwartkop",
    "name": "Syncro Dynamics",
-   "category": "security-services",
-   "suburb": "zwartkop",
+   "category": "Security Services",
+   "suburb": "Zwartkop",
+   "region": "centurion",
+   "address": "Ext 4, 8 Baobab Nook, Zwartkop, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://syncrodynamics.com/",
+   "existing_sources": [
+    "https://syncrodynamics.com/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Syncro Dynamics is a security and risk-management firm in Zwartkop, Centurion, offering armed escort and response-team services, criminal background screening, security and firearm training, and on- and off-site surveillance and investigations for corporate clients."
@@ -104,10 +178,18 @@
   {
    "slug": "talkr-communications-mayville",
    "name": "TALKR Communications",
-   "category": "computer-it-services",
-   "suburb": "mayville",
+   "category": "Computer & IT Services",
+   "suburb": "Mayville",
+   "region": "pretoria",
+   "address": "805 Paul Kruger St, Mayville, Pretoria, 0084",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.talkr.co.za/",
+   "existing_sources": [
+    "http://www.talkr.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "TALKR Communications is a two-way radio and business-communications specialist in Mayville, Pretoria, supplying and renting VHF/UHF radios with geo-fencing and reporting features from brands including Motorola, Kenwood, Icom and Hytera, alongside drone services."
@@ -115,10 +197,18 @@
   {
    "slug": "tappo-industries-rosslyn",
    "name": "Tappo Industries",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "rosslyn",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Rosslyn",
+   "region": "pretoria",
+   "address": "2 Piet Pretorius St, Rosslyn, Akasia, 0200",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.tappo.co.za/",
+   "existing_sources": [
+    "http://www.tappo.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Tappo Industries is a Level 2 BBBEE-rated manufacturer in Rosslyn, operating since 2006, producing lint-free and anti-static garments, cleanroom and paintshop wipes, protective covers and material-handling services for the pharmaceutical and automotive OEM sectors."
@@ -126,10 +216,18 @@
   {
    "slug": "tarps-canvas-kings-projects-pty-ltd-hesteapark",
    "name": "Tarps & Canvas Kings Projects Pty ltd",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "hesteapark",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Hesteapark",
+   "region": "pretoria",
+   "address": "Shop nr 2, 98 Diamant St, Klerksoord AH, Akasia, 0020",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.tckprojects.co.za/",
+   "existing_sources": [
+    "https://www.tckprojects.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 08:00-17:00, Fri 08:00-14:00, Sat-Sun Closed",
    "has_email": false,
    "current_words": 34,
    "current_description": "Tarps & Canvas Kings Projects Pty Ltd supplies and installs custom-fitted canvas pool covers and awnings in Hesteapark, Akasia, with pool covers designed to reduce evaporation by up to 80% and inhibit algae growth."
@@ -137,10 +235,18 @@
   {
    "slug": "team-support-labels-cc-parktown-estate",
    "name": "TEAM SUPPORT LABELS CC",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "parktown-estate",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Parktown Estate",
+   "region": "pretoria",
+   "address": "1135 Japie Peens St, Mountain View, Pretoria, 0082",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.teamsupport.co.za/",
+   "existing_sources": [
+    "http://www.teamsupport.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "TEAM SUPPORT LABELS CC is a custom-label manufacturer based near Parktown Estate, Pretoria, producing digitally printed barcode, price and promotional labels on a range of materials for retail and logistics businesses, operating since 1999."
@@ -148,10 +254,18 @@
   {
    "slug": "technosgn-olievenhoutbosch",
    "name": "TECHNOSGN",
-   "category": "computer-it-services",
-   "suburb": "olievenhoutbosch",
+   "category": "Computer & IT Services",
+   "suburb": "Olievenhoutbosch",
+   "region": "centurion",
+   "address": "11050 Thatchill Security Estate 3, Olievenhoutbosch, Centurion, 0187",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.technosgn.co.za/",
+   "existing_sources": [
+    "http://www.technosgn.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "TECHNOSGN is a 100%-Black-owned IT consulting firm in Olievenhoutbosch, Centurion, offering managed IT support, network installation and cloud backup alongside website and app development and graphic design, partnering with AWS, Microsoft and Pinnacle."
@@ -159,10 +273,19 @@
   {
    "slug": "tesk-amandla-pumps-koedoespoort",
    "name": "Tesk & Amandla Pumps",
-   "category": "commercial-property-office-space",
-   "suburb": "koedoespoort",
+   "category": "Commercial Property & Office Space",
+   "suburb": "Koedoespoort",
+   "region": "pretoria",
+   "address": "44 Koedoe St, Koedoespoort Industrial, Pretoria, 0186",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://teskpump.co.za/",
+   "existing_sources": [
+    "http://teskpump.co.za/",
+    "https://electramining.co.za/tesk-sa-pty-ltd-and-amandla-pumps-manufacturing-pty-ltd-to-showcase-cutting-edge-solutions-at-electra-mining-africa-2024/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Tesk & Amandla Pumps manufactures and supplies submersible borehole pumps, motors, controllers and vertical turbine and axial flow pump systems from its Koedoespoort warehouse, and exhibited its pump range at Electra Mining Africa 2024."
@@ -170,10 +293,18 @@
   {
    "slug": "tevo-factory-outlet-midrand-kosmosdal",
    "name": "Tevo Factory Outlet Midrand",
-   "category": "general-retail",
-   "suburb": "kosmosdal",
+   "category": "General Retail",
+   "suburb": "Kosmosdal",
+   "region": "centurion",
+   "address": "6 Travertine Avenue N1 Business Park Cnr. Old Jhb Road &, Granite Blvd, Kosmosdal, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://tevo.co.za/",
+   "existing_sources": [
+    "http://tevo.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Tevo Factory Outlet in Kosmosdal sells the Tevo brand's outdoor, backup power, electronics, toys, health and beauty, and household product ranges, including the Bennett Read line, with nationwide delivery and an extended warranty programme."
@@ -181,10 +312,18 @@
   {
    "slug": "the-company-buddy-irene",
    "name": "The Company Buddy",
-   "category": "business-consulting",
-   "suburb": "irene",
+   "category": "Business & Management Consulting",
+   "suburb": "Irene",
+   "region": "centurion",
+   "address": "Stand 3311, Zayit House, 108 Sovereign Dr, Irene, Pretoria, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.thecompanybuddy.co.za/",
+   "existing_sources": [
+    "https://www.thecompanybuddy.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "The Company Buddy handles corporate compliance and company-secretarial work from Irene -- forming new companies, submitting annual returns and Beneficial Ownership filings, and managing director changes, share capital and MOI amendments for company directors."
@@ -192,10 +331,19 @@
   {
    "slug": "the-family-dentist-faerie-glen",
    "name": "The Family Dentist",
-   "category": "dentists",
-   "suburb": "faerie-glen",
+   "category": "Dentists",
+   "suburb": "Faerie Glen",
+   "region": "pretoria",
+   "address": "696 Rhode St, Faerie Glen, Pretoria, 0043",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.readymap.info/8/23680",
+    "https://za.africabz.com/gauteng/the-family-dentist-51666"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 07:00-20:00, Fri 09:00-15:00, Sat 08:00-13:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "The Family Dentist is a full-service dental practice in Faerie Glen offering general dentistry, dental emergencies, paediatric dentistry and tooth reconstructions, with online booking, free short-distance Uber rides for patients and secured on-site parking."
@@ -203,10 +351,18 @@
   {
    "slug": "the-food-works-hennopspark-hennopspark",
    "name": "The Food Works Hennopspark",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "hennopspark",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Hennopspark",
+   "region": "centurion",
+   "address": "118 Jakaranda St, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://thefoodworks.co.za/",
+   "existing_sources": [
+    "https://thefoodworks.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "The Food Works Hennopspark is a family-owned business established in 2019 manufacturing and selling restaurant-quality frozen meals, including chicken dishes, rice-based meals, pies, desserts and pre-cooked vegetables, with delivery across Centurion and Pretoria East."
@@ -214,10 +370,18 @@
   {
    "slug": "the-francis-brokerage-centurion-golf-estate",
    "name": "The Francis Brokerage",
-   "category": "estate-agents",
-   "suburb": "centurion-golf-estate",
+   "category": "Estate Agents",
+   "suburb": "Centurion Golf Estate",
+   "region": "centurion",
+   "address": "6 Chardonay St, Zwartkop, Centurion, 0051",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.francisbrokerage.co.za/",
+   "existing_sources": [
+    "http://www.francisbrokerage.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "The Francis Brokerage is a real estate agency in Centurion specialising in property sales and rentals, offering property listings, email alerts for new listings and bond-calculator tools to help buyers and sellers through transactions."
@@ -225,10 +389,18 @@
   {
    "slug": "the-hearing-clinic-pretoria-hazeldean",
    "name": "The Hearing Clinic (Pretoria)",
-   "category": "clinics-healthcare",
-   "suburb": "hazeldean",
+   "category": "Clinics & Healthcare",
+   "suburb": "Hazeldean",
+   "region": "pretoria",
+   "address": "Silverlakes Rd Unit 6 Avocet Corner, Hazeldean Office Park, Pretoria, 0081",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.gehoor.co.za/",
+   "existing_sources": [
+    "https://www.gehoor.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:30-16:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "The Hearing Clinic (Pretoria) is an audiology practice in Hazeldean Office Park offering hearing assessments, hearing aid fittings and trials, earwax removal and tinnitus treatment, stocking devices from around ten major hearing aid brands."
@@ -236,10 +408,19 @@
   {
    "slug": "the-rock-hazelwood",
    "name": "The Rock",
-   "category": "restaurants-takeaways",
-   "suburb": "hazelwood",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Hazelwood",
+   "region": "pretoria",
+   "address": "Shop 113, The Club Retail Centre, 147 Pinaster Avenue, Hazelwood",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.therockrestaurant.co.za/hazelwood",
+   "existing_sources": [
+    "https://www.therockrestaurant.co.za/hazelwood",
+    "https://www.tripadvisor.com/Restaurant_Review-g312583-d26726948-Reviews-The_Rock_Hazelwood-Pretoria_Gauteng.html"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 08:00-22:00, Sun 08:00-21:00",
    "has_email": true,
    "current_words": 34,
    "current_description": "The Rock in Hazelwood is a fine-dining restaurant at The Club Retail Centre serving a menu of ribs, chicken wings, fresh oysters and seafood pasta alongside signature cocktails, with outdoor seating and live music."
@@ -247,10 +428,18 @@
   {
    "slug": "the-sox-factory-kameeldrift",
    "name": "The Sox Factory",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "kameeldrift",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Kameeldrift",
+   "region": "pretoria",
+   "address": "487 Nieshout St, Roodeplaat, Pretoria, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://thesoxfactory.com/",
+   "existing_sources": [
+    "https://thesoxfactory.com/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00 (visits by appointment only)",
    "has_email": false,
    "current_words": 34,
    "current_description": "The Sox Factory manufactures premium personalised socks, arm sleeves and sweatbands for brands, teams and events from its Roodeplaat facility, with in-house design, low minimum order quantities and ISO 9001 and OEKO-TEX certified production."
@@ -258,10 +447,18 @@
   {
    "slug": "theron-s-meat-products-andeon",
    "name": "Theron's Meat Products",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "andeon",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Andeon",
+   "region": "pretoria",
+   "address": "185 Charlotte Maxeke St, Pretoria West, Pretoria, 0183",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://theronsmeat.co.za/",
+   "existing_sources": [
+    "http://theronsmeat.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-17:00, Sat 08:00-13:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Theron's Meat Products is a family-run meat processing factory shop in Pretoria West, manufacturing sausages, bacon, hams and other smoked meats using traditional wood-smoke methods since 1983, with wholesale pricing open to the public."
@@ -269,10 +466,18 @@
   {
    "slug": "thoka-properties-claudius",
    "name": "Thoka Properties",
-   "category": "estate-agents",
-   "suburb": "claudius",
+   "category": "Estate Agents",
+   "suburb": "Claudius",
+   "region": "centurion",
+   "address": "BLOCK 1, COROBAY CORNER, 169 Corobay Ave, Menlyn, Pretoria, 0181",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.thokaproperties.co.za/",
+   "existing_sources": [
+    "http://www.thokaproperties.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Thoka Properties is an estate agency, established in 2018 and registered with the PPRA, handling sales and lettings of residential, commercial, industrial, retail and agricultural property as well as vacant land across South Africa."
@@ -280,10 +485,18 @@
   {
    "slug": "tianclaassens-pty-ltd-muckleneuk",
    "name": "TianClaassens (Pty) Ltd",
-   "category": "business-consulting",
-   "suburb": "muckleneuk",
+   "category": "Business & Management Consulting",
+   "suburb": "Muckleneuk",
+   "region": "pretoria",
+   "address": "3rd Floor Steven House Brooklyn Bridge Office Park, 570 Fehrsen St, Brooklyn, Pretoria, 0181",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://tianclaassens.co.za/",
+   "existing_sources": [
+    "http://tianclaassens.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "TianClaassens (Pty) Ltd is an independent business consulting practice in Brooklyn, Pretoria, advising on strategic and risk issues in financing and developing large-scale infrastructure projects, with particular focus on the municipal and social-infrastructure sector."
@@ -291,10 +504,18 @@
   {
    "slug": "tma-express-road-brooklands-lifestyle-estate",
    "name": "TMA Express Road",
-   "category": "logistics-courier-transport",
-   "suburb": "brooklands-lifestyle-estate",
+   "category": "Logistics, Courier & Transport",
+   "suburb": "Brooklands Lifestyle Estate",
+   "region": "centurion",
+   "address": "45 Sterling Rd, Samrand Business Park, Centurion, 0187",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.tmaxr.co.za/",
+   "existing_sources": [
+    "http://www.tmaxr.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "TMA Express Road provides cross-border express cargo transport between South Africa, Zimbabwe and Zambia, part of the TMA Group's Southern African logistics network operating since 1994 and serving FMCG, pharmaceutical, automotive and mining sectors."
@@ -302,10 +523,20 @@
   {
    "slug": "trailarent-montana-pretoria-montana",
    "name": "Trailarent Montana Pretoria",
-   "category": "logistics-courier-transport",
-   "suburb": "montana",
+   "category": "Logistics, Courier & Transport",
+   "suburb": "Montana",
+   "region": "pretoria",
+   "address": "750 Dr Swanepoel Rd, cnr Zambesi & Dr Swanepoel Rd, Montana, Pretoria, 0044",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://trailarent.co.za",
+   "existing_sources": [
+    "https://www.jamii.co.za/380-pretoria-north-east-trailer-rental-service-trailarent-bakkie-trailer-rental",
+    "https://www.cybo.com/ZA-biz/trailarent-montana-pretoria",
+    "http://www.trailarent.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 07:00-17:00, Sun 07:00-13:00",
    "has_email": true,
    "current_words": 34,
    "current_description": "Trailarent Montana Pretoria is a branch of the nationwide Trailarent network, renting and selling trailers of all sizes (luggage, cargo, flat-deck, cattle and car-hauler trailers), plus bakkie and van hire, trailer parts and servicing."
@@ -313,10 +544,18 @@
   {
    "slug": "trailarent-montana-pretoria-montana-gardens",
    "name": "Trailarent Montana Pretoria",
-   "category": "logistics-courier-transport",
-   "suburb": "montana-gardens",
+   "category": "Logistics, Courier & Transport",
+   "suburb": "Montana Gardens",
+   "region": "pretoria",
+   "address": "750 Dr Swanepoel Road. Cnr Zambesi &, Dr Swanepoel Rd, Montana, Pretoria, 0044",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.trailarent.co.za/",
+   "existing_sources": [
+    "http://www.trailarent.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 07:00-17:00, Sun 07:00-13:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Trailarent Montana Pretoria is a branch of the nationwide Trailarent network, renting and selling trailers of all sizes (luggage, cargo, flat-deck, cattle and car-hauler trailers), plus bakkie and van hire, trailer parts and servicing."
@@ -324,10 +563,18 @@
   {
    "slug": "trenstar-sa-head-office-bronberrik",
    "name": "TrenStar SA Head Office",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "bronberrik",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Bronberrik",
+   "region": "centurion",
+   "address": "Building 3, Central Office Park, 13 Esdoring St, Highveld Techno Park, Centurion, 0169",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.trenstar.co.za/",
+   "existing_sources": [
+    "http://www.trenstar.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "TrenStar supplies returnable packaging and pooled container solutions for supply-chain logistics, with RFID, barcoding and GPS tracking technology for real-time inventory visibility; this is its South African head office in Centurion's Highveld Techno Park."
@@ -335,10 +582,18 @@
   {
    "slug": "tshukudu-survey-s-doornpoort",
    "name": "Tshukudu Survey's",
-   "category": "engineering-surveying",
-   "suburb": "doornpoort",
+   "category": "Engineering & Surveying Services",
+   "suburb": "Doornpoort",
+   "region": "pretoria",
+   "address": "Montana Estate, Doornpoort, Pretoria, 0186",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.tshukudusurveys.com/",
+   "existing_sources": [
+    "https://www.tshukudusurveys.com/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Tshukudu Survey's is a land surveying and engineering firm offering topographical, engineering, construction and mining surveys, power line and pipeline staking, and Lidar surveys across Gauteng, Limpopo, Mpumalanga, North West and the Northern Cape."
@@ -346,10 +601,18 @@
   {
    "slug": "tshwane-school-for-business-and-society-bryntirion",
    "name": "TSHWANE SCHOOL FOR BUSINESS AND SOCIETY",
-   "category": "schools-education",
-   "suburb": "bryntirion",
+   "category": "Schools & Education",
+   "suburb": "Bryntirion",
+   "region": "pretoria",
+   "address": "159 Nana Sita St, Pretoria Central, Pretoria, 0001",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://tsb.ac.za/",
+   "existing_sources": [
+    "http://tsb.ac.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Tshwane School for Business and Society is an accredited postgraduate business school in Pretoria, offering the PDBA, MBA and DBA degrees along with 13 executive development programmes covering leadership, management, entrepreneurship, agribusiness and innovation."
@@ -357,10 +620,18 @@
   {
    "slug": "tts-top-talent-solutions-monument-park",
    "name": "TTS-Top Talent Solutions",
-   "category": "recruitment-hr-services",
-   "suburb": "monument-park",
+   "category": "Recruitment & HR Services",
+   "suburb": "Monument Park",
+   "region": "pretoria",
+   "address": "Block 6, Suite 6-102, 72 Steenbok Ave, Monument Park, Pretoria, 0151",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.tts-talent.com/",
+   "existing_sources": [
+    "https://www.tts-talent.com/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "TTS-Top Talent Solutions (TTS Talent) is a recruitment and HR consultancy in Monument Park specialising in talent assessment and selection, using proprietary psychometric assessment technology to support screening, development and succession planning for organisations."
@@ -368,10 +639,18 @@
   {
    "slug": "turaco-business-logix-irene",
    "name": "Turaco Business Logix",
-   "category": "logistics-courier-transport",
-   "suburb": "irene",
+   "category": "Logistics, Courier & Transport",
+   "suburb": "Irene",
+   "region": "centurion",
+   "address": "4 King St, Irene, Centurion, 0062",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://turacobusinesslogix.com/",
+   "existing_sources": [
+    "http://turacobusinesslogix.com/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Turaco Business Logix is an asset and fleet management company based in Irene, Centurion, providing GPS, IoT and cellular-based tracking and operational-intelligence solutions for mining, construction, coal and passenger-vehicle fleets, in operation since 2012."
@@ -379,10 +658,18 @@
   {
    "slug": "unique-metal-works-cc-daspoort",
    "name": "Unique Metal Works CC",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "daspoort",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Daspoort",
+   "region": "pretoria",
+   "address": "900 Caledon St, Daspoort, Pretoria, 0082",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.uniquemetalworks.co.za/",
+   "existing_sources": [
+    "http://www.uniquemetalworks.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Unique Metal Works CC is a metal fabrication business in Daspoort producing decorative ironwork such as rosettes, scrolls and spears alongside structural components and industrial castings and forgings, sold from an extensive product catalogue."
@@ -390,10 +677,18 @@
   {
    "slug": "urban-property-group-wonderboom",
    "name": "Urban Property Group",
-   "category": "estate-agents",
-   "suburb": "wonderboom",
+   "category": "Estate Agents",
+   "suburb": "Wonderboom",
+   "region": "pretoria",
+   "address": "121A Marija St, Wonderboom, Pretoria, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.urbanpropgroup.co.za/",
+   "existing_sources": [
+    "http://www.urbanpropgroup.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Urban Property Group is a Wonderboom-based estate agency handling residential, commercial, industrial and land sales and rentals across Pretoria and other South African regions, with tools such as a bond calculator and property alerts."
@@ -401,10 +696,18 @@
   {
    "slug": "v-cor-group-raslouw",
    "name": "V Cor Group",
-   "category": "recruitment-hr-services",
-   "suburb": "raslouw",
+   "category": "Recruitment & HR Services",
+   "suburb": "Raslouw",
+   "region": "centurion",
+   "address": "147 Gouws Ave, Raslouw, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://vcor.co.za/",
+   "existing_sources": [
+    "http://vcor.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "V Cor Group is a Raslouw-based business consulting group offering an integrated range of services through its divisions, spanning security and cleaning, HR consulting, branded promotional products, workplace safety risk management and SME accounting."
@@ -412,10 +715,18 @@
   {
    "slug": "van-aswegen-attorney-pretoria-florauna",
    "name": "van Aswegen attorney PRETORIA",
-   "category": "attorneys-legal",
-   "suburb": "florauna",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Florauna",
+   "region": "pretoria",
+   "address": "205 West St, Pretoria North, Pretoria, 0082",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://lvaa.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "van Aswegen Attorney is a law firm in Pretoria North specialising in magistrate and high court litigation, family law and divorce, civil litigation, debt collection, insolvencies, commercial contracts, and wills and deceased estate administration."
@@ -423,10 +734,18 @@
   {
    "slug": "van-der-walt-hugo-inc-eldoraigne",
    "name": "Van Der Walt & Hugo Inc",
-   "category": "attorneys-legal",
-   "suburb": "eldoraigne",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Eldoraigne",
+   "region": "centurion",
+   "address": "126 Willem Botha Dr, Eldoraigne, Pretoria, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.vanderwalt-hugo.co.za/",
+   "existing_sources": [
+    "http://www.vanderwalt-hugo.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Van der Walt & Hugo Inc is a commercial law firm and conveyancing specialist established in 1998, handling residential and commercial property transfers, bonds, and litigation and dispute resolution, with Level 2 BEE status."
@@ -434,10 +753,18 @@
   {
    "slug": "van-zyl-incorporated-attorneys-properties-doringkloof",
    "name": "Van Zyl Incorporated Attorneys / Properties",
-   "category": "attorneys-legal",
-   "suburb": "doringkloof",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Doringkloof",
+   "region": "centurion",
+   "address": "90 Jean Ave, Doringkloof, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.vzylinc.co.za/",
+   "existing_sources": [
+    "http://www.vzylinc.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Van Zyl Incorporated Attorneys / Properties, founded in 1998, offers conveyancing, litigation, estate planning, commercial law, property law, family law and notarial services, with more than 50 years of combined legal experience across its directors."
@@ -445,10 +772,20 @@
   {
    "slug": "vaporiz-vapelounge-wierdapark",
    "name": "Vaporiz - Vapelounge",
-   "category": "general-retail",
-   "suburb": "wierdapark",
+   "category": "General Retail",
+   "suburb": "Wierdapark",
+   "region": "centurion",
+   "address": "Shop 14, Wierda 2 Shopping Centre, 402 Theuns van Niekerk Street, Wierdapark, Centurion, 0157",
+   "shopping_centre": "Wierda 2 Shopping Centre",
+   "phone_on_file": true,
    "website": "https://www.vaporiz-vapelounge.com/",
+   "existing_sources": [
+    "https://vapestores.co.za/za/gauteng/centurion/vaporiz-vape-lounge-wierdapark-centurion-gauteng",
+    "https://www.vaporiz-vapelounge.com/contact-us/",
+    "https://pretoria.co.za/listing/vaporiz-vape-lounge/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sat 09:00-16:00, Sun 09:00-14:00",
    "has_email": true,
    "current_words": 34,
    "current_description": "Vaporiz - Vapelounge is a vape shop and lounge in Wierda 2 Shopping Centre, Wierdapark, stocking a range of local e-liquid flavours and vaping hardware, with a lounge area offering free wifi for customers."
@@ -456,10 +793,18 @@
   {
    "slug": "variable-valhalla",
    "name": "Variable",
-   "category": "business-consulting",
-   "suburb": "valhalla",
+   "category": "Business & Management Consulting",
+   "suburb": "Valhalla",
+   "region": "centurion",
+   "address": "On the Lake, 1006 Lenchen Ave N, Centurion Central, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.variable.co.za/",
+   "existing_sources": [
+    "https://www.variable.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-16:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Variable is an IT services and managed-technology company offering web hosting, cloud backup, managed IT services, web application development, SEO and social media services, positioning itself as a long-term technology partner for its clients."
@@ -467,10 +812,18 @@
   {
    "slug": "venture-graphix-pty-ltd-zwavelpoort",
    "name": "Venture Graphix (PTY) Ltd",
-   "category": "printing-services",
-   "suburb": "zwavelpoort",
+   "category": "Printing Services",
+   "suburb": "Zwavelpoort",
+   "region": "pretoria",
+   "address": "Plot 230 Rail rd Swaeltjie AH Zwavelpoort, Pretoria, 0081",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://venturegraphix.co.za/",
+   "existing_sources": [
+    "https://venturegraphix.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Venture Graphix is a Zwavelpoort-based vehicle-branding specialist operating since 1991, producing custom vinyl wraps and truck, van and fleet branding in-house, including digital printing, lamination and vinyl-cutting, followed by on-site installation at client premises."
@@ -478,10 +831,18 @@
   {
    "slug": "veritas-rekenmeesters-accountants-doringkloof",
    "name": "Veritas Rekenmeesters - Accountants",
-   "category": "accountants",
-   "suburb": "doringkloof",
+   "category": "Accountants",
+   "suburb": "Doringkloof",
+   "region": "centurion",
+   "address": "99 Jean Ave, Doringkloof, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://veritasaccountants.co.za/",
+   "existing_sources": [
+    "http://veritasaccountants.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Veritas Rekenmeesters is a Doringkloof accounting firm serving small and medium businesses, companies, close corporations, trusts, sole proprietors and individuals with income tax compliance, bookkeeping, and corporate secretarial services such as company registration updates."
@@ -489,10 +850,18 @@
   {
    "slug": "voltex-electrical-wholesaler-montana-montana-gardens",
    "name": "Voltex Electrical Wholesaler - Montana",
-   "category": "hardware-stores",
-   "suburb": "montana-gardens",
+   "category": "Hardware Stores",
+   "suburb": "Montana Gardens",
+   "region": "pretoria",
+   "address": "Shop G112A Montana Crossing Shopping Centre Cnr Dirk and Veronica Roads, Montana, Pretoria, 0151",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.voltex.co.za/",
+   "existing_sources": [
+    "https://www.voltex.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Voltex Electrical Wholesaler in Montana is a branch of Voltex, South Africa's largest electrical and lighting distributor, supplying cable and wiring, switchgear, lighting, power tools and renewable-energy products to residential, commercial and industrial customers."
@@ -500,10 +869,19 @@
   {
    "slug": "waterkloof-corner-pharmacy-waterkloof",
    "name": "Waterkloof Corner Pharmacy",
-   "category": "pharmacies",
-   "suburb": "waterkloof",
+   "category": "Pharmacies",
+   "suburb": "Waterkloof",
+   "region": "pretoria",
+   "address": "21 Crown Street",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.arrienelapteekgroep.co.za/p/269939/waterkloof-corner-pharmacy--waterkloof",
+   "existing_sources": [
+    "https://www.openstreetmap.org/node/396010082",
+    "https://arrienel.co.za/waterkloof-corner-pharmacy/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-19:00, Sat-Sun 08:00-19:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Waterkloof Corner Pharmacy is part of the Arrie Nel Pharmacy Group, trading from Waterkloof Corner Shopping Centre on the corner of Crown and Main Street, with in-store and off-site delivery and clinic-backed health advice."
@@ -511,10 +889,18 @@
   {
    "slug": "webdevine-bergtuin",
    "name": "WebDevine",
-   "category": "software-development",
-   "suburb": "bergtuin",
+   "category": "Software Development",
+   "suburb": "Bergtuin",
+   "region": "pretoria",
+   "address": "354 Braam Pretorius St, Pretoria, Gauteng, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://webdevine.co.za/",
+   "existing_sources": [
+    "https://webdevine.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "WebDevine has been helping South African clients grow online since 2003, offering website design and development, Google Ads and SEO, social media management, branding and web hosting from its Pretoria and Cape Town offices."
@@ -522,10 +908,18 @@
   {
    "slug": "well-health-pro-pretoria-garsfontein-smallholdings",
    "name": "Well Health Pro - Pretoria",
-   "category": "physiotherapists",
-   "suburb": "garsfontein-smallholdings",
+   "category": "Physiotherapists",
+   "suburb": "Garsfontein Smallholdings",
+   "region": "pretoria",
+   "address": "301 Issie Smuts St, Garsfontein, Pretoria, 0042",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://physiopretoria.co.za/",
+   "existing_sources": [
+    "https://physiopretoria.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Well Health Pro is a physiotherapy practice group operating since 2011 with sites in Garsfontein and Lynnwood, Pretoria, offering manual therapy, electrotherapy, dry needling, sports massage and chest physiotherapy alongside biokinetics and sports-medicine services."
@@ -533,10 +927,20 @@
   {
    "slug": "west-pack-express-lynnwood-lane-equestria",
    "name": "West Pack Express Lynnwood Lane",
-   "category": "general-retail",
-   "suburb": "equestria",
+   "category": "General Retail",
+   "suburb": "Equestria",
+   "region": "pretoria",
+   "address": "Lynnwood Lane Retail Centre, The Hwy St, Equestria, Pretoria, 0184",
+   "shopping_centre": "Lynnwood Lane Retail Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://southafricafirm.com/gauteng/west-pack-express-lynnwood-lane-33906",
+    "https://za.africabz.com/gauteng/west-pack-express-lynnwood-lane-249988",
+    "https://pretoria.co.za/listing/west-pack-express-lynnwood-lane-2/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "West Pack Express Lynnwood Lane is a home goods and packaging retailer in Equestria, stocking storage solutions, party supplies, packaging materials, kids' toys, school accessories and home accessories, with in-store shopping, pickup and delivery."
@@ -544,10 +948,18 @@
   {
    "slug": "wierdapark-city-cleaning-services-maid-services-wierdapark",
    "name": "Wierdapark City Cleaning services & Maid Services",
-   "category": "cleaning-services",
-   "suburb": "wierdapark",
+   "category": "Cleaning Services",
+   "suburb": "Wierdapark",
+   "region": "centurion",
+   "address": "328 Piet Hugo St, Wierdapark, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://cleaningcompanies.co.za/organisations/wierdapark-city-cleaning-services-maid-services/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Wierdapark City Cleaning services & Maid Services is a home and business cleaning company in Wierda Park, Centurion, offering deep cleaning and disinfecting, canopy and extractor hood cleaning, fat trap cleaning and computer cleaning."

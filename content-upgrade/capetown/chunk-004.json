@@ -5,10 +5,19 @@
   {
    "slug": "edgemead-optical-centre-edgemead",
    "name": "Edgemead Optical Centre",
-   "category": "opticians",
-   "suburb": "edgemead",
+   "category": "Opticians",
+   "suburb": "Edgemead",
+   "region": "northern-suburbs",
+   "address": "Edgemead Village Centre, Louis Thibault Drive, Edgemead, Cape Town, 7441",
+   "shopping_centre": "Edgemead Village Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=31779",
+    "https://sabusinesslistings.co.za/listings/edgemead-optical-centre-incorp/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "Edgemead Optical Centre is an optometry practice in the Edgemead Village Centre, in Edgemead."
@@ -16,10 +25,19 @@
   {
    "slug": "eversdal-dental-eversdal",
    "name": "Eversdal Dental",
-   "category": "dentists",
-   "suburb": "eversdal",
+   "category": "Dentists",
+   "suburb": "Eversdal",
+   "region": "northern-suburbs",
+   "address": "51 Chantecler Avenue, Eversdal, Cape Town, 7550",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.eversdaldental.co.za",
+   "existing_sources": [
+    "https://www.eversdaldental.co.za/",
+    "https://www.facebook.com/p/Eversdal-Dental-100095530265864/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "Eversdal Dental is a dental practice offering general dentistry services in Eversdal, Cape Town."
@@ -27,10 +45,19 @@
   {
    "slug": "hometown-cafe-rosebank",
    "name": "Hometown Cafe",
-   "category": "restaurants-takeaways",
-   "suburb": "rosebank",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Rosebank",
+   "region": "southern-suburbs",
+   "address": "6 Alma Road, Rosebank, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.instagram.com/hometown.cafe/",
+    "https://www.tripadvisor.com/Restaurant_Review-g2427350-d10787479-Reviews-Hometown_Cafe-Rosebank_Western_Cape.html"
+   ],
    "has_hours": true,
+   "hours": "Tue-Fri 07:30-16:30, Sat 08:30-16:00, Sun 08:30-14:30",
    "has_email": false,
    "current_words": 14,
    "current_description": "Hometown Cafe is a neighbourhood coffee shop and eatery on Alma Road in Rosebank."
@@ -38,10 +65,19 @@
   {
    "slug": "kfc-drive-thru-richmond-corner-richwood",
    "name": "KFC Drive Thru Richmond Corner",
-   "category": "restaurants-takeaways",
-   "suburb": "richwood",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Richwood",
+   "region": "northern-suburbs",
+   "address": "Shop 01, Richmond Corner, Corner Plattekloof & Tygerberg Valley Roads, Richwood, Milnerton, Cape Town, 7441",
+   "shopping_centre": "Richmond Corner",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://southafricafirm.com/western-cape/kfc-richmond-corner-51480",
+    "https://www.tripadvisor.com.sg/Restaurant_Review-g312665-d24175900-Reviews-KFC_Richmond_Corner-Milnerton_Western_Cape.html"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 07:00-23:00, Sun 07:00-22:00",
    "has_email": false,
    "current_words": 14,
    "current_description": "KFC Drive Thru is a fast-food restaurant with a drive-thru inside Richmond Corner, Richwood."
@@ -49,10 +85,19 @@
   {
    "slug": "kfc-kraaifontein-kraaifontein",
    "name": "KFC Kraaifontein",
-   "category": "restaurants-takeaways",
-   "suburb": "kraaifontein",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Kraaifontein",
+   "region": "northern-suburbs",
+   "address": "Corner of Van Riebeeck & Old Paarl Road, Kraaifontein, 7570",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://locations.kfc.co.za/western-cape/kraaifontein-cape-town/corner-of-van-riebeeck-&-old-paarl-road",
+    "https://www.cylex.net.za/company/kfc-kraaifontein-17652236.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "KFC Kraaifontein is a fast-food restaurant serving fried chicken, burgers and wings, in Kraaifontein."
@@ -60,10 +105,19 @@
   {
    "slug": "l-and-l-motors-parow",
    "name": "L & L Motors",
-   "category": "car-dealerships",
-   "suburb": "parow",
+   "category": "Car Dealerships",
+   "suburb": "Parow",
+   "region": "northern-suburbs",
+   "address": "67 Voortrekker Road, Parow, 7500",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://llmotors.co.za",
+   "existing_sources": [
+    "https://llmotors.co.za/",
+    "https://www.cars.co.za/groups/Individual-Dealers/L-and-L-Motors/6304/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "L & L Motors is a used car dealership established in 1942, in Parow."
@@ -71,10 +125,19 @@
   {
    "slug": "m-van-der-scholtz-attorneys-goodwood",
    "name": "M van der Scholtz Attorneys",
-   "category": "attorneys-legal",
-   "suburb": "goodwood",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Goodwood",
+   "region": "northern-suburbs",
+   "address": "51 Hugo Street, Richmond Estate, Goodwood, 7460",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.property24.com/attorney-firms/goodwood/western-cape/435",
+    "https://www.southafricanlawyer.co.za/law-firm/m-van-der-scholtz-attorneys/goodwood/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "M van der Scholtz Attorneys is a legal practice based in Goodwood, Cape Town."
@@ -82,10 +145,20 @@
   {
    "slug": "maitland-gas-maitland",
    "name": "Maitland Gas",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "maitland",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Maitland",
+   "region": "northern-suburbs",
+   "address": "398 Voortrekker Road, Maitland, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://nearfinderza.com/en/business/wc/cape-town/installations/maitland-gas_44383+8.html",
+    "https://www.thinklocal.co.za/biz/maitland-gas-maitland",
+    "https://www.yep.co.za/biz/store/maitland-gas/223836"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "Maitland Gas is a supplier of gases for domestic and industrial use, in Maitland."
@@ -93,10 +166,19 @@
   {
    "slug": "malan-laas-and-scholtz-inc-kraaifontein",
    "name": "Malan Laas and Scholtz Inc",
-   "category": "attorneys-legal",
-   "suburb": "kraaifontein",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Kraaifontein",
+   "region": "northern-suburbs",
+   "address": "60 Brighton Road, Zoo Park, Kraaifontein, 7570",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.sayellow.com/view/south-africa/malan-laas-and-scholtz-in-kraaifontein-cape-town",
+    "https://www.brabys.com/za/western-cape/kraaifontein/zoo-park/attorneys/malan-laas-and-scholtz-inc"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 14,
    "current_description": "Malan Laas and Scholtz Inc is an attorneys' firm based in Kraaifontein, Cape Town."
@@ -104,10 +186,19 @@
   {
    "slug": "mcdonalds-gugulethu-square-gugulethu",
    "name": "McDonald's Gugulethu",
-   "category": "restaurants-takeaways",
-   "suburb": "gugulethu",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Gugulethu",
+   "region": "cape-flats",
+   "address": "Gugulethu Square, NY3, Gugulethu, Cape Town, 7750",
+   "shopping_centre": "Gugulethu Square",
+   "phone_on_file": true,
    "website": "https://www.mcdonalds.co.za/location/mcdonalds-gugulethu",
+   "existing_sources": [
+    "https://www.tripadvisor.co.za/Restaurant_Review-g1722390-d23211923-Reviews-McDonald_s_Gugulethu-Cape_Town_Western_Cape.html",
+    "https://www.findmy.co.za/food/category-detail/mcdonalds-gugulethu/24294"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "McDonald's Gugulethu is a fast-food restaurant chain branch at Gugulethu Square on NY3, Gugulethu."
@@ -115,10 +206,19 @@
   {
    "slug": "medirite-pharmacy-blue-downs",
    "name": "Medirite Pharmacy",
-   "category": "pharmacies",
-   "suburb": "blue-downs",
+   "category": "Pharmacies",
+   "suburb": "Blue Downs",
+   "region": "cape-flats",
+   "address": "Erf 20395, Cnr Hindle Road & Eersriv Way, Blue Downs Shopping Centre, Blue Downs, Cape Town, 7100",
+   "shopping_centre": "Blue Downs Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=251214",
+    "https://www.recomed.co.za/clinic/sunset-glen/medirite---blue-downs/54495/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "Medirite Pharmacy is a pharmacy and health store operating from Blue Downs Shopping Centre."
@@ -126,10 +226,21 @@
   {
    "slug": "mohammeds-meat-hyper-lansdowne",
    "name": "Mohammed's Meat Hyper",
-   "category": "butcheries",
-   "suburb": "lansdowne",
+   "category": "Butcheries",
+   "suburb": "Lansdowne",
+   "region": "cape-flats",
+   "address": "568 Lansdowne Road, Lansdowne, Cape Town, 7780",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.waze.com/live-map/directions/za/wc/cape-town/mohameds-meat-hyper",
+    "https://www.cylex.net.za/company/mohammed's-meat-hyper-23708910.html",
+    "https://www.thinklocal.co.za/biz/mohammeds-meat-hyper-cape-town",
+    "https://www.zabihah.com/restaurants/c9f49460-7767-11ef-95ae-6045bdeb9f57/mohammeds-meat-hyper-cape-town-western-cape"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "Mohammed's Meat Hyper is a halal-certified butcher and meat retailer on Lansdowne Road, Lansdowne."
@@ -137,10 +248,19 @@
   {
    "slug": "mr-price-home-diep-river",
    "name": "Mr Price Home",
-   "category": "furniture-homeware",
-   "suburb": "diep-river",
+   "category": "Furniture & Homeware",
+   "suburb": "Diep River",
+   "region": "southern-suburbs",
+   "address": "207-209 Main Road, Diep River, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.polomap.com/cape-town/42340",
+    "https://za.africabz.com/western-cape/mr-price-home-main-road-8015"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "Mr Price Home is a homeware retail store on Main Road, in Diep River."
@@ -148,10 +268,19 @@
   {
    "slug": "pep-maitland",
    "name": "PEP",
-   "category": "general-retail",
-   "suburb": "maitland",
+   "category": "General Retail",
+   "suburb": "Maitland",
+   "region": "northern-suburbs",
+   "address": "Shop 5-6, Maitland Square, 278 Voortrekker Road, Maitland, Cape Town, 7405",
+   "shopping_centre": "Maitland Square",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tiendeo.co.za/stores/cape-town/pep-stores-shop--maitland-square-voortrekker-road-maitland-cape-town-western-cape/70461",
+    "https://www.yellosa.co.za/company/777169/pep-stores-pty-ltdbranchesmaitland-square"
+   ],
    "has_hours": true,
+   "hours": "Mon 09:00-13:00, Tue-Wed 08:30-17:30, Thu 09:00-17:30, Fri-Sat 08:30-17:30, Sun 08:30-14:30",
    "has_email": false,
    "current_words": 14,
    "current_description": "PEP is a general retail store inside Maitland Square on Voortrekker Road in Maitland."
@@ -159,10 +288,19 @@
   {
    "slug": "pick-n-pay-table-bay-mall-bloubergstrand",
    "name": "Pick n Pay Table Bay Mall",
-   "category": "supermarkets-groceries",
-   "suburb": "bloubergstrand",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Bloubergstrand",
+   "region": "west-coast",
+   "address": "Store G002, Table Bay Mall, Cnr R27 (West Coast Road) & Berkshire Blvd, Bloubergstrand, Cape Town, 7441",
+   "shopping_centre": "Table Bay Mall",
+   "phone_on_file": true,
    "website": "https://www.tablebaymall.co.za/shop/pick-n-pay",
+   "existing_sources": [
+    "https://www.tablebaymall.co.za/shop/pick-n-pay",
+    "https://za.africabz.com/western-cape/pick-n-pay-117904"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "Pick n Pay Table Bay Mall is a supermarket inside Table Bay Mall, Bloubergstrand."
@@ -170,10 +308,19 @@
   {
    "slug": "postnet-constantia-constantia",
    "name": "PostNet Constantia",
-   "category": "printing-services",
-   "suburb": "constantia",
+   "category": "Printing Services",
+   "suburb": "Constantia",
+   "region": "southern-suburbs",
+   "address": "Shop 6, Old Village Shopping Centre, Constantia Main Road, Constantia, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://postnet.co.za/stores/constantia",
+    "https://www.callupcontact.com/b/Courier_amp_Postal_Services/Postnet_Constantia/3826"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "PostNet Constantia is a PostNet store offering printing, courier services and stationery, in Constantia."
@@ -181,10 +328,19 @@
   {
    "slug": "postnet-plattekloof-shopping-centre-plattekloof",
    "name": "PostNet",
-   "category": "printing-services",
-   "suburb": "plattekloof",
+   "category": "Printing Services",
+   "suburb": "Plattekloof",
+   "region": "northern-suburbs",
+   "address": "Shop 10, Plattekloof Shopping Centre, Olienhout Street, Plattekloof, Cape Town, 7500",
+   "shopping_centre": "Plattekloof Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.postnet.co.za/stores/plattekloof",
+    "https://www.yellowpages.net/phone_27-219111104_courier-service_Cape-Town_ZA13168.html"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:00, Sat 09:00-13:00, Sun and public holidays closed",
    "has_email": false,
    "current_words": 14,
    "current_description": "PostNet Plattekloof is a courier, printing and postal services outlet in Plattekloof Shopping Centre."
@@ -192,10 +348,19 @@
   {
    "slug": "ramasibi-guest-services-panorama",
    "name": "Ramasibi Guest Services",
-   "category": "accommodation",
-   "suburb": "panorama",
+   "category": "Accommodation",
+   "suburb": "Panorama",
+   "region": "northern-suburbs",
+   "address": "83 Uys Krige Drive, Panorama, Cape Town, 7500",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://ramasibi.co.za",
+   "existing_sources": [
+    "https://ramasibi.co.za/contact/",
+    "https://www.capetown.travel/listing/ramasibi/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 14,
    "current_description": "Ramasibi Guest Services is a bed and breakfast with 14 guest rooms, in Panorama."
@@ -203,10 +368,19 @@
   {
    "slug": "retreat-motor-spares-retreat",
    "name": "Retreat Motor Spares",
-   "category": "motor-spares",
-   "suburb": "retreat",
+   "category": "Motor Spares",
+   "suburb": "Retreat",
+   "region": "cape-flats",
+   "address": "93 Tenth Avenue, Cafda Village, Retreat, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.africabizinfo.com/ZA/retreat-motor-spares-021-712-2533",
+    "https://nearfinderza.com/en/business/wc/cape-town/motor-car-parts-new/retreat-motor-spares_394032+5.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "Retreat Motor Spares is a motor spares and parts supplier serving Retreat, Cape Town."
@@ -214,10 +388,20 @@
   {
    "slug": "romans-pizza-liberty-promenade-mitchells-plain",
    "name": "Romans Pizza",
-   "category": "restaurants-takeaways",
-   "suburb": "mitchells-plain",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Mitchells Plain",
+   "region": "cape-flats",
+   "address": "Shop 190, Liberty Promenade, Cnr AZ Berman Drive & Morgenster Road, Mitchells Plain, Cape Town, 7785",
+   "shopping_centre": "Liberty Promenade",
+   "phone_on_file": true,
    "website": "https://www.romanspizza.co.za",
+   "existing_sources": [
+    "http://textmap.co.za/3/47913",
+    "https://vymaps.com/ZA/ROMANS-PIZZA-164648/",
+    "https://libertypromenade.co.za/shops/romans-pizza/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 09:00-20:00, Fri 09:00-22:00, Sat 09:00-22:00, Sun 09:00-20:00",
    "has_email": false,
    "current_words": 14,
    "current_description": "Roman's Pizza is a pizza restaurant and takeaway at Liberty Promenade in Mitchells Plain."
@@ -225,10 +409,19 @@
   {
    "slug": "shade-and-co-de-waterkant",
    "name": "Shade & Co",
-   "category": "general-retail",
-   "suburb": "de-waterkant",
+   "category": "General Retail",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "Shop 037, The Square, Cape Quarter Lifestyle Village, 27 Somerset Road, De Waterkant, Cape Town",
+   "shopping_centre": "Cape Quarter Lifestyle Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://capequarter.co.za/shops/",
+    "https://www.shadeandcompany.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "Shade & Co is a retail store in Cape Quarter Lifestyle Village, De Waterkant."
@@ -236,10 +429,19 @@
   {
    "slug": "sheet-street-the-junction-mall-philippi",
    "name": "Sheet Street The Junction Mall",
-   "category": "fashion-clothing",
-   "suburb": "philippi",
+   "category": "Fashion & Clothing",
+   "suburb": "Philippi",
+   "region": "cape-flats",
+   "address": "Shop 9, The Junxion Mall, Cnr Eisleben & Govan Mbeki Roads, Philippi, Cape Town, 7750",
+   "shopping_centre": "The Junxion Mall",
+   "phone_on_file": true,
    "website": "https://www.sheetstreet.com/sheet-street-philippi-the-junction-30558",
+   "existing_sources": [
+    "https://www.sheetstreet.com/sheet-street-philippi-the-junction-30558",
+    "https://www.tiendeo.co.za/stores/cape-town/sheet-street-shop-the-junction-mall-bounded-by-eisleben-and-govan-mbeki-roads-philippi/65901"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "Sheet Street is a value fashion and homeware retailer inside The Junxion Mall, Philippi."
@@ -247,10 +449,19 @@
   {
    "slug": "shoprite-durbanville",
    "name": "Shoprite Durbanville",
-   "category": "supermarkets-groceries",
-   "suburb": "durbanville",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Durbanville",
+   "region": "northern-suburbs",
+   "address": "Shop 1, Durbanville Town Centre, 31 Wellington Road, Durbanville, 7550",
+   "shopping_centre": "Durbanville Town Centre",
+   "phone_on_file": true,
    "website": "https://www.shoprite.co.za/Western-Cape/Cape-Town/Durbanville/Shoprite-Durbanville/store-details/1894",
+   "existing_sources": [
+    "https://www.shoprite.co.za/Western-Cape/Cape-Town/Durbanville/Shoprite-Durbanville/store-details/1894",
+    "https://www.durbanvilletowncentre.co.za/stores/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "Shoprite Durbanville is a supermarket in Durbanville Town Centre, offering groceries and everyday essentials."
@@ -258,10 +469,19 @@
   {
    "slug": "swatch-va-waterfront",
    "name": "Swatch",
-   "category": "jewellers",
-   "suburb": "va-waterfront",
+   "category": "Jewellers",
+   "suburb": "V&A Waterfront",
+   "region": "city-bowl",
+   "address": "Shop 246, Victoria Wharf Shopping Centre, 3 Dock Rd, V&A Waterfront, Cape Town",
+   "shopping_centre": "Victoria Wharf Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.waterfront.co.za/stores/swatch/",
+    "https://www.tiendeo.co.za/stores/cape-town/swatch-victoria-wharf/24488"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "Swatch is a watch store inside Victoria Wharf Shopping Centre at the V&A Waterfront."
@@ -269,10 +489,19 @@
   {
    "slug": "villa-massage-spa-bantry-bay",
    "name": "Villa Massage Spa",
-   "category": "spas-wellness",
-   "suburb": "bantry-bay",
+   "category": "Spas & Wellness",
+   "suburb": "Bantry Bay",
+   "region": "atlantic-seaboard",
+   "address": "20 Ave Marina, Bantry Bay, Cape Town, 8005",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/lvp/the-villa-massage-spa-avenue-marina-cape-town-ovLQGx",
+    "https://thevillamassagespa.setmore.com/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 10:00-19:00, Sun 09:00-17:00",
    "has_email": false,
    "current_words": 14,
    "current_description": "Villa Massage Spa offers massage and spa treatments in Bantry Bay, bookable by appointment."
@@ -280,10 +509,19 @@
   {
    "slug": "visagievos-inc-goodwood",
    "name": "VisagieVos Inc",
-   "category": "attorneys-legal",
-   "suburb": "goodwood",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Goodwood",
+   "region": "northern-suburbs",
+   "address": "181 Vasco Boulevard, Goodwood, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.attorneys.co.za/CompanyHomePage.asp?CompanyID=1120",
+    "https://www.southafricanlawyer.co.za/law-firm/visagievos-attorneys/goodwood/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "VisagieVos Inc is an attorneys' and legal services firm based in Goodwood, Cape Town."
@@ -291,10 +529,19 @@
   {
    "slug": "woolworths-brackenfell-corner-brackenfell",
    "name": "Woolworths Brackenfell Corner",
-   "category": "supermarkets-groceries",
-   "suburb": "brackenfell",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Brackenfell",
+   "region": "northern-suburbs",
+   "address": "Shop 1, Brackenfell Corner Shopping Centre, Frans Conradie Drive & Paradys Street, Brackenfell, Cape Town, 7560",
+   "shopping_centre": "Brackenfell Corner",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://brackenfellcorner.co.za/brackenfell-corner---stores.html",
+    "https://www.tiendeo.co.za/stores/Vergelegen/woolworths-brackenfell-corner-shopping-centre-paradys-street-brackenfell/47713"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "Woolworths Brackenfell Corner is a Woolworths supermarket inside Brackenfell Corner Shopping Centre in Brackenfell."
@@ -302,10 +549,19 @@
   {
    "slug": "woolworths-dean-street-arcade-newlands",
    "name": "Woolworths Dean Street",
-   "category": "supermarkets-groceries",
-   "suburb": "newlands",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Newlands",
+   "region": "southern-suburbs",
+   "address": "Dean Street Arcade, Dean St, Newlands, Cape Town, 7700",
+   "shopping_centre": "Dean Street Arcade",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://readymap.co.za/4/38720",
+    "https://za.africabz.com/western-cape/woolworths-dean-street-16648"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 09:00-19:00, Fri 08:30-19:00, Sat 08:00-17:00, Sun 09:00-14:00",
    "has_email": false,
    "current_words": 14,
    "current_description": "Woolworths is a supermarket and food store located in Dean Street Arcade in Newlands."
@@ -313,10 +569,19 @@
   {
    "slug": "z-n-hardware-manenberg",
    "name": "Z & N Hardware",
-   "category": "hardware-stores",
-   "suburb": "manenberg",
+   "category": "Hardware Stores",
+   "suburb": "Manenberg",
+   "region": "cape-flats",
+   "address": "Shop 6A, Nyanga Junction Shopping Centre, Duinefontein Road, Manenberg, Cape Town, 7764",
+   "shopping_centre": "Nyanga Junction Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.africanadvice.com/1231263/Hardware/Western_Cape/Z_And_N_Hardware/",
+    "https://south-africa.worldplaces.me/view-place/62555392-z-and-n-hardware.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 14,
    "current_description": "Z & N Hardware is a hardware store in Nyanga Junction Shopping Centre, Manenberg."
@@ -324,10 +589,19 @@
   {
    "slug": "ackermans-bothasig-bothasig",
    "name": "Ackermans Bothasig",
-   "category": "fashion-clothing",
-   "suburb": "bothasig",
+   "category": "Fashion & Clothing",
+   "suburb": "Bothasig",
+   "region": "northern-suburbs",
+   "address": "Shop 4, Bothasig Square, Vryburger Avenue, Bothasig, Cape Town, 7441",
+   "shopping_centre": "Bothasig Square",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://my-catalogue.co.za/stores/cape-town/ackermans/shoprite-centre-vryburger-ave-bothasig",
+    "https://www.facebook.com/AckermansBothasig/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 15,
    "current_description": "Ackermans Bothasig is a fashion and clothing retail store located within Bothasig Square in Bothasig."
@@ -335,10 +609,18 @@
   {
    "slug": "advanced-electric-fencing-kraaifontein",
    "name": "Advanced Electric Fencing",
-   "category": "fencing-security-installations",
-   "suburb": "kraaifontein",
+   "category": "Fencing & Security Installations",
+   "suburb": "Kraaifontein",
+   "region": "northern-suburbs",
+   "address": "49 Edward Street, Windsor Park, Kraaifontein",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.yellosa.co.za/location/kraaifontein"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 15,
    "current_description": "Advanced Electric Fencing is an electric fencing supplier and installer based in Windsor Park, Kraaifontein."
@@ -346,10 +628,19 @@
   {
    "slug": "anchor-pharmacy-athlone",
    "name": "Anchor Pharmacy",
-   "category": "pharmacies",
-   "suburb": "athlone",
+   "category": "Pharmacies",
+   "suburb": "Athlone",
+   "region": "cape-flats",
+   "address": "28 Lawrence Road, Athlone, Cape Town, 7764",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=88361",
+    "https://www.sayellow.com/view/south-africa/anchor-pharmacy-in-cape-town"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 09:00-22:00",
    "has_email": false,
    "current_words": 15,
    "current_description": "Anchor Pharmacy is a community pharmacy operating out of Lawrence Road in Athlone, Cape Town."
@@ -357,10 +648,19 @@
   {
    "slug": "bargain-books-howard-centre-pinelands",
    "name": "Bargain Books",
-   "category": "books-stationery",
-   "suburb": "pinelands",
+   "category": "Books & Stationery",
+   "suburb": "Pinelands",
+   "region": "northern-suburbs",
+   "address": "Shop G43a, Howard Centre, Corner Howard & Forest Drive, Pinelands, Cape Town, 7405",
+   "shopping_centre": "Howard Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/bargain-books-pinelands-111008",
+    "https://nearbyza.com/place/bargain-books-pinelands"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sat 09:00-15:00, Sun 09:00-13:00",
    "has_email": false,
    "current_words": 15,
    "current_description": "Bargain Books is a book and stationery retailer with a branch inside Howard Centre, Pinelands."
@@ -368,10 +668,19 @@
   {
    "slug": "berthas-restaurant-simons-town",
    "name": "Bertha's Restaurant",
-   "category": "restaurants-takeaways",
-   "suburb": "simons-town",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Simon's Town",
+   "region": "south-peninsula",
+   "address": "1 Wharf Road, Simon's Town, 7995",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://berthas.co.za",
+   "existing_sources": [
+    "https://berthas.co.za",
+    "https://www.simonstown.com/listing-category/restaurants/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 15,
    "current_description": "Bertha's Restaurant is a restaurant on Wharf Road in Simon's Town, next to the harbour."
@@ -379,10 +688,20 @@
   {
    "slug": "broadway-confectionery-bakery-maitland",
    "name": "Broadway Confectionery & Bakery",
-   "category": "bakeries",
-   "suburb": "maitland",
+   "category": "Bakeries",
+   "suburb": "Maitland",
+   "region": "northern-suburbs",
+   "address": "109 Voortrekker Road, Maitland, 7405",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.cybo.com",
+    "https://za.africabz.com",
+    "https://broadwayconfectionery.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 06:30-16:00, Sat 06:30-14:00, Sun Closed",
    "has_email": false,
    "current_words": 15,
    "current_description": "Broadway Confectionery & Bakery is a Portuguese-style bakery and café on Voortrekker Road in Maitland."
@@ -390,10 +709,20 @@
   {
    "slug": "c-pack-corrugated-epping",
    "name": "C-Pack Corrugated",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "epping",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Epping",
+   "region": "northern-suburbs",
+   "address": "75 Bofors Circle, Epping Industria 2, Cape Town, 7460",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.brabys.com/za/western-cape/cape-town/epping-industria/box-manufacturers/c-pack-corrugated",
+    "https://c-pack.com/contact/",
+    "https://opening-hours.co.za/04493176/C-Pack_Corrugated"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00, Sat-Sun Closed",
    "has_email": false,
    "current_words": 15,
    "current_description": "C-Pack Corrugated manufactures custom-made corrugated cartons as well as standard-size stock cartons, in Epping Industria."
@@ -401,10 +730,19 @@
   {
    "slug": "capitec-bank-nyanga-junction-manenberg",
    "name": "Capitec Bank",
-   "category": "financial-investment-services",
-   "suburb": "manenberg",
+   "category": "Financial & Investment Services",
+   "suburb": "Manenberg",
+   "region": "cape-flats",
+   "address": "Shop 28, Nyanga Junction, Duinefontein Road, Manenberg, Cape Town, 7750",
+   "shopping_centre": "Nyanga Junction Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://nearfinderza.com/en/business/capitec-bank-nyanga-junction_768033+8.html",
+    "https://www.callupcontact.com/b/Banks/Capitec_Bank_Nyanga_Junction/4918"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 15,
    "current_description": "A Capitec Bank branch inside Nyanga Junction shopping centre, Manenberg, offering standard retail banking services."
@@ -412,10 +750,19 @@
   {
    "slug": "central-pharmacy-mitchells-plain",
    "name": "Central Pharmacy",
-   "category": "pharmacies",
-   "suburb": "mitchells-plain",
+   "category": "Pharmacies",
+   "suburb": "Mitchells Plain",
+   "region": "cape-flats",
+   "address": "5 Minuet Lane, Mitchells Plain Town Centre, Cape Town, 7785",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.yep.co.za/biz/store/iyp/10699190_2",
+    "https://za.polomap.com/cape-town/29955"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 15,
    "current_description": "Central Pharmacy is a retail pharmacy located in the Mitchells Plain Town Centre, Cape Town."
@@ -423,10 +770,19 @@
   {
    "slug": "clicks-flamingo-square-table-view",
    "name": "Clicks Flamingo Square",
-   "category": "pharmacies",
-   "suburb": "table-view",
+   "category": "Pharmacies",
+   "suburb": "Table View",
+   "region": "west-coast",
+   "address": "15 Flamingo Square, Flamingo Crescent, Table View, 7441",
+   "shopping_centre": "Flamingo Square",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://my-catalogue.co.za/stores/cape-town/clicks/15-flamingo-square-shopping-centre-n-a-flamingo-crescent-blouberg-tableview",
+    "https://clicks.co.za/store/Flamingo/1666"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-19:00, Sat 08:00-17:00, Sun 09:00-14:00, Public Holiday 09:00-14:00",
    "has_email": false,
    "current_words": 15,
    "current_description": "Clicks Flamingo Square is a pharmacy, health and beauty retailer inside Flamingo Square, Table View."
@@ -434,10 +790,19 @@
   {
    "slug": "craigmore-poultry-farm-kraaifontein",
    "name": "Craigmore Poultry Farm",
-   "category": "agricultural-farming-supplies",
-   "suburb": "kraaifontein",
+   "category": "Agricultural & Farming Supplies",
+   "suburb": "Kraaifontein",
+   "region": "northern-suburbs",
+   "address": "Old Paarl Road, Kraaifontein, 7570",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.yellosa.co.za/location/kraaifontein",
+    "https://www.brabys.com/za/western-cape/kraaifontein/poultry-farms/craigmore-poultry-farm"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:30, Sat-Sun Closed",
    "has_email": false,
    "current_words": 15,
    "current_description": "Craigmore Poultry Farm is a poultry farm and hatchery on Old Paarl Road in Kraaifontein."
@@ -445,10 +810,19 @@
   {
    "slug": "district-cafe-woodstock",
    "name": "District Cafe",
-   "category": "restaurants-takeaways",
-   "suburb": "woodstock",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Woodstock",
+   "region": "city-bowl",
+   "address": "115 Roodebloem Road, Woodstock, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.districtcafe.co.za/",
+   "existing_sources": [
+    "https://www.districtcafe.co.za/",
+    "https://www.dine4less.co.za/establishment.asp?est=10767"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 15,
    "current_description": "District Cafe is a cafe on Roodebloem Road in Woodstock serving breakfast, lunch and coffee."
@@ -456,10 +830,19 @@
   {
    "slug": "dunns-philippi-shopping-centre-philippi",
    "name": "Dunns",
-   "category": "fashion-clothing",
-   "suburb": "philippi",
+   "category": "Fashion & Clothing",
+   "suburb": "Philippi",
+   "region": "cape-flats",
+   "address": "Shop 14, Philippi Shopping Centre, Cnr Eisleben & Lansdowne Rd, Philippi, Cape Town, 7750",
+   "shopping_centre": "Philippi Shopping Centre",
+   "phone_on_file": true,
    "website": "http://www.dunns.co.za/",
+   "existing_sources": [
+    "https://finderafrica.com/listing/dunns-philippi-shopping-centre/",
+    "https://www.facebook.com/DunnsPhilippi/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 15,
    "current_description": "Dunns is a fashion and footwear retailer with a store in Philippi Shopping Centre, Philippi."
@@ -467,10 +850,19 @@
   {
    "slug": "game-liberty-promenade-mitchells-plain",
    "name": "Game",
-   "category": "general-retail",
-   "suburb": "mitchells-plain",
+   "category": "General Retail",
+   "suburb": "Mitchells Plain",
+   "region": "cape-flats",
+   "address": "Liberty Promenade, Cnr AZ Berman Drive & Morgenster Road, Mitchells Plain, Cape Town, 7785",
+   "shopping_centre": "Liberty Promenade",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://mydorpie.com/m/?page=chain_game_mplain",
+    "https://www.callupcontact.com/b/Supermarkets/Game_Mitchells_Plain/4239"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 15,
    "current_description": "Game is a general merchandise and appliance retailer in Liberty Promenade shopping centre, Mitchells Plain."
@@ -478,10 +870,19 @@
   {
    "slug": "grassy-park-pharmacy-grassy-park",
    "name": "Grassy Park Pharmacy",
-   "category": "pharmacies",
-   "suburb": "grassy-park",
+   "category": "Pharmacies",
+   "suburb": "Grassy Park",
+   "region": "cape-flats",
+   "address": "Shop 2, Nazraf Centre, 71 Victoria Road, Grassy Park, Cape Town, 7941",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://homeappliancerepairs.co.za/17839304734797624282/",
+    "https://www.africanadvice.com/1178212/Pharmacies/Western_Cape/Grassy_Park_Pharmacy/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-13:00 & 14:00-18:30, Sat 09:00-14:00, Sun Closed",
    "has_email": false,
    "current_words": 15,
    "current_description": "Grassy Park Pharmacy is a pharmacy in the Nazraf Centre on Victoria Road, Grassy Park."
@@ -489,10 +890,20 @@
   {
    "slug": "jmr-body-works-epping",
    "name": "JMR Body Works",
-   "category": "automotive-repairs",
-   "suburb": "epping",
+   "category": "Automotive & Repairs",
+   "suburb": "Epping",
+   "region": "northern-suburbs",
+   "address": "Unit C, Barkley Park, 82 Bofors Circle, Epping Industria, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.yep.co.za/biz/store/jmr-body-works",
+    "https://www.brabys.com",
+    "https://showme.co.za/cape-town/lifestyle/jmr-body-works/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:30-17:00, Sat-Sun Closed",
    "has_email": false,
    "current_words": 15,
    "current_description": "JMR Body Works is a panelbeating and spray-painting workshop in Epping Industria, established in 1995."
@@ -500,10 +911,19 @@
   {
    "slug": "kc-thebarbershop-bonteheuwel",
    "name": "KC TheBarberShop",
-   "category": "beauty-hair-salons",
-   "suburb": "bonteheuwel",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Bonteheuwel",
+   "region": "cape-flats",
+   "address": "52 Bonteheuwel Avenue, Bonteheuwel, Cape Town, 7764",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/lvp/kc-thebarbershop-pty-ltd-bonteheuwel-avenue-cape-town-Wq8bVL",
+    "https://kcthebarbershop.setmore.com/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 15,
    "current_description": "KC TheBarberShop on Bonteheuwel Avenue offers barbering, fades, beard trims, men's shaves and head shaves."
@@ -511,10 +931,19 @@
   {
    "slug": "kenridge-pharmacy-kenridge",
    "name": "Kenridge Pharmacy",
-   "category": "pharmacies",
-   "suburb": "kenridge",
+   "category": "Pharmacies",
+   "suburb": "Kenridge",
+   "region": "northern-suburbs",
+   "address": "Shop 13, IPIC Shopping Centre Kenridge, Doordekraal Road, Kenridge, Durbanville",
+   "shopping_centre": "IPIC Shopping Centre Kenridge",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://brabys.com/south-africa/durbanville/verified-business/kenridge-pharmacy",
+    "https://za.africabz.com/western-cape/kenridge-pharmacy-153934"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 15,
    "current_description": "Kenridge Pharmacy is a retail pharmacy trading from Shop 13 in IPIC Shopping Centre, Kenridge."
@@ -522,10 +951,20 @@
   {
    "slug": "kfc-waterstone-somerset-west",
    "name": "KFC Waterstone",
-   "category": "restaurants-takeaways",
-   "suburb": "somerset-west",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Somerset West",
+   "region": "helderberg",
+   "address": "Waterstone Village, Cnr of R44 & Main Road, Somerset West, 7130",
+   "shopping_centre": "Waterstone Village Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.waterstonevillage.co.za",
+    "https://getoccupi.com/malls/waterstone-village",
+    "https://www.tiendeo.co.za/stores/somerset-west/kfc"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 15,
    "current_description": "KFC Waterstone is a fried chicken and fast-food outlet inside Waterstone Village in Somerset West."
@@ -533,10 +972,19 @@
   {
    "slug": "kwik-spar-flamingo-square-table-view",
    "name": "Kwik Spar Flamingo Square",
-   "category": "supermarkets-groceries",
-   "suburb": "table-view",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Table View",
+   "region": "west-coast",
+   "address": "Shop 15, Flamingo Square Centre, cnr Study & Blaauwberg Road, Table View, 7441",
+   "shopping_centre": "Flamingo Square",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.spar.co.za/home/store-view/kwikspar-tableview-western-cape",
+    "https://my-catalogue.co.za/stores/table-view/spar/flamingo-square-centre"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 07:00-21:00",
    "has_email": false,
    "current_words": 15,
    "current_description": "Kwik Spar Flamingo Square is a convenience supermarket inside Flamingo Square, Table View, trading daily."
@@ -544,10 +992,19 @@
   {
    "slug": "nedbank-gardens-shopping-centre-gardens",
    "name": "Nedbank",
-   "category": "financial-investment-services",
-   "suburb": "gardens",
+   "category": "Financial & Investment Services",
+   "suburb": "Gardens",
+   "region": "city-bowl",
+   "address": "Shop 64, Gardens Shopping Centre, 38 Mill Street, Gardens, Cape Town",
+   "shopping_centre": "Gardens Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://nedbank.banklocationmaps.co.za/en/branch/956874-nedbank-branch-shop-64-gardens-centre-38-mill-street",
+    "https://nearbyza.com/place/nedbank-gardens-cape-town"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 15,
    "current_description": "Nedbank is a bank branch inside Gardens Shopping Centre in Gardens, offering everyday banking services."

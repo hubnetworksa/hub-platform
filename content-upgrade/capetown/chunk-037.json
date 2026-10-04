@@ -5,10 +5,20 @@
   {
    "slug": "hillside-properties-kenridge",
    "name": "Hillside Properties",
-   "category": "estate-agents",
-   "suburb": "kenridge",
+   "category": "Estate Agents",
+   "suburb": "Kenridge",
+   "region": "northern-suburbs",
+   "address": "Shop 12, IPIC Shopping Centre Kenridge, Door De Kraal Avenue, Kenridge, Durbanville, Cape Town, 7550",
+   "shopping_centre": "IPIC Shopping Centre Kenridge",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.thinklocal.co.za/biz/hillside-properties-durbanville",
+    "https://www.africanadvice.com/1374408/Real_Estate_Brokers_And_Agencies/Western_Cape/Hillside_Properties/",
+    "https://www.brabys.com/za/western-cape/durbanville/kenridge/real-estate-agents/hillside-properties"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:30-17:00, Sat 09:00-12:00, Sun Closed",
    "has_email": false,
    "current_words": 33,
    "current_description": "Hillside Properties is a family-owned estate agency founded in 1988, based in the IPIC Shopping Centre in Kenridge, selling residential property across greater Durbanville and Bellville, including Kenridge, Stellenberg, Eversdal and Sonstraal Heights."
@@ -16,10 +26,20 @@
   {
    "slug": "hout-bay-main-road-clinic-imizamo-yethu",
    "name": "Hout Bay Main Road Clinic",
-   "category": "clinics-healthcare",
-   "suburb": "imizamo-yethu",
+   "category": "Clinics & Healthcare",
+   "suburb": "Imizamo Yethu",
+   "region": "south-peninsula",
+   "address": "ERF 1477, Hout Bay Main Road, Imizamo Yethu, Cape Town, 7806",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.capetown.gov.za/local%20and%20communities/see-all-city-facilities/our-service-facilities/Clinics%20and%20healthcare%20facilities/hout-bay-main-road-clinic",
+    "https://www.africanadvice.com/1387208/Hospitals,_Medical_Centre_And_Clinics/Cape_Town/Hout_Bay_Main_Road_Clinic/",
+    "https://d7.westerncape.gov.za/facility/hout-bay-main-road-clinic"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-21:00",
    "has_email": true,
    "current_words": 33,
    "current_description": "Hout Bay Main Road Clinic is a public healthcare facility in Imizamo Yethu run by the City of Cape Town, providing general health, HIV/TB and substance-abuse support services to the local community."
@@ -27,10 +47,20 @@
   {
    "slug": "huang-mei-sushi-chinese-food-mowbray",
    "name": "Huang Mei Sushi & Chinese Food",
-   "category": "restaurants-takeaways",
-   "suburb": "mowbray",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Mowbray",
+   "region": "southern-suburbs",
+   "address": "4 Caledonian Road, Mowbray, Cape Town, 7700",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.huangmei.co.za",
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/huang-mei-sushi-chinese-food-177268",
+    "https://www.africabizinfo.com/ZA/huang-mei-sushi-chinese-food-021-685-3985",
+    "https://www.huangmei.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 11:00-21:00, Sun 12:00-20:00",
    "has_email": false,
    "current_words": 33,
    "current_description": "Huang Mei Sushi & Chinese Food is a Mowbray takeaway serving Chinese dishes and sushi at affordable prices, with delivery and collection available via its online menu; cash only, cards are not accepted."
@@ -38,10 +68,20 @@
   {
    "slug": "il-leone-mastrantonio-green-point",
    "name": "Il Leone Mastrantonio",
-   "category": "restaurants-takeaways",
-   "suburb": "green-point",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Green Point",
+   "region": "atlantic-seaboard",
+   "address": "22 Cobern Street, Green Point, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://insideguide.co.za/cape-town/restaurants/il-leone-mastrantonio/",
+    "https://www.tripadvisor.com/Restaurant_Review-g312659-d2084244-Reviews-Il_Leone_Mastrantonio-Cape_Town_Central_Western_Cape.html",
+    "https://www.gamberorossointernational.com/restaurants/restaurant/il-leone-mastrantonio/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 33,
    "current_description": "Il Leone Mastrantonio is an Italian restaurant on Cobern Street in Green Point, serving traditional and modern Italian dishes including homemade pastas and grilled meats, and a recipient of the Gambero Rosso award."
@@ -49,10 +89,21 @@
   {
    "slug": "indigo-scuba-gordons-bay",
    "name": "Indigo Scuba",
-   "category": "fitness-gyms",
-   "suburb": "gordons-bay",
+   "category": "Fitness & Gyms",
+   "suburb": "Gordon's Bay",
+   "region": "helderberg",
+   "address": "16 Blue Gum Avenue, Mountainside, Gordon's Bay, 7140",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.indigoscuba.com",
+   "existing_sources": [
+    "https://www.indigoscuba.com/contact-us/",
+    "https://www.waze.com/live-map/directions/indigo-scuba-diving-centre-bluegum-ave-16-gordons-bay",
+    "https://www.indigoscuba.com/",
+    "https://xray-mag.com/directory/indigo-scuba-gordons-bay"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "Indigo Scuba is a PADI dive centre in Gordon's Bay running boat dives, scuba courses, guided dives and gear rental, with dive guides who have explored the local False Bay reefs since 1999."
@@ -60,10 +111,19 @@
   {
    "slug": "infusion-on-long-cape-town-cbd",
    "name": "Infusion on Long",
-   "category": "restaurants-takeaways",
-   "suburb": "cape-town-cbd",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Cape Town CBD",
+   "region": "city-bowl",
+   "address": "57 Long Street, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://infusiononlong.co.za/",
+    "https://www.capetownmagazine.com/infusion-on-long"
+   ],
    "has_hours": true,
+   "hours": "Tue-Sat 10:30-23:00",
    "has_email": false,
    "current_words": 33,
    "current_description": "Infusion on Long is a restaurant, bar and lounge on Long Street offering an eclectic CBD-infused menu spanning Italian, Asian and street food influences, from breakfast items to burgers, tacos, sushi and desserts."
@@ -71,10 +131,19 @@
   {
    "slug": "inhouse-design-studio-sea-point",
    "name": "Inhouse Design Studio",
-   "category": "business-consulting",
-   "suburb": "sea-point",
+   "category": "Business & Management Consulting",
+   "suburb": "Sea Point",
+   "region": "atlantic-seaboard",
+   "address": "Suite 301, 3rd Floor, The Point, 76 Regent Road, Sea Point, Cape Town",
+   "shopping_centre": "The Point",
+   "phone_on_file": true,
    "website": "https://www.inhouse.ws",
+   "existing_sources": [
+    "https://www.inhouse.ws/contact-us",
+    "https://capebpo.org.za/listings/inhouse-design-studio/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "Inhouse Design Studio is an interior design and architecture studio on the 3rd floor of The Point in Sea Point, offering bespoke design and project management for commercial, retail, hospitality and residential clients."
@@ -82,10 +151,19 @@
   {
    "slug": "intrinsic-hair-and-beauty-plumstead",
    "name": "Intrinsic Hair & Beauty",
-   "category": "beauty-hair-salons",
-   "suburb": "plumstead",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Plumstead",
+   "region": "southern-suburbs",
+   "address": "Prospur Centre, 88 Churchill Road, Plumstead, Cape Town",
+   "shopping_centre": "Prospur Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/a/intrinsic-hair-beauty-cape-town-prospur-centre-88-churchill-road-dxpavs4a",
+    "https://www.intrinsic-hair.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:00, Sat 08:00-15:00, Sun Closed",
    "has_email": false,
    "current_words": 33,
    "current_description": "Intrinsic Hair & Beauty is a women-owned hair salon in Prospur Centre, Plumstead, offering Joico-based colour services including LumiShine highlights and grey coverage alongside beauty treatments such as pedicures, brow shaping and waxing."
@@ -93,10 +171,19 @@
   {
    "slug": "jackies-on-5th-lotus-river",
    "name": "Jackie's On 5th",
-   "category": "beauty-hair-salons",
-   "suburb": "lotus-river",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Lotus River",
+   "region": "cape-flats",
+   "address": "327 5th Avenue, Lotus River, 7805",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/lvp/jackies-on-5th-5th-avenue-cape-town-QvRMVW",
+    "https://www.facebook.com/p/Jackies-On-5th-100041606834058/"
+   ],
    "has_hours": true,
+   "hours": "Mon Closed, Tue-Sat 08:00-19:00, Sun 08:00-13:00",
    "has_email": false,
    "current_words": 33,
    "current_description": "Jackie's On 5th is a hair and beauty salon on 5th Avenue in Lotus River, offering hair styling, colouring and treatments such as keratin and permanent straightening alongside waxing, facials and makeup services."
@@ -104,10 +191,20 @@
   {
    "slug": "kehls-upholstery-suppliers-maitland",
    "name": "Kehl's Upholstery Suppliers",
-   "category": "general-retail",
-   "suburb": "maitland",
+   "category": "General Retail",
+   "suburb": "Maitland",
+   "region": "northern-suburbs",
+   "address": "403 Voortrekker Road, Maitland, Cape Town, 7405",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.kehls.co.za/contact-us/",
+    "https://za.africabz.com/western-cape/kehls-upholstery-suppliers-17241",
+    "https://www.kehls.co.za/about-us/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "Kehl's Upholstery Suppliers has supplied upholstery fabric, vinyl, foam and trimming supplies to Cape Town's interior decorators, upholsterers and motor-trimming trade since the late 1960s, operating from its landmark Maitland premises since 1988."
@@ -115,10 +212,19 @@
   {
    "slug": "krystal-restaurant-gordons-bay",
    "name": "Krystal Restaurant",
-   "category": "restaurants-takeaways",
-   "suburb": "gordons-bay",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Gordon's Bay",
+   "region": "helderberg",
+   "address": "Krystal Beach Hotel, Breakwater Lane, Harbour Island, Gordon's Bay, 7140",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.krystalbeach.co.za/dining/krystal-restaurant/",
+    "https://www.tripadvisor.com/Restaurant_Review-g1020231-d9819813-Reviews-Krystal_Restaurant-Gordon_s_Bay_Western_Cape.html"
+   ],
    "has_hours": true,
+   "hours": "Daily 07:00-22:00",
    "has_email": false,
    "current_words": 33,
    "current_description": "Krystal Restaurant is the in-house dining room at Krystal Beach Hotel on Harbour Island, Gordon's Bay, offering gourmet dishes with a strong seafood focus, French-style sandwiches and salads, with views over the marina."
@@ -126,10 +232,20 @@
   {
    "slug": "little-lambs-christian-daycare-imizamo-yethu",
    "name": "Little Lambs Christian Daycare",
-   "category": "schools-education",
-   "suburb": "imizamo-yethu",
+   "category": "Schools & Education",
+   "suburb": "Imizamo Yethu",
+   "region": "south-peninsula",
+   "address": "Van Hoogstraten Street, Imizamo Yethu, Hout Bay, Cape Town, 7806",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.littlelambs.org.za",
+   "existing_sources": [
+    "https://www.littlelambs.org.za/contact-us",
+    "https://www.capetownetc.com/education/little-lambs-centre-brings-education-and-empowerment-to-imizamo-yethu/",
+    "https://www.littlelambs.org.za/who-we-are"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "Little Lambs Christian Daycare is a registered non-profit early childhood centre in Imizamo Yethu, Hout Bay, founded in 1991 by the SEEDS Trust, providing early education, daily meals and care for local preschoolers."
@@ -137,10 +253,19 @@
   {
    "slug": "marian-rc-secondary-school-matroosfontein",
    "name": "Marian RC Secondary School",
-   "category": "schools-education",
-   "suburb": "matroosfontein",
+   "category": "Schools & Education",
+   "suburb": "Matroosfontein",
+   "region": "cape-flats",
+   "address": "St Dominic Street, Matroosfontein, Cape Town, 7490",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.westerncape.gov.za/education/facility/marian-rc-secondary-school",
+    "https://schoolsdigest.co.za/listings/marian-rc-secondary-school/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "Marian RC Secondary School is a public Roman Catholic secondary school on St Dominic Street, Matroosfontein, classified as a quintile 4 Section 21 school responsible for its own stationery, textbook and maintenance budgets."
@@ -148,10 +273,20 @@
   {
    "slug": "mdzananda-animal-clinic-mandela-park",
    "name": "Mdzananda Animal Clinic",
-   "category": "vets-animal-care",
-   "suburb": "mandela-park",
+   "category": "Vets & Animal Care",
+   "suburb": "Mandela Park",
+   "region": "cape-flats",
+   "address": "21297 Govan Mbeki Road, Mandela Park, Khayelitsha, Cape Town, 7784",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://mdzananda.co.za/contact/",
+    "https://www.africabizinfo.com/ZA/mdzananda-animal-clinic-082-251-0554",
+    "https://petworld.co.za/blogs/care/the-mdzananda-animal-clinic-a-beacon-of-hope-in-khayelitsha"
+   ],
    "has_hours": true,
+   "hours": "Mon/Wed/Fri 08:00-16:00, Tue/Thu 09:00-16:00, Sat 08:00-12:30, Sun Closed",
    "has_email": false,
    "current_words": 33,
    "current_description": "Mdzananda Animal Clinic is a veterinary-council-registered non-profit clinic founded in 1996, providing low-cost and subsidised veterinary care, sterilisation and pet-health education to the Khayelitsha community, and running mobile clinics into the wider area."
@@ -159,10 +294,19 @@
   {
    "slug": "mitchells-plain-community-health-centre-eastridge",
    "name": "Mitchells Plain Community Health Centre",
-   "category": "clinics-healthcare",
-   "suburb": "eastridge",
+   "category": "Clinics & Healthcare",
+   "suburb": "Eastridge",
+   "region": "cape-flats",
+   "address": "1st Avenue, Eastridge, Mitchells Plain, Cape Town, 7785",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.westerncape.gov.za/health-wellness/facility/mitchells-plain-chc",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=94792"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "Mitchells Plain Community Health Centre is a public primary healthcare facility providing free clinical services, including maternity care, to Eastridge and surrounding communities such as Philippi, Samora Machel, Weltevrede Park, Mandalay and Marikana."
@@ -170,10 +314,19 @@
   {
    "slug": "never-new-observatory",
    "name": "Never New",
-   "category": "fashion-clothing",
-   "suburb": "observatory",
+   "category": "Fashion & Clothing",
+   "suburb": "Observatory",
+   "region": "city-bowl",
+   "address": "15b Lower Main Road, Observatory, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.facebook.com/nevernewstore/",
+    "https://www.vinylworld.org/record-shop/nevernew/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "Never New is a thrift store in Observatory stocking a large, weekly-rotating selection of men's and women's vintage and second-hand clothing, along with new hippie and Indian-inspired clothing and locally made festival wear."
@@ -181,10 +334,19 @@
   {
    "slug": "o-on-kloof-bantry-bay",
    "name": "O on Kloof Boutique Hotel & Spa",
-   "category": "hotels",
-   "suburb": "bantry-bay",
+   "category": "Hotels",
+   "suburb": "Bantry Bay",
+   "region": "atlantic-seaboard",
+   "address": "92 Kloof Road, Bantry Bay, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.oonkloof.co.za/",
+   "existing_sources": [
+    "https://www.oonkloof.co.za/",
+    "https://www.sa-venues.com/visit/oonkloof/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 33,
    "current_description": "O on Kloof is a 4-star boutique hotel and spa in Bantry Bay with rooms across three categories, a heated indoor pool, gym and spa, and ocean-facing dining including breakfast and dinner service."
@@ -192,10 +354,19 @@
   {
    "slug": "oh-so-boho-kalk-bay",
    "name": "Oh So Boho",
-   "category": "fashion-clothing",
-   "suburb": "kalk-bay",
+   "category": "Fashion & Clothing",
+   "suburb": "Kalk Bay",
+   "region": "south-peninsula",
+   "address": "96-98 Main Road, Kalk Bay, Cape Town, 7990",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.ohsoboho.co.za/pages/about-us",
+    "https://www.brabys.com/za/western-cape/cape-town/kalk-bay/clothing-retailers/oh-so-boho"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "Oh So Boho is a bohemian-style boutique on Kalk Bay's Main Road selling artisan jewellery, natural-fibre clothing, and block-print home decor and accessories sourced from small, family-run makers rather than mass factory production."
@@ -203,10 +374,19 @@
   {
    "slug": "ohmm-face-and-beauty-newlands",
    "name": "OHMM Face and Beauty",
-   "category": "beauty-hair-salons",
-   "suburb": "newlands",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Newlands",
+   "region": "southern-suburbs",
+   "address": "Shop 2B, Dean Street Arcade, Cnr Dean St and Main Rd, Newlands, Cape Town, 7700",
+   "shopping_centre": "Dean Street Arcade",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.hellolocal.co.za/south-africa/newlands/beauty/ohmm-face-and-body",
+    "https://ohmmbeauty.co.za/contact-us/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "OHMM Face and Beauty is a beauty and wellness spa in the Dean Street Arcade in Newlands, open since 2005 and offering facials, body treatments, nails and aesthetic treatments using premium skincare brands."
@@ -214,10 +394,19 @@
   {
    "slug": "paul-bothner-music-plumstead",
    "name": "Paul Bothner Music",
-   "category": "general-retail",
-   "suburb": "plumstead",
+   "category": "General Retail",
+   "suburb": "Plumstead",
+   "region": "southern-suburbs",
+   "address": "Shop G7, Richmond Centre, Main Road, Plumstead, Cape Town, 7800",
+   "shopping_centre": "Richmond Centre",
+   "phone_on_file": true,
    "website": "https://bothners.co.za/",
+   "existing_sources": [
+    "https://www.cybo.com/ZA-biz/paul-bothner-music-plumstead_2T",
+    "https://bothners.co.za/plumstead-super-store-cape-town/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "Paul Bothner Music's Plumstead branch, in the Richmond Centre, is a two-floor musical instrument superstore stocking guitars, drum kits, keyboards, orchestral instruments and PA and recording equipment, with in-store music teachers offering lessons."
@@ -225,10 +414,20 @@
   {
    "slug": "rosetta-roastery-cape-town-cbd",
    "name": "Rosetta Roastery",
-   "category": "restaurants-takeaways",
-   "suburb": "cape-town-cbd",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Cape Town CBD",
+   "region": "city-bowl",
+   "address": "97 Bree Street, Cnr Shortmarket Street, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.rosettaroastery.com/",
+    "https://www.eatout.co.za/venue/rosetta-roastery-bree-street/",
+    "https://www.rosettaroastery.com/pages/contact"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-16:00, Sat 08:00-16:00, Sun & Public Holidays 08:00-14:00",
    "has_email": false,
    "current_words": 33,
    "current_description": "Rosetta Roastery is a specialty coffee roastery and cafe on the corner of Bree and Shortmarket Streets, roasting single-origin coffee and serving it in a work-friendly cafe setting in the Cape Town CBD."
@@ -236,10 +435,20 @@
   {
    "slug": "rustenburg-pharmacy-muizenberg",
    "name": "Rustenburg Pharmacy",
-   "category": "pharmacies",
-   "suburb": "muizenberg",
+   "category": "Pharmacies",
+   "suburb": "Muizenberg",
+   "region": "south-peninsula",
+   "address": "48 Beach Road, Muizenberg, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.alphapharmacies.co.za/department/rustenburg-pharmacy/",
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/rustenburg-pharmacy-144329",
+    "https://www.brabys.com/za/western-cape/cape-town/muizenberg/pharmacies/rustenburg-pharmacy-muizenberg",
+    "https://www.alphapharmacies.co.za/department/rustenburg-pharmacy/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:30-19:00, Sat 08:30-14:00, Sun 09:00-13:00",
    "has_email": true,
    "current_words": 33,
    "current_description": "Rustenburg Pharmacy is a community pharmacy in Muizenberg, part of the Alpha Pharmacies group, that has served the Muizenberg, Marina da Gama, Lakeside, St James and Kalk Bay community for over three decades."
@@ -247,10 +456,20 @@
   {
    "slug": "senior-flexonics-cape-town-thornton",
    "name": "Senior Flexonics Cape Town",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "thornton",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Thornton",
+   "region": "northern-suburbs",
+   "address": "11 Thor Circle, Viking Place, Thornton, Cape Town, 7460",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://flexonics.co.za/contact-2/",
+    "https://panjiva.com/Senior-Flexonics/5226202",
+    "https://flexonics.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "Senior Flexonics Cape Town, a subsidiary of UK-based Senior plc established in Cape Town in 1997, designs, manufactures and supplies thin-gauge flexible stainless steel components and assemblies for vehicle and engine technology applications."
@@ -258,10 +477,19 @@
   {
    "slug": "simply-asia-lakeside",
    "name": "Simply Asia",
-   "category": "restaurants-takeaways",
-   "suburb": "lakeside",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Lakeside",
+   "region": "south-peninsula",
+   "address": "Shop 6, Lakeside Centre, Main Road, Lakeside, Cape Town, 7945",
+   "shopping_centre": "Lakeside Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.eatout.co.za/venue/simply-asia-lakeside/",
+    "https://www.dining-out.co.za/md/Simply-Asia-Lakeside/8588"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 12:00-22:00",
    "has_email": false,
    "current_words": 33,
    "current_description": "Simply Asia in Lakeside Centre is a branch of the South African Simply Asia franchise, serving Thai, sushi and other Asian dishes including seafood and vegetarian options, with dine-in, takeaway and parking available."
@@ -269,10 +497,20 @@
   {
    "slug": "soviet-cape-town-cbd",
    "name": "Soviet",
-   "category": "fashion-clothing",
-   "suburb": "cape-town-cbd",
+   "category": "Fashion & Clothing",
+   "suburb": "Cape Town CBD",
+   "region": "city-bowl",
+   "address": "Golden Acre Shopping Centre, 9 Adderley St, Cape Town",
+   "shopping_centre": "Golden Acre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://golden-acre.co.za/stores/",
+    "http://sovietdenim.blogspot.com/2015/10/a-golden-affair-with-soviet-gold-is.html",
+    "https://sovietdenim.com/pages/about-soviet"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "Soviet is a South African jeanswear and streetwear brand founded in 1987, offering denim, footwear and accessories for men, women and kids; this store trades from Golden Acre Shopping Centre, Cape Town CBD."
@@ -280,10 +518,20 @@
   {
    "slug": "sportscene-cape-town-cbd",
    "name": "Sportscene",
-   "category": "fashion-clothing",
-   "suburb": "cape-town-cbd",
+   "category": "Fashion & Clothing",
+   "suburb": "Cape Town CBD",
+   "region": "city-bowl",
+   "address": "Golden Acre Shopping Centre, 9 Adderley St, Cape Town",
+   "shopping_centre": "Golden Acre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://golden-acre.co.za/stores/",
+    "https://www.tiendeo.co.za/stores/cape-town/sportscene-golden-acre-shopping-centrecnr-adderley-strand-str/62727",
+    "https://centurionmall.co.za/stores/store-list/sportscene/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "Sportscene is a South African streetwear retailer selling footwear, apparel and accessories from brands including Nike, adidas Originals, PUMA, Converse and Vans; this store trades from Golden Acre Shopping Centre, Cape Town CBD."
@@ -291,10 +539,20 @@
   {
    "slug": "steven-johnson-cars-paarden-eiland",
    "name": "Steven Johnson Cars",
-   "category": "car-dealerships",
-   "suburb": "paarden-eiland",
+   "category": "Car Dealerships",
+   "suburb": "Paarden Eiland",
+   "region": "northern-suburbs",
+   "address": "Cnr Milner Street and Marine Drive, Paarden Eiland, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://stevenjohnsoncars.co.za/contact/",
+    "https://za.africabz.com/western-cape/steven-johnson-cars-cc-66596",
+    "https://www.cars.co.za/groups/Individual-Dealers/Steven-Johnson-Cars/2265/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:30, Sat 09:00-13:00, Sun Closed",
    "has_email": false,
    "current_words": 33,
    "current_description": "Steven Johnson Cars is a used-car dealership established in 1983, relocating several times before settling on Marine Drive in Paarden Eiland in 2002; it specialises in pre-owned Land Rover, BMW and MINI vehicles."
@@ -302,10 +560,21 @@
   {
    "slug": "sticky-bbq-observatory",
    "name": "Sticky BBQ",
-   "category": "restaurants-takeaways",
-   "suburb": "observatory",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Observatory",
+   "region": "city-bowl",
+   "address": "96 Station Road, Observatory, Cape Town, 7700",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://foursquare.com/v/sticky-fingers-bbq/4c0693e48a81c9b673ed2590",
+    "https://www.eatout.co.za/venue/sticky-fingers/",
+    "https://www.tripadvisor.com/Restaurant_Review-g312659-d3601120-Reviews-Sticky_BBQ_Observatory-Cape_Town_Central_Western_Cape.html",
+    "https://stickybbq.com/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 12:00-01:00, Fri-Sat 12:00-02:00, Sun 12:00-00:00",
    "has_email": false,
    "current_words": 33,
    "current_description": "Sticky BBQ is a ribs specialist on Station Road in Observatory, known for ribs slow-cooked for hours, marinated overnight and finished with a sticky barbecue glaze, with hours running late into the night."
@@ -313,10 +582,20 @@
   {
    "slug": "swan-cafe-zonnebloem",
    "name": "Swan Cafe",
-   "category": "restaurants-takeaways",
-   "suburb": "zonnebloem",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Zonnebloem",
+   "region": "city-bowl",
+   "address": "Corner Buitenkant and Barrack Street, Zonnebloem, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://swancafe.co.za",
+   "existing_sources": [
+    "https://swancafe.co.za/",
+    "https://www.eatout.co.za/venue/swan-cafe/",
+    "https://www.capetownmagazine.com/swan-cafe"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 08:30-16:00, Sun 09:00-14:00",
    "has_email": false,
    "current_words": 33,
    "current_description": "Swan Cafe is a Parisian-style creperie on the corner of Buitenkant and Barrack Street in Zonnebloem, serving sweet crepes and savoury buckwheat galettes alongside a curated tea selection, with vegan and gluten-free options."
@@ -324,10 +603,20 @@
   {
    "slug": "the-dentist-on-main-rondebosch",
    "name": "The Dentist on Main (Rondebosch)",
-   "category": "dentists",
-   "suburb": "rondebosch",
+   "category": "Dentists",
+   "suburb": "Rondebosch",
+   "region": "southern-suburbs",
+   "address": "41 Main Road, Rondebosch, Cape Town, 7700",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.dentistonmain.co.za",
+   "existing_sources": [
+    "https://www.dentistonmain.co.za/contact/",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=207211",
+    "https://www.dentistonmain.co.za/about/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-13:00, 14:00-17:00, Sat 08:00-12:00, Sun Closed",
    "has_email": false,
    "current_words": 33,
    "current_description": "The Dentist on Main is an established dental practice in Rondebosch, in the area for over 15 years, offering preventative dentistry, scaling and polishing, root canal therapy, crowns, digital X-rays and tooth whitening."
@@ -335,10 +624,20 @@
   {
    "slug": "the-green-room-kommetjie",
    "name": "The Green Room",
-   "category": "restaurants-takeaways",
-   "suburb": "kommetjie",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Kommetjie",
+   "region": "south-peninsula",
+   "address": "12 Huskisson Way, The Old Post House, Kommetjie, Cape Town, 7975",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/the-green-room-107374",
+    "https://www.facebook.com/greenroomkommetjie/",
+    "https://www.tripadvisor.co.za/Restaurant_Review-g1214290-d2271339-Reviews-or45-The_Green_Room-Kommetjie_Western_Cape.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "The Green Room is a vibey restaurant and bar in Kommetjie serving Mexican and steakhouse-style food including nachos and craft beer, with breakfast, lunch, dinner and brunch menus and vegetarian and vegan options."
@@ -346,10 +645,19 @@
   {
    "slug": "the-luxe-beaute-co-brooklyn",
    "name": "The Luxe Beauté Co.",
-   "category": "beauty-hair-salons",
-   "suburb": "brooklyn",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Brooklyn",
+   "region": "northern-suburbs",
+   "address": "57 Koeberg Road, Unit 1, Brooklyn, Cape Town, 7405",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/a/the-luxe-beaute-co-brooklyn-cape-town-57-koeberg-road-n4qxa9ji",
+    "https://epilfree.co.za/the-luxe-beaute-co/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 09:00-18:00, Sun 09:00-16:00",
    "has_email": false,
    "current_words": 33,
    "current_description": "The Luxe Beauté Co. is a beauty salon in Brooklyn, Cape Town, offering nail treatments such as gel tips, polygel and overlays, along with brow waxing and tinting, hair treatments and braiding services."
@@ -357,10 +665,19 @@
   {
    "slug": "the-waterside-va-waterfront",
    "name": "The Waterside",
-   "category": "restaurants-takeaways",
-   "suburb": "va-waterfront",
+   "category": "Restaurants & Takeaways",
+   "suburb": "V&A Waterfront",
+   "region": "city-bowl",
+   "address": "2 Pierhead Road, V&A Waterfront, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://insideguide.co.za/cape-town/restaurants/waterside/",
+    "https://www.waterfront.co.za/eat-and-drink/the-waterside"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 12:00-14:00, 18:30-20:30",
    "has_email": false,
    "current_words": 33,
    "current_description": "The Waterside is a smart-casual restaurant on the V&A Waterfront harbour, part of the La Colombe restaurant group, offering indoor and outdoor deck dining with a reduced menu and a tasting menu option."
@@ -368,10 +685,20 @@
   {
    "slug": "the-welgemoed-guesthouse-welgemoed",
    "name": "The Welgemoed Guesthouse",
-   "category": "accommodation",
-   "suburb": "welgemoed",
+   "category": "Accommodation",
+   "suburb": "Welgemoed",
+   "region": "northern-suburbs",
+   "address": "79 Kommissaris Street, Welgemoed, Cape Town, 7530",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.thewelgemoedguesthouse.co.za",
+   "existing_sources": [
+    "https://www.thewelgemoedguesthouse.co.za/",
+    "https://www.lekkeslaap.co.za/accommodation/the-welgemoed-guest-house",
+    "https://www.expedia.com/Cape-Town-Hotels-The-Welgemoed-Guest-House.h13134270.Hotel-Information"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "The Welgemoed Guesthouse is a 10-room guesthouse in Welgemoed styled in classic Cape colonial decor, offering an outdoor pool, 24-hour front desk, free WiFi and parking, a short walk from Bellville Golf Club."
@@ -379,10 +706,20 @@
   {
    "slug": "tifgifts-paarden-eiland",
    "name": "Tifgifts Factory Shop",
-   "category": "general-retail",
-   "suburb": "paarden-eiland",
+   "category": "General Retail",
+   "suburb": "Paarden Eiland",
+   "region": "northern-suburbs",
+   "address": "10 Industry Road, Paarden Eiland, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/tifgifts-factory-shop-163134",
+    "https://www.yoys.co.za/phone,27-215143106,Gift-Basket-Store,Cape-Town,ZA17352.html",
+    "https://factoryshops.co.za/tifgifts-paarden-eiland/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "Tifgifts Factory Shop is a bath and body factory shop on Industry Road in Paarden Eiland, selling manufactured toiletries, liquid soaps, lotions and facial skincare products, and has been trading for 25 years."
@@ -390,10 +727,20 @@
   {
    "slug": "tops-at-spar-woodstock-quarter-woodstock",
    "name": "TOPS at SPAR Woodstock Quarter",
-   "category": "liquor-stores",
-   "suburb": "woodstock",
+   "category": "Liquor Stores",
+   "suburb": "Woodstock",
+   "region": "city-bowl",
+   "address": "Woodstock Quarter, 187 Sir Lowry Road, Woodstock, Cape Town",
+   "shopping_centre": "Woodstock Quarter",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.hotfrog.co.za/company/646141d43cd6ac2678baba316bde6c37/tops-at-spar-woodstock-quarter/cape-town/food-beverages",
+    "https://www.cylex.net.za/company/tops-at-spar-woodstock-quarter-23862003.html",
+    "https://my-catalogue.co.za/stores/woodstock/tops-at-spar/187-sir-lowry-road"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sat 09:00-18:30",
    "has_email": false,
    "current_words": 33,
    "current_description": "TOPS at SPAR Woodstock Quarter is a liquor store attached to the SPAR supermarket in the Woodstock Quarter retail precinct on Sir Lowry Road, stocking a wide range of wine, beer and spirits."
@@ -401,10 +748,20 @@
   {
    "slug": "wellington-fruit-growers-wetton",
    "name": "Wellington Fruit Growers",
-   "category": "general-retail",
-   "suburb": "wetton",
+   "category": "General Retail",
+   "suburb": "Wetton",
+   "region": "cape-flats",
+   "address": "Unit C3, 141 Wetton Road, Wetton, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://wellingtonfruitgrowers.co.za/",
+   "existing_sources": [
+    "https://wellingtonfruitgrowers.co.za/",
+    "https://www.brabys.com/za/western-cape/cape-town/wetton/dry-fruit/wellington-fruit-growers-head-office",
+    "https://wellingtonfruitgrowers.co.za/about-us/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 33,
    "current_description": "Wellington Fruit Growers, based in Wetton, has processed and distributed dried fruit, nuts and confectionery since 1904, manufacturing products such as mebos, mixed nuts and fruit lollies that are certified Halaal and Kosher."
@@ -412,10 +769,20 @@
   {
    "slug": "algarve-restaurant-bar-kuils-river",
    "name": "Algarve Restaurant & Bar",
-   "category": "restaurants-takeaways",
-   "suburb": "kuils-river",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Kuils River",
+   "region": "northern-suburbs",
+   "address": "20 Church Street, Kuils River, Cape Town, 7580",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tripadvisor.com/Restaurant_Review-g2213035-d27119572-Reviews-Algarve_Restaurant_Bar_Venue-Kuils_River_Western_Cape.html",
+    "https://www.findglocal.com/ZA/Kuils-River/105233781057842/Algarve-Restaurant-&-Bar",
+    "https://www.dining-out.co.za/md/Algarve-Restaurant-Bar/11308"
+   ],
    "has_hours": true,
+   "hours": "Mon Closed, Tue-Wed 15:00-22:00, Thu-Fri 15:00-02:00, Sat-Sun 09:00-02:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Algarve Restaurant & Bar is a Portuguese-influenced restaurant and bar in Kuils River known for seafood platters, chicken livers, creamy mussels and espetada, plus themed nights including Wednesday salsa dancing and Thursday/Sunday karaoke."
@@ -423,10 +790,20 @@
   {
    "slug": "ashby-manor-guest-house-fresnaye",
    "name": "Ashby Manor Guest House",
-   "category": "accommodation",
-   "suburb": "fresnaye",
+   "category": "Accommodation",
+   "suburb": "Fresnaye",
+   "region": "atlantic-seaboard",
+   "address": "242 High Level Road, Fresnaye, Cape Town, 8005",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tripadvisor.com/Hotel_Review-g1233430-d7702718-Reviews-Ashby_Manor_Guest_House-Fresnaye_Western_Cape.html",
+    "https://southafricafirm.com/western-cape/ashby-manor-guest-house-3781",
+    "https://www.booking.com/hotel/za/ashby-manor-guest-house.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Ashby Manor Guest House is a restored Victorian guest house in Fresnaye offering double, twin and triple rooms, some with sea views, along with an onsite spa offering Swedish massage and a rooftop terrace."
@@ -434,10 +811,20 @@
   {
    "slug": "asserum-electronics-fish-hoek",
    "name": "Asserum Electronics",
-   "category": "electronics-appliances",
-   "suburb": "fish-hoek",
+   "category": "Electronics & Appliances",
+   "suburb": "Fish Hoek",
+   "region": "south-peninsula",
+   "address": "13B Town Square, 13 Main Road, Fish Hoek, Cape Town, 7974",
+   "shopping_centre": "Fish Hoek Town Square",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://textmap.co.za/3/43650",
+    "https://www.thinklocal.co.za/biz/asserum-iphones-computers-fish-hoek",
+    "https://www.aiyellow.com/asserum/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Asserum Electronics is a cellphone, tablet and computer specialist in Fish Hoek Town Square, selling and repairing iPhones, Android devices, iPads and computers, including cracked-screen repairs, and backing devices sold with a 24-month guarantee."
@@ -445,10 +832,20 @@
   {
    "slug": "atlas-trading-company-bo-kaap",
    "name": "Atlas Trading Company",
-   "category": "general-retail",
-   "suburb": "bo-kaap",
+   "category": "General Retail",
+   "suburb": "Bo-Kaap",
+   "region": "city-bowl",
+   "address": "104 Wale Street, Bo-Kaap, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://atlastradingonline.com/pages/about-us",
+    "https://www.capetownmagazine.com/atlas",
+    "https://www.facebook.com/atlastradingcompanyza/posts/atlas-trading-company-established-in-1946-cape-towns-oldest-spice-store/654715846700469/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Atlas Trading Company is Cape Town's oldest spice store, family-run in Bo-Kaap since 1946, specialising in Cape Malay, Indian and Thai spice blends with more than 150 signature mixes plus its own exclusive creations."
@@ -456,10 +853,19 @@
   {
    "slug": "bootlegger-coffee-company-kenilworth",
    "name": "Bootlegger Coffee Company",
-   "category": "restaurants-takeaways",
-   "suburb": "kenilworth",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Kenilworth",
+   "region": "southern-suburbs",
+   "address": "Shop G05, Pam Golding on Main, 323 Main Road, Kenilworth, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.eatout.co.za/venue/bootlegger-coffee-company-kenilworth/",
+    "https://ourcafes.bootlegger.coffee/FoodDrink-CapeTown-BootleggerKenilworth"
+   ],
    "has_hours": true,
+   "hours": "Mon-Wed 06:30-18:00, Thu-Fri 06:30-21:00, Sat 07:00-21:00, Sun 07:00-15:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Bootlegger Coffee Company's Kenilworth branch, in the Pam Golding on Main development, is part of the wider Bootlegger Coffee Company chain, serving coffee, breakfast, lunch and evening meals with extended hours toward the weekend."
@@ -467,10 +873,20 @@
   {
    "slug": "bootlegger-woodstock-quarter-woodstock",
    "name": "Bootlegger Woodstock Quarter",
-   "category": "restaurants-takeaways",
-   "suburb": "woodstock",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Woodstock",
+   "region": "city-bowl",
+   "address": "Woodstock Quarter, 193 Sir Lowry Road, Woodstock, Cape Town",
+   "shopping_centre": "Woodstock Quarter",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://ourcafes.bootlegger.coffee/FoodDrink-CapeTown-BootleggerWoodstockQuarter",
+    "https://www.woodstockquarter.co.za/tenant-directory/eateries/bootlegger",
+    "https://www.tripadvisor.co.za/Restaurant_Review-g312659-d19993593-Reviews-Bootlegger_Coffee_Company-Cape_Town_Central_Western_Cape.html"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-17:00, Sat-Sun 08:00-15:00",
    "has_email": false,
    "current_words": 34,
    "current_description": "Bootlegger Woodstock Quarter is a coffee shop and café in Woodstock Quarter, part of the Bootlegger Coffee Company chain, serving all-day breakfast, lunch and brunch with free wifi, a kids' menu and takeaway options."
@@ -478,10 +894,20 @@
   {
    "slug": "campo-marzio-design-cape-quarter-de-waterkant",
    "name": "Campo Marzio Design",
-   "category": "fashion-clothing",
-   "suburb": "de-waterkant",
+   "category": "Fashion & Clothing",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "Piazza Level, Cape Quarter, 27 Somerset Rd, De Waterkant, Cape Town",
+   "shopping_centre": "Cape Quarter Lifestyle Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://capequarter.co.za/shops/",
+    "https://www.campomarzio.co.za/capequarter",
+    "https://www.campomarzio.co.za/about-us"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Campo Marzio Design sells Italian leather goods, pens and accessories from a Rome brand tracing back to a 1933 stationery workshop; its Cape Quarter store, opened in 2008, was the brand's first in Africa."
@@ -489,10 +915,19 @@
   {
    "slug": "camps-bay-haute-coiffure-camps-bay",
    "name": "Camps Bay Haute Coiffure",
-   "category": "beauty-hair-salons",
-   "suburb": "camps-bay",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Camps Bay",
+   "region": "atlantic-seaboard",
+   "address": "Shop 104c, The Promenade, 87 Victoria Road, Camps Bay, Cape Town",
+   "shopping_centre": "The Promenade",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.facebook.com/campsbayhautecoiffure/",
+    "https://www.barbercartel.co.za/camps-bay-haute-coiffure"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Camps Bay Haute Coiffure is a ladies' hair salon in The Promenade, Camps Bay, offering colouring, balayage, highlights, extensions and braiding for both Caucasian and ethnic hair, along with Brazilian and hair-Botox smoothing treatments."
@@ -500,10 +935,20 @@
   {
    "slug": "cape-biologix-ndabeni",
    "name": "Cape Biologix",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "ndabeni",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Ndabeni",
+   "region": "northern-suburbs",
+   "address": "Unit 3, The Powder Mill, 5 Sunrise Circle, Ndabeni, Cape Town, 7405",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://capebiologix.com",
+   "existing_sources": [
+    "https://capebiologix.com/contact/",
+    "https://www.facebook.com/CapeBiologixTechnologies/",
+    "https://capebiologix.com/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 34,
    "current_description": "Cape Biologix is a Ndabeni-based biotechnology company that develops and manufactures plant-made recombinant proteins for scientific research and rapid diagnostic test kits, using a transient expression platform in tobacco plants rather than animal-based methods."
@@ -511,10 +956,20 @@
   {
    "slug": "caroline-berry-optometrists-sunnydale",
    "name": "Caroline Berry Optometrists",
-   "category": "opticians",
-   "suburb": "sunnydale",
+   "category": "Opticians",
+   "suburb": "Sunnydale",
+   "region": "south-peninsula",
+   "address": "Unit 6 Longboat Corner, Cnr Ou Kaapse Weg & Longboat Street, Sunnydale, Cape Town, 7975",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=165107",
+    "https://www.brabys.com/za/western-cape/fish-hoek/sunnydale/optometrists/caroline-berry-optometrist",
+    "https://carolineberry.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Caroline Berry Optometrists is an optometry practice in Sunnydale offering eye tests, spectacles, sunglasses and contact lenses for patients from school age to senior years, serving the wider Fish Hoek, Noordhoek and Constantia area."
@@ -522,10 +977,20 @@
   {
    "slug": "combat-force-cape-cc-diep-river",
    "name": "Combat Force Cape CC",
-   "category": "security-services",
-   "suburb": "diep-river",
+   "category": "Security Services",
+   "suburb": "Diep River",
+   "region": "southern-suburbs",
+   "address": "9 Greenville Terrace, Diep River, Cape Town, 7800",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.yellosa.co.za",
+    "https://cape-town.infoisinfo.co.za",
+    "https://combatforce.co.za"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 34,
    "current_description": "Combat Force Cape CC is a security services provider based in Diep River, offering security guarding, alarm installation and monitoring, and CCTV systems, including a dedicated response vehicle for the Marina da Gama area."
@@ -533,10 +998,20 @@
   {
    "slug": "cpb-cape-plumbing-bathroom-supplies-somerset-west-somerset-west",
    "name": "CP&B Cape Plumbing & Bathroom Supplies Somerset West",
-   "category": "hardware-stores",
-   "suburb": "somerset-west",
+   "category": "Hardware Stores",
+   "suburb": "Somerset West",
+   "region": "helderberg",
+   "address": "44 Clarendon Road, Gants Plaza, Somerset West, 7140",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.cpandb.co.za/store/somerset.west",
+    "https://za.africabz.com/western-cape/cpb-cape-plumbing-bathroom-supplies-somerset-west-134191",
+    "https://www.openhours-southafrica.com/en/cape-town/cp-b-cape-plumbing-bathroom-supplies-somerset-west"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:30-16:45, Sat 08:00-12:30, Sun Closed",
    "has_email": false,
    "current_words": 34,
    "current_description": "CP&B Cape Plumbing & Bathroom Supplies Somerset West is a branch of the Cape Plumbing & Bathroom Supplies retail chain, stocking plumbing fittings and bathroom fixtures from its Gants Plaza showroom in Somerset West."
@@ -544,10 +1019,19 @@
   {
    "slug": "dawood-butchery-hanover-park",
    "name": "Dawood Butchery",
-   "category": "butcheries",
-   "suburb": "hanover-park",
+   "category": "Butcheries",
+   "suburb": "Hanover Park",
+   "region": "cape-flats",
+   "address": "133 Hanover Park Avenue, Hanover Park, Cape Town, 7780",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://dawoodbutchery.co.za/",
+   "existing_sources": [
+    "https://dawoodbutchery.co.za/about/",
+    "https://za.africabz.com/western-cape/dawood-muslim-butchery-116887"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 34,
    "current_description": "Dawood Butchery is a halaal butchery in Hanover Park that has served the community for more than 50 years, known locally for its boerwors alongside a range of meats, spices, sauces and braai accessories."

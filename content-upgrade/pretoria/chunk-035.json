@@ -5,10 +5,19 @@
   {
    "slug": "adendorff-machinery-mart-centurion-rooihuiskraal",
    "name": "Adendorff Machinery Mart Centurion",
-   "category": "hardware-stores",
-   "suburb": "rooihuiskraal",
+   "category": "Hardware Stores",
+   "suburb": "Rooihuiskraal",
+   "region": "centurion",
+   "address": "Shop 33, Miracle Retail Park, 49 Old Johannesburg Rd, Rooihuiskraal North, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.adendorff.co.za/",
+   "existing_sources": [
+    "https://www.adendorff.co.za/",
+    "https://www.tiendeo.co.za/stores/centurion/adendorff-machinery-mart-shop-miracle-retail-park-old-johannesburg-road-rooihuiskraal-north/49981"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00, Sat 08:00-13:00, Sun Closed",
    "has_email": false,
    "current_words": 27,
    "current_description": "This Centurion branch of Adendorff Machinery Mart, in Rooihuiskraal North, supplies tools and machinery including generators, air compressors, welding equipment and woodworking machinery direct to the public."
@@ -16,10 +25,18 @@
   {
    "slug": "afro-hair-salon-les-marais",
    "name": "Afro Hair Salon",
-   "category": "beauty-hair-salons",
-   "suburb": "les-marais",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Les Marais",
+   "region": "pretoria",
+   "address": "694 Paul Kruger St, Les Marais, Pretoria, 0084",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/lvp/afro-hair-salon-paul-kruger-street-pretoria-ovL09w"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 08:30-18:30, Sun Closed",
    "has_email": false,
    "current_words": 27,
    "current_description": "Afro Hair Salon is a Les Marais hair salon on Paul Kruger Street specialising in Afro hair care, offering braiding, weaves, locs, keratin treatments, colouring and perms."
@@ -27,10 +44,18 @@
   {
    "slug": "agricad-pty-ltd-waltloo",
    "name": "AgriCAD (Pty) Ltd",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "waltloo",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Waltloo",
+   "region": "pretoria",
+   "address": "292 Mundt St, Waltloo, Pretoria, 0184",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.agricad.co.za/",
+   "existing_sources": [
+    "http://www.agricad.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "AgriCAD (Pty) Ltd supplies agricultural implements organised by farming stage, including deep rippers for land preparation, fertilizer spreaders with augers for planting, and grain hoppers for harvesting."
@@ -38,10 +63,19 @@
   {
    "slug": "aigs-highveld",
    "name": "AIGS",
-   "category": "software-development",
-   "suburb": "highveld",
+   "category": "Software Development",
+   "suburb": "Highveld",
+   "region": "centurion",
+   "address": "Bldg 2, Ground Floor Left, Oxford Office Park, 3 Bauhinia St, Highveld Techno Park, Centurion, 0169",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.aigs.co.za/",
+   "existing_sources": [
+    "http://www.aigs.co.za/",
+    "https://aigs.co.za/our-team/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "AIGS is a Centurion-based software consultancy, founded in 2010, specialising in Progress OpenEdge and Corticon software engineering, modernisation and infrastructure services for its partner and customer base."
@@ -49,10 +83,18 @@
   {
    "slug": "aimnet-meyerspark",
    "name": "AIMNET",
-   "category": "marketing-advertising",
-   "suburb": "meyerspark",
+   "category": "Marketing & Advertising",
+   "suburb": "Meyerspark",
+   "region": "pretoria",
+   "address": "197 Roos St, Meyerspark, Pretoria, 0184",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.aimnet.co.za/",
+   "existing_sources": [
+    "https://www.aimnet.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "AIMNET is a digital marketing consultancy in Meyerspark offering SEO, content strategy and article writing services to grow clients' online visibility, primarily for the professional services industry."
@@ -60,10 +102,19 @@
   {
    "slug": "alfie-s-menlyn",
    "name": "Alfie's",
-   "category": "restaurants-takeaways",
-   "suburb": "hazelwood",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Hazelwood",
+   "region": "pretoria",
+   "address": "11 Hazelwood Road, Hazelwood",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.openstreetmap.org/node/9573572517",
+    "https://www.eatout.co.za/venue/alfies/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Alfie's is a small, intimate Italian cafe in Hazelwood run by an Italian owner and known for fresh homemade pasta, with its gnocchi highly recommended by regulars."
@@ -71,10 +122,18 @@
   {
    "slug": "alisom-enterprise-services-doringkloof",
    "name": "ALISOM ENTERPRISE SERVICES",
-   "category": "computer-it-services",
-   "suburb": "doringkloof",
+   "category": "Computer & IT Services",
+   "suburb": "Doringkloof",
+   "region": "centurion",
+   "address": "17 Impala Ave, Doringkloof, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://aesconnect.co.za/",
+   "existing_sources": [
+    "http://aesconnect.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "AliSom Enterprise Services (AES), founded in 2017, is a Doringkloof-based business-to-business connectivity provider offering fixed and mobile voice and data access alongside bespoke digital and IoT solutions."
@@ -82,10 +141,18 @@
   {
    "slug": "allos-connect-claudius",
    "name": "Allos Connect",
-   "category": "photographers",
-   "suburb": "claudius",
+   "category": "Photographers",
+   "suburb": "Claudius",
+   "region": "centurion",
+   "address": "19477 Molepo St, Mamelodi - Fifteens, Pretoria, 0122",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.allosconnect.co.za/",
+   "existing_sources": [
+    "http://www.allosconnect.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Allos Connect is a video production and digital marketing agency based in Claudius, Pretoria, producing video content, event coverage and marketing campaigns for small and growing businesses."
@@ -93,10 +160,19 @@
   {
    "slug": "alu-fox-kameeldrift",
    "name": "Alu Fox",
-   "category": "hardware-stores",
-   "suburb": "kameeldrift",
+   "category": "Hardware Stores",
+   "suburb": "Kameeldrift",
+   "region": "pretoria",
+   "address": "338 Kameeldrift Rd, Derdepoort, Pretoria, 0186",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.alufox.co.za/",
+   "existing_sources": [
+    "https://www.alufox.co.za/",
+    "https://www.facebook.com/p/Alu-Fox-61556830447183/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Alu Fox is an aluminium and glass manufacturer in Kameeldrift, Pretoria, established in 2020, specialising in aluminium windows, doors and frameless showers for residential and commercial projects."
@@ -104,10 +180,18 @@
   {
    "slug": "an-then-wellness-center-wingate-park",
    "name": "Anóthen Wellness Center",
-   "category": "spas-wellness",
-   "suburb": "wingate-park",
+   "category": "Spas & Wellness",
+   "suburb": "Wingate Park",
+   "region": "pretoria",
+   "address": "741 Umhlanga St, Wingate Park, Pretoria, 0181",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://awonline.co/",
+   "existing_sources": [
+    "http://awonline.co/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Anóthen Wellness Center is a natural health and wellness practice in Wingate Park, Pretoria, offering acupuncture alongside locally encapsulated supplements such as moringa, saffron and buchu."
@@ -115,10 +199,18 @@
   {
    "slug": "ancil-research-laboratories-alphen-park",
    "name": "Ancil Research Laboratories",
-   "category": "electronics-appliances",
-   "suburb": "alphen-park",
+   "category": "Electronics & Appliances",
+   "suburb": "Alphen Park",
+   "region": "pretoria",
+   "address": "63B Dely Rd, Alphen Park, Pretoria, 0161",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.ancil.co.za/",
+   "existing_sources": [
+    "http://www.ancil.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Ancil Research Laboratories is a Pretoria technology company developing RFID asset-tracking systems, GSM payphones, remote meter reading and mobile surveillance systems for telecommunications, security and research clients."
@@ -126,10 +218,18 @@
   {
    "slug": "apache-manufacturing-cc-rosslyn",
    "name": "Apache Manufacturing CC",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "rosslyn",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Rosslyn",
+   "region": "pretoria",
+   "address": "10 Stefaan Viljoen St, Rosslyn, Akasia, 0200",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.ccbc.co.za/business-directory-2/rosslyn-improvement-district/apache-manufacturing"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 08:00-16:30, Fri 08:00-15:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "Apache Manufacturing CC is an air conditioning company in the Rosslyn Industrial Area, Akasia, providing installation, repairs, maintenance and ventilation services for air conditioning and electrical equipment."
@@ -137,10 +237,19 @@
   {
    "slug": "arrie-nel-pharmacy-menlyn",
    "name": "Arrie Nel Pharmacy",
-   "category": "pharmacies",
-   "suburb": "garsfontein",
+   "category": "Pharmacies",
+   "suburb": "Garsfontein",
+   "region": "pretoria",
+   "address": "474 Winifred Yell Street",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.openstreetmap.org/node/8505954878",
+    "https://arrienel.co.za/serene-pharmacy/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Arrie Nel Pharmacy (Serene Pharmacy) is a 24-hour branch of the Arrie Nel Pharmacy Group in Garsfontein, Pretoria, offering in-store shopping, pickup and delivery around the clock."
@@ -148,10 +257,19 @@
   {
    "slug": "asg-software-solutions-ashley-gardens",
    "name": "ASG Software Solutions",
-   "category": "software-development",
-   "suburb": "ashley-gardens",
+   "category": "Software Development",
+   "suburb": "Ashley Gardens",
+   "region": "pretoria",
+   "address": "179 Garsfontein Rd, Ashlea Gardens, Pretoria, 0081",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.asgsolutions.co.za/",
+   "existing_sources": [
+    "http://www.asgsolutions.co.za/",
+    "https://pretoria.co.za/asg-leads-the-charge-on-future-it-outsourcing-trends-for-2025/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "ASG Software Solutions is a Level 2 B-BBEE technology company based in Ashlea Gardens, combining business consulting with custom software solutions to help decision-makers improve business performance."
@@ -159,10 +277,20 @@
   {
    "slug": "avis-centurion",
    "name": "AVIS",
-   "category": "car-dealerships",
-   "suburb": "irene",
+   "category": "Car Dealerships",
+   "suburb": "Irene",
+   "region": "centurion",
+   "address": "Barloworld Toyota Centurion, 1302 South Street, Centurion",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.avis.com/en/locations/af/za/centurion/c0n",
+    "https://www.africanadvice.com/1324311/Car_Rentals/Centurion/Avis_Rent_A_Car/",
+    "https://www.travelocity.com/Avis-at-Barloworld-Toyota-Centurion-1302-South-Street-Centurion-ZAF.v32153.Car-Rental-Guide-Location"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00, Sat 08:00-12:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "AVIS is a car rental branch at Barloworld Toyota Centurion on South Street, part of the international Avis Rent a Car network offering vehicle hire in Centurion."
@@ -170,10 +298,20 @@
   {
    "slug": "avis-pretoria-central",
    "name": "AVIS",
-   "category": "car-dealerships",
-   "suburb": "pretorius-park",
+   "category": "Car Dealerships",
+   "suburb": "Pretorius Park",
+   "region": "pretoria",
+   "address": "70 Francis Baard Street, Pretoria",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.avis.com/en/locations/af/za/pretoria/py1",
+    "https://www.africanadvice.com/1324269/Car_Rentals/Pretoria/Avis_Rent_A_Car/",
+    "https://www.travelocity.com/Avis-at-70-Francis-Baard-Street-Pretoria-ZAF.v32150.Car-Rental-Guide-Location"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-18:00, Sat 08:00-13:00, Sun 08:00-12:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "AVIS is a car rental branch on Francis Baard Street in Pretoria, part of the international Avis Rent a Car network offering daily and long-term vehicle hire."
@@ -181,10 +319,20 @@
   {
    "slug": "bakwena-auto-sales-akasia",
    "name": "Bakwena Auto Sales",
-   "category": "car-dealerships",
-   "suburb": "akasia",
+   "category": "Car Dealerships",
+   "suburb": "Akasia",
+   "region": "pretoria",
+   "address": "185 Lynn Road, Karenpark, Akasia, 0118",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://bakwenasales.co.za/",
+   "existing_sources": [
+    "https://bakwenasales.co.za/contact/",
+    "https://www.yep.co.za/biz/store/iyp/17270358_2",
+    "https://www.cars.co.za/groups/Individual-Dealers/Bakwena-Auto-Sales/5378/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Bakwena Auto Sales is a family-run pre-owned vehicle dealership in Karenpark, Akasia, buying and selling cars, trucks and boats, and offering in-house vehicle finance and workshop servicing."
@@ -192,10 +340,19 @@
   {
    "slug": "baobab-menlyn",
    "name": "Baobab",
-   "category": "restaurants-takeaways",
-   "suburb": "menlyn",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Menlyn",
+   "region": "pretoria",
+   "address": "Atterbury Road",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://baobabcafe.co.za/",
+   "existing_sources": [
+    "https://www.openstreetmap.org/node/7409879853",
+    "https://baobabcafe.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 11:30-21:30, Fri-Sat 11:00-22:00, Sun 11:00-21:30",
    "has_email": false,
    "current_words": 27,
    "current_description": "Baobab Cafe and Grill is a pan-African restaurant in Menlyn Park Shopping Centre on Atterbury Road, offering indoor and terrace dining with views over Pretoria's eastern suburbs."
@@ -203,10 +360,20 @@
   {
    "slug": "bay-tree-guest-house-baileys-muckleneuk",
    "name": "Bay Tree Guest House",
-   "category": "accommodation",
-   "suburb": "baileys-muckleneuk",
+   "category": "Accommodation",
+   "suburb": "Baileys Muckleneuk",
+   "region": "pretoria",
+   "address": "489 Roper St, Baileys Muckleneuk, Pretoria",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.baytree.co.za/",
+   "existing_sources": [
+    "https://www.baytree.co.za/contact-us/",
+    "https://www.hotelplanner.com/Hotels/304009/Reservations-Bay-Tree-Guest-House-Pretoria-489-Roper-St-Muckleneuk-Pretoria-0002",
+    "https://pretoria.co.za/place/bay-tree-guest-house"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Bay Tree Guest House is a guest house in Baileys Muckleneuk, Pretoria, offering rooms with an outdoor pool, garden and free WiFi close to the Brooklyn area."
@@ -214,10 +381,19 @@
   {
    "slug": "be-prop-claudius",
    "name": "BE PROP",
-   "category": "estate-agents",
-   "suburb": "claudius",
+   "category": "Estate Agents",
+   "suburb": "Claudius",
+   "region": "centurion",
+   "address": "163 First Ave, Laudium, Centurion, 0037",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.beprop.co.za/",
+   "existing_sources": [
+    "http://www.beprop.co.za/",
+    "https://www.laudiumonline.co.za/directory-listing/beprop-property-agents/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "BE Prop is an estate agency and property management company established in 2007, based in Laudium, Centurion, handling property sales and rentals across Centurion, Pretoria and beyond."
@@ -225,10 +401,18 @@
   {
    "slug": "beads-direct-is-now-gems-and-things-monument-park",
    "name": "Beads Direct is now Gems and Things",
-   "category": "general-retail",
-   "suburb": "monument-park",
+   "category": "General Retail",
+   "suburb": "Monument Park",
+   "region": "pretoria",
+   "address": "Monument Park Shopping Centre, Monument Park, Pretoria, 0181",
+   "shopping_centre": "Monument Park Shopping Centre",
+   "phone_on_file": true,
    "website": "https://gemsandthings.co.za/",
+   "existing_sources": [
+    "https://gemsandthings.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "Beads Direct is now Gems and Things, a gemstone, bead and jewellery-supplies shop in Monument Park Shopping Centre that rebranded from Beads Direct to Gems and Things."
@@ -236,10 +420,19 @@
   {
    "slug": "bedrock-boardwalk-manor",
    "name": "BedRock",
-   "category": "business-consulting",
-   "suburb": "boardwalk-manor",
+   "category": "Business & Management Consulting",
+   "suburb": "Boardwalk Manor",
+   "region": "pretoria",
+   "address": "Building 13, The Boardwalk Office Park, Phase 7, 107 Eros Rd, 107 Eros Rd, Faerie Glen, Pretoria, 0043",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.twkagri.com/",
+   "existing_sources": [
+    "http://www.twkagri.com/",
+    "https://www.bedrockms.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "BedRock, based in Boardwalk Office Park in Faerie Glen, Pretoria, supplies timber support products for underground mining operations as well as dunnage for industrial and export use."
@@ -247,10 +440,19 @@
   {
    "slug": "beefcakes-menlyn",
    "name": "Beefcakes",
-   "category": "restaurants-takeaways",
-   "suburb": "hazelwood",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Hazelwood",
+   "region": "pretoria",
+   "address": "270 Witch-Hazel Avenue, Pretoria",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://beefcakes.co.za/pretoria/",
+   "existing_sources": [
+    "https://www.waze.com/live-map/directions/za/gp/pretoria/beefcakes-pretoria?to=place.ChIJX1puueNglR4Rx6H66KwgdfI",
+    "https://restaurantguru.com/Beefcakes-Pretoria-Pretoria-2"
+   ],
    "has_hours": true,
+   "hours": "Sun-Tue Closed, Wed-Fri 18:00-00:00, Sat 16:00-00:00",
    "has_email": true,
    "current_words": 27,
    "current_description": "Beefcakes is a 1950s Miami South Beach-styled burger bar on Witch-Hazel Avenue in Pretoria, known for its food, drinks and drag shows performed by resident drag queens."
@@ -258,10 +460,18 @@
   {
    "slug": "bester-attorneys-inc-zwartkop",
    "name": "Bester Attorneys Inc",
-   "category": "attorneys-legal",
-   "suburb": "zwartkop",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Zwartkop",
+   "region": "centurion",
+   "address": "59 Migmatite Dr, Zwartkop, Pretoria, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://pretoria.co.za/place/bester-attorneys-inc"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Bester Attorneys Inc, on Migmatite Drive in Zwartkop, Centurion, is a law firm offering family law, criminal law, commercial law and estate planning services with wheelchair-accessible offices."
@@ -269,10 +479,18 @@
   {
    "slug": "blackbeard-attorneys-inc-wierdapark",
    "name": "Blackbeard Attorneys Inc",
-   "category": "attorneys-legal",
-   "suburb": "wierdapark",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Wierdapark",
+   "region": "centurion",
+   "address": "Unit 6, 39 Estcourt Ave, Wierdapark, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://blackbeardinc.co.za/",
+   "existing_sources": [
+    "http://blackbeardinc.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Blackbeard Attorneys Inc, incorporated in 2013 and based in Wierdapark, practises corporate law, debt collection, property law, labour law and litigation in the High and Lower courts."
@@ -280,10 +498,19 @@
   {
    "slug": "blixm-corporate-group-pty-ltd-sunderland-ridge",
    "name": "BLiXM Corporate Group Pty Ltd",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "sunderland-ridge",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Sunderland Ridge",
+   "region": "centurion",
+   "address": "6 Rudolph St, Sunderland Ridge, Pretoria, 0183",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.blixm.co.za/",
+   "existing_sources": [
+    "https://www.blixm.co.za/",
+    "https://www.facebook.com/p/BLiXm-Corporate-GROUP-100091594039055/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "BLiXM Corporate Group is a Sunderland Ridge-based waste and skip hire company offering 24/7 skip hire, rubble removal and bin hire, alongside a custom-designed furniture division."
@@ -291,10 +518,19 @@
   {
    "slug": "boardmans-menlyn",
    "name": "Boardmans",
-   "category": "general-retail",
-   "suburb": "menlyn",
+   "category": "General Retail",
+   "suburb": "Menlyn",
+   "region": "pretoria",
+   "address": "Shop RV21, Menlyn Park Shopping Centre, Corner Lois Avenue & Atterbury Road, Menlyn",
+   "shopping_centre": "Menlyn Park Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.openstreetmap.org/node/288565623",
+    "https://www.boardmans.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Boardmans in Menlyn Park Shopping Centre is part of South Africa's long-running homeware chain of over 25 stores, selling bed and bath, kitchen, entertaining, and lifestyle products."
@@ -302,10 +538,19 @@
   {
    "slug": "boardmart-louwlardia",
    "name": "BOARDMART",
-   "category": "hardware-stores",
-   "suburb": "louwlardia",
+   "category": "Hardware Stores",
+   "suburb": "Louwlardia",
+   "region": "centurion",
+   "address": "Cnr Tlokwa and, Cloud St, Louwlardia, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.boardmart.co.za/",
+   "existing_sources": [
+    "http://www.boardmart.co.za/",
+    "https://boardmart.co.za/about-us"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "BOARDMART is a wholesale board supplier in Louwlardia, established in 2016, distributing melamine board, chipboard, MDF and hardboard in bulk, with in-house cutting, edging and worktop-surface manufacturing."
@@ -313,10 +558,18 @@
   {
    "slug": "bondev-office-park-midstream-candlewoods-estate",
    "name": "Bondev Office Park, Midstream",
-   "category": "commercial-property-office-space",
-   "suburb": "candlewoods-estate",
+   "category": "Commercial Property & Office Space",
+   "suburb": "Candlewoods Estate",
+   "region": "centurion",
+   "address": "4 Ashford St, Midstream Estate, Olifantsfontein, 1692",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.midstream.co.za/",
+   "existing_sources": [
+    "http://www.midstream.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "An office park within the Midstream Estate development in Olifantsfontein, one of three office parks that form part of Midstream's commercial property offering alongside two shopping centres."
@@ -324,10 +577,19 @@
   {
    "slug": "bonne-maison-riviera",
    "name": "Bonne Maison",
-   "category": "estate-agents",
-   "suburb": "riviera",
+   "category": "Estate Agents",
+   "suburb": "Riviera",
+   "region": "pretoria",
+   "address": "Bonne Maison, 70 Black Street, Riveria, Pretoria, 0084",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://bonnemaison.co.za/",
+   "existing_sources": [
+    "http://bonnemaison.co.za/",
+    "https://www.privateproperty.co.za/estate-agency/bonne-maison/13760"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "An estate agency based on Black Street in Riviera, Pretoria, with property listings across Riviera and other Pretoria suburbs including Amandasig, Hatfield, Monument Park and Moreleta Park."
@@ -335,10 +597,18 @@
   {
    "slug": "bontshi-hennopspark",
    "name": "Bontshi",
-   "category": "printing-services",
-   "suburb": "hennopspark",
+   "category": "Printing Services",
+   "suburb": "Hennopspark",
+   "region": "centurion",
+   "address": "Unit 21, Dirk Smit Industrial Park, 14 Jakaranda St, Hennopspark, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.bontshi.co.za/",
+   "existing_sources": [
+    "http://www.bontshi.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "A printing, graphic design, signage and branding company in Hennopspark, Centurion, established in 2001, also producing corporate gifts and uniforms, and holding a BEE Level 4 certification."
@@ -346,10 +616,18 @@
   {
    "slug": "broadway-laundry-valhalla",
    "name": "Broadway Laundry",
-   "category": "cleaning-services",
-   "suburb": "valhalla",
+   "category": "Cleaning Services",
+   "suburb": "Valhalla",
+   "region": "centurion",
+   "address": "42 Broadway E, Valhalla, Pretoria, 0185",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.broadwaylaundry.co.za/",
+   "existing_sources": [
+    "http://www.broadwaylaundry.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Broadway Laundry, based in Valhalla, offers commercial laundry processing, linen supply and rental, and laundry equipment sales and rental, serving the hospitality, healthcare, education, and corporate sectors."
@@ -357,10 +635,18 @@
   {
    "slug": "bronberg-storage-zwavelpoort",
    "name": "Bronberg Storage",
-   "category": "commercial-property-office-space",
-   "suburb": "zwavelpoort",
+   "category": "Commercial Property & Office Space",
+   "suburb": "Zwavelpoort",
+   "region": "pretoria",
+   "address": "Plot 182 Graham Rd, Zwavelpoort, Pretoria, 0081",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://bronbergstorage.co.za/",
+   "existing_sources": [
+    "https://bronbergstorage.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Bronberg Storage is a self-storage facility in Zwavelpoort, Pretoria, offering secure, access-controlled residential and business storage units and car parking, with 24-hour security and generator backup power."
@@ -368,10 +654,20 @@
   {
    "slug": "brooklyn-dens-dental-studio-waterkloof",
    "name": "Brooklyn Dens Dental Studio",
-   "category": "dentists",
-   "suburb": "waterkloof",
+   "category": "Dentists",
+   "suburb": "Waterkloof",
+   "region": "pretoria",
+   "address": "1148 Jan Shoba Street",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.snel.co.za/",
+   "existing_sources": [
+    "https://www.openstreetmap.org/node/9256582447",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=22110",
+    "https://www.meditrader.co.za/brooklyn-dens-dental-studio-dentist-dental-surgeon-pretoria-gauteng"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Brooklyn Dens Dental Studio is a dentistry practice offering general dental care in Pretoria, listed as a dentist/dental surgeon in the Medpages and Meditrader healthcare directories."
@@ -379,10 +675,18 @@
   {
    "slug": "bts-centurion-central",
    "name": "BTS",
-   "category": "business-consulting",
-   "suburb": "centurion-central",
+   "category": "Business & Management Consulting",
+   "suburb": "Centurion Central",
+   "region": "centurion",
+   "address": "267 West Ave, Lyttelton AH, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.bts.com/",
+   "existing_sources": [
+    "http://www.bts.com/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "BTS Africa is a business consulting firm headquartered in Lyttelton, Centurion, founded in 1985 as part of the global BTS Group network delivering strategy-execution and leadership-development consulting."
@@ -390,10 +694,18 @@
   {
    "slug": "c-d-empire-supply-and-services-lotus-gardens",
    "name": "C&D EMPIRE SUPPLY AND SERVICES",
-   "category": "business-consulting",
-   "suburb": "lotus-gardens",
+   "category": "Business & Management Consulting",
+   "suburb": "Lotus Gardens",
+   "region": "pretoria",
+   "address": "32 MODITLARE STREET, LOTUS GARDEN, Pretoria, 0008",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://thovhogic.wixsite.com/website",
+   "existing_sources": [
+    "https://thovhogic.wixsite.com/website"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "C&D Empire Supply and Services is a Lotus Gardens-based consulting firm offering strategic planning and business advisory services to help clients grow and expand across various industries."
@@ -401,10 +713,16 @@
   {
    "slug": "calabash-conracting-works-annlin",
    "name": "Calabash Conracting Works",
-   "category": "building-construction",
-   "suburb": "annlin",
+   "category": "Building & Construction",
+   "suburb": "Annlin",
+   "region": "pretoria",
+   "address": "Ext. 36, 318 Desmia Cres, Annlin, Pretoria, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Calabash Contracting Works is a contracting company based in Annlin, Pretoria, that describes itself as committed to equal opportunities, transparency and accountability in the services it provides."
@@ -412,10 +730,19 @@
   {
    "slug": "casa-social-da-madeira-pretoria-zwavelpoort",
    "name": "Casa Social da Madeira - Pretoria",
-   "category": "events-function-venues",
-   "suburb": "zwavelpoort",
+   "category": "Events & Function Venues",
+   "suburb": "Zwavelpoort",
+   "region": "pretoria",
+   "address": "Casa Social Da Madeira, 34 Boschkop Rd, Zwavelpoort, 0081",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.facebook.com/casasocialdamadeira",
+    "https://www.myidoz.co.za/profile/casa-social-da-madeira-pretoria"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Casa Social da Madeira is a Portuguese cultural and social club in Zwavelpoort, Pretoria East, that also operates as an events venue hosting weddings, conferences and functions."
@@ -423,10 +750,18 @@
   {
    "slug": "cash-converters-nina-park-ninapark",
    "name": "Cash Converters Nina Park",
-   "category": "general-retail",
-   "suburb": "ninapark",
+   "category": "General Retail",
+   "suburb": "Ninapark",
+   "region": "pretoria",
+   "address": "Cnr Rachel De Beer Rd & Grafenheim St, Shop 21, Nina Park Square, Nina Park, Akasia, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.cashconverters.co.za/",
+   "existing_sources": [
+    "http://www.cashconverters.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:30, Sat 09:00-14:30, Sun 09:00-12:30",
    "has_email": false,
    "current_words": 27,
    "current_description": "Cash Converters Nina Park is a second-hand goods and money-lending store in Nina Park Square, Akasia, buying and selling furniture, homeware, antiques, collectibles, gold and used appliances."
@@ -434,10 +769,18 @@
   {
    "slug": "cashbuild-olievenhoutbosch-olievenhoutbosch",
    "name": "Cashbuild Olievenhoutbosch",
-   "category": "hardware-stores",
-   "suburb": "olievenhoutbosch",
+   "category": "Hardware Stores",
+   "suburb": "Olievenhoutbosch",
+   "region": "centurion",
+   "address": "Shop 1, Olievenhout Plaza, Olifantsfontein Rd, Olievenhoutbosch, Centurion, 0187",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://locations.cashbuild.co.za/Retail-Centurion-CashbuildOlievenhoutbosch?utm_source=google_maps&utm_medium=website_button&utm_campaign=SP&utm_content=SP",
+   "existing_sources": [
+    "https://locations.cashbuild.co.za/Retail-Centurion-CashbuildOlievenhoutbosch?utm_source=google_maps&utm_medium=website_button&utm_campaign=SP&utm_content=SP"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-18:00, Sat 07:00-16:00, Sun 08:00-14:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "A Cashbuild building materials store at Olievenhout Plaza in Olievenhoutbosch, Centurion, stocking cement, timber, hardware, plumbing, electrical, roofing, paint and garden supplies, with delivery and quoting services."
@@ -445,10 +788,18 @@
   {
    "slug": "centurion-accountant-centurion-central",
    "name": "Centurion Accountant",
-   "category": "accountants",
-   "suburb": "centurion-central",
+   "category": "Accountants",
+   "suburb": "Centurion Central",
+   "region": "centurion",
+   "address": "88 South St, Die Hoewes, Centurion, 0163",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.facebook.com/CenturionAccountant",
+   "existing_sources": [
+    "https://www.facebook.com/CenturionAccountant"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Centurion Accountant is an accounting practice based in Die Hoewes, Centurion, with a presence on Facebook and local business directories; further service details were not publicly available."
@@ -456,10 +807,16 @@
   {
    "slug": "chocho-property-group-hesteapark",
    "name": "Chocho Property Group",
-   "category": "estate-agents",
-   "suburb": "hesteapark",
+   "category": "Estate Agents",
+   "suburb": "Hesteapark",
+   "region": "pretoria",
+   "address": "7 Great Dane St, Hesteapark, Pretoria, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Chocho Property Group is an estate agency operating in the greater Pretoria area, with property listings spanning Pretoria North and surrounding suburbs such as Akasia and Mabopane."
@@ -467,10 +824,18 @@
   {
    "slug": "cim-lubricants-hermanstad",
    "name": "CIM Lubricants",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "hermanstad",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Hermanstad",
+   "region": "pretoria",
+   "address": "486 Taljaard St, Hermanstad, Pretoria, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.cimlubricants.com/",
+   "existing_sources": [
+    "http://www.cimlubricants.com/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:30-16:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "CIM Lubricants is a Hermanstad-based manufacturer established in 2006 that blends and distributes automotive and industrial lubricants, including engine oils, gear oils, hydraulic fluids, greases and coolants."
@@ -478,10 +843,18 @@
   {
    "slug": "clean-cut-glass-aluminium-pty-ltd-hennopspark",
    "name": "Clean Cut Glass & Aluminium Pty Ltd",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "hennopspark",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Hennopspark",
+   "region": "centurion",
+   "address": "Unit 33, Dirk Smit Industrial Park, 14 Jakaranda St, Hennopspark, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.ccglassaluminium.co.za/",
+   "existing_sources": [
+    "http://www.ccglassaluminium.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "A manufacturer of aluminium and glass products based in Hennopspark, Centurion, making windows, doors, frameless glass showers, shop fronts, louvres and skylights for residential and commercial projects."
@@ -489,10 +862,19 @@
   {
    "slug": "cleaning-warehouse-pretoria-north-pretoria-north",
    "name": "Cleaning Warehouse Pretoria North",
-   "category": "cleaning-services",
-   "suburb": "pretoria-north",
+   "category": "Cleaning Services",
+   "suburb": "Pretoria North",
+   "region": "pretoria",
+   "address": "386 Jan Van Riebeeck St, Pretoria North, Pretoria, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.cleaningwarehouse.co.za/",
+   "existing_sources": [
+    "http://www.cleaningwarehouse.co.za/",
+    "https://rsa.worldorgs.com/catalog/pretoria/cleaning-products-supplier/cleaning-warehouse-pretoria-north"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "The Pretoria North branch of Cleaning Warehouse, a Pretoria-based chain of cleaning-products stores at 386 Jan Van Riebeeck Street supplying household and industrial cleaning products and detergents."
@@ -500,10 +882,20 @@
   {
    "slug": "clickleaf-pty-ltd-midstream-estate",
    "name": "Clickleaf (Pty) Ltd",
-   "category": "computer-it-services",
-   "suburb": "midstream-estate",
+   "category": "Computer & IT Services",
+   "suburb": "Midstream Estate",
+   "region": "centurion",
+   "address": "1 Midstream Ridge Dr, Midstream Estate, Midstream, 1692",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.clickleaf.co.za/",
+   "existing_sources": [
+    "http://www.clickleaf.co.za/",
+    "https://clickleaf.co.za/collections/all",
+    "https://www.pricecheck.co.za/shops/5679/ClickLeaf"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "An online store based in Midstream Estate, Centurion, selling branded gardening and irrigation products, including GARDENA, Flymo, Neta and Rain Bird ranges, lawnmower parts and plant-care products."
@@ -511,10 +903,19 @@
   {
    "slug": "clicks-hammanskraal",
    "name": "Clicks",
-   "category": "pharmacies",
-   "suburb": "hammanskraal",
+   "category": "Pharmacies",
+   "suburb": "Hammanskraal",
+   "region": "pretoria",
+   "address": "Shop 20a, Jubilee Mall, Cnr Jubilee Rd & Zoutpan Rd, Temba, Hammanskraal",
+   "shopping_centre": "Jubilee Mall",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://clicks.co.za/store/Jubilee-Mall/1633",
+    "https://my-catalogue.co.za/stores/hammanskraal/clicks/jubilee-mall-cnr-jubilee-rd-zoutpan-rd-temba"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 09:00-18:00, Sun/Public Holidays 09:00-15:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "Clicks Jubilee Mall is a pharmacy and health and beauty store located in Jubilee Mall at the corner of Jubilee Road and Zoutpan Road in Temba, Hammanskraal."
@@ -522,10 +923,21 @@
   {
    "slug": "clicks-mallreds-rooihuiskraal-north",
    "name": "Clicks Mall@Reds",
-   "category": "pharmacies",
-   "suburb": "rooihuiskraal-north",
+   "category": "Pharmacies",
+   "suburb": "Rooihuiskraal North",
+   "region": "centurion",
+   "address": "Mall@Reds, Cnr Rooihuiskraal Rd & Hendrik Verwoerd Dr, Rooihuiskraal North, Centurion, 0157",
+   "shopping_centre": "Mall@Reds",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://clicks.co.za/store/The-Mall-at-Reds/427",
+    "https://www.jamii.co.za/5030-centurion-pharmacy-clicks-pharmacy-clinic-mallreds",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=216308",
+    "https://openhours-southafrica.com/en/centurion/clicks-pharmacy-clinic-mall-reds"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-19:00, Sat 08:00-17:00, Sun 09:00-17:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "Clicks Mall@Reds is a pharmacy and health-and-beauty store inside the Mall@Reds shopping centre, with an in-store dispensary as part of the national Clicks retail chain."
@@ -533,10 +945,20 @@
   {
    "slug": "clicks-mamelodi-crossing-mamelodi",
    "name": "Clicks Mamelodi Crossing",
-   "category": "pharmacies",
-   "suburb": "mamelodi",
+   "category": "Pharmacies",
+   "suburb": "Mamelodi",
+   "region": "pretoria",
+   "address": "Shop H11, Mamelodi Crossing, Cnr Watloo & Stormvoel, Maphalla St, Mamelodi, 0122",
+   "shopping_centre": "Mamelodi Crossing",
+   "phone_on_file": true,
    "website": "https://clicks.co.za/store/Mamelodi/1672",
+   "existing_sources": [
+    "https://clicks.co.za/store/Mamelodi/1672",
+    "https://za.africabz.com/gauteng/clicks-pharmacy-mamelodi-406170",
+    "https://my-catalogue.co.za/stores/pretoria/clicks/mamelodi-crossing-cnr-watloo-and-stormvoel-mamelodi"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sun 09:00-14:00",
    "has_email": false,
    "current_words": 27,
    "current_description": "Clicks Mamelodi Crossing is a pharmacy and health and beauty store located in the Mamelodi Crossing shopping centre at the corner of Watloo and Stormvoel roads, Mamelodi."
@@ -544,10 +966,18 @@
   {
    "slug": "co-space-entrepreneur-village-pretoria-derdepoort",
    "name": "Co.Space Entrepreneur Village | Pretoria",
-   "category": "commercial-property-office-space",
-   "suburb": "derdepoort",
+   "category": "Commercial Property & Office Space",
+   "suburb": "Derdepoort",
+   "region": "pretoria",
+   "address": "9 Havelock Rd, Willow Park Manor, Pretoria, 0184",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://cospace.co.za/pretoria/",
+   "existing_sources": [
+    "https://cospace.co.za/pretoria/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 27,
    "current_description": "Co.Space Entrepreneur Village Pretoria offers flexible, month-to-month workspace rentals including offices, warehouses, studios, workshops, commercial kitchens and event space near the Simon Vermooten and Bronkhorstspruit intersection."

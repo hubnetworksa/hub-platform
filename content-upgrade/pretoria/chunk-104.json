@@ -5,10 +5,19 @@
   {
    "slug": "clicks-sunnyside-sunnyside",
    "name": "Clicks Sunnyside",
-   "category": "pharmacies",
-   "suburb": "sunnyside",
+   "category": "Pharmacies",
+   "suburb": "Sunnyside",
+   "region": "pretoria",
+   "address": "Sunnypark Shopping Centre, Greef St, Trevenna, Pretoria, 0002",
+   "shopping_centre": "Sunnypark Shopping Centre",
+   "phone_on_file": true,
    "website": "https://clicks.co.za",
+   "existing_sources": [
+    "https://clicks.co.za/store/Sunnyside/305",
+    "https://sunnyparkcentre.co.za/shops/clicks/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Clicks Sunnyside is a health, beauty and pharmacy branch, store number 305, inside Sunnypark Shopping Centre in Sunnyside, Pretoria, offering a dispensary alongside personal-care and everyday retail. Open Mon-Fri 09:00-18:00, Sat 09:00-17:00, Sun 09:00-14:00."
@@ -16,10 +25,18 @@
   {
    "slug": "clubview-laundry-clubview-east",
    "name": "Clubview Laundry",
-   "category": "cleaning-services",
-   "suburb": "clubview-east",
+   "category": "Cleaning Services",
+   "suburb": "Clubview East",
+   "region": "centurion",
+   "address": "Cnr Harvard and, Lyttelton Rd, Clubview, Centurion, 0151",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.clubviewlaundry.co.za/",
+   "existing_sources": [
+    "http://www.clubviewlaundry.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Clubview Laundry offers laundry and dry cleaning services, including standard wash/dry/iron, dry cleaning (PERC and eco-friendly wet cleaning), carpet cleaning, shoe repair, and garment alteration, from Shop G07 Clubview Corner, corner of Lyttelton and Harvard Roads, Clubview, Centurion."
@@ -27,10 +44,19 @@
   {
    "slug": "constantia-guest-lodge-meyerspark",
    "name": "Constantia Guest Lodge",
-   "category": "accommodation",
-   "suburb": "meyerspark",
+   "category": "Accommodation",
+   "suburb": "Meyerspark",
+   "region": "pretoria",
+   "address": "133 Emmarentia Street, Meyerspark, Pretoria, 0184",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.constantialodge.co.za",
+   "existing_sources": [
+    "https://www.constantialodge.co.za",
+    "https://www.sa-venues.com/visit/constantiaguestlodge/map.php"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Constantia Guest Lodge is a wine-farm-themed guest house in Meyerspark with seven Cape Dutch-styled en-suite rooms each named after a wine varietal, an outdoor pool, free WiFi, complimentary breakfast and a veranda seating area, catering to business travellers and tourists."
@@ -38,10 +64,20 @@
   {
    "slug": "cordys-africa-leeuwfontein",
    "name": "Cordys Africa",
-   "category": "software-development",
-   "suburb": "leeuwfontein",
+   "category": "Software Development",
+   "suburb": "Leeuwfontein",
+   "region": "pretoria",
+   "address": "Plot 49 Protea St, Roodeplaat, 0035",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.cordys.co.za/",
+   "existing_sources": [
+    "https://www.cordys.co.za/",
+    "https://www.offerzen.com/companies/cordys-africa",
+    "https://www.facebook.com/cordysafrica/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Cordys Africa is a Pretoria-based software development company providing IT solutions for the agricultural sector, with custom software developed for the broiler, broiler breeder, commercial layer, and feed mill markets, including its Avihance poultry management and Millstone+ feed mill products."
@@ -49,10 +85,18 @@
   {
    "slug": "creative-condos-kameeldrift",
    "name": "Creative Condos",
-   "category": "building-construction",
-   "suburb": "kameeldrift",
+   "category": "Building & Construction",
+   "suburb": "Kameeldrift",
+   "region": "pretoria",
+   "address": "251 Moepel St, Montana, Pretoria, 0001",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.wendycorp.co.za/",
+   "existing_sources": [
+    "http://www.wendycorp.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "A prefabricated timber and modular construction company based in Montana, Pretoria, offering Nutec wendy houses, tiny homes, log cabins, garden studios, decking, and prefab classrooms and offices built using timber frame and insulated panel systems, serving clients across South Africa."
@@ -60,10 +104,18 @@
   {
    "slug": "daisy-business-solutions-midfields-estate",
    "name": "Daisy Business Solutions",
-   "category": "books-stationery",
-   "suburb": "midfields-estate",
+   "category": "Books & Stationery",
+   "suburb": "Midfields Estate",
+   "region": "centurion",
+   "address": "1182 Kuskoraal Street Moregloed, East, Pretoria, 0081",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://daisysolutions.co.za/",
+   "existing_sources": [
+    "https://daisysolutions.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Daisy Business Solutions is a South African technology services provider with over 40 years in business, offering connectivity, telecoms, IT managed services, software, business security, print and document solutions, solar and energy systems, and business finance across multiple branches nationwide."
@@ -71,10 +123,20 @@
   {
    "slug": "delugo-the-happy-food-co-hennopspark",
    "name": "Delugo | The Happy Food Co.",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "hennopspark",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Hennopspark",
+   "region": "centurion",
+   "address": "28 Hilda Ave, Hennopspark, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.delugo.co.za/",
+   "existing_sources": [
+    "http://www.delugo.co.za/",
+    "https://delugo.co.za/about/",
+    "https://www.facebook.com/delugohappyfoodco/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00, Sat 09:00-13:00",
    "has_email": false,
    "current_words": 40,
    "current_description": "Delugo | The Happy Food Co. is a frozen ready-made meals manufacturer in Hennopspark, Centurion, describing itself as \"comfort food for modern taste buds,\" offering meal categories including beef, chicken, pasta, pizza and pies, plus family meal boxes delivered across Gauteng."
@@ -82,10 +144,18 @@
   {
    "slug": "deo-swanepoel-properties-doornpoort",
    "name": "Deo Swanepoel Properties",
-   "category": "estate-agents",
-   "suburb": "doornpoort",
+   "category": "Estate Agents",
+   "suburb": "Doornpoort",
+   "region": "pretoria",
+   "address": "488 Airport Rd, Doornpoort, Pretoria, 0017",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.deoswanepoelproperties.co.za/",
+   "existing_sources": [
+    "http://www.deoswanepoelproperties.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "A Pretoria-based real estate agency registered with the PPRA, handling the sale, purchase and rental of residential and commercial property across northern Pretoria suburbs including Magalieskruin, Montana, Silverton and Doornpoort, with an in-house home loan specialist and free property evaluations."
@@ -93,10 +163,18 @@
   {
    "slug": "deposita-blue-valley-golf-estate",
    "name": "Deposita",
-   "category": "business-consulting",
-   "suburb": "blue-valley-golf-estate",
+   "category": "Business & Management Consulting",
+   "suburb": "Blue Valley Golf Estate",
+   "region": "centurion",
+   "address": "1 Slate Avenue, N1 Business Park. Old Pretoria Road. Midrand, Centurion, 0175",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.deposita.co.za/",
+   "existing_sources": [
+    "http://www.deposita.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "A cash management technology company providing smart safes, cash recycling machines, banknote disinfection cabinets and the Connector SaaS platform for retail, wholesale and banking clients, holding ISO 27001 and ISO 9001:2015 certification as part of the Allied Universal group."
@@ -104,10 +182,18 @@
   {
    "slug": "die-byenes-jan-niemand-park",
    "name": "Die Byenes",
-   "category": "books-stationery",
-   "suburb": "jan-niemand-park",
+   "category": "Books & Stationery",
+   "suburb": "Jan Niemand Park",
+   "region": "pretoria",
+   "address": "75 Jan Coetzee St, Jan Niemand Park, Pretoria, 0186",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.diebyenes.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Die Byenes (DieByeNes) is a stationery, printing and personal branding business in Jan Niemand Park, Pretoria, offering custom printing, stickers and labels, sublimation products such as personalised mugs and bottles, and laser-cut signage, with orders placed online or via WhatsApp."
@@ -115,10 +201,18 @@
   {
    "slug": "die-grashut-boekenhoutskloof",
    "name": "Die Grashut",
-   "category": "building-construction",
-   "suburb": "boekenhoutskloof",
+   "category": "Building & Construction",
+   "suburb": "Boekenhoutskloof",
+   "region": "pretoria",
+   "address": "22 Lavender Road, Wonderboom, Pretoria, 0138",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.diegrashut.co.za/",
+   "existing_sources": [
+    "http://www.diegrashut.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Die Grashut is a thatching and construction company established in 1996, offering thatch roof installation and repairs, building and renovation work, custom lapas and pergolas, fire retardant treatment, and lightning protection systems, serving Pretoria and other parts of South Africa."
@@ -126,10 +220,18 @@
   {
    "slug": "digit-technologies-villieria",
    "name": "Digit Technologies",
-   "category": "software-development",
-   "suburb": "villieria",
+   "category": "Software Development",
+   "suburb": "Villieria",
+   "region": "pretoria",
+   "address": "353 30th Ave, Villieria, Pretoria, 0186",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://digit.co.za/",
+   "existing_sources": [
+    "https://digit.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Digit Technologies is a Pretoria-based IT solutions provider operating since 2005, offering cloud and web hosting, Office 365 reselling, Omni Accounts and ERP software reselling, cloud backup and security services, hosted VOIP/PBX systems, and on-site and remote IT support."
@@ -137,10 +239,18 @@
   {
    "slug": "digital-zoo-zwavelpoort",
    "name": "Digital Zoo",
-   "category": "software-development",
-   "suburb": "zwavelpoort",
+   "category": "Software Development",
+   "suburb": "Zwavelpoort",
+   "region": "pretoria",
+   "address": "Rhino Ridge, 13 Sandolien St, The Wilds, Pretoria, 0181",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.digitalzoo.com/",
+   "existing_sources": [
+    "https://www.digitalzoo.com/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00",
    "has_email": false,
    "current_words": 40,
    "current_description": "Digital Zoo is a web design and digital marketing agency based in The Wilds, Pretoria, offering website design and development, SEO, social media optimisation, domain registration, and business email hosting, with fully managed content updates, security maintenance, and analytics reporting."
@@ -148,10 +258,18 @@
   {
    "slug": "diy-depot-ryneveld-pierre-van-ryneveld-park",
    "name": "DIY DEPOT Ryneveld",
-   "category": "hardware-stores",
-   "suburb": "pierre-van-ryneveld-park",
+   "category": "Hardware Stores",
+   "suburb": "Pierre van Ryneveld Park",
+   "region": "centurion",
+   "address": "Shop 10 Ryneveld corner centre, Pierre van Ryneveld Park, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.diydepot.co.za/",
+   "existing_sources": [
+    "http://www.diydepot.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "A branch of the DIY Depot hardware and building-supplies chain, which operates more than 140 stores across South Africa stocking cement, bricks, sand, timber and other building materials, along with brands such as Plascon, AfriSam and Gardena, plus delivery services."
@@ -159,10 +277,18 @@
   {
    "slug": "drake-events-clydesdale",
    "name": "Drake Events",
-   "category": "events-function-venues",
-   "suburb": "clydesdale",
+   "category": "Events & Function Venues",
+   "suburb": "Clydesdale",
+   "region": "pretoria",
+   "address": "886 Jacques St, Moreleta Park, Pretoria, 0044",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.drakeevents.co.za/",
+   "existing_sources": [
+    "http://www.drakeevents.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Drake Events is an event management company offering full event planning and on-site coordination, bar and drinks service (Drinks by Drake), event staffing (Staff by Drake), and styling and decor (Styling by Drake) for corporate events, brand activations and celebrations."
@@ -170,10 +296,18 @@
   {
    "slug": "e-connect-kilner-park",
    "name": "E-CONNECT",
-   "category": "electricians",
-   "suburb": "kilner-park",
+   "category": "Electricians",
+   "suburb": "Kilner Park",
+   "region": "pretoria",
+   "address": "11 Bellis St, Kilner Park, Pretoria, 0186",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://electricalconnections.co.za/",
+   "existing_sources": [
+    "http://electricalconnections.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "E-Connect has operated as an electrical contractor in South Africa since 1995, headquartered in Kilner Park, Pretoria with an additional depot in Willow Park Manor, delivering electrical installation projects in line with SABS certification and also offering solar installation services."
@@ -181,10 +315,18 @@
   {
    "slug": "easy-lift-transport-crane-and-truck-hire-florauna",
    "name": "Easy Lift Transport Crane and Truck Hire",
-   "category": "building-construction",
-   "suburb": "florauna",
+   "category": "Building & Construction",
+   "suburb": "Florauna",
+   "region": "pretoria",
+   "address": "140 Jack Hindon St, Pretoria North, Pretoria, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://easy-lift-truck-and-crane-hire.co.za/",
+   "existing_sources": [
+    "https://easy-lift-truck-and-crane-hire.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Easy Lift Transport Crane and Truck Hire, founded in 1996 by Johnny Hough, provides heavy lifting and transport services in Pretoria and Gauteng, including generator and machinery transport, palm tree and cycad relocation, light aircraft recovery, and steel structure erection."
@@ -192,10 +334,19 @@
   {
    "slug": "elardus-park-midas-elardus-park",
    "name": "Elardus Park MIDAS",
-   "category": "motor-spares",
-   "suburb": "elardus-park",
+   "category": "Motor Spares",
+   "suburb": "Elardus Park",
+   "region": "pretoria",
+   "address": "Shop 8, Barnard St, Elardus Park, Pretoria, 0047",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://midas.co.za/?utm_source=google_maps&utm_medium=website_button&utm_campaign=SP&utm_content=SP",
+   "existing_sources": [
+    "https://midas.co.za/store-locator/elardus-park-midas/",
+    "https://pretoria.co.za/listing/elardus-park-midas/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-19:00, Sat 08:00-15:00, Sun 09:00-13:00",
    "has_email": false,
    "current_words": 40,
    "current_description": "Elardus Park MIDAS is a branch of the Midas automotive parts retail chain, southern Africa's largest privately owned automotive parts retailer and wholesaler, stocking spare parts, accessories and car care products at the Elardus Park Shopping Centre on Barnard Street."
@@ -203,10 +354,18 @@
   {
    "slug": "election-management-consulting-agency-of-africa-willow-park-manor",
    "name": "Election Management Consulting Agency of Africa",
-   "category": "business-consulting",
-   "suburb": "willow-park-manor",
+   "category": "Business & Management Consulting",
+   "suburb": "Willow Park Manor",
+   "region": "pretoria",
+   "address": "11 Havelock Rd, Willow Park Manor, Pretoria, 0184",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://emca.co.za/",
+   "existing_sources": [
+    "http://emca.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "The Election Management Consulting Agency of Africa (EMCA) is a Pretoria-based independent specialist consultancy focused on elections, offering election management, election materials supply and election campaign management, along with political strategy consulting and a Women in Politics programme across Africa."
@@ -214,10 +373,18 @@
   {
    "slug": "elite-wealth-technology-solutions-boardwalk-manor",
    "name": "Elite Wealth Technology Solutions",
-   "category": "software-development",
-   "suburb": "boardwalk-manor",
+   "category": "Software Development",
+   "suburb": "Boardwalk Manor",
+   "region": "pretoria",
+   "address": "83 Boardwalk Blvd, Valley Farm AH, Faerie Glen, Pretoria, 0083",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.elitewealth.biz/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Elite Wealth Technology Solutions is a Pretoria-based software company, founded in 2008, providing a web-based practice management system for financial advisors, with client management, financial planning tools, and automated data feeds and reporting, from Boardwalk Office Park in Faerie Glen."
@@ -225,10 +392,18 @@
   {
    "slug": "era-real-estate-south-africa-centurion-golf-estate",
    "name": "ERA Real Estate - South Africa",
-   "category": "estate-agents",
-   "suburb": "centurion-golf-estate",
+   "category": "Estate Agents",
+   "suburb": "Centurion Golf Estate",
+   "region": "centurion",
+   "address": "7 Einstein St, Highveld Techno Park, Centurion, 0067",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.era.co.za/",
+   "existing_sources": [
+    "http://www.era.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "ERA Real Estate South Africa is part of the ERA Group, a residential real estate franchise brokerage network operating in South Africa since 1972, offering property sales and rental services for houses, apartments, townhouses, commercial properties, farms and vacant land."
@@ -236,10 +411,18 @@
   {
    "slug": "eresa-pty-ltd-koedoespoort",
    "name": "ERESA (PTY) LTD",
-   "category": "electronics-appliances",
-   "suburb": "koedoespoort",
+   "category": "Electronics & Appliances",
+   "suburb": "Koedoespoort",
+   "region": "pretoria",
+   "address": "22 Eland St, Koedoespoort Industrial, Pretoria, 0186",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.eresa.co.za/",
+   "existing_sources": [
+    "https://www.eresa.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:30-16:30",
    "has_email": false,
    "current_words": 40,
    "current_description": "ERESA specialises in emergency and specialised vehicle conversions, including custom ambulances, security and mobile clinic vehicles, LED lightbars, sirens and safety equipment, serving police, medical, security, construction and mining sectors, with assembly and engineering carried out locally in Koedoespoort, Pretoria."
@@ -247,10 +430,20 @@
   {
    "slug": "evetech-centurion",
    "name": "Evetech",
-   "category": "computer-it-services",
-   "suburb": "brakfontein",
+   "category": "Computer & IT Services",
+   "suburb": "Brakfontein",
+   "region": "centurion",
+   "address": "Limeroc Business Park, Holland Road (R114), Centurion",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.evetech.co.za/contact",
+    "https://www.africabizinfo.com/ZA/evetech-012-653-0033",
+    "https://pretoria.co.za/place/evetech"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-16:00, Sat 09:00-12:00, Sun Closed",
    "has_email": false,
    "current_words": 40,
    "current_description": "Evetech has built and sold PC systems since 2007, working with major component brands including Intel, AMD, NVIDIA, ASUS and MSI; its Centurion store on Holland Road offers in-store and online sales, custom PC assembly, and repair and onsite services."
@@ -258,10 +451,18 @@
   {
    "slug": "eztax-erasmia",
    "name": "EZTax",
-   "category": "accountants",
-   "suburb": "erasmia",
+   "category": "Accountants",
+   "suburb": "Erasmia",
+   "region": "centurion",
+   "address": "538 Helena St, Erasmia, Centurion, 0183",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.eztax.co.za/",
+   "existing_sources": [
+    "http://www.eztax.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Eztax CC is an accounting firm based in Erasmia, Centurion, offering accounting, tax registrations and submissions, CIPC company registration and amendments, and will planning and deceased estate administration. The firm states it has provided financial services for over 13 years."
@@ -269,10 +470,19 @@
   {
    "slug": "firwood-lodge-hazelwood",
    "name": "Firwood Lodge",
-   "category": "accommodation",
-   "suburb": "hazelwood",
+   "category": "Accommodation",
+   "suburb": "Hazelwood",
+   "region": "pretoria",
+   "address": "15 Firwood Avenue, Hazelwood, Pretoria, 0081",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://firwoodlodge.com",
+   "existing_sources": [
+    "https://firwoodlodge.com/",
+    "https://www.sa-venues.com/visit/firwoodlodge/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Firwood Lodge is a TGCSA 4-star graded guesthouse in Hazelwood offering en-suite rooms with flat-screen TVs and eco-friendly air-conditioning, along with an outdoor pool, bar and fitness room, and has been welcoming guests in the area for over a decade."
@@ -280,10 +490,19 @@
   {
    "slug": "fourier-it-die-hoewes",
    "name": "Fourier IT",
-   "category": "software-development",
-   "suburb": "die-hoewes",
+   "category": "Software Development",
+   "suburb": "Die Hoewes",
+   "region": "centurion",
+   "address": "Block 4 - Unit 19, Falcon Crest Office Park, 142 South St, Die Hoewes, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://fourierit.co.za/",
+   "existing_sources": [
+    "https://fourierit.co.za/",
+    "https://za.linkedin.com/company/fourier-it"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Fourier IT is an IT services and consulting company in Die Hoewes, Centurion, trading since 1998, specialising in custom software development, mobile applications, data warehousing and business intelligence, and process automation for clients in the financial, engineering and mining sectors."
@@ -291,10 +510,20 @@
   {
    "slug": "gerneke-potgieter-attorneys-pretoria-north",
    "name": "Gerneke & Potgieter Attorneys",
-   "category": "attorneys-legal",
-   "suburb": "pretoria-north",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Pretoria North",
+   "region": "pretoria",
+   "address": "307 Danie Theron Street, Pretoria North, 0002",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.thinklocal.co.za/biz/gerneke-potgieter-attorneys-pretoria",
+    "https://www.brabys.com/business/5782975/south-africa/gauteng/pretoria/pretoria-north/danie-theron-st/attorneys/conveyance-corporate-law/gerneke-potgieter",
+    "https://www.property24.com/attorneys/gerneke-and-potgieter-attorneys/201"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 40,
    "current_description": "Gerneke & Potgieter Attorneys is a Pretoria North law firm established in 1995, specialising in conveyancing and registered on the panels of all four major commercial banks, with practice areas spanning estate litigation, civil law, estate planning and divorce law."
@@ -302,10 +531,20 @@
   {
    "slug": "gm-anchor-group-heritage-hill-estate",
    "name": "GM Anchor Group",
-   "category": "software-development",
-   "suburb": "heritage-hill-estate",
+   "category": "Software Development",
+   "suburb": "Heritage Hill Estate",
+   "region": "centurion",
+   "address": "159 Brakfontein Rd, Gauteng, Pretoria, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.gmanchorgroup.net/",
+   "existing_sources": [
+    "https://www.gmanchorgroup.net/",
+    "https://pretoria.co.za/listing/gm-anchor-group/",
+    "https://www.mtaalamu.com/south-africa/pretoria/website-designer/gm-anchor-group"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "GM Anchor Group is a digital marketing and IT company in Heritage Hill Estate offering SEO, social media management and paid advertising alongside IT services such as cybersecurity and process optimisation, plus a Leadership & Innovation Hub for business-growth training."
@@ -313,10 +552,21 @@
   {
    "slug": "go2-accounting-garsfontein",
    "name": "Go2 Accounting",
-   "category": "accountants",
-   "suburb": "garsfontein",
+   "category": "Accountants",
+   "suburb": "Garsfontein",
+   "region": "pretoria",
+   "address": "Unit 25, Garsfontein Office Park, 645 Jacqueline Drive, Garsfontein, Pretoria, 0042",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://go2accounting.co.za/",
+   "existing_sources": [
+    "https://garsfonteinofficepark.co.za/business-directory/",
+    "https://www.findmy.co.za/services/business/go2-accounting-pty-ltd/3295",
+    "https://go2accounting.co.za/contact-us/",
+    "https://garsfonteinofficepark.co.za/2024/07/21/go2-accounting-pty-ltd/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Go2 Accounting is an accounting and bookkeeping practice, established in 2016, that focuses on personalised service for small and medium-sized businesses, offering Xero and Sage implementation, monthly bookkeeping, payroll and full SARS tax compliance from its Garsfontein Office Park base."
@@ -324,10 +574,18 @@
   {
    "slug": "hcl-financial-services-waterkloof-park",
    "name": "HCL Financial Services",
-   "category": "accountants",
-   "suburb": "waterkloof-park",
+   "category": "Accountants",
+   "suburb": "Waterkloof Park",
+   "region": "pretoria",
+   "address": "252 Rigel Avenue South Waterkloof Ridge, East, Pretoria, 0181",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.hclfinservices.site/",
+   "existing_sources": [
+    "https://www.hclfinservices.site/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "HCL Financial Services is an accounting practice based in Waterkloof Park offering bookkeeping, payroll and tax compliance services to Pretoria-area small and medium businesses, with particular experience serving tradesmen, construction and architectural firms, fuel stations, retailers, salons and hospitality operators."
@@ -335,10 +593,18 @@
   {
    "slug": "hensoldt-gew-brummeria",
    "name": "HENSOLDT GEW",
-   "category": "business-consulting",
-   "suburb": "brummeria",
+   "category": "Business & Management Consulting",
+   "suburb": "Brummeria",
+   "region": "pretoria",
+   "address": "13 De Havilland Cres, Persequor, Pretoria, 0020",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.hensoldt.co.za/",
+   "existing_sources": [
+    "http://www.hensoldt.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "HENSOLDT GEW is the GEW Technologies business unit of HENSOLDT South Africa, a systems engineering company established in 1968 that designs, develops and supports electronic warfare, spectrum monitoring and security systems for defence forces, government institutions and spectrum management authorities."
@@ -346,10 +612,19 @@
   {
    "slug": "himoinsa-southern-africa-johannesburg-kosmosdal",
    "name": "HIMOINSA Southern Africa - Johannesburg",
-   "category": "solar-renewable-energy",
-   "suburb": "kosmosdal",
+   "category": "Solar & Renewable Energy",
+   "suburb": "Kosmosdal",
+   "region": "centurion",
+   "address": "Cnr Tlowka Street &, 1 Quartz Avenue, Samrand Business Park, Old Johannesburg Rd, Kosmosdal, Centurion, 0187",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://himoinsa.africa/",
+   "existing_sources": [
+    "https://himoinsa.africa/",
+    "https://www.miningweekly.com/article/himoinsa-southern-africa-has-the-flexibility-to-deliver-bespoke-solutions-2025-02-04"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "HIMOINSA Southern Africa is part of the global HIMOINSA/Yanmar Group, supplying diesel, gas and hybrid generator sets and lighting towers, with sales, rental, OEM spare parts, maintenance and technical services for standby, prime and peak power applications, in Kosmosdal."
@@ -357,10 +632,19 @@
   {
    "slug": "inqaba-biotechnical-industries-pty-ltd-muckleneuk",
    "name": "Inqaba Biotechnical Industries (Pty) Ltd",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "muckleneuk",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Muckleneuk",
+   "region": "pretoria",
+   "address": "525 Justice Mahomed St, Muckleneuk, Pretoria, 0002",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.inqababiotec.co.za/",
+   "existing_sources": [
+    "http://www.inqababiotec.co.za/",
+    "https://www.up.ac.za/faculty-of-health-sciences-research/inqaba-biotechnical-industries-pty-ltd-0"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Inqaba Biotechnical Industries, trading as inqaba biotec, is a genomics company established in 2002 and based in Muckleneuk, offering DNA sequencing, oligonucleotide synthesis, SNP and methylation analysis, and bioinformatics services, and distributing life-science laboratory equipment and reagents from international manufacturers."
@@ -368,10 +652,18 @@
   {
    "slug": "intrinsyc-dzumba-group-doringkloof",
    "name": "Intrinsyc Dzumba Group",
-   "category": "business-consulting",
-   "suburb": "doringkloof",
+   "category": "Business & Management Consulting",
+   "suburb": "Doringkloof",
+   "region": "centurion",
+   "address": "24 Amatola Rd, Doringkloof, Centurion, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.intrinsycdzumba.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00",
    "has_email": false,
    "current_words": 40,
    "current_description": "Intrinsyc Dzumba Group, trading as IDG Africa, is a black-owned systems integrator based in Doringkloof with more than 15 years of experience, providing IT services and consulting, professional training, systems engineering and renewable energy solutions to government and private-sector clients."
@@ -379,10 +671,20 @@
   {
    "slug": "irene-farm-centurion-golf-estate",
    "name": "Irene Farm",
-   "category": "restaurants-takeaways",
-   "suburb": "centurion-golf-estate",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Centurion Golf Estate",
+   "region": "centurion",
+   "address": "Nellmapius Rd, Irene, Centurion, 0062",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.irenefarm.co.za/",
+   "existing_sources": [
+    "https://www.irenefarm.co.za/",
+    "https://irenefarm.co.za/",
+    "https://www.tripadvisor.com/Attraction_Review-g312613-d6433970-Reviews-Irene_Farm-Centurion_Gauteng.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Irene Farm is a working dairy farm that has operated since 1895 and has stayed in the same family for five generations, with two on-site restaurants, The Barn and The Deck, plus a farm shop and dairy tours for visitors."
@@ -390,10 +692,20 @@
   {
    "slug": "jg-refrigeration-andeon",
    "name": "JG Refrigeration",
-   "category": "building-construction",
-   "suburb": "andeon",
+   "category": "Building & Construction",
+   "suburb": "Andeon",
+   "region": "pretoria",
+   "address": "155 Johnson St, Andeon, Pretoria, 0082",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.jgrefrigeration.co.za/",
+   "existing_sources": [
+    "http://www.jgrefrigeration.co.za/",
+    "https://www.jgrefrigeration.co.za/",
+    "https://www.jgrefrigeration.co.za/about-us/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00",
    "has_email": false,
    "current_words": 40,
    "current_description": "JG Refrigeration is a Pretoria West-based building and construction firm in Andeon with more than 30 years of experience, specializing in shop fitting, renovations, electrical work, and installing cold rooms, freezer rooms and blast freezers, with 24-hour emergency breakdown response."
@@ -401,10 +713,20 @@
   {
    "slug": "jhc-power-solutions-pty-ltd-villieria",
    "name": "JHC Power Solutions (Pty) Ltd",
-   "category": "solar-renewable-energy",
-   "suburb": "villieria",
+   "category": "Solar & Renewable Energy",
+   "suburb": "Villieria",
+   "region": "pretoria",
+   "address": "466 25th Ave, Villieria, Pretoria, 0084",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.jhcpowersolutions.co.za/",
+   "existing_sources": [
+    "https://www.jhcpowersolutions.co.za/",
+    "https://www.facebook.com/jhcpowerpta/",
+    "https://www.procompare.co.za/providers/jhc-power-solutions"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "JHC Power Solutions is a solar and electrical services provider based in Villieria, installing photovoltaic and solar panel systems alongside electrical wiring, repairs and certificate of compliance work, with completed solar installation projects in the Montana Tuine area of Pretoria."
@@ -412,10 +734,18 @@
   {
    "slug": "jubilee-metals-group-plc-southdowns",
    "name": "Jubilee Metals Group Plc",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "southdowns",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Southdowns",
+   "region": "centurion",
+   "address": "Block A Ground Floor, Suite 04, Corner John Vorster and Nellmapius Drive Southdowns Ridge, Irene, 0157",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://jubileemetalsgroup.com/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Jubilee Metals Group Plc is a diversified metals recovery company listed on the London Stock Exchange's AIM and the JSE's AltX, specializing in the recovery of platinum group metals, chrome, nickel and copper from operations across southern Africa and Zambia."
@@ -423,10 +753,18 @@
   {
    "slug": "leo-consulting-queenswood",
    "name": "LEO Consulting",
-   "category": "engineering-surveying",
-   "suburb": "queenswood",
+   "category": "Engineering & Surveying Services",
+   "suburb": "Queenswood",
+   "region": "pretoria",
+   "address": "1169 Cobham Rd, Queenswood, Pretoria, 0184",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://leoconsult.co.za/about-us/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "LEO Consulting is a civil consulting engineering firm established in 2008, with engineering staff carrying more than 100 years of combined experience across roads, bridges and civil works, water and sanitation infrastructure, buildings and structures, geotechnical work and GIS services."
@@ -434,10 +772,16 @@
   {
    "slug": "leon-de-kock-garage-doors-kameeldrift",
    "name": "Leon de Kock Garage Doors",
-   "category": "hardware-stores",
-   "suburb": "kameeldrift",
+   "category": "Hardware Stores",
+   "suburb": "Kameeldrift",
+   "region": "pretoria",
+   "address": "Plot 974 Lalapalm Rd, Kameeldrift East, Pretoria, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [],
    "has_hours": true,
+   "hours": "Mon-Fri 07:15-16:45, Sat-Sun Closed",
    "has_email": false,
    "current_words": 40,
    "current_description": "Leon de Kock Garage Doors has provided garage door installation and repair services in the Kameeldrift area for over 10 years, covering double, sectional, glass, steel, roller, wooden and aluminium garage doors as well as pivot, folding and sliding doors."
@@ -445,10 +789,19 @@
   {
    "slug": "liafin-professional-accountants-and-tax-practitioners-willow-park-manor",
    "name": "LIAFIN Professional Accountants and Tax Practitioners",
-   "category": "accountants",
-   "suburb": "willow-park-manor",
+   "category": "Accountants",
+   "suburb": "Willow Park Manor",
+   "region": "pretoria",
+   "address": "340 Bush Rd, Willow Park Manor, Pretoria, 0184",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.liafin.co.za/",
+   "existing_sources": [
+    "http://www.liafin.co.za/",
+    "http://www.liafin.co.za/about.php"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "LIAFIN Professional Accountants and Tax Practitioners traces back to an accounting practice founded in 1993, and became an accredited SAIPA training centre in 2014, offering tailored accounting and tax services to individuals, sole traders, partnerships, close corporations, trusts and companies."
@@ -456,10 +809,18 @@
   {
    "slug": "loadcell-services-the-willows",
    "name": "Loadcell Services",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "the-willows",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "The Willows",
+   "region": "pretoria",
+   "address": "X65, N4 Gateway Business Park, 98 Mokwa St, Willow Park Manor, Pretoria, 0184",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://loadcell.co.za/",
+   "existing_sources": [
+    "https://loadcell.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Founded in 1979, Loadcell Services is South Africa's largest manufacturer of locally made load cells, serving industries such as steel, mining, chemical processing, cement, and pulp and paper with static weighing, force measurement and overload-protection systems for cranes and conveyors."
@@ -467,10 +828,18 @@
   {
    "slug": "logmex-global-trading-pty-ltd-east-lynne",
    "name": "Logmex Global Trading (Pty) Ltd",
-   "category": "logistics-courier-transport",
-   "suburb": "east-lynne",
+   "category": "Logistics, Courier & Transport",
+   "suburb": "East Lynne",
+   "region": "pretoria",
+   "address": "135 Lanham St, East Lynne, Pretoria, 0186",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "http://www.logmex.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Logmex Global Trading, a subsidiary of TransCT Investments, provides supply chain management, logistics and import/export services, specialising in sourcing and distributing industrial consumables such as lubricants, sealants, adhesives, welding and soldering consumables, insulation materials, power capacitors and conveyor parts."
@@ -478,10 +847,20 @@
   {
    "slug": "lynx-real-estate-lynnwood-lane-equestria",
    "name": "Lynx Real Estate",
-   "category": "estate-agents",
-   "suburb": "equestria",
+   "category": "Estate Agents",
+   "suburb": "Equestria",
+   "region": "pretoria",
+   "address": "Office 204, 1st Floor, Lynnwood Lane Retail Centre, 285 The Hwy Str, Equestria, Pretoria, 0184",
+   "shopping_centre": "Lynnwood Lane Retail Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.lynx-re.co.za/lynx-real-estate-contact",
+    "https://www.lynx-re.co.za/buildings/lynnwood-lane",
+    "https://www.lynx-re.co.za/lynx-real-estate-property-management"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Lynx Real Estate is a property development company founded in 2016, drawing on around 50 years of combined joint-venture experience to source and execute property development projects, with a core focus on convenience retail centres anchored by strong national tenants."
@@ -489,10 +868,19 @@
   {
    "slug": "marietjie-prinsloo-properties-murrayfield",
    "name": "Marietjie Prinsloo Properties",
-   "category": "estate-agents",
-   "suburb": "murrayfield",
+   "category": "Estate Agents",
+   "suburb": "Murrayfield",
+   "region": "pretoria",
+   "address": "84 Rubida St, Murrayfield, Pretoria, 0184",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.marietjieprinslooproperties.co.za/wcontact.php",
+   "existing_sources": [
+    "http://www.marietjieprinslooproperties.co.za/wcontact.php",
+    "https://www.privateproperty.co.za/estate-agency/marietjie-prinsloo-properties/11256"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Marietjie Prinsloo Properties is an estate agency established in 2001 and based in Murrayfield, Pretoria, serving the greater Pretoria East area including Lynnwood Ridge, Die Wilgers, Meyerspark, Equestria, Wapadrand and Val de Grace with property sales, rentals and property management."
@@ -500,10 +888,19 @@
   {
    "slug": "masilo-nkwe-heatherdale",
    "name": "Masilo Nkwe",
-   "category": "estate-agents",
-   "suburb": "heatherdale",
+   "category": "Estate Agents",
+   "suburb": "Heatherdale",
+   "region": "pretoria",
+   "address": "74 Heather flower crescent 1030 Heatherview Hills Heatherdale, Akasia, 0182",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://benebael.co.za/",
+   "existing_sources": [
+    "https://benebael.co.za/",
+    "https://masilo-nkwe.business.site/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Masilo Nkwe is a real estate agent affiliated with eXp South Africa, specialising in new developments and residential property sales across Soshanguve, Rosslyn, Klerksoord, Pretoria North, Lotus Gardens and Mamelodi, with more than a decade of experience in the industry."
@@ -511,10 +908,19 @@
   {
    "slug": "mbeu-property-group-pty-ltd-bryntirion",
    "name": "Mbeu Property Group pty ltd",
-   "category": "building-construction",
-   "suburb": "bryntirion",
+   "category": "Building & Construction",
+   "suburb": "Bryntirion",
+   "region": "pretoria",
+   "address": "905 Stanza Bopape St, Arcadia, Pretoria, 0007",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.mbeuproperties.co.za/",
+   "existing_sources": [
+    "http://www.mbeuproperties.co.za/",
+    "https://mbeuproperties.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Mbeu Property Group is a 100% Black-owned firm offering property, engineering, construction, civil works, fuel supply and branding services, and holds SAFCEC registration across multiple CIDB grades as well as registration with the National Bargaining Council for the Electrical Industry."
@@ -522,10 +928,19 @@
   {
    "slug": "medical-resources-group-villieria",
    "name": "Medical Resources Group",
-   "category": "recruitment-hr-services",
-   "suburb": "villieria",
+   "category": "Recruitment & HR Services",
+   "suburb": "Villieria",
+   "region": "pretoria",
+   "address": "Office 2, Crystal Corner, 353 24th Avenue, Villieria, Pretoria, 0186",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://medicalresources.co.za/",
+   "existing_sources": [
+    "http://medicalresources.co.za/",
+    "https://ahasa.org/medicalresourcesgroup/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Medical Resources Group is a healthcare management consultancy established in 2013, offering locum placements, permanent recruitment, practice sale marketing, practice management and malpractice insurance to medical practices, and is a Level 4 BBBEE contributor and member of AHASA and APSO."
@@ -533,10 +948,20 @@
   {
    "slug": "medirite-mayville-mayville",
    "name": "Medirite Mayville",
-   "category": "pharmacies",
-   "suburb": "mayville",
+   "category": "Pharmacies",
+   "suburb": "Mayville",
+   "region": "pretoria",
+   "address": "130 Van Rensburg St, Mayville, Pretoria, 0084",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.medirite.co.za",
+   "existing_sources": [
+    "https://www.yellosa.co.za/company/691457/medirite-mayville",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=226480",
+    "https://www.goafricaonline.com/za/1222745-medirite-mayville"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Medirite Mayville is part of the Medirite pharmacy chain, which operates within the Shoprite Checkers group, offering a wide range of pharmaceuticals and medication at competitive prices with pharmacists registered with the South African Pharmacy Council on hand to assist."
@@ -544,10 +969,18 @@
   {
    "slug": "mega-paints-hardware-mayville-mayville",
    "name": "Mega Paints & Hardware Mayville",
-   "category": "hardware-stores",
-   "suburb": "mayville",
+   "category": "Hardware Stores",
+   "suburb": "Mayville",
+   "region": "pretoria",
+   "address": "Shop 11, 789 Paul Kruger St, Mayville, Pretoria, 0084",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.megapaints.co.za/",
+   "existing_sources": [
+    "https://www.megapaints.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 40,
    "current_description": "Mega Paints & Hardware in Mayville stocks a wide range of premium paints alongside brushes, primers, waterproofing products, skimming compounds, solvents, varnish and cleaning supplies, covering roof, wall, floor and ceiling paint needs plus the hardware to complete the job."

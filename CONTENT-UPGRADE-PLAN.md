@@ -125,10 +125,7 @@ These rules go into the new runbook, `routines/content-upgrade.md`. It replaces 
 - Each source URL is appended to `source_urls`.
 - Facts we already hold (name, category, suburb, centre) need no new source.
 
-**If nothing new can be found, the listing is not reworded.** Rewording our own fields into another one-liner is what produced the generic text in the first place. Instead the listing is marked `content_upgrade_status = 'no_sources'` and appears in Hub Admin, under Listings → "Couldn't find more", for a human decision:
-- find a source by hand,
-- invite the business to claim the listing, or
-- (for Pretoria only, and only if you agree) keep it out of the sitemap so it doesn't drag the site down.
+**Every listing gets a full description; there is no "skip" outcome.** Research comes first: existing sources, website, Google listing, social pages, directories, the centre's site, and the chain's own site for chain branches. If that adds nothing about the business itself, the agent writes the 80–150 words from the details we already hold: category, full address, the centre and what it is, the suburb and where it sits in the city, access and hours. Nothing is invented. Those listings are marked `content_upgrade_status = 'from_known_details'` (the others `researched`), so a later pass can look for more online. They never stay as one-liners. The full rules and an example are in `content-upgrade/README.md`.
 
 **Never** shorten a description, change the business name, phone, address or category, or upgrade a protected listing.
 
@@ -161,7 +158,7 @@ Each run takes the next batch from one queue, ordered by:
    - suburbs and centres without proper text.
    It writes `status/<city>/content-audit.json` and shows it in Hub Admin → Listings.
 2. **Migration**, for all three cities:
-   - on `businesses`: `content_upgraded_at`, `content_upgrade_status` (`upgraded` / `no_sources` / `skipped`) and `content_upgrade_run`;
+   - on `businesses`: `content_upgraded_at`, `content_upgrade_status` (`researched` / `from_known_details`) and `content_upgrade_run`;
    - a new `description_history` table;
    - the same "upgraded at" and "status" columns on `suburbs` and `shopping_centers`.
 3. **Snapshot:** add description length, protected yes/no, upgrade status and has-hours to `status/<city>/db-snapshot.json`. Lengths and flags only, not full text, so the snapshot stays small. The routine needs this to pick work without reading the database.
@@ -177,7 +174,7 @@ Each run takes the next batch from one queue, ordered by:
    - adds a fact without appending a new source URL;
    - names a person, using the existing checks.
 6. **Runbook `routines/content-upgrade.md`:** the writing rules from section 3, with good and bad examples from real listings.
-7. **`done.mjs`** records progress, and listings marked `no_sources` drop out of the queue.
+7. **`done.mjs`** records progress; every upgraded listing drops out of the queue.
 8. **Retire `enrichment`** for good. It's disabled today; it gets removed from `next.mjs`.
 
 ### Phase 2: trial run (about 1 week, needs your OK)
@@ -200,7 +197,7 @@ Each run takes the next batch from one queue, ordered by:
 14. **Hub Admin → Listings** shows:
     - the counts going down (descriptions under 160 / 250, generic, no hours),
     - the most recent upgrades with before/after text,
-    - the "Couldn't find more" list.
+    - how many are `researched` and how many are `from_known_details` (re-checked later).
 15. **Hub Admin → Google** shows whether it's working: "Pages seen in Google per day" and the "not in Google" list should improve over 2–8 weeks.
 16. **Monthly check:** I read 20 random upgrades per city and tighten the rules if anything slips.
 
@@ -208,7 +205,7 @@ Each run takes the next batch from one queue, ordered by:
 
 ## 6. Rough timeline
 
-The rate depends on how many listings have sources online. Expect roughly 60–80% to be upgradable, with the rest marked "no sources".
+Every listing is upgraded. The share written from known details rather than new research depends on how many businesses are online.
 
 | Rate | Weakest ~1,100 (under 140 characters) | Busiest 2,000 | All ~7,000 under 250 |
 |---|---|---|---|
@@ -221,7 +218,7 @@ Busiest-first means most of the traffic gain comes in the first month.
 
 ## 7. Known limits
 
-- **Blocked websites:** the routine's sandbox often can't open business websites (the egress proxy blocks many). It then uses search result snippets, and a snippet counts only if it literally states the fact. This keeps text accurate but sometimes short of detail; those listings end up "no sources" rather than padded.
+- **Blocked websites:** the routine's sandbox often can't open business websites (the egress proxy blocks many). It then uses search result snippets, and a snippet counts only if it literally states the fact. This keeps text accurate; when it adds nothing, the description is written from the details we hold (`from_known_details`), never padded with invented claims.
 - **Chains:** facts must be about this exact branch. Chain branches (Woolworths, Steers, banks) usually get a shorter, factual description of the branch: centre, anchor services, branch-specific hours.
 - **Owners:** a claimed business can still have a thin description. That's for the owner to improve. Hub Admin could nudge them (a "your listing could be better" email) as a separate, later step.
 
@@ -231,7 +228,7 @@ Busiest-first means most of the traffic gain comes in the first month.
 
 1. **Length:** 80–150 words for descriptions. More, less, or fine?
 2. **Hours and email:** fill these too while researching (recommended), or descriptions only?
-3. **No sources:** if nothing can be found for a Pretoria listing, keep it as is (default), or keep it out of the sitemap?
+3. **Decided:** every listing gets a full description; nothing is left as is.
 4. **Pace:** decided: all at once with agents (section 9).
 5. **Other pages:** include suburb and shopping-centre text in the same routine (recommended), or listings only for now?
 6. **Trial review:** read the 45 trial upgrades yourself before it starts (recommended), or start straight away?
@@ -285,6 +282,6 @@ Batches don't overlap, so any number of agents can work on the same city at once
 
 All 9,408 upgrades write about 19,000 rows in total (history plus update). The free limit is 100,000 rows written per day, and reads are small. If many batches land at once the 3-hourly deploy can still apply them in one go; the Health screen's database meter shows the real cost.
 
-### Expect some "no sources"
+### Every listing is upgraded
 
-Many small businesses have nothing online beyond a directory card, and the agents' sandbox can't open every website. Expect roughly 20–40% of listings to come back as `no_sources` rather than upgraded. That's by design: no padding, no invented facts. They appear in Hub Admin → Listings for a human decision.
+Many small businesses have nothing online beyond a directory card, and the agents' sandbox can't open every website. Expect perhaps 20–40% of listings to be written `from_known_details` (location, centre, category and access details we already hold) rather than `researched`. Every one still ends up at 80–150 words, with no invented facts. The marker lets a later pass add more detail when the business appears online.

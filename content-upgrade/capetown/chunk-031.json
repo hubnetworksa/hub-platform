@@ -5,10 +5,20 @@
   {
    "slug": "pure-skin-and-body-kenridge",
    "name": "Pure Skin & Body",
-   "category": "beauty-hair-salons",
-   "suburb": "kenridge",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Kenridge",
+   "region": "northern-suburbs",
+   "address": "Shop 2, Kenridge Centre, Cnr Kenridge Avenue & Mildred Street, Kenridge, Durbanville, Cape Town, 7550",
+   "shopping_centre": "Kenridge Centre",
+   "phone_on_file": true,
    "website": "https://pureskinandbody.co.za/",
+   "existing_sources": [
+    "https://www.fresha.com/lvp/pure-skin-body-kenridge-mildred-street-cape-town-vv2NWo",
+    "https://pureskinandbody.co.za/contact.php",
+    "https://www.facebook.com/PureKenridge/"
+   ],
    "has_hours": true,
+   "hours": "Tue-Fri 09:00-17:00, Sat 08:00-13:00",
    "has_email": false,
    "current_words": 29,
    "current_description": "Pure Skin & Body is an established beauty salon in Kenridge Centre, Durbanville, operating since 1995 and offering massages, waxing, manicures, pedicures, gel nails, facials, microneedling and male grooming."
@@ -16,10 +26,20 @@
   {
    "slug": "randy-warthog-bar-grill-green-point",
    "name": "Randy Warthog Bar & Grill",
-   "category": "restaurants-takeaways",
-   "suburb": "green-point",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Green Point",
+   "region": "atlantic-seaboard",
+   "address": "107 Main Road, Green Point, Cape Town, 8005",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tripadvisor.com/Restaurant_Review-g12880258-d15856847-Reviews-Randy_Warthog_Bar_Grill-Green_Point_Western_Cape.html",
+    "https://www.dining-out.co.za/md/Randy-Warthog-Restaurant-and-Bar/9761",
+    "https://randywarthog.com/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 07:00-22:00",
    "has_email": false,
    "current_words": 29,
    "current_description": "Randy Warthog Bar & Grill is a backpacker-style bar and grill in Green Point serving breakfast, burgers and chicken schnitzels, with a daily happy hour and weekly themed nights."
@@ -27,10 +47,19 @@
   {
    "slug": "salon-jean-paul-kuilsriver-kuils-river",
    "name": "Salon Jean Paul Kuilsriver",
-   "category": "beauty-hair-salons",
-   "suburb": "kuils-river",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Kuils River",
+   "region": "northern-suburbs",
+   "address": "Shop 3, Shoprite Centre, Van Riebeeck Road, Kuils River, Cape Town, 7580",
+   "shopping_centre": "Kuilsriver Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/lvp/salon-jean-paul-kuilsriver-van-riebeeck-road-cape-town-8Jyb2M",
+    "https://www.brabys.com/za/western-cape/kuils-river/kuils-river-ind/unisex-hairdressers/salon-jean-paul-unisex-hair-clinic"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:30-18:00, Sat 08:00-16:00, Sun 08:30-14:00",
    "has_email": false,
    "current_words": 29,
    "current_description": "Salon Jean Paul Kuilsriver is a hair salon in the Shoprite Centre on Van Riebeeck Road in Kuils River, offering colouring, braiding, extensions, keratin treatments and other hair services."
@@ -38,10 +67,20 @@
   {
    "slug": "sams-hardware-and-gas-lentegeur",
    "name": "Sams Hardware & Gas",
-   "category": "hardware-stores",
-   "suburb": "lentegeur",
+   "category": "Hardware Stores",
+   "suburb": "Lentegeur",
+   "region": "cape-flats",
+   "address": "9 Melkbos Street, Lentegeur, Mitchells Plain",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.yep.co.za/biz/store/iyp/1676462_2",
+    "https://take.app/samshardware/follow",
+    "https://take.app/samshardware"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 29,
    "current_description": "Sams Hardware & Gas is a hardware store on Melkbos Street in Lentegeur, Mitchells Plain, stocking hardware, plumbing, gas, paint and electrical supplies and tools for the local community."
@@ -49,10 +88,20 @@
   {
    "slug": "saveur-restaurant-simons-town",
    "name": "Saveur Restaurant",
-   "category": "restaurants-takeaways",
-   "suburb": "simons-town",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Simon's Town",
+   "region": "south-peninsula",
+   "address": "Shop WC2A, Simon's Town Boardwalk Centre, Wharf Street, Simon's Town, Cape Town, 7975",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tripadvisor.co.za/Restaurant_Review-g319718-d7195583-Reviews-Saveur_Restaurant-Simon_s_Town_Western_Cape.html",
+    "https://www.eatout.co.za/venue/saveur-restaurant-simons-town/",
+    "https://www.dining-out.co.za/md-menu/Saveur-Restaurant-Simons-Town/8045"
+   ],
    "has_hours": true,
+   "hours": "Tue-Sat 09:00-21:00, Sun-Mon 09:00-17:00",
    "has_email": false,
    "current_words": 29,
    "current_description": "Saveur Restaurant in the Simon's Town Boardwalk Centre serves modern European cuisine, from gourmet burgers to fresh hake and chips, with a rotating catch-of-the-day and a weekly burger night."
@@ -60,10 +109,20 @@
   {
    "slug": "sbg-cape-town-noordhoek",
    "name": "SBG Cape Town",
-   "category": "fitness-gyms",
-   "suburb": "noordhoek",
+   "category": "Fitness & Gyms",
+   "suburb": "Noordhoek",
+   "region": "south-peninsula",
+   "address": "Studio 2, Noordhoek Garden Emporium, Noordhoek Main Road, Noordhoek, Cape Town, 7975",
+   "shopping_centre": "Noordhoek Garden Emporium",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://sbgcapetown.co.za/contact/",
+    "https://www.slapbump.co.za/gym/sbg-noordhoek",
+    "https://sbgcapetown.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 29,
    "current_description": "SBG Cape Town is a martial arts and fitness gym at Noordhoek Garden Emporium, offering Brazilian Jiu-Jitsu, MMA, kickboxing and submission wrestling training for all ages and skill levels."
@@ -71,10 +130,19 @@
   {
    "slug": "shoprite-dunoon-dunoon",
    "name": "Shoprite Dunoon",
-   "category": "supermarkets-groceries",
-   "suburb": "dunoon",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Dunoon",
+   "region": "west-coast",
+   "address": "The Stables Shopping Centre, Potsdam Road, Dunoon, Cape Town, 7441",
+   "shopping_centre": "The Stables Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.shopshours.co.za/shoprite/cape-town/c-57f3cabc47d677c3b27e3eae",
+    "https://www.tiendeo.co.za/stores/milnerton/shoprite-potsdam-road/6754"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 29,
    "current_description": "Shoprite Dunoon anchors The Stables Shopping Centre on Potsdam Road, a centre serving Dunoon's roughly 80,000 residents along with the surrounding industrial area, offering groceries and everyday essentials."
@@ -82,10 +150,19 @@
   {
    "slug": "smartphone-er-westlake",
    "name": "Smartphone ER",
-   "category": "mobile-phones",
-   "suburb": "westlake",
+   "category": "Mobile Phones & Accessories",
+   "suburb": "Westlake",
+   "region": "south-peninsula",
+   "address": "Shop 34D, Westlake Shopping Centre, Westlake Drive, Westlake, Cape Town, 7945",
+   "shopping_centre": "Westlake Shopping Centre",
+   "phone_on_file": true,
    "website": "https://smartphoneer.co.za",
+   "existing_sources": [
+    "https://mybroadband.co.za/news/industrynews/590551-smartphone-er-brings-expert-repairs-to-westlake-shopping-centre.html",
+    "https://smartphoneer.co.za/stores/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 29,
    "current_description": "Smartphone ER is a mobile phone repair shop in Westlake Shopping Centre, offering screen and battery replacements for Samsung, Oppo, Vivo, Tecno, Nokia and HONOR devices using genuine parts."
@@ -93,10 +170,20 @@
   {
    "slug": "son-of-a-butcher-and-deli-sea-point",
    "name": "Son of a Butcher & Deli",
-   "category": "butcheries",
-   "suburb": "sea-point",
+   "category": "Butcheries",
+   "suburb": "Sea Point",
+   "region": "atlantic-seaboard",
+   "address": "103 Regent Road, Sea Point, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/son-of-a-butcher-279674",
+    "https://www.ubereats.com/za/store/son-of-a-butcher-%26-deli-sea-point/bQlKx49bQkOF0XTyRVaq6Q",
+    "https://opening-hours.co.za/0796106/Son_of_a_Butcher"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 08:30-18:00, Sun Closed",
    "has_email": false,
    "current_words": 29,
    "current_description": "Son of a Butcher & Deli is a butchery and deli on Regent Road in Sea Point specialising in Wagyu beef, dry-aged free-range beef, Karoo lamb, and pasture-raised poultry."
@@ -104,10 +191,20 @@
   {
    "slug": "sorbet-salon-kenilworth-on-main-kenilworth",
    "name": "Sorbet Salon Kenilworth on Main",
-   "category": "spas-wellness",
-   "suburb": "kenilworth",
+   "category": "Spas & Wellness",
+   "suburb": "Kenilworth",
+   "region": "southern-suburbs",
+   "address": "Shop G004, Pam Golding on Main, Corner Main Road & Summerley Road, Kenilworth, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/sorbet-kenilworth-207307",
+    "https://stores.salonssorbet.co.za/western-cape/cape-town/pam-golding-on-main-shop-g004",
+    "https://www.fresha.com/lvp/sorbet-salon-kenilworth-summerley-road-cape-town-ovL4gG"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-18:00, Sat 09:00-17:00, Sun 09:00-14:00",
    "has_email": false,
    "current_words": 29,
    "current_description": "Sorbet Salon Kenilworth on Main is a beauty salon at Pam Golding on Main offering facials and skincare treatments including dermaplaning and microdermabrasion, hair removal, threading, manicures and pedicures."
@@ -115,10 +212,19 @@
   {
    "slug": "southern-sun-cape-sun-cape-town-cbd",
    "name": "Southern Sun Cape Sun",
-   "category": "hotels",
-   "suburb": "cape-town-cbd",
+   "category": "Hotels",
+   "suburb": "Cape Town CBD",
+   "region": "city-bowl",
+   "address": "23 Strand Street, Cape Town, 8001",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.southernsun.com/southern-sun-cape-sun",
+   "existing_sources": [
+    "https://www.southernsun.com/southern-sun-cape-sun/contact-us",
+    "https://capetown.hotelguide.co.za/Cape_Town_City_Bowl-travel/cape-town-hotel-cape-sun_location.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 29,
    "current_description": "Southern Sun Cape Sun is a 368-room hotel on Strand Street in the Cape Town CBD, a short walk from Long Street, with an on-site gym and swimming pool."
@@ -126,10 +232,19 @@
   {
    "slug": "spar-gugulethu-square-gugulethu",
    "name": "SPAR Gugulethu Square",
-   "category": "supermarkets-groceries",
-   "suburb": "gugulethu",
+   "category": "Supermarkets & Groceries",
+   "suburb": "Gugulethu",
+   "region": "cape-flats",
+   "address": "Gugulethu Square, Cnr NY1 & Gugulethu Road, Gugulethu, Cape Town, 7750",
+   "shopping_centre": "Gugulethu Square",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://my-catalogue.co.za/stores/gugulethu/spar/gugulethu-square-cnr-ny1-gugulethu-roads",
+    "https://www.vukile.co.za/property/gugulethu-square/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 08:00-19:00, Sun 08:00-17:00",
    "has_email": false,
    "current_words": 29,
    "current_description": "SPAR Gugulethu Square is a supermarket at the Gugulethu Square shopping centre on the corner of NY1 and Gugulethu Road, serving the local community with groceries and household essentials."
@@ -137,10 +252,20 @@
   {
    "slug": "spk-engineering-supplies-paarden-eiland",
    "name": "SPK Engineering Supplies",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "paarden-eiland",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Paarden Eiland",
+   "region": "northern-suburbs",
+   "address": "25 Paarden Eiland Road, Paardeneiland, Cape Town, 7420",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "http://www.spk-sa.co.za/",
+    "https://www.yep.co.za/biz/store/s-p-k-engineering-supplies/216767",
+    "http://www.spk-sa.co.za/about.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 29,
    "current_description": "SPK Engineering Supplies is a Paarden Eiland-based supplier of engineering cutting tools and machinery to the local manufacturing and engineering industry, also exporting equipment to countries elsewhere in Africa."
@@ -148,10 +273,20 @@
   {
    "slug": "standard-bank-golden-acre-cape-town-cbd",
    "name": "Standard Bank Golden Acre",
-   "category": "financial-investment-services",
-   "suburb": "cape-town-cbd",
+   "category": "Financial & Investment Services",
+   "suburb": "Cape Town CBD",
+   "region": "city-bowl",
+   "address": "Golden Acre, 9 Adderley St, Cape Town",
+   "shopping_centre": "Golden Acre",
+   "phone_on_file": true,
    "website": "https://www.standardbank.co.za",
+   "existing_sources": [
+    "https://golden-acre.co.za/stores/",
+    "https://www.standardbank.co.za/branch-locator",
+    "https://za.bankopenhours.com/golden-acre/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:30-15:30",
    "has_email": false,
    "current_words": 29,
    "current_description": "Standard Bank Golden Acre is a retail banking branch operating from the Golden Acre shopping centre in Cape Town's CBD, offering everyday banking services to shoppers and city-centre workers."
@@ -159,10 +294,19 @@
   {
    "slug": "surf-emporium-muizenberg",
    "name": "Surf Emporium",
-   "category": "general-retail",
-   "suburb": "muizenberg",
+   "category": "General Retail",
+   "suburb": "Muizenberg",
+   "region": "south-peninsula",
+   "address": "Surfers Corner, 72 Beach Road, Muizenberg, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://surfemporium.co.za/",
+    "https://yourneighbourhood.co.za/the-surf-emporium/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 29,
    "current_description": "Surf Emporium is a surf school and shop at Surfers Corner in Muizenberg, offering accredited surfing and stand-up paddleboarding lessons for all skill levels alongside equipment rental and retail."
@@ -170,10 +314,19 @@
   {
    "slug": "telecom-installations-stellenberg",
    "name": "Telecom Installations CC",
-   "category": "fencing-security-installations",
-   "suburb": "stellenberg",
+   "category": "Fencing & Security Installations",
+   "suburb": "Stellenberg",
+   "region": "northern-suburbs",
+   "address": "11 Woltemade Street, Stellenberg, Durbanville, Cape Town, 7550",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.mytelecom.co.za",
+   "existing_sources": [
+    "http://www.mytelecom.co.za/services.html",
+    "http://www.yellowpages.co.za/business/SA_6419260_BUS"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 29,
    "current_description": "Telecom Installations CC is a telecommunications installer in Stellenberg, Durbanville, providing PABX systems, intercoms, CCTV, VoIP and data cabling for homes and businesses with in-house installation and maintenance teams."
@@ -181,10 +334,19 @@
   {
    "slug": "the-counselling-hub-woodstock",
    "name": "The Counselling Hub",
-   "category": "clinics-healthcare",
-   "suburb": "woodstock",
+   "category": "Clinics & Healthcare",
+   "suburb": "Woodstock",
+   "region": "city-bowl",
+   "address": "Unit A033, 1st Floor, The Palms Emporium, 145 Sir Lowry Road, Woodstock, Cape Town",
+   "shopping_centre": "The Palms Decor and Lifestyle Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.palms.co.za/tenants",
+    "https://counsellinghub.org.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 09:00-17:00, Fri 09:00-15:00",
    "has_email": false,
    "current_words": 29,
    "current_description": "The Counselling Hub is a nonprofit counselling and mental-health service in The Palms Emporium, Woodstock, offering low-cost one-on-one counselling sessions and group workshops on trauma, anxiety, depression and grief."
@@ -192,10 +354,20 @@
   {
    "slug": "the-hussar-grill-waterstone-somerset-west",
    "name": "The Hussar Grill",
-   "category": "restaurants-takeaways",
-   "suburb": "somerset-west",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Somerset West",
+   "region": "helderberg",
+   "address": "Shop 26, Waterstone Village, Cnr of R44 & Main Road, Somerset West, 7130",
+   "shopping_centre": "Waterstone Village Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.waterstonevillage.co.za",
+    "https://getoccupi.com/malls/waterstone-village",
+    "https://www.dineplan.com/restaurants/the-hussar-grill-somerset-west"
+   ],
    "has_hours": true,
+   "hours": "Daily 12:00-23:00",
    "has_email": false,
    "current_words": 29,
    "current_description": "The Hussar Grill in Waterstone Village is a steakhouse serving prime cuts and a comprehensive wine list, open in Somerset West since 2014 with views of the Helderberg mountains."
@@ -203,10 +375,20 @@
   {
    "slug": "the-lookout-hout-bay",
    "name": "The Lookout Hout Bay",
-   "category": "restaurants-takeaways",
-   "suburb": "hout-bay",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Hout Bay",
+   "region": "south-peninsula",
+   "address": "Lot 65, Quayside, Hout Bay Harbour, Hout Bay",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.lookouthoutbay.co.za",
+   "existing_sources": [
+    "https://www.lookouthoutbay.co.za",
+    "https://www.capetownetc.com/things-to-do-cape-town/hout-bay-restaurants/",
+    "https://www.dineplan.com/restaurants/the-lookout-hout-bay"
+   ],
    "has_hours": true,
+   "hours": "Fri-Sat 11:00-20:30, Sun 11:00-18:30, Mon-Thu Closed",
    "has_email": false,
    "current_words": 29,
    "current_description": "The Lookout Hout Bay is a harbourside restaurant and bar at Hout Bay Harbour's Quayside, open for lunch and dinner on Friday and Saturday and lunch only on Sunday."
@@ -214,10 +396,20 @@
   {
    "slug": "the-tux-tailor-riverlands-observatory",
    "name": "The Tux Tailor",
-   "category": "general-retail",
-   "suburb": "observatory",
+   "category": "General Retail",
+   "suburb": "Observatory",
+   "region": "city-bowl",
+   "address": "Shop G32, Riverlands Mall, 51 Gogosoa St, Observatory, Cape Town",
+   "shopping_centre": "Riverlands Mall",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://riverlands.capetown/mall/",
+    "https://www.instagram.com/the_tux_tailor_riverlandsmall/",
+    "https://thetuxtailor.com/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 29,
    "current_description": "The Tux Tailor is a tailoring and alterations business in Riverlands Mall, Observatory, offering custom-made suits for weddings and matric balls alongside alterations for men's, ladies' and children's clothing."
@@ -225,10 +417,20 @@
   {
    "slug": "timbuild-somerset-west-somerset-west",
    "name": "TimBuild Somerset West",
-   "category": "hardware-stores",
-   "suburb": "somerset-west",
+   "category": "Hardware Stores",
+   "suburb": "Somerset West",
+   "region": "helderberg",
+   "address": "Cnr Reitz Street & Victoria Street, Somerset West, 7130",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://timbuildsomersetwest.co.za/",
+    "https://www.hardware1000.com/ZA/Somerset-West/111768537832294/TimBuild-Somerset-West",
+    "https://www.helderberg.biz/timbuild--somerset-west-7151.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 29,
    "current_description": "TimBuild Somerset West is an independent hardware and building-materials store at the corner of Reitz and Victoria Streets in Somerset West, stocking general hardware, tools, timber and home-improvement supplies."
@@ -236,10 +438,20 @@
   {
    "slug": "vida-e-caffe-3arts-village-plumstead",
    "name": "vida e caffè 3Arts Village",
-   "category": "restaurants-takeaways",
-   "suburb": "plumstead",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Plumstead",
+   "region": "southern-suburbs",
+   "address": "Shop S08-GF, 3 Arts Village, 260 Main Road, Plumstead, Cape Town",
+   "shopping_centre": "3Arts Village",
+   "phone_on_file": true,
    "website": "https://www.vidaecaffe.com",
+   "existing_sources": [
+    "https://www.cybo.com/ZA-biz/vida-e-caff%C3%A8-arts-village-halaal",
+    "https://za.africabz.com/western-cape/vida-e-caffe-3arts-village-468701",
+    "https://www.mrdfood.com/food-delivery/restaurant/vida-e-caffe-3-arts-village_plumstead/24145"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 07:00-21:00, Sun 07:00-20:00",
    "has_email": false,
    "current_words": 29,
    "current_description": "vida e caffe 3Arts Village is a halaal-certified branch of the vida e caffe coffee shop chain, trading inside the 3 Arts Village retail centre on Main Road, Plumstead."
@@ -247,10 +459,20 @@
   {
    "slug": "village-skincare-medi-spa-meadowridge",
    "name": "Village Skincare & Medi Spa",
-   "category": "spas-wellness",
-   "suburb": "meadowridge",
+   "category": "Spas & Wellness",
+   "suburb": "Meadowridge",
+   "region": "southern-suburbs",
+   "address": "Shop 3, Meadowridge Shopping Centre, Howard Drive, Meadowridge, Cape Town, 7806",
+   "shopping_centre": "Meadowridge Shopping Centre",
+   "phone_on_file": true,
    "website": "www.villageskincare.co.za",
+   "existing_sources": [
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=401148",
+    "https://www.tuugo.co.za/Companies/village-skincare-medi-spa8/0260003513511",
+    "https://www.yep.co.za/biz/store/iyp/15708384_5"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-17:00, Sat 08:00-15:00, Sun Closed",
    "has_email": false,
    "current_words": 29,
    "current_description": "Village Skincare & Medi Spa is a skin, beauty and aesthetics clinic in Meadowridge Shopping Centre, Meadowridge, offering facials, skin peels and other medi-spa treatments performed by qualified therapists."
@@ -258,10 +480,20 @@
   {
    "slug": "vredenhof-organic-estate-firgrove",
    "name": "Vredenhof Organic Estate",
-   "category": "restaurants-takeaways",
-   "suburb": "firgrove",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Firgrove",
+   "region": "helderberg",
+   "address": "Bredell Road, Firgrove, Cape Town, 7130",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/vredenhof-organic-estate-114092",
+    "https://www.tripadvisor.com/Restaurant_Review-g469396-d4813306-Reviews-Vredenhof_Organic_Estate-Somerset_West_Western_Cape.html",
+    "https://www.wininganddining.co.za/western-cape/somerset-west/vredenhof-organic-estate"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 08:00-16:00, Sun Closed",
    "has_email": false,
    "current_words": 29,
    "current_description": "Vredenhof Organic Estate is a farm restaurant and organic produce estate in Firgrove, serving breakfast and lunch with a menu of quiches, pastas and sugar-free desserts alongside organic wines."
@@ -269,10 +501,20 @@
   {
    "slug": "wetton-hardware-wetton",
    "name": "Wetton Hardware",
-   "category": "hardware-stores",
-   "suburb": "wetton",
+   "category": "Hardware Stores",
+   "suburb": "Wetton",
+   "region": "cape-flats",
+   "address": "27 Dolphin Way, Wetton, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://buildandsave.co/",
+   "existing_sources": [
+    "https://buildandsave.co/",
+    "https://sabusinesslistings.co.za/listings/wetton-hardware/",
+    "https://www.yep.co.za/biz/store/iyp/10644236_3"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 08:00-16:45 (closed 13:00-13:30), Fri 08:00-16:30 (closed 12:00-14:00), Sat 08:00-13:00, Sun 09:00-12:00",
    "has_email": false,
    "current_words": 29,
    "current_description": "Wetton Hardware is a hardware and building-materials store on Dolphin Way, stocking sand, cement, bricks, paint, timber, tiling tools and security products, with advice on waterproofing and building plans."
@@ -280,10 +522,19 @@
   {
    "slug": "willem-hair-design-boston",
    "name": "Willem Hair Design",
-   "category": "beauty-hair-salons",
-   "suburb": "boston",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Boston",
+   "region": "northern-suburbs",
+   "address": "88 13th Avenue, Boston, Bellville, Cape Town, 7530",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/a/willem-hair-design-cape-town-88-13th-avenue-uu5e09ve",
+    "https://www.facebook.com/Willemhairdesign0303/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 29,
    "current_description": "Willem Hair Design is a hair salon on 13th Avenue in Boston, Bellville, offering haircuts, blow-dry treatments, colouring, highlights and other specialised hair treatments in a refined salon setting."
@@ -291,10 +542,20 @@
   {
    "slug": "wine-concepts-newlands",
    "name": "Wine Concepts",
-   "category": "liquor-stores",
-   "suburb": "newlands",
+   "category": "Liquor Stores",
+   "suburb": "Newlands",
+   "region": "southern-suburbs",
+   "address": "Cardiff Castle, Cnr Kildare Road & Main Street, Newlands, Cape Town, 7700",
+   "shopping_centre": "Cardiff Castle Centre",
+   "phone_on_file": true,
    "website": "https://wineconcepts.co.za/stores/newlands/",
+   "existing_sources": [
+    "https://wineconcepts.co.za/stores/newlands/",
+    "https://www.thinklocal.co.za/biz/wine-concepts-newlands",
+    "https://wineconcepts.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 29,
    "current_description": "Wine Concepts is a specialist wine, beer and spirits retailer with a branch in Cardiff Castle, Newlands, part of a wider chain of dedicated wine stores across South Africa."
@@ -302,10 +563,21 @@
   {
    "slug": "xciter-sports-bergvliet",
    "name": "Xciter Sports",
-   "category": "general-retail",
-   "suburb": "bergvliet",
+   "category": "General Retail",
+   "suburb": "Bergvliet",
+   "region": "southern-suburbs",
+   "address": "Shop 4, Sherwood Centre, Corner Children's Way and Dreyersdal Road, Bergvliet, Cape Town, 7945",
+   "shopping_centre": "Sherwood Shopping Centre",
+   "phone_on_file": true,
    "website": "https://xciter.co.za",
+   "existing_sources": [
+    "https://sherwoodshopping.co.za/xciter-sports/",
+    "https://opening-hours.co.za/03952442/Xciter_Sports_-_Bergvliet",
+    "https://bikeshops.heyplaces.co.za/01976221/Xciter_Sports_-_Bergvliet",
+    "https://xciter.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:30, Sat 08:00-15:00, Sun 08:30-12:00",
    "has_email": true,
    "current_words": 29,
    "current_description": "Xciter Sports is a multi-sport specialist inside Sherwood Centre in Bergvliet, focused on cycling, running and triathlon gear, with an in-house bike workshop offering servicing, repairs and puncture fixes."
@@ -313,10 +585,20 @@
   {
    "slug": "zone-fitness-westgate-mall-westgate",
    "name": "Zone Fitness Westgate Mall",
-   "category": "fitness-gyms",
-   "suburb": "westgate",
+   "category": "Fitness & Gyms",
+   "suburb": "Westgate",
+   "region": "cape-flats",
+   "address": "Westgate Mall, Corner Weltevreden Parkway & Morgenster Road, Westgate, Mitchells Plain, Cape Town, 7785",
+   "shopping_centre": "Westgate Mall",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://zonefitness.co.za/westgate/",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=1976690",
+    "https://zonefitness.co.za/westgate-timetables/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 05:30-21:00, Fri 05:30-20:00, Sat-Sun 07:00-15:00, Public holidays 07:00-15:00",
    "has_email": false,
    "current_words": 29,
    "current_description": "Zone Fitness Westgate Mall is a gym inside Westgate Mall in Westgate, Mitchells Plain, offering newly upgraded cardio and weights areas as part of the wider Zone Fitness chain."
@@ -324,10 +606,20 @@
   {
    "slug": "306-restaurant-and-lounge-parklands",
    "name": "306 Restaurant and Lounge",
-   "category": "restaurants-takeaways",
-   "suburb": "parklands",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Parklands",
+   "region": "west-coast",
+   "address": "Unit 2, Eclipse Park, Village Walk, Parklands, Cape Town, 7441",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.306restaurant.com/",
+   "existing_sources": [
+    "https://www.306restaurant.com/contact",
+    "https://www.ubereats.com/za/store/306-restaurant-and-lounge/yQfoFaApRXWLz47li1c6iw",
+    "https://restaurants-southafrica.nears.me/restaurants/south-africa/cape-town/306-restaurant-and-lounge-in-cape-town-complete-african-restaurant-guide/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Tue 09:00-21:00, Wed-Sat 09:30-21:00, Sun 09:00-18:00",
    "has_email": false,
    "current_words": 30,
    "current_description": "306 Restaurant and Lounge is a Nigerian restaurant in Eclipse Park, Parklands, serving traditional dishes such as jollof rice, pepper soup and grilled plantain, with dine-in, takeaway and delivery options."
@@ -335,10 +627,20 @@
   {
    "slug": "african-elite-properties-de-waterkant",
    "name": "African Elite Properties",
-   "category": "accommodation",
-   "suburb": "de-waterkant",
+   "category": "Accommodation",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "Shop A22, Cape Quarter, Dixon Street, De Waterkant, Cape Town",
+   "shopping_centre": "Cape Quarter Lifestyle Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://capequarter.co.za/shops/",
+    "https://africaneliteproperties.com/stay-with-us/",
+    "https://africaneliteproperties.com/apartments/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 30,
    "current_description": "African Elite Properties offers luxury serviced accommodation in De Waterkant, with apartments inside Cape Quarter Lifestyle Village as well as free-standing apartments nearby, some with private pools and braai areas."
@@ -346,10 +648,20 @@
   {
    "slug": "algina-wholesale-nursery-firgrove",
    "name": "Algina Wholesale Nursery",
-   "category": "nurseries-garden-centres",
-   "suburb": "firgrove",
+   "category": "Nurseries & Garden Centres",
+   "suburb": "Firgrove",
+   "region": "helderberg",
+   "address": "Rustenhof Farm, Firgrove, Cape Town, 7130",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.facebook.com/AlginaWholesaleNursery/",
+    "https://www.yellowpages.net.za/phone,27-746183901,Wholesale-Plant-Nursery,Cape-Town,ZA33547.html",
+    "https://www.foodformzansi.co.za/agri-worker-goes-from-retrenchment-to-award-winning-entrepreneur/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 08:00-17:00, Sun Closed",
    "has_email": false,
    "current_words": 30,
    "current_description": "Algina Wholesale Nursery is a wholesale plant nursery on Rustenhof Farm in Firgrove, growing seasonal plants and vegetable seedlings at scale and supplying community gardens and households in the area."
@@ -357,10 +669,20 @@
   {
    "slug": "anysberg-biltong-and-deli-durbanville",
    "name": "Anysberg Biltong & Deli",
-   "category": "butcheries",
-   "suburb": "durbanville",
+   "category": "Butcheries",
+   "suburb": "Durbanville",
+   "region": "northern-suburbs",
+   "address": "Shop 17, De Ville Shopping Centre, Corner of Wellington Street and Main Road, Durbanville, 7551",
+   "shopping_centre": "De Ville Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.jamii.co.za/6325-cape-town-biltong-retailer-anysberg-biltong-deli",
+    "https://www.snupit.co.za/durbanville/morningstar/anysberg-biltong-_and_-deli/220321",
+    "https://anysbergbiltong.com/about-us/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 30,
    "current_description": "Anysberg Biltong & Deli is a butchery and delicatessen inside De Ville Shopping Centre in Durbanville, specialising in beef, game, ostrich and chicken biltong and droewors alongside other deli products."
@@ -368,10 +690,19 @@
   {
    "slug": "artappel-prop-hire-salt-river",
    "name": "Artappel Prop Hire",
-   "category": "events-function-venues",
-   "suburb": "salt-river",
+   "category": "Events & Function Venues",
+   "suburb": "Salt River",
+   "region": "city-bowl",
+   "address": "Transnet Industrial Park, 19a Voortrekker Road, Salt River, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.artappel.co.za/",
+   "existing_sources": [
+    "https://www.artappel.co.za/contact/",
+    "https://b2bhint.com/en/company/za/artappel-prophire--B2009142051"
+   ],
    "has_hours": true,
+   "hours": "Summer (Oct-Apr): Mon-Fri 08:00-17:00, Sat 09:00-13:00, Sun Closed; Winter (May-Sep): Mon-Fri 09:00-17:00, Sat-Sun Closed",
    "has_email": false,
    "current_words": 30,
    "current_description": "Artappel Prop Hire is a prop and furniture rental company based in the Transnet Industrial Park on Voortrekker Road, supplying props for film, TV and event productions in Salt River."
@@ -379,10 +710,20 @@
   {
    "slug": "barnyard-theatre-willowbridge-bellville",
    "name": "Barnyard Theatre Willowbridge",
-   "category": "events-function-venues",
-   "suburb": "bellville",
+   "category": "Events & Function Venues",
+   "suburb": "Bellville",
+   "region": "northern-suburbs",
+   "address": "Shop F09, 1st Floor, Willowbridge Shopping Centre, 39 Carl Cronje Drive, Tyger Valley, Bellville, 7530",
+   "shopping_centre": "Willowbridge Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.barnyardtheatre.co.za/tygervalley/",
+    "https://www.tripadvisor.co.nz/Attraction_Review-g312656-d7264238-Reviews-Barnyard_Theatre_Willowbridge-Bellville_Western_Cape.html",
+    "https://www.tripadvisor.com/Attraction_Review-g312656-d7264238-Reviews-Barnyard_Theatre_Willowbridge-Bellville_Western_Cape.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 30,
    "current_description": "Barnyard Theatre Willowbridge is a live entertainment venue inside Willowbridge Shopping Centre in Bellville, staging concerts, tribute shows and comedy performances on weekday and weekend evenings, with occasional Sunday matinees."
@@ -390,10 +731,20 @@
   {
    "slug": "be-dazzle-hair-and-beauty-salon-kenilworth",
    "name": "Be-Dazzle Hair and Beauty Salon",
-   "category": "beauty-hair-salons",
-   "suburb": "kenilworth",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Kenilworth",
+   "region": "southern-suburbs",
+   "address": "Shop G4, Access Park, Chichester Road, Kenilworth, Cape Town, 7708",
+   "shopping_centre": "Access Park",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.facebook.com/bedazzle.accesspark/",
+    "https://www.hotfrog.co.za/company/1099860278091776/be-dazzle-hair-and-beauty-salon/kenilworth/cosmetics",
+    "https://healthspas.co.za/spa/be-dazzle/kenilworth/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Wed 08:00-17:00, Thu-Fri 08:00-18:00, Sat 08:00-17:00, Sun 09:00-14:00",
    "has_email": false,
    "current_words": 30,
    "current_description": "Be-Dazzle Hair and Beauty Salon is a hair, beauty and slimming salon in Access Park, Kenilworth, offering hair colouring, treatments, manicures, pedicures, waxing and laser hair removal, open since 2012."
@@ -401,10 +752,19 @@
   {
    "slug": "billy-now-de-waterkant",
    "name": "Billy Now",
-   "category": "fashion-clothing",
-   "suburb": "de-waterkant",
+   "category": "Fashion & Clothing",
+   "suburb": "De Waterkant",
+   "region": "city-bowl",
+   "address": "Store A15, Mezzanine Level, Cape Quarter Lifestyle Village, 27 Somerset Rd, De Waterkant, Cape Town",
+   "shopping_centre": "Cape Quarter Lifestyle Village",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://capequarter.co.za/shops/",
+    "https://shop.billynow.com/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 30,
    "current_description": "Billy Now is a Cape Town-based clothing brand known for limited-run printed shirts and jackets designed and made locally, with a store in Cape Quarter Lifestyle Village in De Waterkant."
@@ -412,10 +772,19 @@
   {
    "slug": "bluebottle-guesthouse-muizenberg",
    "name": "Bluebottle Guesthouse",
-   "category": "accommodation",
-   "suburb": "muizenberg",
+   "category": "Accommodation",
+   "suburb": "Muizenberg",
+   "region": "south-peninsula",
+   "address": "18 Mount Road, Muizenberg, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.blue-bottle.co.za/accommodation",
+    "https://www.thegsa.co.za/game-lodges/948-bluebottle-guest-house"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 30,
    "current_description": "Bluebottle Guesthouse is a seven-room guesthouse in Muizenberg with sea, lake and mountain views, offering en-suite rooms, a garden, an honesty bar and an on-site restaurant serving South African dishes."
@@ -423,10 +792,20 @@
   {
    "slug": "body-mind-wellness-spa-sea-point",
    "name": "Body+Mind Wellness Spa",
-   "category": "spas-wellness",
-   "suburb": "sea-point",
+   "category": "Spas & Wellness",
+   "suburb": "Sea Point",
+   "region": "atlantic-seaboard",
+   "address": "11 Kloof Road, Sea Point, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://bodyplusmindwellness.co.za/",
+    "https://www.retreatatlassouthafrica.com/listing/body-mind-wellness-spa-d86803/",
+    "https://www.thespaguide.co.za/listing/cape-town/spa/bodymind-wellness-spa/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sun 09:00-19:00",
    "has_email": false,
    "current_words": 30,
    "current_description": "Body+Mind Wellness Spa is a day spa on the second floor of the Sea Point Medical Centre on Kloof Road, offering massage therapy, facials, waxing, and manicure/pedicure treatments."
@@ -434,10 +813,20 @@
   {
    "slug": "bornman-and-hayward-attorneys-stellenberg",
    "name": "Bornman & Hayward Attorneys",
-   "category": "attorneys-legal",
-   "suburb": "stellenberg",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Stellenberg",
+   "region": "northern-suburbs",
+   "address": "Suite 1, 2 Reiger Road, Stellenberg, Bellville, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://borhay.co.za",
+   "existing_sources": [
+    "https://borhay.co.za/contact-us/",
+    "https://www.brabys.com/za/western-cape/bellville/stellenberg/attorneys/bornman-hayward-attorneys",
+    "https://lawzana.com/lawyer/bornman-hayward-attorneys"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 30,
    "current_description": "Bornman & Hayward Attorneys is a law firm established in 1971, offering conveyancing, litigation, labour relations, commercial law, debt collection and deceased estate services from its Stellenberg office in Bellville."
@@ -445,10 +834,19 @@
   {
    "slug": "builders-warehouse-constantiaberg-retreat",
    "name": "Builders Warehouse Constantiaberg",
-   "category": "hardware-stores",
-   "suburb": "retreat",
+   "category": "Hardware Stores",
+   "suburb": "Retreat",
+   "region": "cape-flats",
+   "address": "Cnr Main Road and Bark Street, Retreat, Cape Town, 7945",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tiendeo.co.za/stores/cape-town/builders-warehouse-co-main-road-and-bark-street-retreat/4888",
+    "https://www.brabys.com/za/western-cape/retreat/retreat-industrial/building-materials/builders-warehouse-constantiaberg"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-18:00, Sat 08:00-17:00, Sun 08:00-16:00",
    "has_email": false,
    "current_words": 30,
    "current_description": "Builders Warehouse Constantiaberg is a large-format hardware and building-materials store on the corner of Main Road and Bark Street in Retreat, stocking building supplies, tools, hardware, paint, and home-improvement products."
@@ -456,10 +854,19 @@
   {
    "slug": "cafe-orca-melkbosstrand",
    "name": "Cafe Orca",
-   "category": "restaurants-takeaways",
-   "suburb": "melkbosstrand",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Melkbosstrand",
+   "region": "west-coast",
+   "address": "88 Beach Rd, Melkbosstrand, Cape Town, 7437",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.cafeorca.co.za/",
+   "existing_sources": [
+    "https://www.cafeorca.co.za/",
+    "https://www.tripadvisor.com/Restaurant_Review-g667022-d2415694-Reviews-Cafe_Orca-Melkbosstrand_Western_Cape.html"
+   ],
    "has_hours": true,
+   "hours": "Wed-Sat 12:00-15:00 & 17:30-20:30, Sun 12:00-15:00, Mon-Tue Closed",
    "has_email": false,
    "current_words": 30,
    "current_description": "Cafe Orca is a seafood restaurant in Melkbosstrand known for West Coast dishes such as Cajun calamari tentacles, peri-peri chicken livers and grilled West Coast sole, with dinner reservations recommended."
@@ -467,10 +874,19 @@
   {
    "slug": "cafe-pescado-simons-town",
    "name": "Cafe Pescado",
-   "category": "restaurants-takeaways",
-   "suburb": "simons-town",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Simon's Town",
+   "region": "south-peninsula",
+   "address": "118 St Georges Street, Simon's Town, Cape Town, 7975",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.simonstown.com/business-directory/cafe-pescado/",
+    "https://pescados.co.za/contact"
+   ],
    "has_hours": true,
+   "hours": "Open daily 09:00-23:00",
    "has_email": false,
    "current_words": 30,
    "current_description": "Cafe Pescado is a casual restaurant on St Georges Street in Simon's Town serving pizzas, pastas, burgers and seafood, with prawns and calamari among its specialities, plus regular live music."
@@ -478,10 +894,19 @@
   {
    "slug": "cape-of-storms-distilling-company-salt-river",
    "name": "Cape of Storms Distilling Company",
-   "category": "liquor-stores",
-   "suburb": "salt-river",
+   "category": "Liquor Stores",
+   "suburb": "Salt River",
+   "region": "city-bowl",
+   "address": "The Spice Yard, Unit RS03, 100 Voortrekker Road, Salt River, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://capeofstormsdistillery.com/",
+   "existing_sources": [
+    "https://capeofstormsdistillery.com/contact/",
+    "https://www.tripadvisor.com/Attraction_Review-g1722390-d18856854-Reviews-Cape_Of_Storms_Distilling_Company-Cape_Town_Western_Cape.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 30,
    "current_description": "Cape of Storms Distilling Company is a craft rum distillery and tasting room at The Spice Yard in Salt River, producing small-batch sugar-free rums and offering distillery tours and tastings."
@@ -489,10 +914,19 @@
   {
    "slug": "cape-to-cuba-kalk-bay",
    "name": "Cape to Cuba",
-   "category": "restaurants-takeaways",
-   "suburb": "kalk-bay",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Kalk Bay",
+   "region": "south-peninsula",
+   "address": "165 Main Road, Kalk Bay, Cape Town, 7990",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://capetocuba.com/",
+    "https://wanderboat.ai/restaurants/south-africa/western-cape/cape-to-cuba/f5mW8XjgSMS_Wr7hHBmfKA"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 30,
    "current_description": "Cape to Cuba is a Cuban-inspired restaurant and beach bar at Kalk Bay Harbour, a local landmark since 1999 known for its seafood, mojitos, and live music on weekend afternoons."
@@ -500,10 +934,20 @@
   {
    "slug": "cape-union-mart-travel-safari-va-waterfront",
    "name": "Cape Union Mart Travel & Safari",
-   "category": "general-retail",
-   "suburb": "va-waterfront",
+   "category": "General Retail",
+   "suburb": "V&A Waterfront",
+   "region": "city-bowl",
+   "address": "Shop 142, Victoria Wharf Shopping Centre, 19 Dock Rd, V&A Waterfront, Cape Town",
+   "shopping_centre": "Victoria Wharf Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://brabys.com/south-africa/cape-town/verified-business/cape-union-mart-travel-safari",
+    "https://absolutelylife.co.za/cape-union-mart---travel-safari-v-a-waterfront-6196138989481018881/",
+    "https://www.africanadvice.com/1072798/Outdoor_Accessories/Cape_Town/Cape_Union_Mart_Travel_And_Safari/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 30,
    "current_description": "Cape Union Mart Travel & Safari at the V&A Waterfront is a dedicated travel-goods store from the Cape Union Mart outdoor retail group, stocking non-seasonal clothing, luggage and travel gear."
@@ -511,10 +955,20 @@
   {
    "slug": "carlton-hair-blue-route-tokai",
    "name": "Carlton Hair - Blue Route",
-   "category": "beauty-hair-salons",
-   "suburb": "tokai",
+   "category": "Beauty & Hair Salons",
+   "suburb": "Tokai",
+   "region": "southern-suburbs",
+   "address": "Shop G130, Blue Route Mall, 16 Tokai Road, Tokai, Cape Town, 7945",
+   "shopping_centre": "Blue Route Mall",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.fresha.com/lvp/carlton-hair-blue-route-tokai-road-cape-town-VEo3r8",
+    "https://za.africabz.com/western-cape/carlton-hair-168662",
+    "https://blueroutemall.co.za/stores/pick/carlton-hair/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 09:00-19:00, Sun 09:00-17:00",
    "has_email": false,
    "current_words": 30,
    "current_description": "Carlton Hair - Blue Route is a hair salon inside Blue Route Mall offering precision cuts and colour treatments, part of a South African hair salon chain operating since 1968."
@@ -522,10 +976,21 @@
   {
    "slug": "cashbuild-philippi-philippi",
    "name": "Cashbuild Philippi",
-   "category": "hardware-stores",
-   "suburb": "philippi",
+   "category": "Hardware Stores",
+   "suburb": "Philippi",
+   "region": "cape-flats",
+   "address": "Lansdowne Rd, Philippi Shopping Centre, Philippi, Cape Town, 7785",
+   "shopping_centre": "Philippi Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.sa-venues.com/things-to-do/westerncape/bysuburb/philippi/category/malls-and-shopping/",
+    "https://www.yep.co.za/biz/store/iyp/2371682_2",
+    "https://www.brabys.com/za/western-cape/cape-town/philippi/building-materials-supplies/cash-build",
+    "https://startupmag.co.za/2025/02/building-success-the-rise-of-cashbuild-in-south-africa/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 30,
    "current_description": "Cashbuild is a South African hardware and building-materials retailer founded in 1978, stocking cement, timber, roofing, plumbing and hardware supplies; this branch trades from the Philippi Shopping Centre in Philippi."
@@ -533,10 +998,20 @@
   {
    "slug": "chart-farm-wynberg",
    "name": "Chart Farm",
-   "category": "nurseries-garden-centres",
-   "suburb": "wynberg",
+   "category": "Nurseries & Garden Centres",
+   "suburb": "Wynberg",
+   "region": "southern-suburbs",
+   "address": "1A Klaasens Road, Wynberg, Cape Town",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://chartfarm.co.za/",
+   "existing_sources": [
+    "https://insideguide.co.za/cape-town/things-to-do/chart-farm/",
+    "https://www.sa-venues.com/attractionswc/chart-farm.php",
+    "https://chartfarm.co.za/"
+   ],
    "has_hours": true,
+   "hours": "Daily 09:00-16:00",
    "has_email": false,
    "current_words": 30,
    "current_description": "Chart Farm is a pick-your-own rose farm and farm stall in Wynberg, offering fresh fruit, jams, preserves and honey alongside The Terrace coffee shop with views over the Constantia Valley."
@@ -544,10 +1019,21 @@
   {
    "slug": "classic-bakery-crawford",
    "name": "Classic Bakery",
-   "category": "bakeries",
-   "suburb": "crawford",
+   "category": "Bakeries",
+   "suburb": "Crawford",
+   "region": "cape-flats",
+   "address": "212 Thornton Road, Crawford, Cape Town, 7780",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.classicbakery.co.za/",
+   "existing_sources": [
+    "https://za.africabz.com/western-cape/classic-bakery-39241",
+    "http://www.classicbakery.co.za/",
+    "https://www.findglocal.com/ZA/Cape-Town/138636872852371/Classic-Bakery",
+    "https://www.shopshours.co.za/classic-bakery/cape-town/c-57f3ca5147d677c3b27c33e1"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 09:00-17:00, Fri 09:00-12:30 & 14:00-17:00, Sat 09:00-13:30, Sun 08:00-11:00",
    "has_email": false,
    "current_words": 30,
    "current_description": "Classic Bakery is a halaal-certified bakery on Thornton Road in Crawford that has been baking since 1980, offering a wide range of cakes including custom wedding, engagement and birthday cakes."

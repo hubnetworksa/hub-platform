@@ -5,10 +5,20 @@
   {
    "slug": "fnb-bendor",
    "name": "FNB Mall of the North",
-   "category": "banks-atms",
-   "suburb": "bendor",
+   "category": "Banks & ATMs",
+   "suburb": "Bendor",
+   "region": "polokwane",
+   "address": "Shop L44, Mall of the North, Cnr R81 & N1 Bypass, Bendor, Polokwane, 0699",
+   "shopping_centre": "Mall of the North",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://mallofthenorth.co.za/stores/",
+    "https://mycityinfo.co.za/places/south-africa/limpopo/polokwane/finance/fnb-mall-of-the-north/",
+    "https://www.fnb.co.za/downloads/savingInvestments/Polokwane.PDF"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "FNB (First National Bank), part of the FirstRand group and one of South Africa's big-four banks, operates a full-service branch in Mall of the North, Bendor, offering personal and business banking, loans and investment services."
@@ -16,10 +26,20 @@
   {
    "slug": "foto-first-bendor",
    "name": "Foto First",
-   "category": "general-retail",
-   "suburb": "bendor",
+   "category": "General Retail",
+   "suburb": "Bendor",
+   "region": "polokwane",
+   "address": "Shop L70, Mall of the North, Cnr R81 and N1, Bendor Ext 99, Polokwane, 0699",
+   "shopping_centre": "Mall of the North",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://mallofthenorth.co.za/stores/",
+    "https://fotofirst.co.za/store-locator/",
+    "https://fotofirst.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Foto First is a South African photographic printing franchise, represented in all nine provinces, with a store in Mall of the North, Bendor, offering photo prints, digital printing and photographic equipment using Fujifilm lab technology."
@@ -27,10 +47,20 @@
   {
    "slug": "gateway-maintenance-and-solar-superbia",
    "name": "Gateway Maintenance and Solar",
-   "category": "solar-renewable-energy",
-   "suburb": "superbia",
+   "category": "Solar & Renewable Energy",
+   "suburb": "Superbia",
+   "region": "polokwane",
+   "address": "43 Nikkel Street, Superbia, Polokwane",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://agri4all.com/profile/11276",
+    "https://www.facebook.com/p/Gateway-Maintenance-and-Solar-100090928175325/",
+    "https://www.procompare.co.za/providers/gateway-maintenance-and-solar"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 35,
    "current_description": "Gateway Maintenance and Solar is a team of qualified electricians offering solar panel and back-up power system installation, electrical maintenance and Certificate of Compliance (COC) issuing, with financing options available for once-off or monthly payment."
@@ -38,10 +68,20 @@
   {
    "slug": "great-north-power-solutions-futura",
    "name": "Great North Power Solutions",
-   "category": "solar-renewable-energy",
-   "suburb": "futura",
+   "category": "Solar & Renewable Energy",
+   "suburb": "Futura",
+   "region": "polokwane",
+   "address": "35B Corundum Street, Futura, Polokwane",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.gnps.co.za",
+   "existing_sources": [
+    "https://www.gnps.co.za/solar",
+    "https://www.facebook.com/gnpslimpopo/",
+    "https://www.procompare.co.za/providers/great-north-power-solutions"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 07:00-17:00, Sat 08:00-13:00",
    "has_email": true,
    "current_words": 35,
    "current_description": "Great North Power Solutions distributes and maintains power generation and solar equipment for commercial, agricultural, industrial and domestic use, and is an authorised Bundu Power dealer offering solar geysers alongside its generator and solar systems."
@@ -49,10 +89,20 @@
   {
    "slug": "hi-q-ladanna-ladanna",
    "name": "Hi-Q Ladanna",
-   "category": "tyre-fitment-centres",
-   "suburb": "ladanna",
+   "category": "Tyre Fitment Centres",
+   "suburb": "Ladanna",
+   "region": "polokwane",
+   "address": "Cnr Witklip St & Pietersburg Rd, Ladanna, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.yellosa.co.za/company/584431/hi-q-ladanna",
+    "https://www.netpages.co.za/Polokwane/Hi-Q-Ladanna-13098.html",
+    "https://hiq.co.za/store-locator/limpopo/hi-q-tyres-&-autocare-polokwane-ladine"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Hi-Q Ladanna is a tyre and autocare fitment centre at the corner of Witklip Street and Pietersburg Road, offering tyres, batteries, suspension, brakes, mechanical servicing and rim repairs as part of the national Hi-Q chain."
@@ -60,10 +110,19 @@
   {
    "slug": "hound-dogs-flora-park",
    "name": "Hound Dogs",
-   "category": "vets-animal-care",
-   "suburb": "flora-park",
+   "category": "Vets & Animal Care",
+   "suburb": "Flora Park",
+   "region": "polokwane",
+   "address": "62 McDonald Street, Flora Park, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://hounddogs.co.za",
+   "existing_sources": [
+    "https://hounddogs.co.za/",
+    "https://www.polokwane.info/pet-food-in-polokwane/hound-dog-alley-cats/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Hound Dogs is a mobile dog grooming service in Flora Park, offering bathing, brushing, nail clipping, ear cleaning, de-shedding and breed-specific grooming at the client's home, bookable via WhatsApp or its own online booking form."
@@ -71,10 +130,20 @@
   {
    "slug": "identity-mall-of-the-north-bendor",
    "name": "Identity",
-   "category": "fashion-clothing",
-   "suburb": "bendor",
+   "category": "Fashion & Clothing",
+   "suburb": "Bendor",
+   "region": "polokwane",
+   "address": "Shop U13, Mall of the North, Munnik Ave, Bendor, Polokwane, 0699",
+   "shopping_centre": "Mall of the North",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://mallofthenorth.co.za/stores/",
+    "https://www.tiendeo.co.za/stores/polokwane/identity",
+    "https://capegatecentre.co.za/shop/identity"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Identity is a South African fashion retailer, part of the Truworths International group and trading since 1999, with a store in Mall of the North, Bendor, offering on-trend clothing, footwear and accessories for young shoppers."
@@ -82,10 +151,20 @@
   {
    "slug": "jmr-trailer-parts-ladanna",
    "name": "JMR Trailer Parts",
-   "category": "motor-spares",
-   "suburb": "ladanna",
+   "category": "Motor Spares",
+   "suburb": "Ladanna",
+   "region": "polokwane",
+   "address": "108 Blaauwberg Street, Ladanna, Polokwane",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.facebook.com/Adsonlineadvertising/photos/jmr-trailer-parts-polokwane-limpopophone-015-293-2281mobile-phone-082-974-0497jo/965890583599074/",
+    "https://www.ananzi.co.za/ads/za/limpopo/polokwane/ladine/trailer-parts-accessories/jmr-trailer-parts",
+    "https://jmrgroup.co.za/branches/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "JMR Trailer Parts supplies trailer parts and accessories, including BPW, WABCO and JOST brand components, and provides trailer repair, brake work and road assistance services from its Ladanna branch, as part of the JMR Group."
@@ -93,10 +172,19 @@
   {
    "slug": "jphen-beauty-spa-polokwane-central",
    "name": "Jphen Beauty Spa",
-   "category": "spas-wellness",
-   "suburb": "polokwane-central",
+   "category": "Spas & Wellness",
+   "suburb": "Polokwane Central",
+   "region": "polokwane",
+   "address": "92A Hoog Street, Polokwane Central",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://jphenbeautyspa.co.za",
+   "existing_sources": [
+    "https://www.fresha.com/lvp/jphen-beauty-spa-hoog-street-polokwane-eX0jMP",
+    "https://jphenbeautyspa.co.za/contact.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Jphen Beauty Spa is a boutique beauty and spa venue on Hoog Street in Polokwane Central, open since August 2022 and offering spa packages, body scrubs, nail treatments and facials for women, men and children."
@@ -104,10 +192,20 @@
   {
    "slug": "keneilwe-mabapa-attorneys-eduan-park",
    "name": "Keneilwe Mabapa Attorneys",
-   "category": "attorneys-legal",
-   "suburb": "eduan-park",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Eduan Park",
+   "region": "polokwane",
+   "address": "14 Holland Street, Eduan Park, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://keneilwemabapa.co.za",
+   "existing_sources": [
+    "http://keneilwemabapa.co.za/about.html",
+    "https://www.facebook.com/keneilwemabapaincorporated/",
+    "https://www.procompare.co.za/providers/keneilwe-mabapa-incorporated"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Keneilwe Mabapa Attorneys is a boutique law firm in Eduan Park, Polokwane, handling family law, divorce, labour law, corporate and commercial law, immigration law, notarial work and conveyancing, as well as estate planning and administration."
@@ -115,10 +213,18 @@
   {
    "slug": "limparts-limpopo-futura",
    "name": "Limparts Limpopo",
-   "category": "motor-spares",
-   "suburb": "futura",
+   "category": "Motor Spares",
+   "suburb": "Futura",
+   "region": "polokwane",
+   "address": "45 Lood Street, Futura, Polokwane",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://limparts.co.za",
+   "existing_sources": [
+    "https://limparts.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Limparts Limpopo supplies mechanical and body spare parts for Scania, Volvo, MAN and Shacman trucks and buses from its Futura branch, part of a group founded in 2017 with branches across Gauteng, Mpumalanga and Limpopo."
@@ -126,10 +232,21 @@
   {
    "slug": "lovisa-bendor",
    "name": "Lovisa",
-   "category": "jewellers",
-   "suburb": "bendor",
+   "category": "Jewellers",
+   "suburb": "Bendor",
+   "region": "polokwane",
+   "address": "Shop U63, Mall of the North, Cnr R81 & N1 Bypass, Bendor Park, Polokwane, 0699",
+   "shopping_centre": "Mall of the North",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://mallofthenorth.co.za/stores/",
+    "https://www.ivote.co.za/view/south-africa/lovisa-mall-of-the-north-in-polokwane",
+    "https://www.facebook.com/mallofthenorth/photos/the-beautiful-new-look-lovisa-store-in-shoppolokwane-mallofthenorth-is-official-/1474937712572501/",
+    "https://en.wikipedia.org/wiki/Lovisa_(company)"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Lovisa is an Australian fast-fashion jewellery chain founded in Sydney in 2010, with more than 1,000 stores across over 50 countries including South Africa; stores stock affordable, trend-led jewellery with new styles arriving weekly."
@@ -137,10 +254,20 @@
   {
    "slug": "mama-testimony-african-restaurant-grocery-polokwane-central",
    "name": "Mama Testimony African Restaurant & Grocery",
-   "category": "restaurants-takeaways",
-   "suburb": "polokwane-central",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Polokwane Central",
+   "region": "polokwane",
+   "address": "106 Schoeman Street, Polokwane Central",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.facebook.com/people/Mama-Testimony-African-Restaurant-Grocery/100076670251686/",
+    "https://www.mrd.com/delivery/restaurant/mama-testimony-african-restaurant-grocery-polokwane-central/23978",
+    "https://www.ubereats.com/za/store/mama-testimony-restaurant/wr2qTA0aXpq6RkkgBTK4xA"
+   ],
    "has_hours": true,
+   "hours": "Mon-Wed 08:30-17:30, Thu 08:30-18:30, Fri 08:30-17:30, Sat 09:00-15:00",
    "has_email": false,
    "current_words": 35,
    "current_description": "Mama Testimony African Restaurant & Grocery is a Nigerian and West African restaurant and grocery on Schoeman Street, Polokwane Central, serving dishes such as jollof rice and fried rice, with delivery available via Uber Eats."
@@ -148,10 +275,19 @@
   {
    "slug": "mary-jane-mphahlele-attorneys-inc-polokwane-central",
    "name": "Mary-Jane Mphahlele Attorneys Inc",
-   "category": "attorneys-legal",
-   "suburb": "polokwane-central",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Polokwane Central",
+   "region": "polokwane",
+   "address": "3rd Floor, Thabakgolo Building, 60 Landdros Mare Street, Polokwane Central, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.facebook.com/p/Mary-Jane-Mphahlele-Attorneys-100088186725987/",
+    "https://www.mjmattorneys.co.za/about/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Mary-Jane Mphahlele Attorneys Inc is a full-service law firm in Polokwane Central handling deceased estate administration, insolvency, litigation and arbitration, divorce and family law, commercial law, debt collection, and personal injury and medical negligence matters."
@@ -159,10 +295,20 @@
   {
    "slug": "maxis-game-centre-polokwane-central",
    "name": "Maxi's Game Centre",
-   "category": "restaurants-takeaways",
-   "suburb": "polokwane-central",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Polokwane Central",
+   "region": "polokwane",
+   "address": "Shop 0017, Game Centre, Cnr Hospital & Market Street, Polokwane, 0699",
+   "shopping_centre": "Game Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.near-place.com/maxis-polokwane",
+    "https://www.yep.co.za/biz/store/maxis-restaurant/340576",
+    "https://maxisfood.com/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Maxi's is a long-running South African restaurant and takeaway chain, in operation for more than 30 years and known for generous portions and affordable pricing; this branch trades from the Game Centre in Polokwane's CBD."
@@ -170,10 +316,21 @@
   {
    "slug": "mohlakaneng-high-school-seshego-zone-1",
    "name": "Mohlakaneng High School",
-   "category": "schools-education",
-   "suburb": "seshego-zone-1",
+   "category": "Schools & Education",
+   "suburb": "Seshego Zone 1",
+   "region": "seshego",
+   "address": "1912 Zone 1, Seshego, 0742",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://mohlakanengsecondary.co.za",
+   "existing_sources": [
+    "https://skools.co.za/listings/mohlakaneng-high-school/",
+    "https://www.school-register.co.za/school/mohlakaneng/",
+    "https://schoolsdigest.co.za/listings/mohlakaneng/",
+    "https://mohlakanengsecondary.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 35,
    "current_description": "Mohlakaneng High School is a public, no-fee secondary school in Seshego Zone 1 offering grades 8 to 12, with around 698 learners and 20 educators as of 2023, and the motto 'A journey to excellence'."
@@ -181,10 +338,20 @@
   {
    "slug": "mphahlele-ma-attorneys-polokwane-central",
    "name": "Mphahlele MA Attorneys",
-   "category": "attorneys-legal",
-   "suburb": "polokwane-central",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Polokwane Central",
+   "region": "polokwane",
+   "address": "Office 10, A L Smit Building, 26 Thabo Mbeki Street, Polokwane Central, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.shopshours.co.za/lawyers/polokwane",
+    "https://www.infoisinfo.co.za/searchname/mphahlele%20ma%20attorneys",
+    "https://mamphahleleattorneys.co.za/about-us/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Mphahlele MA Attorneys is a 100% women-led law firm in Polokwane Central, established in 2005, practising litigation, matrimonial and contract law, intellectual property and labour law, with a focus on serving small and medium-sized enterprises."
@@ -192,10 +359,20 @@
   {
    "slug": "ngwenya-accounting-and-tax-services-polokwane-central",
    "name": "Ngwenya Accounting and Tax Services",
-   "category": "accountants",
-   "suburb": "polokwane-central",
+   "category": "Accountants",
+   "suburb": "Polokwane Central",
+   "region": "polokwane",
+   "address": "15C Magazyn Street, Polokwane Central, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://ngwenya-accounting.co.za/",
+   "existing_sources": [
+    "https://ngwenya-accounting.co.za/contact-us/",
+    "https://www.procompare.co.za/providers/ngwenya-accounting-tax-services",
+    "https://ngwenya-accounting.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Ngwenya Accounting and Tax Services is an accounting practice in Polokwane Central offering tax compliance such as income tax returns and VAT submissions, payroll processing including SARS EMP201/501 returns, and broader business advisory services."
@@ -203,10 +380,20 @@
   {
    "slug": "polokwane-estate-lodge-spa-dalmada",
    "name": "Polokwane Estate Lodge & Spa",
-   "category": "accommodation",
-   "suburb": "dalmada",
+   "category": "Accommodation",
+   "suburb": "Dalmada",
+   "region": "polokwane",
+   "address": "R71 Road, towards Mankweng/Turfloop, Dalmada, Polokwane",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://polokwaneestatelodge.co.za/",
+   "existing_sources": [
+    "https://polokwaneestatelodge.co.za/contact-us/",
+    "https://www.tripadvisor.co.za/Hotel_Review-g312624-d30230280-Reviews-Polokwane_Estate_Lodge-Polokwane_Limpopo_Province.html",
+    "https://www.travelstart.co.za/accommodation/polokwane-estate-lodge-and-spa-room-only-dalmada"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 35,
    "current_description": "Polokwane Estate Lodge & Spa is a guesthouse and spa retreat on the R71 towards Mankweng/Turfloop in Dalmada, offering guest rooms with Wi-Fi and DStv alongside on-site spa treatments such as massages and facials."
@@ -214,10 +401,20 @@
   {
    "slug": "rampora-attorneys-lebowakgomo",
    "name": "J.M Rampora Attorneys",
-   "category": "attorneys-legal",
-   "suburb": "lebowakgomo",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Lebowakgomo",
+   "region": "limpopo-other",
+   "address": "Stand No. 04, Unit P, Lebowakgomo, 0737",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.directory101.co.za/legaldir/index.php?page=item&id=181",
+    "https://b2bhint.com/en/company/za/jm-rampora-attorneys--K2020621772",
+    "https://www.southafricanlawyer.co.za/law-firm/jm-rampora-attorneys/limpopo/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "J.M Rampora Attorneys is a law firm in Lebowakgomo offering a broad range of legal services, including criminal and civil litigation, contracts, debt collection, conveyancing, administration of deceased estates, notarial work and labour law."
@@ -225,10 +422,20 @@
   {
    "slug": "sasol-bendor-bendor",
    "name": "Sasol Bendor",
-   "category": "fuel-stations",
-   "suburb": "bendor",
+   "category": "Fuel Stations & Garages",
+   "suburb": "Bendor",
+   "region": "polokwane",
+   "address": "Cnr Outspan Dr & General Maritz St, Bendor, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.sasol.com/franchise-opportunities",
+   "existing_sources": [
+    "https://za.near-place.com/sasol-bendor-cnr-outspan-dr-general-maritz-st-bendor-polokwane",
+    "https://www.facebook.com/SasolBendor/",
+    "https://www.fueldirectory.co.za/listing.php?listings_id=4923"
+   ],
    "has_hours": true,
+   "hours": "Open 24 hours",
    "has_email": false,
    "current_words": 35,
    "current_description": "Sasol Bendor is a fuel station on the corner of Outspan Drive and General Maritz Street in Bendor with a Sasol Convenience Centre, car wash, and forecourt assistance with oil, water and tyre pressure checks."
@@ -236,10 +443,20 @@
   {
    "slug": "scampis-take-aways-flora-park",
    "name": "Scampi's Take Aways",
-   "category": "restaurants-takeaways",
-   "suburb": "flora-park",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Flora Park",
+   "region": "polokwane",
+   "address": "Shop 3, 297 Marshall Street, Flora Park Centre, Flora Park, Polokwane, 0699",
+   "shopping_centre": "Flora Park Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.yellowpages.net.za/phone,27-711287657,meal-takeaway,Polokwane,ZA348095.html",
+    "https://www.ubereats.com/za/store/scampis-flora-park/p-oWQ62_VLuLr1CVJ5mKrQ",
+    "https://restaurantguru.com/Scampis-Polokwane"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 09:00-20:00, Sun 09:00-13:00",
    "has_email": false,
    "current_words": 35,
    "current_description": "Scampi's Take Aways serves burgers, fish and pizza, with sweet and sticky ribs among its specialities, from Shop 3 in the Flora Park Shopping Centre, with delivery available via Uber Eats and Mr D Food."
@@ -247,10 +464,19 @@
   {
    "slug": "shelvcraft-superbia",
    "name": "Shelvcraft",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "superbia",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Superbia",
+   "region": "polokwane",
+   "address": "28 Nikkel St, Superbia, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://shelvcraft.co.za",
+   "existing_sources": [
+    "https://shelvcraft.co.za/contact-us/",
+    "https://www.brabys.com/za/limpopo/polokwane/superbia/shelving/shelvcraft"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Shelvcraft's Polokwane branch, on Nikkel Street in Superbia, manufactures, supplies and installs steel shelving, racking, display and shopfitting solutions for retailers and warehouses, backed by the company's more than 40 years in the shelving industry."
@@ -258,10 +484,20 @@
   {
    "slug": "sheriff-of-the-court-superbia",
    "name": "Sheriff of the Court",
-   "category": "attorneys-legal",
-   "suburb": "superbia",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Superbia",
+   "region": "polokwane",
+   "address": "66 Platinum Street, Superbia, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.cylex.net.za/company/sheriff-of-the-court--23732570.html",
+    "https://www.yellowpages.co.za/business/10212773_3",
+    "https://www.brabys.com/za/limpopo/polokwane/sheriffs/sheriff-of-the-court"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Sheriff of the Court is the local sheriff's office based in Superbia, Polokwane, providing court process and enforcement services for the Limpopo courts -- serving summonses and warrants and executing judgments and sales in execution."
@@ -269,10 +505,19 @@
   {
    "slug": "skin-deep-sterpark",
    "name": "Skin Deep",
-   "category": "spas-wellness",
-   "suburb": "sterpark",
+   "category": "Spas & Wellness",
+   "suburb": "Sterpark",
+   "region": "polokwane",
+   "address": "Corner Veldspaat Street & Munnik Avenue, Sterpark, Polokwane, 0700",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "http://www.skindeepplk.co.za/",
+   "existing_sources": [
+    "https://www.fresha.com/lvp/skin-deep-munnik-avenue-polokwane-PVqR8J",
+    "http://www.skindeepplk.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Skin Deep is a beauty salon and spa in Sterpark offering skincare, hair and nail services, with signature treatments including customised facials and precision haircuts alongside specialised skin treatments such as chemical peels and microdermabrasion."
@@ -280,10 +525,20 @@
   {
    "slug": "sugar-cube-cafe-polokwane-central",
    "name": "Sugar Cube Cafe",
-   "category": "restaurants-takeaways",
-   "suburb": "polokwane-central",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Polokwane Central",
+   "region": "polokwane",
+   "address": "96 Burger Street, Polokwane Central, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tripadvisor.com/Restaurant_Review-g312624-d13880173-Reviews-Sugar_Cube_Cafe-Polokwane_Limpopo_Province.html",
+    "https://the-sugar-cube-cafe.wheree.com/",
+    "https://restaurantguru.com/The-Sugar-Cube-Polokwane"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 09:00-17:00, Sat 09:00-14:00",
    "has_email": false,
    "current_words": 35,
    "current_description": "Sugar Cube Cafe is a breakfast and brunch cafe on Burger Street in Polokwane Central, serving dishes such as beef burgers, pancakes, fish and chips and quiche alongside coffee and milkshakes, for dine-in or takeaway."
@@ -291,10 +546,20 @@
   {
    "slug": "the-crazy-store-game-centre-polokwane-central",
    "name": "The Crazy Store Game Centre",
-   "category": "general-retail",
-   "suburb": "polokwane-central",
+   "category": "General Retail",
+   "suburb": "Polokwane Central",
+   "region": "polokwane",
+   "address": "Shop 002A, Game Centre, Market St, Polokwane, 0699",
+   "shopping_centre": "Game Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.tiendeo.co.za/stores/polokwane/crazy-store-market-st-shop-game-centre-polokwane-south-africa/7409",
+    "https://za.near-place.com/the-crazy-store-polokwane-game-centre-market-st-shop-3-game-centre-polokwane",
+    "https://cbn.co.za/featured/the-crazy-store-celebrates-the-opening-of-their-500th-store/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "The Crazy Store at Game Centre is a branch of the South African discount variety chain founded in 1995, stocking a wide mix of household, stationery, toy and gift items across its 450-plus stores nationwide."
@@ -302,10 +567,20 @@
   {
    "slug": "tirhani-lodge-hospark",
    "name": "Tirhani Lodge",
-   "category": "accommodation",
-   "suburb": "hospark",
+   "category": "Accommodation",
+   "suburb": "Hospital Park",
+   "region": "polokwane",
+   "address": "57A Van Nispen Street, Hospital Park, Polokwane, 0700",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.near-place.com/tirhani-lodge-57a-van-nispen-street-polokwane-ext-4-polokwane",
+    "https://www.yep.co.za/biz/store/tirhani-lodge/6094",
+    "https://www.safarinow.com/go/tirhanilodgepolokwane/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "Tirhani Lodge is a 14-room guesthouse in Hospital Park offering double en-suite rooms with a private bath and shower, DStv, complimentary beverage-making facilities, an electronic safe and a telephone in every room, plus wheelchair-accessible parking."
@@ -313,10 +588,20 @@
   {
    "slug": "zuch-accommodation-at-pafuri-penina-park",
    "name": "ZUCH Accommodation at Pafuri",
-   "category": "accommodation",
-   "suburb": "penina-park",
+   "category": "Accommodation",
+   "suburb": "Penina Park",
+   "region": "polokwane",
+   "address": "47 Pafuri Avenue, Penina Park, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://zuchaccommodation.co.za/",
+   "existing_sources": [
+    "https://www.lekkeslaap.co.za/accommodation/zuch-accommodation-at-pafuri",
+    "https://zuchaccommodation.co.za/",
+    "https://www.safarinow.com/go/zuch-accommodation-at-pafuri-self-catering/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 35,
    "current_description": "ZUCH Accommodation at Pafuri offers self-catering apartments, villas and cabins with air-conditioning, private bathrooms, a swimming pool and secure parking, close to attractions such as the Pietersburg Snake & Reptile Park and Peter Mokaba Stadium."
@@ -324,10 +609,20 @@
   {
    "slug": "apd-limpopo-centenary-house-penina-park",
    "name": "APD Limpopo - Centenary House",
-   "category": "clinics-healthcare",
-   "suburb": "penina-park",
+   "category": "Clinics & Healthcare",
+   "suburb": "Penina Park",
+   "region": "polokwane",
+   "address": "1 Pafuri Avenue, Penina Park, Polokwane",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://apdlimpopo.org",
+   "existing_sources": [
+    "https://caremap.co.za/facilities/apd-limpopo-centenary-house-polokwane",
+    "https://apdlimpopo.org/centenary-house-eeufeeshuis/",
+    "https://ncpd.org.za/about-apds/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 36,
    "current_description": "APD Limpopo's Centenary House, opened in 1988, is a residential facility in Penina Park providing long-term accommodation for adults with physical disabilities from across Limpopo, alongside the organisation's day care and protective workshop programmes for residents."
@@ -335,10 +630,19 @@
   {
    "slug": "bb-used-polokwane-polokwane-central",
    "name": "BB Used Polokwane",
-   "category": "car-dealerships",
-   "suburb": "polokwane-central",
+   "category": "Car Dealerships",
+   "suburb": "Polokwane Central",
+   "region": "polokwane",
+   "address": "90 Landdros Mare Street, Polokwane Central, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.cars.co.za/groups/Individual-Dealers/BB-Used-Polokwane/2798/",
+    "https://bbused.co.za/contact-us/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 36,
    "current_description": "BB Used Polokwane is a used-vehicle dealership on Landdros Mare Street stocking a wide range of makes, including Volkswagen, Nissan, Ford, Mazda, Suzuki, Renault, Mahindra, Honda and Haval, with dozens of pre-owned vehicles typically in stock."
@@ -346,10 +650,19 @@
   {
    "slug": "brace-yourself-orthodontics-bendor",
    "name": "Brace Yourself Orthodontics",
-   "category": "dentists",
-   "suburb": "bendor",
+   "category": "Dentists",
+   "suburb": "Bendor",
+   "region": "polokwane",
+   "address": "Office 10, Pro Park, 35 Bendor Drive, Bendor, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.braceyourself.africa",
+   "existing_sources": [
+    "https://www.braceyourself.africa/",
+    "https://www.facebook.com/braceyourselforthodonticssa"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 36,
    "current_description": "Brace Yourself Orthodontics is an orthodontic and general dental practice in Pro Park, Bendor, offering braces and orthodontic treatment alongside general dentistry, with a team of dentists and an orthodontist providing decades of combined clinical experience."
@@ -357,10 +670,20 @@
   {
    "slug": "bronkhorst-crane-hire-futura",
    "name": "Bronkhorst Crane Hire",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "futura",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Futura",
+   "region": "polokwane",
+   "address": "28 Chroom Street, Futura, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.bronkhorstcranehire.co.za/",
+   "existing_sources": [
+    "https://www.findmy.co.za/services/business/bronkhorst-crane-hire/10191",
+    "https://www.brabys.com/za/limpopo/polokwane/machine-moving-specialists/bronkhorst-crane-hire",
+    "https://www.bronkhorstcranehire.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 36,
    "current_description": "Bronkhorst Crane Hire is a mobile crane hire company based in Futura, offering machine moving, rigging and steel-erection services to industrial and construction clients across the Polokwane area, with more than 30 years in the business."
@@ -368,10 +691,21 @@
   {
    "slug": "defy-sales-office-limpopo-superbia",
    "name": "Defy Sales Office Limpopo",
-   "category": "electronics-appliances",
-   "suburb": "superbia",
+   "category": "Electronics & Appliances",
+   "suburb": "Superbia",
+   "region": "polokwane",
+   "address": "87 Nelson Mandela Street, Superbia, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.thinklocal.co.za/biz/defy-sales-office-limpopo-polokwane",
+    "https://www.yellosa.co.za/company/693786/defy-sales-office-limpopo",
+    "https://www.yep.co.za/biz/store/defy/90129",
+    "https://appliancerepair.co.za/places/defy-sales-office-polokwane/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Fri 08:00-16:30, Sat-Sun Closed",
    "has_email": false,
    "current_words": 36,
    "current_description": "Defy Sales Office Limpopo is the appliance manufacturer's regional sales and authorised service office for Limpopo, coordinating household appliance sales and warranty repairs for dealers and customers across the greater Polokwane area from its Superbia premises."
@@ -379,10 +713,20 @@
   {
    "slug": "doppio-zero-polokwane-bendor",
    "name": "Doppio Zero Polokwane",
-   "category": "restaurants-takeaways",
-   "suburb": "bendor",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Bendor",
+   "region": "polokwane",
+   "address": "Shop HG03A, Farmyard Trading Post, Corner Munich and Schools Road, Bendor Ext 115, Polokwane, 0699",
+   "shopping_centre": "The Farmyard Trading Post",
+   "phone_on_file": true,
    "website": "https://doppio.co.za/restaurant/polokwane/",
+   "existing_sources": [
+    "https://doppio.co.za/restaurant/polokwane/",
+    "https://za.africabz.com/limpopo/doppio-zero-polokwane-597582",
+    "https://evendo.com/locations/south-africa/limpopo/restaurant/doppio-zero-polokwane"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 07:00-21:00, Fri-Sat 07:00-22:00, Sun 07:00-20:00",
    "has_email": false,
    "current_words": 36,
    "current_description": "Doppio Zero Polokwane is a Mediterranean-inspired restaurant and bakery at Farmyard Trading Post in Bendor, with a wood-fired oven and on-site bakery for fresh bread and pastries, relaxed outdoor seating, a kids menu and wheelchair-accessible facilities."
@@ -390,10 +734,20 @@
   {
    "slug": "ethen-guesthouse-fauna-park",
    "name": "Ethen Guesthouse",
-   "category": "accommodation",
-   "suburb": "fauna-park",
+   "category": "Accommodation",
+   "suburb": "Fauna Park",
+   "region": "polokwane",
+   "address": "26 Springbok Street, Fauna Park, Polokwane, 0700",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://ethen.co.za/",
+   "existing_sources": [
+    "https://ethen.co.za/contact-us/",
+    "https://www.hotel.com.au/polokwane/ethen-guesthouse.htm",
+    "https://ethen.co.za/our-guest-house/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 36,
    "current_description": "Ethen Guesthouse is a guesthouse in Fauna Park with a garden and outdoor swimming pool, offering en-suite rooms, free WiFi in public areas, and breakfast, lunch and dinner served in a dining room overlooking the garden."
@@ -401,10 +755,20 @@
   {
    "slug": "fidelity-adt-polokwane-polokwane-central",
    "name": "Fidelity ADT Polokwane",
-   "category": "security-services",
-   "suburb": "polokwane-central",
+   "category": "Security Services",
+   "suburb": "Polokwane Central",
+   "region": "polokwane",
+   "address": "3 Schoeman Street, Polokwane, 0700",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://adt.co.za/",
+   "existing_sources": [
+    "https://adt.co.za/branch-locator/polokwane-fidelity-adt/",
+    "https://fidelity-services.com/branche/fidelity-adt-polokwane/",
+    "https://www.polokwane.info/security-gates-and-farm-security-systems-in-polokwane/fidelity-adt/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 36,
    "current_description": "Fidelity ADT Polokwane is the local branch of the national Fidelity ADT security company, offering integrated alarm systems linked to 24-hour monitoring, armed response and smart home security solutions to homes and businesses in the area."
@@ -412,10 +776,20 @@
   {
    "slug": "fine-and-country-ansie-marais-properties-bendor-park",
    "name": "Fine And Country /Ansie Marais Properties",
-   "category": "estate-agents",
-   "suburb": "bendor-park",
+   "category": "Estate Agents",
+   "suburb": "Bendor Park",
+   "region": "polokwane",
+   "address": "Cycad Centre, 83 Generaal Maritz Street, Bendor Park, Polokwane, 0699",
+   "shopping_centre": "Cycad Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.yellosa.co.za/company/810107/fine-and-country-ansie-marais-properties",
+    "https://www.netpages.co.za/Polokwane/Fine+And+Country+Ansie+Marais+Properties-1043746.html",
+    "https://www.era.co.za/property-for-sale-by-ansie-marais-a413726"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 36,
    "current_description": "Fine And Country /Ansie Marais Properties is a real estate agency operating from Cycad Centre in Bendor Park, listing residential properties for sale across the greater Polokwane area, including retirement-estate properties such as Macadamia Lifestyle Estate."
@@ -423,10 +797,21 @@
   {
    "slug": "freshmark-futura",
    "name": "Freshmark (Pty) Ltd",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "futura",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Futura",
+   "region": "polokwane",
+   "address": "41 Emerald St, Futura, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://dir.alltrack.org/view/395070-4-freshmark-pty.-ltd.",
+    "https://www.thinklocal.co.za/biz/freshmark-polokwane",
+    "https://www.brabys.com/za/limpopo/polokwane/futura/fresh-fruit-vegetables/freshmark-pty-ltd",
+    "https://www.shopriteholdings.co.za/group/brands/freshmark.html"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 36,
    "current_description": "Freshmark is the fresh produce procurement and distribution arm of the Shoprite Group, buying and distributing fruit and vegetables from local and international growers to supply Group stores across South Africa and the rest of Africa."
@@ -434,10 +819,20 @@
   {
    "slug": "galitos-library-gardens-moregloed",
    "name": "Galito's Library Gardens",
-   "category": "restaurants-takeaways",
-   "suburb": "polokwane-central",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Polokwane Central",
+   "region": "polokwane",
+   "address": "Library Gardens Building, Cnr Schoeman & Grobler St, Moregloed, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.galitos.co.za",
+   "existing_sources": [
+    "https://za.africabz.com/limpopo/galitos-library-gardens-47443",
+    "https://southafricafirm.com/limpopo/galitos-polokwane-library-gardens-39525",
+    "https://localpages.galitos.co.za/chicken-restaurant-polokwane-library-gardens"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 36,
    "current_description": "Galito's Library Gardens is the Moregloed branch of the Galito's flame-grilled peri-peri chicken chain, serving chicken, burgers and sides for eat-in and takeaway at the Library Gardens Building on the corner of Schoeman and Grobler Streets."
@@ -445,10 +840,20 @@
   {
    "slug": "grandmark-international-ladanna",
    "name": "Grandmark International",
-   "category": "motor-spares",
-   "suburb": "ladanna",
+   "category": "Motor Spares",
+   "suburb": "Ladanna",
+   "region": "polokwane",
+   "address": "65 Silicon Street, Ladanna, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": "https://www.grandmarkltd.com/polokwane/index.html",
+   "existing_sources": [
+    "https://www.grandmarkltd.com/polokwane/index.html",
+    "https://www.brabys.com/za/limpopo/polokwane/ladine/motor-vehicle-parts/grandmark-international",
+    "https://grandmark.co.za/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 36,
    "current_description": "Grandmark International's Polokwane branch, based in Ladanna, is part of one of South Africa's largest privately owned automotive aftermarket parts distributors, supplying components such as brakes, suspension, cooling and auto-electrical parts to the local motor trade."
@@ -456,10 +861,19 @@
   {
    "slug": "kalahari-slaghuis-annadale",
    "name": "Kalahari Slaghuis",
-   "category": "butcheries",
-   "suburb": "annadale",
+   "category": "Butcheries",
+   "suburb": "Annadale",
+   "region": "polokwane",
+   "address": "Tropicana Centre, 21 Witklip Street, Annadale, Polokwane",
+   "shopping_centre": "Tropicana Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.worldofmeats.co.za/view/kalahari-slaghuis",
+    "https://www.thinklocal.co.za/biz/kalahari-slaghuis-polokwane"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 36,
    "current_description": "Kalahari Slaghuis is a butchery in Tropicana Centre, Annadale, offering a wide variety of fresh meat, crumbed chicken products, fish, biltong and droewors, plus baked goods from local producers, with a specialty in processing game meat."
@@ -467,10 +881,20 @@
   {
    "slug": "laduma-hardware-seshego-plaza-seshego",
    "name": "Laduma Hardware Seshego Plaza",
-   "category": "hardware-stores",
-   "suburb": "seshego",
+   "category": "Hardware Stores",
+   "suburb": "Seshego",
+   "region": "seshego",
+   "address": "Shop 27, Seshego Plaza, New Era Drive, Seshego, Polokwane",
+   "shopping_centre": "Seshego Plaza",
+   "phone_on_file": true,
    "website": "https://ladumahardware.co.za/hardware-stores/seshego/",
+   "existing_sources": [
+    "https://za.africabz.com/limpopo/laduma-hardware-seshego-296385",
+    "https://ladumahardware.co.za/hardware-stores/seshego/",
+    "https://www.jojo.co.za/distributor/laduma-hardware-and-bricks-pty-ltd-seshego-plaza/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 36,
    "current_description": "Laduma Hardware Seshego Plaza is a branch of the Laduma Hardware chain, stocking building materials and hardware supplies -- including water tanks, cement and general DIY and building needs -- from Shop 27 in Seshego Plaza."
@@ -478,10 +902,20 @@
   {
    "slug": "lipco-law-for-all-polokwane-central",
    "name": "LIPCO - LAW FOR ALL",
-   "category": "attorneys-legal",
-   "suburb": "polokwane-central",
+   "category": "Attorneys & Legal Services",
+   "suburb": "Polokwane Central",
+   "region": "polokwane",
+   "address": "17A Landdros Mare Street, Polokwane Central, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://za.polomap.com/polokwane/5310",
+    "https://readymap.co.za/188/4248",
+    "https://www.lawforall.co.za/contact-us"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 08:00-16:30, Fri 08:00-16:00, Sat-Sun Closed",
    "has_email": false,
    "current_words": 36,
    "current_description": "LIPCO - Law For All is a branch of South Africa's largest legal mediation company, founded in 1993, offering legal advice, legal insurance, mediation and litigation support from its Landdros Mare Street office in Polokwane Central."
@@ -489,10 +923,19 @@
   {
    "slug": "macgyver-commercial-panel-beaters-ladanna",
    "name": "Macgyver Commercial Panel Beaters",
-   "category": "panel-beaters-spray-painters",
-   "suburb": "ladanna",
+   "category": "Panel Beaters & Spray Painters",
+   "suburb": "Ladanna",
+   "region": "polokwane",
+   "address": "117 Blaauwberg Street, Ladanna, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.macgyvercommercial.co.za/",
+    "https://panelbeatersdirectory.co.za/listing.php?listings_id=272"
+   ],
    "has_hours": true,
+   "hours": "Mon-Thu 07:30-17:00, Fri 07:30-16:00, Sat-Sun Closed",
    "has_email": false,
    "current_words": 36,
    "current_description": "Macgyver Commercial Panel Beaters is a panel beating and auto body repair shop in Ladanna specialising in advanced structural and major body repairs to accident-damaged vehicles and trucks, working with major insurance companies and manufacturer approvals."
@@ -500,10 +943,20 @@
   {
    "slug": "macsteel-trading-superbia",
    "name": "Macsteel Trading",
-   "category": "industrial-suppliers-manufacturing",
-   "suburb": "superbia",
+   "category": "Industrial Suppliers & Manufacturing",
+   "suburb": "Superbia",
+   "region": "polokwane",
+   "address": "13 Sapphire St, Superbia, Polokwane, 0699",
+   "shopping_centre": null,
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.yellosa.co.za/company/398150/macsteel-trading-polokwane",
+    "https://www.brabys.com/za/limpopo/polokwane/steel-distributors/macsteel-trading-polokwane-pty-ltd",
+    "https://macsteel.co.za/division/macsteel-trading/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 36,
    "current_description": "Macsteel Trading Polokwane is a branch of the Macsteel group, part of a national network of more than 40 steel service centres and warehouses, supplying steel and tube products to the Superbia area from Sapphire St."
@@ -511,10 +964,20 @@
   {
    "slug": "mcdonalds-seshego-circle-seshego",
    "name": "McDonald's Seshego Circle",
-   "category": "restaurants-takeaways",
-   "suburb": "seshego",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Seshego",
+   "region": "seshego",
+   "address": "2 Ditlou St, Seshego Circle Shopping Centre, Seshego-F, Seshego, Polokwane, 0742",
+   "shopping_centre": "Seshego Circle Shopping Centre",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://www.pressreader.com/south-africa/polokwane-observer/20260917/281741276321304",
+    "https://www.tiendeo.co.za/stores/seshego/mcdonald-s",
+    "https://www.mcdonalds.co.za/templates/_layout/ajax_calls/get_all_locations.php?lat=0&long=0"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": true,
    "current_words": 36,
    "current_description": "McDonald's Seshego Circle is a McDonald's restaurant that opened at Seshego Circle Shopping Centre in September 2026, bringing the fast-food chain's dine-in and drive-thru service to Seshego for the first time with a community launch event."
@@ -522,10 +985,20 @@
   {
    "slug": "midas-seshego-plaza-seshego",
    "name": "Midas Seshego Plaza",
-   "category": "automotive-repairs",
-   "suburb": "seshego",
+   "category": "Automotive & Repairs",
+   "suburb": "Seshego",
+   "region": "seshego",
+   "address": "Shop 18, Seshego Plaza, New Era Drive, Seshego, Polokwane",
+   "shopping_centre": "Seshego Plaza",
+   "phone_on_file": true,
    "website": "https://midas.co.za/store-locator/seshego-midas/",
+   "existing_sources": [
+    "https://midas.co.za/store-locator/seshego-midas/",
+    "https://www.tiendeo.co.za/stores/seshego/midas-shop-seshego-plaza-new-era-dr-street/76134",
+    "https://midas.co.za/about-midas/"
+   ],
    "has_hours": true,
+   "hours": "Mon-Sat 09:00-18:00, Sun Closed",
    "has_email": false,
    "current_words": 36,
    "current_description": "Midas Seshego Plaza is a branch of the Midas automotive chain, a South African car parts and accessories retailer operating since 1983 with a network of over 300 stores, based at Shop 18 in Seshego Plaza."
@@ -533,10 +1006,21 @@
   {
    "slug": "mugg-and-bean-bendor",
    "name": "Mugg & Bean",
-   "category": "restaurants-takeaways",
-   "suburb": "bendor",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Bendor",
+   "region": "polokwane",
+   "address": "Shop U44, Mall of the North, Cnr R81 & N1 Bypass, Bendor, Polokwane, 0699",
+   "shopping_centre": "Mall of the North",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://mallofthenorth.co.za/stores/",
+    "https://locations.muggandbean.co.za/restaurants-MalloftheNorth-MuggBeanMallofTheNorth",
+    "https://www.tripadvisor.co.za/Restaurant_Review-g312624-d17796337-Reviews-Mugg_Bean_Mall_of_The_North-Polokwane_Limpopo_Province.html",
+    "https://www.muggandbean.co.za/about-us/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 36,
    "current_description": "Mugg & Bean is a Famous Brands coffee-shop and restaurant franchise, founded in Cape Town in 1996, known for all-day breakfasts, hearty meals and its famously oversized muffins; this branch trades inside Mall of the North."
@@ -544,10 +1028,20 @@
   {
    "slug": "mugg-bean-the-greenery-polokwane-central",
    "name": "Mugg & Bean The Greenery",
-   "category": "restaurants-takeaways",
-   "suburb": "polokwane-central",
+   "category": "Restaurants & Takeaways",
+   "suburb": "Polokwane Central",
+   "region": "polokwane",
+   "address": "Shop 5, The Greenery, Oost Street, Polokwane, 0700",
+   "shopping_centre": "The Greenery",
+   "phone_on_file": true,
    "website": null,
+   "existing_sources": [
+    "https://locations.muggandbean.co.za/restaurants-TheGreenery-MuggBeanPolokwaneGreenery",
+    "https://propertywheel.co.za/2023/10/polokwanes-11-000m2-the-greenery-shopping-centre-opens-its-doors/",
+    "https://www.muggandbean.co.za/about-us/"
+   ],
    "has_hours": false,
+   "hours": null,
    "has_email": false,
    "current_words": 36,
    "current_description": "Mugg & Bean is a Famous Brands coffee-shop and restaurant franchise, founded in Cape Town in 1996, known for all-day breakfasts, hearty meals and its famously oversized muffins; this branch trades inside The Greenery shopping centre."
