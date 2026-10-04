@@ -1,5 +1,6 @@
 import type { D1Database } from '@cloudflare/workers-types';
 import { DEMO_ADMIN_ENABLED } from './demo-flags';
+import { verifyHubAdminRequest } from './hub-admin-auth';
 
 // Password hashing via PBKDF2-SHA256 (Workers' native crypto.subtle) — no
 // external dependency needed. Stored as "iterations:saltHex:hashHex" so the
@@ -132,6 +133,14 @@ export function isAdminEmail(email: string): boolean {
 // or null if there's no cookie, it's unknown, or expired. Lazily deletes
 // expired rows on the way out rather than running a separate cleanup job.
 export async function getSessionUser(request: Request, db: D1Database): Promise<SessionUser | null> {
+  // A request signed by Hub Admin (see ./hub-admin-auth.ts) acts as the site
+  // admin; one that claims to be signed but doesn't verify gets nothing (no
+  // falling back to a cookie).
+  if (request.headers.has('X-Hub-Admin-Signature')) {
+    if (!(await verifyHubAdminRequest(request, db))) return null;
+    const admin = await db.prepare('SELECT id, email FROM users WHERE lower(email) = ?').bind(ADMIN_EMAIL).first<{ id: number; email: string }>();
+    return admin ? { id: admin.id, email: admin.email } : null;
+  }
   const token = readCookie(request, SESSION_COOKIE);
   if (!token) return null;
 

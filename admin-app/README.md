@@ -5,10 +5,10 @@ One dashboard for every city site, at **https://hub-admin-b4x.pages.dev** (`hub-
 | Screen | What it shows |
 |---|---|
 | **Overview** | Today's briefing (written each morning by a Claude routine), each site's status, listings, paid plans, revenue this month and users, plus one combined **Needs attention** list. |
-| **Inbox** | Every waiting item on every site (new listings, claims, reports, messages, reviews, events, event claims) with its full details: the submitted listing, the review text, the message, the reason for a report. Each opens the right screen in that site's admin to approve, reject or reply. |
+| **Inbox** | Every waiting item on every site (new listings, claims, reports, messages, reviews, events, event claims) with its full details, and the buttons to deal with it: approve, reject, resolve, or reply to a message by email. |
 | **Stats** | Listing views, contact taps, enquiries, searches, sign-ups and installs against the previous period; daily charts per site; top categories, searches and listings; revenue by month; weekly Search Console figures. |
 | **Health** | Uptime per site (checked every 5 minutes, with outages), the latest run of every GitHub workflow (with the failing step and error), Cloudflare D1 usage against the free daily limit, routine health, security checks and the weekly broken-links report. |
-| **Listings** | Data quality per city: a completeness score, what's missing (phone, hours, description, map location, address, category), likely duplicates, stale and unseen listings, enquiries that never reached the business, unclaimed businesses getting enquiries, owners who never confirmed, and thin category-in-suburb pages. |
+| **Listings** | Tick listings to hide them in bulk. Data quality per city: a completeness score, what's missing (phone, hours, description, map location, address, category), likely duplicates, stale and unseen listings, enquiries that never reached the business, unclaimed businesses getting enquiries, owners who never confirmed, and thin category-in-suburb pages. |
 | **Google** | Daily clicks and impressions, the indexing trend (pages seen in Google per day), Google's verdict for each page (the "not in Google" list), searches where the site is just off page one, and on-site searches with only one or two results. |
 | **Money** | Income per month, monthly recurring income, paying customers, failed payments, overdue renewals, plans ending soon, new and cancelled plans, the free listings most worth offering a paid plan, and AdSense earnings. |
 | **Activity log** | Every city's own log (approvals, claims, payments, renewals, settings) plus what admins did in Hub Admin, and the Monday weekly summary. |
@@ -32,6 +32,14 @@ On phones the tab bar shows Overview, Inbox, Stats and Health; everything else i
 - Icon: `assets/logo-src/hub-admin.svg`, rendered by `node scripts/render-admin-icons.mjs`. Banner (Overview header and sign-in background): the three cities' own hero photos, joined by `node scripts/render-admin-banner.mjs` into `public/banner-wide.jpg` and `public/banner-mobile.jpg`.
 
 Chart colours per city are the reference data-viz palette's first three slots (blue, orange, teal), checked for colour-blind separation in light and dark mode. The teal sits just under 3:1 contrast on white, which is why every chart has direct labels and a table view.
+
+## Acting on the city sites
+
+Inbox actions and bulk hiding go through each site's own endpoints (the ones its admin uses), so emails, rebuilds and the site's activity log work exactly as from that admin:
+
+- Approving or rejecting a new listing or a business claim posts that row's own review token to the same endpoint the review email links to (`/api/confirm-listing`, `/api/review-claim`).
+- Everything else calls the site's admin API (`/api/admin/...`) signed by Hub Admin: an ECDSA P-256 key generated in Hub Admin's database (`settings` 'city_key', never leaves it). The sites hold only the public half (`functions/_lib/hub-admin-auth.ts` in the main repo, also served at `/api/city-key`) and accept a signature once, within 2 minutes, only for `/api/admin/` paths, and only for that exact site, path and body.
+- To rotate the key: delete the `city_key` setting in hub-admin-db, open `/api/city-key`, paste the new key into `functions/_lib/hub-admin-auth.ts` and redeploy the sites.
 
 ## Signing in
 
