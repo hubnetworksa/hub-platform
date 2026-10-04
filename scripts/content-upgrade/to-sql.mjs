@@ -53,7 +53,8 @@ for (const [i, it] of items.entries()) {
   seen.add(it.slug);
   const d = typeof it.description === 'string' ? it.description.trim() : '';
   const w = words(d);
-  if (w < 100 || w > 250) errors.push(`${at}: ${w} words (needs at least 100)`);
+  if (w < 100) errors.push(`${at}: only ${w} words: rewrite it to 110-150 words (more sourced detail, more on what it offers and the area) and run this again`);
+  if (w > 250) errors.push(`${at}: ${w} words: trim it to 110-150 words and run this again`);
   if (d.length > 1500) errors.push(`${at}: ${d.length} characters (the site's limit is 1,500)`);
   if (PHONE.test(d)) errors.push(`${at}: phone number in the text`);
   if (EMAIL.test(d)) errors.push(`${at}: email address in the text`);
@@ -67,7 +68,7 @@ for (const [i, it] of items.entries()) {
 }
 for (const s of expected) if (!seen.has(s)) errors.push(`${s}: missing (every listing in the chunk needs a description)`);
 if (errors.length) {
-  console.error(`${errors.length} problem(s) in content-upgrade/out/${city}/chunk-${nnn}.json:\n- ${errors.join('\n- ')}`);
+  console.error(`${errors.length} description(s) to fix in content-upgrade/out/${city}/chunk-${nnn}.json (nothing was written; fix them all, then run this again):\n- ${errors.join('\n- ')}`);
   process.exit(1);
 }
 
