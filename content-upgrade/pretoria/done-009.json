@@ -1,0 +1,315 @@
+{
+  "city": "pretoria",
+  "chunk": 9,
+  "generated_at": "2026-10-04T10:12:48.645Z",
+  "items": [
+    {
+      "slug": "riaphela-general-services-cc-silverton",
+      "status": "researched",
+      "sources": [
+        "http://riaphela.co.za/"
+      ]
+    },
+    {
+      "slug": "richester-distribution-centre-sunderland-ridge",
+      "status": "deferred",
+      "reason": "Research found only Richester Foods' candy-manufacturing 'About Us' page (head office at 9 Hennopsriver St, not our listing's address of 473 Barolong St); confidence was rated medium with a crawl timeout. Possible same-company-different-building situation or wrong-business match; the address/suburb discrepancy should be verified centrally before publishing."
+    },
+    {
+      "slug": "rms-projects-pty-ltd-eldo-lakes-estate",
+      "status": "researched",
+      "sources": [
+        "https://www.rmsprojects.co.za/"
+      ]
+    },
+    {
+      "slug": "rock-engineering-africa-akasia",
+      "status": "researched",
+      "sources": [
+        "https://yellowbookafrica.com/listings/rock-engineering-africa-pty-ltd/"
+      ]
+    },
+    {
+      "slug": "rossouw-and-co-inc-ashley-gardens",
+      "status": "deferred",
+      "reason": "Homepage text is only a generic tagline ('Your Numbers. Our Passion.') with no specific service detail; an 'Established in 1973' fact appeared in extracted metadata but is not supported by any retrievable page text this pass (other pages returned 404s). Search results were unrelated news stories, so no sourced content found."
+    },
+    {
+      "slug": "royal-greenhouse-tunnels-polokwane-pretoria-north-west-cape-town-dorandia",
+      "status": "deferred",
+      "reason": "Company website shows only a 'Coming Soon' placeholder page (new WordPress site not yet published) across home, about and services URLs; no business content is currently live to source a description from."
+    },
+    {
+      "slug": "sbp-ceiling-and-drywall-koedoespoort",
+      "status": "researched",
+      "sources": [
+        "https://www.sbpceilings.co.za/"
+      ]
+    },
+    {
+      "slug": "sithole-truck-bodies-pty-ltd-rietfontein",
+      "status": "deferred",
+      "reason": "Website could not be reached this pass (DNS resolution failure on sitholetruckbodies.co.za); no pages were fetched and search results returned only unrelated YouTube links, so no sourced content is available to write from."
+    },
+    {
+      "slug": "sms-gateway-erasmia",
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/place/sms-gateway"
+      ]
+    },
+    {
+      "slug": "solarch-consulting-irene",
+      "status": "deferred",
+      "reason": "Only a contact page was retrievable, listing a named individual, a phone number and an email address, with no description of services; search results were unrelated horse-racing content. Not enough sourced service detail to support or replace the current 'AI consultancy' description."
+    },
+    {
+      "slug": "spar-waterkloof",
+      "status": "deferred",
+      "reason": "Only SPAR's national 'About Us' chain-history page was retrieved; it contains no content specific to the Main/Crown Street Waterkloof branch, so there is no sourced branch-specific fact available to build a non-generic description from."
+    },
+    {
+      "slug": "sportsmans-warehouse-highveld",
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/gauteng/sportsmans-warehouse-centurion-5151"
+      ]
+    },
+    {
+      "slug": "sting-wood-rosslyn",
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/diehoutshop/?ref=bookmarks"
+      ]
+    },
+    {
+      "slug": "structural-precast-elements-cc-koedoespoort",
+      "status": "deferred",
+      "reason": "No company website could be fetched; search results returned unrelated LinkedIn profiles and a Michigan cycling organisation. No sourced content found."
+    },
+    {
+      "slug": "studio-calibre-villieria",
+      "status": "deferred",
+      "reason": "Company website (studiocalibre.com) was blocked by anti-bot protection on every attempt; search results returned unrelated Studio 88 and YouTube links. No sourced content found."
+    },
+    {
+      "slug": "tattoo-academy-moregloed",
+      "status": "researched",
+      "sources": [
+        "https://www.fresha.com/lvp/tattoo-academy-codonia-avenue-pretoria-581xz8"
+      ]
+    },
+    {
+      "slug": "thakgo-facility-solutions-karenpark",
+      "status": "researched",
+      "sources": [
+        "https://www.thakgo.co.za/"
+      ]
+    },
+    {
+      "slug": "tholo-group-of-companies-wapadrand",
+      "status": "deferred",
+      "reason": "The tholoconsultants.com domain returned 'temporarily unavailable' on every page attempted (home, about, about-us); the secondary source (procompare.co.za) was not fetched; search results were unrelated Facebook links. No sourced content found this pass."
+    },
+    {
+      "slug": "tshwane-scout-shop-waterkloof",
+      "status": "deferred",
+      "reason": "Scoutwiki page was blocked by a Cloudflare challenge; other search results returned only unrelated City of Tshwane municipal-site links. No sourced content retrievable this pass to support or expand the existing description."
+    },
+    {
+      "slug": "vanrail-hennopspark",
+      "status": "researched",
+      "sources": [
+        "http://www.vanrail.co.za/",
+        "http://www.vanrail.co.za/about"
+      ]
+    },
+    {
+      "slug": "vdw-quantity-surveyors-de-wilgers",
+      "status": "deferred",
+      "reason": "Source page (copyright dated 2014, likely outdated) gives the firm's address as 'Northern Lofts @ Silver Oaks Crossing, Willow Acres X13', which differs from our listing's address (The Willows, Fintech Campus, 81 Botterklapper St). Flagging the address/suburb mismatch rather than guessing which is current; the page otherwise only names an individual director, not a description of current operations."
+    },
+    {
+      "slug": "volpes-hennopspark",
+      "status": "deferred",
+      "reason": "The Volpes page was blocked by Cloudflare, returning only a generic security-block page (oddly referencing an unrelated domain); no content specific to this store was retrievable."
+    },
+    {
+      "slug": "vulcan-mining-construction-donkerhoek",
+      "status": "deferred",
+      "reason": "Company website (vulcanmc.co.za) returned HTTP 404 on every page attempted; search results returned unrelated shoe-retailer (Green Cross) listings. No sourced content found."
+    },
+    {
+      "slug": "waverley-slagtery-butchery-waverley",
+      "status": "deferred",
+      "reason": "Only a directory listing confirming the address, phone number and 'Butchers' category was found (listed there under the name 'Waverly Slaghuis'); no substantive, specific content about this business's own offerings could be sourced to responsibly write a full description."
+    },
+    {
+      "slug": "wired-wonderpark-karenpark",
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/listing/wired-wonderpark/"
+      ]
+    },
+    {
+      "slug": "woolworths-castle-walk-erasmuskloof",
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/gauteng/woolworths-5828"
+      ]
+    },
+    {
+      "slug": "woolworths-gordon-hood-avenue-centurion",
+      "status": "deferred",
+      "reason": "Only Woolworths' generic national e-commerce homepage and a 404 'about' page were retrieved; no content specific to the Gordon Hood Avenue / Centurion Park branch was found."
+    },
+    {
+      "slug": "woolworths-olympus-village-olympus",
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/listing/woolworths-olympus-village/"
+      ]
+    },
+    {
+      "slug": "woolworths-sunnypark-trevenna",
+      "status": "deferred",
+      "reason": "Only Woolworths' generic national e-commerce homepage and a 404 'about' page were retrieved; no content specific to the Sunnypark branch was found."
+    },
+    {
+      "slug": "yobuningi-trading-pty-ltd-celtisdal",
+      "status": "deferred",
+      "reason": "Only a thin Facebook profile snippet was retrieved, confirming it as a 'Yo-Connect' networking and marketing company based in Centurion; not enough verified specific detail is available (the B-BBEE claim in the current description is unsupported here) to write a full, non-padded description."
+    },
+    {
+      "slug": "4most-systems-pty-ltd-blue-valley-golf-estate",
+      "status": "deferred",
+      "reason": "Website (4most.co.za) returned only an anti-bot 'checking your browser' interstitial on every page attempted; search results returned unrelated dishwasher pricing pages. No sourced content found."
+    },
+    {
+      "slug": "4sight-holdings-ltd-lyttelton",
+      "status": "researched",
+      "sources": [
+        "https://www.4sight.cloud/about",
+        "https://www.4sight.cloud/"
+      ]
+    },
+    {
+      "slug": "about-it-group-garsfontein-smallholdings",
+      "status": "researched",
+      "sources": [
+        "https://aboutitgroup.co.za/"
+      ]
+    },
+    {
+      "slug": "absolute-hosting-centurion-golf-estate",
+      "status": "researched",
+      "sources": [
+        "https://absolutehosting.co.za/"
+      ]
+    },
+    {
+      "slug": "ackermans-pretoria-central-5",
+      "status": "deferred",
+      "reason": "Only Ackermans' generic national e-commerce homepage pages were retrieved; no content specific to the Johannes Ramokhoase Street, Pretoria Central branch was found."
+    },
+    {
+      "slug": "ackermans-pta-daspoort-bouganville-centre-daspoort",
+      "status": "deferred",
+      "reason": "Only Ackermans' generic national e-commerce homepage (reached via a tracking-parameter URL) was retrieved; no content specific to the Bougainville Shopping Centre, Daspoort branch was found."
+    },
+    {
+      "slug": "adelaars-restaurant-venue-wonderboom-south",
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/share/1B8VrxzzDU/?mibextid=qi2Omg"
+      ]
+    },
+    {
+      "slug": "afrikaanse-hoer-meisieskool-clydesdale",
+      "status": "researched",
+      "sources": [
+        "https://www.ahmp.co.za/"
+      ]
+    },
+    {
+      "slug": "allan-y-brink-pty-ltd-eloffsdal",
+      "status": "deferred",
+      "reason": "Source pages could not be fetched (crawl timeout on africanadvice.com, brabys.com not retrieved); search results returned unrelated transcription-job listings. No sourced content found."
+    },
+    {
+      "slug": "american-battery-company-moot-rietfontein",
+      "status": "researched",
+      "sources": [
+        "https://americanbattery.co/stores/moot.html"
+      ]
+    },
+    {
+      "slug": "art-motor-engineerig-cc-silverton",
+      "status": "researched",
+      "sources": [
+        "https://www.findmy.co.za/services/business/art-motor-engineering-cc/11544"
+      ]
+    },
+    {
+      "slug": "ary-motors-proclamation-hill",
+      "status": "researched",
+      "sources": [
+        "https://arymotors.org/"
+      ]
+    },
+    {
+      "slug": "auditsa-auditors-accountants-shere",
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/place/auditsa-auditors-amp-accountants"
+      ]
+    },
+    {
+      "slug": "azariah-pharmaceuticals-pty-ltd-waverley",
+      "status": "researched",
+      "sources": [
+        "http://azariah.co.za/"
+      ]
+    },
+    {
+      "slug": "b2it-monument-park",
+      "status": "researched",
+      "sources": [
+        "https://b2it.co.za/"
+      ]
+    },
+    {
+      "slug": "barcelos-pretoria-central",
+      "status": "researched",
+      "sources": [
+        "https://barcelos.co.za"
+      ]
+    },
+    {
+      "slug": "baroka-tombstones-booysens",
+      "status": "researched",
+      "sources": [
+        "https://barokatombstones.co.za/"
+      ]
+    },
+    {
+      "slug": "batho-bantsho-trading-and-projects-cc-east-lynne",
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/listing/batho-bantsho-trading-and-projects-cc/"
+      ]
+    },
+    {
+      "slug": "bestway-design-studio-laudium-laudium",
+      "status": "deferred",
+      "reason": "No website could be found or fetched for this business; search results returned only unrelated 'Tubidy' music-downloader pages. No sourced content found."
+    },
+    {
+      "slug": "bevera-sunderland-ridge",
+      "status": "researched",
+      "sources": [
+        "https://bevera.co.za/"
+      ]
+    }
+  ]
+}

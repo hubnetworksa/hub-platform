@@ -1,0 +1,311 @@
+{
+  "city": "pretoria",
+  "chunk": 12,
+  "generated_at": "2026-10-04T10:23:39.596Z",
+  "items": [
+    {
+      "slug": "nr-nagel-attorneys-lynnwood-glen",
+      "status": "researched",
+      "sources": [
+        "http://www.nrnlaw.co.za/"
+      ]
+    },
+    {
+      "slug": "nulane-technologies-queenswood",
+      "status": "researched",
+      "sources": [
+        "http://nulane.co.za/"
+      ]
+    },
+    {
+      "slug": "oasis-water-pretoria-olympus-olympus-gardens-olympus",
+      "status": "deferred",
+      "reason": "The oasiswater.co.za site timed out or returned 404 on every attempt, and the globuya.com listing was blocked by Cloudflare. All search results returned were about the band Oasis, not this water-delivery branch, so no genuine sourced content could be found."
+    },
+    {
+      "slug": "ok-express-la-montagne-la-montagne",
+      "status": "deferred",
+      "reason": "The only page fetched was okfoods.co.za's generic group homepage (recipes, national specials, loyalty programme), with no content specific to the La Montagne store itself, so there is nothing genuine to base a store-specific description on."
+    },
+    {
+      "slug": "on-guard-consulting-business-registrations-design-blue-valley-golf-estate",
+      "status": "deferred",
+      "reason": "onguardbiz.co.za could not be reached (DNS resolution failure), and every search result returned was about the unrelated 'On' running-shoe brand, so no genuine content about this business-registration consultancy was found."
+    },
+    {
+      "slug": "outdoor-warehouse-centurion-zwartkop",
+      "status": "deferred",
+      "reason": "Both the store-locator and about-us pages returned only generic newsletter-subscription boilerplate and site navigation text, with no facts specific to the Centurion branch beyond its existence, so nothing new or genuine could be added."
+    },
+    {
+      "slug": "parts-mall-pretoria-central",
+      "status": "researched",
+      "sources": [
+        "https://www.parts-mall.co.za/about"
+      ]
+    },
+    {
+      "slug": "paving-centurion-clubview",
+      "status": "researched",
+      "sources": [
+        "http://pavingcenturion-gauteng.co.za/"
+      ]
+    },
+    {
+      "slug": "pen-travel-menlyn",
+      "status": "researched",
+      "sources": [
+        "https://www.pentravel.co.za/branches/gauteng/pentravel-menlyn/"
+      ]
+    },
+    {
+      "slug": "penthouse-dental-wapadrand",
+      "status": "deferred",
+      "reason": "penthousedental.co.za and its about pages returned only an empty loading placeholder, and search results were unrelated (YouTube pages), so no genuine, specific information about this dental practice could be found."
+    },
+    {
+      "slug": "ph4life-pretoria-wellness-centre-clubview-east",
+      "status": "researched",
+      "sources": [
+        "https://ph4life.co.za"
+      ]
+    },
+    {
+      "slug": "pizza-hut-hazeldean",
+      "status": "deferred",
+      "reason": "The only page fetched was a reverse-phone-lookup/robocall-checker directory listing, which gave no genuine descriptive content about the restaurant beyond address and category; it also states daily hours (10am-9pm) that conflict with the hours already on file, which a thin directory source cannot resolve."
+    },
+    {
+      "slug": "plastica-film-extrusions-jan-niemand-park",
+      "status": "researched",
+      "sources": [
+        "http://www.plastica.co.za/"
+      ]
+    },
+    {
+      "slug": "pobana-group-meyerspark",
+      "status": "deferred",
+      "reason": "No usable source was found; search results returned results for a Michael Bolton song ('Soul Provider'), not this marketing and advertising business, so nothing genuine could be sourced."
+    },
+    {
+      "slug": "portable-spaces-sunderland-ridge",
+      "status": "deferred",
+      "reason": "No usable source was found; search returned unrelated Google-support and CCM how-to pages with no connection to this engineering and surveying business."
+    },
+    {
+      "slug": "premiumprint-sa-erasmuskloof",
+      "status": "researched",
+      "sources": [
+        "https://www.premiumprint.co.za/"
+      ]
+    },
+    {
+      "slug": "print-partners-eldoraigne",
+      "status": "researched",
+      "sources": [
+        "https://printpartners.co.za/"
+      ]
+    },
+    {
+      "slug": "printaways-videorama-pierre-van-ryneveld-park",
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/gauteng/videorama-117996"
+      ]
+    },
+    {
+      "slug": "proearth-lyttelton",
+      "status": "deferred",
+      "reason": "LIKELY WRONG-BUSINESS MATCH: the only reachable source (pro-earth.co.za) is for 'PROearth College', an NCV vocational education college in Lyttelton offering IT, Marketing and Finance qualifications - a different business from the listed construction/earthworks company. This should not be used to describe the listed business; flagging for central review rather than guessing."
+    },
+    {
+      "slug": "property-coza-homefront-centurion-heritage-hill-estate",
+      "status": "deferred",
+      "reason": "ADDRESS MISMATCH: the propertycoza.com page for this office gives its address as Shop 8, Clubview Centre, Lyttelton Rd, Clubview, which differs from the Riverview Rd, Clubview address on file. Deferring rather than guessing which address is current."
+    },
+    {
+      "slug": "prosec-citr-eldorette",
+      "status": "researched",
+      "sources": [
+        "http://www.proseccitr.co.za/"
+      ]
+    },
+    {
+      "slug": "proshield-security-wonderboom-south",
+      "status": "researched",
+      "sources": [
+        "https://proshield.co.za/"
+      ]
+    },
+    {
+      "slug": "prostone-granite-marble-quartz-hennopspark",
+      "status": "researched",
+      "sources": [
+        "http://www.prostone.co.za/"
+      ]
+    },
+    {
+      "slug": "red-spiral-printing-moregloed",
+      "status": "researched",
+      "sources": [
+        "http://www.redspiral.co.za/"
+      ]
+    },
+    {
+      "slug": "red-truck-coffee-roastery-derdepoort-smallholdings",
+      "status": "deferred",
+      "reason": "redtruckcoffee.co.za failed to load (SSL/cipher error) and search results were about the colour red generally, not this coffee roastery, so no genuine content could be found."
+    },
+    {
+      "slug": "republic-knitwear-pty-ltd-laudium",
+      "status": "deferred",
+      "reason": "No usable source was found; search returned articles about blockchain Layer 2 scaling solutions, entirely unrelated to this knitwear manufacturer."
+    },
+    {
+      "slug": "riakona-electrical-solutions-and-projects-eldorette",
+      "status": "deferred",
+      "reason": "No usable source was found; search returned results about ChatGPT and GitHub repositories, entirely unrelated to this electrical contractor."
+    },
+    {
+      "slug": "rivera-consulting-and-projects-pty-ltd-eersterust",
+      "status": "researched",
+      "sources": [
+        "http://www.riveracp.co.za/"
+      ]
+    },
+    {
+      "slug": "secmet-pty-ltd-centurion-branch-eldoraigne",
+      "status": "researched",
+      "sources": [
+        "http://secmet.co.za/"
+      ]
+    },
+    {
+      "slug": "shere-decor-shere",
+      "status": "deferred",
+      "reason": "ADDRESS/SUBURB MISMATCH: sheredecor.co.za states the shop 'has relocated to Warehouse Unit J14, Bronberg Storage, Plot 182, Bronberg Mountain Estate' and now trades by appointment only, which differs from the Shop 2B, 4 Graham Rd, Shere address on file. Deferring rather than guessing which address is current."
+    },
+    {
+      "slug": "shine-sa-heritage-hill-estate",
+      "status": "researched",
+      "sources": [
+        "http://www.shine-sa.co.za/"
+      ]
+    },
+    {
+      "slug": "siyakha-smme-business-consultants-pty-ltd-salieshoek",
+      "status": "deferred",
+      "reason": "POSSIBLE NAME COLLISION: no page for this specific company could be reached. Search results returned several different 'Siyakha'-named organisations (Siyakha Africa, Siyakha Consulting in Dainfern, Siyakha Capital Advisors, Siyakha Learning), none clearly matching 'Siyakha SMME Business Consultants (Pty) Ltd' in Salieshoek/Silverton, so none were used to avoid conflating a different business with this one."
+    },
+    {
+      "slug": "sourcebranding-digital-agency-dorandia",
+      "status": "researched",
+      "sources": [
+        "https://www.sourcebranding.com/"
+      ]
+    },
+    {
+      "slug": "spacerocket-shipping-company-annlin-west",
+      "status": "deferred",
+      "reason": "spacerocketshipping.com could not be reached (DNS resolution failure), and search results returned Hollywoodbets betting-platform pages, entirely unrelated to this courier and logistics business."
+    },
+    {
+      "slug": "spar-woodhill-woodhill-golf-estate",
+      "status": "deferred",
+      "reason": "The only page fetched was SPAR's generic national about-us page (group history since 1963, 2,500+ stores), with no facts specific to the Woodhill branch, so there is nothing genuine to base a store-specific description on."
+    },
+    {
+      "slug": "spec-savers-sunny-park-pretoria-central",
+      "status": "researched",
+      "sources": [
+        "https://www.specsavers.co.za/store/sunny-park"
+      ]
+    },
+    {
+      "slug": "square-time-cafe-boardwalk-manor",
+      "status": "deferred",
+      "reason": "The eatout.co.za page fetched returned only generic News24/Eat Out site navigation and unrelated articles, with no content describing this specific cafe, so nothing genuine could be sourced."
+    },
+    {
+      "slug": "ssg-consulting-blue-valley-golf-estate",
+      "status": "researched",
+      "sources": [
+        "https://www.ssgconsulting.co.za/"
+      ]
+    },
+    {
+      "slug": "stor-age-self-storage-hennopspark-hennopspark",
+      "status": "researched",
+      "sources": [
+        "https://stor-age.co.za/stores/hennopspark?utm_source=Local&utm_medium=Organic&utm_campaign=Google-Places&utm_content=Hennopspark"
+      ]
+    },
+    {
+      "slug": "swanepoel-and-partners-buffelsdrift",
+      "status": "researched",
+      "sources": [
+        "http://www.swanepoelpartners.co.za/"
+      ]
+    },
+    {
+      "slug": "totalguard-workwear-rosslyn-rosslyn",
+      "status": "researched",
+      "sources": [
+        "https://www.totalguardppe.co.za/"
+      ]
+    },
+    {
+      "slug": "travel-with-flair-menlyn",
+      "status": "deferred",
+      "reason": "The travelwithflair.co.za homepage contained only a generic marketing tagline ('world-class travel sophistication') and navigation labels, with no concrete facts (no address, hours, history or specific service detail) to support a genuine description."
+    },
+    {
+      "slug": "tree-felling-pros-waterkloof-waterkloof-park",
+      "status": "deferred",
+      "reason": "The about-us page returned '404 Page Not Found', and search results were generic information about trees as plants, not about this tree-felling business, so no genuine content could be sourced."
+    },
+    {
+      "slug": "trendy-gadgets-midstream-ridge",
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/ShoppinginMidstream/posts/trendy-gadgets-at-shopping-on-ridgeway-offer-repairs-on-most-devices-contact-the/1011626256268921/"
+      ]
+    },
+    {
+      "slug": "trigger-digital-rsa-eldoraigne",
+      "status": "researched",
+      "sources": [
+        "http://www.trigger-digital.co.za/"
+      ]
+    },
+    {
+      "slug": "true-organics-juice-business-opportunity-olievenhoutbosch",
+      "status": "researched",
+      "sources": [
+        "https://trueorganics.life/"
+      ]
+    },
+    {
+      "slug": "tshwane-christian-school-onderstepoort",
+      "status": "deferred",
+      "reason": "The only page fetched (where-to-find-us) contains just contact and address details; no sourced content this round about curriculum, affiliation or accreditation was found to support a genuine description beyond what is already on file."
+    },
+    {
+      "slug": "vader-industries-pty-ltd-boardwalk-manor",
+      "status": "deferred",
+      "reason": "vaderind.com and its about page are both a 'Coming Soon' placeholder with only a tagline ('Cyber-Resilient IT for a Cloud-First World'), no substantive facts beyond what is already captured in the current description."
+    },
+    {
+      "slug": "van-heerdens-pretoria-central",
+      "status": "deferred",
+      "reason": "No usable source was found; thinklocal.co.za was blocked by anti-bot protection and search results returned Vans footwear and commercial-vehicle pages, entirely unrelated to this pharmacy."
+    },
+    {
+      "slug": "vectra-business-technologies-die-wilgers",
+      "status": "researched",
+      "sources": [
+        "https://craft.co/vectra-business-technologies"
+      ]
+    }
+  ]
+}

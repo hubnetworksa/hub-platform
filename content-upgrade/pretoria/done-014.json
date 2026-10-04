@@ -1,0 +1,318 @@
+{
+  "city": "pretoria",
+  "chunk": 14,
+  "generated_at": "2026-10-04T10:24:40.187Z",
+  "items": [
+    {
+      "slug": "cash-converters-karen-park-karenpark",
+      "status": "deferred",
+      "reason": "Research only returned the generic Cash Converters chain homepage product listings; no content specific to this Karen Park branch could be verified."
+    },
+    {
+      "slug": "cash-converters-mayville-mayville",
+      "status": "deferred",
+      "reason": "Fetched page is the same generic Cash Converters chain homepage as the Karen Park branch, with no content specific to the Mayville store itself."
+    },
+    {
+      "slug": "cate-a-bake-factory-shop-hermanstad",
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/p/Cate-a-Bake-Pta-Factory-Shop-100063915578999/"
+      ]
+    },
+    {
+      "slug": "centurion-dental-studio-wierdapark",
+      "status": "researched",
+      "sources": [
+        "https://centuriondentalstudio.co.za"
+      ]
+    },
+    {
+      "slug": "city-angels-funeral-services-eersterust",
+      "status": "researched",
+      "sources": [
+        "http://www.cityangels.co.za/"
+      ]
+    },
+    {
+      "slug": "clc-bronberrik",
+      "status": "researched",
+      "sources": [
+        "http://www.clc.co.za/"
+      ]
+    },
+    {
+      "slug": "click7-wonderboom",
+      "status": "deferred",
+      "reason": "Website was blocked by anti-bot protection on every fetch attempt; search results returned unrelated F1TV streaming content with no usable business facts."
+    },
+    {
+      "slug": "clicks-castle-walk-erasmuskloof",
+      "status": "deferred",
+      "reason": "Address mismatch: Yellow Pages lists this Clicks Pharmacy at Lois Street, Erasmuskloof 0181, while our listing has it on Nossob St, Erasmuskloof, 0048 (Castle Walk Shopping Centre) -- flagging for central review rather than guessing which is correct."
+    },
+    {
+      "slug": "clicks-pharmacy-silver-mall-silverton",
+      "status": "deferred",
+      "reason": "Only content retrieved was the generic Clicks e-commerce category menu (beauty/skincare products); nothing specific to the Silver Mall branch itself."
+    },
+    {
+      "slug": "clothing-junction-pretoria-central",
+      "status": "deferred",
+      "reason": "Fetched page is general Bloed Street Mall centre information, not content about Clothing Junction specifically; also a shop-number mismatch exists between our address (Shop 178) and current description (Shop 42) that this source does not resolve."
+    },
+    {
+      "slug": "clubview-guest-house-clubview-east",
+      "status": "researched",
+      "sources": [
+        "https://www.clubview.co.za/contact"
+      ]
+    },
+    {
+      "slug": "cn-lighting-woodhill-golf-estate",
+      "status": "researched",
+      "sources": [
+        "http://cnlighting.co.za/"
+      ]
+    },
+    {
+      "slug": "conexus-accountants-de-wilgers",
+      "status": "deferred",
+      "reason": "conexusacc.co.za returned 'Website inactive' / domain no longer hosted; b2bhint.com was blocked by Cloudflare; no usable content found about this firm."
+    },
+    {
+      "slug": "cosetati-trading-and-projects-riviera",
+      "status": "deferred",
+      "reason": "Website failed to load (navigation timeout) on every attempt; search results returned unrelated YouTube pages with no business facts."
+    },
+    {
+      "slug": "cronje-steelworks-andeon",
+      "status": "deferred",
+      "reason": "Address mismatch: Waze lists Cronje Steelworks at 1430 Kenneth St, Andeon AH, while our listing has Plot 24 Holtmann Ave, Andeon AH -- same suburb/postcode but a different street, flagging rather than guessing; no additional substantive facts beyond hours/phone already known."
+    },
+    {
+      "slug": "db-design-labs-florauna",
+      "status": "deferred",
+      "reason": "Domain dbdesignlabs.net failed to resolve (DNS error) on every fetch attempt; search results were unrelated (Deutsche Bahn, DB Cash and Carry); no usable content found."
+    },
+    {
+      "slug": "designelo-visual-solutions-murrayfield",
+      "status": "researched",
+      "sources": [
+        "http://designelo.co.za/"
+      ]
+    },
+    {
+      "slug": "dis-chem-wonderpark-pharmacy-karenpark",
+      "status": "researched",
+      "sources": [
+        "https://dischem.co.za/storefinder/149"
+      ]
+    },
+    {
+      "slug": "dkr-waterkloof-glen",
+      "status": "researched",
+      "sources": [
+        "http://www.dkrconsultants.co.za/"
+      ]
+    },
+    {
+      "slug": "doringkloof-vingerlek-bpk-doringkloof",
+      "status": "deferred",
+      "reason": "brabys.com was blocked by Cloudflare on every attempt; search results returned unrelated MP3 download sites, so no verifiable facts about the bakery were found."
+    },
+    {
+      "slug": "dorite-centurion",
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/place/ringpharm-pharmacy-on-jean-dorite"
+      ]
+    },
+    {
+      "slug": "dr-hj-swart-les-marais",
+      "status": "deferred",
+      "reason": "The only fetched page (medpages.info) is platform boilerplate about the Medpages directory itself, not substantive content about Dr Swart beyond the name, specialty and suburb already in the current description."
+    },
+    {
+      "slug": "drift-butchery-and-deli-kameeldrift",
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/place/drift-butchery-and-deli"
+      ]
+    },
+    {
+      "slug": "eat-in-italian-sinoville",
+      "status": "researched",
+      "sources": [
+        "https://eatinitalian.co.za"
+      ]
+    },
+    {
+      "slug": "eldo-inc-pty-ltd-digital-marketing-agency-eldo-lakes-estate",
+      "status": "deferred",
+      "reason": "Procompare.co.za listing is a generic directory profile with boilerplate service-category links, not specific facts about this agency; it also lists the business location as 'Generaal Kemp Heuwel', which does not match our Eldo Lakes Estate/Proclamation Hill address -- flagging the discrepancy."
+    },
+    {
+      "slug": "elevate-x-solutions-midlands-estate",
+      "status": "deferred",
+      "reason": "Company website returned HTTP 404 / anti-bot block on every page fetched; search results were unrelated senior-nutrition content, so no usable facts were found."
+    },
+    {
+      "slug": "elysium-drive-pty-ltd-montana-gardens",
+      "status": "researched",
+      "sources": [
+        "https://www.elysiumdrive.co.za/"
+      ]
+    },
+    {
+      "slug": "embrac-n-touch-wellness-spa-hesteapark",
+      "status": "researched",
+      "sources": [
+        "https://embracntouch.co.za/"
+      ]
+    },
+    {
+      "slug": "emotive-group-of-co-de-wilgers",
+      "status": "deferred",
+      "reason": "The only source (emotivegroup.co) consists of vague, grandiose corporate language ('global infrastructure developer', 'private unicorn company', contracts 'through to 2045') with no concrete, verifiable facts about a small Pretoria construction business; treating this as unusable generic/padded content rather than genuine sourced information."
+    },
+    {
+      "slug": "engen-45-george-storrar-drive",
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/place/engen-george-storrar-drive"
+      ]
+    },
+    {
+      "slug": "engen-monavoni-service-station-monavoni",
+      "status": "deferred",
+      "reason": "All fetched pages (store-details, about, contact) returned only cookie-banner text and generic Engen head-office contact information, with no content specific to the Monavoni station."
+    },
+    {
+      "slug": "engineering-data-management-pty-ltd-boardwalk-manor",
+      "status": "researched",
+      "sources": [
+        "http://www.engdm.co.za/"
+      ]
+    },
+    {
+      "slug": "epix-south-africa-wierdapark",
+      "status": "deferred",
+      "reason": "Procompare.co.za directory profile is generic (cost guides, 'similar pros' list) and places the business in 'Amberville, Centurion' rather than our Wierdapark address -- flagging the location discrepancy; confidence rated low and no substantive specific facts found."
+    },
+    {
+      "slug": "eric-s-manufacturing-jewellers-florauna",
+      "status": "researched",
+      "sources": [
+        "https://www.ericsjewellers.co.za/"
+      ]
+    },
+    {
+      "slug": "espress-print-and-brand-doringkloof",
+      "status": "researched",
+      "sources": [
+        "http://www.espressmarketing.co.za/"
+      ]
+    },
+    {
+      "slug": "evolution-aluglass-wonderboom-south",
+      "status": "researched",
+      "sources": [
+        "http://www.evolutionglass.co.za/"
+      ]
+    },
+    {
+      "slug": "eworkshop-laudium",
+      "status": "researched",
+      "sources": [
+        "http://eworkshop.co.za/"
+      ]
+    },
+    {
+      "slug": "faithful-to-nature-irene-village-mall-irene-farm-villages",
+      "status": "deferred",
+      "reason": "Fetched page is the generic national Faithful to Nature e-commerce storefront (product SKUs/categories) with no mention of the Irene Village Mall branch specifically."
+    },
+    {
+      "slug": "flexiwifi-eldo-lakes-estate",
+      "status": "researched",
+      "sources": [
+        "http://flexiwifi.co.za/"
+      ]
+    },
+    {
+      "slug": "forever-business-owner-centurion-heuweloord",
+      "status": "deferred",
+      "reason": "Facebook page content is unavailable ('this content isn't available'); the only other fetched page was Meta's generic corporate About page, with no facts about this specific distributor."
+    },
+    {
+      "slug": "frantel-engineering-and-distribution-waltloo",
+      "status": "deferred",
+      "reason": "Likely wrong-business/domain-hijack match: frantelengineering.co.za now returns content entirely about online casino bonuses, unrelated to the metal-fabrication business; no genuine facts about Frantel Engineering were found."
+    },
+    {
+      "slug": "freeme-solutions-erasmia",
+      "status": "researched",
+      "sources": [
+        "http://freemesolutions.co.za/"
+      ]
+    },
+    {
+      "slug": "full-swing-trading-hennopspark",
+      "status": "researched",
+      "sources": [
+        "http://fullswing.co.za/"
+      ]
+    },
+    {
+      "slug": "furnicare-zwavelpoort",
+      "status": "researched",
+      "sources": [
+        "https://www.furnicare.co.za/",
+        "https://www.furnicare.co.za/about"
+      ]
+    },
+    {
+      "slug": "galoot-stationery-print-shop-de-wilgers",
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/gauteng/galoot-87060"
+      ]
+    },
+    {
+      "slug": "genius-geeks-rooihuiskraal-north",
+      "status": "researched",
+      "sources": [
+        "https://www.geniusgeeks.co.za/"
+      ]
+    },
+    {
+      "slug": "ghs-projects-pty-ltd-villieria",
+      "status": "researched",
+      "sources": [
+        "http://ghsprojects.co.za/"
+      ]
+    },
+    {
+      "slug": "glamour-bar-za-willow-park-manor",
+      "status": "researched",
+      "sources": [
+        "http://glamourbarza.co.za/services"
+      ]
+    },
+    {
+      "slug": "globerisk-midfields-estate",
+      "status": "researched",
+      "sources": [
+        "https://globerisk.co.za/"
+      ]
+    },
+    {
+      "slug": "golden-crown-properties-dorandia",
+      "status": "researched",
+      "sources": [
+        "http://www.goldencrowngroup.co.za/"
+      ]
+    }
+  ]
+}
