@@ -11,6 +11,7 @@ Each listing in the batch gives you:
 - `shopping_centre` and `website` when known
 - `existing_sources`: the pages the listing was originally built from
 - `current_description`: the thin text you're replacing
+- `hours` when known: the business's own trading hours (already stored on the listing, the same text its page already shows). **If `hours` is present, work it naturally into the description** — one clause near the end is enough ("...and is open Monday to Friday from 8am to 5pm, and Saturdays until 1pm"). It's a real, sourced fact, not filler, even if several nearby businesses happen to share the same hours text; don't force it in if it reads awkwardly for that business. Cape Town and Polokwane chunks don't have this field backfilled yet — don't invent hours for a listing that doesn't have one.
 
 ## Research first, then write
 

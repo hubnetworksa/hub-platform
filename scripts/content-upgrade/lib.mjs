@@ -41,12 +41,18 @@ export const textErrors = (at, d) => {
   return errors;
 };
 
+// A sentence that's mostly a trading-hours statement (day names + times) is a
+// real, sourced fact, not templated filler, even when several businesses
+// genuinely share the same hours — so it's exempt from the repeat check.
+const HOURS_SENTENCE = /\b(mon|tue|wed|thu|fri|sat|sun)[a-z]*\b.{0,40}\b\d{1,2}([:.]\d{2})?\s*(am|pm)?\b.{0,20}\b\d{1,2}([:.]\d{2})?\s*(am|pm)?\b|\b24\s*hours?\b|\bopen\b.{0,10}\bdaily\b/i;
+
 // The same sentence in 3+ descriptions is templated filler.
 export const repeatedSentenceErrors = (items) => {
   const sentences = new Map();
   for (const it of items) {
     const mine = new Set();
     for (const raw of String(it?.description ?? '').split(/(?<=[.!?])\s+/)) {
+      if (HOURS_SENTENCE.test(raw)) continue;
       const n = raw.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
       if (n.split(' ').length < 4 || mine.has(n)) continue;
       mine.add(n);
