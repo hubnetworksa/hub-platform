@@ -47,13 +47,14 @@ Only use `category_slug` and `suburb_slug` values that appear in your work packe
 
 ```sql
 INSERT OR IGNORE INTO businesses
-  (slug, name, suburb_id, shopping_center_id, address, phone, website, email, description, lat, lng, source_urls, status, origin)
+  (slug, name, suburb_id, shopping_center_id, address, phone, website, email, description, hours, lat, lng, source_urls, status, origin)
 VALUES (
   'example-name-suburbslug', 'Example Name',
   (SELECT id FROM suburbs WHERE slug = 'suburbslug'),
   (SELECT id FROM shopping_centers WHERE slug = 'example-mall-suburbslug'),
   '123 Example St', '021 345 6789', NULL, NULL,
-  'Example Name is a <one-sentence factual description>, in <suburb>.',
+  '<a real, 100-250 word description built only from what your sources actually say -- see "Description and hours" below>',
+  '<real trading hours if a source states them, e.g. ''Mon-Fri 08:00-17:00, Sat 08:00-13:00, Sun Closed'', else NULL>',
   NULL, NULL,
   '["https://real-source-one.example", "https://real-source-two.example"]',
   'published', 'agent_research'
@@ -67,6 +68,15 @@ VALUES (
 ```
 
 Omit the `shopping_center_id` column and its value for a business that is not inside a centre. Slug format: `slugify(name) + '-' + suburb_slug` (lowercase, non-alphanumeric runs become single hyphens); if it already exists, append `-2`, `-3`. Use `lat`/`lng` only when a source actually gives coordinates; otherwise `NULL`. If a source gives the business's own website or a company contact email, you may fill `website` and `email` (see the enrichment runbook for the email rules).
+
+### Description and hours
+
+A new business's description is written once, at discovery, and (enrichment being disabled) never revisited -- so get it right here, to the same bar as a manually researched listing:
+
+- **100 to 250 words** (aim for 110-150), third person, built only from facts your sources actually state. `validate.mjs` rejects anything shorter as a one-liner and anything longer as needing a trim.
+- No sales filler ("one-stop-shop", "look no further", "world-class"), no phone number, email or link inside the text itself (those have their own columns), and never a named individual -- see the rule above.
+- If your sources only support a thin, one- or two-sentence description, that is a sign you do not have enough to publish this business yet, not a reason to pad it with invented detail: find more sourced detail (what it sells or specialises in, who it serves, what makes this branch or location specific) or skip the candidate.
+- Fill `hours` with the business's real trading hours, in free text (e.g. `'Mon-Fri 08:00-17:00, Sat 08:00-13:00, Sun Closed'`), whenever a source actually states them -- most Google/Maps and directory listings do. Otherwise leave it `NULL`. Never guess typical hours for the category or chain.
 
 **New shopping centre:**
 

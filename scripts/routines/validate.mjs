@@ -170,8 +170,14 @@ for (const s of stmts) {
       if (urls.some((u) => !/^https:\/\//.test(u))) err(`${label}: every source must be an https link`);
       if (hosts.size < 2) err(`${label}: needs at least 2 independent sources on different websites`);
       const desc = unq(row.description) ?? '';
-      if (desc.length < 20) err(`${label}: description is missing or too short`);
+      const descWords = (desc.match(/[A-Za-z0-9'’&-]+/g) ?? []).length;
+      if (descWords < 100) err(`${label}: description is only ${descWords} word${descWords === 1 ? '' : 's'} -- it needs 100-250 (a full description, not a one-liner)`);
+      else if (descWords > 250) err(`${label}: description is ${descWords} words -- trim it to 110-150`);
+      if (desc.length > 1500) err(`${label}: description is ${desc.length} characters -- the site's limit is 1,500`);
+      if (/\b(one[- ]stop[- ]shop|look no further|best in (town|the city)|second to none|unbeatable|world[- ]class|top[- ]notch|your go-to)\b/i.test(desc)) err(`${label}: sales filler in the description`);
       if (/\b(?:[Ff]ounded|[Oo]wned|[Rr]un|[Mm]anaged|[Ss]tarted|[Ee]stablished)\s+by\s+[A-Z][a-z]+/.test(desc) || /\b(owner|founder|director)\s+[A-Z][a-z]+\s+[A-Z][a-z]+/.test(desc)) warn(`${label}: description may name an individual; descriptions must not`);
+      const hours = unq(row.hours);
+      if (hours != null && !String(hours).trim()) err(`${label}: hours is an empty string -- use NULL when no source states them`);
       const email = unq(row.email);
       if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) err(`${label}: email is not a valid address`);
       const centre = subSlug(row.shopping_center_id, 'shopping_centers');
