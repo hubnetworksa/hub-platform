@@ -7,6 +7,10 @@ Status: **plan, not started**. Written 4 October 2026, updated the same day for 
 > - **Coverage:** every eligible listing (9,408) gets an 80–150 word description; there is no "skip".
 > - **How:** all at once, by agents working in parallel on 50-listing batches (section 9). The agent brief is `content-upgrade/README.md`.
 > - **Keeping it cheap:** about 2 tool calls per listing. Agents only write a small JSON file; `scripts/content-upgrade/to-sql.mjs` checks it and generates the guarded SQL.
+> - **Quality bar:** owner-quality, third-person introductions, modelled on RE/MAX Northland Realty's own description (`content-upgrade/README.md`).
+> - **Marking upgraded listings:** the existing `description_enriched_at`. The content-upgrade migration clears it on every listing and narrows the 1 October lock to owner-managed and claimed listings. The upgrade stamps it again as each description is written. The undo point is a database backup taken just before the agents start (`scripts/content-upgrade/undo.mjs`).
+> - **Marking upgraded listings:** the existing `description_enriched_at` column, set to the time of the upgrade. There are no new columns or tables. The undo point is a database backup taken just before the agents start (`scripts/content-upgrade/undo.mjs`).
+> - **The database lock:** the 1 October lock that blocks every enrichment write is narrowed to owner-managed and claimed listings (migration `*_content_upgrade_enrichment_guard.sql`), so those stay locked at database level.
 >
 > Where older sections below mention hours, emails, short descriptions, a slow routine or a "no sources" list, this box overrides them.
 
@@ -33,7 +37,7 @@ How this is enforced. Three layers, so a mistake in one can't change a protected
 3. **The database itself re-checks at the moment the change is applied.** Every update carries the guard in its own `WHERE`. If someone claims the business between the routine writing the file and the deploy applying it, the update simply changes nothing.
 
 ```sql
-UPDATE businesses SET description = ..., short_description = ..., content_upgraded_at = datetime('now'), ...
+UPDATE businesses SET description = ..., description_enriched_at = datetime('now')
 WHERE slug = 'example-slug'
   AND owner_user_id IS NULL
   AND COALESCE(subscription_tier, 0) = 0
@@ -41,13 +45,15 @@ WHERE slug = 'example-slug'
   AND NOT EXISTS (SELECT 1 FROM business_claims c WHERE c.business_id = businesses.id)
   AND NOT EXISTS (SELECT 1 FROM subscriptions s WHERE s.business_id = businesses.id)
   AND NOT EXISTS (SELECT 1 FROM business_photos p WHERE p.business_id = businesses.id)
-  AND content_upgraded_at IS NULL                  -- never changed twice
+  AND (description_enriched_at IS NULL OR description_enriched_at < '2026-10-04 00:00:00')  -- not already upgraded
   AND length(COALESCE(description, '')) < 700;     -- only short descriptions are replaced
 ```
 
 The last two lines mean a listing is upgraded once only, and a description that has since been written up properly (by an admin, or an owner who just claimed) is never overwritten. The exact SQL agents use is in `content-upgrade/README.md`.
 
-**History and undo:** before each change, the old text is copied into a new `description_history` table (business id, old description, old short description, old hours, when, which routine run). Any change can be undone one listing at a time, or a whole run at once.
+**Undo:** a full database backup is taken just before the run ("Weekly database backup" workflow, run by hand). `scripts/content-upgrade/undo.mjs` restores the old text from it for one batch or a whole city, and clears the stamp so those listings can be redone.
+
+**Database-level lock:** the 1 October trigger (`block_routine_description_enrichment`) is kept but narrowed by the content-upgrade migration (`pretoria/0070`, `polokwane/0073`, `capetown/0071`). Any write to `description_enriched_at` is still silently dropped for a listing with an owner, a paid plan or any subscription, an owner submission, or any claim. So even a faulty file can't stamp, and therefore can't upgrade, a claimed listing.
 
 ---
 
@@ -166,8 +172,7 @@ Each run takes the next batch from one queue, ordered by:
    - suburbs and centres without proper text.
    It writes `status/<city>/content-audit.json` and shows it in Hub Admin → Listings.
 2. **Migration**, for all three cities:
-   - on `businesses`: `content_upgraded_at`, `content_upgrade_status` (`researched` / `from_known_details`) and `content_upgrade_run`;
-   - a new `description_history` table;
+   - superseded: no new columns or tables. The migration clears `description_enriched_at` on every listing and narrows the 1 October lock;
    - the same "upgraded at" and "status" columns on `suburbs` and `shopping_centers`.
 3. **Snapshot:** add description length, protected yes/no, upgrade status and has-hours to `status/<city>/db-snapshot.json`. Lengths and flags only, not full text, so the snapshot stays small. The routine needs this to pick work without reading the database.
 
@@ -270,13 +275,17 @@ Batches don't overlap, so any number of agents can work on the same city at once
 
 ### What must be in place before the first agent runs
 
-1. **Done:** `scripts/content-upgrade/to-sql.mjs`. It checks an agent's JSON (every listing present once, 80–150 words, no phone/email/link/HTML/sales filler, valid statuses and sources). It then writes the SQL: an undo copy into `description_history`, then the update, both behind the protection guard from section 1. Tested on a copy of the database: owned and claimed listings stayed untouched, others updated, and re-applying the file changed nothing.
-2. **To do (me): database migration** for all three cities:
-   - on `businesses`: `content_upgraded_at` and `content_upgrade_status`;
-   - a new table `description_history (id, business_id, old_description, changed_by, changed_at)`.
-3. **To do (me): deploy filter.** Add `content-upgrade/` to the deploy workflow's routine-only paths, so agent pushes don't each rebuild all three sites. The 3-hourly deploy applies the SQL in bulk.
-4. **To do (me): undo script.** `scripts/content-upgrade/undo.mjs --city <c> [--chunk NNN]` restores the old text from `description_history`.
-5. **Trial:** chunk-001 for each city first, then check before running the rest.
+1. **Done: `scripts/content-upgrade/to-sql.mjs`.** It checks an agent's JSON: every listing present once, 80–150 words, no phone/email/link/HTML/sales filler, valid statuses and sources. It then writes one guarded `UPDATE` per listing, which also stamps `description_enriched_at`.
+2. **Done: content-upgrade migration** (`pretoria/0070`, `polokwane/0073`, `capetown/0071`). It clears every `description_enriched_at` and narrows the lock as described in section 1.
+   - **Tested on a copy of the database with the original lock:**
+     - every date was cleared;
+     - the batch upgraded the unclaimed listings and left the owned and claimed ones alone;
+     - a direct overwrite of the owned listing (as the old routine would have done) was still dropped;
+     - re-applying the batch changed nothing.
+3. **Done: undo.** `node scripts/content-upgrade/undo.mjs <city> <backup.sql> <NNN|all>`.
+4. **Before starting: take the undo point.** Run GitHub → Actions → "Weekly database backup" → Run workflow. Its artifact is the backup (kept 90 days).
+5. **With the push to main: deploy filter.** `content-upgrade/` and `scripts/content-upgrade/` are added to the deploy workflow's routine-only paths, so agent pushes don't each rebuild all three sites. The push that brings the migration rebuilds once; that's what applies it.
+6. **Trial:** chunk-001 for each city first, then check before running the rest.
 
 ### How long "all at once" takes
 
@@ -287,7 +296,7 @@ Batches don't overlap, so any number of agents can work on the same city at once
 
 ### Database cost
 
-All 9,408 upgrades write about 19,000 rows in total (an undo copy plus the update for each). The free limit is 100,000 rows written per day, and reads are small. If many batches land at once the 3-hourly deploy can still apply them in one go; the Health screen's database meter shows the real cost.
+All 9,408 upgrades write about 9,400 rows in total, one update each. The free limit is 100,000 rows written per day, and reads are small. If many batches land at once the 3-hourly deploy can still apply them in one go; the Health screen's database meter shows the real cost.
 
 ### Every listing is upgraded
 

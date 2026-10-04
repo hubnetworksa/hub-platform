@@ -7,9 +7,14 @@
 //
 // This script checks every item (all listings in the chunk present once,
 // 80-150 words, no phone/email/link in the text, no sales filler) and
-// writes db/routine-updates/<city>/content-NNN.sql: per listing, a copy of
-// the old text into description_history, then the UPDATE, both behind the
-// guard that leaves owned, claimed, paid and hand-curated listings alone.
+// writes db/routine-updates/<city>/content-NNN.sql: one UPDATE per listing
+// behind the guard that leaves owned, claimed, paid and hand-curated listings
+// alone. It uses the existing description_enriched_at column, which the
+// content-upgrade migration cleared for every listing: a listing is changed
+// only while that is empty, and the update sets it to now, so a file applied
+// twice changes nothing.
+// No schema change; the undo point is the database backup taken before the
+// run (see scripts/content-upgrade/undo.mjs).
 //
 //   node scripts/content-upgrade/to-sql.mjs <city> <chunk number>
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -66,7 +71,7 @@ if (errors.length) {
 const q = (s) => `'${String(s).replace(/'/g, "''")}'`;
 // Owned, claimed, paid, owner-submitted, photographed or hand-built listings
 // never change; a listing is upgraded once, and only while its text is short.
-const guard = (slug) => `slug = ${q(slug)} AND content_upgraded_at IS NULL AND length(COALESCE(description, '')) < 700
+const guard = (slug) => `slug = ${q(slug)} AND description_enriched_at IS NULL AND length(COALESCE(description, '')) < 700
   AND owner_user_id IS NULL AND COALESCE(subscription_tier, 0) = 0 AND COALESCE(origin, '') != 'owner_submitted'
   AND status = 'published' AND closed_at IS NULL AND is_test = 0
   AND custom_blocks IS NULL AND page_html IS NULL
@@ -80,8 +85,7 @@ for (const it of items) {
   const src = (it.sources ?? []).map((u) => `'$[#]', ${q(u)}`).join(', ');
   sql.push(
     `-- ${it.slug} (${it.status})`,
-    `INSERT INTO description_history (business_id, old_description, changed_by) SELECT id, description, ${q(run)} FROM businesses WHERE ${guard(it.slug)};`,
-    `UPDATE businesses SET description = ${q(it.description.trim())},${src ? ` source_urls = json_insert(CASE WHEN json_valid(source_urls) AND json_type(source_urls) = 'array' THEN source_urls ELSE '[]' END, ${src}),` : ''} content_upgraded_at = datetime('now'), content_upgrade_status = ${q(it.status)} WHERE ${guard(it.slug)};`
+    `UPDATE businesses SET description = ${q(it.description.trim())},${src ? ` source_urls = json_insert(CASE WHEN json_valid(source_urls) AND json_type(source_urls) = 'array' THEN source_urls ELSE '[]' END, ${src}),` : ''} description_enriched_at = datetime('now') WHERE ${guard(it.slug)};`
   );
 }
 mkdirSync(`db/routine-updates/${city}`, { recursive: true });
