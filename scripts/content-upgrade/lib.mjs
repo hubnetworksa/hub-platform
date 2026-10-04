@@ -26,6 +26,17 @@ export const buildGuard = (slug, currentDescription) => {
   AND NOT EXISTS (SELECT 1 FROM business_photos p WHERE p.business_id = businesses.id)`;
 };
 
+// Same ownership/safety rule as buildGuard, for writing the `hours` column
+// instead of `description`: only ever fills in hours that are currently
+// empty, never overwrites a value an owner, admin or earlier run already set.
+export const buildHoursGuard = (slug) => `slug = ${q(slug)} AND (hours IS NULL OR length(trim(hours)) < 3)
+  AND owner_user_id IS NULL AND COALESCE(subscription_tier, 0) = 0 AND COALESCE(origin, '') != 'owner_submitted'
+  AND status = 'published' AND closed_at IS NULL AND is_test = 0
+  AND custom_blocks IS NULL AND page_html IS NULL
+  AND NOT EXISTS (SELECT 1 FROM business_claims c WHERE c.business_id = businesses.id)
+  AND NOT EXISTS (SELECT 1 FROM subscriptions s WHERE s.business_id = businesses.id)
+  AND NOT EXISTS (SELECT 1 FROM business_photos p WHERE p.business_id = businesses.id)`;
+
 // Text checks shared by researched and owner descriptions. Returns messages.
 export const textErrors = (at, d) => {
   const errors = [];
