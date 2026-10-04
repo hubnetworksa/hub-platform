@@ -1,8 +1,9 @@
-// Hub Admin service worker. The app shell (HTML, CSS, JS, icons) is served
-// from cache and refreshed in the background; API data always comes from the
-// network, falling back to the last copy only when offline, so numbers are
-// never silently stale while online. Bump VERSION to force a fresh shell.
-const VERSION = 'hub-admin-v5';
+// Hub Admin service worker. The app's own code (HTML, CSS, JS) and all API
+// data come from the network first, so a new version shows on the next
+// open; the saved copy is only used offline (or if the network takes over
+// 4 seconds). Images and the vendored libraries come from the cache and are
+// refreshed in the background. Bump VERSION when the precached list changes.
+const VERSION = 'hub-admin-v6';
 const SHELL = ['/', '/styles.css', '/app.js', '/charts.js', '/motion.js', '/vendor/gsap.min.js', '/vendor/ScrollTrigger.min.js', '/manifest.webmanifest', '/icons/logo-rounded.png', '/icons/icon-192.png'];
 
 self.addEventListener('install', (event) => {
@@ -15,14 +16,22 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-async function networkFirst(request) {
+async function networkFirst(request, timeoutMs = 0) {
   const cache = await caches.open(VERSION);
-  try {
-    const res = await fetch(request);
-    if (res.ok) cache.put(request, res.clone());
+  const network = fetch(request).then((res) => {
+    if (res.ok && !res.redirected) cache.put(request, res.clone());
     return res;
+  });
+  try {
+    if (!timeoutMs) return await network;
+    // A slow connection falls back to the saved copy after timeoutMs.
+    const slow = new Promise((resolve) => setTimeout(resolve, timeoutMs, null));
+    const res = await Promise.race([network, slow]);
+    if (res) return res;
+    const hit = await cache.match(request, { ignoreSearch: true });
+    return hit || (await network);
   } catch (err) {
-    const hit = await cache.match(request);
+    const hit = await cache.match(request, { ignoreSearch: true });
     if (hit) return hit;
     throw err;
   }
@@ -56,6 +65,11 @@ self.addEventListener('fetch', (event) => {
     // Navigations go to the network first so an expired Access session can
     // redirect to sign-in; offline, the cached shell still opens.
     event.respondWith(fetch(req).catch(() => caches.match('/')));
+    return;
+  }
+  // The app's own code: newest first, so updates appear straight away.
+  if (/\.(js|css|webmanifest)$/.test(url.pathname) && !url.pathname.startsWith('/vendor/')) {
+    event.respondWith(networkFirst(req, 4000));
     return;
   }
   event.respondWith(staleWhileRevalidate(req));
