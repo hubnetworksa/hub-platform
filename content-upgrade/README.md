@@ -36,7 +36,7 @@ Why it works:
 
 Write every description like that:
 
-- **At least 100 words (never less), ideally 100–150, never over 1,500 characters including spaces** (the site's limit for the description field). That's 4–7 flowing sentences in plain South African English, warm and professional, like a short "About us". The RE/MAX example above shows the quality to match; yours must be longer (100+ words). Use the extra room only for real, sourced detail, never padding.
+- **Write 110–150 words for every listing.** The hard minimum is 100 words, and the site's limit for the field is 1,500 characters including spaces. Count before you save. If a draft is short, add more sourced detail about what the business offers and more about the area, never filler. That's 4–7 flowing sentences in plain South African English, warm and professional, like a short "About us". The RE/MAX example above shows the quality to match; yours must be longer (100+ words). Use the extra room only for real, sourced detail, never padding.
 - **Third person** ("the team", "the practice", "the store"), never "we" or "our". The business didn't write it, so don't speak for it.
 - **Cover, in this order:**
   1. **What it is and what it does:** the specific services, products, brands and specialities you read about.
@@ -73,7 +73,7 @@ node scripts/content-upgrade/to-sql.mjs <city> <NNN>
 ```
 
 It checks everything (at least 100 words, the 1,500-character limit) and writes the guarded SQL to `db/routine-updates/<city>/content-NNN.sql`. The SQL leaves any owned, claimed or paid listing untouched (the database also blocks those), and the old text can be restored from the backup taken before the run.
-- **If it prints problems:** fix those items in your JSON and run it again.
+- **If it lists descriptions to fix** (e.g. one under 100 words), rewrite each one to 110–150 words in your JSON and run it again. Repeat until it prints `ok`. Every listing must end up with a 100+ word description; never drop one from the file.
 - **When it prints `ok`:** commit both files and push to `main` with the message `content-upgrade <city> chunk <NNN>`. If the push is rejected, run `git pull --rebase` and push again.
 
 Done. Don't do another batch unless you were asked to.
