@@ -96,3 +96,21 @@ It checks everything (researched 100–250 words, the 1,500-character limit, no 
 - **When it prints `ok` (and you were not told "trial"):** commit the JSON, the SQL and `done-NNN.json`, and push to `main` with the message `content-upgrade <city> chunk <NNN>`. If the push is rejected, run `git pull --rebase` and push again.
 
 Done. Don't do another batch unless you were asked to.
+
+## Deferred listings and owner descriptions
+
+The site owner has said: if a business can't be found or described from sources, ask him and he will provide a description. Deferred listings are therefore collected for him:
+
+```
+node scripts/content-upgrade/deferred-report.mjs [pretoria|polokwane|capetown|all]
+```
+
+Reads every `content-upgrade/<city>/done-NNN.json`, writes `status/content-upgrade-deferred.md` (per city: name, what we know, reason, public listing URL, a blank `Description:` line) and creates or merges the fill-in template `content-upgrade/owner/<city>.json` (`{ "<slug>": "" }`). Filled text is never overwritten; slugs already researched or already written from owner text are skipped.
+
+The owner fills the text in `content-upgrade/owner/<city>.json` (slug to description, one string each; leave `""` for ones not done). Then:
+
+```
+node scripts/content-upgrade/owner-sql.mjs <city>
+```
+
+Rules: owner text is published as-is after validation. It must be 100-250 words, at most 1,500 characters, with no phone number, email address, link or HTML, no sales filler, and no sentence repeated across 3+ descriptions. Third person is preferred but not enforced. It writes `db/routine-updates/<city>/owner-<YYYYMMDD-HHMM>.sql` behind the same guard as `to-sql.mjs` (shared in `scripts/content-upgrade/lib.mjs`; owned, claimed, paid, photographed or hand-edited listings are untouched), leaves `source_urls` alone, moves the written slugs to `content-upgrade/owner/<city>.done.json` and out of `<city>.json`.

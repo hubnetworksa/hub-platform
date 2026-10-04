@@ -300,3 +300,7 @@ All 9,408 upgrades write about 9,400 rows in total, one update each. The free li
 ### Every listing is upgraded
 
 Many small businesses have nothing online beyond a directory card, and the agents' sandbox can't open every website. Expect perhaps 20–40% of listings to be written `from_known_details` (location, centre, category and access details we already hold) rather than `researched`. Every one still gets a real description (50–80 words, only what is known, no padding), with no invented facts. The `done-NNN.json` sidecar lets a later pass add more detail when the business appears online.
+
+### Deferred listings and the owner (added 4 October 2026)
+
+Listings with no usable sources are deferred, never padded. The owner offered to write those descriptions himself. `scripts/content-upgrade/deferred-report.mjs` lists them in `status/content-upgrade-deferred.md` and prepares `content-upgrade/owner/<city>.json`; `scripts/content-upgrade/owner-sql.mjs <city>` validates the owner's text (100-250 words, no phone/email/link, published as-is) and emits guarded SQL, using the same guard as the researched batches. See `content-upgrade/README.md`.

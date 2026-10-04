@@ -29,6 +29,7 @@
 //
 //   node scripts/content-upgrade/to-sql.mjs <city> <chunk number>
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { words, FILLER, PHONE, EMAIL, LINK, q, buildGuard, repeatedSentenceErrors } from './lib.mjs';
 
 const [city, chunkArg] = process.argv.slice(2);
 if (!['pretoria', 'polokwane', 'capetown'].includes(city) || !/^\d{1,3}$/.test(chunkArg ?? '')) {
@@ -44,12 +45,6 @@ try {
   console.error(`Can't read content-upgrade/out/${city}/chunk-${nnn}.json: ${e.message}`);
   process.exit(1);
 }
-
-const words = (t) => (t.match(/[A-Za-z0-9'’&-]+/g) ?? []).length;
-const FILLER = /\b(one[- ]stop[- ]shop|look no further|best in (town|the city|pretoria|polokwane|cape town)|second to none|unbeatable|world[- ]class|top[- ]notch|your go-to)\b/i;
-const PHONE = /(\+27|\b0\d{2})[\s-]?\d{3}[\s-]?\d{4}\b/;
-const EMAIL = /[^\s@]+@[^\s@]+\.[a-z]{2,}/i;
-const LINK = /(https?:\/\/|www\.|\b[a-z0-9-]+\.(co\.za|com|org\.za|net)\b)/i;
 
 // Sources of a researched description must be URLs the research file holds for
 // that slug (pages, search results, website, existing_sources), so nobody cites
@@ -105,45 +100,14 @@ for (const [i, it] of items.entries()) {
   if (!src.length) errors.push(`${at}: researched needs at least one source`);
 }
 for (const s of expected) if (!seen.has(s)) errors.push(`${s}: missing (every listing in the chunk must appear, as researched or deferred)`);
-// The same sentence in 3+ descriptions is templated filler.
-const sentences = new Map();
-for (const it of items) {
-  const mine = new Set();
-  for (const raw of String(it?.description ?? '').split(/(?<=[.!?])\s+/)) {
-    const n = raw.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
-    if (n.split(' ').length < 4 || mine.has(n)) continue;
-    mine.add(n);
-    if (!sentences.has(n)) sentences.set(n, { text: raw.trim(), slugs: [] });
-    sentences.get(n).slugs.push(it.slug);
-  }
-}
-for (const { text, slugs } of sentences.values()) {
-  if (slugs.length >= 3) errors.push(`templated filler, remove it: "${text}" appears in ${slugs.length} descriptions (${slugs.join(', ')})`);
-}
+errors.push(...repeatedSentenceErrors(items));
 if (errors.length) {
   console.error(`${errors.length} description(s) to fix in content-upgrade/out/${city}/chunk-${nnn}.json (nothing was written; fix them all, then run this again):\n- ${errors.join('\n- ')}`);
   process.exit(1);
 }
 
-const q = (s) => `'${String(s).replace(/'/g, "''")}'`;
-// Owned, claimed, paid, owner-submitted, photographed or hand-built listings
-// never change; a listing is upgraded once, and only while its text is short.
-// The text-unchanged condition (description = the batch file's
-// current_description) matters because admin edits made through the Edit modal
-// don't stamp description_enriched_at, so without it a hand-written rewrite made
-// after the batch was prepared would be overwritten by this update.
 const current = new Map(chunk.listings.map((l) => [l.slug, l.current_description]));
-const sameText = (slug) => {
-  const c = current.get(slug);
-  return c == null || String(c) === '' ? `COALESCE(description, '') = ''` : `description = ${q(c)}`;
-};
-const guard = (slug) => `slug = ${q(slug)} AND ${sameText(slug)} AND description_enriched_at IS NULL AND length(COALESCE(description, '')) < 700
-  AND owner_user_id IS NULL AND COALESCE(subscription_tier, 0) = 0 AND COALESCE(origin, '') != 'owner_submitted'
-  AND status = 'published' AND closed_at IS NULL AND is_test = 0
-  AND custom_blocks IS NULL AND page_html IS NULL
-  AND NOT EXISTS (SELECT 1 FROM business_claims c WHERE c.business_id = businesses.id)
-  AND NOT EXISTS (SELECT 1 FROM subscriptions s WHERE s.business_id = businesses.id)
-  AND NOT EXISTS (SELECT 1 FROM business_photos p WHERE p.business_id = businesses.id)`;
+const guard = (slug) => buildGuard(slug, current.get(slug));
 
 const run = `content-upgrade:${city}:${nnn}`;
 const written = items.filter((i) => i.status === 'researched');
