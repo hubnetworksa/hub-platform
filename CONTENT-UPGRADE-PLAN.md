@@ -4,7 +4,7 @@ Status: **plan, not started**. Written 4 October 2026, updated the same day for 
 
 > **Current approach (latest decisions, 4 October 2026):**
 > - **Scope:** descriptions only. No hours, emails or short descriptions.
-> - **Coverage:** every eligible listing (9,408) gets a description of at least 80 words, ideally 100–150 (at most 1,500 characters, the site's limit for the field since 4 October); there is no "skip".
+> - **Coverage:** every eligible listing (9,408) gets a description of at least 100 words (never less), ideally 100–150 (at most 1,500 characters, the site's limit for the field since 4 October); there is no "skip".
 > - **How:** all at once, by agents working in parallel on 50-listing batches (section 9). The agent brief is `content-upgrade/README.md`.
 > - **Keeping it cheap:** about 2 tool calls per listing. Agents only write a small JSON file; `scripts/content-upgrade/to-sql.mjs` checks it and generates the guarded SQL.
 > - **Quality bar:** owner-quality, third-person introductions, modelled on RE/MAX Northland Realty's own description (`content-upgrade/README.md`).
