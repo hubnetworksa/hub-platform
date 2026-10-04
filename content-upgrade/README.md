@@ -36,7 +36,7 @@ Why it works:
 
 Write every description like that:
 
-- **80–100 words and at most 600 characters including spaces** (the site's limit for the description field). That's 4–5 flowing sentences in plain South African English, warm and professional, like a short "About us". The RE/MAX example above is 84 words and 592 characters: aim for that.
+- **At least 80 words, ideally 100–150, never over 1,500 characters including spaces** (the site's limit for the description field). That's 4–7 flowing sentences in plain South African English, warm and professional, like a short "About us". The RE/MAX example above is 84 words and 592 characters, the minimum standard. Use the extra room only for real, sourced detail, never padding.
 - **Third person** ("the team", "the practice", "the store"), never "we" or "our". The business didn't write it, so don't speak for it.
 - **Cover, in this order:**
   1. **What it is and what it does:** the specific services, products, brands and specialities you read about.
@@ -50,7 +50,7 @@ Write every description like that:
   - make up claims ("award-winning", "the best", "leading") unless a source says so;
   - use sales filler ("one-stop shop", "look no further");
   - use HTML.
-- **If your research adds nothing about the business itself** (rare), still write a full, natural introduction (80–100 words) from the batch data: what kind of business it is, where it is with that area context, the centre it's in, and who it serves (only if that's obvious from the category). Never invent services. Mark it `"from_known_details"`.
+- **If your research adds nothing about the business itself** (rare), still write a full, natural introduction (at least 80 words) from the batch data: what kind of business it is, where it is with that area context, the centre it's in, and who it serves (only if that's obvious from the category). Never invent services. Mark it `"from_known_details"`.
 
 ## Output: one JSON file, then one command
 
@@ -58,8 +58,8 @@ Write `content-upgrade/out/<city>/chunk-NNN.json`:
 
 ```json
 { "items": [
-  { "slug": "<slug>", "description": "<80-100 words, max 600 characters>", "status": "researched", "sources": ["https://page-you-used"] },
-  { "slug": "<slug>", "description": "<80-100 words, max 600 characters>", "status": "from_known_details", "sources": [] }
+  { "slug": "<slug>", "description": "<100-150 words, max 1,500 characters>", "status": "researched", "sources": ["https://page-you-used"] },
+  { "slug": "<slug>", "description": "<100-150 words, max 1,500 characters>", "status": "from_known_details", "sources": [] }
 ] }
 ```
 
@@ -72,7 +72,7 @@ Then run:
 node scripts/content-upgrade/to-sql.mjs <city> <NNN>
 ```
 
-It checks everything (including the 600-character limit) and writes the guarded SQL to `db/routine-updates/<city>/content-NNN.sql`. The SQL leaves any owned, claimed or paid listing untouched (the database also blocks those), and the old text can be restored from the backup taken before the run.
+It checks everything (at least 80 words, the 1,500-character limit) and writes the guarded SQL to `db/routine-updates/<city>/content-NNN.sql`. The SQL leaves any owned, claimed or paid listing untouched (the database also blocks those), and the old text can be restored from the backup taken before the run.
 - **If it prints problems:** fix those items in your JSON and run it again.
 - **When it prints `ok`:** commit both files and push to `main` with the message `content-upgrade <city> chunk <NNN>`. If the push is rejected, run `git pull --rebase` and push again.
 
