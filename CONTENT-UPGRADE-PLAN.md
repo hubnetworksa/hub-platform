@@ -1,6 +1,6 @@
 # Content upgrade plan: low-content listings and pages
 
-Status: **plan, not started**. Written 4 October 2026. Scope: PretoriaHub, PolokwaneHub and TheCapeTownHub.
+Status: **plan, not started**. Written 4 October 2026, updated the same day for the all-at-once agent approach (section 9). Scope: PretoriaHub, PolokwaneHub and TheCapeTownHub.
 
 **Goal:** replace thin, generic content with real, specific, sourced content, starting with the pages that bring the most visitors. Thin pages are a large part of why Google indexes so little of the sites, especially Pretoria. **Claimed businesses are never touched.**
 
@@ -33,10 +33,11 @@ WHERE slug = 'example-slug'
   AND NOT EXISTS (SELECT 1 FROM business_claims c WHERE c.business_id = businesses.id)
   AND NOT EXISTS (SELECT 1 FROM subscriptions s WHERE s.business_id = businesses.id)
   AND NOT EXISTS (SELECT 1 FROM business_photos p WHERE p.business_id = businesses.id)
-  AND description = '<the exact current text>';   -- unchanged since the routine read it
+  AND content_upgraded_at IS NULL                  -- never changed twice
+  AND length(COALESCE(description, '')) < 700;     -- only short descriptions are replaced
 ```
 
-The last line means a description someone edited in the meantime (an admin, or an owner who just claimed) is never overwritten.
+The last two lines mean a listing is upgraded once only, and a description that has since been written up properly (by an admin, or an owner who just claimed) is never overwritten. The exact SQL agents use is in `content-upgrade/README.md`.
 
 **History and undo:** before each change, the old text is copied into a new `description_history` table (business id, old description, old short description, old hours, when, which routine run). Any change can be undone one listing at a time, or a whole run at once.
 
@@ -46,20 +47,41 @@ The last line means a description someone edited in the meantime (an admin, or a
 
 ### 2.1 Business listings (the main job)
 
-Estimated from a sample of 200 live listings per city (3–4 October 2026). Phase 0 replaces these with exact counts.
+**What counts as thin, in words:**
 
-| | Live listings | Description under 140 characters | Under 160 | Under 250 |
-|---|---|---|---|---|
-| Pretoria | 5,958 | ~90 | ~630 | ~4,000 |
-| Polokwane | 1,262 | ~310 | ~470 | ~1,140 |
-| Cape Town | 2,197 | ~690 | ~1,070 | ~2,050 |
-| **Total** | **9,417** | **~1,090** | **~2,170** | **~7,180** |
+| Description length | Verdict |
+|---|---|
+| Under 50 words | **Thin**: one or two generic sentences. |
+| 50–79 words | **Still thin** for a business page: a short paragraph. |
+| **80–150 words** | **Not thin (the target):** 3–6 specific, sourced sentences. |
+| Over 150 words | Fine, but not needed. Don't pad to get there. |
 
-These figures include protected listings; Phase 0 removes them from the target list.
+Google sets no official word count. The rule of thumb for a directory listing is to say enough to be clearly more useful than the bare name/phone/address card every other directory shows. 80+ specific words, plus hours and a one-line summary, does that.
+
+**Exact counts:** every live listing's description, read through the sites' own listing API on 4 October 2026.
+
+| | Live listings | Owner-managed (skipped) | Under 25 words | 25–49 | 50–79 | **80 words or more** | Median |
+|---|---|---|---|---|---|---|---|
+| Pretoria | 5,958 | 3 | 1,096 | 4,748 | 111 | **0** | 31 words |
+| Polokwane | 1,262 | 5 | 516 | 734 | 7 | **0** | 27 words |
+| Cape Town | 2,197 | 1 | 991 | 1,195 | 10 | **0** | 25 words |
+| **Total** | **9,417** | **9** | **2,603** | **6,677** | **128** | **0** | |
+
+**So every listing that isn't owner-managed (9,408) is thin and in scope.** No listing on any site reaches 80 words today; the longest is 87.
+
+"Owner-managed" means it has an owner, was submitted by its owner, or is on a paid plan. Pending claims aren't in that count, but the SQL guard (section 1) still skips them.
+
+The same eligible listings are also missing:
+
+| | No opening hours | No email | Have a website to research |
+|---|---|---|---|
+| Pretoria | 4,666 | 5,792 | 4,806 |
+| Polokwane | 820 | 1,067 | 372 |
+| Cape Town | 1,071 | 2,022 | 527 |
 
 A listing is **low content** if it is not protected and **any** of these is true:
 
-- **The description is under 250 characters.** Most are one sentence, e.g. "Francor Bakery is an independent bakery in Parow, Cape Town."
+- **The description is under 80 words.** Most are one sentence, e.g. "Francor Bakery is an independent bakery in Parow, Cape Town."
 - **The description is generic.** It only restates the name, category and place ("X is a Y in Z"), whatever its length. The validator detects this pattern.
 - **There is no short description** (the one-line summary used in cards and search results).
 - **There are no opening hours.**
@@ -84,7 +106,7 @@ Map location, address, phone and category gaps are **not** in scope. Those need 
 
 These rules go into the new runbook, `routines/content-upgrade.md`. It replaces the disabled `routines/enrichment.md`, which was switched off because it rewrote a paying owner's description.
 
-**Business description: 3–5 sentences, about 350–700 characters, in plain South African English.**
+**Business description: 80–150 words (3–6 sentences), in plain South African English.**
 
 - **What it does:** say what the business actually does, and what it specialises in.
 - **Specifics, only if sourced:** how long it has operated, brands stocked, services, who it serves.
@@ -129,6 +151,8 @@ Each run takes the next batch from one queue, ordered by:
 
 ## 5. Build steps
 
+> For the all-at-once approach you chose, **section 9 replaces phases 1–3 and the timeline in section 6**. The safety rules, writing rules and monitoring stay the same.
+
 ### Phase 0: measure and prepare (about 1 day, me)
 
 1. **Audit script** `scripts/routines/content-audit.mjs`, run by a workflow. Uses read-only queries and gives exact counts per city:
@@ -147,7 +171,7 @@ Each run takes the next batch from one queue, ordered by:
 4. **`next.mjs content-upgrade`:** builds the queue (sections 2 and 4) and leaves protected listings out. Each batch carries the current description text, so the update can check that it hasn't changed since.
 5. **`validate.mjs`** rejects any statement that:
    - lacks the full guard from section 1;
-   - writes a description outside 300–900 characters or a short description over 160;
+   - writes a description outside 80–150 words (a little slack allowed) or a short description over 160 characters;
    - contains a phone number, email address or URL in the text;
    - matches the generic "X is a Y in Z" pattern with nothing else added;
    - adds a fact without appending a new source URL;
@@ -205,9 +229,62 @@ Busiest-first means most of the traffic gain comes in the first month.
 
 ## 8. Decisions for you
 
-1. **Length:** 3–5 sentences (about 350–700 characters) for descriptions. More, less, or fine?
+1. **Length:** 80–150 words for descriptions. More, less, or fine?
 2. **Hours and email:** fill these too while researching (recommended), or descriptions only?
 3. **No sources:** if nothing can be found for a Pretoria listing, keep it as is (default), or keep it out of the sitemap?
-4. **Pace:** about 60 a day (4 runs) or about 120 a day (8 runs)?
+4. **Pace:** decided: all at once with agents (section 9).
 5. **Other pages:** include suburb and shopping-centre text in the same routine (recommended), or listings only for now?
 6. **Trial review:** read the 45 trial upgrades yourself before it starts (recommended), or start straight away?
+
+---
+
+## 9. Doing it all at once with agents (chosen 4 October 2026)
+
+Instead of a slow routine, the whole backlog is split into ready-made batches, and you run agents on them in parallel, per site.
+
+### The batches (ready now)
+
+**Where they are:** `content-upgrade/<city>/chunk-NNN.json`.
+- **Size:** 50 listings per batch, thinnest first.
+- **Each listing has:** slug, name, category, suburb, website, has_hours, has_email, the current word count and the current text.
+- **Already removed:** owner-managed listings.
+
+| City | Listings | Batches |
+|---|---|---|
+| Pretoria | 5,955 | 120 (chunk-001 to chunk-120) |
+| Polokwane | 1,257 | 26 |
+| Cape Town | 2,196 | 44 |
+| **Total** | **9,408** | **190** |
+
+**Agent brief:** `content-upgrade/README.md`, a self-contained brief for one agent and one batch. Give each agent its city and batch number, e.g. *"Follow content-upgrade/README.md for pretoria, chunk 007."* Each agent:
+- researches its 50 listings,
+- writes one guarded SQL file to `db/routine-updates/<city>/content-NNN.sql`,
+- validates it, logs, commits and pushes.
+
+Batches don't overlap, so any number of agents can work on the same city at once.
+
+### What must be in place before the first agent runs (me, about half a day)
+
+1. **Database migration** for all three cities:
+   - on `businesses`: `content_upgraded_at` and `content_upgrade_status`;
+   - a new `description_history` table (the undo copy every upgrade writes first).
+   Without it, the agents' SQL fails when applied.
+2. **`validate.mjs --routine content-upgrade`:** checks every statement has the full protection guard, 80–150 words, a short description of at most 160 characters, no phone/email/links/people's names in the text, and a new source URL for new facts. Agents must get `ok` before pushing.
+3. **Deploy filter:** `content-upgrade/` and this plan are added to the deploy workflow's "routine-only" paths. That way agents' pushes don't each rebuild all three sites; the 3-hourly scheduled deploy applies their SQL in bulk.
+4. **Undo script:** `scripts/content-upgrade-undo.mjs --city <c> [--chunk NNN]` restores the old text from `description_history`.
+5. **Trial:** run chunk-001 for each city first, then read the before/after text in Hub Admin → Listings before letting the rest go.
+
+### How long "all at once" takes
+
+- **Per batch:** roughly 1–2 hours for an agent, since each listing needs 2–5 searches and page reads.
+- **10 agents in parallel:** about 190 batches ÷ 10 = 19 rounds, so roughly 1.5–3 days.
+- **More agents:** each one shortens it further.
+- **Going live:** each pushed batch goes live at the next 3-hourly deploy.
+
+### Database cost
+
+All 9,408 upgrades write about 19,000 rows in total (history plus update). The free limit is 100,000 rows written per day, and reads are small. If many batches land at once the 3-hourly deploy can still apply them in one go; the Health screen's database meter shows the real cost.
+
+### Expect some "no sources"
+
+Many small businesses have nothing online beyond a directory card, and the agents' sandbox can't open every website. Expect roughly 20–40% of listings to come back as `no_sources` rather than upgraded. That's by design: no padding, no invented facts. They appear in Hub Admin → Listings for a human decision.
