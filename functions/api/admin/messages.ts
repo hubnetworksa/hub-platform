@@ -1,8 +1,14 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
+import { looksLikeEmail } from '../../_lib/messages';
+import { sendEmail } from '../../_lib/send-email';
+import { logActivity } from '../../_lib/activity-log';
+import { getSite } from '../../_lib/site';
 
 interface Env {
   DB: D1Database;
+  SITE: string;
+  RESEND_API_KEY?: string;
 }
 
 // Backs the admin Enquiries tab: everything visitors sent through the site's
@@ -47,6 +53,33 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     await db.prepare(`UPDATE messages SET status = 'open', resolved_at = NULL WHERE id = ?`).bind(id).run();
     return json({ ok: true });
   }
+  // Answer the visitor by email (from Hub Admin's Inbox), then mark it done.
+  if (body.action === 'reply') {
+    const text = typeof body.text === 'string' ? body.text.trim() : '';
+    if (text.length < 2 || text.length > 5000) return json({ ok: false, error: 'The reply must be 2 to 5,000 characters.' }, 400);
+    const msg = await db
+      .prepare('SELECT name, contact, topic, message, business_name FROM messages WHERE id = ?')
+      .bind(id)
+      .first<{ name: string | null; contact: string; topic: string | null; message: string; business_name: string | null }>();
+    if (!msg) return json({ ok: false, error: 'That message no longer exists.' }, 404);
+    if (!looksLikeEmail(msg.contact)) return json({ ok: false, error: 'This message has no email address to reply to.' }, 400);
+    const site = getSite(context.env.SITE);
+    const quoted = msg.message.split('\n').map((l) => `> ${l}`).join('\n');
+    const greeting = msg.name ? `Hi ${msg.name},\n\n` : '';
+    const signoff = `\n\n— ${site.siteName}\nhttps://${site.domain}`;
+    const { sent } = await sendEmail(context.env, {
+      from: `${site.siteName} <${site.contactEmail}>`,
+      to: msg.contact,
+      replyTo: site.contactEmail,
+      subject: `Re: ${msg.topic || (msg.business_name ? `your enquiry about ${msg.business_name}` : `your message to ${site.siteName}`)}`.slice(0, 150),
+      text: `${greeting}${text}${signoff}\n\n${quoted}`,
+      html: `<div style="font-family:sans-serif;max-width:560px;line-height:1.5">${greeting ? `<p>${escapeHtml(greeting.trim())}</p>` : ''}<p>${escapeHtml(text).replace(/\n/g, '<br>')}</p><p>— ${escapeHtml(site.siteName)}<br><a href="https://${site.domain}">${site.domain}</a></p><blockquote style="margin:16px 0 0;padding-left:12px;border-left:3px solid #ccc;color:#666">${escapeHtml(msg.message).replace(/\n/g, '<br>')}</blockquote></div>`,
+    });
+    if (!sent) return json({ ok: false, error: 'The email couldn’t be sent (is email set up for this site?).' }, 502);
+    await db.prepare(`UPDATE messages SET status = 'resolved', resolved_at = datetime('now') WHERE id = ?`).bind(id).run();
+    await logActivity(db, 'message_replied', msg.business_name ?? msg.name ?? 'Contact form', `Reply emailed to ${msg.contact}.`);
+    return json({ ok: true });
+  }
   if (body.action === 'delete') {
     await db.prepare('DELETE FROM messages WHERE id = ?').bind(id).run();
     return json({ ok: true });
@@ -56,4 +89,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
 function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
+}
+
+function escapeHtml(s: string): string {
+  return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 }
