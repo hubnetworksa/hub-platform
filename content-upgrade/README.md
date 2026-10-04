@@ -54,6 +54,7 @@ Write every description like that:
   2. **What sets it apart:** years trading, the brand or group behind it, who it serves (homeowners, trade, families, businesses), how it works (appointments, walk-ins, delivery, call-outs).
   3. **Where it is:** the centre, suburb and city, in one sentence at most. No area trivia ("the capital of Limpopo", "a sought-after suburb", "with around 180 stores"): the same area sentence repeated across many listings is exactly the low-value content this upgrade must avoid.
   4. **A natural close:** who it's a good fit for, or what visitors can expect.
+- **Paragraph breaks — never one dense block.** Split the description into 2 paragraphs (3 if it runs to 7+ sentences) with a blank line between them: `\n\n` in the JSON string. A natural split is after part 2 (what it is/does + what sets it apart) and before part 3 (where it is + the close). The site renders a blank line as a new `<p>`, so without one the whole description shows as a single wall of text. A single `\n` would show as a line break instead, so always use a full blank line, never one newline.
 - **Only facts you read** in a snippet or page about **this** business, or from the batch data. For chains (banks, supermarkets, pharmacies, fast food, fuel), the branch needs its own facts (its store page, hours, services, in-store departments, the centre it trades from); one sentence about the chain is fine as support, but a description made only of chain-level facts is not allowed: defer it.
 - **Never:**
   - name a person (owner, doctor, partner);
@@ -70,12 +71,14 @@ Write `content-upgrade/out/<city>/chunk-NNN.json`:
 ```json
 { "items": [
   { "slug": "<slug>", "description": "<110-150 words, max 1,500 characters>", "status": "researched", "sources": ["https://page-you-used"] },
-  { "slug": "<slug>", "status": "deferred", "reason": "<what was tried / why nothing was usable>" }
+  { "slug": "<slug>", "status": "deferred", "reason": "<what was tried / why nothing was usable>" },
+  { "slug": "<slug>", "status": "researched", "description": "...", "sources": [...], "hours": "Mon-Fri 08:00-17:00, Sat 08:00-13:00, Sun Closed" }
 ] }
 ```
 
 - **Include every listing in the batch,** exactly once.
 - **`status`:** `researched` when the text has facts you found (list the pages you used in `sources`), otherwise `deferred` with a `reason` and no description.
+- **`hours` (optional, any item):** only when the batch file's `hours` field for that listing is empty AND the research states that specific business's own trading hours clearly (its own site, Google listing, or an owner-written directory page — never a generic chain page, a different branch, or an aggregator default like "Open 24 Hours" that looks like a placeholder). Never invent, round or guess. Format exactly: `Mon-Fri 08:00-17:00, Sat 08:00-13:00, Sun Closed` (days Mon/Tue/Wed/Thu/Fri/Sat/Sun, `-` for a range, 24-hour `HH:MM`, `Closed` for a closed day, `Open 24 hours` for always-open, `Mon-Sun HH:MM-HH:MM` if every day is the same) — this is the exact format `src/lib/openNow.ts` already parses for the "open now" badge and schema.org markup, so anything else silently breaks those features. `to-sql.mjs` validates the format and writes the `hours` column directly via a guard that only fires while the listing's `hours` is still empty — never put hours in the description text itself.
 
 Then run:
 
@@ -114,4 +117,4 @@ The owner fills the text in `content-upgrade/owner/<city>.json` (slug to descrip
 node scripts/content-upgrade/owner-sql.mjs <city>
 ```
 
-Rules: owner text is published as-is after validation. It must be 100-250 words, at most 1,500 characters, with no phone number, email address, link or HTML, no sales filler, and no sentence repeated across 3+ descriptions. Third person is preferred but not enforced. It writes `db/routine-updates/<city>/owner-<YYYYMMDD-HHMM>.sql` behind the same guard as `to-sql.mjs` (shared in `scripts/content-upgrade/lib.mjs`; owned, claimed, paid, photographed or hand-edited listings are untouched), leaves `source_urls` alone, moves the written slugs to `content-upgrade/owner/<city>.done.json` and out of `<city>.json`.
+Rules: owner text is published as-is after validation. It must be 100-250 words, at most 1,500 characters, with no phone number, email address, link or HTML, no sales filler, and no sentence repeated across 3+ descriptions. Third person is preferred but not enforced. Same paragraph-break rule as above: split it into 2-3 paragraphs with a blank line (`\n\n`) between them, never one dense block. It writes `db/routine-updates/<city>/owner-<YYYYMMDD-HHMM>.sql` behind the same guard as `to-sql.mjs` (shared in `scripts/content-upgrade/lib.mjs`; owned, claimed, paid, photographed or hand-edited listings are untouched), leaves `source_urls` alone, moves the written slugs to `content-upgrade/owner/<city>.done.json` and out of `<city>.json`.

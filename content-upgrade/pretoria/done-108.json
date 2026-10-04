@@ -1,0 +1,337 @@
+{
+  "city": "pretoria",
+  "chunk": 108,
+  "generated_at": "2026-10-04T18:21:01.289Z",
+  "items": [
+    {
+      "slug": "oasis-water-pretoria-kilner-park-express-at-superspar-kilner-park",
+      "status": "deferred",
+      "reason": "Website returned timeouts and 404s on every page; search results were entirely about the band Oasis, nothing about this water-refill kiosk."
+    },
+    {
+      "slug": "oasis-water-pretoria-villieria-villieria",
+      "status": "deferred",
+      "reason": "Website returned timeouts and 404s on every page, and the cavaonline.org listing failed to crawl; search results were entirely about the band Oasis, nothing specific to this branch."
+    },
+    {
+      "slug": "onderstepoort-biological-products-obp-the-home-of-onderstepoort-vaccines-onderstepoort",
+      "status": "researched",
+      "sources": [
+        "http://www.obpvaccines.co.za/"
+      ]
+    },
+    {
+      "slug": "palisade-factory-klerksoord",
+      "status": "researched",
+      "sources": [
+        "http://palisadefactory.co.za/"
+      ]
+    },
+    {
+      "slug": "peermed-health-centre-pretoria-central",
+      "status": "researched",
+      "sources": [
+        "https://peermed.co.za/pretoria/"
+      ]
+    },
+    {
+      "slug": "pinnacle-college-copperleaf-copperleaf-golf-estate",
+      "status": "researched",
+      "sources": [
+        "https://www.pinnaclecolleges.co.za/copperleaf"
+      ]
+    },
+    {
+      "slug": "plumb-avid-celtisdal",
+      "status": "researched",
+      "sources": [
+        "https://www.plumbavid.co.za/"
+      ]
+    },
+    {
+      "slug": "pmplus-projects-strategy-consultants-the-reeds",
+      "status": "researched",
+      "sources": [
+        "https://pmplus.co.za/"
+      ]
+    },
+    {
+      "slug": "pna-castle-gate-lifestyle-wingate-park",
+      "status": "deferred",
+      "reason": "Only PNA's national homepage was retrieved (chain-wide stock, rewards and delivery info); the branch-specific store locator page for Castle Gate Lifestyle wasn't reachable this round, and chain-level facts alone aren't enough for this branch."
+    },
+    {
+      "slug": "postnet-eldoraigne-eldoraigne",
+      "status": "researched",
+      "sources": [
+        "http://eldoraigne.postnet.co.za/"
+      ]
+    },
+    {
+      "slug": "pressed-in-time-eco-boulevard-centurion-eco-park",
+      "status": "deferred",
+      "reason": "Only the branch's own Instagram bio was retrievable (dry cleaning, laundry, carpet and sneaker cleaning); the brand's own website timed out and search returned unrelated security-company results, leaving too little branch-specific detail for a full description."
+    },
+    {
+      "slug": "pretoria-east-testing-station-jan-niemand-park",
+      "status": "researched",
+      "sources": [
+        "https://pretoriaeasttesting.co.za/"
+      ]
+    },
+    {
+      "slug": "pretoria-mansion-boutique-hotel-waterkloof-heights",
+      "status": "researched",
+      "sources": [
+        "https://www.pretoriamansion.co.za/"
+      ]
+    },
+    {
+      "slug": "proethics-muckleneuk",
+      "status": "researched",
+      "sources": [
+        "http://www.proethics.co.za/about"
+      ]
+    },
+    {
+      "slug": "prosopa-restaurant-waterkloof-heights",
+      "status": "researched",
+      "sources": [
+        "https://prosopa.co.za/about"
+      ]
+    },
+    {
+      "slug": "pt-signage-pty-ltd-willow-park-manor",
+      "status": "deferred",
+      "reason": "The site's about page returned only generic branding/rebranding mission and vision statements; the services page listing actual sign types and products wasn't retrieved this round, so there's no concrete, non-generic detail to write from."
+    },
+    {
+      "slug": "ptp-building-services-derdepoort-smallholdings",
+      "status": "researched",
+      "sources": [
+        "http://www.ptpbs.co.za/"
+      ]
+    },
+    {
+      "slug": "puricentric-eloffsdal",
+      "status": "deferred",
+      "reason": "Every page on the website was blocked by Anubis anti-bot protection, returning only a cookie/JavaScript challenge notice; the Facebook source wasn't retrieved either, so no business-specific content was found."
+    },
+    {
+      "slug": "quatro-integrated-services-pty-ltd-equestria",
+      "status": "researched",
+      "sources": [
+        "https://quatro.co.za/services"
+      ]
+    },
+    {
+      "slug": "quick-buy-houses-amandasig",
+      "status": "researched",
+      "sources": [
+        "https://quickbuyhouses.co.za/"
+      ]
+    },
+    {
+      "slug": "radio-communication-consultants-eloffsdal",
+      "status": "deferred",
+      "reason": "Website failed to load (navigation timeout); search results were entirely about virtual credit and debit cards, nothing about this two-way radio supplier."
+    },
+    {
+      "slug": "rbm-kontrakteurs-pty-ltd-waverley",
+      "status": "researched",
+      "sources": [
+        "https://5c9b52be007e5.site123.me/"
+      ]
+    },
+    {
+      "slug": "rent-a-store-centurion-self-storage-heuweloord",
+      "status": "researched",
+      "sources": [
+        "https://rentastore.co.za/storage-facility/centurion"
+      ]
+    },
+    {
+      "slug": "simumech-sinoville",
+      "status": "researched",
+      "sources": [
+        "http://simumech.com/about"
+      ]
+    },
+    {
+      "slug": "smartin-solutions-pty-ltd-pierre-van-ryneveld-park",
+      "status": "researched",
+      "sources": [
+        "http://smartinsolutions.co.za/"
+      ]
+    },
+    {
+      "slug": "smec-south-africa-la-montagne",
+      "status": "researched",
+      "sources": [
+        "https://www.smec.com"
+      ]
+    },
+    {
+      "slug": "solar-europe-pty-ltd-onderstepoort",
+      "status": "researched",
+      "sources": [
+        "https://www.solar-europe.co.za/contact-us/"
+      ]
+    },
+    {
+      "slug": "solar-europe-pty-ltd-solar-product-importer-manufacturer-distributor-rooiwal",
+      "status": "researched",
+      "sources": [
+        "http://solar-europe.co.za/"
+      ]
+    },
+    {
+      "slug": "sos-advertising-sa-daspoort",
+      "status": "researched",
+      "sources": [
+        "http://www.sosadvertising.co.za/"
+      ]
+    },
+    {
+      "slug": "stanton-porter-marketing-erasmia",
+      "status": "researched",
+      "sources": [
+        "http://www.stanport.co.za/"
+      ]
+    },
+    {
+      "slug": "stargas-zwartkop",
+      "status": "researched",
+      "sources": [
+        "http://stargas.co.za/"
+      ]
+    },
+    {
+      "slug": "stem-connect-waterkloof-park",
+      "status": "researched",
+      "sources": [
+        "https://stemconnect.net/"
+      ]
+    },
+    {
+      "slug": "stuttafords-menlyn",
+      "status": "researched",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Stuttafords"
+      ]
+    },
+    {
+      "slug": "synergy-video-productions-pty-ltd-wingate-park",
+      "status": "researched",
+      "sources": [
+        "http://www.synergyvideo.co.za/"
+      ]
+    },
+    {
+      "slug": "tbi-team-building-institute-shere",
+      "status": "researched",
+      "sources": [
+        "http://www.team.co.za/about"
+      ]
+    },
+    {
+      "slug": "the-energy-gurus-louwlardia",
+      "status": "researched",
+      "sources": [
+        "https://www.energygurus.co.za/about-us"
+      ]
+    },
+    {
+      "slug": "the-wine-shop-by-caraffa-alphen-park",
+      "status": "researched",
+      "sources": [
+        "https://www.thewineshoppretoria.co.za"
+      ]
+    },
+    {
+      "slug": "type-dev-bronberrik",
+      "status": "deferred",
+      "reason": "Website timed out on every attempt; search results were entirely about unrelated streaming APIs and tools, nothing about this software studio."
+    },
+    {
+      "slug": "unique-painters-waverley",
+      "status": "deferred",
+      "reason": "Website blocked by anti-bot protection (HTTP 403) on every attempt; search results were entirely about unrelated companies and dictionary definitions sharing the word 'unique', nothing about this painting contractor."
+    },
+    {
+      "slug": "val-de-grace-vet-crew-val-de-grace",
+      "status": "researched",
+      "sources": [
+        "https://valdegrace.co.za/"
+      ]
+    },
+    {
+      "slug": "venter-it-services-moregloed",
+      "status": "researched",
+      "sources": [
+        "https://www.venterservices.co.za/"
+      ]
+    },
+    {
+      "slug": "vermaak-attorneys-kloofsig",
+      "status": "researched",
+      "sources": [
+        "https://vermaaklaw.co.za/about-us"
+      ]
+    },
+    {
+      "slug": "view-world-studios-meyerspark",
+      "status": "deferred",
+      "reason": "Website failed to load (timeout); search results were entirely generic 'view' results (Street View, dictionary definitions, a trading platform), nothing about this photography studio."
+    },
+    {
+      "slug": "vizin-group-wierdapark",
+      "status": "researched",
+      "sources": [
+        "https://itnetrecruit.co.za/"
+      ]
+    },
+    {
+      "slug": "vorster-brandt-inc-ashley-gardens",
+      "status": "researched",
+      "sources": [
+        "http://www.vorsterbrandt.co.za/"
+      ]
+    },
+    {
+      "slug": "weir-consulting-sterrewag",
+      "status": "researched",
+      "sources": [
+        "https://weirconsulting.co.za/"
+      ]
+    },
+    {
+      "slug": "willows-country-lodge-the-willows",
+      "status": "researched",
+      "sources": [
+        "http://www.willowslodge.co.za/"
+      ]
+    },
+    {
+      "slug": "zutari-head-office-ashley-gardens",
+      "status": "researched",
+      "sources": [
+        "https://www.zutari.com/"
+      ]
+    },
+    {
+      "slug": "afro-fire-and-safety-cc-rietfontein",
+      "status": "researched",
+      "sources": [
+        "https://afrofire.net/"
+      ]
+    },
+    {
+      "slug": "appsolve-pty-ltd-midstream-estate",
+      "status": "researched",
+      "sources": [
+        "https://www.appsolve.co.za/"
+      ]
+    }
+  ]
+}
