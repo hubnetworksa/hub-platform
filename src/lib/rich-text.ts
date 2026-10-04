@@ -129,13 +129,14 @@ export function plainLine(text: string | null | undefined): string {
 // Limits count VISIBLE characters (plainText: markers don't count, a line
 // break counts one, a paragraph break two), the same on the server
 // (update-business, submit-business, admin listings) and in the editor's
-// counter. The long cap is the 600 the description column always had (it
-// used to count the raw text, markers included); the short one is new.
+// counter. The long cap was 600 (what the description column always had) and
+// was raised to 1,500 in October 2026, so a listing can carry a proper
+// introduction; the short one is new.
 
 /** Short description: cards, Featured blocks, search, meta. One paragraph. */
 export const SHORT_DESC_MAX = 160;
 /** Full description: the business page. */
-export const LONG_DESC_MAX = 600;
+export const LONG_DESC_MAX = 1500;
 /** Raw stored length allowed on top of the visible cap, for the markers. */
 export const RAW_SLACK = 2;
 

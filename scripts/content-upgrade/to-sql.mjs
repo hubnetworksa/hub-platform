@@ -6,7 +6,7 @@
 //   { "items": [ { "slug": "...", "description": "...", "status": "researched", "sources": ["https://..."] }, ... ] }
 //
 // This script checks every item (all listings in the chunk present once,
-// 80-110 words and at most 600 characters (the site's description limit,
+// 80-250 words and at most 1,500 characters (the site's description limit,
 // LONG_DESC_MAX in src/lib/rich-text.ts), no phone/email/link in the text,
 // no sales filler) and
 // writes db/routine-updates/<city>/content-NNN.sql: one UPDATE per listing
@@ -53,8 +53,8 @@ for (const [i, it] of items.entries()) {
   seen.add(it.slug);
   const d = typeof it.description === 'string' ? it.description.trim() : '';
   const w = words(d);
-  if (w < 80 || w > 110) errors.push(`${at}: ${w} words (needs 80-100)`);
-  if (d.length > 600) errors.push(`${at}: ${d.length} characters (the site's limit is 600)`);
+  if (w < 80 || w > 250) errors.push(`${at}: ${w} words (needs at least 80)`);
+  if (d.length > 1500) errors.push(`${at}: ${d.length} characters (the site's limit is 1,500)`);
   if (PHONE.test(d)) errors.push(`${at}: phone number in the text`);
   if (EMAIL.test(d)) errors.push(`${at}: email address in the text`);
   if (LINK.test(d)) errors.push(`${at}: link in the text`);
