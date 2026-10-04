@@ -2,6 +2,14 @@
 
 Status: **plan, not started**. Written 4 October 2026, updated the same day for the all-at-once agent approach (section 9). Scope: PretoriaHub, PolokwaneHub and TheCapeTownHub.
 
+> **Current approach (latest decisions, 4 October 2026):**
+> - **Scope:** descriptions only. No hours, emails or short descriptions.
+> - **Coverage:** every eligible listing (9,408) gets an 80–150 word description; there is no "skip".
+> - **How:** all at once, by agents working in parallel on 50-listing batches (section 9). The agent brief is `content-upgrade/README.md`.
+> - **Keeping it cheap:** about 2 tool calls per listing. Agents only write a small JSON file; `scripts/content-upgrade/to-sql.mjs` checks it and generates the guarded SQL.
+>
+> Where older sections below mention hours, emails, short descriptions, a slow routine or a "no sources" list, this box overrides them.
+
 **Goal:** replace thin, generic content with real, specific, sourced content, starting with the pages that bring the most visitors. Thin pages are a large part of why Google indexes so little of the sites, especially Pretoria. **Claimed businesses are never touched.**
 
 ---
@@ -260,27 +268,26 @@ Instead of a slow routine, the whole backlog is split into ready-made batches, a
 
 Batches don't overlap, so any number of agents can work on the same city at once.
 
-### What must be in place before the first agent runs (me, about half a day)
+### What must be in place before the first agent runs
 
-1. **Database migration** for all three cities:
+1. **Done:** `scripts/content-upgrade/to-sql.mjs`. It checks an agent's JSON (every listing present once, 80–150 words, no phone/email/link/HTML/sales filler, valid statuses and sources). It then writes the SQL: an undo copy into `description_history`, then the update, both behind the protection guard from section 1. Tested on a copy of the database: owned and claimed listings stayed untouched, others updated, and re-applying the file changed nothing.
+2. **To do (me): database migration** for all three cities:
    - on `businesses`: `content_upgraded_at` and `content_upgrade_status`;
-   - a new `description_history` table (the undo copy every upgrade writes first).
-   Without it, the agents' SQL fails when applied.
-2. **`validate.mjs --routine content-upgrade`:** checks every statement has the full protection guard, 80–150 words, a short description of at most 160 characters, no phone/email/links/people's names in the text, and a new source URL for new facts. Agents must get `ok` before pushing.
-3. **Deploy filter:** `content-upgrade/` and this plan are added to the deploy workflow's "routine-only" paths. That way agents' pushes don't each rebuild all three sites; the 3-hourly scheduled deploy applies their SQL in bulk.
-4. **Undo script:** `scripts/content-upgrade-undo.mjs --city <c> [--chunk NNN]` restores the old text from `description_history`.
-5. **Trial:** run chunk-001 for each city first, then read the before/after text in Hub Admin → Listings before letting the rest go.
+   - a new table `description_history (id, business_id, old_description, changed_by, changed_at)`.
+3. **To do (me): deploy filter.** Add `content-upgrade/` to the deploy workflow's routine-only paths, so agent pushes don't each rebuild all three sites. The 3-hourly deploy applies the SQL in bulk.
+4. **To do (me): undo script.** `scripts/content-upgrade/undo.mjs --city <c> [--chunk NNN]` restores the old text from `description_history`.
+5. **Trial:** chunk-001 for each city first, then check before running the rest.
 
 ### How long "all at once" takes
 
-- **Per batch:** roughly 1–2 hours for an agent, since each listing needs 2–5 searches and page reads.
-- **10 agents in parallel:** about 190 batches ÷ 10 = 19 rounds, so roughly 1.5–3 days.
+- **Per batch:** roughly 30–60 minutes for an agent, at about 2 tool calls per listing with searches run in parallel.
+- **10 agents in parallel:** about 190 batches ÷ 10 = 19 rounds, so roughly 1–2 days.
 - **More agents:** each one shortens it further.
 - **Going live:** each pushed batch goes live at the next 3-hourly deploy.
 
 ### Database cost
 
-All 9,408 upgrades write about 19,000 rows in total (history plus update). The free limit is 100,000 rows written per day, and reads are small. If many batches land at once the 3-hourly deploy can still apply them in one go; the Health screen's database meter shows the real cost.
+All 9,408 upgrades write about 19,000 rows in total (an undo copy plus the update for each). The free limit is 100,000 rows written per day, and reads are small. If many batches land at once the 3-hourly deploy can still apply them in one go; the Health screen's database meter shows the real cost.
 
 ### Every listing is upgraded
 
