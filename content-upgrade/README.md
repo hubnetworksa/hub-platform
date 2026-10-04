@@ -12,14 +12,21 @@ Each listing in the batch gives you:
 - `existing_sources`: the pages the listing was originally built from
 - `current_description`: the thin text you're replacing
 
-## Work fast: budget per listing
+## Work fast: research is pre-fetched, you only write
 
-1. **Search once:** `"<name>" <suburb>` (add the city if the name is common). **Run the searches for 5–10 listings in parallel** in one step.
-2. **Read the result snippets first.** Google, directory and Facebook snippets usually say what the business does, what it sells and since when.
-3. **Open at most one page per listing,** and only if the snippets aren't enough. Prefer its `website`, else the first `existing_sources` link. If a page is blocked, don't retry it; use the snippets.
-4. **Then write it and move on.** Aim for about 2 tool calls per listing on average. Don't polish.
+1. **Run the research script FIRST** (plain HTTP fetches, no Claude tools):
 
-Every listing came from online sources, so there is almost always something to use. When a business's own pages are blocked, the snippets and `existing_sources` are enough.
+   ```
+   node scripts/content-upgrade/research.mjs <city> <N>
+   ```
+
+   It fetches each listing's website and `existing_sources` (and, where there are none, a search-page lookup) and writes `content-upgrade/research/<city>/chunk-NNN.json` (page title, description and text, search snippets, and a `note` if a fetch failed). It takes about 20 seconds.
+2. **Read ONLY the research file plus the chunk file** and write all 50 descriptions from that. Don't read anything else.
+3. **No WebSearch and no WebFetch calls at all.** The Claude web tools share a ~200-call limit across the whole bulk run, so they are reserved. Everything you need is in the research file. If a page was blocked, use its search snippets and the batch data.
+4. **A listing with no page text and no snippets** (empty `pages` and `search`) becomes `from_known_details`: 50-80 words from the batch data only, no padding.
+5. Write it and move on. Don't polish.
+
+Every listing came from online sources, so there is almost always something to use. The research file is intermediate output: it is gitignored, don't commit it.
 
 ## Writing rules: write it the way a good business owner would
 
