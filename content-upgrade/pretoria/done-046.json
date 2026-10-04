@@ -1,0 +1,314 @@
+{
+  "city": "pretoria",
+  "chunk": 46,
+  "generated_at": "2026-10-04T11:56:56.331Z",
+  "items": [
+    {
+      "slug": "themolo-business-enterprise-garsfontein-smallholdings",
+      "status": "researched",
+      "sources": [
+        "http://www.themolo.co.za/about-us"
+      ]
+    },
+    {
+      "slug": "tilt-interactive-pty-ltd-rietvalleirand",
+      "status": "researched",
+      "sources": [
+        "http://www.tiltinteractive.co.za/about"
+      ]
+    },
+    {
+      "slug": "timber-trends-za-the-reeds",
+      "status": "deferred",
+      "reason": "Both crawled pages (about-us, services) returned 404 'Page Not Found' with only nav/category bullets (Console Tables, Coffee Tables, Benches, TV Stands, etc.); no body text about the business. Search results are unrelated YouTube links. Insufficient genuine content for a non-filler description."
+    },
+    {
+      "slug": "toncrete-klerksoord",
+      "status": "researched",
+      "sources": [
+        "https://toncrete.co.za/services"
+      ]
+    },
+    {
+      "slug": "tops-at-spar-valhalla-valhalla",
+      "status": "deferred",
+      "reason": "Only source retrieved is a deals-aggregator page (my-catalogue.co.za) giving address/hours and generic weekly-specials links; the hotfrog source was blocked by anti-bot protection (HTTP 403). No business-specific facts beyond the address and hours already known elsewhere."
+    },
+    {
+      "slug": "totalenergies-eldoraigne-eldoraigne",
+      "status": "deferred",
+      "reason": "Only the generic TotalEnergies global/national homepage was retrieved; content is corporate-wide (leadership, renewables, careers, café brand) with no facts specific to the Eldoraigne branch."
+    },
+    {
+      "slug": "tseba-business-accountants-florauna",
+      "status": "researched",
+      "sources": [
+        "http://www.tseba.co.za/about"
+      ]
+    },
+    {
+      "slug": "tssd-projects-roodeplaat",
+      "status": "deferred",
+      "reason": "tssd.co.za redirects to an unrelated domain (an Afrihost hosting placeholder page) and returns 404s on direct attempts; search results are unrelated (rain.co.za 5G network). No genuine content about the business was retrieved."
+    },
+    {
+      "slug": "turn-n-tender-midstream-midstream-estate",
+      "status": "deferred",
+      "reason": "The location page returned only a loading placeholder with no body text; search results are just listing titles and empty snippets. No location-specific facts found beyond the franchise branch address already known."
+    },
+    {
+      "slug": "twist-electrical-supplies-montana-montana-park",
+      "status": "researched",
+      "sources": [
+        "https://twistelectrical.co.za/"
+      ]
+    },
+    {
+      "slug": "ultimate-labour-solutions-doornpoort",
+      "status": "researched",
+      "sources": [
+        "https://ultimatelabor.co.za/about/",
+        "https://ultimatelabor.co.za/"
+      ]
+    },
+    {
+      "slug": "v4-marketing-pierre-van-ryneveld-park",
+      "status": "researched",
+      "sources": [
+        "https://v4marketing.co.za/",
+        "https://v4marketing.co.za/about/"
+      ]
+    },
+    {
+      "slug": "valley-falls-spur-irene-farm-villages",
+      "status": "researched",
+      "sources": [
+        "https://www.spursteakranches.com/za/restaurant/gauteng/centurion/irene-farm-villages/valley-falls-spur?utm_source=google_maps&utm_medium=website_button&utm_campaign=SP&utm_content=SP"
+      ]
+    },
+    {
+      "slug": "van-niekerk-attorneys-inc-kameeldrift",
+      "status": "researched",
+      "sources": [
+        "https://vnattorneys.net/about"
+      ]
+    },
+    {
+      "slug": "vector-cnc-zwavelpoort",
+      "status": "deferred",
+      "reason": "Website timed out on every attempt (5 tries); search results are entirely unrelated (Vector Logistics, Vecteezy stock graphics, Vector GmbH, Wikipedia on mathematical vectors). No genuine content about the business was retrieved."
+    },
+    {
+      "slug": "vindit-sable-hills-waterfront-estate",
+      "status": "researched",
+      "sources": [
+        "https://www.vindit.co.za/about"
+      ]
+    },
+    {
+      "slug": "virgin-active-highveld",
+      "status": "deferred",
+      "reason": "Only source is a review-aggregator listing (africabz.com) whose body text is customer reviews (excluded per the no-review-content rule) and generic category labels (Gym, Health Club, Wellness Center); no additional genuine facts about this branch's amenities beyond what is already captured in the current description."
+    },
+    {
+      "slug": "vivior-laser-beauty-studio-erasmuskloof",
+      "status": "deferred",
+      "reason": "Both potential sources (fresha.com, viviorbeauty.co.za) timed out; search results are unrelated YouTube links. No genuine content about the business was retrieved."
+    },
+    {
+      "slug": "vsp-huur-rietvalleirand",
+      "status": "deferred",
+      "reason": "vsprojects.co.za timed out or returned 404 on every attempt; search results are about an unrelated 'VSP' acronym (VSP Vision Care insurance, voluntary severance packages). No genuine content about the business was retrieved."
+    },
+    {
+      "slug": "wannenburgs-hermanstad-branch-hermanstad",
+      "status": "researched",
+      "sources": [
+        "https://wannenburgs.co.za"
+      ]
+    },
+    {
+      "slug": "wapadrand-medical-centre-wapadrand",
+      "status": "researched",
+      "sources": [
+        "https://www.wapadrandmed.co.za/"
+      ]
+    },
+    {
+      "slug": "webbi-eldoraigne",
+      "status": "researched",
+      "sources": [
+        "https://webbi.co.za/"
+      ]
+    },
+    {
+      "slug": "winmax-business-support-services-pty-ltd-wonderboom",
+      "status": "deferred",
+      "reason": "Homepage content is generic marketing-blog commentary ('why marketing is important', 'why you should have a website') rather than specific facts about WinMax's own history, team or client work; writing a description from this would be filler rather than sourced fact."
+    },
+    {
+      "slug": "wizard-polyethylene-waltloo",
+      "status": "deferred",
+      "reason": "wizpol.co.za failed to resolve (DNS error); search results are entirely unrelated (LottoStar gambling site). No genuine content about the business was retrieved."
+    },
+    {
+      "slug": "wonders-christian-preschool-thia-s-business-enterprise-the-orchards",
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/place/wonders-christian-preschool"
+      ]
+    },
+    {
+      "slug": "wvdm-attorneys-inc-waterkloof-park",
+      "status": "deferred",
+      "reason": "The firm's own site (wvdmlegal.com) was blocked by anti-bot protection (HTTP 503); the only other result is an entirely unrelated US-based attorney with a similar-sounding name (Carina Laguzzi, Laguzzi Law P.C., Philadelphia) returned due to a name collision. No genuine content about this Pretoria firm was retrieved."
+    },
+    {
+      "slug": "wysa-engineering-services-pty-ltd-rooihuiskraal",
+      "status": "researched",
+      "sources": [
+        "http://www.wysa.co.za/"
+      ]
+    },
+    {
+      "slug": "ysterman-safety-and-security-cc-akasia",
+      "status": "researched",
+      "sources": [
+        "http://www.ysterman.co.za/"
+      ]
+    },
+    {
+      "slug": "yuri-property-woodhill-golf-estate",
+      "status": "researched",
+      "sources": [
+        "https://yuriproperty.co.za/"
+      ]
+    },
+    {
+      "slug": "zambesi-glass-aluminium-montana-park",
+      "status": "deferred",
+      "reason": "ADDRESS/BUSINESS MISMATCH FLAG - the one retrieved source (findmy.co.za) describes this listing as an automotive glass and windscreen repair specialist, which conflicts with the current description's custom shower doors, aluminium glazing and shop fronts business established in 1997; the page's body text is otherwise only a generic directory category menu with no business-specific content. Needs human review to confirm this is the same business before writing a description."
+    },
+    {
+      "slug": "zgs-security-services-sinoville",
+      "status": "researched",
+      "sources": [
+        "https://zgs.co.za/"
+      ]
+    },
+    {
+      "slug": "zire-fresh-produce-distribution-centre-pretoria-roseville",
+      "status": "deferred",
+      "reason": "Only source is a short LinkedIn post caption ('Site visit to Zire Fresh Produce Distribution Centre Pretoria... Subtropico Market Agents') by an individual, with no further descriptive text about the business itself. Insufficient genuine content for a description."
+    },
+    {
+      "slug": "zone-chemicals-rosslyn",
+      "status": "researched",
+      "sources": [
+        "http://www.zonechemicals.co.za/"
+      ]
+    },
+    {
+      "slug": "1-online-digital-marketing-les-marais",
+      "status": "researched",
+      "sources": [
+        "https://1online.co.za/"
+      ]
+    },
+    {
+      "slug": "1stop4u-erasmia",
+      "status": "researched",
+      "sources": [
+        "https://1stop4u.co.za/"
+      ]
+    },
+    {
+      "slug": "3-properties-parris-inc-clydesdale",
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/place/3com-properties-parris-inc"
+      ]
+    },
+    {
+      "slug": "a2m-management-business-consultants-brummeria",
+      "status": "researched",
+      "sources": [
+        "https://a2mconsultants.co.za/"
+      ]
+    },
+    {
+      "slug": "ab-aboo-and-company-laudium",
+      "status": "researched",
+      "sources": [
+        "http://ababooandco.co.za/about",
+        "http://ababooandco.co.za/"
+      ]
+    },
+    {
+      "slug": "abbots-college-centurion",
+      "status": "deferred",
+      "reason": "Only source is a generic about.me profile page containing promotional text attributed to a named staff member (which must be excluded per the no-named-individuals rule); the research tool flagged this entry's confidence as 'none'. No independent, usable facts about the school remain once that bio text is excluded (the matric-results facts in the current description are not present in this research entry)."
+    },
+    {
+      "slug": "accenis-it-solutions-pierre-van-ryneveld-park",
+      "status": "deferred",
+      "reason": "accenisitsolutions.co.za failed to resolve (DNS error) on every attempt; search results are unrelated (fibertime ISP). No genuine content about the business was retrieved."
+    },
+    {
+      "slug": "ackermans-heatherview",
+      "status": "deferred",
+      "reason": "Only source is a deals-aggregator page (tiendeo.co.za) giving trading hours and a list of unrelated nearby stores; no facts specific to this Ackermans branch beyond hours, which are already reflected in the current description. Insufficient additional material for a substantive description."
+    },
+    {
+      "slug": "adapt-management-consulting-riviera",
+      "status": "deferred",
+      "reason": "The only page retrieved is a personal consultant profile (a named individual's career biography), which must be excluded under the no-named-individuals rule. No separate, company-level facts about Adapt Management Consulting remain once that bio is excluded."
+    },
+    {
+      "slug": "africa-solution-distributor-highveld",
+      "status": "deferred",
+      "reason": "The business's Facebook page returned no visible content ('content isn't available'); search results are unrelated general pages about the African continent (Wikipedia, Britannica) due to a name collision. No genuine content about the business was retrieved."
+    },
+    {
+      "slug": "aldes-orion-business-brokers-bronberrik",
+      "status": "deferred",
+      "reason": "bizxchange.co.za returned only generic site navigation (confidence flagged 'none', HTTP 404s); aldes.co.za/contact-us returned a nationwide directory of other Aldes franchise office addresses, not facts about the Lynnwood Manor branch itself. No business-specific content about this branch was found."
+    },
+    {
+      "slug": "allemans-concrete-walls-klerksoord",
+      "status": "researched",
+      "sources": [
+        "https://www.adsnational.co.za/listings/view/id/560/Allemans-Concrete-Pretoria-Gauteng"
+      ]
+    },
+    {
+      "slug": "amst-asset-management-solutions-technologies-clubview",
+      "status": "researched",
+      "sources": [
+        "http://amst.co.za/about"
+      ]
+    },
+    {
+      "slug": "an-metals-hermanstad",
+      "status": "deferred",
+      "reason": "The only source (mra.co.za member locator) returned cookie-consent boilerplate and generic association-site navigation (crime alerts, permit circulars, etc.), not content about AN Metals' own operations; the page's listed contact is a named individual, which must be excluded regardless."
+    },
+    {
+      "slug": "anderson-concrete-works-pty-ltd-olievenhoutbosch",
+      "status": "deferred",
+      "reason": "andersonconcreteworks.co.za failed to resolve (DNS error); search results are entirely unrelated (Rome, Italy tourism pages). No genuine content about the business was retrieved."
+    },
+    {
+      "slug": "arlis-accounting-pty-ltd-wierdapark",
+      "status": "deferred",
+      "reason": "arlis.co.za failed to resolve (DNS error); search results are entirely unrelated (Hollywood entertainment news). No genuine content about the business was retrieved."
+    },
+    {
+      "slug": "army-surplus-stores-pretoria-west",
+      "status": "researched",
+      "sources": [
+        "https://armystores.co.za/"
+      ]
+    }
+  ]
+}
