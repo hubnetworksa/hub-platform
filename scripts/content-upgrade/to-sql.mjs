@@ -29,7 +29,14 @@
 //
 //   node scripts/content-upgrade/to-sql.mjs <city> <chunk number>
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { words, FILLER, PHONE, EMAIL, LINK, q, buildGuard, repeatedSentenceErrors } from './lib.mjs';
+import { words, FILLER, PHONE, EMAIL, LINK, q, buildGuard, buildHoursGuard, repeatedSentenceErrors } from './lib.mjs';
+
+// Optional `hours` field (any item, researched or deferred): the business's own
+// trading hours, only when the research clearly states them AND the listing's
+// `hours` field in the batch file is empty. House format so the site's own
+// parser (src/lib/openNow.ts) understands it: "Mon-Fri 08:00-17:00, Sat
+// 08:00-13:00, Sun Closed" / "Open 24 hours" / "Mon-Sun 08:00-19:00".
+const HOURS_FORMAT = /^(Open 24 hours|((Mon|Tue|Wed|Thu|Fri|Sat|Sun)(-(Mon|Tue|Wed|Thu|Fri|Sat|Sun))? (\d{2}:\d{2}-\d{2}:\d{2}|Closed)(, )?)+)$/;
 
 const [city, chunkArg] = process.argv.slice(2);
 if (!['pretoria', 'polokwane', 'capetown'].includes(city) || !/^\d{1,3}$/.test(chunkArg ?? '')) {
@@ -99,6 +106,14 @@ for (const [i, it] of items.entries()) {
   }
   if (!src.length) errors.push(`${at}: researched needs at least one source`);
 }
+const hoursListing = new Map(chunk.listings.map((l) => [l.slug, l.hours]));
+for (const [i, it] of items.entries()) {
+  if (!it || typeof it.hours !== 'string' || !it.hours.trim()) continue;
+  const at = `item ${i + 1} (${it?.slug ?? '?'})`;
+  if (!HOURS_FORMAT.test(it.hours.trim())) { errors.push(`${at}: hours "${it.hours}" doesn't match the house format (e.g. "Mon-Fri 08:00-17:00, Sat 08:00-13:00, Sun Closed" or "Open 24 hours")`); continue; }
+  const existing = hoursListing.get(it.slug);
+  if (existing && String(existing).trim().length >= 3) errors.push(`${at}: this listing already has hours ("${existing}") — only add hours when the field is empty, never overwrite`);
+}
 for (const s of expected) if (!seen.has(s)) errors.push(`${s}: missing (every listing in the chunk must appear, as researched or deferred)`);
 errors.push(...repeatedSentenceErrors(items));
 if (errors.length) {
@@ -120,6 +135,11 @@ for (const it of written) {
     `UPDATE businesses SET description = ${q(it.description.trim())},${src ? ` source_urls = json_insert(CASE WHEN json_valid(source_urls) AND json_type(source_urls) = 'array' THEN source_urls ELSE '[]' END, ${src}),` : ''} description_enriched_at = datetime('now') WHERE ${guard(it.slug)};`
   );
 }
+const withHours = items.filter((i) => typeof i.hours === 'string' && i.hours.trim());
+if (withHours.length) {
+  sql.push(`-- ${run}: ${withHours.length} trading-hours updates (sourced from research, listing had none)`);
+  for (const it of withHours) sql.push(`-- ${it.slug} (hours)`, `UPDATE businesses SET hours = ${q(it.hours.trim())} WHERE ${buildHoursGuard(it.slug)};`);
+}
 mkdirSync(`db/routine-updates/${city}`, { recursive: true });
 writeFileSync(`db/routine-updates/${city}/content-${nnn}.sql`, sql.join('\n') + '\n');
 writeFileSync(`content-upgrade/${city}/done-${nnn}.json`, JSON.stringify({
@@ -128,4 +148,4 @@ writeFileSync(`content-upgrade/${city}/done-${nnn}.json`, JSON.stringify({
     ? { slug: i.slug, status: 'deferred', reason: i.reason.trim() }
     : { slug: i.slug, status: 'researched', sources: i.sources ?? [] }),
 }, null, 2) + '\n');
-console.log(`ok: db/routine-updates/${city}/content-${nnn}.sql (${items.length} listings: ${written.length} researched, ${deferred.length} deferred)`);
+console.log(`ok: db/routine-updates/${city}/content-${nnn}.sql (${items.length} listings: ${written.length} researched, ${deferred.length} deferred${withHours.length ? `, ${withHours.length} with new hours` : ''})`);

@@ -71,12 +71,14 @@ Write `content-upgrade/out/<city>/chunk-NNN.json`:
 ```json
 { "items": [
   { "slug": "<slug>", "description": "<110-150 words, max 1,500 characters>", "status": "researched", "sources": ["https://page-you-used"] },
-  { "slug": "<slug>", "status": "deferred", "reason": "<what was tried / why nothing was usable>" }
+  { "slug": "<slug>", "status": "deferred", "reason": "<what was tried / why nothing was usable>" },
+  { "slug": "<slug>", "status": "researched", "description": "...", "sources": [...], "hours": "Mon-Fri 08:00-17:00, Sat 08:00-13:00, Sun Closed" }
 ] }
 ```
 
 - **Include every listing in the batch,** exactly once.
 - **`status`:** `researched` when the text has facts you found (list the pages you used in `sources`), otherwise `deferred` with a `reason` and no description.
+- **`hours` (optional, any item):** only when the batch file's `hours` field for that listing is empty AND the research states that specific business's own trading hours clearly (its own site, Google listing, or an owner-written directory page — never a generic chain page, a different branch, or an aggregator default like "Open 24 Hours" that looks like a placeholder). Never invent, round or guess. Format exactly: `Mon-Fri 08:00-17:00, Sat 08:00-13:00, Sun Closed` (days Mon/Tue/Wed/Thu/Fri/Sat/Sun, `-` for a range, 24-hour `HH:MM`, `Closed` for a closed day, `Open 24 hours` for always-open, `Mon-Sun HH:MM-HH:MM` if every day is the same) — this is the exact format `src/lib/openNow.ts` already parses for the "open now" badge and schema.org markup, so anything else silently breaks those features. `to-sql.mjs` validates the format and writes the `hours` column directly via a guard that only fires while the listing's `hours` is still empty — never put hours in the description text itself.
 
 Then run:
 
