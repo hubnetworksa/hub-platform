@@ -25,7 +25,7 @@ The owner's instruction, verbatim: **"there must be something about the business
    It runs three passes per listing: (1) the business's own website (home, /about, /about-us, /services, /contact) and its non-OSM `existing_sources`; (2) searches (Bing, name + suburb / city / category / facebook / street) until at least two relevant results; (3) opens up to three relevant result pages (own domain, Facebook, then directories such as snupit, procompare, yellowpages, cylex, brabys, hotfrog, medpages). It writes `content-upgrade/research/<city>/chunk-NNN.json` with, per listing: `pages` (title, description, text, bullets), `search` (title, url, snippet), `facts` (years trading, hours lines, service lists), `confidence` (`strong` = own site or owner-written directory text, `medium` = relevant snippets only, `none`) and a `note`. It prints the strong/medium/none counts and the slugs with `none`. It takes a minute or two.
 2. **Read EVERY page and snippet** the research file holds for a listing before giving up on it. Snippets, page titles and meta descriptions all count. Don't skim the first one.
 3. **No WebSearch and no WebFetch calls at all.** The Claude web tools share a ~200-call limit across the whole bulk run, so they are reserved. Everything you need is in the research file.
-4. **`from_known_details` is only for a listing whose research file truly has nothing relevant** (`confidence: none`, or every page and snippet is about something else). Then write **30–80 words** using only facts you actually have (name, category, address, suburb, a website if listed). **No** sentences about the area, the mall or the suburb, and **no** "could not be confirmed" or "no further details" sentences. A short, factual description is fine.
+4. **Nothing generic, ever.** If the research file truly has nothing relevant about the business (every page and snippet is about something else, or only chain-level or mall-level facts), do NOT write a description. Mark the listing `"status": "deferred"` with a `reason` (what was tried, why nothing was usable). It is held back for a deeper pass. Padded or boilerplate text is worse than the current one-liner: Google treats it as low-value content. Read everything before deferring.
 5. **Never repeat a sentence across listings.** The same sentence in three or more descriptions in a batch fails validation as templated filler.
 6. Write it and move on. Don't polish.
 
@@ -46,21 +46,21 @@ Why it works:
 
 Write every description like that:
 
-- **Length depends on the status.** `researched` (you found facts about this business): **100–250 words allowed, target 110–150**. `from_known_details` (research file has nothing relevant): **30–120 words allowed, target 30–80**. Both: at most 1,500 characters including spaces (the site's limit for the field). Count before you save. If a researched draft is short, add more sourced detail about what the business offers and more about the area, never filler. That's 4–7 flowing sentences in plain South African English, warm and professional, like a short "About us". The RE/MAX example above shows the quality to match; yours must be longer (100+ words when researched). Use the extra room only for real, sourced detail, never padding.
+- **Length:** every description is `researched`: **100–250 words allowed, target 110–150**, at most 1,500 characters including spaces (the site's limit for the field). Count before you save. If a draft is short, add more sourced detail about what the business offers, never filler; if the sources can't carry 100 real words, mark the listing `deferred` instead. That's 4–7 flowing sentences in plain South African English, warm and professional, like a short "About us". The RE/MAX example above shows the quality to match; yours must be longer (100+ words). Use the extra room only for real, sourced detail, never padding.
 - **Third person** ("the team", "the practice", "the store"), never "we" or "our". The business didn't write it, so don't speak for it.
 - **Cover, in this order:**
   1. **What it is and what it does:** the specific services, products, brands and specialities you read about.
   2. **What sets it apart:** years trading, the brand or group behind it, who it serves (homeowners, trade, families, businesses), how it works (appointments, walk-ins, delivery, call-outs).
-  3. **Where it is, with context:** the centre, suburb and city, plus a well-known fact about the area when it helps. For example, "Polokwane, the capital of Limpopo", or "Bendor, one of Polokwane's main residential and retail suburbs". Only use facts that are true and widely known, or that you read; no guesses about roads or distances.
+  3. **Where it is:** the centre, suburb and city, in one sentence at most. No area trivia ("the capital of Limpopo", "a sought-after suburb", "with around 180 stores"): the same area sentence repeated across many listings is exactly the low-value content this upgrade must avoid.
   4. **A natural close:** who it's a good fit for, or what visitors can expect.
-- **Only facts you read** in a snippet or page about **this** business, or from the batch data. For chains (banks, supermarkets, pharmacies, fast food, fuel), describe this branch plus what the chain's own site says every branch offers.
+- **Only facts you read** in a snippet or page about **this** business, or from the batch data. For chains (banks, supermarkets, pharmacies, fast food, fuel), the branch needs its own facts (its store page, hours, services, in-store departments, the centre it trades from); one sentence about the chain is fine as support, but a description made only of chain-level facts is not allowed: defer it.
 - **Never:**
   - name a person (owner, doctor, partner);
   - put a phone number, email or link in the text;
   - make up claims ("award-winning", "the best", "leading") unless a source says so;
   - use sales filler ("one-stop shop", "look no further");
   - use HTML.
-- **If the research file truly has nothing about the business** (`confidence: none` and you read everything), mark it `"from_known_details"` and write **30–80 words** (30–120 allowed). Write ONLY what is actually known: the category, address, suburb and trading pattern if it is in the data. No sentence about the area, the mall or the suburb, no "could not be confirmed" line, no invented services. It is fine to be short: the same padding repeated across a suburb is near-duplicate thin content, which is the exact problem this upgrade is meant to fix.
+- **If the research file truly has nothing about the business** (and you read everything), mark it `{"slug": "...", "status": "deferred", "reason": "..."}` with **no description**. Never write from the address and category alone, never a "could not be confirmed" line, never invented services.
 
 ## Output: one JSON file, then one command
 
@@ -69,12 +69,12 @@ Write `content-upgrade/out/<city>/chunk-NNN.json`:
 ```json
 { "items": [
   { "slug": "<slug>", "description": "<110-150 words, max 1,500 characters>", "status": "researched", "sources": ["https://page-you-used"] },
-  { "slug": "<slug>", "description": "<30-80 words, only what is known, max 1,500 characters>", "status": "from_known_details", "sources": [] }
+  { "slug": "<slug>", "status": "deferred", "reason": "<what was tried / why nothing was usable>" }
 ] }
 ```
 
 - **Include every listing in the batch,** exactly once.
-- **`status`:** `researched` when the text has facts you found (list the pages you used in `sources`, https only), otherwise `from_known_details`.
+- **`status`:** `researched` when the text has facts you found (list the pages you used in `sources`), otherwise `deferred` with a `reason` and no description.
 
 Then run:
 
@@ -82,13 +82,13 @@ Then run:
 node scripts/content-upgrade/to-sql.mjs <city> <NNN>
 ```
 
-It checks everything (researched 100–250 words, from_known_details 30–120, the 1,500-character limit, no sentence repeated in 3+ descriptions, and every source of a researched description must be a URL in the research file for that listing) and writes the guarded SQL to `db/routine-updates/<city>/content-NNN.sql`, plus a small sidecar `content-upgrade/<city>/done-NNN.json` (`{ city, chunk, generated_at, items: [{slug, status, sources}] }`). The status (`researched` / `from_known_details`) is **not stored in the database** (there is no column); it exists only in that sidecar and as a comment in the SQL, so a later pass can list the `from_known_details` listings from `done-NNN.json`. Each UPDATE only applies if the listing's description is still exactly the `current_description` from the batch file, so a hand-written rewrite made after the batch was prepared is never overwritten. The SQL leaves any owned, claimed or paid listing untouched (the database also blocks those), and the old text can be restored from the backup taken before the run.
-- **If it lists descriptions to fix** (e.g. a researched one under 100 words, or a from_known_details one outside 30–120), rewrite each in your JSON and run it again. Repeat until it prints `ok`. Never drop a listing from the file.
+It checks everything (researched 100–250 words, the 1,500-character limit, no sentence repeated in 3+ descriptions, every source of a researched description must be a URL in the research file for that listing, every deferred item has a reason and no description) and writes the guarded SQL to `db/routine-updates/<city>/content-NNN.sql` for the researched listings only (deferred listings get no SQL and stay as they are), plus a small sidecar `content-upgrade/<city>/done-NNN.json` (`{ city, chunk, generated_at, items: [{slug, status, sources | reason}] }`). The status is **not stored in the database** (there is no column); it exists only in that sidecar and as a comment in the SQL, so the deeper pass later lists the `deferred` listings from `done-NNN.json`. Each UPDATE only applies if the listing's description is still exactly the `current_description` from the batch file, so a hand-written rewrite made after the batch was prepared is never overwritten. The SQL leaves any owned, claimed or paid listing untouched (the database also blocks those), and the old text can be restored from the backup taken before the run.
+- **If it lists descriptions to fix** (e.g. one under 100 words, or a source not in the research file), rewrite each in your JSON and run it again, or mark that listing `deferred` if the sources can't carry 100 real words. Repeat until it prints `ok`. Never drop a listing from the file.
 - **Trial mode:** if you are told "trial", do NOT push. Commit locally only, and also append each listing's before/after to `status/content-upgrade-trial.md` in this format:
 
   ```
   ### <name> (<city>, <suburb>)
-  status: <researched|from_known_details>
+  status: <researched|deferred>   (deferred: give the reason instead of Before/After)
   sources: <urls, or none>
   **Before:** <current_description>
   **After:** <new description>
