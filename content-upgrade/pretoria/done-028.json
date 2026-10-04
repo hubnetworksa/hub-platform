@@ -1,0 +1,324 @@
+{
+  "city": "pretoria",
+  "chunk": 28,
+  "generated_at": "2026-10-04T11:06:03.158Z",
+  "items": [
+    {
+      "slug": "totalenergies-eersterust-eersterust",
+      "status": "deferred",
+      "reason": "Research only returned the generic corporate TotalEnergies homepage (promotions, lubricants, careers, history) with no station-specific content; nothing unique to this Eersterust site was found."
+    },
+    {
+      "slug": "totalenergies-waltloo-silverton",
+      "status": "deferred",
+      "reason": "Research only returned the generic corporate TotalEnergies homepage (promotions, lubricants, careers, history) with no station-specific content; nothing unique to this Waltloo site was found."
+    },
+    {
+      "slug": "tshwane-turbo-diesel-mac-and-engineering-booysens",
+      "status": "deferred",
+      "reason": "Address mismatch: the business's own about page states it is currently located at 1229 Boekenhoutkloof, Pretoria West, Booysens, not 567 Attie St as in our listing; needs address verification before publishing."
+    },
+    {
+      "slug": "ubvelela-signage-and-promotions-olievenhoutbosch",
+      "status": "researched",
+      "sources": [
+        "https://ubvelelasp.co.za/"
+      ]
+    },
+    {
+      "slug": "ultra-liquors-centurion-centurion",
+      "status": "deferred",
+      "reason": "The only fetched page is for Ultra Liquors' Wynberg (Cape Town) store, not the Centurion/Zwartkop branch; no Centurion-specific content was found in the research."
+    },
+    {
+      "slug": "uzuri-tech-solutions-copperleaf-golf-estate",
+      "status": "researched",
+      "sources": [
+        "http://uzuritech.co.za/"
+      ]
+    },
+    {
+      "slug": "valhalla-pharmacy-clinic-valhalla",
+      "status": "researched",
+      "sources": [
+        "https://valhalla-health.co.za/valhalla-pharmacy-clinic/",
+        "https://valhalla-health.co.za/about"
+      ]
+    },
+    {
+      "slug": "vision-works-thatchfield-thatchfield-estate",
+      "status": "researched",
+      "sources": [
+        "https://www.vision-works.co.za/thatchfield/"
+      ]
+    },
+    {
+      "slug": "vitalis-accounting-sinoville",
+      "status": "researched",
+      "sources": [
+        "https://www.vitalis.co.za/"
+      ]
+    },
+    {
+      "slug": "volpes-hazeldean-hazeldean",
+      "status": "deferred",
+      "reason": "Site blocked the crawler with a Cloudflare security challenge; no business content could be retrieved for this branch."
+    },
+    {
+      "slug": "volpes-moreleta-corner-moreleta-park",
+      "status": "deferred",
+      "reason": "Site blocked the crawler with a Cloudflare security challenge; no business content could be retrieved for this branch."
+    },
+    {
+      "slug": "vorsters-security-doringkloof",
+      "status": "researched",
+      "sources": [
+        "https://vorstersgroup.co.za/"
+      ]
+    },
+    {
+      "slug": "vortex-plumbing-val-de-grace",
+      "status": "deferred",
+      "reason": "Fetched page is templated placeholder theme text repeated throughout, with no genuine business-specific content beyond a title and meta tag already reflected in the existing description; nothing new or verifiable to add."
+    },
+    {
+      "slug": "vovo-telo-lynnwood-manor",
+      "status": "deferred",
+      "reason": "Fetched eatout.co.za page returned only generic site navigation and unrelated news content, nothing specific to this Vovo Telo branch."
+    },
+    {
+      "slug": "vyfster-elektries-rooihuiskraal",
+      "status": "researched",
+      "sources": [
+        "https://vyfsterelektries.co.za/"
+      ]
+    },
+    {
+      "slug": "waltloo-plastics-bergtuin",
+      "status": "researched",
+      "sources": [
+        "http://www.waltlooplastics.co.za/wp/"
+      ]
+    },
+    {
+      "slug": "waltloo-plastics-waltloo",
+      "status": "researched",
+      "sources": [
+        "https://www.waltlooplastics.co.za/"
+      ]
+    },
+    {
+      "slug": "water-pump-master-florauna",
+      "status": "researched",
+      "sources": [
+        "https://waterpumpmaster.co.za/about"
+      ]
+    },
+    {
+      "slug": "water-spot-centurion-bronberrik",
+      "status": "deferred",
+      "reason": "Site fetch timed out and only generic 'water' search results (Wikipedia, Rand Water, dictionary definitions) were returned; no business-specific content was found."
+    },
+    {
+      "slug": "waxit-hazeldean-hazeldean",
+      "status": "researched",
+      "sources": [
+        "https://www.waxit.co.za/hazeldean"
+      ]
+    },
+    {
+      "slug": "we-are-centurion-centurion-central",
+      "status": "researched",
+      "sources": [
+        "https://www.wearecenturion.co.za/"
+      ]
+    },
+    {
+      "slug": "weavind-park-liquor-city-weavind-park",
+      "status": "deferred",
+      "reason": "Sources were blocked or irrelevant; one fetched page returned an unrelated music-download site, and no genuine content about this liquor store was found."
+    },
+    {
+      "slug": "website-creators-rietfontein",
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/place/website-creators"
+      ]
+    },
+    {
+      "slug": "west-pack-lifestyle-kolonnade-montana-gardens",
+      "status": "deferred",
+      "reason": "Fetched page returned only site navigation (cart/menu links) with no branch-specific content; search results were also unrelated to this store."
+    },
+    {
+      "slug": "western-national-insurance-montana-park",
+      "status": "researched",
+      "sources": [
+        "https://westnat.com/"
+      ]
+    },
+    {
+      "slug": "whisk-wine-bar-cornwall-hill-estate",
+      "status": "researched",
+      "sources": [
+        "https://whiskwinebar.com/"
+      ]
+    },
+    {
+      "slug": "wimpy-gezina-galleries-gezina",
+      "status": "deferred",
+      "reason": "Fetched yellowpages.co.za page was a 404 error, and search results returned unrelated football match content; no branch-specific facts were found."
+    },
+    {
+      "slug": "wimpy-pretoria-central-3",
+      "status": "researched",
+      "sources": [
+        "https://locations.wimpy.co.za/restaurants-HallmarkBuilding-WimpyHallmark"
+      ]
+    },
+    {
+      "slug": "wing-wah-sushi-faerie-glen",
+      "status": "deferred",
+      "reason": "Fetched eatout.co.za page returned only generic site navigation and unrelated news content, nothing specific to this Wing Wah Sushi branch."
+    },
+    {
+      "slug": "yellow-fat-biltong-magalieskruin",
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/listing/yellow-fat-biltong/"
+      ]
+    },
+    {
+      "slug": "yoliswa-ventures-lydiana",
+      "status": "researched",
+      "sources": [
+        "https://borderlessself.com/legal/"
+      ]
+    },
+    {
+      "slug": "zambezi-montana-midas-montana-gardens",
+      "status": "researched",
+      "sources": [
+        "https://www.zmidas.co.za/"
+      ]
+    },
+    {
+      "slug": "zater-willow-park-manor",
+      "status": "researched",
+      "sources": [
+        "https://www.zater.co.za/"
+      ]
+    },
+    {
+      "slug": "zela-tech-zambesi-cc-magalieskruin",
+      "status": "researched",
+      "sources": [
+        "http://www.zela.co.za/"
+      ]
+    },
+    {
+      "slug": "zero-plus-printers-bergtuin",
+      "status": "researched",
+      "sources": [
+        "https://www.zeroplus.co.za/"
+      ]
+    },
+    {
+      "slug": "0861nutsman-zwartkop",
+      "status": "researched",
+      "sources": [
+        "https://0861nutsman.co.za/centurion/"
+      ]
+    },
+    {
+      "slug": "1worx-pty-ltd-southdowns",
+      "status": "researched",
+      "sources": [
+        "http://1worx.co/"
+      ]
+    },
+    {
+      "slug": "3-step-teambuilding-zwartkop",
+      "status": "researched",
+      "sources": [
+        "https://www.teambuildsa.com/"
+      ]
+    },
+    {
+      "slug": "3pin-gauteng-blue-valley-golf-estate",
+      "status": "researched",
+      "sources": [
+        "http://www.3pin.co.za/"
+      ]
+    },
+    {
+      "slug": "3t-business-fusion-bronberrik",
+      "status": "researched",
+      "sources": [
+        "http://3tfusion.co.za/"
+      ]
+    },
+    {
+      "slug": "4-u-pure-water-florana-mall-florauna",
+      "status": "deferred",
+      "reason": "Content describes the 4 U Pure Water franchise generally, with the company's own address listed at Rooihuiskraal North, Centurion, not the Florana Mall, Florauna branch; address mismatch and no branch-specific facts found."
+    },
+    {
+      "slug": "4pl-group-irene-farm-villages",
+      "status": "researched",
+      "sources": [
+        "http://www.fourpl.com/"
+      ]
+    },
+    {
+      "slug": "62-waters-rooihuiskraal-north",
+      "status": "researched",
+      "sources": [
+        "https://www.62.co.za/"
+      ]
+    },
+    {
+      "slug": "a-mohamed-attorneys-raslouw",
+      "status": "deferred",
+      "reason": "Site fetch timed out and search results returned only unrelated 'letter A' content; no genuine sourced facts about this firm were found in this research pass."
+    },
+    {
+      "slug": "acheron-systems-wingate-park",
+      "status": "researched",
+      "sources": [
+        "http://acheronsystems.co.za/"
+      ]
+    },
+    {
+      "slug": "ackermans-centurion-lyttelton-manor",
+      "status": "researched",
+      "sources": [
+        "https://www.tiendeo.co.za/stores/centurion/ackermans-napier-roadlyttelton-manor/61800"
+      ]
+    },
+    {
+      "slug": "ackermans-hammanskraal",
+      "status": "researched",
+      "sources": [
+        "https://www.tiendeo.co.za/stores/hammanskraal/ackermans-jubilee-mallcnr-jubilee-harry-gwala-rds/61745"
+      ]
+    },
+    {
+      "slug": "adendorff-machinery-mart-silver-lakes-pretoria-east-kameeldrift-east",
+      "status": "deferred",
+      "reason": "Fetched page is the generic nationwide Adendorff homepage (product categories, store locator, company history) with no mention of the Silver Lakes/Pretoria East branch specifically."
+    },
+    {
+      "slug": "afrivala-doors-derdepoort",
+      "status": "deferred",
+      "reason": "Likely wrong-business match: afridoors.co.za now describes 'Afrivala Holdings', an industrial and engineering services conglomerate (plant spares, steel fabrication, mining, power, construction), with no mention of doors, timber or door manufacturing at all."
+    },
+    {
+      "slug": "ahlaams-gourmet-grills-erasmia",
+      "status": "researched",
+      "sources": [
+        "https://restaurantguru.com/Ahlaams-Gourmet-Grills-Centurion"
+      ]
+    }
+  ]
+}
