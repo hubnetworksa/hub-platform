@@ -6,7 +6,7 @@
 //   { "items": [ { "slug": "...", "description": "...", "status": "researched", "sources": ["https://..."] }, ... ] }
 //
 // This script checks every item (all listings in the chunk present once,
-// researched: 100-250 words (target 110-150); from_known_details: 50-120 words
+// researched: 100-250 words (target 110-150); from_known_details: 30-120 words
 // (target 50-80, only what is known, no padding); both at most 1,500 characters
 // (the site's description limit, LONG_DESC_MAX in src/lib/rich-text.ts), no
 // phone/email/link in the text, no sales filler) and
@@ -46,6 +46,21 @@ const PHONE = /(\+27|\b0\d{2})[\s-]?\d{3}[\s-]?\d{4}\b/;
 const EMAIL = /[^\s@]+@[^\s@]+\.[a-z]{2,}/i;
 const LINK = /(https?:\/\/|www\.|\b[a-z0-9-]+\.(co\.za|com|org\.za|net)\b)/i;
 
+// Sources of a researched description must be URLs the research file holds for
+// that slug (pages, search results, website, existing_sources), so nobody cites
+// a page they never saw.
+const normUrl = (u) => String(u).trim().replace(/#.*$/, '').replace(/^https?:\/\/(www\.|m\.)?/i, '').replace(/\/+$/, '').toLowerCase();
+let research = null;
+const researchUrls = new Map();
+try {
+  research = JSON.parse(readFileSync(`content-upgrade/research/${city}/chunk-${nnn}.json`, 'utf8'));
+  const base = new Map(chunk.listings.map((l) => [l.slug, l]));
+  for (const r of research.listings ?? []) {
+    const l = base.get(r.slug) ?? {};
+    researchUrls.set(r.slug, new Set([l.website, ...(l.existing_sources ?? []), ...(r.pages ?? []).map((p) => p.url), ...(r.search ?? []).map((x) => x.url)].filter(Boolean).map(normUrl)));
+  }
+} catch { console.error(`note: no research file at content-upgrade/research/${city}/chunk-${nnn}.json; source URLs not cross-checked`); }
+
 const expected = new Set(chunk.listings.map((l) => l.slug));
 const seen = new Set();
 const errors = [];
@@ -58,8 +73,8 @@ for (const [i, it] of items.entries()) {
   const d = typeof it.description === 'string' ? it.description.trim() : '';
   const w = words(d);
   if (it.status === 'from_known_details') {
-    if (w < 50) errors.push(`${at}: only ${w} words: from_known_details needs at least 50 (target 50-80): state the category, address, centre and suburb, no padding`);
-    if (w > 120) errors.push(`${at}: ${w} words: from_known_details is at most 120 (target 50-80); write only what is known, don't pad`);
+    if (w < 30) errors.push(`${at}: only ${w} words: from_known_details needs at least 30 (target 30-80): state only the known facts, no padding`);
+    if (w > 120) errors.push(`${at}: ${w} words: from_known_details is at most 120 (target 30-80); write only what is known, don't pad`);
   } else {
     if (w < 100) errors.push(`${at}: only ${w} words: rewrite it to 110-150 words (more sourced detail, more on what it offers and the area) and run this again`);
     if (w > 250) errors.push(`${at}: ${w} words: trim it to 110-150 words and run this again`);
@@ -73,9 +88,29 @@ for (const [i, it] of items.entries()) {
   if (!['researched', 'from_known_details'].includes(it.status)) errors.push(`${at}: status must be researched or from_known_details`);
   const src = Array.isArray(it.sources) ? it.sources : [];
   if (src.some((u) => typeof u !== 'string' || !/^https:\/\/[^\s'"]+$/.test(u) || u.length > 400)) errors.push(`${at}: sources must be https links`);
+  if (it.status === 'researched' && src.length && research) {
+    const allowed = researchUrls.get(it.slug) ?? new Set();
+    const bad = src.filter((u) => !allowed.has(normUrl(u)));
+    if (bad.length) errors.push(`${at}: source(s) not in the research file for this listing (cite only pages you were given): ${bad.join(', ')}`);
+  }
   if (it.status === 'researched' && !src.length) errors.push(`${at}: researched needs at least one source`);
 }
 for (const s of expected) if (!seen.has(s)) errors.push(`${s}: missing (every listing in the chunk needs a description)`);
+// The same sentence in 3+ descriptions is templated filler.
+const sentences = new Map();
+for (const it of items) {
+  const mine = new Set();
+  for (const raw of String(it?.description ?? '').split(/(?<=[.!?])\s+/)) {
+    const n = raw.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+    if (n.split(' ').length < 4 || mine.has(n)) continue;
+    mine.add(n);
+    if (!sentences.has(n)) sentences.set(n, { text: raw.trim(), slugs: [] });
+    sentences.get(n).slugs.push(it.slug);
+  }
+}
+for (const { text, slugs } of sentences.values()) {
+  if (slugs.length >= 3) errors.push(`templated filler, remove it: "${text}" appears in ${slugs.length} descriptions (${slugs.join(', ')})`);
+}
 if (errors.length) {
   console.error(`${errors.length} description(s) to fix in content-upgrade/out/${city}/chunk-${nnn}.json (nothing was written; fix them all, then run this again):\n- ${errors.join('\n- ')}`);
   process.exit(1);
