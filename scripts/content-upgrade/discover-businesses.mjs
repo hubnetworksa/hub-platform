@@ -76,10 +76,15 @@ function parseLite(html) {
   }
   return out;
 }
+// Brave started hard-blocking this environment (HTTP 429, anti-bot) once
+// enough parallel discover-fill batches were hitting it at once, and Bing's
+// scrape was frequently serving generic/irrelevant top results for small-
+// suburb queries instead of falling through. lite.duckduckgo first turned
+// out far more reliable for these hyperlocal queries; Brave dropped
+// entirely rather than kept as a fallback that just eats a timeout.
 const ENGINES = [
-  ['brave', 'https://search.brave.com/search?q=', parseBrave],
-  ['bing', 'https://www.bing.com/search?setlang=en&q=', parseBing],
   ['lite', 'https://lite.duckduckgo.com/lite/?q=', parseLite],
+  ['bing', 'https://www.bing.com/search?setlang=en&q=', parseBing],
 ];
 
 async function search(q) {
