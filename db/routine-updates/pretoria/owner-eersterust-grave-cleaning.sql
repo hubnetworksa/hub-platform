@@ -1,0 +1,2 @@
+-- Owner correction: Eersterust Grave Cleaning Group is a cleaning service, not commercial property. Guarded on the current category.
+UPDATE business_categories SET category_id = (SELECT id FROM categories WHERE slug = 'cleaning-services') WHERE business_id = (SELECT id FROM businesses WHERE slug = 'eersterust-grave-cleaning-group-eersterust') AND is_primary = 1 AND category_id = (SELECT id FROM categories WHERE slug = 'commercial-property-office-space');
