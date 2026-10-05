@@ -183,17 +183,28 @@ async function discoverOne(combo) {
 
 async function main() {
   await startCrawler();
-  const out = [];
+  // Resume support: if outFile already has partial results (from an interrupted
+  // run), skip combos already done instead of re-crawling from scratch.
+  let out = [];
+  if (fs.existsSync(outFile)) {
+    try { out = JSON.parse(fs.readFileSync(outFile, 'utf8')); } catch { out = []; }
+  }
+  const doneKey = (c) => `${c.category}::${c.suburb}`;
+  const doneSet = new Set(out.map(doneKey));
   for (const combo of combos) {
+    if (doneSet.has(doneKey(combo))) continue;
     console.error(`-> ${combo.catLabel} in ${combo.subLabel}`);
     let candidates = [];
     try { candidates = await discoverOne(combo); }
     catch (e) { console.error(`   failed: ${e.message}`); }
     console.error(`   ${candidates.length} candidate(s)`);
     out.push({ ...combo, candidates });
+    // Write after every combo, not just at the end, so a killed/interrupted
+    // run never loses progress — re-running the same command resumes instead
+    // of starting over.
+    fs.writeFileSync(outFile, JSON.stringify(out, null, 2));
   }
   stopCrawler();
-  fs.writeFileSync(outFile, JSON.stringify(out, null, 2));
-  console.log(`wrote ${outFile}`);
+  console.log(`wrote ${outFile} (${out.length} combos)`);
 }
 main().catch((e) => { console.error(e); process.exit(1); });
