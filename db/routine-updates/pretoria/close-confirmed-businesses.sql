@@ -1,0 +1,32 @@
+-- content-upgrade:pretoria: mark 30 confirmed-closed businesses (from content-upgrade/closed-businesses.json)
+-- Sets closed_at so these stop appearing on the live site. Idempotent: guarded on closed_at IS NULL.
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'virgin-active-pretoria-central-2' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'dros-menlyn' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'beefcakes-menlyn' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'plaka-menlyn' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'piza-e-vino-brooklyn-waterkloof-waterkloof' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'padbok-thai-restaurant-waterkloof' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'dr-ah-coetzee-waterkloof' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'casa-bourguesa-tapas-grill-faerie-glen' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'lionvarage-brooklands-lifestyle-estate' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'pc-worx-centurion-golf-estate' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'enkay-logistics-eldo-lakes-estate' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'rheo-systems-pty-ltd-eldoraigne' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'distillique-hennopspark' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'laser-inc-sa-lyttelton' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'credo-projects-pty-ltd-pierre-van-ryneveld-park' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'lodas-construction-pty-ltd-boardwalk-manor' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'tafel-bring-everyone-together-derdepoort-smallholdings' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'bjoko-security-training-services-les-marais' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'quberg-forex-shere' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'cafe-41-rigel-erasmusrand' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'cafe-41-groenkloof' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'news-cafe-hatfield' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'piza-e-vino-lynnridge-lynnwood-ridge' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'ocean-basket-newlands-plaza-newlands' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'maxi-skips-parktown-estate' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'the-queenswood-butchery-and-deli-queenswood' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'bigfoot-security-rietfontein' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'woolworths-sunnypark-trevenna' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'valhalla-book-exchange-valhalla' AND closed_at IS NULL;
+UPDATE businesses SET closed_at = datetime('now') WHERE slug = 'cool-runnings-hatfield' AND closed_at IS NULL;
