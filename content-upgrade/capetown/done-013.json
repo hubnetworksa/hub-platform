@@ -1,0 +1,306 @@
+{
+  "city": "capetown",
+  "chunk": 13,
+  "generated_at": "2026-10-05T12:42:30.510Z",
+  "items": [
+    {
+      "slug": "ces-forklift-montague-gardens",
+      "status": "researched",
+      "sources": [
+        "https://cesforklift.co.za/"
+      ]
+    },
+    {
+      "slug": "false-bay-veterinary-clinic-muizenberg",
+      "status": "researched",
+      "sources": [
+        "https://falsebayvet.co.za/"
+      ]
+    },
+    {
+      "slug": "makemba-boutique-kommetjie",
+      "status": "researched",
+      "sources": [
+        "https://imhofffarm.co.za/makemba-boutique/"
+      ]
+    },
+    {
+      "slug": "queens-hair-beauty-golden-acre-cape-town-cbd",
+      "status": "researched",
+      "sources": [
+        "https://queenshairandbeauty.com/"
+      ]
+    },
+    {
+      "slug": "ital-cement-ysterplaat",
+      "status": "researched",
+      "sources": [
+        "https://italcement.com"
+      ]
+    },
+    {
+      "slug": "sakura-harfield-village",
+      "status": "researched",
+      "sources": [
+        "https://www.sa-venues.com/things-to-do/westerncape/dine-at-sakura/"
+      ]
+    },
+    {
+      "slug": "carlyles-on-derry-vredehoek",
+      "status": "researched",
+      "sources": [
+        "https://carlyles.co.za/contact/",
+        "https://za.africabz.com/western-cape/carlyles-on-derry-26273"
+      ]
+    },
+    {
+      "slug": "clicks-cape-quarter-de-waterkant",
+      "status": "researched",
+      "sources": [
+        "https://capequarter.co.za/shops/",
+        "https://clicks.co.za/store/Cape-Quarter/2045"
+      ]
+    },
+    {
+      "slug": "clicks-pharmacy-ottery",
+      "status": "deferred",
+      "reason": "Owner's research confirms the branch location (Shop L-38, Ottery Hyper) but found insufficient branch-specific information about exact services or facilities; holding rather than adding unverified clinic/vaccination claims. HOLD/VERIFY per owner."
+    },
+    {
+      "slug": "clicks-prospur-pharmacy-plumstead",
+      "status": "researched",
+      "sources": [
+        "https://clicks.co.za/store/Prospur-Pharmacy/1841",
+        "https://za.africabz.com/western-cape/clicks-pharmacy-294788"
+      ]
+    },
+    {
+      "slug": "clicks-waterstone-village-somerset-west",
+      "status": "researched",
+      "sources": [
+        "https://www.waterstonevillage.co.za",
+        "https://clicks.co.za/store/Waterstone-Village/163"
+      ]
+    },
+    {
+      "slug": "colcacchio-canal-walk-century-city",
+      "status": "researched",
+      "sources": [
+        "https://www.colcacchio.co.za/restaurants",
+        "https://www.eatout.co.za/venue/colcacchio-canal-walk/"
+      ]
+    },
+    {
+      "slug": "colorado-motor-spares-colorado",
+      "status": "deferred",
+      "reason": "Owner's research confirms no additional business-specific detail beyond the auto-parts-store classification already known; current evidence is not strong enough for a detailed, non-generic product range. HOLD/VERIFY per owner."
+    },
+    {
+      "slug": "coricraft-clearance-centre-montague-gardens",
+      "status": "deferred",
+      "reason": "Owner's research found insufficient branch-specific information about clearance stock types, discount structure or seasonal inventory changes; readymap source remains Cloudflare-blocked. HOLD/VERIFY per owner."
+    },
+    {
+      "slug": "debonairs-pizza-mandalay-mandalay",
+      "status": "deferred",
+      "reason": "Cylex continues to report the business as closed; owner could not find a current reliable source to resolve its status either way. Holding as possibly closed rather than publishing or marking it closed in closed-businesses.json. HOLD per owner."
+    },
+    {
+      "slug": "dr-v-h-davids-bonteheuwel",
+      "status": "researched",
+      "sources": [
+        "https://www.recomed.co.za/dentist/gatesville/vh-davids/4348/4131/",
+        "https://www.medpages.info/sf/index.php?page=person&personcode=12986"
+      ]
+    },
+    {
+      "slug": "factory-toy-shop-parow",
+      "status": "researched",
+      "sources": [
+        "https://www.sayellow.com/view/south-africa/factory-toy-shop-in-parow",
+        "https://www.yep.co.za/biz/store/iyp/1479429_3"
+      ]
+    },
+    {
+      "slug": "field-office-woodstock",
+      "status": "deferred",
+      "reason": "Owner's research also found insufficient reliable current business-specific information to confirm its current food and beverage offering or distinguish it from similarly named venues; source pages remain unreachable or generic (nearbyza 521 error, TripAdvisor captcha, FindMy generic copy). HOLD/VERIFY per owner."
+    },
+    {
+      "slug": "fnb-gardens-shopping-centre-gardens",
+      "status": "deferred",
+      "reason": "Africabizinfo gives address, phone and generic branch hours only; no verified list of actual banking services or facilities beyond generic branch banking (chain rule), matching the bank-branch hold pattern used throughout this pipeline. HOLD per owner."
+    },
+    {
+      "slug": "fnb-greenpoint-green-point",
+      "status": "deferred",
+      "reason": "fnb.co.za still returns a bot-protection captcha page for every URL; no content retrieved. Same bank-branch hold pattern as FNB Gardens: address, phone and generic trading hours only, no verified service list. HOLD per owner."
+    },
+    {
+      "slug": "footgear-kuils-river",
+      "status": "deferred",
+      "reason": "Address mismatch, likely wrong branch: Footgear's own official store locator confirms a separate Kuils River branch ('Footgear Access City') at a different address, while the official Access Park Footgear branch is actually in Kenilworth. The Access Park Bellville directory entry used for this listing may be conflating two different branches. HOLD per owner."
+    },
+    {
+      "slug": "going-under-clothing-lansdowne",
+      "status": "researched",
+      "sources": [
+        "https://www.goingunder.co.za/find-our-stores/",
+        "https://za.africabz.com/western-cape/going-under-clothing-lansdowne-451885"
+      ]
+    },
+    {
+      "slug": "golden-acre-pharmacy-cape-town-cbd",
+      "status": "deferred",
+      "reason": "Owner's research confirms only address, phone and category (retail pharmacy); no genuinely non-generic distinguishing fact beyond that. HOLD per owner."
+    },
+    {
+      "slug": "harbour-house-kalk-bay",
+      "status": "researched",
+      "sources": [
+        "https://www.harbourhouse.co.za/contact-us/"
+      ]
+    },
+    {
+      "slug": "helderberg-restaurant-gordons-bay",
+      "status": "deferred",
+      "reason": "Owner's research could not confidently match the supplied Gordon's Bay Harbour address to a sufficiently authoritative current source either; sa-venues pages cover other Gordon's Bay restaurants (Bertie's Moorings, Old Cape Cafe) but nothing on Helderberg Restaurant itself. Holding rather than publishing unverified cuisine/history claims. HOLD/VERIFY per owner."
+    },
+    {
+      "slug": "ho-ho-takeaways-kenridge",
+      "status": "researched",
+      "sources": [
+        "https://www.hohotakeaways.co.za/",
+        "https://za.africabz.com/western-cape/ho-62609"
+      ]
+    },
+    {
+      "slug": "hout-bay-handiman-centre-hout-bay",
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/hout-bay-handiman-centre-50868",
+        "https://www.brabys.com/za/western-cape/cape-town/hout-bay/hardware-retailers/hout-bay-handiman-centre"
+      ]
+    },
+    {
+      "slug": "hungry-lion-delft-mall-delft",
+      "status": "researched",
+      "sources": [
+        "https://www.hungrylion.co.za/",
+        "https://stores.hungrylion.co.za/"
+      ]
+    },
+    {
+      "slug": "hussar-grill-durbanville",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: identifiable as a Hussar Grill branch but still no branch-specific confirmation of exact cuts, wine-list detail or BYO policy beyond chain/Dineplan booking copy (about 70 usable words); insufficient for 100 real words without unconfirmed claims. Held pending a stronger branch-specific source."
+    },
+    {
+      "slug": "kfc-westridge-westridge",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: locations.kfc.co.za still did not resolve; search results remain the national order page and unrelated Gauteng outlets, with no reliable current branch-specific information for this location. Held pending a stronger branch-specific source."
+    },
+    {
+      "slug": "kommetjie-pizzeria-kommetjie",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: Yellow Pages listing remains the only branch-specific source, giving address, hours and likes only; still not enough to confirm the exact pizza range, dining facilities or current trading status. Held pending a stronger branch-specific source."
+    },
+    {
+      "slug": "kwikspar-strandfontein-strandfontein",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: the supplied address still could not be sufficiently confirmed through a current official SPAR store source (store-finder remains blocked); Halaal-status claims remain unverified beyond mixed customer reviews. Held pending a stronger branch-specific source."
+    },
+    {
+      "slug": "lavender-hill-clinic-lavender-hill",
+      "status": "deferred",
+      "reason": "OVERRIDE of orchestrator PUBLISH call: the cited City of Cape Town source (capetown.gov.za Clinics listing) returned HTTP 404 and resource.capetown.gov.za timed out in the research crawl, so no content about this clinic was actually retrieved -- the only crawled page is an unrelated Cleveland Clinic article about lavender the plant. The claimed services (child health, family planning, STI/HIV testing) and hours (Mon-Fri 07:30-16:30) are not backed by any crawled or allowed source for this listing. Held pending a working City of Cape Town page or other branch-specific source."
+    },
+    {
+      "slug": "medicross-table-view-table-view",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: address remains identifiable via Recomed but still no practice-specific information on doctors, dental or nursing services beyond a generic provider list. Held pending a stronger branch-specific source."
+    },
+    {
+      "slug": "medirite-grand-central-eerste-river",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: Tiendeo still gives only store hours and catalogues, and the medpages source still timed out; no branch-specific service facts confirming the exact Grand Central pharmacy location or facilities. Held pending a stronger branch-specific source."
+    },
+    {
+      "slug": "modacks-superstore-bonteheuwel",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: confirms the name and address only; still no substantive business description available from any crawled or allowed source. Held pending a stronger branch-specific source."
+    },
+    {
+      "slug": "mr-price-kids-cape-town-cbd",
+      "status": "deferred",
+      "reason": "OVERRIDE of orchestrator PUBLISH call: golden-acre.co.za timed out and was never actually retrieved, so there is no Golden Acre tenant listing confirming Mr Price Kids or a branch phone number in the research file. The only 'strong' crawled page (mrphome.com) is for Mr Price Home, a different sub-brand, with no Golden Acre or Mr Price Kids-specific facts. The cited anchor facts are not backed by any crawled or allowed source. Held pending a working Golden Acre tenant page or other branch-specific source."
+    },
+    {
+      "slug": "mtn-waterstone-village-somerset-west",
+      "status": "deferred",
+      "reason": "OVERRIDE of orchestrator PUBLISH call: no MTN official store page was crawled -- the only source retrieved (getoccupi.com mall directory) confirms MTN as a tenant at Waterstone Village at centre level only, with no MTN-specific trading hours, contact details or services. The cited anchor facts are not backed by any crawled or allowed source (chain rule). Held pending an MTN branch-specific source."
+    },
+    {
+      "slug": "nceduluntu-driving-school-khayelitsha",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: search results remain unrelated (ChatGPT pages) and brabys/thinklocal remain blocked; still no reliable business-specific information confirming current licence codes (08/10/14) or training services. Held pending a stronger branch-specific source."
+    },
+    {
+      "slug": "nestle-purina-petcare-ndabeni",
+      "status": "deferred",
+      "reason": "OVERRIDE of orchestrator PUBLISH call: the only crawled page (yep.co.za) is an empty, broken mall-directory search result with no content about the Ndabeni facility; sabusinesslistings.co.za and craft.co were never successfully retrieved. The claimed classification (nutrition products, food manufacturing, food supply), phone number and 'Purina factory' framing are not backed by any crawled or allowed source. Held pending a working industry-listing or company source for this facility."
+    },
+    {
+      "slug": "opulence-events-function-venue-philippi-horticultural",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: the Facebook page still gives only a follower count and one tagline; no verified details of function types or facilities offered. Held pending a stronger branch-specific source."
+    },
+    {
+      "slug": "ottos-cafe-crawford",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: Triptap source still gives categories, website, aggregator hours and generic copy only; no owner-written facts confirming current menu, Halaal status or service offering. Held pending a stronger branch-specific source."
+    },
+    {
+      "slug": "palette-art-gallery-de-waterkant",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: the available Cape Quarter source confirming a gallery presence (capetownmagazine.com) is a historical listing rather than a current gallery-owned page, consistent with how other historical-source-only listings have been held in this pipeline. Held pending a current gallery-specific source."
+    },
+    {
+      "slug": "pep-bishop-lavis",
+      "status": "researched",
+      "sources": [
+        "https://www.tiendeo.co.za/stores/cape-town/pep-stores-shop--the-business-centre-league-road-bishop-lavis-cape-town-western-cape/12332"
+      ]
+    },
+    {
+      "slug": "pep-goodwood-mall-goodwood",
+      "status": "deferred",
+      "reason": "OVERRIDE of orchestrator PUBLISH call: the only crawled page is the national pepstores.com homepage (confidence: none in the research file) -- no Goodwood Mall branch facts, trading hours or phone number were actually retrieved despite tiendeo.co.za and cybo.com being listed as existing sources. The cited anchor facts are not backed by any crawled or allowed source (chain rule). Held pending a working fetch of those listings or another branch-specific source."
+    },
+    {
+      "slug": "pep-macassar-shopping-centre-macassar",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: Nearfinderza listing still gives address, phone and conflicting hours; PEP facts remain chain-level only, with no confirmed exact product range. Held pending a stronger branch-specific source."
+    },
+    {
+      "slug": "pick-n-pay-gardens-shopping-centre-gardens",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: still identifiable as a branch via Tiendeo and the Gardens Shopping Centre tenant page, but no confirmation of current departments or facilities beyond the centre name. Held pending a stronger branch-specific source."
+    },
+    {
+      "slug": "romans-pizza-parklands",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: Africabz listing still gives address, hours, phone and categories only; Roman's facts remain chain-level, with no confirmation of the Parklands Junction menu, delivery area or facilities. Held pending a stronger branch-specific source."
+    },
+    {
+      "slug": "rouge-day-spa-lakeside",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: treatment categories (facials, massage, acne facial) remain supported by the Rouge contact page and Fresha listing, but still insufficient branch-specific detail to write a full description without unverified facility claims. Held pending a stronger branch-specific source."
+    },
+    {
+      "slug": "sasol-maitland-maitland",
+      "status": "deferred",
+      "reason": "User-supplied research reviewed: only a City of Cape Town vendor-list address confirmation and fuel-station/forecourt category are available; polomap remains Cloudflare-blocked, with no phone, hours or other distinguishing fact beyond that. Held pending a stronger branch-specific source."
+    }
+  ]
+}

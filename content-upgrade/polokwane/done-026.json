@@ -1,22 +1,28 @@
 {
   "city": "polokwane",
   "chunk": 26,
-  "generated_at": "2026-10-04T20:48:51.001Z",
+  "generated_at": "2026-10-05T11:47:08.133Z",
   "items": [
     {
       "slug": "macsteel-vrn-superbia",
       "status": "deferred",
-      "reason": "Macsteel national division page (speciality steel products and processing, capital-project copy). Division-level text only, with no Superbia branch-specific facts."
+      "reason": "Macsteel national division page (speciality steel products and processing, capital-project copy) only; no Superbia branch-specific facts. Also an address/branch mismatch: Macsteel VRN's own current official branch locator lists VRN locations including Lephalale, Rustenburg, Klerksdorp, Kathu and others, but does not currently list a Polokwane/Superbia branch -- the supplied 11 Mangaan Street, Superbia address could not be independently confirmed against Macsteel's own branch information. Held deferred pending confirmation."
     },
     {
       "slug": "netcare-pholoso-hospital-fauna-park",
-      "status": "deferred",
-      "reason": "Netcare facility page gives only a two-sentence description (specialised private healthcare for Limpopo). The rest of the page was cookie text, so there is not enough for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.netcare.co.za/netcare-facilities/netcare-pholoso-hospital",
+        "https://www.saprivatehospitals.com/limpopo/pholoso-hospital-netcare-in-polokwane-limpopo/"
+      ]
     },
     {
       "slug": "bennie-boekwurm-pre-school-ladanna",
-      "status": "deferred",
-      "reason": "Directory listing (preschool for ages 0-6, address, holiday programme fees, homework centre) only. Not enough for 100 words without padding; hours come from an aggregator, not the school."
+      "status": "researched",
+      "sources": [
+        "https://www.citizen.co.za/review-online/news-headlines/local-news/2024/06/22/bennie-boekwurm-establishes-homework-centre/",
+        "https://www.schoolandcollegelistings.com/ZA/Polokwane/777595405612024/Bennie-Boekwurm-Pre-school-Polokwane"
+      ]
     },
     {
       "slug": "kurumba-lodge-hospark",

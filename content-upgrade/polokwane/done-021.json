@@ -1,47 +1,65 @@
 {
   "city": "polokwane",
   "chunk": 21,
-  "generated_at": "2026-10-04T20:41:57.128Z",
+  "generated_at": "2026-10-05T11:54:05.308Z",
   "items": [
     {
       "slug": "ufo-savannah-mall-fauna-park",
-      "status": "deferred",
-      "reason": "Store page gives address, phone and showroom copy, but the hours text contradicts itself (Closed Monday with 09:00-18:00). Brand-level copy otherwise; not enough branch-specific content for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.unitedfurnitureoutlets.co.za/storelocator/store/index/id/100/"
+      ]
     },
     {
       "slug": "ok-furniture-paledi-mall-mankweng",
-      "status": "deferred",
-      "reason": "Store locator entry (address, phone) and generic OK Furniture chain pages only. No branch-specific services or background."
+      "status": "researched",
+      "sources": [
+        "https://www.okfurniture.co.za/mankweng-paledi-mall"
+      ]
     },
     {
       "slug": "old-khaki-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Mall of the North directory line only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "polokwane-place-hospark",
-      "status": "deferred",
-      "reason": "Business site shows only a coming-soon banner. Other results are general Polokwane travel pages, not this business."
+      "status": "researched",
+      "sources": [
+        "https://www.booking.com/hotel/za/polokwane-place.html"
+      ]
     },
     {
       "slug": "rocotta-brick-centre-dalmada",
       "status": "deferred",
-      "reason": "Business site did not resolve. Search results were unrelated (an unrelated software product)."
+      "reason": "Deeper research pass found no independent source for current products, address or trading status beyond the business's own unreachable domain; search results remained unrelated. Held for owner verification rather than publishing from address and category alone."
     },
     {
       "slug": "sentech-eduan-park",
-      "status": "deferred",
-      "reason": "Company-wide corporate pages (national broadcaster services) only. Nothing specific to the Eduan Park site."
+      "status": "researched",
+      "sources": [
+        "https://www.sentech.co.za",
+        "https://www.brabys.com/za/limpopo/polokwane/eduan-park/signals-warning/sentech",
+        "https://www.sayellow.com/south-africa/sentech-offices-in-polokwane"
+      ]
     },
     {
       "slug": "stewarts-lloyds-nirvana",
-      "status": "deferred",
-      "reason": "ISF members-directory entry and national company overview only. Branch-level facts not found."
+      "status": "researched",
+      "sources": [
+        "https://www.stewartsandlloyds.co.za/stewarts-lloyds-polokwane/",
+        "https://isf.co.za/listing/stewards-lloyds-trading-polokwane/",
+        "https://www.stewartsandlloyds.co.za/hardware-2/"
+      ]
     },
     {
       "slug": "studio-88-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Mall of the North directory line only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "tax-saviour-polokwane-central",
@@ -59,63 +77,83 @@
     },
     {
       "slug": "auto-electrical-aircon-specialist-superbia",
-      "status": "deferred",
-      "reason": "Facebook page gives a tagline and a follower count only. Yep and search results were empty or unrelated."
+      "status": "researched",
+      "sources": [
+        "https://www.yep.co.za/biz/store/iyp/10210313_3",
+        "https://www.facebook.com/p/Auto-Electrical-Aircon-Specialists-61576998676187/"
+      ]
     },
     {
       "slug": "baby-city-bendor",
-      "status": "deferred",
-      "reason": "Chain-wide Baby City and Dis-Chem pages only (product categories, loyalty programme). No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://www.babycity.co.za",
+        "https://www.babycity.co.za/baby-city-mall-of-the-north"
+      ]
     },
     {
       "slug": "bargain-books-savannah-mall-fauna-park",
-      "status": "deferred",
-      "reason": "Infoisinfo listing gives category and shop number only. Brabys-style directories were blocked. Not enough for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://polokwane.infoisinfo.co.za/card/bargain-books/209521",
+        "https://bargainbooks.co.za/about"
+      ]
     },
     {
       "slug": "bearings-international-ladanna",
       "status": "deferred",
-      "reason": "National company website (products, industries, history). No Polokwane or Ladanna branch facts found."
+      "reason": "Deeper research pass found only the national Hudaco/Bearings International corporate site (products, industries, history); no Polokwane or Ladanna branch-specific facts (address confirmation, branch services, staff) were found. Held for owner verification."
     },
     {
       "slug": "blesbok-inn-fauna-park",
-      "status": "deferred",
-      "reason": "LekkeSlaap listing gives capacity, check-in times and address only. The description is one short sentence."
+      "status": "researched",
+      "sources": [
+        "https://www.lekkeslaap.co.za/accommodation/blesbok-inn"
+      ]
     },
     {
       "slug": "bradlows-mankweng",
       "status": "deferred",
-      "reason": "Chain store page gives address, hours and phone, plus chain-wide furniture copy. Not enough branch-specific content."
+      "reason": "Deeper research pass found an address mismatch: Bradlows' own store page gives Shop 28, Twin City Shopping Centre, Main Road, Mankweng (another current retail listing gives Shop 25 at the same centre), neither of which matches the Paledi Mall address on file. Held for an address check before publishing."
     },
     {
       "slug": "clicks-limpopo-mall-polokwane-central",
       "status": "deferred",
-      "reason": "Chain store-details page with navigation text only. No branch-specific facts."
+      "reason": "OVERRIDE of the orchestrator's PUBLISH call: the distinguishing branch-specific fact (a Department of Health CCMDD medicine-pick-up listing for this pharmacy) sits only on a source outside this chunk's allowed research/existing-source set, so it can't be cited. The allowed Clicks store page and Tiendeo listing give only the branch address and chain-wide navigation text (ClubCard, Health Hub, Beauty Hub, dispensary mention) — address-and-category level, not branch-specific. Held rather than publish from that alone."
     },
     {
       "slug": "freedom-of-movement-bendor",
-      "status": "deferred",
-      "reason": "Mall of the North directory line only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/",
+        "https://www.freedomofmovement.co.za/pages/fom-mall-of-the-north"
+      ]
     },
     {
       "slug": "galitos-ivy-park-ivy-park",
-      "status": "deferred",
-      "reason": "Chain branch page with a generic flame-grilled chicken pitch and opening time. No branch-specific services or background."
+      "status": "researched",
+      "sources": [
+        "https://localpages.galitos.co.za/chicken-restaurant-polokwane-ivy-park",
+        "https://www.sayellow.com/view/south-africa/galitos-ivy-park-in-polokwane"
+      ]
     },
     {
       "slug": "gizaras-carwash-cleaning-services-polokwane-central",
       "status": "deferred",
-      "reason": "Cylex directory entry (address, phone, opening hours, service categories) only. No description of the business."
+      "reason": "Deeper research pass found only a Cylex directory entry (address, phone, opening hours, service categories); no independent confirmation of the claimed 20-year history or multiple-branch footprint was found. Held for owner verification."
     },
     {
       "slug": "glass-doctor-superbia",
       "status": "deferred",
-      "reason": "Brand homepage gives a short service pitch (windscreen replacement, mobile call-outs). Not enough Polokwane-specific material for 100 words."
+      "reason": "Deeper research pass found only the national Glass Doctor brand site (windscreen replacement, mobile call-outs); no Superbia-branch-specific facts or current trading status were found. Held for owner verification."
     },
     {
       "slug": "grace-terraces-guest-house-flora-park",
-      "status": "deferred",
-      "reason": "Only a third-party booking page with currency and language menus. The business site did not resolve."
+      "status": "researched",
+      "sources": [
+        "https://thegraceterraces.co.za/",
+        "https://www.hotel.com.au/polokwane/the-grace-terraces-guesthouse.htm"
+      ]
     },
     {
       "slug": "image-travel-and-tours-polokwane-central",
@@ -127,7 +165,7 @@
     {
       "slug": "jaggertech-industrial-supplies-hospark",
       "status": "deferred",
-      "reason": "Infoisinfo category search page and a founding year only. No description of the business or its products."
+      "reason": "Deeper research pass found only a 2003 founding year and a one-line directory entry (ambient air filtration); no further description of products or services beyond that was found. Held for owner verification."
     },
     {
       "slug": "madulo-guest-house-flora-park",
@@ -138,13 +176,19 @@
     },
     {
       "slug": "markham-seshego",
-      "status": "deferred",
-      "reason": "Tiendeo store listing (address, hours, phone) and generic Markham chain pages only. No branch-specific services."
+      "status": "researched",
+      "sources": [
+        "https://www.tiendeo.co.za/stores/polokwane/markham-shop-seshego-circle-erf-portion-ditlou-str/8848",
+        "https://tfglimited.co.za/our-brands/mens-fashion/"
+      ]
     },
     {
       "slug": "mtn-savannah-mall-fauna-park",
-      "status": "deferred",
-      "reason": "Savannah Mall shop directory entry (phone, shop number) and an MTN site that is blocked by anti-bot protection."
+      "status": "researched",
+      "sources": [
+        "https://www.mtn.co.za/home/coverage/store/mtn-store-savanna-mall",
+        "https://savannahmall.co.za/shop/64/"
+      ]
     },
     {
       "slug": "paint-pot-polokwane-cc-superbia",
@@ -155,8 +199,12 @@
     },
     {
       "slug": "pest-control-hygiene-and-cleaning-flora-park",
-      "status": "deferred",
-      "reason": "AiYellow directory page with a 25-year claim and a service list only. Not enough for 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "https://www.aiyellow.com/pestcontrolhygieneandcleaning/?lang=it",
+        "https://www.facebook.com/PestControlHygieneandCleaning/",
+        "https://pchcpolokwane.business.site/"
+      ]
     },
     {
       "slug": "polo-guest-house-hospark",
@@ -168,22 +216,29 @@
     {
       "slug": "r-and-g-meat-supplier-dalmada",
       "status": "deferred",
-      "reason": "Facebook page gives a short meat-supply statement, phone and follower count only. Not enough for 100 words."
+      "reason": "Deeper research pass found only a Facebook page with a short meat-supply statement and follower count; no independent confirmation of the claimed Plot 37 address, A-grade meat range or delivery area was found. Held for owner verification."
     },
     {
       "slug": "reclam-polokwane-ladanna",
       "status": "deferred",
-      "reason": "Metal Recyclers Association member-locator entry (contact person only, no description of the business)."
+      "reason": "Deeper research pass found only a Metal Recyclers Association member-locator entry (contact person, no business description); independent evidence for the detailed recycling and garden-waste scope on file was not found. Held for owner verification."
     },
     {
       "slug": "savannah-guest-house-flora-park",
-      "status": "deferred",
-      "reason": "Findmy directory entry reads only 'Guest House'. No description found."
+      "status": "researched",
+      "sources": [
+        "https://www.booking.com/hotel/za/savannah-guest-house.html",
+        "https://www.africanadvice.com/1046188/Guest_Houses/Limpopo/Savannah_Guest_House/"
+      ]
     },
     {
       "slug": "sea-water-boutique-lodge-mankweng",
-      "status": "deferred",
-      "reason": "Business site gives address, phone and room photos only. Its About page is about an unrelated person, so no usable business description was found."
+      "status": "researched",
+      "sources": [
+        "https://www.seawaterlodge.co.za/",
+        "https://www.seawaterlodge.co.za/about-us",
+        "https://www.tripadvisor.com/Hotel_Review-g12880261-d23800049-Reviews-Sea_Water_Boutique_Lodge-Mankweng_Limpopo_Province.html"
+      ]
     },
     {
       "slug": "splash-jump-zone-polokwane-dalmada",
@@ -195,7 +250,7 @@
     {
       "slug": "steers-total-fauna-park-fauna-park",
       "status": "deferred",
-      "reason": "Steers branch page is mostly chain-wide copy (history, flame-grilled menu). Branch facts are limited to opening hours and phone."
+      "reason": "Deeper research pass confirmed the branch at TotalEnergies Fauna Park (address, phone, hours) but found only chain-wide Steers copy beyond that; no Fauna Park-specific detail was found. Held for owner verification."
     },
     {
       "slug": "turbo-tyres-point-s-polokwane-central",
@@ -214,12 +269,12 @@
     {
       "slug": "vertex-industries-bendor",
       "status": "deferred",
-      "reason": "Directory listing gives address and contact details only. Vertex Drills contact page and product menu list rig models with no descriptive text."
+      "reason": "OVERRIDE of the orchestrator's PUBLISH call: the distinguishing borehole-drilling-services description sits only on a source outside this chunk's allowed research/existing-source set, so it can't be cited. The allowed sources (a directory stub and the Vertex Drills contact page) give only address, phone and a bare rig-model menu, not descriptive sentences, and writing a rig-manufacturing description from that menu would contradict the narrower scope the research intended for this listing. Held rather than publish either framing without real sourced content."
     },
     {
       "slug": "alert-steel-polokwane-superbia",
       "status": "deferred",
-      "reason": "Business domain is a parked-domain page with no content about the company."
+      "reason": "Deeper research pass confirmed the business domain is now a parked-domain page with no company content; the strongest available records are older historical corporate documents, with no recent source confirming current trading at the Superbia address. Held for owner verification."
     },
     {
       "slug": "ambiance-restaurant-polokwane-central",
@@ -231,7 +286,7 @@
     {
       "slug": "auto-magic-superbia",
       "status": "deferred",
-      "reason": "Franchise network homepage (over 125 franchises nationwide, customer care, repair process) with no branch-specific facts for Superbia."
+      "reason": "Deeper research pass found only the national Auto Magic franchise site (125+ franchises, repair process, customer care); no Superbia-branch-specific address confirmation or service detail was found. Held for owner verification."
     },
     {
       "slug": "bakone-malapa-open-air-museum-chuenespoort",
@@ -249,23 +304,32 @@
     },
     {
       "slug": "biddulphs-international-eduan-park",
-      "status": "deferred",
-      "reason": "National removals company website (services list, 13 branches nationally). No Eduan Park branch facts."
+      "status": "researched",
+      "sources": [
+        "https://www.biddulphs.co.za/branches/polokwane",
+        "https://www.biddulphs.co.za"
+      ]
     },
     {
       "slug": "buco-ga-thoka-mankweng",
-      "status": "deferred",
-      "reason": "JoJo distributor directory page with address and phone only. The product copy is JoJo-wide."
+      "status": "researched",
+      "sources": [
+        "https://thebuildingco.com/store/buco-ga-thoka/",
+        "https://www.jojo.co.za/distributor/buco-ga-toka/",
+        "https://www.citizen.co.za/review-online/news-headlines/local-news/2022/11/24/first-birthday-celebrations-for-buco-hardware-ga-thoka/"
+      ]
     },
     {
       "slug": "cashbuild-madiba-park-seshego",
-      "status": "deferred",
-      "reason": "Cashbuild store page gives address, trading hours and chain-wide product copy. Not enough branch-specific content."
+      "status": "researched",
+      "sources": [
+        "https://stores.cashbuild.co.za/za/limpopo/seshego/cnr-nelson-mandela-&-madiba-park-crossing"
+      ]
     },
     {
       "slug": "cofi-fauna-park",
       "status": "deferred",
-      "reason": "Near-place directory entry (address, phone, hours) and a single review line. No description of the business."
+      "reason": "Deeper research pass found only a directory entry (address, phone, hours) and customer review snippets; no description of the menu or restaurant concept from an independent source was found. Held for owner verification."
     },
     {
       "slug": "debbie-mouton-jewellers-fauna-park",
@@ -277,7 +341,7 @@
     {
       "slug": "dis-chem-mall-of-the-north-bendor",
       "status": "deferred",
-      "reason": "Mall of the North directory line only. Chain-level pharmacy facts not found for this branch."
+      "reason": "OVERRIDE of the orchestrator's PUBLISH call: the distinguishing fact (a Department of Health/GEMS pharmacy-network listing identifying this branch specifically as 'Dis-Chem Polokwane North Pharmacy') sits only on a source outside this chunk's allowed research/existing-source set, so it can't be cited. The allowed Mall of the North directory line and Dis-Chem's own corporate 'about' page give only the branch's shop number and chain-wide content, same as the original deferral. Held rather than publish from that alone."
     }
   ]
 }

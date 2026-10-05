@@ -1,0 +1,281 @@
+{
+  "city": "capetown",
+  "chunk": 35,
+  "generated_at": "2026-10-05T05:32:47.859Z",
+  "items": [
+    {
+      "slug": "totalsports-the-junxion-mall-philippi",
+      "status": "deferred",
+      "reason": "Only the Jamii directory profile and the 2 short lines about the branch (partner brands Nike, adidas, Asics, Puma; premier sporting goods destination) were found. The Junxion Mall page and the Totalsports store page were not usable, so branch-specific facts cannot carry 100 words. Chain-wide facts alone are not allowed."
+    },
+    {
+      "slug": "vida-e-caffe-sitari-croydon",
+      "status": "deferred",
+      "reason": "Wanderlog gives a generic chain-style description and places the cafe in Somerset West, not Croydon. vymaps returned 404. No Sitari-specific facts beyond a few generic review lines."
+    },
+    {
+      "slug": "walmer-estate-primary-school-walmer-estate",
+      "status": "deferred",
+      "reason": "Schools directory pages only: public primary, Quintile 5 fee-paying, and general admissions and uniform boilerplate. No school-specific programmes or history to support 100 words without padding."
+    },
+    {
+      "slug": "wellness-warehouse-steenberg-village-tokai",
+      "status": "deferred",
+      "reason": "The Fresha page is a generic salon directory; its services and reviews belong to other venues. The Constantia Valley and my-catalogue pages did not return usable store content for this branch."
+    },
+    {
+      "slug": "woodlands-secondary-school-woodlands",
+      "status": "deferred",
+      "reason": "School register page gives only identifiers, learner and teacher numbers, quintile and fee status. No programmes, history or facilities could be sourced to make 100 real words."
+    },
+    {
+      "slug": "woolworths-food-macassar",
+      "status": "deferred",
+      "reason": "Only africabz and sayellow directory entries for Engen False Bay 1 Stop (N2, Macassar) were found, with one review mentioning Woolies food. Chain-level Woolworths facts alone are not allowed, and no branch-specific content was found."
+    },
+    {
+      "slug": "zaika-tandoor-crawford",
+      "status": "deferred",
+      "reason": "Eat Out and Yep pages returned only site navigation and news headlines. The directory sources were blocked by anti-bot checks. Nothing about the restaurant itself was found."
+    },
+    {
+      "slug": "1890-house-sushi-grill-observatory",
+      "status": "deferred",
+      "reason": "Only the africabz directory entry (address, categories, hours) and user reviews were usable. Tripadvisor was blocked and the business website 1890housesushi.co.za was not fetched. Review quotes alone do not make an honest 100-word description."
+    },
+    {
+      "slug": "addis-in-cape-cape-town-cbd",
+      "status": "deferred",
+      "reason": "The business website timed out, and the only other sources were generic Western Cape accommodation directory pages. Nothing specific to this property was found."
+    },
+    {
+      "slug": "alta-bay-higgovale",
+      "status": "deferred",
+      "reason": "HotelPlanner page gives only star rating, check-in and check-out times, room types and generic booking-site text. Not enough property-specific content for 100 real words."
+    },
+    {
+      "slug": "bargain-books-somerset-west",
+      "status": "deferred",
+      "reason": "Only the Waterstone Village mall directory and trading hours were found. The shop listing for Bargain Books at Shop 28 contains only the name and phone number, and the chain-wide and mall-level facts alone are not allowed."
+    },
+    {
+      "slug": "bolton-shoes-elsies-river",
+      "status": "deferred",
+      "reason": "The boltonshoes.co.za site gives chain-wide facts (brand since 1859, departments, delivery terms) and a head-office style address on Malherbe Street. No store-specific facts for this Elsies River branch were found."
+    },
+    {
+      "slug": "bootlegger-xs-salt-river-salt-river",
+      "status": "deferred",
+      "reason": "Bootlegger pages are about the chain (120-plus cafes, menus, app). The XS Salt River branch itself was not found; the ourcafes page timed out and TripAdvisor was blocked. Chain-wide facts alone are not allowed."
+    },
+    {
+      "slug": "brick-lane-eatery-century-city",
+      "status": "deferred",
+      "reason": "The business website timed out. The only page was an Eat Out news page with site navigation and headlines, with no content about the restaurant."
+    },
+    {
+      "slug": "cape-care-pharmacy-parklands",
+      "status": "deferred",
+      "reason": "The business website did not resolve (DNS error). Search results were unrelated pages about Cape Town and outdoor shops."
+    },
+    {
+      "slug": "cape-paradise-lodge-and-apartments-higgovale",
+      "status": "deferred",
+      "reason": "The business website timed out. Search results were unrelated Cape Town and outdoor-retail pages, with no lodge-specific content."
+    },
+    {
+      "slug": "cape-town-appliances-montague-gardens",
+      "status": "researched",
+      "sources": [
+        "https://capetownappliances.co.za"
+      ]
+    },
+    {
+      "slug": "college-of-cape-town-thornton-campus-thornton",
+      "status": "deferred",
+      "reason": "Sources were a Tanzanian jobs and tenders site (mabumbe.com) and TVET college news about Gauteng, not the Thornton campus. The college's own site returned 404. Nothing about this campus was found."
+    },
+    {
+      "slug": "colour-and-copy-solutions-rondebosch",
+      "status": "researched",
+      "sources": [
+        "https://colourandcopy.com/services-offered/",
+        "https://colourandcopy.com/contact-us/"
+      ]
+    },
+    {
+      "slug": "compass-house-bantry-bay",
+      "status": "researched",
+      "sources": [
+        "https://www.sa-venues.com/visit/compasshouse/"
+      ]
+    },
+    {
+      "slug": "copper-club-eatery-newlands",
+      "status": "deferred",
+      "reason": "The only source was an Eat Out news page with site navigation and headlines. The business website was not in the research and no restaurant-specific content was found."
+    },
+    {
+      "slug": "curate-bantry-bay",
+      "status": "deferred",
+      "reason": "Only an Inside Guide article about Ellerman House restaurants was found. It covers OneEighty and Curate together, and the Ellerman House site was not fetched, so a Curate-only description would be unsupported."
+    },
+    {
+      "slug": "de-kelder-restaurant-winery-plattekloof",
+      "status": "deferred",
+      "reason": "The own site gives two locations, event packages for celebrations and corporate events, and generic marketing copy. No dishes, wine list or specific services were found, so 100 real words cannot be sourced."
+    },
+    {
+      "slug": "dinkel-bakery-tamboerskloof",
+      "status": "deferred",
+      "reason": "Only an africabz directory entry and user reviews (almond croissants, German-style bakery) were found. The own site dinkelbakery.co.za was not fetched, and review quotes alone are not enough for an honest description."
+    },
+    {
+      "slug": "ecco-il-caffe-salt-river",
+      "status": "deferred",
+      "reason": "The business domain eccoilcaffe.co.za now shows a parked page registered by an unrelated IT company (InterDev Systems). No cafe content exists to research."
+    },
+    {
+      "slug": "four-and-twenty-cafe-and-pantry-wynberg",
+      "status": "researched",
+      "sources": [
+        "https://www.capetownmagazine.com/four-and-twenty-cafe"
+      ]
+    },
+    {
+      "slug": "hacienda-coastal-mexican-cape-town-cbd",
+      "status": "deferred",
+      "reason": "The only source was an Eat Out news page with site navigation and headlines. The restaurant's own website and any menu content were not found."
+    },
+    {
+      "slug": "hair-freedom-kenilworth",
+      "status": "deferred",
+      "reason": "Only an africabz directory entry (address, categories, hours) and about 25 user reviews were found. The business's own site was not fetched, and review quotes alone are not enough for a 100-word description."
+    },
+    {
+      "slug": "harbour-house-va-waterfront",
+      "status": "deferred",
+      "reason": "Only the V&A Waterfront venue page was found: seafood with Mediterranean influences, harbour views, Quays District location and a 4.2 Google rating. That is about 70 words, and the restaurant's own site was not fetched."
+    },
+    {
+      "slug": "hard-rock-cafe-cape-town-camps-bay",
+      "status": "researched",
+      "sources": [
+        "https://www.capetownetc.com/dine/rocking-hard-camps-bay/"
+      ]
+    },
+    {
+      "slug": "identity-cape-town-cbd",
+      "status": "deferred",
+      "reason": "Only a Yellosa directory entry for Identity at Golden Acre Shopping Centre (unverified listing, company description only) and a broken store-site fetch were found. No branch-specific facts beyond that."
+    },
+    {
+      "slug": "instruments-south-africa-paarden-eiland",
+      "status": "researched",
+      "sources": [
+        "https://www.yellosa.co.za/company/948174/instruments-south-africaptyltd"
+      ]
+    },
+    {
+      "slug": "iron-horse-relocations-montague-gardens",
+      "status": "researched",
+      "sources": [
+        "https://www.homify.co.za/professionals/5207804/iron-horse-relocations-house-moving-office-furniture-removals-company-cape-town"
+      ]
+    },
+    {
+      "slug": "jackys-chinese-restaurant-bothasig",
+      "status": "deferred",
+      "reason": "Sources were a Cape Town nightlife article that mentions the restaurant only in passing (spicy noodles and dim sum), a restaurant directory blurb and a blocked Dining Out page. The Facebook page was empty. No dishes, history or services were supported well enough for 100 words."
+    },
+    {
+      "slug": "jamaica-me-crazy-woodstock",
+      "status": "deferred",
+      "reason": "The only page found was an online casino affiliate site (jamaicamecrazy.co.za) with casino bonuses and games. It is not a restaurant, so the listing's category or address looks wrong and should be checked before any description is written."
+    },
+    {
+      "slug": "joe-fish-seafood-cafe-pinelands",
+      "status": "deferred",
+      "reason": "Dining Out was blocked by anti-bot checks, joefish.net timed out, and the search results were unrelated YouTube and Zhihu pages. Nothing about the restaurant was found."
+    },
+    {
+      "slug": "kalk-bay-books-kalk-bay",
+      "status": "deferred",
+      "reason": "Only the africabz directory entry and user reviews (a wide selection, strong children's section on nature and science, seating for browsers) were found. The shop's own site kalkbaybooks.co.za was not fetched, so 100 real words cannot be sourced."
+    },
+    {
+      "slug": "kensington-place-higgovale",
+      "status": "researched",
+      "sources": [
+        "https://www.kensingtonplace.co.za/",
+        "https://www.mrandmrssmith.com/luxury-hotels/kensington-place"
+      ]
+    },
+    {
+      "slug": "kloof-street-house-gardens",
+      "status": "researched",
+      "sources": [
+        "https://insideguide.co.za/cape-town/restaurants/kloof-street-house/"
+      ]
+    },
+    {
+      "slug": "kluk-cgdt-cape-town-cbd",
+      "status": "deferred",
+      "reason": "The KLuK CGDT contact page gives addresses, phone lines and departments (boutique, property, marketing). It has no description of the boutique's product, history or services, so 100 real words cannot be sourced."
+    },
+    {
+      "slug": "la-frontiere-zimborders-sea-point",
+      "status": "deferred",
+      "reason": "The Point Mall page describes La Frontiere & Zimborders only as an operational and management vehicle for border-terminal upgrades. The rest of that page is other merchants' hours and menus, and the listing's business consulting category does not match what was found."
+    },
+    {
+      "slug": "le-pickle-de-waterkant",
+      "status": "deferred",
+      "reason": "Only one April 2025 Crush magazine interview was usable (smash burgers, pickles, sauce and buns made from scratch, a chicken smash burger, launched weeks earlier). That is not enough for 100 real words without padding, and the business website was not in the research."
+    },
+    {
+      "slug": "mama-africa-cape-town-cbd",
+      "status": "deferred",
+      "reason": "Only the Mama Africa contact page was found, with address, daily live-entertainment times, parking and booking details. The menu, story and experience pages were not fetched, so no honest 100-word description of the restaurant could be written."
+    },
+    {
+      "slug": "mancelles-locksmiths-thornton",
+      "status": "deferred",
+      "reason": "Only a BikeFinder page was found: motorcycle key cutting, repairs to bike locks and an after-hours call-out. The business website did not resolve, so 80 or so words are supported and not 100."
+    },
+    {
+      "slug": "matrix-warehouse-ysterplaat",
+      "status": "deferred",
+      "reason": "Matrix Warehouse pages are chain-wide (product ranges, store list, online pricing). The store list shows Cape Town, Brooklyn and Mossel Bay but not Ysterplaat, so no branch-specific facts were found."
+    },
+    {
+      "slug": "mediclinic-panorama",
+      "status": "deferred",
+      "reason": "The Mediclinic page was mostly cookie consent text. The only facts were a meta description: a 400-bed multi-disciplinary acute care hospital in Panorama, plus generic navigation. That is not enough for 100 real words."
+    },
+    {
+      "slug": "melkbos-hardware-melkbosstrand",
+      "status": "researched",
+      "sources": [
+        "https://melkboshardware.co.za/"
+      ]
+    },
+    {
+      "slug": "melkbos-kitchen-melkbosstrand",
+      "status": "researched",
+      "sources": [
+        "https://melkboskitchen.co.za/"
+      ]
+    },
+    {
+      "slug": "metro-organics-noordhoek",
+      "status": "deferred",
+      "reason": "The Farm Village page is a short product blurb: locally grown organic greens and vegetables, seasonal fruit and mushrooms sourced in, a farm on Sleepy Hollow Lane practising no-dig farming. About 75 words of real content, with no further sources."
+    },
+    {
+      "slug": "mlv-law-somerset-west",
+      "status": "deferred",
+      "reason": "The firm's site and Facebook page give practice areas (family, commercial, property, conveyancing, labour, wills and trusts, litigation), a Somerset West address and phone. The Facebook page says the firm is 'opening soon'. No firm-specific history or approach was found."
+    }
+  ]
+}

@@ -1,0 +1,304 @@
+{
+  "city": "capetown",
+  "chunk": 2,
+  "generated_at": "2026-10-05T12:24:52.940Z",
+  "items": [
+    {
+      "slug": "nedbank-kenilworth-kenilworth",
+      "status": "deferred",
+      "reason": "Deeper manual research still finds only Nedbank Group-wide pages (online banking, leadership, business banking); the branch's own directory pages remain blocked (cybo 403, callupcontact script shell). No Kenilworth Centre-specific service detail could be verified, so this stays deferred pending direct branch verification."
+    },
+    {
+      "slug": "rossiers-pharmacy-kensington",
+      "status": "deferred",
+      "reason": "Deeper manual research still finds only a Medpages directory stub (address, phone, category 'Pharmacies - Retail'). No reliable source describes this pharmacy's specific services, product range or healthcare offerings, so it stays deferred pending direct verification."
+    },
+    {
+      "slug": "settlers-muslim-butchery-bonteheuwel",
+      "status": "deferred",
+      "reason": "Deeper manual research confirms the business and its halal-butchery category, but turns up no reliable detail on its specific meat range, halal certification or additional services beyond a worldofmeats directory stub. Stays deferred pending direct verification."
+    },
+    {
+      "slug": "sneaker-box-kuils-river",
+      "status": "researched",
+      "sources": [
+        "https://accessparkbellville.co.za/directory/sneaker-box/"
+      ]
+    },
+    {
+      "slug": "st-james-guesthouses-st-james",
+      "status": "researched",
+      "sources": [
+        "https://www.stjamesguesthouses.com/",
+        "https://www.stjamesguesthouses.com/about"
+      ]
+    },
+    {
+      "slug": "strandfontein-gas-and-hardware-strandfontein",
+      "status": "deferred",
+      "reason": "Deeper manual research still finds only the africabz directory listing and customer reviews; reviews mention gas filling and a general product range, but there is no owner-written description, services list or history. Stays deferred pending direct verification."
+    },
+    {
+      "slug": "superspar-belhar-belhar",
+      "status": "researched",
+      "sources": [
+        "https://www.spar.co.za/home/store-view/superspar-belhar-western-cape"
+      ]
+    },
+    {
+      "slug": "superspar-kuilsrivier-kuils-river",
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/superspar-17269",
+        "https://www.thinklocal.co.za/biz/superspar-kuilsriver-kuilsriver"
+      ]
+    },
+    {
+      "slug": "taaz-tours-kenwyn",
+      "status": "deferred",
+      "reason": "Deeper manual research still finds only an Infoisinfo card confirming category and address; the Brabys page remains blocked by a Cloudflare challenge. No detail on the tours or destinations offered could be verified, so it stays deferred."
+    },
+    {
+      "slug": "the-board-shop-kommetjie",
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/the-board-shop-131344",
+        "https://theboardshop.co.za/"
+      ]
+    },
+    {
+      "slug": "woolworths-food-welgemoed",
+      "status": "deferred",
+      "reason": "Reviewed against the research file and this listing's existing sources: beyond confirming this is a Woolworths Foods branch inside Welgemoed Forum (name, address, phone), the only further text available is generic, chain-wide Woolworths marketing copy, which the content-upgrade rules don't allow as the sole basis for a description. No source specific to this branch (e.g. a Welgemoed Forum tenant page) is among the sources on file, so it stays deferred."
+    },
+    {
+      "slug": "woolworths-hout-bay",
+      "status": "deferred",
+      "reason": "Reviewed against the research file and this listing's existing sources: the only material found is an opening-hours aggregator page with unrelated hotel/restaurant links, plus the generic full-range Woolworths description (food, clothing, homeware, beauty) that applies to any full-format store. No fact specific to this Mainstream Mall branch could be confirmed, so it stays deferred rather than publish chain-level text alone."
+    },
+    {
+      "slug": "woolworths-howard-centre-pinelands",
+      "status": "deferred",
+      "reason": "Reviewed against the research file and this listing's existing sources (Tiendeo, My Catalogue): both give only address, phone and trading hours, and the hours look partly unreliable (e.g. a weekday closure that doesn't fit a mall-anchor store). No source matching a dedicated Pinelands directory with store-manager contact details is among the sources on file for this listing, so that claim can't be cited. Stays deferred."
+    },
+    {
+      "slug": "woolworths-meadowridge",
+      "status": "deferred",
+      "reason": "Reviewed against the research file and this listing's existing sources: My Catalogue's store page does tag this branch as a Woolworths Foods location, but beyond that, the address and phone, the only other data is a per-day hours table with implausible entries (e.g. 05:00-22:00 on a Tuesday), which isn't reliable enough to use. That's not enough sourced, non-generic material to carry a full description without padding, so it stays deferred."
+    },
+    {
+      "slug": "woolworths-westgate-mall-westgate",
+      "status": "deferred",
+      "reason": "Deeper manual research still finds only woolworths.co.za chain pages and catalogue search results; the external store-specific pages remained blocked. Beyond being one of the mall's anchor tenants alongside Checkers and Shoprite, no branch-specific department, service or shop/unit number could be verified, so it stays deferred."
+    },
+    {
+      "slug": "41-on-cedar-thornton",
+      "status": "researched",
+      "sources": [
+        "https://www.hotelplanner.com/Hotels/303800/Reservations-41-on-Cedar-Bed-Breakfast-Cape-Town-41-Cedar-Rd-Town-7460"
+      ]
+    },
+    {
+      "slug": "bluefin-restaurant-plattekloof",
+      "status": "deferred",
+      "reason": "Reviewed against the research file and this listing's existing sources (Eat Out, Tripadvisor): Eat Out's page returned only unrelated News24 site navigation, and the Tripadvisor review page remained blocked to the research crawl. No source matching a Plattekloof Village Shopping Centre tenant confirmation is among the sources on file, and the only confirmable detail (an up-market sushi/seafood positioning) is too thin to carry a genuine 100+ word description without padding or repetition, so it stays deferred."
+    },
+    {
+      "slug": "bothasig-pharmacy-bothasig",
+      "status": "deferred",
+      "reason": "Deeper manual research still finds only an africabz directory listing (category, address, one customer review praising service and delivery). No owner-sourced description of specific pharmacy services, clinic facilities or product range could be verified, so it stays deferred."
+    },
+    {
+      "slug": "busy-corner-butchery-grassy-park",
+      "status": "deferred",
+      "reason": "Reviewed against the research file and this listing's existing sources (Hotfrog, Cylex): the only verifiable facts are the retail-butcher category, address, phone and a specific weekly trading schedule. There is no sourced detail on the actual meat or product range (a chicken-and-sausage range is not evidenced in any source on file for this listing), so even with the trading hours this remains too close to address-plus-category to support a genuine, non-padded description. Stays deferred."
+    },
+    {
+      "slug": "cash-converters-ottery",
+      "status": "deferred",
+      "reason": "Deeper manual research still finds only chain-level Cash Converters brand text (buy/sell/loan, CC Tech-certified devices) and a product catalogue that happens to tag some stock as held at the Ottery store. That stock tagging isn't branch-specific description material, so it stays deferred."
+    },
+    {
+      "slug": "clicks-howard-centre-pinelands",
+      "status": "researched",
+      "sources": [
+        "https://clicks.co.za/store/Pinelands/128"
+      ]
+    },
+    {
+      "slug": "dental-wize-brackenfell",
+      "status": "deferred",
+      "reason": "Deeper manual research still finds only a Medpages directory stub (address, phone); the practice category (dentistry) is confirmed but no verified information describes the specific dental treatments offered, so it stays deferred."
+    },
+    {
+      "slug": "dis-chem-wynberg",
+      "status": "researched",
+      "sources": [
+        "https://www.dischem.co.za/wynberg-cape-town"
+      ]
+    },
+    {
+      "slug": "food-concept-maitland-maitland",
+      "status": "researched",
+      "sources": [
+        "https://www.tripadvisor.com/Restaurant_Review-g312659-d23912150-Reviews-Food_concept_Maitland-Cape_Town_Central_Western_Cape.html"
+      ]
+    },
+    {
+      "slug": "knead-bakery-panorama",
+      "status": "researched",
+      "sources": [
+        "https://www.kneadbakery.co.za/knead-panorama",
+        "https://www.panoramahcc.co.za/tenants/knead-bakery/"
+      ]
+    },
+    {
+      "slug": "nedbank-the-junxion-mall-philippi",
+      "status": "deferred",
+      "reason": "Jamii profile gives address, branch code and hours only; its description is generic Nedbank text. Nothing branch-specific. Deeper research pass confirmed the same: only the Jamii profile exists for this branch, still address/branch-code/hours with no services or branch detail."
+    },
+    {
+      "slug": "nedbank-westgate-mall-westgate",
+      "status": "deferred",
+      "reason": "Results are for Nedbank branches in Roodepoort and Westgate Shopping Centre (Gauteng), not this Mitchells Plain branch. The Westgate Mall branch has no facts in the research. Deeper pass also flags a possible branch/ATM mismatch: Westgate Mall's current directory lists a Nedbank ATM rather than clearly confirming a full branch at this unit, so the listing can't be independently confirmed as a full branch either."
+    },
+    {
+      "slug": "pep-kuils-river",
+      "status": "researched",
+      "sources": [
+        "https://www.tiendeo.co.za/stores/cape-town/pep-stores-shop-voortrekker-centre-van-riebeeck-road-kuils-river-cape-town-western-cape/12268"
+      ]
+    },
+    {
+      "slug": "pep-strand",
+      "status": "deferred",
+      "reason": "Only PEP chain-level pages and a generic store finder. Nothing specific to the Strand Square branch. Deeper pass confirmed the same: pepstores.com, pepcell.com and pepkor.co.za are all chain-wide, with no Strand Square facts."
+    },
+    {
+      "slug": "petes-pizzas-kenridge",
+      "status": "researched",
+      "sources": [
+        "https://www.petespizzas.co.za"
+      ]
+    },
+    {
+      "slug": "rocomamas-rondebosch-rondebosch",
+      "status": "researched",
+      "sources": [
+        "https://restaurantguru.com/RocoMamas-Cape-Town-7"
+      ]
+    },
+    {
+      "slug": "shoprite-kuils-river-2",
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/shoprite-kuils-river-58310"
+      ]
+    },
+    {
+      "slug": "specsavers-howard-centre-pinelands",
+      "status": "deferred",
+      "reason": "Centre directory gives hours and a generic optician description. The Specsavers store page was not in the research. Not enough branch facts. Deeper pass still could not retrieve specsavers.co.za/store/howard (crawler timeout), and the Pinelands directory's own entry for this store is truncated before any text is reached (it only yields mall-wide hours and nearby shops). The 'professional optometric services and affordable frames' framing suggested for this listing is standard Specsavers chain copy that would describe any branch, not something specific to Howard Centre, so it is held rather than published as generic text."
+    },
+    {
+      "slug": "tjopshop-parow-centre-parow",
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/tjopshop-416746"
+      ]
+    },
+    {
+      "slug": "vetpoint-clinic-sea-point",
+      "status": "deferred",
+      "reason": "Veterinary.co.za page contained only banner and insurance advert text plus address and phone. The savet and Brabys sources were not readable in research. No clinic services text. A South African Veterinary Council active-facility register entry was suggested as a source confirming this is an active registered clinic, but that register isn't in the research file or this listing's existing_sources, so it can't be cited; without it, only address, phone and category remain. Held."
+    },
+    {
+      "slug": "wavecrest-pharmacy-strandfontein",
+      "status": "deferred",
+      "reason": "Only Link Pharmacy group-level pages (40 years, health articles). Nothing about the Wavecrest Plaza branch itself. Note: Link Pharmacy is also a different brand to the Alpha Pharm franchise this listing names, so that source may not even be the right chain. A REXI supplier-partner listing was suggested as independent confirmation, but no REXI source is in the research file or this listing's existing_sources, so it can't be cited; without it, only address, phone and a franchise name remain. Held."
+    },
+    {
+      "slug": "woolworths-fish-hoek-town-square-fish-hoek",
+      "status": "researched",
+      "sources": [
+        "https://my-catalogue.co.za/stores/fish-hoek/woolworths/town-square-shopping-centre-main-rd"
+      ]
+    },
+    {
+      "slug": "woolworths-plattekloof",
+      "status": "deferred",
+      "reason": "my-catalogue store page gives address, phone and hours only. No branch-specific description. Deeper pass confirmed the same: still only address, phone and trading hours, no services or departments beyond a generic 'Foods' category tag. Held."
+    },
+    {
+      "slug": "woolworths-table-bay-mall-bloubergstrand",
+      "status": "deferred",
+      "reason": "Table Bay Mall centre pages describe the mall, not the Woolworths branch; the store page returned 404. No branch-specific facts. Deeper pass confirmed the mall's own /services page itself 404s; still nothing Woolworths-specific. Held."
+    },
+    {
+      "slug": "woolworths-va-waterfront",
+      "status": "deferred",
+      "reason": "Smeg retailer listing gives only address, phone and email. No branch-specific description. Deeper pass confirmed the only source found is a Smeg appliance-retailer page (listing where Smeg products are sold), not a Woolworths source; still no branch-specific facts. Held."
+    },
+    {
+      "slug": "yusria-cornelius-incorporated-goodwood",
+      "status": "deferred",
+      "reason": "Southafricanlawyer.co.za page returned only a disclaimer. No practice areas or services in the research. Deeper pass confirmed the same: the page is still just the site-wide legal disclaimer, no firm-specific practice areas. Held."
+    },
+    {
+      "slug": "african-bank-eerste-river-eerste-river",
+      "status": "deferred",
+      "reason": "Business directory gives category tags (banking services, credit and debt management, investment), address and phone. Nothing branch-specific. Deeper pass confirmed the same: still only category tags, address and phone from southafricabusinessdirectory.co.za. Held."
+    },
+    {
+      "slug": "beta-kem-pharmacy-mitchells-plain",
+      "status": "deferred",
+      "reason": "Medpages stub gives address and phone only. No pharmacy services or history. A Ringpharm store-locator listing and a GEMS Western Cape pharmacy-network listing were suggested as sources confirming branch hours and network inclusion, but neither URL is in the research file or this listing's existing_sources, so neither can be cited; without them, only address, phone and category remain. Held."
+    },
+    {
+      "slug": "brackenfell-hardware-brackenfell",
+      "status": "researched",
+      "sources": [
+        "https://brackenfellhardware.co.za/",
+        "https://www.facebook.com/Brackenfellhardware/"
+      ]
+    },
+    {
+      "slug": "cashbuild-gugulethu-square-gugulethu",
+      "status": "deferred",
+      "reason": "Cashbuild online shop, catalogues and corporate text are chain-wide. The Gugulethu Square store locator page was not in the research (timed out again on the deeper pass). Without that branch-specific page, only address and generic chain-wide hardware/DIY description remain, which isn't enough to avoid a generic write-up. Held."
+    },
+    {
+      "slug": "clicks-plattekloof-shopping-centre-plattekloof",
+      "status": "deferred",
+      "reason": "Clicks store page gives address and trading hours; the rest is chain-wide product navigation. No branch-specific description. Deeper pass: the store page's actual crawled text is still just generic beauty-product navigation (the trading-hours text promised in its meta description wasn't captured), and africabizinfo gives only address and phone. A shopping-centre tenant listing was suggested as an independent source, but no such URL is in the research file or this listing's existing_sources. Held."
+    },
+    {
+      "slug": "delis-pies-woodstock",
+      "status": "deferred",
+      "reason": "Facebook page and directories give a short wholesale-bakery profile (frozen and baked goods for delis, restaurants and hotels). Not enough material for 100 real words. Deeper pass confirmed the same short Facebook profile; stretching it to 100+ words would mean padding or repeating the same few facts. Held."
+    },
+    {
+      "slug": "footgear-eerste-river",
+      "status": "researched",
+      "sources": [
+        "https://www.footgear.co.za/stores/footgear-eerste-river/",
+        "https://eersteriviercentre.co.za/shop/"
+      ]
+    },
+    {
+      "slug": "anglo-auto-athlone",
+      "status": "researched",
+      "sources": [
+        "https://angloauto.co.za",
+        "https://angloauto.co.za/contact"
+      ]
+    },
+    {
+      "slug": "abacas-electrical-solution-tafelsig",
+      "status": "researched",
+      "sources": [
+        "https://abacassolution.co.za/"
+      ]
+    }
+  ]
+}

@@ -1,17 +1,19 @@
 {
   "city": "polokwane",
   "chunk": 14,
-  "generated_at": "2026-10-04T20:39:39.104Z",
+  "generated_at": "2026-10-05T11:39:32.041Z",
   "items": [
     {
       "slug": "gracious-guest-manor-seshego-zone-4",
       "status": "deferred",
-      "reason": "Research holds only a 2020 Facebook post (located in Seshego Zone 4, 13 km outside Polokwane) and guest questions about nightly rates. The bnbfinder and business.site pages were not captured. Nothing else about the guesthouse could be sourced."
+      "reason": "Final review: the only material found is a 2020 Facebook post placing the guesthouse in Seshego Zone 4, 13km outside Polokwane, plus guest comments asking about nightly rates. No reliable source confirms the current room count, amenities or trading status, so the listing stays deferred pending a stronger source."
     },
     {
       "slug": "identity-savannah-mall-fauna-park",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds a directory entry (hours, in-store shopping, wheelchair entrance), two short customer reviews and the phone number. That is not enough branch-specific material for 100 real words; chain-level facts alone are not allowed."
+      "status": "researched",
+      "sources": [
+        "https://rsa.worldorgs.com/catalog/polokwane/clothing-store/identity-savannah-mall"
+      ]
     },
     {
       "slug": "indwe-risk-services-polokwane-central",
@@ -22,8 +24,11 @@
     },
     {
       "slug": "interspares-polokwane-ladanna",
-      "status": "deferred",
-      "reason": "Research returned only an unrelated music download site for the name search. The business website and the opening-hours page were not captured. Nothing about the motor spares business could be sourced."
+      "status": "researched",
+      "sources": [
+        "https://www.intersparespolokwane.co.za",
+        "https://opening-hours.co.za/02392950/Interspares_Polokwane"
+      ]
     },
     {
       "slug": "iveco-polokwane-nirvana",
@@ -42,17 +47,20 @@
     {
       "slug": "ladannah-hardware-annadale",
       "status": "deferred",
-      "reason": "Research holds only directory pages for the Limpopo Store at 16 Witklip Street (category tags and a phone reveal) and a generic Hardware Stores listing. No product, service or history detail about Ladannah Hardware was captured."
+      "reason": "Final review: only directory pages (category tags, a phone reveal) describe Ladannah Hardware; the business and category are confirmed but no source establishes its current hardware or building-material range, so a non-generic description can't be written yet."
     },
     {
       "slug": "laerskool-pietersburg-oos-moregloed",
       "status": "deferred",
-      "reason": "Research holds only an InfoIsInfo directory card (address, website, school category) and an unrelated training listing. The school's own site and the Brabys page were not captured, so no curriculum or enrolment detail can be verified."
+      "reason": "Final review: only an InfoIsInfo directory card (address, website link, school category) is available; the school's own site and the enrolment figure on file could not be independently verified, so the listing stays deferred."
     },
     {
       "slug": "leda-seshego-training-centre-seshego",
-      "status": "deferred",
-      "reason": "Research holds only a generic FindMy directory page of service categories and language options. Nothing about the LEDA Seshego Training Centre's own courses, hours or history could be sourced."
+      "status": "researched",
+      "sources": [
+        "https://www.lieda.co.za/index.php/leda-seshego-training-centre/",
+        "https://www.brabys.com/za/limpopo/seshego/training-institutes/leda-seshego-training-centre"
+      ]
     },
     {
       "slug": "limpopo-guest-manor-hospark",
@@ -70,33 +78,43 @@
     },
     {
       "slug": "malan-properties-bendor",
-      "status": "deferred",
-      "reason": "Research holds one FindGlocal page of Facebook-style posts (established August 2005, rentals and sales, a current to-let listing) and a generic agency blurb. That is not enough sourced detail about the agency's services for 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "https://www.findglocal.com/ZA/Polokwane/1379730105681772/Malan-Properties"
+      ]
     },
     {
       "slug": "mankweng-hospital-mankweng",
       "status": "deferred",
-      "reason": "Research returned only general Mankweng and Turfloop township pages. The hospital's own services list and contact pages were not captured, so the specialist services in the batch text could not be verified."
+      "reason": "Overriding the PUBLISH call to HOLD: no URL in the research file or this listing's existing_sources (callupcontact.com, brabys.com, health.infogov.co.za) was ever captured with any actual content -- the research file holds only generic Mankweng/Turfloop township background (Wikipedia and similar), none of which describes the hospital itself. The paediatric-surgery/conjoined-twins story given for this call has no matching URL anywhere in the allowed source pool, so it can't be cited without new research, which is out of scope for this pass. Add a specific URL for that story, or any page describing the hospital's own departments or services, to existing_sources and this can be published next pass."
     },
     {
       "slug": "mickey-minnie-pre-school-fauna-park",
-      "status": "deferred",
-      "reason": "Research holds only a Waze map page and unrelated WhatsApp forum results. No page about the pre-school itself was captured."
+      "status": "researched",
+      "sources": [
+        "https://www.waze.com/live-map/directions/za/lp/polokwane/mickey-and-minnie-pre-school",
+        "https://www.thinklocal.co.za/biz/mickey-minnie-pre-school-polokwane"
+      ]
     },
     {
       "slug": "mobifix-bendor",
-      "status": "deferred",
-      "reason": "Research holds the Mall of the North store directory, which lists mobiFix only among other tenants with no description. The mobiFix store and franchise pages were not captured, so no repair or service detail can be sourced."
+      "status": "researched",
+      "sources": [
+        "https://www.mobifixsa.com/stores/polokwane/",
+        "https://www.safranchisebrands.co.za/listing/mobifix/"
+      ]
     },
     {
       "slug": "mr-price-turfloop-plaza-mankweng",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds only the Mr Price corporate about page and its navigation. No Turfloop Plaza branch facts (range, services, hours) were captured, and chain-level facts alone are not allowed."
+      "status": "researched",
+      "sources": [
+        "https://www.mrp.com/en_za/store/mr-price-mankweng-turfloop-plaza"
+      ]
     },
     {
       "slug": "nedbank-savannah-mall-fauna-park",
       "status": "deferred",
-      "reason": "Chain branch. Research holds a Cylex directory entry (address, phone, category) and a generic Nedbank listing. No branch-specific services or description could be sourced beyond that."
+      "reason": "Final review: only a Cylex directory entry (address, phone, category, hours) and a generic chain listing describe this branch; no source confirms branch-specific facilities or services beyond that, so it stays deferred."
     },
     {
       "slug": "new-holland-limpopo-polokwane-magna-via",
@@ -108,28 +126,35 @@
     },
     {
       "slug": "oasis-water-thornhill-estate",
-      "status": "deferred",
-      "reason": "Research holds the Thornhill Shopping Centre store directory, but the captured text ends before the Oasis Water entry, and the other Oasis sources returned no page text. Only chain-level facts are available, which are not allowed on their own."
+      "status": "researched",
+      "sources": [
+        "https://www.thornhillshoppingcentre.co.za/shopping/store-directory.php"
+      ]
     },
     {
       "slug": "pep-home-savannah-mall-fauna-park",
       "status": "deferred",
-      "reason": "Chain branch. Research holds Tiendeo listing pages (address, hours, catalogue dates) and nearby branch links. Branch-specific services or a description could not be sourced; the chain-level homeware facts alone are not allowed."
+      "reason": "Final review: only Tiendeo listing pages (address, hours, catalogue dates) and nearby-branch links describe this store; no source gives branch-specific product or service detail beyond the general PEP Home format, so it stays deferred."
     },
     {
       "slug": "pick-n-pay-cycad-bendor-park",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds only a Yellosa directory entry (address, hours, establishment year) and the chain's company description. No branch-specific range, services or own-site detail was captured."
+      "status": "researched",
+      "sources": [
+        "https://www.yellosa.co.za/company/699459/pick-n-pay-cycad-polokwane"
+      ]
     },
     {
       "slug": "real-fish-and-chips-thornhill-thornhill-estate",
-      "status": "deferred",
-      "reason": "Chain branch. The captured text of the Real Fish and Chips store locator ends before the Thornhill entry, and the menu and delivery pages returned no page text. Branch-specific facts could not be verified."
+      "status": "researched",
+      "sources": [
+        "https://www.ubereats.com/za/store/real-fish-&-chips-thornhill/a-ReT5XyXL2jKRlATWS5TQ",
+        "https://realfishandchips.co.za/our-stores/"
+      ]
     },
     {
       "slug": "realnet-polokwane-welgelegen",
       "status": "deferred",
-      "reason": "Research holds the RealNet national homepage (founding history, franchise territories, featured listings) and cookie-banner text. No Polokwane or Welgelegen office detail was captured, so only chain-level facts are available."
+      "reason": "Final review: RealNet's own official page lists its Polokwane office at 11 Ismini Office Park, Bendor -- not the 95C General Viljoen Street, Welgelegen address on file for this listing -- an address mismatch that can't be resolved from the sources available. This also appears to be the same underlying business as the separately listed Malan Properties (Bendor), which trades under the RealNet Malan Properties name at that Ismini Office Park address; the apparent duplicate is flagged for review rather than merged or closed. Stays deferred."
     },
     {
       "slug": "refinery-plumbing-polokwane-central",
@@ -141,7 +166,7 @@
     {
       "slug": "rgr-services-ladanna",
       "status": "deferred",
-      "reason": "Research returned only grade 12 maths past-paper websites for the name search. The company's own site and directory entries were not captured, so no service detail could be sourced."
+      "reason": "Final review: the name search still returns only unrelated grade 12 maths past-paper sites; no company page or directory entry about RGR Services was found, so it stays deferred."
     },
     {
       "slug": "ricoh-bcm-didgisol-ext91-industrial",
@@ -153,22 +178,22 @@
     {
       "slug": "sasko-bakery-lebowakgomo",
       "status": "deferred",
-      "reason": "Chain branch. Research holds a business-listing page with only the Indarea address and phone, plus the national Sasko homepage. No branch-specific products, hours or history could be sourced; the chain-level facts alone are not allowed."
+      "reason": "Final review: only a business listing with the Indarea address and phone, plus the national Sasko homepage, describe this outlet; the branch's current status and product range couldn't be independently verified, so it stays deferred."
     },
     {
       "slug": "seshego-guesthouse-seshego",
       "status": "deferred",
-      "reason": "Research holds only Booking.com and travel directory search pages for Seshego, which describe the area's hotels rather than this guesthouse. No page about the property itself was captured."
+      "reason": "Final review: only Booking.com and travel-directory search pages for Seshego are available, and they describe other Seshego properties rather than this guesthouse; no page about the property itself was found, so it stays deferred."
     },
     {
       "slug": "seshego-hospital-seshego-zone-1",
       "status": "deferred",
-      "reason": "Research holds only a Medpages organisation page (name, type and location) and a clinic directory entry. No page describing the hospital's services was captured, so the services in the batch text could not be verified."
+      "reason": "Final review: only a Medpages organisation page (name, type, location) and a clinic directory entry describe Seshego Hospital; no source describing its departments or services was found, so it stays deferred."
     },
     {
       "slug": "si-hardware-polokwane-nirvana",
       "status": "deferred",
-      "reason": "Research holds a Facebook post with the Gypsum Street address and phone number, and the JoJo distributor page for the same address. The JoJo page describes JoJo's own product range, not this store's stock, so no store-specific detail could be sourced."
+      "reason": "Final review: a Facebook post confirms the Gypsum Street address and phone, and a JoJo distributor page confirms the JoJo tank distributorship at the same address, but that page describes JoJo's own product range rather than this store's full hardware stock; the JoJo link can't be treated as proof of a wider range, so it stays deferred."
     },
     {
       "slug": "sj-van-der-merwe-technical-high-school-lebowakgomo",
@@ -180,7 +205,7 @@
     {
       "slug": "standard-bank-fauna-park-service-centre-fauna-park",
       "status": "deferred",
-      "reason": "Chain branch. Research holds a near-place directory entry (address, phone, a 24-hour opening listing that looks like a default) and a few old user comments. No branch-specific service detail could be sourced."
+      "reason": "Final review: only a near-place directory entry (address, phone, a 24-hour listing that looks like an aggregator default) and a couple of old user comments describe this branch; no reliable branch-specific service detail was found, so it stays deferred."
     },
     {
       "slug": "strydom-plumbers-polokwane-moregloed",
@@ -199,12 +224,12 @@
     {
       "slug": "therapy-beautique-polokwane-central",
       "status": "deferred",
-      "reason": "Research holds a Fresha page saying the salon is no longer listed there, and a FindMy page whose opening paragraph is a generic beauty-destination blurb. No service list, prices or history for the salon itself could be sourced."
+      "reason": "Final review: Fresha confirms the salon is no longer listed on that platform, and a FindMy page opens with a generic beauty-destination blurb rather than service-specific detail; current trading status is unverified (possibly closed, not confirmed), so the listing stays deferred rather than being treated as a confirmed closure."
     },
     {
       "slug": "tops-game-centre-polokwane-central",
       "status": "deferred",
-      "reason": "Chain branch. Research holds the My Catalogue store page (address, phone, trading hours) and generic SPAR store lists. No branch-specific range, services or description could be sourced beyond those listing facts."
+      "reason": "Final review: only a My Catalogue store page (address, phone, trading hours) and generic SPAR store lists describe this branch; no source gives this exact shop's own range or facilities, so it stays deferred."
     },
     {
       "slug": "torque-airbrake-services-futura",
@@ -215,8 +240,10 @@
     },
     {
       "slug": "vona-lodge-ladanna",
-      "status": "deferred",
-      "reason": "Research holds the BNB Finder listing (name, category, address) and a generic Polokwane travel guide. The guide describes the city, not this lodge, so no sourced detail about the lodge itself could be found."
+      "status": "researched",
+      "sources": [
+        "https://polokwanetourism.co.za/item/vona-lodge/"
+      ]
     },
     {
       "slug": "vonyani-group-of-companies-dalmada",
@@ -227,38 +254,45 @@
     },
     {
       "slug": "westenburg-post-office-westenburg",
-      "status": "deferred",
-      "reason": "Research holds the postal database entry (counters, service type, rented outlet, motor licence service) and a near-place directory page. The opening hours shown are incomplete, and the batch text covers only mail and parcels, so 100 sourced words are not available."
+      "status": "researched",
+      "sources": [
+        "https://postaldb.net/en/south-africa/post-office/view/1483"
+      ]
     },
     {
       "slug": "absa-bank-polokwane-central",
       "status": "deferred",
-      "reason": "Chain branch. Research holds a Foursquare login page, a Tiendeo listing (address, phone, nearby stores) and generic Absa corporate text. No branch-specific services or detail beyond the address and phone could be sourced."
+      "reason": "Final review: only a Foursquare login page, a Tiendeo listing (address, phone, nearby stores) and generic Absa corporate text describe this branch; no source confirms this branch's own facilities or services, and generic Absa corporate content can't stand in for them, so it stays deferred."
     },
     {
       "slug": "ackermans-seshego-circle-seshego",
       "status": "deferred",
-      "reason": "Chain branch. Research holds the My Catalogue store listing (address, phone, trading hours) and a list of other Ackermans stores. No branch-specific range or description could be sourced; the chain-level facts alone are not allowed."
+      "reason": "Final review: only a My Catalogue store listing (address, phone, trading hours) and a list of other Ackermans branches describe this store; no source gives this branch's own stock range beyond the chain format, so it stays deferred."
     },
     {
       "slug": "battery-centre-thornhill-thornhill-estate",
-      "status": "deferred",
-      "reason": "Research holds the First Battery store page (address, delivery yes, no call-outs, hours) and a Facebook page with the same details. Those facts alone are too thin for 100 sourced words; the battery range is not verified."
+      "status": "researched",
+      "sources": [
+        "https://www.battery.co.za/store/first-battery-centre-thornhill/",
+        "https://www.facebook.com/BatteryCentreThornhill/"
+      ]
     },
     {
       "slug": "body-life-bendor-bendor-park",
       "status": "deferred",
-      "reason": "Research holds only a Medpages organisation page for Bodylife Gym Bendor Park (category and featured practitioners, which are not named). No page describing the gym or biokinetics services was captured."
+      "reason": "Overriding the PUBLISH call to HOLD: the only source available for this slug is a Medpages organisation page giving just the name (Bodylife Gym - Bendor Park), category (Biokinetics) and suburb -- address and category alone, which this project's rules say is never enough to publish on. The specific hours and the 'own official website' citation given for this call aren't backed by any URL in content-upgrade/research/polokwane/chunk-014.json or this listing's existing_sources (medpages.info, cybo.com, findmy.co.za); none of those is Body Life's own website, and none was captured with any hours or service detail. If an actual URL for Body Life's own site, or a fuller directory entry for this specific branch, is added to existing_sources, this can be published next pass."
     },
     {
       "slug": "body-life-flora-park",
-      "status": "deferred",
-      "reason": "Research holds one Entrepo directory entry: a short mission line about individual care, the categories (yoga, personal training, gym, Pilates) and the contact details. That is not enough sourced detail for 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "https://www.entrepo.co.za/business-directory/body-life-flora-park/"
+      ]
     },
     {
       "slug": "bradburys-auto-body-ladanna",
       "status": "deferred",
-      "reason": "Research holds one Chery owners-area listing (approved panel beater, address, phone) and generic Facebook search pages. No page about the body shop's services was captured."
+      "reason": "Final review: a Chery owners-area listing confirms Bradbury's as an approved panel beater at this address and phone, but no source describes its actual current services or manufacturer approvals in detail; the panel-beating classification is supported but not enough for a full description, so it stays deferred."
     },
     {
       "slug": "bradlows-moregloed",
@@ -271,12 +305,14 @@
     {
       "slug": "capitec-bank-turfloop-plaza-mankweng",
       "status": "deferred",
-      "reason": "Chain branch. Research holds a user-added directory page (hours, phone, a few anonymous reviews about queues and speed) and a map listing. The reviews are not reliable enough for a description, and no own-branch detail was captured."
+      "reason": "Final review: only a user-added directory page (hours, phone, a few anonymous reviews about queues and service speed) and a map listing describe this branch; the reviews aren't reliable enough to found a description on, and no other branch-specific detail was found, so it stays deferred."
     },
     {
       "slug": "cell-c-savannah-mall-fauna-park",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds Tiendeo store pages (hours, phone, a connector promotion) and a Cylex entry. No branch-specific services or description could be sourced beyond those listing facts."
+      "status": "researched",
+      "sources": [
+        "https://www.tiendeo.co.za/stores/polokwane/cell-c-shop-savannah-mall-corner-grimm-street-and-thabo-mbeki-street-fauna-park/9067"
+      ]
     },
     {
       "slug": "centurion-mag-repairs-annadale",

@@ -1,7 +1,7 @@
 {
   "city": "polokwane",
   "chunk": 18,
-  "generated_at": "2026-10-04T20:55:56.460Z",
+  "generated_at": "2026-10-05T11:40:28.326Z",
   "items": [
     {
       "slug": "alpha-sand-stone-plant-hire-ladanna",
@@ -84,12 +84,14 @@
     {
       "slug": "sasol-turfloop-mankweng",
       "status": "deferred",
-      "reason": "Chain branch. Research holds an Africa Business listing (24-hour hours, categories, phone) and customer reviews that mostly complain about service. No branch-specific own-site detail was captured for the R71 Ga Thoka station."
+      "reason": "Further research still could not confirm this branch's exact services or product offering; the 24-hour and bakery claims in the current text are not independently verified for the R71 Ga Thoka station, only a third-party directory listing and customer reviews about service quality. Held pending verification."
     },
     {
       "slug": "signature-cosmetics-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the Signature Cosmetics national homepage (brand story, product categories) and a Mall of the North directory line. No store-specific detail was captured beyond the address."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/shop/signature-cosmetics/"
+      ]
     },
     {
       "slug": "smile-on-dental-polokwane-central-polokwane-central",
@@ -101,28 +103,36 @@
     },
     {
       "slug": "sportsmans-warehouse-thornhill-thornhill-estate",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the national Sportsmans Warehouse store page (no store details shown) and the company About page. No Thornhill-specific range or service detail was captured."
+      "status": "researched",
+      "sources": [
+        "https://www.sportsmanswarehouse.co.za/store/thornhill-shopping-centre-polokwane/",
+        "https://my-catalogue.co.za/stores/polokwane/sportsmans-warehouse/thornhill-shopping-centre-cnr-veldspaat-munnik-avenue"
+      ]
     },
     {
       "slug": "steers-engen-bendor-bendor",
       "status": "deferred",
-      "reason": "Chain branch. Research holds a Tiendeo listing (opening times, phone, catalogue) and a TripAdvisor entry. The menu detail in the batch text is national chain material, and no own-site branch page was captured."
+      "reason": "Further research still could not confirm this branch's own menu or service details beyond a Tiendeo directory listing and a TripAdvisor entry; the current text's menu detail is national Steers material, not confirmed for this branch. Held pending verification."
     },
     {
       "slug": "supa-roof-lebowakgomo",
-      "status": "deferred",
-      "reason": "Chain branch. The Lebowakgomo store pages returned 404, and the captured national About page describes the chain (2012 start, franchising, IBR and tile profiles). No Lebowakgomo branch detail beyond the batch address is available."
+      "status": "researched",
+      "sources": [
+        "https://suparoof.co.za/lebowakgomo/",
+        "https://shop.suparoof.co.za/storefinder/store/index/id/264/"
+      ]
     },
     {
       "slug": "the-crazy-store-thornhill-thornhill-estate",
       "status": "deferred",
-      "reason": "Chain branch. Research holds a near-place listing (hours, phone) and short customer reviews. No own-site branch page was captured, so the product detail is national chain material."
+      "reason": "Further research confirmed the branch trades at Thornhill Shopping Centre via a near-place directory listing and short customer reviews, but found no reliable branch-specific description of its product range beyond national chain material. Held pending verification."
     },
     {
       "slug": "the-fix-paledi-mall-mankweng",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds a SayYellow listing (address, phone, a brand paragraph) and a Foschini Group brand link. No branch-specific range or service detail beyond the national brand description was captured."
+      "status": "researched",
+      "sources": [
+        "https://www.sayellow.com/view/south-africa/the-fix-paledi-mall-in-mankweng"
+      ]
     },
     {
       "slug": "the-steakshop-welgelegen",
@@ -147,143 +157,174 @@
     },
     {
       "slug": "vodacom-shop-repairs-savannah-mall-fauna-park",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds a Cylex listing (address, phone, opening times) and an Africa Business listing. No branch-specific own-site page was captured, so the service detail is Vodacom national material."
+      "status": "researched",
+      "sources": [
+        "https://savannahmall.co.za/shop/11-14/",
+        "https://www.cylex.net.za/company/vodacom-shop-repairs-savannah-mall-23845226.html"
+      ]
     },
     {
       "slug": "wackys-polokwane-cbd-polokwane-central",
       "status": "deferred",
-      "reason": "Research holds a Mr D Food listing (category, menu tags) and a blocked Uber Eats page. No page about this takeaway's own menu or service was captured."
+      "reason": "Further research still could not independently confirm this takeaway's own menu or specialty beyond delivery-platform listings on Mr D Food and a blocked Uber Eats page; delivery-platform information alone is not a sufficient source for a described menu. Held pending verification."
     },
     {
       "slug": "wonderland-pre-school-foundation-phase-sterpark",
       "status": "deferred",
-      "reason": "Research holds a SchoolParrot review-site listing (address, phone, no reviews) and a Yep page with no content. No school-run page was captured, so the learner and staff numbers in the batch text cannot be verified."
+      "reason": "Further research confirmed the school's existence in Sterpark via a SchoolParrot review-site listing and a blank Yep page, but could not confirm the educational programme, Christian basis, or the learner and staff numbers claimed in the current text. Held pending verification."
     },
     {
       "slug": "woodstuff-superbia",
       "status": "deferred",
-      "reason": "Research holds a polokwane.info directory entry (timber and bathroom categories, contact details, website name) and an empty Yep page. The batch product and service detail is not supported by a captured page of the business."
+      "reason": "Further research confirmed Woodstuff as a timber-related business in Superbia via a polokwane.info directory entry and an empty Yep page, but could not confirm the full product range, services or the 2009 establishment date claimed in the current text. Held pending verification."
     },
     {
       "slug": "zanna-motors-annadale",
       "status": "deferred",
-      "reason": "Research holds an Auto Repair Directory profile with no description and a Brabys listing. The batch text's membership of MIWA and the workshop's services are not supported by a captured source."
+      "reason": "Further research identified Zanna Motors as an automotive business in Annadale via an Auto Repair Directory profile and a Brabys listing, but could not confirm the exact repair and servicing offering or the claimed MIWA membership from any source. Held pending verification."
     },
     {
       "slug": "acdc-express-polokwane-central",
       "status": "deferred",
-      "reason": "Chain branch. Research holds the national ACDC branch locator (Polokwane listed among many branches), with no store-specific detail. Chain-level facts alone are not allowed."
+      "reason": "ACDC's own current official branch locator lists ACDC Express Polokwane at 21 Iran Avenue, Nirvana X1(E), Polokwane, not the Shop 8, Polokwane Lifestyle Centre address in the current text, so the batch address appears to be out of date. Held pending an address correction rather than published against a now-incorrect address."
     },
     {
       "slug": "alzu-feeds-polokwane-industria",
-      "status": "deferred",
-      "reason": "Research holds the Alzufeeds homepage (product categories, branch menu) and the head-office contact page. The Industria branch's own details were not captured, so the batch feed list is not sourced to a branch page."
+      "status": "researched",
+      "sources": [
+        "https://alzufeeds.co.za/branches-2/"
+      ]
     },
     {
       "slug": "bidvest-waltons-thornhill-estate",
       "status": "deferred",
-      "reason": "Chain branch. Research holds a Tiendeo branch page (trading hours, phone, catalogue) and an Africa Business listing. No branch-specific range or service description was captured."
+      "reason": "Further research confirmed the Thornhill Shopping Centre branch via a Tiendeo trading-hours page and an Africa Business listing, but found no branch-specific product or service detail beyond the national Waltons range. Held pending verification."
     },
     {
       "slug": "carrol-boyes-bendor",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the Mall of the North store directory line, a TikTok link and a Carrol Boyes story link that was not captured. No store-specific detail is available."
+      "status": "researched",
+      "sources": [
+        "https://carrolboyes.com/za/our-story",
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "chicken-licken-fly-thru-polokwane-central",
-      "status": "deferred",
-      "reason": "Research holds a restaurant-guide page with aggregated customer review snippets and a Waze map page. No own-site or branch page with the store's own description was captured."
+      "status": "researched",
+      "sources": [
+        "https://restaurantguru.com/Chicken-Licken-Fly-Thru-Polokwane-2",
+        "https://chickenlickenmenu.co.za/chicken-licken-polokwane/"
+      ]
     },
     {
       "slug": "coco-affair-polokwane-central",
-      "status": "deferred",
-      "reason": "Research holds a Yep page with no content, a near-place food listing (address, phone) and a business site link that was not captured. The menu and catering details in the batch text cannot be verified."
+      "status": "researched",
+      "sources": [
+        "https://za.near-place.com/food-nearby-coco-affair-standard-bank-square-49c-schoeman-street-polokwane-central-polokwane",
+        "https://www.yep.co.za/biz/store/coco-affair/132968"
+      ]
     },
     {
       "slug": "college-of-africa-mankweng",
-      "status": "deferred",
-      "reason": "The college's own site confirms only DHET private-college registration and shows bursary notices. The accredited-programme and course claims in the batch text are not confirmed by a captured source, so a description would rest on unverified claims."
+      "status": "researched",
+      "sources": [
+        "https://collegeofafrica.com/about-us.html",
+        "https://collegeofafrica.com/contact.html"
+      ]
     },
     {
       "slug": "eagle-clothing-bendor",
       "status": "deferred",
-      "reason": "Chain branch. Research holds the Mall of the North store directory line, the Eagle Clothing store-listing link and a Facebook post. No branch-specific detail beyond the national brand description was captured."
+      "reason": "Further research confirmed an Eagle Clothing store in Mall of the North via the mall's own directory and the brand's store-listing page, but found no branch-specific detail independent of the national plus-size retailer description. Held pending verification."
     },
     {
       "slug": "eduan-park-cafe-bakery-eduan-park",
       "status": "deferred",
-      "reason": "Research holds only a Yellosa general-business listing with an address and phone and no reviews or description. The bakery and convenience detail in the batch text is not sourced to a captured page."
+      "reason": "Further research still found only a Yellosa general-business listing with an address and phone number and no description or reviews; the bakery and convenience detail in the current text remains unconfirmed by any source. Held pending verification."
     },
     {
       "slug": "freshstop-caltex-ivypark-ivy-park",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds Africa Business and near-place listings (24-hour hours, phone, categories). No branch-specific own-site detail was captured, so the store description is too thin."
+      "status": "researched",
+      "sources": [
+        "https://www.africabizinfo.com/ZA/freshstop-at-caltex-ivypark-015-295-2220",
+        "https://za.near-place.com/freshstop-at-caltex-ivypark-cnr-campbell-marshall-street-lyndhurst-ivy-park"
+      ]
     },
     {
       "slug": "gasoline-alley-superbia",
       "status": "deferred",
-      "reason": "Research holds a Facebook page (one-stop repair and pre-loved cars, address, phone, one review) and a Brabys listing. The page gives too little sourced detail on the services for 100 words without padding."
+      "reason": "Further research confirmed the business as a vehicle repair, service and pre-loved used-car centre in Superbia via its Facebook page, with the address also confirmed via Shell's distributor locator (204 Tagore Street, Polokwane), but the page still does not give enough sourced detail on the tyre and vehicle-service offering to support a full description without padding. Held pending verification."
     },
     {
       "slug": "house-of-plumbing-superbia",
       "status": "deferred",
-      "reason": "Research holds the House of Plumbing homepage, which describes the division of Norcros and national supply since 2008, and a JoJo distributor page. No Superbia branch-specific detail was captured, and group-level facts alone are not allowed."
+      "reason": "Further research confirmed House of Plumbing as a division of Norcros supplying plumbing materials nationally since 2008, and as a JoJo distributor, but found no Superbia branch-specific detail; group-level facts alone are not allowed for a branch description. Held pending verification."
     },
     {
       "slug": "john-craig-limpopo-mall-polokwane-central",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the John Craig store-locator page (other stores listed) and a directory entry. No Limpopo Mall branch detail beyond the address was captured."
+      "status": "researched",
+      "sources": [
+        "https://www.johncraig.co.za/stores/limpopo-mall-john-craig/",
+        "https://www.yellosa.co.za/company/776634/john-craig-limpopo-mall"
+      ]
     },
     {
       "slug": "laduma-hardware-lebowakgomo",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the Laduma group homepage (store count, staff, 1996 start, Mpumalanga and Limpopo footprint) and a World Orgs listing. No Lebowakgomo branch detail beyond the address was captured."
+      "status": "researched",
+      "sources": [
+        "https://ladumahardware.co.za/hardware-stores/lebowakgomo/"
+      ]
     },
     {
       "slug": "lebowa-funeral-parlour-mankweng",
       "status": "deferred",
-      "reason": "Research holds a FindMy category entry, a Yep blank page and a homepage that only shows a chat widget. The burial and catering detail in the batch text cannot be verified from a captured page."
+      "reason": "Further research confirmed Lebowa Funeral Parlour as a funeral services provider near Makanye Mall in Mankweng via a FindMy category entry, but its own homepage only shows a chat widget and could not confirm the full burial, arranging and catering service offering in the current text. Held pending verification."
     },
     {
       "slug": "lebowakgomo-hospital-lebowakgomo",
       "status": "deferred",
-      "reason": "Research holds only directory and medical-listing pages (state hospital category, location). The services in the batch text, such as emergency and maternity care, are not supported by a captured hospital page."
+      "reason": "Further research confirmed Lebowakgomo Hospital as a public district hospital in Chuenespoort via directory and medical-listing pages, but could not confirm its current service departments, such as emergency, maternity or specialist care, from the hospital's own page. Held pending verification."
     },
     {
       "slug": "medleb-private-hospital-lebowakgomo",
       "status": "deferred",
-      "reason": "Research holds a medical-aid network listing (private acute hospital, Lebowakgomo, phone) and two MedPages entries. The orthopaedic, theatre and radiology detail in the batch text is not supported by a captured page of the hospital's own."
+      "reason": "Further research confirmed Medleb Private Hospital as a private acute hospital in Lebowakgomo via a medical-aid network listing and two MedPages entries, but could not confirm the orthopaedic, theatre and radiology detail in the current text from the hospital's own page. Held pending verification."
     },
     {
       "slug": "njr-steel-polokwane-superbia",
-      "status": "deferred",
-      "reason": "Research returned only an unrelated music site and an empty directory page for the name search. The batch detail on steel products and services is not supported by a captured page."
+      "status": "researched",
+      "sources": [
+        "https://www.njrsteel.com/polokwane"
+      ]
     },
     {
       "slug": "oak-tree-flower-market-polokwane-central",
       "status": "deferred",
-      "reason": "Research holds a Facebook page (flower shop categories, wreaths, events, delivery and collection, one review) and a florist directory. The page gives too little sourced detail for 100 words without padding."
+      "reason": "Further research confirmed Oak Tree Flower Market as a florist on Schoeman Street via its Facebook page (flower shop categories, wreaths, events, delivery and collection) and a florist directory, but the page still gives too little sourced detail to support a full description without padding; the current delivery, wreath and event-flower claims remain unconfirmed in detail. Held pending verification."
     },
     {
       "slug": "p-and-l-hardware-mankweng",
       "status": "deferred",
-      "reason": "Research returned only unrelated alphabet and social-media pages for the name search. The batch detail on delivery, glass cutting and plan costing is not supported by a captured source."
+      "reason": "Further research still returned no usable page about this business; searches for the name returned only unrelated general-topic pages, and the store's own page could not be reached. The current text's claims about delivery, glass cutting and plan costing remain unsupported by any source. Held pending verification."
     },
     {
       "slug": "pietersburg-motor-centre-polokwane-central",
-      "status": "deferred",
-      "reason": "Research holds the dealer homepage with a few used-stock listings and a number of directory profiles. The stock listings do not describe the dealership itself, and the batch's trading history is not confirmed by a captured page."
+      "status": "researched",
+      "sources": [
+        "https://www.pietersburgmotorcentre.co.za/"
+      ]
     },
     {
       "slug": "pizzalitos-tropicana-annadale",
       "status": "deferred",
-      "reason": "Research holds a restaurant-guide page marked as possibly permanently closed, with review snippets, and an Uber Eats listing. Current trading cannot be confirmed, so no description can be written."
+      "reason": "Further research still found a restaurant-guide listing marking the business as possibly permanently closed, with review snippets, and an Uber Eats listing, but found no confirmation either way of current trading. Held pending verification rather than treated as a confirmed closure."
     },
     {
       "slug": "plumblink-superbia",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the SayYellow listing (address, phone, national supplier claim) and a directory link. No own-site branch detail was captured, so chain-level facts alone are not allowed."
+      "status": "researched",
+      "sources": [
+        "https://www.plumblink.co.za/store/plumblink-polokwane"
+      ]
     }
   ]
 }

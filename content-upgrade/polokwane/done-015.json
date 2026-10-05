@@ -1,22 +1,27 @@
 {
   "city": "polokwane",
   "chunk": 15,
-  "generated_at": "2026-10-04T20:59:58.464Z",
+  "generated_at": "2026-10-05T11:39:10.030Z",
   "items": [
     {
       "slug": "city-medical-wholesalers-superbia",
-      "status": "deferred",
-      "reason": "Research holds the group's About page (history, mission, four distribution centres including Polokwane, over 20,000 products) and an empty Yep directory shell. Nothing specific to the Superbia branch was captured, so only group-level facts are available."
+      "status": "researched",
+      "sources": [
+        "https://citymedical.co.za/about/"
+      ]
     },
     {
       "slug": "colon-health-polokwane-sterpark",
-      "status": "deferred",
-      "reason": "Research holds only a Fresha listing (address, opening times, spa category) and a directory page. The clinic's own site and the 2022 news piece were not captured, so no service detail can be sourced."
+      "status": "researched",
+      "sources": [
+        "https://www.colonhealthpolokwane.com/",
+        "https://www.citizen.co.za/review-online/news-headlines/local-news/2022/11/14/inspired-by-her-daughter-nurse-opens-a-colon-clinic/"
+      ]
     },
     {
       "slug": "cure-o-pharm-polokwane-central",
       "status": "deferred",
-      "reason": "Research holds only a national directory listing (address, phone, website) and a directory category. No pharmacy services or own-site detail were captured."
+      "reason": "OVERRIDE of PUBLISH call: the Department of Health CCMDD pick-up point listing cited as the anchor fact is not in content-upgrade/research/polokwane/chunk-015.json or this listing's existing_sources (only nationalbusinesspages.co.za, thelocalchoice.co.za and opening-hours.co.za are allowed, and only nationalbusinesspages.co.za was actually captured, with thelocalchoice.co.za timing out). The captured directory text repeats only the pharmacy's tagline and Local Choice Group affiliation already in the current description, which is not enough distinct, sourced detail for a non-generic 100+ word description. Holding rather than publishing from address and category alone."
     },
     {
       "slug": "decoratz-polokwane-central",
@@ -35,32 +40,35 @@
     {
       "slug": "dr-vh-meintjes-annadale",
       "status": "deferred",
-      "reason": "Research holds only a Medpages practitioner page (name, GP category, Annadale location) and directory listings. The services in the batch text, such as chronic disease and women's health, were not captured, and the practitioner cannot be named."
+      "reason": "OVERRIDE of PUBLISH call: the only allowed source for this listing (medpages.info) gives nothing beyond the practitioner's category (General Practitioner) and suburb (Annadale) -- the address-plus-category combination the writing rules say is not enough to publish on its own, and the practitioner cannot be named. The other existing_sources (brabys.com, za.polomap.com, recomed.co.za) were not captured and have no content in the research file to draw from. Holding rather than publishing a generic category-only description."
     },
     {
       "slug": "f-n-b-insurance-brokers-bendor",
       "status": "deferred",
-      "reason": "Chain branch. Research holds the Mall of the North FNB page (generic bank text, phone and hours) and unrelated results. No insurance-specific branch detail was captured."
+      "reason": "UPDATED per orchestrator note: a current business listing gives this brokerage's shop as Unit 106, Mall of the North, Bendor Park -- not the Suite 103 address on file -- an unresolved shop-number mismatch. Research otherwise holds only the Mall of the North FNB bank page (a different FNB unit, Shop L44, with generic bank text) and unrelated results. Holding until the address is reconciled."
     },
     {
       "slug": "fashion-crimp-house-nirvana",
       "status": "deferred",
-      "reason": "Research holds only a NearFinder directory card (address, phone, category) and related directory listings. The company's own site was not captured, so no sourced detail about its curtain and blind work exists."
+      "reason": "Category (curtain, blind and upholstery manufacturing) and the Nirvana address are confirmed via directory listings (NearFinder, Brabys, Thinklocal), but the company's own site was not captured, so no sourced detail about its specific curtain and blind manufacturing, installation or stock exists beyond what directories already state. Holding rather than publishing unverified service detail."
     },
     {
       "slug": "fnb-polokwane-cbd-polokwane-central",
       "status": "deferred",
-      "reason": "Chain branch. Research returned only national FNB pages and social media results. No Polokwane CBD branch detail was captured."
+      "reason": "Research returned only generic national FNB pages and unrelated social-media/letter-F results; no Polokwane CBD branch-specific facilities, services or hours could be confirmed. Holding rather than publishing generic chain-level content as branch detail."
     },
     {
       "slug": "hm-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds only the Mall of the North store directory line and the H&M store-locator link. No branch-specific detail was captured; chain-level facts alone are not allowed."
+      "status": "researched",
+      "sources": [
+        "https://www.hm.com/za/store-locator/south-africa/polokwane/mall-of-the-north/",
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "htm-driving-school-polokwane-central",
       "status": "deferred",
-      "reason": "Research returned only generic Facebook login and app pages. The school's own site and services page were not captured, so no sourced detail about its lessons exists."
+      "reason": "UPDATED per orchestrator note: the school's own site and contact page give two different street numbers on Hans van Rensburg Street for its office (76 vs 31), an unresolved address conflict. Research otherwise returned only generic Facebook login and app pages, with no sourced detail about its lessons. Holding until the correct address is confirmed."
     },
     {
       "slug": "ijuici-market-street-factory-shop-polokwane-central",
@@ -71,43 +79,62 @@
     },
     {
       "slug": "istore-bendor",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds only the Mall of the North directory line and an unrelated listing. The iStore store-locator and about pages were not captured, so the Apple reseller details in the batch text cannot be verified."
+      "status": "researched",
+      "sources": [
+        "https://www.istore.co.za/storelocator/istore_mall_of_the_north",
+        "https://www.istore.co.za/about-us",
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "italfurn-furniture-moregloed",
-      "status": "deferred",
-      "reason": "Research holds the Italfurn homepage tagline, a contact page (Palm Centre address, phone, in-store shopping) and a Waze link. The product range is taken from batch text only, which is not enough sourced detail for 100 words."
+      "status": "researched",
+      "sources": [
+        "http://italfurn.co.za/",
+        "http://italfurn.co.za/contact",
+        "https://www.polokwane.info/italfurn/"
+      ]
     },
     {
       "slug": "jacky-mogashoa-attorneys-polokwane-central",
       "status": "deferred",
-      "reason": "Research holds only directory lists of Polokwane attorneys and a business finder entry. The firm's own website was not captured, and the batch text's practice-area detail cannot be verified."
+      "reason": "UPDATED per orchestrator note: directory listings (shopshours.co.za, infoisinfo.co.za, Yep) confirm the firm exists in Polokwane Central, but the firm's own website was not captured and no source verifies the claimed women-run status or the labour-law, deceased-estate, debt-collection or road-accident specialisation. Holding; no attorney will be named even if later researched."
     },
     {
       "slug": "jaguar-land-rover-polokwane-thornhill-estate",
-      "status": "deferred",
-      "reason": "Research holds one Cylex listing (address, phone, dealer category, opening hours) and a generic Land Rover retailer link. The dealership's own service and sales pages were not captured."
+      "status": "researched",
+      "sources": [
+        "https://www.cylex.net.za/company/land-rover-polokwane-23662334.html",
+        "https://retailers.landrover.co.za/polokwane-land-rover/service"
+      ]
     },
     {
       "slug": "jetline-polokwane-checkers-centre-polokwane-central",
-      "status": "deferred",
-      "reason": "Research holds the Jetline store page: address, contact link, full-service printing and specialist work, and an empty services list. That is too little branch-specific material for 100 sourced words."
+      "status": "researched",
+      "sources": [
+        "https://www.jetline.co.za/store/jetline-polokwane"
+      ]
     },
     {
       "slug": "john-craig-paledi-mall-mankweng",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the John Craig store-locator page, which lists other stores, and a generic directory entry. No Paledi Mall branch detail was captured."
+      "status": "researched",
+      "sources": [
+        "https://www.johncraig.co.za/stores/paledi-mall-john-craig/",
+        "https://www.brabys.com/za/limpopo/sovenga/mankweng/clothing-retailers/john-craig"
+      ]
     },
     {
       "slug": "jumbo-cash-carry-polokwane-superbia",
       "status": "deferred",
-      "reason": "Research holds only directory listings (address, phone, cash and carry heading) and an unrelated Eezi directory page. No product, service or own-site detail was captured."
+      "reason": "Business, category (cash and carry) and the Nikkel Street, Superbia location are confirmed via directory listings, but no source gives a current, specific product or department list for this store; the batch text's grocery, household and fresh-produce detail cannot be verified. Holding rather than publishing unverified assortment claims."
     },
     {
       "slug": "kauai-thornhill-thornhill-estate",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds only the national Kauai About pages (franchising, newsletter, app) and no Thornhill branch detail. The menu description in the batch text cannot be verified from the captured sources."
+      "status": "researched",
+      "sources": [
+        "https://kauai.co.za/store/kauai-thornhill-polokwane-virgin-active/",
+        "https://locations.kauai.co.za/HealthyFood-Polokwane-KAUAIVirginActiveThornhillPolokwane"
+      ]
     },
     {
       "slug": "la-fiato-luxury-lodge-dalmada",
@@ -120,7 +147,7 @@
     {
       "slug": "laerskool-ivy-park-ivy-park",
       "status": "deferred",
-      "reason": "Research holds only a Yellosa listing (name, address, school category, no reviews) and a Waze map page. The school's fees, quintile and classification cannot be verified from the captured sources."
+      "reason": "The school and its Smuts Road, Ivy Park address are confirmed via directory and map listings, but no source verifies the claimed Section 21 status, Quintile 5 classification or the roughly R24,000-R36,000 fee range. Holding rather than publishing unverified classification and fee detail."
     },
     {
       "slug": "leda-lebowakgomo-lebowakgomo",
@@ -131,8 +158,10 @@
     },
     {
       "slug": "limdent-auto-body-technologies-nirvana",
-      "status": "deferred",
-      "reason": "Research holds one Ads Online listing with a short panel-beating blurb (fully equipped, Sambra approved, competitive rates) and no own-site page. That is not enough sourced detail for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://adsonlineadvertising.co.za/root/listings/south-africa/limpopo/polokwane/limdent-auto-body-technologies-nirvana-polokwane/"
+      ]
     },
     {
       "slug": "lz-makwela-accountants-polokwane-central",
@@ -151,12 +180,12 @@
     {
       "slug": "maruma-plant-hire-ladanna",
       "status": "deferred",
-      "reason": "Research holds one FindMy listing with a short equipment list and no own-site page. The batch text's construction and earthmoving detail cannot be verified, and the sourced material is well under 100 words."
+      "reason": "Plant-hire category and the Ladanna location are confirmed via directory listings, but no source gives a verifiable, current equipment list for this business; the batch text's forklift, TLB, tipper, crane and lowbed detail cannot be confirmed from the captured sources. Holding rather than publishing an unverified equipment list."
     },
     {
       "slug": "midas-landdros-mare-polokwane-central",
       "status": "deferred",
-      "reason": "Chain branch. Research holds the national Midas About page (franchise scale, distribution centres, part numbers) and no Landdros Mare branch detail beyond the address. Chain-level facts alone are not allowed."
+      "reason": "The Landdros Mare Street address is confirmed via the Midas store-locator and directory listings, but only national Midas franchise-level content (distribution-centre scale, part-number count) was captured; no Landdros Mare branch-specific stock or workshop service detail exists in the research. Holding rather than publishing chain-level facts as branch facts."
     },
     {
       "slug": "millennium-combined-school-seshego",
@@ -182,7 +211,7 @@
     {
       "slug": "monate-construction-hospark",
       "status": "deferred",
-      "reason": "Research returned only unrelated search results for the name, and no company site or directory page about Monate Construction was captured. The batch text's services cannot be verified."
+      "reason": "No reliable source confirming Monate Construction's turnkey residential-construction services was found; research returned only unrelated results for the business name, and the company's own site did not resolve. Holding; the batch text's service claims remain unverified."
     },
     {
       "slug": "nirvana-learning-academy-nirvana",
@@ -194,7 +223,7 @@
     {
       "slug": "noordelike-eiendomme-flora-park",
       "status": "deferred",
-      "reason": "Research returned only unrelated YouTube support pages for the name search. The agency's own site and property portal pages were not captured, so no sourced detail exists."
+      "reason": "No reliable current website or property-portal profile for Noordelike Eiendomme was found; research returned only unrelated results for the agency's name. Holding rather than publishing the batch text's unverified sales and rental claims."
     },
     {
       "slug": "orel-christian-school-dalmada",
@@ -206,12 +235,15 @@
     {
       "slug": "palm-health-medi-centre-moregloed",
       "status": "deferred",
-      "reason": "Research holds only a Medpages page with the clinic category and Polokwane location, and no own-site content was captured. The services in the batch text, such as 4D ultrasound and the 2013 start date, cannot be verified."
+      "reason": "The practice is confirmed as a clinic in Polokwane via a Medpages listing, but no source verifies the claimed women's health, men's health, 4D ultrasound services or 2013 establishment date; the practice's own site did not resolve. Holding rather than publishing unverified service and history claims."
     },
     {
       "slug": "parana-panelbeaters-ladanna",
-      "status": "deferred",
-      "reason": "Research returned only WhatsApp pages for the name search. The panel beater's own site and directory listings were not captured, so no sourced detail about its services exists."
+      "status": "researched",
+      "sources": [
+        "https://www.paranapanelbeaters.co.za",
+        "https://www.thinklocal.co.za/biz/parana-panelbeaters-polokwane"
+      ]
     },
     {
       "slug": "pentagon-college-mankweng",
@@ -231,32 +263,34 @@
     {
       "slug": "pizzalitos-ladanna",
       "status": "deferred",
-      "reason": "Research holds only the Mr D Food delivery platform's generic pages and a Facebook link that returned no text. No page about Pizzalitos itself was captured, so the menu detail cannot be verified."
+      "reason": "Only the Mr D Food delivery platform's generic pages and a Facebook link with no text were captured; no page about Pizzalitos itself confirms its pizza, burger, chicken-wing or breakfast menu. Holding rather than publishing an unverified menu."
     },
     {
       "slug": "pna-cycad-centre-bendor-park",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds an InfoIsInfo directory card (address, stationery and gift categories, website) and a Thinklocal listing. No branch-specific range or own-site detail was captured."
+      "status": "researched",
+      "sources": [
+        "https://polokwane.infoisinfo.co.za/card/p-n-a/285498"
+      ]
     },
     {
       "slug": "proforum-limpopo-accountants-bendor",
       "status": "deferred",
-      "reason": "Research holds only a Yellosa directory entry (address, phone, audit and accounting category) and related directory pages. The founding year and services in the batch text were not captured from a source."
+      "reason": "Location and the accounting/auditing category are confirmed via a Yellosa directory listing, but no source gives the founding year or a specific service list for this practice; the Proforum group's own corporate page was not captured. Holding rather than publishing unverified history and service detail."
     },
     {
       "slug": "renove-aesthetics-wellness-clinic-bendor-park",
       "status": "deferred",
-      "reason": "Research holds a Medpages listing that says its information is being updated, a generic Yep page and a Brabys link. The treatment list in the batch text was not captured from a source."
+      "reason": "The Medpages listing for this clinic explicitly states its information is being updated and gives no treatment detail; a Yep directory page and a Brabys listing add nothing further. Holding rather than publishing the batch text's unverified treatment list."
     },
     {
       "slug": "roof-king-waterproofing-specialists-fauna-park",
       "status": "deferred",
-      "reason": "Research holds an InfoIsInfo directory card (address, waterproofing category) and a Yellosa listing. The company's About page text was empty, so the family-owned and experience claims cannot be verified."
+      "reason": "Waterproofing category and the Fauna Park address are confirmed via directory listings, but the company's own About page returned no usable text, so the family-owned status, years of experience and broader painting services claimed in the batch text cannot be verified. Holding rather than publishing unverified history claims."
     },
     {
       "slug": "sheet-street-savannah-mall-fauna-park",
       "status": "deferred",
-      "reason": "Chain branch. Research holds the Sheet Street store page (address, trading hours, phone) and the national homepage. No branch-specific range or description beyond the store details was captured."
+      "reason": "UPDATED per orchestrator note: the Savannah Mall store and its trading hours are confirmed on Sheet Street's own store page, but no branch-specific product range beyond the national homewares assortment was captured. Holding the description while adding the store's own confirmed trading hours."
     },
     {
       "slug": "sidze-pest-management-bendor-park",
@@ -268,22 +302,22 @@
     {
       "slug": "steve-madden-bendor",
       "status": "deferred",
-      "reason": "Chain branch. Research holds only the Mall of the North store directory line and a Facebook post from the mall. No branch-specific detail was captured; chain-level facts alone are not allowed."
+      "reason": "Store presence at Mall of the North is confirmed via the mall's directory, but no Steve Madden-specific footwear, handbag or accessory range for this branch was captured; only a general mall Facebook post and the mall's shop list were found. Holding rather than publishing unverified branch assortment."
     },
     {
       "slug": "trappers-trading-co-moregloed",
       "status": "deferred",
-      "reason": "Chain branch. Research holds the national Trappers homepage (outdoor goods since 1977, product lines, South African-made clothing) and a directory listing. No branch-specific detail beyond the Palm Centre address was captured."
+      "reason": "The Trappers brand's national outdoor-goods specialisation (since 1977) is confirmed via its own homepage, but no Palm Centre branch-specific stock or facilities were captured beyond the directory address. Holding rather than publishing national content as branch-specific detail."
     },
     {
       "slug": "travelex-bendor",
       "status": "deferred",
-      "reason": "Chain branch. Research holds only the Mall of the North store directory line, a worldorgs listing and the corporate history page. No branch-specific service detail was captured."
+      "reason": "Store presence at Mall of the North is confirmed via the mall's directory and a worldorgs listing, but only Travelex's corporate history page was captured; no Mall of the North branch-specific services or hours exist in the research. Holding rather than publishing corporate content as branch-specific detail."
     },
     {
       "slug": "yellow-lemon-tree-polokwane-central",
       "status": "deferred",
-      "reason": "Research returned only unrelated search results for the name, and the Yellow Lemon Tree site and directory pages were not captured. The shop's furniture and curtaining detail comes from batch text only."
+      "reason": "Research returned only unrelated search results for the shop's name; the Yellow Lemon Tree site and directory pages (cylex.net.za, polomap.com) either weren't captured or returned nothing usable. Holding rather than publishing the batch text's unverified solid-wood furniture and bespoke-furniture claims."
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "city": "polokwane",
   "chunk": 25,
-  "generated_at": "2026-10-04T20:48:12.465Z",
+  "generated_at": "2026-10-05T12:07:30.696Z",
   "items": [
     {
       "slug": "ra-motors-and-panelbeaters-ladanna",
@@ -13,12 +13,14 @@
     {
       "slug": "romans-pizza-platinum-park-bendor-park",
       "status": "deferred",
-      "reason": "Mr D delivery page (menu categories, rating) and chain-wide Roman's Pizza copy only. No branch-specific facts."
+      "reason": "Held per deep-research review: only the Mr D delivery page and chain-wide Roman's Pizza copy are available; no reliable branch-specific facts about this Platinum Park location's current menu or services could be confirmed, so nothing beyond chain-level claims can be written."
     },
     {
       "slug": "stafix-electric-fence-security-nirvana",
-      "status": "deferred",
-      "reason": "Business homepage gives only menu links and a copyright line. Polomap was blocked. No description of the business."
+      "status": "researched",
+      "sources": [
+        "https://www.stafix.co.za/"
+      ]
     },
     {
       "slug": "stay-on-plein-hospark",
@@ -29,8 +31,11 @@
     },
     {
       "slug": "steendal-guest-house-sterpark",
-      "status": "deferred",
-      "reason": "LekkeSlaap listing (sleeps 12, check-in times, tranquil garden, distance to airport) only. Not enough for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.lekkeslaap.co.za/accommodation/steendal-guest-house",
+        "https://www.booking.com/hotel/za/steendal-guest-house-polokwane.html"
+      ]
     },
     {
       "slug": "the-guesthouse-8-on-impala-fauna-park",
@@ -41,13 +46,15 @@
     },
     {
       "slug": "cashbuild-polokwane-central-polokwane-central",
-      "status": "deferred",
-      "reason": "Cashbuild store page with address, trading hours and chain-wide product copy only. Not enough branch-specific content."
+      "status": "researched",
+      "sources": [
+        "https://stores.cashbuild.co.za/za/polokwane/cnr-boom-excelsior-street"
+      ]
     },
     {
       "slug": "computers-r-us-polokwane-central",
       "status": "deferred",
-      "reason": "Contact page with address and phone numbers only. The main site returned 404 and no description of the business was found."
+      "reason": "Held per deep-research review: the business is independently identifiable (contact page, address, phone numbers) but its current product range and technical services could not be reliably confirmed; the main site returns a 404 and no other usable description was found."
     },
     {
       "slug": "country-blue-luxury-accommodation-hospark",
@@ -59,52 +66,68 @@
     {
       "slug": "dlb-signs-superbia",
       "status": "deferred",
-      "reason": "No business site or directory description found. Search results were unrelated university pages and directory sites were blocked."
+      "reason": "Held per deep-research review: no business website or directory text with real content was found; search results returned unrelated university pages and directory sites were blocked, so the vehicle-wrapping, printing and decade-of-experience claims in the prior text remain unverified."
     },
     {
       "slug": "glass-king-aluminium-superbia",
       "status": "deferred",
-      "reason": "Facebook page gives a short product line (windows, sliding and folding doors) and an address. The website is under construction, so not enough for 100 words."
+      "reason": "Held per deep-research review: only a short Facebook product line (windows, sliding and folding doors) and an address could be confirmed; the business's own website is under construction, so the full aluminium/glass product range and the 40-plus-years claim remain unverified."
     },
     {
       "slug": "incredible-connection-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Mall of the North directory line only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "kingsley-heath-bendor",
-      "status": "deferred",
-      "reason": "Mall of the North directory line only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://kingsleyheath.co.za/pages/store-locator",
+        "https://kingsleyheath.co.za/pages/about-kingsley-heath"
+      ]
     },
     {
       "slug": "lekoana-driving-institute-mankweng",
       "status": "deferred",
-      "reason": "Facebook page gives a local-service label, an address and a phone number only. Not enough for 100 words."
+      "reason": "Held per deep-research review: only a Facebook local-service label, an address and a phone number could be confirmed; the current learner's-licence training programme, manual/automatic lessons and mock-test claims remain unverified."
     },
     {
       "slug": "meropa-casino-entertainment-world-ivy-park",
-      "status": "deferred",
-      "reason": "Fresha spa listing with a services list (sauna, facials, massages) only. No description of the spa itself."
+      "status": "researched",
+      "sources": [
+        "https://www.suninternational.com/meropa/casino/",
+        "https://www.fresha.com/lvp/meropa-casino-entertainment-world-prov-roodepoort-street-polokwane-rw7WZy"
+      ]
     },
     {
       "slug": "miladys-savannah-mall-fauna-park",
       "status": "deferred",
-      "reason": "Savannah Mall directory line and a Yep listing only. No branch-specific facts."
+      "reason": "Held: the deep-research text supplied for this item is identical to miladys-bendor's Mall of the North branch data (Shop L30, phone 087 750 1802, Mall of the North hours) -- this is the wrong branch's information, mistakenly duplicated onto this Savannah Mall (Fauna Park) listing, and cannot be used to describe this specific branch. Beyond the existing Savannah Mall directory line and a Yep listing, no branch-specific facts for this Fauna Park store were supplied. Kept deferred pending Savannah Mall-specific research."
     },
     {
       "slug": "plein-on-suid-guesthouse-hospark",
-      "status": "deferred",
-      "reason": "Booking.com listing (recently renovated, outdoor pool, address) only. The business site did not resolve."
+      "status": "researched",
+      "sources": [
+        "https://www.booking.com/hotel/za/plein-on-suid-guesthouse.html",
+        "https://pleinonsuid.co.za/"
+      ]
     },
     {
       "slug": "theo-goosen-estate-agents-auctioneers-bendor",
-      "status": "deferred",
-      "reason": "Estate agency homepage with property listings and menu labels only. No description of the agency or its team."
+      "status": "researched",
+      "sources": [
+        "https://www.theogoosen.co.za/",
+        "https://www.citizen.co.za/review-online/news-headlines/local-news/2025/02/09/new-home-for-well-known-estate-agents/"
+      ]
     },
     {
       "slug": "totalsports-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Mall of the North directory line only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "bona-manzi-water-drilling-ladanna",
@@ -122,78 +145,105 @@
     },
     {
       "slug": "gemstone-bed-and-breakfast-mankweng",
-      "status": "deferred",
-      "reason": "Business site gives room names, a spa mention and opening hours, but no description of the property or services beyond a short list. Not enough for 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "https://www.gemstonebandb.co.za/",
+        "https://limpopoguide.co.za/f/gemstone-bed-and-breakfast-%E2%80%93-a-relaxing-stay-in-mankweng"
+      ]
     },
     {
       "slug": "miladys-bendor",
-      "status": "deferred",
-      "reason": "Mall of the North directory line only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/",
+        "https://www.miladys.com/miladys-mall-of-the-north-polokwane-40418"
+      ]
     },
     {
       "slug": "the-village-inn-dalmada",
       "status": "deferred",
-      "reason": "LekkeSlaap listing (self-catering, seven units, smallholding location, sleeps 16) only. Not enough for 100 words without padding."
+      "reason": "Held per deep-research review: the property currently shows as not accepting reservations through Booking.com, so its current trading/booking status is uncertain; publishing an active description would risk describing a business that may not currently be taking guests."
     },
     {
       "slug": "car-service-city-superbia",
-      "status": "deferred",
-      "reason": "National Car Service City branch page (services, guarantee and payment options) with chain-wide copy. No branch-specific description."
+      "status": "researched",
+      "sources": [
+        "https://carservicecity.net/find-a-branch/polokwane/"
+      ]
     },
     {
       "slug": "debbie-mouton-jewellers-bendor",
-      "status": "deferred",
-      "reason": "Same business site as the Fauna Park listing in chunk 021. Needs owner confirmation of which branch this listing is before a description is written."
+      "status": "researched",
+      "sources": [
+        "https://debbiemoutonjewellers.co.za/",
+        "https://debbiemoutonjewellers.co.za/about-debbie-mouton-jewellers/"
+      ]
     },
     {
       "slug": "jabez-christian-academy-eduan-park",
-      "status": "deferred",
-      "reason": "School contact and academics navigation only. Phase names are listed without descriptive text. Not enough for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.jabezca.co.za/wcontact.php",
+        "https://saprivateschools.co.za/listing/jabez-christian-academy-high-school/"
+      ]
     },
     {
       "slug": "legit-bendor",
-      "status": "deferred",
-      "reason": "Mall of the North directory line only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "levis-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Mall of the North directory line only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "mighty-scrapyard-ladanna",
       "status": "deferred",
-      "reason": "Africabz directory entry (address, phone, reviews, categories) only. No description of the business."
+      "reason": "Held per deep-research review: only an Africabz directory entry (address, phone, reviews, categories) could be confirmed; the claimed vehicle-spares brands (VW, Toyota, Nissan, Ford), towing/recovery services, RMI membership and insurance-approved status remain unverified."
     },
     {
       "slug": "virgin-active-polokwane-polokwane-central",
-      "status": "deferred",
-      "reason": "Virgin Active club page with class names and staff types only. No club-specific facilities or hours in the research file."
+      "status": "researched",
+      "sources": [
+        "https://www.virginactive.co.za/gyms/polokwane"
+      ]
     },
     {
       "slug": "cambridge-food-seshego-circle-seshego",
-      "status": "deferred",
-      "reason": "Near-place directory entry (address, phone, opening hours) only. No description of the business."
+      "status": "researched",
+      "sources": [
+        "https://www.cambridgefood.co.za/about-us/company-profile/",
+        "https://za.near-place.com/cambridge-food-seshego-ditlou-st-seshego-circle-shopping-centre-seshego-polokwane"
+      ]
     },
     {
       "slug": "markham-savannah-mall-fauna-park",
       "status": "deferred",
-      "reason": "Savannah Mall directory line and Tiendeo store listing only. Chain-level clothing copy, no branch-specific facts."
+      "reason": "Held, overriding the PUBLISH call: the deep-research text supplied for this item describes a different branch -- it cites 'the Mall of the North's own current directory' with a Mall of the North shop number (U37A) and phone, but this chunk's own data has this listing trading from Savannah Mall in Fauna Park (Shop 43-44, Cnr Grobler St & Grid Rd). This is the same wrong-branch mix-up identified and flagged for Milady's (items 12/17 of the research file), just not caught by the same name-check for Markham. It cannot be used to describe this Savannah Mall branch. Kept deferred pending Savannah Mall-specific research; only the existing Savannah Mall directory line and a Tiendeo listing (with this branch's own hours and phone) are available for this slug."
     },
     {
       "slug": "protea-driving-school-polokwane-central",
       "status": "deferred",
-      "reason": "Yellow Pages entry (address, phone) only. The school's own site was blocked."
+      "reason": "Held per deep-research review: only a Yellow Pages entry (address, phone) could be confirmed; the school's own site was blocked, so the claimed K53/learner's-licence training, Code 8/10 lessons, Schoeman Street specifics and a second Witbank/eMalahleni branch remain unverified."
     },
     {
       "slug": "scrap-metal-lady-hospark",
-      "status": "deferred",
-      "reason": "Infoisinfo listing with a short company statement, head-office location and category list only. Not enough for 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "https://polokwane.infoisinfo.co.za/card/scrap-metal-lady/432692"
+      ]
     },
     {
       "slug": "the-macaw-nest-dalmada",
-      "status": "deferred",
-      "reason": "Only a 2017 press article describes the venue. The business site did not resolve, so the current facilities and services cannot be confirmed."
+      "status": "researched",
+      "sources": [
+        "https://heybedbreakfast.co.za/01094689/The_Macaw_Nest_Accommodation_&_Events"
+      ]
     },
     {
       "slug": "61-on-ireland-guest-house-moregloed",
@@ -205,12 +255,12 @@
     {
       "slug": "modhope-properties-hospark",
       "status": "deferred",
-      "reason": "Valuation firm homepage with a description of data collection and zoning work only. Not enough for 100 words without padding."
+      "reason": "Held per deep-research review: the firm's homepage describes general data-collection and zoning work but does not confirm the full claimed valuation-service range; the specialist property types (schools, petrol stations, churches, creches) and valuation purposes (sale, rental, rating, mortgage, insurance) remain unverified."
     },
     {
       "slug": "precision-spares-futura",
       "status": "deferred",
-      "reason": "Directory listings (Yep, Yellosa) with address and phone only. No description of the business."
+      "reason": "Held per deep-research review: only directory listings (Yep, Yellosa) with address and phone could be confirmed; the detailed Cummins engine-series list, engine-overhaul claims and the Fuller/Rockwell/Fleetguard agency claims remain unverified."
     },
     {
       "slug": "taxila-secondary-school-nirvana",
@@ -228,8 +278,10 @@
     },
     {
       "slug": "unjani-clinic-lebowakgomo-lebowakgomo",
-      "status": "deferred",
-      "reason": "Medpages organisation entry (category and location only). The Unjani clinic website returned HTTP 500."
+      "status": "researched",
+      "sources": [
+        "https://www.unjaniclinic.co.za/clinic/lebowakgomo/"
+      ]
     },
     {
       "slug": "mayfair-gearbox-annadale",
@@ -240,13 +292,18 @@
     },
     {
       "slug": "seeff-polokwane-bendor-park",
-      "status": "deferred",
-      "reason": "Property24 agency profile with a list of serviced areas and a For Sale and To Rent menu. Not enough for 100 words of agency-specific text."
+      "status": "researched",
+      "sources": [
+        "https://www.seeff.com/contact/polokwane/190/",
+        "https://www.property24.com/estate-agents/seeff-polokwane/7223"
+      ]
     },
     {
       "slug": "sonpra-lebowakgomo-lebowakgomo",
-      "status": "deferred",
-      "reason": "Directory sites were blocked and the search results were unrelated. No description of the business was found."
+      "status": "researched",
+      "sources": [
+        "https://sonpra-upholsterysuppliers.co.za/about-us/"
+      ]
     },
     {
       "slug": "victoria-place-guest-house-hospark",
@@ -265,18 +322,23 @@
     },
     {
       "slug": "destiny-inn-lodge-dalmada",
-      "status": "deferred",
-      "reason": "Business homepage gives accommodation and venue headings only. The facilities and services pages were not in the research file, and the reviews are customer comments rather than business copy."
+      "status": "researched",
+      "sources": [
+        "https://www.destinyinnlodge.co.za/contact/",
+        "https://www.sa-venues.com/visit/destinyinnlodge/"
+      ]
     },
     {
       "slug": "lambrechts-van-dyk-bk-dalmada",
       "status": "deferred",
-      "reason": "Directory sites were blocked and the search results were football news. No description of the business was found."
+      "reason": "Held per deep-research review: directory sites were blocked and search results returned unrelated football news; the claimed Audatex/digital assessment methods and Institute of Motor Assessors/Institute of Loss Adjusters memberships remain unverified."
     },
     {
       "slug": "the-place-food-eatery-lebowakgomo",
-      "status": "deferred",
-      "reason": "Restaurant Guru listing with a 2.2 rating, a few menu items and a review count only. Not enough for 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/ThePlaceFoodEatery3/"
+      ]
     }
   ]
 }

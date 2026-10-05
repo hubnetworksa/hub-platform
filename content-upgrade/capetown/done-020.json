@@ -1,0 +1,289 @@
+{
+  "city": "capetown",
+  "chunk": 20,
+  "generated_at": "2026-10-05T12:58:23.238Z",
+  "items": [
+    {
+      "slug": "multiserv-maynard-mall-wynberg",
+      "status": "researched",
+      "sources": [
+        "https://www.cylex.net.za/company/multiserv-maynard-mall-wynberg-23861466.html"
+      ]
+    },
+    {
+      "slug": "norval-foundation-tokai",
+      "status": "researched",
+      "sources": [
+        "https://www.norvalfoundation.org"
+      ]
+    },
+    {
+      "slug": "positano-noordhoek",
+      "status": "researched",
+      "sources": [
+        "https://positano.co.za/pages/contact"
+      ]
+    },
+    {
+      "slug": "quagga-rare-books-and-art-kalk-bay",
+      "status": "researched",
+      "sources": [
+        "https://quaggabooks.co.za"
+      ]
+    },
+    {
+      "slug": "seaforth-restaurant-simons-town",
+      "status": "researched",
+      "sources": [
+        "https://www.seaforthrestaurant.co.za/"
+      ]
+    },
+    {
+      "slug": "vintage-with-love-zonnebloem",
+      "status": "researched",
+      "sources": [
+        "https://www.vintagewithlove.co.za"
+      ]
+    },
+    {
+      "slug": "wild-eatery-zonnebloem",
+      "status": "researched",
+      "sources": [
+        "https://www.wildeatery.co.za/locations",
+        "https://www.corner.inc/place/563497"
+      ]
+    },
+    {
+      "slug": "agrimark-philippi-horticultural",
+      "status": "researched",
+      "sources": [
+        "https://www.agrimark.co.za/store/agrimark-philippi"
+      ]
+    },
+    {
+      "slug": "pinelands-dental-inc-howard-centre-pinelands",
+      "status": "researched",
+      "sources": [
+        "https://pinelandsdentalinc.co.za/contact-us/"
+      ]
+    },
+    {
+      "slug": "pizza-perfect-richwood",
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/PizzaPerfectRichmondCorner/",
+        "https://www.mrdfood.com/food-delivery/restaurant/pizza-perfect-richmond-richmond/17357"
+      ]
+    },
+    {
+      "slug": "royal-tea-riverlands-observatory",
+      "status": "researched",
+      "sources": [
+        "https://magicpin.com/south-africa/Cape-Town/Observatory-Ct/Other/Royal-Tea-Riverlands-Mall/store/241c23a"
+      ]
+    },
+    {
+      "slug": "virtus-medical-sea-point",
+      "status": "researched",
+      "sources": [
+        "https://www.virtusmed.co.za"
+      ]
+    },
+    {
+      "slug": "nandos-tokai-drive-thru-dreyersdal",
+      "status": "deferred",
+      "reason": "Re-verified: ShowMe branch page is cookie-consent boilerplate plus chain-wide Nando's history (founded 1987, Johannesburg); it does not mention Allenby Drive Sports Facility, Apollo Park or Lakeview Park, or any other Tokai-specific fact. The orchestrator's proposed anchor facts are not present in the crawled source — held."
+    },
+    {
+      "slug": "ocean-basket-sea-point",
+      "status": "deferred",
+      "reason": "Re-verified: the Eat Out source is a generic magazine/news template (nav links and unrelated story teasers) with no venue facts; it does not mention dine-in/takeaway/delivery via Uber Eats or Mr D, or reservations, for this branch. Held."
+    },
+    {
+      "slug": "pathcare-the-point-sea-point",
+      "status": "deferred",
+      "reason": "Re-verified: the only crawled source (africabizinfo.com) is for Sea Point Medical Centre, Ste 307, 11 Kloof Rd — a different business at a different address from Pathcare's Suite 308A, 76 Regent Road. Cannot attribute its hours or phone numbers to this Pathcare branch. Held."
+    },
+    {
+      "slug": "pep-blue-downs",
+      "status": "deferred",
+      "reason": "Confirmed held: Tiendeo store page gives only phone and opening hours for this exact Blue Downs address; no branch-specific product or service facts. Added sourced trading hours to the hours field; description remains deferred."
+    },
+    {
+      "slug": "pep-kensington-shopping-centre-kensington",
+      "status": "deferred",
+      "reason": "Confirmed held: Tiendeo store page gives only phone and opening hours for this exact Kensington Shopping Centre address; no branch-specific facts. Added sourced trading hours to the hours field; description remains deferred."
+    },
+    {
+      "slug": "pharmacy-penlyn-philippi",
+      "status": "deferred",
+      "reason": "Confirmed held: the only crawled result was an unrelated University of Mpumalanga student-portal page; no facts about the pharmacy were retrieved."
+    },
+    {
+      "slug": "pizzayiro-sitari-croydon",
+      "status": "deferred",
+      "reason": "Confirmed held: Africabz listing gives category, malformed/garbled hours and customer reviews only, no owner-written facts. Note: this source shows no indication of closure (hours plus 2022-2023 reviews suggest it was trading); the 'temporarily closed' status mentioned in the brief was not found in this crawl, so it is held as insufficiently documented rather than marked closed. Not added to closed-businesses.json."
+    },
+    {
+      "slug": "rosebank-progress-college-rosebank",
+      "status": "deferred",
+      "reason": "Re-verified: the Sayellow listing gives only address, phone, category and generic reviews; it does not mention the Rosebank House Damelin College / Progress College merger, 1964 founding, or 75+ years of history claimed in the brief — none of that appears in the crawled text. Held."
+    },
+    {
+      "slug": "san-julian-taco-tequila-de-waterkant",
+      "status": "deferred",
+      "reason": "Confirmed held: only source is a 2013 personal blog review, too old to confirm current trading. Note: this source shows no indication of closure either; the 'permanently closed' status mentioned in the brief was not found in this crawl, so it remains held as unconfirmed rather than marked closed. Not added to closed-businesses.json."
+    },
+    {
+      "slug": "shoe-city-ottery-centre-ottery",
+      "status": "deferred",
+      "reason": "Confirmed held: Tiendeo store page gives only opening hours for this address; no branch-specific facts. Added sourced trading hours to the hours field; description remains deferred."
+    },
+    {
+      "slug": "solo-factory-shop-salt-river",
+      "status": "deferred",
+      "reason": "Re-verified: businessfindersa.com resolves to a parked Hostinger placeholder domain with zero content about the business; no trading hours or any other fact were actually retrieved, despite the brief’s claim. Held."
+    },
+    {
+      "slug": "sonstraal-superspar-kenridge",
+      "status": "deferred",
+      "reason": "Re-verified: the Sayellow page returned “no listings found” for this business, and the only other crawled content is a set of unrelated YouTube search results; no Ipic Shopping Centre tenant-directory entry, unit number or phone number was actually retrieved. Held."
+    },
+    {
+      "slug": "sorbet-gardens-shopping-centre-gardens",
+      "status": "researched",
+      "sources": [
+        "https://www.fresha.com/lvp/sorbet-salon-gardens1-mill-street-cape-town-A8PzVv"
+      ]
+    },
+    {
+      "slug": "sorbet-sea-point-the-point-sea-point",
+      "status": "deferred",
+      "reason": "Confirmed held: the only crawled source is the generic sorbet.co.za homepage (national chain copy, app-download prompts, no location-specific content); no Sea Point branch facts, phone or hours were retrieved."
+    },
+    {
+      "slug": "sorbet-waterstone-village-somerset-west",
+      "status": "deferred",
+      "reason": "Confirmed held: Tiendeo's “Sorbet Stores in Somerset West” page is a generic multi-branch locator with marketing boilerplate; it lists the Waterstone Village branch's address only, with no confirmed phone number (021 851 8047) or branch-specific hours in the crawled text."
+    },
+    {
+      "slug": "spar-kensington-shopping-centre-kensington",
+      "status": "deferred",
+      "reason": "Confirmed held per original research: Africabz gives category, phone and customer reviews only, no specific product range for this branch."
+    },
+    {
+      "slug": "spar-khayelitsha-mall-khayelitsha",
+      "status": "researched",
+      "sources": [
+        "https://my-catalogue.co.za/stores/khayelitsha/spar/shop-6-kct-mall-walter-sisulu-street"
+      ]
+    },
+    {
+      "slug": "spec-savers-noordhoek",
+      "status": "deferred",
+      "reason": "Re-verified and strengthened to HOLD: Longbeach Mall's own store page is empty (no body text), and all search results are generic Spec-Savers South Africa marketing (eye-test booking, kids' eye-care offer). None of the claimed facts — opened April 2001, two optometrists, two testing rooms, autorefractor/tonometer/fundus camera — appear anywhere in the crawled source. The brief's anchor facts could not be verified; held."
+    },
+    {
+      "slug": "steers-golden-acre-cape-town-cbd",
+      "status": "deferred",
+      "reason": "Confirmed held: golden-acre.co.za timed out, and all search results are generic Steers chain pages (national menu, ordering app); no Golden Acre branch facts."
+    },
+    {
+      "slug": "superspar-edgemead-village-centre-edgemead",
+      "status": "deferred",
+      "reason": "Re-verified and strengthened to HOLD: vymaps.com gives address, phone, generic daily hours and customer reviews about product selection; it does not describe the centre as a “community convenience destination” and does not mention free parking, wheelchair access or a children's play area as claimed. The brief's anchor facts could not be verified; held."
+    },
+    {
+      "slug": "the-barbers-range-3arts-village-plumstead",
+      "status": "deferred",
+      "reason": "Confirmed held: the business's own site gives chain-wide copy for its seven Cape Town barbershops, and the only contact details shown (phone, shop number) are for the Bothasig Mall branch, not 3Arts Village."
+    },
+    {
+      "slug": "the-body-shop-waterstone-village-somerset-west",
+      "status": "deferred",
+      "reason": "Re-verified: the source is Waterstone Village's own centre tenant directory, not “the official The Body Shop store locator” as the brief described; it gives centre-level trading hours and a mixed list of tenant phone numbers, with no phone number or hours confirmed specifically for The Body Shop. Held."
+    },
+    {
+      "slug": "the-coffee-co-cafe-milnerton",
+      "status": "deferred",
+      "reason": "Confirmed held: all search results returned are unrelated dictionary/grammar pages about the word “the”; no facts about the cafe."
+    },
+    {
+      "slug": "the-crazy-store-richmond-corner-richwood",
+      "status": "researched",
+      "sources": [
+        "https://www.hotfrog.co.za/company/1439126240653312/the-crazy-store-richmond-corner/cape-town/retail-stores"
+      ]
+    },
+    {
+      "slug": "tirepoint-matroosfontein",
+      "status": "deferred",
+      "reason": "Confirmed held: Tirepoint's own contact page lists only its Head Office (Spartan), Johannesburg-Spartan, KZN and Harrismith branches; no Matroosfontein branch or facts specific to it."
+    },
+    {
+      "slug": "tops-at-spar-cape-quarter-de-waterkant",
+      "status": "deferred",
+      "reason": "Confirmed held: capequarter.co.za timed out, and every search result returned is an unrelated Hollywoodbets gambling page; no tenant directory, phone number or trading hours were actually retrieved, despite the brief’s claim."
+    },
+    {
+      "slug": "utah-spur-bothasig",
+      "status": "deferred",
+      "reason": "Confirmed held: the branch source timed out, and all search results are about an unrelated textbook (“The Skilled Helper”); no facts about Utah Spur, Wi-Fi, disabled facilities or a smoking area were retrieved."
+    },
+    {
+      "slug": "wellness-warehouse-cape-quarter-de-waterkant",
+      "status": "deferred",
+      "reason": "Confirmed held: wellnesswarehouse.com is the brand's generic national homepage (promotions, featured products); no Cape Quarter branch or stockist-specific information."
+    },
+    {
+      "slug": "workshop17-kloof-street-gardens",
+      "status": "deferred",
+      "reason": "Re-verified and strengthened to HOLD: the own About page gives only chain-wide copy (12 years, 16 locations, founders' story) and a bare locations list naming “CPT | Gardens | Kloof Street”; none of the claimed facility counts (200 hot desks, 49 private offices, 18 meeting rooms, 8 phone booths, 4 consultation rooms, 2 cafés) appear anywhere in the crawled text. The brief's anchor facts could not be verified; held."
+    },
+    {
+      "slug": "absolute-pets-flamingo-square-table-view",
+      "status": "deferred",
+      "reason": "Re-verified: the Medpages entry gives only address, phone and the generic category “Vet Shop”; it does not mention a Pet Spa or separate spa hours as claimed. Held."
+    },
+    {
+      "slug": "absolute-pets-gardens-shopping-centre-gardens",
+      "status": "deferred",
+      "reason": "Confirmed held: the mall’s own store page is empty, and absolutepets.com is purely national chain marketing (200+ stores, free delivery, customer testimonials); no Gardens-specific hours or phone."
+    },
+    {
+      "slug": "absolute-pets-somerset-west",
+      "status": "deferred",
+      "reason": "Re-verified: Waterstone Village's own tenant directory gives only this branch's shop number and phone (Shop 4, 021 506 6168); the only hours shown are the shopping centre's blanket hours, not confirmed as Absolute Pets' own hours. Held as centre-level information only."
+    },
+    {
+      "slug": "absolute-pets-the-point-sea-point",
+      "status": "deferred",
+      "reason": "Confirmed held: the Raw Love Pets page gives only the shop number, address and phone for this branch; no further facts."
+    },
+    {
+      "slug": "ackermans-makhaza-khayelitsha",
+      "status": "deferred",
+      "reason": "Confirmed held: Tiendeo store page gives only phone and opening hours for this exact Makhaza Centre address; no branch-specific facts. Added sourced trading hours to the hours field; description remains deferred."
+    },
+    {
+      "slug": "barrs-pharmacy-cape-town-cbd",
+      "status": "deferred",
+      "reason": "Re-verified and strengthened to HOLD: the actual crawled source (nearfinderza.com, not Medpages as the brief described) gives a different address (Strand Street) from the batch’s Long Street address, with no April-2026 update date and no mention of blood testing or free CBD delivery. Cannot be verified as the same pharmacy; held."
+    },
+    {
+      "slug": "beantree-coffee-shop-kuils-river",
+      "status": "deferred",
+      "reason": "Confirmed held: the only source is a Facebook post whose body text did not extract (title text only: “Come and visit Beantree @ Haasendal Superspar...”); no cake, pancake or cheesecake menu details, or any other facts, were retrieved."
+    },
+    {
+      "slug": "beauty-zone-monte-vista",
+      "status": "deferred",
+      "reason": "Re-verified and strengthened to HOLD: the business's own domain now serves unrelated Indonesian online-gambling content (a “BEJOTOTO” slot site); no Fresha page or “Body Wellness, Slimming & Weightloss” categorisation was retrieved anywhere. Held."
+    },
+    {
+      "slug": "vizi-hair-durbanville",
+      "status": "deferred",
+      "reason": "Confirmed held: the Fresha page’s service list (balayage, colour, extensions, weaves, highlights, keratin, locs, perms, straightening) duplicates what is already in the current description, so there isn’t enough new descriptive content for 100+ non-generic words. Added newly sourced, business-specific trading hours to the hours field, which were not duplicated in the batch text; description remains deferred."
+    }
+  ]
+}

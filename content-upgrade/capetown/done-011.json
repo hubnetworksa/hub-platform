@@ -1,0 +1,282 @@
+{
+  "city": "capetown",
+  "chunk": 11,
+  "generated_at": "2026-10-05T12:37:21.801Z",
+  "items": [
+    {
+      "slug": "ackermans-town-centre-mitchells-plain",
+      "status": "deferred",
+      "reason": "User-supplied research confirms no detailed branch-specific service information exists beyond address, phone and hours (Tiendeo) and chain-level Ackermans text. Kept deferred."
+    },
+    {
+      "slug": "adidas-factory-outlet-kuils-river",
+      "status": "deferred",
+      "reason": "User-supplied research found Access Park Bellville's own Facebook post confirming adidas is present with in-store specials, but it is a single-line promotional caption with no further service detail. That is not enough distinguishing branch-specific material to write a non-generic description without repeating the outlet-store/chain facts already on file. Kept deferred."
+    },
+    {
+      "slug": "alpha-pharm-kraaifontein",
+      "status": "researched",
+      "sources": [
+        "https://www.alphapharmacies.co.za/department/kraaifontein-pharmacy/"
+      ]
+    },
+    {
+      "slug": "bantry-bay-pharmacy-bantry-bay",
+      "status": "deferred",
+      "reason": "User-supplied research confirms there is insufficient information to verify a more detailed branch-specific service range beyond the Medpages address/phone stub already on file. Kept deferred."
+    },
+    {
+      "slug": "barksole-howard-centre-pinelands",
+      "status": "deferred",
+      "reason": "User-supplied research confirms Barksole's own store-locator page for this branch gives only name, address and phone. The only service-type detail found elsewhere (opening-hours.co.za's shoe-repair/engraving/dry-cleaning category tags) repeats the chain-wide categories already in the current description rather than adding a new branch-specific fact, so there is not enough to publish, or to distinguish this branch from the Sea Point branch in this same chunk. Kept deferred."
+    },
+    {
+      "slug": "barksole-sea-point-sea-point",
+      "status": "deferred",
+      "reason": "Same issue as the Howard Centre branch: Barksole's own store-locator page for Sea Point gives only name, address and phone, with no branch-specific service detail beyond the chain-wide categories already on file. Kept deferred."
+    },
+    {
+      "slug": "beantree-cafe-strandfontein",
+      "status": "deferred",
+      "reason": "Restaurant Guru marks this cafe as temporarily closed. That is not a confirmed permanent closure, so it has not been added to closed-businesses.json, but a fresh active-business description should not be published until trading status is confirmed. Kept deferred."
+    },
+    {
+      "slug": "bmc-pharmacy-belhar",
+      "status": "researched",
+      "sources": [
+        "https://bmcpharmacy.co.za/"
+      ]
+    },
+    {
+      "slug": "bootlegger-coffee-company-century-city",
+      "status": "deferred",
+      "reason": "User-supplied research found Bootlegger's own Facebook page, but its content is brand-wide (specialty coffee, all-day breakfast, 7 days a week, founded 2013) rather than specific to the Century City branch; the Century City store-locator page listed among existing sources could not be read. Not enough branch-specific material to clear the chain-level-facts-only bar. Kept deferred."
+    },
+    {
+      "slug": "capitec-bank-goodwood-mall-goodwood",
+      "status": "deferred",
+      "reason": "Consistent with other bank branches in this pipeline, only a phone number and a generic fee-notice catalogue (Tiendeo) are available, with no verified list of in-branch services or facilities. Kept deferred."
+    },
+    {
+      "slug": "cattle-baron-simons-town",
+      "status": "deferred",
+      "reason": "User-supplied research found no reliable branch-specific evidence to confirm the present operation and detailed offering. Kept deferred."
+    },
+    {
+      "slug": "cell-c-westgate-mall-westgate",
+      "status": "deferred",
+      "reason": "Only a shop number and Cell C's chain-level description (phones, SIM cards, airtime, contracts) are available; no branch-specific detail could be verified. Kept deferred."
+    },
+    {
+      "slug": "chapmans-hardware-sunnydale",
+      "status": "deferred",
+      "reason": "The business's own website could not be reliably accessed, so the current product range cannot be verified beyond what is already on file. Kept deferred."
+    },
+    {
+      "slug": "checkers-big-bay-bloubergstrand",
+      "status": "deferred",
+      "reason": "Only a retail-tenant confirmation and address are available, with no phone, hours or other distinguishing fact. Kept deferred."
+    },
+    {
+      "slug": "chelsea-village-framers-and-curiosity-shoppe-diep-river",
+      "status": "deferred",
+      "reason": "User-supplied research found no usable content: the Yep directory entry is an empty shell, the nearbyza listing returns a dead Cloudflare error page, and the shop's own site (chelseavillageframers.co.za) did not resolve. There is no new fact beyond what the current description already states, so there is no confirming source even for a narrowed, 2012-date-removed version. Kept deferred."
+    },
+    {
+      "slug": "chicken-licken-mowbray-mowbray",
+      "status": "deferred",
+      "reason": "Chicken Licken's website and menu pages are entirely chain-level, and delivery availability and other facilities specific to the Mowbray branch could not be verified. Kept deferred."
+    },
+    {
+      "slug": "clicks-gardens-shopping-centre-gardens",
+      "status": "deferred",
+      "reason": "The only crawled Clicks.co.za store page is identical chain-wide beauty/makeup navigation text with no mention of pharmacy or any other branch-specific facility; the pharmacy fact is already stated in the current description and is not new. Not enough to distinguish this branch from the other Clicks branches in this same chunk. Kept deferred."
+    },
+    {
+      "slug": "clicks-grassy-park-grassy-park",
+      "status": "deferred",
+      "reason": "Only address and hours (my-catalogue) are confirmed, with no additional branch-specific information found. Kept deferred."
+    },
+    {
+      "slug": "clicks-parow-centre-parow",
+      "status": "deferred",
+      "reason": "Same issue as the Gardens branch: the Clicks.co.za store page for this branch returns identical chain-wide navigation text with no pharmacy- or branch-specific detail beyond what is already in the current description. Kept deferred."
+    },
+    {
+      "slug": "clicks-pharmacy-gordons-bay",
+      "status": "deferred",
+      "reason": "Only a location confirmation (address and hours) is available, with no distinguishing fact about this specific branch. Kept deferred."
+    },
+    {
+      "slug": "clicks-pharmacy-rondebosch",
+      "status": "deferred",
+      "reason": "Only a centre-tenant confirmation (phone number) is available, with no distinguishing fact about this specific branch. Kept deferred."
+    },
+    {
+      "slug": "clicks-pharmacy-seaside-village-bloubergstrand",
+      "status": "deferred",
+      "reason": "A Cybo listing notes this business may no longer be active. That is not a confirmed closure, so it has not been added to closed-businesses.json, but it is not reliable enough to publish as an operating branch. Kept deferred."
+    },
+    {
+      "slug": "clothing-junction-the-junxion-mall-philippi",
+      "status": "researched",
+      "sources": [
+        "https://www.jamii.co.za/clothing-junction-philippi-junxion-mall-philippi-east"
+      ]
+    },
+    {
+      "slug": "debonairs-pizza-muizenberg",
+      "status": "deferred",
+      "reason": "Only address and Debonairs' generic chain-level description are available; branch-specific delivery and seating facilities could not be verified. Kept deferred."
+    },
+    {
+      "slug": "delightful-patience-hair-studio-mowbray",
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/Delightfulpatiencehairstudio/"
+      ]
+    },
+    {
+      "slug": "die-boer-restaurant-durbanville",
+      "status": "researched",
+      "sources": [
+        "https://dieboer.com/"
+      ]
+    },
+    {
+      "slug": "dr-mb-groenewald-kenridge",
+      "status": "deferred",
+      "reason": "The practice name is the orthodontist's own name, and the only information available is an address/phone stub, so a description cannot be written without naming a person. Kept deferred."
+    },
+    {
+      "slug": "edgars-noordhoek",
+      "status": "deferred",
+      "reason": "The only crawled source (a Sayellow directory listing) gives Edgars' generic chain-level description ('over 300 stores countrywide... for men, women and kids') plus the address; the anchor-tenant fact is already in the current description, and Longbeach Mall's own tenant information could not be read to add anything new. Kept deferred."
+    },
+    {
+      "slug": "engen-bonteheuwel-tyre-service-centre-bonteheuwel",
+      "status": "deferred",
+      "reason": "No reliable current branch-specific information could be found to confirm the precise tyre and mechanical services offered. Kept deferred."
+    },
+    {
+      "slug": "fat-cats-and-dogs-noordhoek",
+      "status": "deferred",
+      "reason": "The only nearby pet-store page found is for a differently-named business (Canine & Co Noordhoek) and cannot safely be treated as the same business. Kept deferred."
+    },
+    {
+      "slug": "goedemoed-animal-hospital-durbanville",
+      "status": "researched",
+      "sources": [
+        "https://goedemoedvet.co.za"
+      ]
+    },
+    {
+      "slug": "goldwagen-goodwood-goodwood",
+      "status": "deferred",
+      "reason": "Only a national network fact (130+ franchise outlets, chain-level) and the address are available; no branch-specific information was found for the Goodwood store. Kept deferred."
+    },
+    {
+      "slug": "hair-drosa-table-view",
+      "status": "researched",
+      "sources": [
+        "https://www.fresha.com/lvp/hair-drosa-blaauwberg-road-cape-town-Ly9xe9",
+        "https://www.facebook.com/p/Hair-D-Rosa-100076285716254/"
+      ]
+    },
+    {
+      "slug": "john-dory-s-century-city-century-city",
+      "status": "deferred",
+      "reason": "User-supplied research confirms the only page crawled for this branch's own URL (johndorys.com/.../john-dorys-century-city) actually describes the brand's new Cavendish Square restaurant and rebrand, not Century City, so its facts cannot be used for this listing. The Eat Out venue page listed among existing sources could not be read, leaving no verified branch-specific fact beyond the chain-level seafood/sushi description already on file. Kept deferred rather than publish from chain-level facts and address alone."
+    },
+    {
+      "slug": "kfc-blue-downs",
+      "status": "deferred",
+      "reason": "Research returned a Foursquare login wall and an unrelated Germiston branch page; no Blue Downs-specific facts could be confirmed. Kept deferred."
+    },
+    {
+      "slug": "kfc-bothasig",
+      "status": "deferred",
+      "reason": "Only address, phone and hours (Cylex) are confirmed; no further branch-specific service information was found. Kept deferred."
+    },
+    {
+      "slug": "knead-constantia-emporium-constantia",
+      "status": "researched",
+      "sources": [
+        "https://www.kneadbakery.co.za/"
+      ]
+    },
+    {
+      "slug": "kwikspar-prospur-plumstead",
+      "status": "deferred",
+      "reason": "Only address, phone and hours (Cylex) are available; no owner-written description of the store's specific product range was found. Kept deferred."
+    },
+    {
+      "slug": "lifestyle-emporium-mouille-point",
+      "status": "deferred",
+      "reason": "Only a generic spa-category address/phone stub (Medpages) is available, with no services or history for this salon confirmed. Kept deferred."
+    },
+    {
+      "slug": "mamma-roma-newlands",
+      "status": "researched",
+      "sources": [
+        "https://www.mammaroma.co.za/"
+      ]
+    },
+    {
+      "slug": "mcgregor-take-aways-meadowridge",
+      "status": "deferred",
+      "reason": "Research returned only a dead Yellow Pages link and unrelated results; the current menu, speciality and operating status could not be verified. Kept deferred."
+    },
+    {
+      "slug": "moksh-indian-restaurant-somerset-west",
+      "status": "deferred",
+      "reason": "The Eat Out venue page returned news-site navigation only; the claimed North Indian and clay-oven specialities could not be substantiated from any available source. Kept deferred."
+    },
+    {
+      "slug": "neovision-optometrist-observatory",
+      "status": "deferred",
+      "reason": "The Riverlands Mall directory lists shop numbers by category without naming tenants clearly, so this branch's current status and facilities could not be confirmed. Kept deferred."
+    },
+    {
+      "slug": "neovision-panorama-panorama",
+      "status": "deferred",
+      "reason": "Only address, hours and contact details are confirmed; the rest of the available text is a generic 'pop in for an eye test' line reused across Neovision branches, which is not branch-specific material. Kept deferred."
+    },
+    {
+      "slug": "noordhoek-veterinary-clinic-noordhoek",
+      "status": "researched",
+      "sources": [
+        "https://www.noordhoekvet.com/"
+      ]
+    },
+    {
+      "slug": "nu-sight-optometrists-bellville",
+      "status": "deferred",
+      "reason": "A Yellosa listing gives only address, phone and fax, with zero reviews and no service detail. Kept deferred."
+    },
+    {
+      "slug": "oblivion-bar-kitchen-harfield-village",
+      "status": "researched",
+      "sources": [
+        "https://www.oblivion.co.za/"
+      ]
+    },
+    {
+      "slug": "panarottis-claremont",
+      "status": "deferred",
+      "reason": "The Crave listing gives only the chain's standard description (Italian-inspired family restaurant, hand-pressed pizzas) with nothing specific to the Stanhope Centre branch, such as delivery, takeaway or children's facilities. Kept deferred."
+    },
+    {
+      "slug": "payne-louw-incorporated-edgemead",
+      "status": "researched",
+      "sources": [
+        "https://www.paynelouwdental.co.za/"
+      ]
+    },
+    {
+      "slug": "pet-utopia-crawford",
+      "status": "deferred",
+      "reason": "Only a generic 'veterinary wholesaler' category address/phone stub (Medpages) is available; the current directory category could not be confirmed as accurate, and a product range cannot be inferred from similarly named pet stores. Kept deferred."
+    }
+  ]
+}

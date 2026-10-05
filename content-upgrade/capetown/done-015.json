@@ -1,0 +1,298 @@
+{
+  "city": "capetown",
+  "chunk": 15,
+  "generated_at": "2026-10-05T12:54:31.093Z",
+  "items": [
+    {
+      "slug": "dr-uwe-esdar-tamboerskloof",
+      "status": "researched",
+      "sources": [
+        "https://www.capedentist.co.za/",
+        "https://www.capedentist.co.za/services"
+      ]
+    },
+    {
+      "slug": "harry-goemans-garden-centre-sunnydale",
+      "status": "researched",
+      "sources": [
+        "https://www.harrygoemans.co.za"
+      ]
+    },
+    {
+      "slug": "mamacitas-district-six",
+      "status": "researched",
+      "sources": [
+        "https://www.mamacitas.co.za/contact",
+        "https://www.dineplan.com/restaurants/mamacitas-on-harrington"
+      ]
+    },
+    {
+      "slug": "mmh-law-kuils-river",
+      "status": "researched",
+      "sources": [
+        "https://mmh.law"
+      ]
+    },
+    {
+      "slug": "muizenberg-medical-practice-muizenberg",
+      "status": "researched",
+      "sources": [
+        "https://www.muizenbergmedical.co.za/"
+      ]
+    },
+    {
+      "slug": "novamarine-paarden-eiland",
+      "status": "researched",
+      "sources": [
+        "https://www.novamarine.co.za"
+      ]
+    },
+    {
+      "slug": "dis-chem-cape-gate-pharmacy-brackenfell",
+      "status": "researched",
+      "sources": [
+        "https://www.dischem.co.za/cape-gate-pharmacy"
+      ]
+    },
+    {
+      "slug": "clearance-warehouse-paarden-eiland",
+      "status": "researched",
+      "sources": [
+        "https://clearancewarehouse.co.za/pages/contact-us"
+      ]
+    },
+    {
+      "slug": "clicks-kct-mall-khayelitsha",
+      "status": "deferred",
+      "reason": "Override of a PUBLISH call: the only crawled source (clicks.co.za store page) returned generic site-wide category navigation (Beauty/Makeup/Skincare menus, ClubCard, account links) with no branch-specific pharmacy facts, clinic facts or trading hours; the claimed 'lists pharmacy facilities and current trading hours' anchor fact is not actually present in that page's content. Kept deferred (chain rule)."
+    },
+    {
+      "slug": "clicks-plumstead-plumstead",
+      "status": "deferred",
+      "reason": "Override of a PUBLISH call: the only crawled source (clicks.co.za store page) returned generic site-wide category navigation only, with no mention of a pharmacy, an in-store clinic, or clinic hours; the claimed 'records both Pharmacy and Clinic facilities with separate weekday clinic hours' anchor fact is not present in that page's content. Kept deferred (chain rule)."
+    },
+    {
+      "slug": "clicks-riverlands-mall-observatory",
+      "status": "deferred",
+      "reason": "Override of a PUBLISH call: the only crawled source (clicks.co.za store page) returned generic site-wide category navigation only; nothing identifies this branch specifically as a 'store and pharmacy' or describes any pharmacy service. Kept deferred (chain rule)."
+    },
+    {
+      "slug": "clicks-town-centre-mitchells-plain",
+      "status": "deferred",
+      "reason": "Override of a PUBLISH call: the only crawled source (clicks.co.za store page) returned generic site-wide category navigation only, with no mention of a pharmacy or an in-store clinic; the claimed 'records both pharmacy and clinic facilities' anchor fact is not present in that page's content. Kept deferred (chain rule)."
+    },
+    {
+      "slug": "cotton-on-va-waterfront",
+      "status": "deferred",
+      "reason": "Override of a PUBLISH call: the Waterfront's own store page is chain-level copy with no branch facts, and the 09:00-21:00 daily hours actually come from Tiendeo, an aggregator, not from 'the V&A Waterfront's own confirmation' as claimed. Aggregator hours alone aren't a real distinguishing fact and the README explicitly treats aggregator-sourced hours as unreliable. Kept deferred (chain rule)."
+    },
+    {
+      "slug": "creative-sweets-factory-shop-montague-gardens",
+      "status": "deferred",
+      "reason": "Confirmed HOLD: Infobel and Brabys directory pages give address and category only; the factory outlet's own product range couldn't be independently substantiated beyond the current one-liner. Kept deferred for a deeper pass."
+    },
+    {
+      "slug": "diamonds-discount-liquor-summer-greens",
+      "status": "deferred",
+      "reason": "Override of a PUBLISH call: the only crawled source (Tiendeo) describes a Milnerton branch at '7/11 Centre', not this listing's Summer Greens/OK Centre address -- a different location -- and brabys.com failed to load (Cloudflare JS challenge), so its content can't be confirmed. Nothing in the allowed sources mentions Uber Eats delivery or 'the company's own current website' listing a Summer Greens store. Kept deferred."
+    },
+    {
+      "slug": "dilshaad-oosthuizen-physiotherapy-grassy-park",
+      "status": "researched",
+      "sources": [
+        "https://www.fresha.com/lvp/dilshaad-oosthuizen-physiotherapy-victoria-road-cape-town-7r6YwX"
+      ]
+    },
+    {
+      "slug": "dis-chem-brackenfell-corner-brackenfell",
+      "status": "deferred",
+      "reason": "Override of a PUBLISH call: the only crawled source (brackenfellcorner.co.za) is the shopping centre's own tenant directory, listing around 18 store names and phone numbers only (Dis-Chem among them) -- no in-store clinic, Baby Wellness Clinic, Click & Collect or separate trading-hours detail for this pharmacy. Dis-Chem's own store page and the Recomed listing in existing_sources were never actually crawled, so their content can't be confirmed. Kept deferred (chain rule)."
+    },
+    {
+      "slug": "dominos-pizza-blue-downs",
+      "status": "deferred",
+      "reason": "Confirmed HOLD: the Domino's PDF store list and a Nusalist page were the only sources available, and neither yields sufficiently reliable, branch-specific detail beyond the current one-liner (chain rule). Kept deferred."
+    },
+    {
+      "slug": "duinefontein-service-station-manenberg",
+      "status": "deferred",
+      "reason": "Override of a PUBLISH call: no FreshStop source exists anywhere in the research file or existing_sources for this listing (only a Fuel Directory contact page, an empty Yep Mall stub, and Caltex's own forecourt page, which timed out and was never actually crawled) -- nothing confirms a FreshStop convenience outlet here, and the phone number cited in the PUBLISH call (021 699 3251) doesn't match the one on record (021 691 0871). Kept deferred."
+    },
+    {
+      "slug": "e-kem-pharmacy-eerste-river",
+      "status": "deferred",
+      "reason": "Confirmed HOLD: only address, phone and category (community retail pharmacy) are confirmed via the Africabz listing; no genuinely non-generic distinguishing fact beyond that was found. Kept deferred."
+    },
+    {
+      "slug": "economical-moslem-butchery-elsies-river",
+      "status": "deferred",
+      "reason": "Confirmed HOLD: only address, phone and category (retail butchery) are confirmed via Infoisinfo and Yep; a detailed current product list could not be independently established from any allowed source. Kept deferred."
+    },
+    {
+      "slug": "engen-strandfontein-strandfontein",
+      "status": "deferred",
+      "reason": "Confirmed HOLD: station identity and location are supported by the Fuel Directory contact page, but there isn't enough branch-specific information to describe fuel grades, convenience facilities or additional services beyond the current one-liner. Kept deferred (chain rule)."
+    },
+    {
+      "slug": "fancy-franks-bothasig",
+      "status": "deferred",
+      "reason": "Override of a PUBLISH call: research confidence is 'none' -- the business's own site timed out and every search result returned was unrelated (YouTube). No source in the research file or existing_sources backs the claimed bar/pizza/barbecue classification, full bar, reservations or table-service facts. Kept deferred."
+    },
+    {
+      "slug": "flight-centre-waterstone-village-somerset-west",
+      "status": "researched",
+      "sources": [
+        "https://www.flightcentre.co.za/stores/somerset-west"
+      ]
+    },
+    {
+      "slug": "food-lovers-market-tokai",
+      "status": "researched",
+      "sources": [
+        "https://foodloversmarket.co.za/stores/western-cape/food-lovers-market-tokai/"
+      ]
+    },
+    {
+      "slug": "gary-rom-man-observatory",
+      "status": "deferred",
+      "reason": "Override of a PUBLISH call: the only crawled source (garyromman.co.za/riverlands) gives contact details and trading hours only; its nav lists a 'Services' link and 'Signature Barber shops' label, but no actual service-menu text was crawled. None of the claimed specifics (fades, beard shaping, hot-towel facials, threading, waxing, skincare, signature cuts, blade shaves, grooming packages) appear anywhere in the allowed source. Kept deferred."
+    },
+    {
+      "slug": "hazeldene-primary-school-portland",
+      "status": "deferred",
+      "reason": "Confirmed HOLD: only address, phone and category (primary school) are confirmed via the Schoolsdigest listing; no enrolment, quintile or other distinguishing fact was found. Kept deferred."
+    },
+    {
+      "slug": "hudsons-the-burger-joint-claremont",
+      "status": "deferred",
+      "reason": "Confirmed HOLD: only address and a generic brand/category description (burger-focused restaurant) are confirmed; the available sources only reconfirm the business's continued existence rather than providing a new distinguishing fact. Kept deferred."
+    },
+    {
+      "slug": "hungry-lion-eerste-river-eerste-river",
+      "status": "deferred",
+      "reason": "Overriding PUBLISH call: the only crawled source (the branch's own store page) is truncated to a generic chain line ('...Founded in 1997, we') before any distinguishing claim; the 'fresh ingredients / fry to order' fact is not actually shown there, leaving only a founding year plus address and category (chain rule)."
+    },
+    {
+      "slug": "italian-club-of-cape-town-rugby",
+      "status": "deferred",
+      "reason": "Overriding PUBLISH call: no page for this business was actually crawled (own site errored, cybo blocked) and the research file's only content is unrelated football-match search results; the claimed ICCT restaurant/bar and Vita Di Sport facts are not backed by any crawled or allowed source."
+    },
+    {
+      "slug": "italtile-cape-brooklyn",
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/italtile-cape-town-49339"
+      ]
+    },
+    {
+      "slug": "kauai-welgemoed",
+      "status": "researched",
+      "sources": [
+        "https://locations.kauai.co.za/HealthyFood-CapeTown-KAUAIWelgemoedForum"
+      ]
+    },
+    {
+      "slug": "kfc-gugulethu-square-gugulethu",
+      "status": "deferred",
+      "reason": "Overriding PUBLISH call: no Gugulethu-specific page was crawled; search results are all about a different branch (KFC Germiston) and generic KFC ordering pages. The claimed 06:30-21:00 trading hours do not appear anywhere in the research file (chain rule)."
+    },
+    {
+      "slug": "kfc-mandalay-mandalay",
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/kfc-mandalay-68665"
+      ]
+    },
+    {
+      "slug": "kfc-milnerton-milnerton",
+      "status": "deferred",
+      "reason": "Overriding PUBLISH call: no Milnerton page was crawled (locator failed to resolve); search results are all about a different branch (KFC Germiston) and the generic KFC ordering site. No Milnerton-specific facts, including the claimed catering/collection/delivery options, appear in the research file (chain rule)."
+    },
+    {
+      "slug": "kwikspar-kromboom-rondebosch-east",
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/kwikspar-40807"
+      ]
+    },
+    {
+      "slug": "malie-nail-and-beauty-salon-plumstead",
+      "status": "deferred",
+      "reason": "Held per owner instruction: the Facebook page confirms only a follower count and a 'newly established' description; no verified service list (manicures, pedicures, gel/acrylic) is backed by any crawled source. Held pending further verification."
+    },
+    {
+      "slug": "mandy-knaap-physiotherapy-table-view",
+      "status": "deferred",
+      "reason": "Overriding PUBLISH call: the only crawled source (magicpin) lists retail product prices for therapy equipment (theraband, lumbar rolls, ergonomic chairs) plus a one-line category/location tag; it does not describe dry needling, neuro-musculo-skeletal treatment or sports-injury rehabilitation as claimed. No owner-written service detail is available beyond name, address and category."
+    },
+    {
+      "slug": "mcdonalds-waterstone-somerset-west",
+      "status": "deferred",
+      "reason": "Overriding PUBLISH call: the only crawled page is the Waterstone Village centre's own site, giving centre-wide trading hours and a store directory that does not reach McDonald's in its tenant list; no McDonald's-specific facts were found anywhere in the research file (chain rule)."
+    },
+    {
+      "slug": "medellin-harrington-district-six",
+      "status": "researched",
+      "sources": [
+        "https://www.fresha.com/lvp/medellin-gentlemen-groomers-harrington-harrington-street-cape-town-loPj11",
+        "https://medellin.co.za/harrington/"
+      ]
+    },
+    {
+      "slug": "miladys-westgate-mall-westgate",
+      "status": "deferred",
+      "reason": "Overriding PUBLISH call: the only crawled page is the chain's general e-commerce homepage (online shop categories, credit account, ML Club loyalty); no Westgate Mall branch facts such as hours or a size-range confirmation were found in the research file (chain rule)."
+    },
+    {
+      "slug": "molteno-road-dental-practice-oranjezicht",
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/molteno-road-dental-practice-cape-town-116847"
+      ]
+    },
+    {
+      "slug": "monument-pharmacy-goodwood",
+      "status": "deferred",
+      "reason": "Held per owner instruction: the Cylex listing gives address, phone numbers and a generic 'what is a pharmacy depot' boilerplate paragraph, not facts specific to this pharmacy. No genuinely non-generic distinguishing fact is available beyond address, phone and category. Held pending further verification."
+    },
+    {
+      "slug": "mr-price-westgate-mall-westgate",
+      "status": "deferred",
+      "reason": "Overriding PUBLISH call: no Westgate Mall page was crawled, and search results are either the generic Mr Price chain homepage or entirely unrelated (dictionary definitions of 'Mr.', a Mr D delivery app, MrBeast's YouTube channel). No branch-specific facts support even a narrowed-scope description (chain rule)."
+    },
+    {
+      "slug": "ok-minimark-strandfontein",
+      "status": "deferred",
+      "reason": "Held per owner instruction: retained only once the current Blackberry Mall branch details have been confirmed; the Africabz listing gives hours, phone and mixed reviews but no owner-written branch facts. Held pending further verification."
+    },
+    {
+      "slug": "ok-minimark-summer-greens-summer-greens",
+      "status": "deferred",
+      "reason": "Held per owner instruction: the saYellow listing gives only the generic OK MiniMark chain description repeated across branches ('convenience outlets ... in residential and high traffic flow areas'), not facts specific to this branch. Held pending further verification."
+    },
+    {
+      "slug": "on-the-rocks-restaurant-bloubergstrand",
+      "status": "researched",
+      "sources": [
+        "https://www.sa-venues.com/things-to-do/westerncape/on-the-rocks-restaurant/"
+      ]
+    },
+    {
+      "slug": "paranga-camps-bay",
+      "status": "researched",
+      "sources": [
+        "https://www.kovecollection.co.za/paranga/"
+      ]
+    },
+    {
+      "slug": "park-health-golden-acre-cape-town-cbd",
+      "status": "deferred",
+      "reason": "Overriding PUBLISH call: the only crawled source (Medpages) gives name, category ('Clinics - Private'), address and phone only; the claimed medical-aid/capitated-rate facts do not appear there, and the other existing sources (LinkedIn, the practice's own site) were not actually crawled, so nothing beyond address and category is verified."
+    },
+    {
+      "slug": "pet-plus-lakeside-lakeside",
+      "status": "deferred",
+      "reason": "Held per owner instruction: the Africabz listing gives branch hours, categories and generic customer reviews praising service and well-known pet-food brands, but no owner-written detail on specific product ranges or services. Held pending further verification."
+    }
+  ]
+}

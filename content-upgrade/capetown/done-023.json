@@ -1,0 +1,306 @@
+{
+  "city": "capetown",
+  "chunk": 23,
+  "generated_at": "2026-10-05T13:03:28.852Z",
+  "items": [
+    {
+      "slug": "the-alma-cafe-rosebank",
+      "status": "researched",
+      "sources": [
+        "https://www.almacafe.co.za"
+      ]
+    },
+    {
+      "slug": "the-bantry-aparthotel-bantry-bay",
+      "status": "researched",
+      "sources": [
+        "https://www.bantryaparthotel.co.za/"
+      ]
+    },
+    {
+      "slug": "the-commons-muizenberg",
+      "status": "researched",
+      "sources": [
+        "https://thecommons.co.za/"
+      ]
+    },
+    {
+      "slug": "vds-roadhouse-colorado",
+      "status": "researched",
+      "sources": [
+        "https://www.mrd.com/delivery/restaurant/vds-roadhouse-colorado-park/32358"
+      ]
+    },
+    {
+      "slug": "wharfside-grill-hout-bay",
+      "status": "researched",
+      "sources": [
+        "https://www.marinerswharf.co.za/wharfside-grill-restaurant/",
+        "https://www.marinerswharf.co.za/services"
+      ]
+    },
+    {
+      "slug": "wheelers-pharmacy-medical-depot-hout-bay",
+      "status": "researched",
+      "sources": [
+        "https://www.wheelerspharmacy.com/contact"
+      ]
+    },
+    {
+      "slug": "alpha-pharm-lentegeur-pharmacy-lentegeur",
+      "status": "researched",
+      "sources": [
+        "https://www.hotfrog.co.za/company/0dc538da048b5422832895641074ba9c/alpha-pharm-lentegeur-pharmacy/cape-town/pharmacies-prescriptions"
+      ]
+    },
+    {
+      "slug": "amanee-beauty-salon-three-anchor-bay",
+      "status": "researched",
+      "sources": [
+        "https://www.fresha.com/a/amanee-beauty-salon-cape-town-three-anchor-bay-48-baywest-46b-main-road-cae1xjue"
+      ]
+    },
+    {
+      "slug": "breitling-va-waterfront",
+      "status": "researched",
+      "sources": [
+        "https://www.thevault.co.za/en/our-shops-the-vault/the-vault-cape-town-breitling"
+      ]
+    },
+    {
+      "slug": "cafe-delicieux-welgemoed",
+      "status": "researched",
+      "sources": [
+        "http://blog.sa-venues.com/provinces/western-cape/cafe-delicieux-welgemoed/"
+      ]
+    },
+    {
+      "slug": "cape-town-fish-market-century-city",
+      "status": "researched",
+      "sources": [
+        "https://ctfm.co.za/stores-canal-walk"
+      ]
+    },
+    {
+      "slug": "castor-king-wetton",
+      "status": "researched",
+      "sources": [
+        "https://www.castorking.co.za"
+      ]
+    },
+    {
+      "slug": "cattle-baron-de-waterkant-de-waterkant",
+      "status": "researched",
+      "sources": [
+        "https://www.cattlebaron.co.za/cattle-baron-de-waterkant/"
+      ]
+    },
+    {
+      "slug": "cattle-baron-westlake-westlake",
+      "status": "researched",
+      "sources": [
+        "https://www.cattlebaron.co.za/cattle-baron-westlake/"
+      ]
+    },
+    {
+      "slug": "clarkes-bar-dining-room-cape-town-cbd",
+      "status": "researched",
+      "sources": [
+        "https://www.capetownccid.org/explore/eat/clarkes-bar-and-dining-room"
+      ]
+    },
+    {
+      "slug": "constantia-glen-constantia",
+      "status": "researched",
+      "sources": [
+        "https://constantiaglen.com/"
+      ]
+    },
+    {
+      "slug": "deer-park-cafe-vredehoek",
+      "status": "researched",
+      "sources": [
+        "https://deerparkcafe.co.za/"
+      ]
+    },
+    {
+      "slug": "dimensions-tent-and-structures-salt-river",
+      "status": "researched",
+      "sources": [
+        "https://dimensionstents.com/"
+      ]
+    },
+    {
+      "slug": "fields-woodstock",
+      "status": "researched",
+      "sources": [
+        "https://theoldbiscuitmill.co.za/tenants/fields/"
+      ]
+    },
+    {
+      "slug": "food-lovers-market-noordhoek",
+      "status": "researched",
+      "sources": [
+        "https://foodloversmarket.co.za/stores/western-cape/food-lovers-market-long-beach-mall/"
+      ]
+    },
+    {
+      "slug": "freddie-freeloader-salt-river",
+      "status": "researched",
+      "sources": [
+        "http://www.freddiefreeloader.co.za"
+      ]
+    },
+    {
+      "slug": "groot-constantia-constantia",
+      "status": "researched",
+      "sources": [
+        "https://grootconstantia.co.za"
+      ]
+    },
+    {
+      "slug": "the-41-camps-bay",
+      "status": "deferred",
+      "reason": "Orchestrator's note proposed publishing beachfront-terrace, Camps Bay Beach views and DJ/live entertainment facts, but the only crawled source (eatout.co.za) is pure site navigation/news boilerplate with no venue facts at all (confidence: none); none of the proposed anchor facts appear in the crawl. Held pending a usable source."
+    },
+    {
+      "slug": "the-holland-bakery-bellville",
+      "status": "deferred",
+      "reason": "Own site describes a Kraaifontein-based bakery that delivers nationally, not a Bellville premises; cannot be verified as the same branch as the batch's Durban/Voortrekker Road address."
+    },
+    {
+      "slug": "the-taproom-salt-river",
+      "status": "deferred",
+      "reason": "Eat Out page is a news template with no venue facts."
+    },
+    {
+      "slug": "thumbs-up-plumbing-construction-monte-vista",
+      "status": "deferred",
+      "reason": "Orchestrator's note proposed publishing a detailed service list (COCs, jetting, roofing, drain unblocking) and a guaranteed-workmanship/qualified-plumber claim from the company's own site, but the own site timed out during crawl and the only search results are unrelated French-language Facebook help-forum pages; none of the proposed facts were actually crawled. Held pending a usable source."
+    },
+    {
+      "slug": "tigers-milk-camps-bay",
+      "status": "deferred",
+      "reason": "Own about page returned not-found; no facts beyond what is already in the batch text (chain rule)."
+    },
+    {
+      "slug": "whole-earth-cafe-scarborough",
+      "status": "deferred",
+      "reason": "Orchestrator's note proposed publishing specific hours (08:30-17:00) and menu facts from the cafe's own site, but the only crawled source (eatout.co.za) is pure news-template boilerplate with no venue facts at all (confidence: none); the proposed hours and menu facts do not appear in the crawl. Held pending a usable source."
+    },
+    {
+      "slug": "woolworths-green-point",
+      "status": "deferred",
+      "reason": "Catalogue site gives hours only; no branch-specific facts (chain rule)."
+    },
+    {
+      "slug": "zone-fitness-fish-hoek-town-square-fish-hoek",
+      "status": "deferred",
+      "reason": "Orchestrator's note proposed publishing anchor-tenant status and specific hours (Mon-Thu 05:30-21:00 etc) sourced to Fish Hoek Town Square's own directory, but no such directory page was crawled; the research only reached zonefitness.co.za's 404 about/services pages and a generic enquiry-form contact page (chain rule), with no Fish Hoek-specific facts. Held pending a usable source."
+    },
+    {
+      "slug": "all-road-tyres-killarney-gardens",
+      "status": "deferred",
+      "reason": "Sayellow listing gives address, phone and category only; no facts beyond what is already in the batch text."
+    },
+    {
+      "slug": "b74-mowbray",
+      "status": "deferred",
+      "reason": "Orchestrator's note proposed publishing kitchen/bar hours sourced to B74's own site, but the site did not resolve (DNS error) and the only search results are unrelated GitHub/ChatGPT pages; no B74-specific facts, including the proposed hours, were crawled. Held pending a usable source."
+    },
+    {
+      "slug": "bare-laser-hair-removal-cape-quarter-de-waterkant",
+      "status": "deferred",
+      "reason": "Orchestrator's note proposed publishing a Bare SA branch-list fact (Green Point/Harfield Village), but no Bare SA or Cape Quarter page was crawled; Cape Quarter's site timed out and the only search results are unrelated payPod login pages and vaginal-itching medical articles. Held pending a usable source."
+    },
+    {
+      "slug": "bloomberg-gym-ottery",
+      "status": "deferred",
+      "reason": "Own site did not resolve; search results are all about the unrelated Bloomberg media company. Nothing usable."
+    },
+    {
+      "slug": "bok-lounge-and-grill-brackenfell",
+      "status": "deferred",
+      "reason": "Centre store-directory page lists tenants and phone numbers only; no branch-specific facts."
+    },
+    {
+      "slug": "buco-montague-gardens",
+      "status": "deferred",
+      "reason": "Orchestrator's note proposed publishing a detailed service list (board cutting, kitchen design, paint mixing, truss sales, garden centre, gas exchange) sourced to BUCO's own store locator, but only a Cylex directory listing was crawled, giving address, phone, category and hours only, with none of that service list present (chain rule). Held pending a usable source."
+    },
+    {
+      "slug": "c4-ecosolutions-dennendal",
+      "status": "deferred",
+      "reason": "Own contact page gives an address in Mowbray (River Park, Liesbeek Parkway), not Dennendal; cannot be verified as the same address as the batch listing."
+    },
+    {
+      "slug": "cafe-neo-mouille-point",
+      "status": "deferred",
+      "reason": "Orchestrator's note proposed publishing Wi-Fi/parking/alfresco/child-friendly amenity facts, but the only crawled source (eatout.co.za) is pure news-template boilerplate with no venue facts at all (confidence: none); none of the proposed amenity facts appear in the crawl. Held pending a usable source."
+    },
+    {
+      "slug": "campuskey-rosebank-rosebank",
+      "status": "deferred",
+      "reason": "Orchestrator's note proposed publishing CK Mini Cafe amenity and 585-bed development facts, but the crawled sources give only placeholder listing text (postmatric.co.za) and a generic CampusKey blog post about Rosebank/Observatory in general, with no Rosebank-specific amenity or bed-count facts (chain rule). Held pending a usable source."
+    },
+    {
+      "slug": "capitec-bank-golden-acre-cape-town-cbd",
+      "status": "deferred",
+      "reason": "Own site gives only chain-wide banking product copy; no Golden Acre branch-specific facts (chain rule)."
+    },
+    {
+      "slug": "cest-la-vie-fish-hoek",
+      "status": "deferred",
+      "reason": "Orchestrator's note proposed publishing specific trading hours (Tue-Sun 07:00-15:00), but the only crawled source (eatout.co.za) is pure news-template boilerplate with no venue facts at all (confidence: none), including no hours. Held pending a usable source."
+    },
+    {
+      "slug": "clicks-blue-downs",
+      "status": "deferred",
+      "reason": "Orchestrator's note proposed publishing specific store/pharmacy hours sourced to Clicks' own store page, but the crawl of that page returned only generic Clicks category-navigation content (beauty/makeup menus) and a meta line promising trading hours that was never actually captured; no Blue Downs branch hours or pharmacy-specific facts were crawled (chain rule). Held pending a usable source."
+    },
+    {
+      "slug": "ctm-northgate-brooklyn",
+      "status": "deferred",
+      "reason": "Orchestrator's note proposed publishing a corrected branch name/address ('CTM Paarden Eiland (Northgate)', 8 Gold Street) sourced to CTM's own store locator, but the crawled storefinder page text lists only Eastern Cape, Free State and Gauteng stores and does not mention a Brooklyn, Northgate or Paarden Eiland branch at all; the proposed correction is unverified (chain rule). Held pending a usable source."
+    },
+    {
+      "slug": "ctp-cartons-and-labels-epping",
+      "status": "researched",
+      "sources": [
+        "https://ctppackaging.co.za"
+      ]
+    },
+    {
+      "slug": "curry-club-cape-quarter-de-waterkant",
+      "status": "deferred",
+      "reason": "Cape Quarter tenant list gives the name and phone only; no facts beyond what is already in the batch text."
+    },
+    {
+      "slug": "digitas-liquorice-zonnebloem",
+      "status": "deferred",
+      "reason": "Orchestrator's note proposed publishing a Johannesburg/Durban multi-office fact, but the crawled pages show only global Digitas/Publicis Groupe agency copy and a Unilever case study, with no mention of other South African offices; no facts specific to the Zonnebloem office (chain rule). Held pending a usable source."
+    },
+    {
+      "slug": "dis-chem-sitari-fields-croydon",
+      "status": "deferred",
+      "reason": "Own store page names a contact person and gives otherwise chain-wide Dis-Chem copy; the name cannot be used and the remaining facts are chain-level (chain rule)."
+    },
+    {
+      "slug": "dis-chem-tableview-table-view",
+      "status": "researched",
+      "sources": [
+        "https://www.dischem.co.za/table-view-shopping-centre"
+      ]
+    },
+    {
+      "slug": "dr-carl-ensil-table-view-dental-studio-table-view",
+      "status": "deferred",
+      "reason": "Medpages page is a named dentist's profile with only address and phone beyond the name; not enough practice-specific content for 100 words."
+    },
+    {
+      "slug": "fish-hoek-fisheries-fish-hoek",
+      "status": "deferred",
+      "reason": "Orchestrator's note proposed publishing specific trading hours (Mon-Sat 07:00-20:00, Sun closed), but the only crawled source (eatout.co.za) is pure news-template/cookie-policy boilerplate with no venue facts at all (confidence: none), including no hours. Held pending a usable source."
+    }
+  ]
+}

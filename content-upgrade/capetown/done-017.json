@@ -1,0 +1,280 @@
+{
+  "city": "capetown",
+  "chunk": 17,
+  "generated_at": "2026-10-05T12:54:07.957Z",
+  "items": [
+    {
+      "slug": "cocoa-cha-chi-observatory",
+      "status": "researched",
+      "sources": [
+        "https://www.cocoa.co.za/"
+      ]
+    },
+    {
+      "slug": "damhuis-restaurant-melkbosstrand",
+      "status": "researched",
+      "sources": [
+        "https://www.diedamhuis.co.za"
+      ]
+    },
+    {
+      "slug": "goodwood-dental-studio-goodwood",
+      "status": "researched",
+      "sources": [
+        "https://www.goodwooddentalstudio.co.za/"
+      ]
+    },
+    {
+      "slug": "maitcomp-printers-maitland",
+      "status": "researched",
+      "sources": [
+        "https://maitcomp.co.za",
+        "https://maitcomp.co.za/contact"
+      ]
+    },
+    {
+      "slug": "namaste-noordhoek",
+      "status": "researched",
+      "sources": [
+        "https://www.capetownmagazine.com/namaste"
+      ]
+    },
+    {
+      "slug": "neighbourgoods-market-woodstock",
+      "status": "researched",
+      "sources": [
+        "https://insideguide.co.za/cape-town/things-to-do/neighbourgoods-market/"
+      ]
+    },
+    {
+      "slug": "newport-market-and-deli-mouille-point",
+      "status": "researched",
+      "sources": [
+        "https://www.newportdeli.co.za/"
+      ]
+    },
+    {
+      "slug": "nicol-coachworks-diep-river",
+      "status": "researched",
+      "sources": [
+        "https://www.nicolcw.co.za"
+      ]
+    },
+    {
+      "slug": "claremont-dental-claremont",
+      "status": "deferred",
+      "reason": "Medpages result is a different dentist's profile (Dr Bruintjies) at a different address (154 Belvedere Road) from the batch listing (Protea Place); cannot be verified as this practice, and naming the dentist is not allowed."
+    },
+    {
+      "slug": "clicks-central-square-pinelands",
+      "status": "deferred",
+      "reason": "Re-verified against the crawled clicks.co.za store-details page: the text is pure site-wide navigation and product-category boilerplate (ClubCard, Health Hub, Beauty Hub, makeup/skincare menus), word-for-word identical to the Cobble Walk and Meadowridge branch pages. No trading hours, phone, or confirmation of separate store/pharmacy facilities for this branch are actually present. Still deferred (chain rule)."
+    },
+    {
+      "slug": "clicks-cobble-walk-durbanville",
+      "status": "deferred",
+      "reason": "Re-verified against the crawled clicks.co.za store-details page: the text is the same site-wide navigation and product-category boilerplate (ClubCard, Health Hub, Beauty Hub, makeup/skincare menus) as the Pinelands and Meadowridge branch pages, with no hours, phone or pharmacy-facility confirmation specific to this branch. Still deferred (chain rule)."
+    },
+    {
+      "slug": "clicks-lansdowne-corner-lansdowne",
+      "status": "deferred",
+      "reason": "Clicks store-details page returned only a generic find-directions line; no branch-specific facts (chain rule)."
+    },
+    {
+      "slug": "clicks-meadowridge-meadowridge",
+      "status": "deferred",
+      "reason": "Re-verified against the crawled clicks.co.za store-details page: the text is the same site-wide navigation and product-category boilerplate (ClubCard, Health Hub, Beauty Hub, makeup/skincare menus) as the Pinelands and Cobble Walk branch pages, with no hours, phone or any fact distinguishing this as a store-only (non-pharmacy) branch. Still deferred (chain rule)."
+    },
+    {
+      "slug": "colcacchio-go-westlake-westlake",
+      "status": "deferred",
+      "reason": "Re-verified against the crawled colcacchio.co.za/go/westlake page: it lists the Benmore, Three Rivers, Hillcrest, Tribeca, Mackeurtan, Waterfall and Old Biscuit Mill branches with their own phone/hours, then cuts off mid-way through the Westlake entry (address only, before any phone or hours text). No Westlake-specific trading hours were actually captured; still deferred (chain rule)."
+    },
+    {
+      "slug": "crossroads-cdc-crossroads",
+      "status": "deferred",
+      "reason": "Re-verified against the crawled Western Cape Government facility page: it does confirm Mon-Fri 07:00-16:00 operating hours, but beyond that gives only the address and a named contact person (not usable). There is no services list or other branch-specific detail, so address + category + hours alone isn't enough to reach 100 real words without inventing generic CDC content. Still deferred."
+    },
+    {
+      "slug": "cuthills-hair-design-panorama",
+      "status": "deferred",
+      "reason": "Re-checked the Fresha listing: it is still for \"Cuthill's Hair Design (Sylvia Cuthill), 16 Barnard St, Monte Vista\" — not the batch's 80 Panorama Road, Panorama address. The address mismatch is not resolved, and the page also names the stylist, which isn't allowed. Still deferred; cannot be verified as this salon."
+    },
+    {
+      "slug": "debonairs-pizza-bothasig-bothasig",
+      "status": "deferred",
+      "reason": "Re-verified against the crawled debonairspizza.co.za homepage and menu page: both are chain-wide marketing and menu content (brand story since 1991, Clazzics/Real Deal/Triple-Decker pricing) with no mention of the Bothasig branch, its hours or its payment methods. Claims of daily 10:00-21:00 trading or contactless/app payment for this branch are not in the crawled source. Still deferred (chain rule)."
+    },
+    {
+      "slug": "dr-r-lalloo-matroosfontein",
+      "status": "deferred",
+      "reason": "Recomed page is a named dentist's profile with no practice-specific facts beyond the name, which is not allowed to use."
+    },
+    {
+      "slug": "faulls-pharmacy-parow",
+      "status": "deferred",
+      "reason": "Re-checked the Yellosa listing: it is explicitly flagged \"Unverified Listing\" and gives only the name, address and phone — no dispensing, prescription or chronic-medication detail. No Oxygen Products distributor page was actually retrieved in the research file. Still deferred."
+    },
+    {
+      "slug": "fish-hoek-veterinary-clinic-fish-hoek",
+      "status": "deferred",
+      "reason": "TopVet page reads as generic, auto-generated directory filler with no concrete facts about the practice; not usable as sourced content."
+    },
+    {
+      "slug": "food-lovers-market-parklands",
+      "status": "deferred",
+      "reason": "Re-verified: the crawled own-site page resolves to Food Lover's Market Sandown, Shop GO3, Sandown Retail Crossing, Milnerton Rural — a different shop number and centre from the batch's Shop 33, Emporium Centre, Parklands address. The phone number, hours and community-partner facts on the page belong to that Sandown branch, not this one. Still deferred; cannot be verified as the same store."
+    },
+    {
+      "slug": "foragers-deli-wholefoods-scarborough",
+      "status": "deferred",
+      "reason": "Re-checked thevillagehub.co.za/foragers: the page is a two-line gallery caption (Foragers Courtyard / Foragers Deli / Coffee Station / Roberto Ricci Design) with no product list, hours or history; the deli/product/history facts claimed for this listing are not in the crawled source. The search pass returned unrelated results (a LinkedIn profile and a crushed-stone company). Still deferred."
+    },
+    {
+      "slug": "game-kenilworth",
+      "status": "deferred",
+      "reason": "Africabz listing gives hours, categories and reviews; no owner-written branch facts (chain rule)."
+    },
+    {
+      "slug": "gamo-hair-beauty-salon-spa-rondebosch",
+      "status": "deferred",
+      "reason": "Facebook and directory listings give only the address and a 2017 opening date; not enough real content for 100 words."
+    },
+    {
+      "slug": "gelato-mania-camps-bay",
+      "status": "deferred",
+      "reason": "Re-checked: the only page retrieved is an Africabz directory listing (hours, phone, categories, customer reviews) for this address — not \"The Promenade's own directory\" or Camps Bay accommodation information as described. It gives no owner-written detail on flavours or range, and Gelato Mania is itself a multi-branch chain (Mojo Market, Green Point, Waterfront and Newlands branches listed on the same page). Still deferred; insufficient non-generic content."
+    },
+    {
+      "slug": "going-under-clothing-nyanga-junction-manenberg",
+      "status": "deferred",
+      "reason": "Re-verified against the crawled own store-finder page: it lists hours for Bellville, Brackenfell, Caledon, Ceres, Eerste River, Elsies River, Goodwood and Kraaifontein, then cuts off before any Nyanga Junction entry. No Nyanga-specific hours were actually captured in the research file. Still deferred (chain rule)."
+    },
+    {
+      "slug": "golden-acre-dental-practice-cape-town-cbd",
+      "status": "deferred",
+      "reason": "Recomed page is a named dentist's profile (Dr A.A. Mia) with no practice-specific facts beyond the name and hours, and naming the dentist is not allowed."
+    },
+    {
+      "slug": "hang-ten-cafe-muizenberg",
+      "status": "deferred",
+      "reason": "Re-checked the Eat Out URL: the crawled text is a generic News24/Eat Out homepage template (awards articles, site navigation) with no venue content at all — no crepes, coffee, Surfers Corner, Wi-Fi or dog-friendly facts are present. TripAdvisor remains blocked. Still deferred; no usable source found."
+    },
+    {
+      "slug": "hanover-park-dental-clinic-hanover-park",
+      "status": "deferred",
+      "reason": "All directory sources were blocked or unrelated; no facts retrieved."
+    },
+    {
+      "slug": "j-s-sushi-claremont-claremont",
+      "status": "deferred",
+      "reason": "Re-verified against orchestrator's PUBLISH call: the only crawled source (Mr D Food) is a generic delivery-platform page listing unrelated restaurants on the platform (Hello Tomato, Bento, Afrikoa, etc.); it contains no facts about J&S Sushi itself, so the claimed Japanese/sushi/halal/pickup confirmation is not supported. Held, not published."
+    },
+    {
+      "slug": "jason-sushi-restaurant-welgemoed",
+      "status": "researched",
+      "sources": [
+        "https://www.jasonsushi.co.za"
+      ]
+    },
+    {
+      "slug": "kauai-plumstead",
+      "status": "deferred",
+      "reason": "Re-verified against orchestrator's PUBLISH call: the crawled source (restaurants-in-cape-town.co.za) is a generic Cape Town nightlife/bars blog post mistagged 'strong' confidence; its actual text is entirely about bars elsewhere in the city, not Kauai's menu, delivery platforms or trading hours. No Kauai-specific facts exist in the research file. Held, not published."
+    },
+    {
+      "slug": "kfc-golden-acre-cape-town-cbd",
+      "status": "deferred",
+      "reason": "Re-verified against orchestrator's PUBLISH call: the only crawled page is for a different KFC branch in Germiston, Gauteng, not Golden Acre, Cape Town; golden-acre.co.za (the real source) timed out and returned nothing. No Golden Acre-specific facts exist anywhere in the research file. Held, not published (chain rule)."
+    },
+    {
+      "slug": "kfc-thornton",
+      "status": "deferred",
+      "reason": "Re-verified against orchestrator's PUBLISH call: Cylex gives this branch's address, phone and opening hours (Mon-Sun 09:00-21:00, added to the hours field) plus generic nationwide KFC corporate copy ('leading brand...over 940 restaurants countrywide'); no branch-specific service-option facts (dine-in/collection, drive-through, delivery, catering) are stated anywhere in the research file. Description held (chain rule); hours added."
+    },
+    {
+      "slug": "kfc-total-rocklands-rocklands",
+      "status": "deferred",
+      "reason": "Re-verified against orchestrator's PUBLISH call: Cylex gives this branch's address, phone and hours (Mon-Sun 08:00-20:00, added to the hours field) plus the same generic nationwide KFC copy; the 'Total Filling Station' framing is not stated in the crawled text itself (only implied by the business name/address), and no other branch-specific facts were found. Description held (chain rule); hours added."
+    },
+    {
+      "slug": "langverwacht-dental-kuils-river",
+      "status": "deferred",
+      "reason": "Confirmed HOLD (matches orchestrator's call): Yellosa gives only a one-line tagline ('Affordable dental care in Kuilsriver for everyone'), an establishment year (2016) and a registration code; no practice-specific services or facts. Held, not published."
+    },
+    {
+      "slug": "magnolia-social-dining-lounge-somerset-west",
+      "status": "deferred",
+      "reason": "Re-verified against orchestrator's PUBLISH call: the only crawled source (Eat Out) is a generic News24/Eat Out homepage template with zero venue facts. The cited erinvale.co.za page was never captured in the research file, so the claimed facts (part of Erinvale Hotel & Spa, welcomes non-residents, daily 11:00-23:00 hours) cannot be verified at all. Held, not published."
+    },
+    {
+      "slug": "mcdonalds-delft",
+      "status": "researched",
+      "sources": [
+        "https://www.mcdonalds.co.za/location/mcdonalds-delft"
+      ]
+    },
+    {
+      "slug": "mr-k-rondebosch",
+      "status": "deferred",
+      "reason": "Re-verified against orchestrator's PUBLISH call: the crawled page is the Mr K homepage with only chain-wide bullion/jewellery copy (Krugerrands, jewellery recycling, custom jewellery, safe custody); no Rondebosch branch facts, no 'established 2020' statement and no Jewellery Council accreditation mention appear anywhere in the research file. Held, not published (chain rule)."
+    },
+    {
+      "slug": "nandos-3arts-village-plumstead",
+      "status": "deferred",
+      "reason": "Confirmed HOLD: both crawled Nando's store-locator pages returned 'Not Found' / 'The store could not be found'; zero facts of any kind were retrieved for this branch, so the orchestrator's 'official store page' claim is not supported. Held, not published (chain rule)."
+    },
+    {
+      "slug": "navaho-spur-brackenfell-shopping-centre-brackenfell",
+      "status": "deferred",
+      "reason": "Confirmed HOLD (matches orchestrator's call): Magicpin text is generic Spur-chain marketing copy (play area, 'Spur spirit') with no facts specific to this branch. Held, not published (chain rule)."
+    },
+    {
+      "slug": "neovision-brackenfell-corner-brackenfell",
+      "status": "deferred",
+      "reason": "Re-verified against orchestrator's PUBLISH call: Medpages gives only name, phone and address; the official brackenfellcorner.co.za page timed out and was never captured, so no 'Monday-Saturday hours' or other branch-specific facts exist anywhere in the research file. Held, not published (chain rule)."
+    },
+    {
+      "slug": "neovision-welgemoed",
+      "status": "deferred",
+      "reason": "Re-verified against orchestrator's PUBLISH call: Neovision's own branch page gives real hours (Mon-Fri 09:00-17:00, Sat 09:00-14:00, Sun Closed - added to the hours field) and phone, but the descriptive text ('Our optometry practices nationwide offer...') is chain-wide copy reused across branches, not distinguishing content; address and hours alone aren't enough for a non-generic description, and this is not meaningfully distinct from item 34's chain-wide service list. Description held (chain rule); hours added."
+    },
+    {
+      "slug": "new-york-bagels-zonnebloem",
+      "status": "deferred",
+      "reason": "Re-verified against orchestrator's PUBLISH call: the CCID directory entry gives only address, phone and a Facebook link; no bagel menu detail (no 'breakfast bagels', 'chicken schnitzel bagels' or any variety) appears anywhere in the research file. Held, not published."
+    },
+    {
+      "slug": "nibbly-bits-de-waterkant",
+      "status": "deferred",
+      "reason": "Re-verified against orchestrator's PUBLISH call: the only crawled source is the Cape Quarter tenant list, giving Nibbly Bits' name and phone number alongside dozens of unrelated tenants; no Nibbly Bits-specific contact page, shop number, hours or product facts were captured. Held, not published."
+    },
+    {
+      "slug": "ou-kaapse-vet-tokai",
+      "status": "researched",
+      "sources": [
+        "https://oukaapsevet.co.za"
+      ]
+    },
+    {
+      "slug": "panorama-veterinary-clinic-specialist-centre-panorama",
+      "status": "deferred",
+      "reason": "Re-verified against orchestrator's PUBLISH call: the SAVET listing is templated directory boilerplate ('one of 141 veterinary clinics listed in Cape Town...2 veterinary practices' in the area) and mentions only general consultations, preventive care, diagnostics, surgical procedures and 24-hour emergency availability; none of the specific anchor facts claimed (intensive care unit, cat-only facilities, isolation wards) appear anywhere in the research file, and panoramavet.co.za itself was blocked (HTTP 403) on every attempt. Held, not published."
+    },
+    {
+      "slug": "pep-cape-town-cbd",
+      "status": "deferred",
+      "reason": "Confirmed HOLD (matches orchestrator's call): Golden Acre directory gives only a list of tenant phone numbers (PEP: 021 425 0880) with no PEP-specific facts. Held, not published (chain rule)."
+    },
+    {
+      "slug": "pick-n-pay-big-bay-bloubergstrand",
+      "status": "deferred",
+      "reason": "Re-verified against orchestrator's PUBLISH call: the only crawled source is a shopshours.co.za aggregator listing with address, phone and hours only (Mon-Sat 09:00-18:00, Sun Closed - added to the hours field); there is no mention anywhere in the research file of Eden on the Bay's own site or the 'fresh food and other items for the home and office' framing, as that source was never captured. Description held (chain rule); hours added."
+    },
+    {
+      "slug": "pick-n-pay-richmond-corner-richwood",
+      "status": "deferred",
+      "reason": "Re-verified against orchestrator's PUBLISH call: Foursquare returned only a login wall and Medpages returned a 404 'page not found'; zero facts of any kind were retrieved. None of the claimed facts (Richmond Corner's own site, specific trading hours, free parking, 24-hour security) exist anywhere in the research file. Held, not published."
+    }
+  ]
+}

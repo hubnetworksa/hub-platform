@@ -1,0 +1,297 @@
+{
+  "city": "capetown",
+  "chunk": 21,
+  "generated_at": "2026-10-05T13:02:08.332Z",
+  "items": [
+    {
+      "slug": "blasters-family-restaurant-brackenfell",
+      "status": "researched",
+      "sources": [
+        "https://www.hungryfoody.com/za/blasters-family-restaurant-cape-gate/"
+      ]
+    },
+    {
+      "slug": "camel-rock-restaurant-scarborough",
+      "status": "researched",
+      "sources": [
+        "https://www.sa-venues.com/things-to-do/westerncape/camel-rock-restaurant/"
+      ]
+    },
+    {
+      "slug": "cape-union-mart-kuils-river",
+      "status": "researched",
+      "sources": [
+        "https://accessparkbellville.co.za/directory/cape-union-mart/"
+      ]
+    },
+    {
+      "slug": "cash-crusaders-airport-shopping-centre-belhar",
+      "status": "researched",
+      "sources": [
+        "https://my-catalogue.co.za/stores/cape-town/cash-crusaders/airport-shopping-centre-corner-of-belhar-drive-and-stellenbosch-arterial-belhar",
+        "https://www.facebook.com/BelharCashCrusad/"
+      ]
+    },
+    {
+      "slug": "columbit-kensington",
+      "status": "researched",
+      "sources": [
+        "https://www.yellosa.co.za/company/181272/columbit-pty-ltd"
+      ]
+    },
+    {
+      "slug": "die-weiveld-slaghuis-kenridge",
+      "status": "researched",
+      "sources": [
+        "https://www.weiveldslaghuis.co.za/",
+        "https://www.ipicgroup.com/kenridge"
+      ]
+    },
+    {
+      "slug": "excentric-hair-artists-gardens",
+      "status": "researched",
+      "sources": [
+        "https://www.excentric-hair.co.za/contact-us"
+      ]
+    },
+    {
+      "slug": "fat-harrys-harfield-village",
+      "status": "researched",
+      "sources": [
+        "https://www.capetownmagazine.com/fat-harrys-restaurant-and-bar"
+      ]
+    },
+    {
+      "slug": "fish4africa-woodstock",
+      "status": "researched",
+      "sources": [
+        "https://fish4.africa/stores/"
+      ]
+    },
+    {
+      "slug": "gentspride-barbershop-bonteheuwel",
+      "status": "researched",
+      "sources": [
+        "https://gentspride.co.za/"
+      ]
+    },
+    {
+      "slug": "golden-river-spur-fish-hoek",
+      "status": "researched",
+      "sources": [
+        "https://www.spursteakranches.com/za/restaurant/western-cape/cape-town/fish+hoek/golden-river-spur"
+      ]
+    },
+    {
+      "slug": "hangberg-dreams-hangberg",
+      "status": "researched",
+      "sources": [
+        "https://hangbergdreams.org.za/contact"
+      ]
+    },
+    {
+      "slug": "harvest-moon-watercolours-kommetjie",
+      "status": "researched",
+      "sources": [
+        "https://harvestmoonwatercolours.co.za/"
+      ]
+    },
+    {
+      "slug": "hassans-colorado-service-station-colorado",
+      "status": "researched",
+      "sources": [
+        "https://find.shell.com/za/fuel/10043025-hassans-colorado-service-stn/en_US"
+      ]
+    },
+    {
+      "slug": "iv-bar-westlake-westlake",
+      "status": "researched",
+      "sources": [
+        "https://theivbar.co.za"
+      ]
+    },
+    {
+      "slug": "kiki-sea-point",
+      "status": "researched",
+      "sources": [
+        "https://insideguide.co.za/cape-town/restaurants/kiki/"
+      ]
+    },
+    {
+      "slug": "kleinskys-delicatessen-sea-point",
+      "status": "researched",
+      "sources": [
+        "https://www.kleinskys.co.za/"
+      ]
+    },
+    {
+      "slug": "lilys-mouille-point",
+      "status": "researched",
+      "sources": [
+        "https://www.kovecollection.co.za/lilys/"
+      ]
+    },
+    {
+      "slug": "best-of-asia-green-point",
+      "status": "deferred",
+      "reason": "Verified against the crawled Eat Out page (eatout.co.za/venue/best-of-asia-green-point): it is the same generic News24/Eat Out template with site navigation and unrelated headlines, not venue facts. The claimed hours (Mon-Sat 11:00-22:00, Sun 11:00-21:00) and cuisine breakdown do not appear anywhere in the crawled text or in search results (search returned none). Holding as originally deferred."
+    },
+    {
+      "slug": "bootlegger-coffee-company-muizenberg",
+      "status": "deferred",
+      "reason": "Verified against the crawled Eat Out page (eatout.co.za/venue/bootlegger-coffee-company-muizenberg): identical generic News24/Eat Out template, no venue facts, no search results. The claimed 'Bootlegger XS' format designation does not appear anywhere in the crawled text. Holding as originally deferred."
+    },
+    {
+      "slug": "brackenfell-dierekliniek-animal-clinic-brackenfell",
+      "status": "deferred",
+      "reason": "Confirmed: the TopVet page is generic, templated copy repeated across many TopVet listings (routine exams, vaccinations, 'structured serene setting') with no concrete fact specific to this clinic, and the Facebook crawl failed (timeout). No address or service list could be verified. Holding as instructed."
+    },
+    {
+      "slug": "buco-plaza-mitchells-plain",
+      "status": "deferred",
+      "reason": "Verified against the crawled BUCO page (buco.co.za/capetown/plaza): it is a site search results page returning 'no results' for the query plus a generic chain-wide product list (paint, nails, hammers), not a store locator entry for the Mitchells Plain branch. No trading hours (07:30-17:00 claimed) appear anywhere in the crawled text. Holding as originally deferred (chain rule)."
+    },
+    {
+      "slug": "cabstrut-ndabeni",
+      "status": "deferred",
+      "reason": "Verified against the crawled Cabstrut homepage (cabstrut.co.za): the page is entirely about the company's Houtbaai Street, Alberton, Gauteng head office, with a Johannesburg phone number (011-622-8633) and joburg@cabstrut.co.za contact - the opposite of the claimed 'official contact page directly confirming a Cape Town location'. No Ndabeni-specific fact found. Holding as originally deferred."
+    },
+    {
+      "slug": "cape-castors-kuils-river",
+      "status": "deferred",
+      "reason": "Verified against the crawled Yellosa page (yellosa.co.za/location/kuils-river/3): it is a directory list of ~835 Kuils River companies; the Cape Castors entry gives only address and phone (021 903 0734) plus a vague '+12 Years with us' tag, not a 2014 founding date. No LinkedIn source was crawled at all - the claimed LinkedIn founding-date fact is not in the research file. Holding as originally deferred."
+    },
+    {
+      "slug": "cash-crusaders-brackenfell-corner-brackenfell",
+      "status": "deferred",
+      "reason": "Verified against the crawled Brackenfell Corner store-directory page: it is literally a flat list of mall tenants and phone numbers (Cash Crusaders listed alongside Woolworths, Mr Price, SPAR etc.) with no Cash Crusaders-specific operational detail, let alone a split between retail and buy-shop hours. Holding as originally deferred (chain rule)."
+    },
+    {
+      "slug": "cash-crusaders-tokai-kirstenhof",
+      "status": "deferred",
+      "reason": "Verified against the crawled Cash Crusaders own-site store page (cashcrusaders.co.za/storedetails?location=Tokai): it returns only chain-wide shop categories (Cellular, TVs, Appliances) and generic loan/lay-by copy, with JavaScript disabled on the crawl; no Tokai-specific detail and no mention of a 'no collections' policy anywhere. Holding as originally deferred (chain rule)."
+    },
+    {
+      "slug": "checkers-langverwacht-plein-kuils-river",
+      "status": "deferred",
+      "reason": "Confirmed: the crawled checkers.co.za/about-us page is entirely generic Sixty60 delivery-service copy (launched November 2019, 60-minute delivery), with the store.co.za page returning HTTP 404. No Langverwacht Plein branch fact, and no mention of a separate LiquorShop. Holding as instructed."
+    },
+    {
+      "slug": "checkers-westgate-mall-westgate",
+      "status": "deferred",
+      "reason": "Verified against the crawled my-catalogue.co.za page: it is a specials/catalogue listing (promotion date ranges only - Home & DIY, Flavours of Asia, LiquorShop Brandy etc.), not a mall directory or liquor-licence record. No anchor-tenant fact or Shoprite Checkers liquor-licence confirmation appears anywhere in the research file. Holding as originally deferred (chain rule)."
+    },
+    {
+      "slug": "clicks-pharmacy-eden-on-the-bay-bloubergstrand",
+      "status": "deferred",
+      "reason": "Verified against the crawled Medpages page (medpages.info, orgcode=1910463): it gives only the pharmacy's name, phone and Shop 47 address, exactly as the original reason stated. No trading hours (the claimed Mon-Fri 09:00-18:00 / Sat 09:00-19:00 / Sun 09:00-17:00) appear anywhere in the crawled text. Holding as originally deferred (chain rule)."
+    },
+    {
+      "slug": "clicks-sanbury-square-eerste-river",
+      "status": "deferred",
+      "reason": "Verified against the crawled Tiendeo page: it gives real, branch-specific trading hours (Sun 09:00-15:00, Mon-Fri 09:00-18:00, Sat 08:30-17:00) added to the hours field below, but no centre-opening-date or Pick n Pay anchor-tenant fact - that claim does not appear anywhere in the research file (no Sanbury Square centre directory was crawled). Per the chain rule, hours alone cannot carry a full rewritten description, so the description itself stays deferred; only the sourced hours are added."
+    },
+    {
+      "slug": "crossroads-1-clinic-crossroads",
+      "status": "deferred",
+      "reason": "Confirmed: the capetown.gov.za facility page timed out on crawl, and every search result returned is for an unrelated Wanderers Taxi Rank in Johannesburg. No City of Cape Town facility page content, and no Mon-Fri 08:00-16:30 hours fact, appears anywhere in the research file. Holding as instructed."
+    },
+    {
+      "slug": "doncaster-motors-kenilworth",
+      "status": "deferred",
+      "reason": "Confirmed: search results are Dimension Data/MyBroadband contact and forum pages, entirely unrelated to this Kenilworth fuel station; the only other page crawled (yep.co.za) returned no usable content. Holding as instructed."
+    },
+    {
+      "slug": "eastlake-barber-shop-marina-da-gama",
+      "status": "deferred",
+      "reason": "Re-checked the 'Colorado' risk flagged originally: the crawled source in this research file is in fact the correct Fresha listing for Shop 13, Eastlake Centre, Marina Da Gama, Cape Town (not the US business), so that specific risk does not apply here. However the listed services (barbering, beard trim, head shave, hot towel shave, men's haircut) duplicate what the current description already states, exactly as the original reason says, so there is no new non-generic fact to build a fuller description from. The one genuinely new fact - Fresha's own trading hours (Mon-Sat 08:00-20:00, Sun 08:00-15:00) - is added via the hours field; the description itself stays deferred."
+    },
+    {
+      "slug": "eerste-river-paint-hardware-eerste-river",
+      "status": "deferred",
+      "reason": "Verified against the crawled Yellosa page (yellosa.co.za/company/838131): it is explicitly marked 'Unverified Listing' and gives only the address and phone (021 9025009), as the original reason states. The claimed split hours (Mon-Thu 08:00-17:15, Fri split, Sat 08:00-15:00) do not appear anywhere in the crawled text. Holding as originally deferred."
+    },
+    {
+      "slug": "epping-motor-spares-epping",
+      "status": "deferred",
+      "reason": "Confirmed: the only page crawled is the saYellow.com homepage itself (generic 'add a free listing' marketing copy), not a listing for this business; the Facebook/netpages crawl failed. No BMW/number-plate specialisation fact found anywhere. Holding as instructed."
+    },
+    {
+      "slug": "excellent-meat-market-elsies-river",
+      "status": "deferred",
+      "reason": "Verified against the crawled World of Meats directory page: it gives only the business's category (Butchers), phone and Halt Road address, alongside a list of nearby competing butcheries, as the original reason states. No '1970' founding date or multi-branch claim appears anywhere in the research file. Holding as originally deferred."
+    },
+    {
+      "slug": "excellent-meat-market-ottery",
+      "status": "deferred",
+      "reason": "Verified against the crawled saYellow page: it gives only the address, phone, category (Butcher Shops) and a review count, alongside a list of other Cape Town butcheries to consider, as the original reason states. The claimed specific trading-day pattern (Mon-Thu / Fri midday break / Sat / Sun) does not appear anywhere in the crawled text. Holding as originally deferred."
+    },
+    {
+      "slug": "food-lovers-market-willowbridge-bellville",
+      "status": "deferred",
+      "reason": "Verified against the crawled Tiendeo page: it gives real, branch-specific trading hours (Mon 09:00-19:00, Tue-Fri 08:00-19:00, Sat 08:00-18:00, Sun 08:00-16:00) added to the hours field below, but the claimed 'around 20 years at Willowbridge' fact does not appear anywhere in the research file. Per the chain rule, hours alone cannot carry a full rewritten description, so the description itself stays deferred; only the sourced hours are added."
+    },
+    {
+      "slug": "gogo-woodstock-woodstock",
+      "status": "deferred",
+      "reason": "Confirmed: the crawled Eat Out page is the same generic News24/Eat Out template with no venue facts, and the Tripadvisor crawl was blocked by a DataDome captcha. The claimed menu list (salads, sandwiches, wraps, croissants, smoothies) and Mon-Fri 07:00-16:00 hours do not appear anywhere in the research file. Holding as originally deferred."
+    },
+    {
+      "slug": "gogos-deli-newlands",
+      "status": "deferred",
+      "reason": "Confirmed: the only page crawled is an unrelated personal blog about a family in Nyeri, Kenya, as the original reason states; the africabz.com crawl was blocked. No Cardiff Castle store-directory page was ever crawled, so the claimed 'Gogo's Deli at Italo's' tenant naming cannot be verified from this research file. Holding as instructed."
+    },
+    {
+      "slug": "hungry-lion-goodwood-mall-goodwood",
+      "status": "deferred",
+      "reason": "Verified against the crawled Hungry Lion 'About' page: although it does contain a 'fresh ingredients...skilfully fry' line, the whole page is explicitly the brand's chain-wide history (founded 1997 in Stellenbosch, expansion across nine African countries, 500th store in 2025) with no mention of the Goodwood Mall branch at all. This is chain-level marketing copy, not branch-specific fact, so it fails the chain rule. Holding as originally deferred."
+    },
+    {
+      "slug": "intercare-waterstone-somerset-west",
+      "status": "deferred",
+      "reason": "Verified against the crawled Waterstone Village site: the page gives the shopping centre's own trading hours (09:00-18:00, Sat 09:00-17:00, Sun 09:00-14:00) and a store directory listing Clicks, Capitec, Absolute Pets etc. - centre-level facts, not Intercare's own hours. No 6 March 2023 opening date or cashless/medical-scheme fact for Intercare appears anywhere in the crawled text. Holding as originally deferred (chain rule)."
+    },
+    {
+      "slug": "jafmed-pharmacy-ottery",
+      "status": "deferred",
+      "reason": "Confirmed: the own site crawl timed out and every search result returned is a generic Google product page (Google search homepage, Gmail sign-in, Google Accounts) with nothing about this pharmacy. The claimed delivery/medical-aid/22:00 hours facts do not appear anywhere in the research file. Holding as instructed."
+    },
+    {
+      "slug": "jarryds-sea-point",
+      "status": "deferred",
+      "reason": "Verified against the crawled source: it is literally an Instagram post caption ('Morning rituals... 90 Regent Rd, Sea Point') with fan comments and emoji reactions, not an editorial review. No September 2026 verification, no 07:00-16:00 hours, and no 'first-come, first-served' claim appear anywhere in the research file. Holding as originally deferred."
+    },
+    {
+      "slug": "johns-touch-hair-and-beauty-salon-mowbray",
+      "status": "researched",
+      "sources": [
+        "https://www.fresha.com/lvp/johns-touch-hair-and-beauty-salon-saint-peters-road-cape-town-X4rLXZ"
+      ]
+    },
+    {
+      "slug": "just-skin-aesthetic-clinic-green-point",
+      "status": "deferred",
+      "reason": "Verified against the crawled Medpages page (medpages.info, orgcode=264652): it gives only the clinic's category (Clinics - Private) and Portside Shopping Centre address, alongside unrelated nearby competitor listings (Skin Renewal branches), exactly as the original reason states; the justskin.co.za own-site crawl was blocked (HTTP 403). The claimed March 2010 opening date, somatologist/doctor staffing, online store and hours do not appear anywhere in the research file. Holding as originally deferred."
+    },
+    {
+      "slug": "kauai-camps-bay",
+      "status": "deferred",
+      "reason": "Verified against the crawled kauai.co.za homepage: it is the brand's national site (menu, blog, franchising, app, 'Find a Kauai' store locator link) with no Camps Bay or Isaacs Corner branch fact, and no MyCiTi retailer page was crawled at all. Holding as originally deferred (chain rule)."
+    },
+    {
+      "slug": "kwikspar-stellenberg-stellenberg",
+      "status": "deferred",
+      "reason": "Verified against the crawled spar.co.za/about-us page: it is the SPAR Group's own national history (founded 1963, 2,500+ stores) with no Stellenberg branch fact, no Bean Tree Café mention and no trading hours; the store.co.za page also returned HTTP 404. Holding as originally deferred (chain rule)."
+    },
+    {
+      "slug": "la-petite-tarte-de-waterkant",
+      "status": "deferred",
+      "reason": "Confirmed: the crawled Eat Out page is a cookie-policy/template page with no venue facts, consistent with the original reason. No independent confirmation of current operating status or closure was found in this research file either way; keeping deferred per instruction rather than publishing as active, and not added to closed-businesses.json."
+    },
+    {
+      "slug": "letitia-bloemiste-florist-strand",
+      "status": "deferred",
+      "reason": "Confirmed: every search result returned is an unrelated Soccer24 football player-statistics page (Stefano Moreo, Marius Marin, Nathaniel Clyne etc.), and the africabz.com/brabys.com crawls were blocked. No florist-specific fact, and no Mon-Fri 08:00-17:00 / Sat 08:00-12:15 hours, appear anywhere in the research file. Holding as instructed."
+    }
+  ]
+}

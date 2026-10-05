@@ -1,0 +1,300 @@
+{
+  "city": "capetown",
+  "chunk": 22,
+  "generated_at": "2026-10-05T13:08:27.241Z",
+  "items": [
+    {
+      "slug": "lords-unisex-hairstylists-bergvliet",
+      "status": "researched",
+      "sources": [
+        "https://sherwoodshopping.co.za/lords-hair-salon/"
+      ]
+    },
+    {
+      "slug": "make-sea-point",
+      "status": "researched",
+      "sources": [
+        "https://www.findglocal.com/ZA/Cape-Town/134495703311920/MAKE-restaurant-Sea-Point"
+      ]
+    },
+    {
+      "slug": "ocean-view-secondary-school-ocean-view",
+      "status": "researched",
+      "sources": [
+        "https://www.school-register.co.za/school/ocean-view-secondary-school/"
+      ]
+    },
+    {
+      "slug": "ons-huisie-restaurant-bloubergstrand",
+      "status": "researched",
+      "sources": [
+        "https://onshuisie.co.za/"
+      ]
+    },
+    {
+      "slug": "optismile-dental-care-sea-point",
+      "status": "researched",
+      "sources": [
+        "https://optismile.co.za"
+      ]
+    },
+    {
+      "slug": "our-local-gardens",
+      "status": "researched",
+      "sources": [
+        "https://insideguide.co.za/cape-town/restaurants/our-local/"
+      ]
+    },
+    {
+      "slug": "planet-fitness-brackenfell-brackenfell",
+      "status": "researched",
+      "sources": [
+        "https://www.planetfitness.co.za/gyms/brackenfell/"
+      ]
+    },
+    {
+      "slug": "postnet-meadowridge-meadowridge",
+      "status": "researched",
+      "sources": [
+        "https://www.postnet.co.za/stores/meadowridge/5c69211355c8c661d10be9f4"
+      ]
+    },
+    {
+      "slug": "protea-chemicals-killarney-gardens",
+      "status": "researched",
+      "sources": [
+        "https://www.cybo.com/ZA-biz/protea-chemicals-pty-ltd_1g"
+      ]
+    },
+    {
+      "slug": "rapt-district-six",
+      "status": "researched",
+      "sources": [
+        "https://crushmag-online.com/unveiling-rapt-a-chocolate-wonderland/"
+      ]
+    },
+    {
+      "slug": "riley-incorporated-wynberg",
+      "status": "researched",
+      "sources": [
+        "https://www.jfrlaw.co.za"
+      ]
+    },
+    {
+      "slug": "rsaweb-sea-point",
+      "status": "researched",
+      "sources": [
+        "https://rsaweb.co.za"
+      ]
+    },
+    {
+      "slug": "sabrias-restaurant-wynberg",
+      "status": "researched",
+      "sources": [
+        "https://www.sabrias.co.za/"
+      ]
+    },
+    {
+      "slug": "spec-savers-cape-gate-brackenfell",
+      "status": "researched",
+      "sources": [
+        "https://www.specsavers.co.za/store/cape-gate"
+      ]
+    },
+    {
+      "slug": "tekkie-town-ottery",
+      "status": "researched",
+      "sources": [
+        "https://m.facebook.com/TekkieTownOttery/",
+        "https://www.guzzle.co.za/tekkie-town"
+      ]
+    },
+    {
+      "slug": "matroosfontein-primary-school-matroosfontein",
+      "status": "deferred",
+      "reason": "Schoolsdigest listing gives generic admission text only; no school-specific facts beyond what is already in the batch text."
+    },
+    {
+      "slug": "mcdonalds-blue-downs",
+      "status": "researched",
+      "sources": [
+        "https://www.mcdonalds.co.za/location/mcdonalds-blue-downs"
+      ]
+    },
+    {
+      "slug": "mcdonalds-parklands",
+      "status": "deferred",
+      "reason": "VERIFIED AGAINST SOURCE, ORCHESTRATOR OVERRIDE: orchestrator's suggested anchor fact (official hours of 06:30-00:00 Sun-Thu / 24 hours Fri-Sat) does not appear anywhere in the crawled research file. The only crawled page (Sluurpy) is a review aggregator with star ratings and customer review quotes only ('best McDonalds in the area', drive-thru is fast, etc.); it contains no owner-written facts, no hours and no services information for this branch (chain rule)."
+    },
+    {
+      "slug": "mcdonalds-the-junxion-philippi",
+      "status": "researched",
+      "sources": [
+        "https://www.mcdonalds.co.za/location/mcdonalds-the-junxion"
+      ]
+    },
+    {
+      "slug": "melomed-bellville-pharmacy-bellville",
+      "status": "researched",
+      "sources": [
+        "https://www.melomed.co.za/services/melomed_pharmacy.asp?m=Melomed+Pharmacies"
+      ]
+    },
+    {
+      "slug": "mr-price-vangate-mall-athlone",
+      "status": "deferred",
+      "reason": "VERIFIED AGAINST SOURCE, ORCHESTRATOR OVERRIDE: orchestrator's suggested anchor fact (a separate 'Mr Price Home' branch at Vangate Mall) is factually wrong against the source -- the Guzzle listing actually names the second store 'Mr Price Vangate Mall Kids' (Shop 67), not Mr Price Home. Even with that correction, the only crawled content is two shop numbers and phone numbers in a store directory; no services, hours or other branch-specific facts (chain rule)."
+    },
+    {
+      "slug": "natural-body-therapy-southfield",
+      "status": "researched",
+      "sources": [
+        "https://www.fresha.com/lvp/natural-body-therapy-spa-victoria-road-cape-town-loPyPY"
+      ]
+    },
+    {
+      "slug": "noormed-pharmacy-lotus-river",
+      "status": "deferred",
+      "reason": "All sources were blocked or unrelated (Chinese-language search results); no facts retrieved."
+    },
+    {
+      "slug": "ocean-basket-durbanville",
+      "status": "deferred",
+      "reason": "VERIFIED AGAINST SOURCE, ORCHESTRATOR OVERRIDE: orchestrator's suggested anchor fact (The Village Square's official store map confirming the shop number) does not appear anywhere in the research file. The Ocean Basket own site crawl timed out and every search result returned is an unrelated dictionary definition of the word 'pivot'; confidence: none. Nothing usable (chain rule)."
+    },
+    {
+      "slug": "pep-cell-cape-town-cbd",
+      "status": "deferred",
+      "reason": "VERIFIED AGAINST SOURCE, ORCHESTRATOR OVERRIDE: orchestrator's suggested anchor fact (a corrected shop number for PEP Cell from current Golden Acre information) does not appear anywhere in the crawled text. Golden Acre's own stores page lists only tenant phone numbers (no shop numbers at all for any tenant), and it lists plain 'PEP' rather than 'PEP Cell' specifically, so this listing cannot even be confirmed as the same store (chain rule)."
+    },
+    {
+      "slug": "pep-home-grand-central-eerste-river",
+      "status": "deferred",
+      "reason": "Tiendeo listing gives hours and other PEP HOME branches only; no branch-specific facts (chain rule)."
+    },
+    {
+      "slug": "pep-poppys-village-retreat",
+      "status": "researched",
+      "sources": [
+        "https://www.tiendeo.co.za/stores/cape-town/pep-stores-shop-poppys-village-th-avenue-retreat-road-retreat-cape-town-western-cape/11883"
+      ]
+    },
+    {
+      "slug": "pep-sanbury-square-eerste-river",
+      "status": "researched",
+      "sources": [
+        "https://www.tiendeo.co.za/stores/cape-town/pep-stores-shop-sanbury-square-cnr-old-faure-road-baden-powell-eerste-river-cape-town-western-cape/76943"
+      ]
+    },
+    {
+      "slug": "philip-wulfsohn-jewellery-de-waterkant",
+      "status": "deferred",
+      "reason": "VERIFIED AGAINST SOURCE, ORCHESTRATOR OVERRIDE: orchestrator's suggested anchor facts (opened 1992 after winning the De Beers Diamonds Today Award, relocated to Cape Quarter in 2003) do not appear anywhere in the research file. The business's own site (philipwulfsohn.com/pages/about) and the CapeTownEtc feature are listed as existing_sources but were never successfully crawled; the only crawled page (Cape Quarter's tenant list) gives the name and phone only, nothing beyond what is already in the batch text."
+    },
+    {
+      "slug": "pick-n-pay-liquors-muizenberg",
+      "status": "deferred",
+      "reason": "Capricorn Square directory lists the store in tenant tables only; no branch-specific facts (chain rule)."
+    },
+    {
+      "slug": "pick-n-pay-sanbury-square-eerste-river",
+      "status": "deferred",
+      "reason": "VERIFIED AGAINST SOURCE, ORCHESTRATOR OVERRIDE: orchestrator's suggested anchor facts (Sanbury Square's own site stating a February 2021 opening, ~6,500m² of retail space, free secure parking, and specific Pick n Pay hours) do not appear anywhere in the research file. The only crawled source (Medpages) returned a generic 404 page-not-found; confidence: none. No facts retrieved (chain rule)."
+    },
+    {
+      "slug": "pick-n-pay-supermarket-plattekloof-plattekloof",
+      "status": "deferred",
+      "reason": "Catalogue site gives hours and specials only; no branch-specific facts (chain rule)."
+    },
+    {
+      "slug": "pomodoro-somerset-west",
+      "status": "deferred",
+      "reason": "VERIFIED AGAINST SOURCE, ORCHESTRATOR OVERRIDE: orchestrator's suggested anchor facts ('Pomodoro Authentic Italian' branding, owner-run status, 17:00-21:00 daily dinner hours) do not appear anywhere in the research file. All crawled sources and search results are unrelated Pomodoro-Technique time-management timer apps (pomofocus.io, pomodorotimer.online, Wikipedia); no facts about the Somerset West restaurant at all."
+    },
+    {
+      "slug": "postnet-cape-quarter-de-waterkant",
+      "status": "deferred",
+      "reason": "VERIFIED AGAINST SOURCE, ORCHESTRATOR OVERRIDE: orchestrator described this item as 'PostNet (Green Point)' with address Shop D09, 27 Somerset Road, Green Point, phone 083 805 8212 and hours Mon-Fri 08:00-17:30 / Sat 09:00-13:00 -- none of that appears anywhere in the research file, and it does not match this listing's own address (Shop D09, Cape Quarter Lifestyle Village, 11 Dixon St, De Waterkant); it appears to describe a different branch entirely. The only crawled page is the Cape Quarter tenant list; confidence: none, and PostNet is not even reached in the captured text. No branch-specific facts (chain rule)."
+    },
+    {
+      "slug": "pro-spa-bantry-bay",
+      "status": "deferred",
+      "reason": "Own site was blocked; search results are unrelated golf retailer and dictionary pages. Nothing usable."
+    },
+    {
+      "slug": "quality-beverages-epping",
+      "status": "deferred",
+      "reason": "VERIFIED AGAINST SOURCE, ORCHESTRATOR OVERRIDE: orchestrator's suggested anchor facts (first soft drinks produced in 1989, independent manufacturer, now part of The Beverage Company/BevCo following a 2018 merger with Shoreline) do not appear anywhere in the research file. The only crawled page (yep.co.za) is an empty mall-directory shell; search results are unrelated -- a Pinetown supermarket called Quality's Pik & Pak, and generic dictionary/Wikipedia definitions of the word 'quality'. No facts about this manufacturer."
+    },
+    {
+      "slug": "riva-de-waterkant",
+      "status": "deferred",
+      "reason": "Eat Out page is a news template with no venue facts."
+    },
+    {
+      "slug": "salon-jean-paul-parow",
+      "status": "deferred",
+      "reason": "Yellosa listing gives address, phone and a single negative review only; not enough real content for 100 words."
+    },
+    {
+      "slug": "shoprite-elsies-river",
+      "status": "deferred",
+      "reason": "Own site gives generic homepage and a 404 about page; no branch-specific facts (chain rule)."
+    },
+    {
+      "slug": "shoprite-steenberg-steenberg",
+      "status": "deferred",
+      "reason": "All sources are chain-wide Shoprite pages (specials, careers); no Steenberg branch-specific facts (chain rule)."
+    },
+    {
+      "slug": "shoprite-town-centre-mitchells-plain",
+      "status": "deferred",
+      "reason": "Catalogue site gives specials and hours only; no branch-specific facts (chain rule)."
+    },
+    {
+      "slug": "skin-recode-observatory",
+      "status": "deferred",
+      "reason": "Riverlands mall page lists apartment sales agents for the shop unit, not facts about Skin Recode itself."
+    },
+    {
+      "slug": "sorbet-salon-rondebosch",
+      "status": "deferred",
+      "reason": "Fresha listing gives services through an aggregator; no owner-written branch facts (chain rule)."
+    },
+    {
+      "slug": "spar-plattekloof-plattekloof",
+      "status": "deferred",
+      "reason": "Catalogue site gives hours and specials only; no branch-specific facts (chain rule)."
+    },
+    {
+      "slug": "specsavers-gordons-bay",
+      "status": "deferred",
+      "reason": "Own store contact page is a generic navigation menu with no branch-specific facts (chain rule)."
+    },
+    {
+      "slug": "step-brothers-restaurant-bar-three-anchor-bay",
+      "status": "deferred",
+      "reason": "Sources give conflicting addresses for the restaurant's history (Chiappini Street, then Bantry Bay, with a Camps Bay page title) that do not match the batch's Three Anchor Bay address; cannot be verified as the same branch."
+    },
+    {
+      "slug": "surfside-restaurant-strand",
+      "status": "deferred",
+      "reason": "Eat Out page is a news template with no venue facts."
+    },
+    {
+      "slug": "svg-autoworks-southfield",
+      "status": "deferred",
+      "reason": "Own site domain is inactive; no facts retrieved."
+    },
+    {
+      "slug": "tafelsig-secondary-school-tafelsig",
+      "status": "deferred",
+      "reason": "Sayellow listing gives address, phone and category only; no school-specific facts."
+    },
+    {
+      "slug": "terrys-beds-plumstead",
+      "status": "deferred",
+      "reason": "Only source is a generic Yellow Pages directory sign-up page, not a listing for this business; no facts retrieved."
+    }
+  ]
+}

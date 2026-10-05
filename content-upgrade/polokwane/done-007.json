@@ -1,77 +1,79 @@
 {
   "city": "polokwane",
   "chunk": 7,
-  "generated_at": "2026-10-04T20:53:51.776Z",
+  "generated_at": "2026-10-05T11:38:59.783Z",
   "items": [
     {
       "slug": "millennium-panelbeaters-ladanna",
-      "status": "deferred",
-      "reason": "Infoisinfo listing gives address, a black-owned family business line, SAMRA and RMI membership and a team of artisans. Not enough honest content for 100 words; the Yep page is an empty shell."
+      "status": "researched",
+      "sources": [
+        "https://polokwane.infoisinfo.co.za/card/millennium-panelbeaters/325375"
+      ]
     },
     {
       "slug": "mpati-attorneys-ivy-park",
       "status": "deferred",
-      "reason": "Yellosa entry gives address, phone and a wills-and-trusts category only; no firm page found."
+      "reason": "Yellosa entry gives address, phone and a wills-and-trusts category only; no firm page found. Deep research pass also returned HOLD/VERIFY: insufficient reliable information to verify the firm's current practice areas; no reliable current firm website or professional profile found. Kept deferred."
     },
     {
       "slug": "mr-price-savannah-mall-fauna-park",
       "status": "deferred",
-      "reason": "Tiendeo store page gives phone, address and promotions only; the rest is Mr Price chain copy."
+      "reason": "Tiendeo store page gives phone, address and promotions only; the rest is Mr Price chain copy. Overriding the orchestrator's PUBLISH call: no own-brand Mr Price page or any branch-specific fact beyond the address is available in the research file or existing_sources; the supplied write-up is address and category only ('fashion clothing through the Mr Price brand ... serves fashion shoppers'), which the house rule treats as not enough on its own. Kept deferred."
     },
     {
       "slug": "nedbank-mall-of-the-north-bendor",
       "status": "deferred",
-      "reason": "Mall of the North store directory row only; no branch-specific description."
+      "reason": "Mall of the North store directory row only; no branch-specific description. Overriding the orchestrator's PUBLISH call: the retrieved Mall of the North directory text is truncated well before the Nedbank row alphabetically, and the Tiendeo/openhours-southafrica existing_sources were never fetched with content, so no citable source actually supports a branch-specific fact; the supplied write-up ('everyday banking, account and card services ... on-site ATMs') just restates the existing chain-level description. Kept deferred."
     },
     {
       "slug": "northern-forklifts-futura",
       "status": "deferred",
-      "reason": "Yellosa entry gives address, phone and an unverified listing; no services or description from the business's own site."
+      "reason": "Yellosa entry gives address, phone and an unverified listing; no services or description from the business's own site. Deep research pass also returned HOLD/VERIFY: forklift-related services are indicated, but the specific combination of sales, servicing, repairs and rental couldn't be independently verified from a reliable current source. Kept deferred."
     },
     {
       "slug": "numberplate-and-key-centre-ladanna",
       "status": "deferred",
-      "reason": "Cylex listing gives address, hours and a website name only; the rest is directory text. Not enough honest content for 100 words."
+      "reason": "Cylex listing gives address, hours and a website name only; the rest is directory text. Not enough honest content for 100 words. Overriding the orchestrator's PUBLISH call: the only strong source retrieved (Cylex) places a similarly-named business at 52 Biccard Street, Checkers Centre -- a different address from both the batch's 21 Witklip Street, Ladanna and the corrected Tropicana Centre, Shop 3 address supplied -- so it may be an unrelated business; the claimed 1997-established date and Saturday-morning trading aren't supported by anything in the research file or existing_sources. Kept deferred pending resolution of the address conflict."
     },
     {
       "slug": "old-mutual-mall-lebo-lebowakgomo",
       "status": "deferred",
-      "reason": "Mall@Lebo store directory row only; the rest is Old Mutual group copy."
+      "reason": "Mall@Lebo store directory row only; the rest is Old Mutual group copy. Overriding the orchestrator's PUBLISH call: the Mall@Lebo directory does confirm Shop 48, but every other fact in the supplied write-up ('life assurance, investment, retirement and personal loan products ... serves individuals and households seeking financial and insurance-related services') is pure Old Mutual group-level copy already in the current description, with nothing branch-specific -- address plus category alone isn't enough under the house rule. Kept deferred."
     },
     {
       "slug": "pep-cell-seshego-circle-seshego",
       "status": "deferred",
-      "reason": "Tiendeo branch page gives hours and phone only; chain-level content."
+      "reason": "Tiendeo branch page gives hours and phone only; chain-level content. Overriding the orchestrator's PUBLISH call: Tiendeo (a third-party deals aggregator, not PEP's own site) only gives this branch's trading hours and phone; everything else in the supplied write-up ('cellular products and accessories ... serves mobile-phone users') restates the existing chain-level description with no new, branch-specific fact about what this store offers. Kept deferred."
     },
     {
       "slug": "pep-home-mankweng",
       "status": "deferred",
-      "reason": "Tiendeo branch page gives hours and phone only; the homeware range is chain-level copy."
+      "reason": "Tiendeo branch page gives hours and phone only; the homeware range is chain-level copy. Deep research pass also returned HOLD/VERIFY: insufficient reliable current branch-specific information to independently confirm the supplied Shop 49 Paledi Mall listing. Kept deferred."
     },
     {
       "slug": "pep-seshego-circle-seshego",
       "status": "deferred",
-      "reason": "Tiendeo branch page gives hours and phone only; chain-level content."
+      "reason": "Tiendeo branch page gives hours and phone only; chain-level content. Deep research pass also returned HOLD/VERIFY: couldn't obtain a sufficiently reliable current source confirming the exact Shop 8 location. Kept deferred."
     },
     {
       "slug": "pep-seshego-plaza-seshego",
       "status": "deferred",
-      "reason": "Tiendeo branch page gives hours and phone only; chain-level content."
+      "reason": "Tiendeo branch page gives hours and phone only; chain-level content. Overriding the orchestrator's PUBLISH call: same issue as the other PEP branches in this chunk -- Tiendeo (a third-party aggregator, not PEP's own site) only supplies this branch's hours and phone; the write-up's claim of 'current listings showing active trading' isn't a fact about what the store offers, and nothing beyond category and address is available. Kept deferred."
     },
     {
       "slug": "pep-stores-metlife-plaza-lebowakgomo",
       "status": "deferred",
-      "reason": "Tiendeo page returned is for a different store (Sandton); no Metlife Plaza branch facts found."
+      "reason": "Tiendeo page returned is for a different store (Sandton); no Metlife Plaza branch facts found. Overriding the orchestrator's PUBLISH call: the only page retrieved for this slug is for an unrelated Sandton store, not the Lebowakgomo branch; the my-catalogue.co.za existing_source was never fetched with content, so there is no verified source at all for this specific branch, let alone the 'current PEP promotional catalogues showing the store as active' claimed in the write-up. Kept deferred."
     },
     {
       "slug": "phologo-health-care-lebowakgomo",
       "status": "deferred",
-      "reason": "Medpages stub gives category and location only; the listed practitioner is not a description of the clinic's services."
+      "reason": "Medpages stub gives category and location only; the listed practitioner is not a description of the clinic's services. Overriding the orchestrator's PUBLISH call: the supplied write-up ('private healthcare/medical clinic services ... serves patients seeking private primary healthcare') is address and category only, which the house rule treats as not enough even though Medpages confirms the clinic is a genuine private clinic. Kept deferred."
     },
     {
       "slug": "pick-n-pay-local-polokwane-crescent-nirvana",
       "status": "deferred",
-      "reason": "Africabizinfo listing gives address, phone and hours only; the rest is chain-level content."
+      "reason": "Africabizinfo listing gives address, phone and hours only; the rest is chain-level content. Deep research pass also returned HOLD/VERIFY: insufficient reliable branch-specific information to independently confirm the current status and full details of the supplied 139 The Crescent Drive location. Kept deferred."
     },
     {
       "slug": "polokwane-vet-clinic-polokwane-central",
@@ -83,32 +85,36 @@
     {
       "slug": "pro-service-centre-superbia",
       "status": "deferred",
-      "reason": "Search results are WhatsApp forum threads only; no business page found for this workshop."
+      "reason": "Search results are WhatsApp forum threads only; no business page found for this workshop. Deep research pass also returned HOLD/VERIFY, with an address conflict: a current map listing identifies 'Pro Service Centre ACD' in the Capricorn Nirvana Industrial Area, which does not match the supplied corner of Nikkel & Rupee Avenue, Superbia address. Kept deferred pending confirmation of which location is current."
     },
     {
       "slug": "rheeder-attorneys-polokwane-central",
-      "status": "deferred",
-      "reason": "Shopshours directory of Polokwane attorneys is the only source; no firm page found."
+      "status": "researched",
+      "sources": [
+        "https://lawzana.com/lawyer/rheeder-attorneys/polokwane"
+      ]
     },
     {
       "slug": "rlh-pharmacy-annadale",
       "status": "deferred",
-      "reason": "Medpages homepage and unrelated practitioner lists returned; no pharmacy page found."
+      "reason": "Medpages homepage and unrelated practitioner lists returned; no pharmacy page found. Deep research pass also returned HOLD/VERIFY: insufficient reliable current business-specific information for the specific services offered at Shop 03, Lea Lara Shops, 77 Pietersburg Street. Kept deferred."
     },
     {
       "slug": "serumula-optometrists-lebowakgomo",
       "status": "deferred",
-      "reason": "Search results are betting pages only; no optometry practice page retrieved."
+      "reason": "Search results are betting pages only; no optometry practice page retrieved. Deep research pass also returned HOLD/VERIFY, with an address conflict: a current GEMS optometry-provider document places the practice at Shop 23A, Shoprite Centre, Jane Furse Road, which differs from the supplied Shop 23, Phasha Shopping Centre address. Kept deferred pending confirmation of which location is current."
     },
     {
       "slug": "sheet-street-mall-lebo-lebowakgomo",
-      "status": "deferred",
-      "reason": "Sheet Street store page gives address, hours and phone; the rest is retailer homeware copy. Chain-level content only."
+      "status": "researched",
+      "sources": [
+        "https://www.sheetstreet.com/sheet-street-mall-lebo-30137"
+      ]
     },
     {
       "slug": "shoprite-liquorshop-seshego-seshego",
       "status": "deferred",
-      "reason": "Yep directory shell and Shoprite chain pages (specials, jobs, group profile); no LiquorShop branch facts."
+      "reason": "Yep directory shell and Shoprite chain pages (specials, jobs, group profile); no LiquorShop branch facts. Overriding the orchestrator's PUBLISH call: the write-up references 'published trading hours' but no actual hours or any other branch-specific fact are given or found in the research file (the Yep page is an empty shell and the Shoprite search results are all group-level corporate pages); the brabys.com existing_source for this branch could not be fetched (blocked by anti-bot protection), so nothing beyond category and address is verifiable. Kept deferred."
     },
     {
       "slug": "skin-deep-thornhill-estate",
@@ -119,33 +125,38 @@
     },
     {
       "slug": "ster-kinekor-bendor",
-      "status": "deferred",
-      "reason": "Mall of the North store directory row only; no branch-specific description."
+      "status": "researched",
+      "sources": [
+        "https://www.vibescout.com/za/cinemas/sterkinekor/mall-of-the-north",
+        "https://mydorpie.com/Cinemas/Limpopo/Polokwane/Ster-Kinekor/Mall-of-the-North-Movies"
+      ]
     },
     {
       "slug": "superspar-paledi-mankweng",
-      "status": "deferred",
-      "reason": "Africabz directory gives address, phone, hours and categories only; the rest is SPAR chain copy."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/limpopo/spar-paledi-mall-377824"
+      ]
     },
     {
       "slug": "truworths-mall-lebo-lebowakgomo",
       "status": "deferred",
-      "reason": "Mall@Lebo directory row gives shop number and phone only; the rest is Truworths chain copy."
+      "reason": "Mall@Lebo directory row gives shop number and phone only; the rest is Truworths chain copy. Overriding the orchestrator's PUBLISH call: the Mall@Lebo directory stub only gives a category and a shop/contact code (not even matching the batch's Shop 16), and the rest of the available material is generic Truworths brand copy (Truworths Man/Woman, LTD, Daniel Hechter) with nothing specific to this branch; the write-up itself asks to drop the shop number as unconfirmed, underlining that address and category are all that's actually available. Kept deferred."
     },
     {
       "slug": "truworths-savannah-mall-fauna-park",
       "status": "deferred",
-      "reason": "Tiendeo store page gives phone and address only; the rest is Truworths chain copy."
+      "reason": "Tiendeo store page gives phone and address only; the rest is Truworths chain copy. Deep research pass also returned HOLD/VERIFY: could not retrieve sufficiently strong current branch-specific evidence to independently verify the supplied Shop 29 details. Kept deferred."
     },
     {
       "slug": "vodacom-seshego-circle-seshego",
       "status": "deferred",
-      "reason": "Tiendeo branch page gives phone and deals only; chain-level content."
+      "reason": "Tiendeo branch page gives phone and deals only; chain-level content. Deep research pass also returned HOLD/VERIFY: could not retrieve a sufficiently reliable current branch profile for Shop 14, Seshego Circle Shopping Centre. Kept deferred."
     },
     {
       "slug": "vodacom-shop-schoeman-street-polokwane-central",
       "status": "deferred",
-      "reason": "Directory results give address and category only; the Visita page is a 404. No description of the shop."
+      "reason": "Directory results give address and category only; the Visita page is a 404. No description of the shop. Deep research pass also returned HOLD/VERIFY: could not obtain sufficient current branch-specific information for Shop 14, Rentmeester Building, 58C Schoeman Street. Kept deferred."
     },
     {
       "slug": "zororo-lodge-dalmada",
@@ -156,58 +167,70 @@
     },
     {
       "slug": "a1-supermarket-polokwane-central",
-      "status": "deferred",
-      "reason": "Near-place listing gives address, phone and hours only; the Yep page is an empty shell. No description of the store."
+      "status": "researched",
+      "sources": [
+        "https://za.near-place.com/a1-supermarket-15-devenish-street-polokwane-central-polokwane"
+      ]
     },
     {
       "slug": "absa-bank-metlife-plaza-lebowakgomo",
       "status": "deferred",
-      "reason": "Absa branch-locator page gives address and rating only; the rest is Absa chain copy."
+      "reason": "Absa branch-locator page gives address and rating only; the rest is Absa chain copy. Deep research pass also returned HOLD/VERIFY: Absa is confirmed generally as present at Mall@Lebo, but there is insufficient current branch-specific information for the Metlife Plaza branch itself. Kept deferred."
     },
     {
       "slug": "african-bank-mall-lebo-lebowakgomo",
-      "status": "deferred",
-      "reason": "Mall@Lebo store directory row only; no branch-specific description."
+      "status": "researched",
+      "sources": [
+        "https://mallatlebo.co.za/shops-v2/"
+      ]
     },
     {
       "slug": "applebox-accounting-bendor",
       "status": "deferred",
-      "reason": "Shopshours directory of Polokwane accountants is the only source; no firm page found."
+      "reason": "Shopshours directory of Polokwane accountants is the only source; no firm page found. Deep research pass found a government-directory listing (Apple Box Accounting, Polokwane) with a phone number, but could not obtain enough reliable current information to verify the specific service range or the supplied 12 Dr Moolman Drive address. Kept deferred."
     },
     {
       "slug": "bendor-builders-bendor",
       "status": "deferred",
-      "reason": "Cylex listing gives address, phone and a construction category only; the years-trading claim in the batch text is not in the research."
+      "reason": "Cylex listing gives address, phone and a construction category only; the years-trading claim in the batch text is not in the research. Deep research pass also returned HOLD/VERIFY: insufficient reliable business-specific information to independently verify the claimed service range or the 'more than 30 years' history. Kept deferred."
     },
     {
       "slug": "best-bake-bakery-nirvana",
-      "status": "deferred",
-      "reason": "Infoisinfo listing gives address and category (bakery); the product list is from the batch text only. Not enough verified content for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://polokwane.infoisinfo.co.za/card/best-bake-bakery/223520"
+      ]
     },
     {
       "slug": "brave-group-security-services-ladanna",
       "status": "deferred",
-      "reason": "Business website was not retrieved; search results are Brave browser pages. Nothing verified about the security company."
+      "reason": "Business website was not retrieved (DNS failure); search results are Brave browser pages. Nothing verified about the security company beyond address and category, which alone is not enough for a non-generic description. Kept deferred."
     },
     {
       "slug": "callsave-bendor",
-      "status": "deferred",
-      "reason": "Contact page gives phone numbers and a generic line on PBX, solar, CCTV and fibre; no verified branch-specific description."
+      "status": "researched",
+      "sources": [
+        "https://callsave.co.za/contact-us/"
+      ]
     },
     {
       "slug": "clicks-the-greenery-polokwane-central",
-      "status": "deferred",
-      "reason": "Clicks store page is navigation and product-category menus; no branch facts beyond the name."
+      "status": "researched",
+      "sources": [
+        "https://clicks.co.za/store/Clicks-Pharmacy-The-Greenery/2249"
+      ]
     },
     {
       "slug": "cw-towing-service-futura",
       "status": "deferred",
-      "reason": "Looking4spares directory gives address, phone and a roadside-recovery line only. Not enough honest content for 100 words."
+      "reason": "Looking4spares directory gives address, phone and a roadside-recovery line only. Not enough honest content for 100 words. Deep research pass also returned HOLD/VERIFY: supports the towing/roadside-recovery category generally, but insufficient reliable current business-specific information to verify the full service range or current trading status. Kept deferred."
     },
     {
       "slug": "debonairs-pizza-mall-lebo-lebowakgomo",
-      "status": "deferred",
-      "reason": "Debonairs branch page gives opening time, order and collection options only; chain-level content."
+      "status": "researched",
+      "sources": [
+        "https://location.debonairspizza.co.za/mall-at-lebo"
+      ]
     },
     {
       "slug": "devenish-guest-house-hospark",
@@ -218,48 +241,54 @@
     },
     {
       "slug": "dis-chem-tlc-market-street-polokwane-central",
-      "status": "deferred",
-      "reason": "Dis-Chem branch page gives address, hours, dispensary and clinic contact details and click-and-collect only. Not enough branch-specific content for 100 honest words; the rest is chain copy."
+      "status": "researched",
+      "sources": [
+        "https://www.dischem.co.za/tlc-market-street-polokwane"
+      ]
     },
     {
       "slug": "engen-wins-motors-annadale",
       "status": "deferred",
-      "reason": "Yep page has no services listed; ShopsHours gives address and hours only. No description of the workshop's services."
+      "reason": "Yep page has no services listed; ShopsHours gives address and hours only. No description of the workshop's services. Deep research pass also returned HOLD/VERIFY: the Engen fuel station itself is confirmed, but there is insufficient reliable current business-specific information to verify the workshop/servicing side of the business. Kept deferred."
     },
     {
       "slug": "enterprise-wholesalers-nirvana",
-      "status": "deferred",
-      "reason": "Facebook page gives the product categories (fabrics, bridal, upholstery, curtains, foam, beds) and an address only. Not enough verified content for 100 words; the 1975 date in the batch text is not in the research."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/enterprisefabrics/"
+      ]
     },
     {
       "slug": "evp-internet-cafe-seshego-zone-1",
       "status": "deferred",
-      "reason": "Restaurant Guru page lists reviews and a closed status only; no verified description of the internet café's services."
+      "reason": "Restaurant Guru page lists reviews and a closed status only; no verified description of the internet café's services. Deep research pass also returned HOLD/VERIFY: Restaurant Guru reviews confirm the business exists and trades on Chris Hani Drive, Seshego Zone 1, but there is insufficient reliable current business-specific information to verify the exact internet/computer services on offer. Kept deferred."
     },
     {
       "slug": "fair-price-seshego-plaza-seshego",
-      "status": "deferred",
-      "reason": "Fair Price localpages gives chain-wide group history and product categories; no store-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://localpages.fairprice.co.za/Retail-Polokwane-FairPriceSeshegoPlaza"
+      ]
     },
     {
       "slug": "fauna-veterinary-clinic-fauna-park",
       "status": "deferred",
-      "reason": "Sayellow listing gives address, phone and a veterinary category only; no description of services found."
+      "reason": "Sayellow listing gives address, phone and a veterinary category only; no description of services found. Deep research pass also returned HOLD/VERIFY: insufficient reliable current business-specific information to verify the clinic's full service range, facilities or current trading status. Kept deferred."
     },
     {
       "slug": "fnb-seshego-circle-seshego",
       "status": "deferred",
-      "reason": "FNB chain pages and unrelated results; the branch page was not retrieved."
+      "reason": "FNB chain pages and unrelated results; the branch page was not retrieved. Deep research pass also returned HOLD/VERIFY: could not retrieve sufficiently strong current branch-specific information beyond the supplied Seshego Circle Shopping Centre address. Kept deferred."
     },
     {
       "slug": "gilani-tile-warehouse-nirvana",
       "status": "deferred",
-      "reason": "Only a 2016 newspaper article about a birthday promotion and an old showroom plan was retrieved. Out of date and not enough for 100 honest words."
+      "reason": "Only a 2016 newspaper article about a birthday promotion and an old showroom plan was retrieved. Out of date and not enough for 100 honest words. Deep research pass also returned HOLD/VERIFY: older material associates the business with tiles and sanitaryware, but the evidence is too old to confidently publish the current product range or confirm current operating status. Kept deferred."
     },
     {
       "slug": "goseame-wholesalers-ladine",
       "status": "deferred",
-      "reason": "Website returned an unrelated architecture firm's page; no verified description of the market or its products."
+      "reason": "Website returned an unrelated architecture firm's page; no verified description of the market or its products. Deep research pass also returned HOLD/VERIFY: insufficient reliable current business-specific information to independently verify the claimed fresh-produce, meat, flower and grocery wholesale/retail operation at 23 Silicon Street. Kept deferred."
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "city": "polokwane",
   "chunk": 19,
-  "generated_at": "2026-10-04T20:59:37.544Z",
+  "generated_at": "2026-10-05T11:43:50.233Z",
   "items": [
     {
       "slug": "rix-pawnshop-cc-annadale",
@@ -13,8 +13,11 @@
     },
     {
       "slug": "rochester-savannah-mall-fauna-park",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the Rochester store-directory page (a garbled Boardmans page), a My Catalogue listing for the store (address, phone, hours) and a Tiendeo listing. No own-site branch description was captured, so only chain-level furniture facts are available."
+      "status": "researched",
+      "sources": [
+        "https://www.rochester.co.za/store/rochester-savannah-mall",
+        "https://my-catalogue.co.za/stores/polokwane/rochester/shop-g12-g16-entrance-3-lower-level-savannah-mall-grimm-st"
+      ]
     },
     {
       "slug": "s-a-compressor-care-futura",
@@ -25,13 +28,17 @@
     },
     {
       "slug": "skipper-bar-limpopo-mall-polokwane-central",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds only a Mallguide page for Limpopo Mall (anchor stores, parking, mall details) and no Skipper Bar store page. The batch detail on brands and store count is not supported by a captured source for this branch."
+      "status": "researched",
+      "sources": [
+        "https://skipperbar.co.za/stores/limpopo-mall/"
+      ]
     },
     {
       "slug": "the-cottage-flora-park",
-      "status": "deferred",
-      "reason": "Research holds a HotelPlanner listing (check-in and check-out times, a group score, rates and an AI disclaimer) and a generic directory entry. No page from the cottages' own site was captured, so the cottage details in the batch text cannot be sourced."
+      "status": "researched",
+      "sources": [
+        "https://www.hotelplanner.com/Hotels/299055/Reservations-The-Cottage-Polokwane-78-Erasmus-St-Polokwane-0699"
+      ]
     },
     {
       "slug": "the-red-bin-ladine",
@@ -42,43 +49,56 @@
     },
     {
       "slug": "tiger-wheel-and-tyre-the-crossing-fauna-park",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds a Tiendeo store page (trading hours, phone, catalogues) and a Michelin dealer locator entry. No own-site branch detail was captured, so the batch description has no sourced branch-specific basis beyond the listing data."
+      "status": "researched",
+      "sources": [
+        "https://www.michelin.co.za/auto/dealer-locator/338084-tiger-wheel-tyre-polokwane-savannah"
+      ]
     },
     {
       "slug": "timberland-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the Mall of the North store directory line, a Tiendeo listing and the Timberland corporate About page. No store-specific detail beyond the national brand history was captured."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "tops-at-spar-madiba-park-seshego",
       "status": "deferred",
-      "reason": "Chain branch. Research holds two Tiendeo and Shopshours pages for the Madiba Park store (trading hours, specials, address). No branch-specific liquor or service detail was captured."
+      "reason": "Location and branch confirmed via Tiendeo and Shopshours trading-hours listings for Madiba Park Shopping Centre, but the current liquor product range and in-store services for this specific Tops at Spar branch could not be independently confirmed from the available sources. Held pending a source that describes this branch's own offering rather than chain/aggregator listing data."
     },
     {
       "slug": "toys-r-us-bendor",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the national Toys R Us online homepage (brands, delivery options) and a Mall of the North store page. No Bendor store detail beyond the mall listing was captured."
+      "status": "researched",
+      "sources": [
+        "https://www.babiesrus.co.za/mall-of-the-north",
+        "https://mallofthenorth.co.za/shop/toys-r-us/"
+      ]
     },
     {
       "slug": "united-furniture-outlets-game-centre-polokwane-central",
       "status": "deferred",
-      "reason": "Chain branch. Research holds the Lewis Group brand page for UFO (cash business, mall locations, online option) and a Brabys listing. No Game Centre store detail was captured, so chain-level facts alone are not allowed."
+      "reason": "The United Furniture Outlets (UFO) retail format and group ownership (Lewis Group) is confirmed nationally, but no source captures this specific Game Centre branch's current product range, trading hours or branch-specific detail -- the Lewis Group brand page and a Brabys listing give chain-level information only. Held pending a source describing this branch directly."
     },
     {
       "slug": "usave-seshego-seshego",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds Waze and Tiendeo pages for the Kwena Street store (trading hours, phone, catalogues) and the national Shoprite USave brand page. No store-specific description beyond those listing facts was captured."
+      "status": "researched",
+      "sources": [
+        "https://www.waze.com/live-map/directions/za/lp/polokwane/usave-seshego?to=place.ChIJOYu55jInxx4R_jrql_STWpk"
+      ]
     },
     {
       "slug": "adendorff-machinery-mart-nirvana",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds a Yellosa listing (address, phone, a one-line company description), a My Catalogue store page and the national Adendorff site link. No branch-specific product or service detail was captured beyond the category list."
+      "status": "researched",
+      "sources": [
+        "https://www.adendorff.co.za/"
+      ]
     },
     {
       "slug": "avbob-funeral-service-mankweng",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the AVBOB branch-details page, which lists the group's national services (funeral arrangements, cremation, coffins, repatriation, insurance) rather than this branch's own details, and a Yep page with no content. Branch-specific detail is not enough for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.avbob.co.za/our-branches/branch-details?loc=AVBOB+Funeral+Service+Mankweng&locationid=8609a610-6b15-4dbb-99d1-973d00e2b159"
+      ]
     },
     {
       "slug": "beauty-matters-eduan-park",
@@ -104,58 +124,70 @@
     },
     {
       "slug": "buco-polokwane-superbia",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds a Tiendeo page (trading hours, specials) and a Yellosa listing for the Sapphire Street address. Its own BUCO store-location page was not captured in usable text, so no branch-specific detail exists."
+      "status": "researched",
+      "sources": [
+        "https://www.buco.co.za/store-location-details?loc=BUCO+Polokwane-Sapphire&locationid=756f08f4-d75d-4b79-a0fa-9a50afa888df"
+      ]
     },
     {
       "slug": "builders-market-pietersburg-superbia",
       "status": "deferred",
-      "reason": "Research holds only a Yellosa listing (address, phone, a general business category) for the Sapphire Street address. The same address is also given for the BUCO branch in this batch, so the listing cannot be attributed to a separate business description."
+      "reason": "The listed address, 18 Sapphire Street, Superbia, is independently confirmed by BUCO's own official store locator as the address of BUCO Polokwane-Sapphire (see the separate BUCO Polokwane listing in this chunk), raising an unresolved duplicate or business-name conflict at the same address. Held rather than published, merged or closed, pending clarification of whether this is a distinct trading business or a stale/duplicate listing for the BUCO branch."
     },
     {
       "slug": "builders-warehouse-polokwane-nirvana",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds a My Catalogue store page (hours, phone, catalogue) and a near-place listing. No branch-specific own-site description was captured, so chain-level facts alone are not allowed."
+      "status": "researched",
+      "sources": [
+        "https://my-catalogue.co.za/stores/polokwane/builders/139-crescent-drive-nirvana"
+      ]
     },
     {
       "slug": "cardies-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the Mall of the North store directory line and the Cardies store and stationery category pages. No store-specific detail beyond the national chain description was captured."
+      "status": "researched",
+      "sources": [
+        "https://cardies.co.za/pages/mall-of-the-north"
+      ]
     },
     {
       "slug": "chicken-licken-seshego-plaza-seshego",
       "status": "deferred",
-      "reason": "Chain branch. Research holds a restaurant-guide page with review snippets (service, takeaway, chicken) and a Brabys listing. No own-site branch page was captured, so the description would rely on reviews."
+      "reason": "A Polokwane municipal visitor guide lists a Chicken Licken at 142 New Era, Seshego, rather than clearly confirming the batch's Seshego Plaza Shop 36 address, leaving the branch's exact trading address unresolved. Held until the address conflict between the batch listing and the municipal guide is settled."
     },
     {
       "slug": "crossfit-firebox-welgelegen",
       "status": "deferred",
-      "reason": "Research holds a Cylex listing (address, phone, class-hours data) and a directory entry. The gym's own site was not captured, so the class format described in the batch text cannot be verified."
+      "reason": "A Cylex directory listing gives address, phone and generic opening hours for this gym, but the gym's own current website and social channels were not available to confirm its CrossFit affiliation, specific class structure (30- and 60-minute sessions, an extra Saturday class) or that it still trades at 115 Diemeer Street. Held pending the gym's own current confirmation of these details."
     },
     {
       "slug": "ctm-polokwane-superbia",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds a SayYellow listing (address, phone, a national CTM description) and a Tiendeo store page. No own-site branch detail beyond the national chain description was captured."
+      "status": "researched",
+      "sources": [
+        "https://www.sayellow.com/view/south-africa/ctm-polokwane-in-polokwane"
+      ]
     },
     {
       "slug": "daniel-hechter-bendor",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the Mall of the North store directory line and the Daniel Hechter Wikipedia entry. No store-specific detail beyond the brand history was captured."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "de-plaas-guesthouse-moregloed",
       "status": "deferred",
-      "reason": "Research holds a near-place listing whose opening times read as open 24 hours (a placeholder) and customer reviews that are mostly critical of the rooms. No own-site page was captured, so no balanced sourced description exists."
+      "reason": "A near-place directory listing confirms the guesthouse's address and phone number, but shows a placeholder 'open 24 hours' schedule, and the only other material found was a set of mostly critical customer reviews about room and bathroom condition. Room facilities and current services (air-conditioning, pool, bar, conference facility) are not confirmed by a reliable business-specific source, so the listing is held rather than published from reviews alone."
     },
     {
       "slug": "era-real-estate-polokwane-central",
-      "status": "deferred",
-      "reason": "Research holds the ERA estate-agency profile page, which shows only search filters and no office details. The Property24 profile was not captured, so the batch description cannot be sourced."
+      "status": "researched",
+      "sources": [
+        "https://www.era.co.za/estate-agency/era-polokwane/9391"
+      ]
     },
     {
       "slug": "floramed-medical-centre-flora-park",
       "status": "deferred",
-      "reason": "Research holds a Yellosa listing (mission statement, contracted medical aids, a list of practitioners in the centre, working hours) and a Medpages entry. The listing hours conflict with its own description, and no own-site page was captured."
+      "reason": "A Yellosa listing confirms the centre's mission statement, that it is contracted to most medical aids, and that it houses several practitioners including a physiotherapist and clinical psychologist, but its stated hours are internally inconsistent (e.g. Saturday '9am-11pm' alongside an '8-5' summary) and no own-site page was available to resolve the practitioner list or current hours. Held pending a source that clears up the conflicting hours and confirms the current practitioner mix."
     },
     {
       "slug": "florapark-comprehensive-primary-school-flora-park",
@@ -167,28 +199,37 @@
     },
     {
       "slug": "g-star-raw-bendor",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the Mall of the North store directory line, a Bash listing and the G-Star corporate store page. No store-specific detail beyond the national brand description was captured."
+      "status": "researched",
+      "sources": [
+        "https://www.g-star.com/en_sg/stores/za/g-star-raw---mall-of-the-north"
+      ]
     },
     {
       "slug": "gae-country-lodge-dalmada",
-      "status": "deferred",
-      "reason": "The lodge's own website returned an account-suspended page for every address captured, so no description from its own pages is available. Directory and Brabys listings were not captured in usable text."
+      "status": "researched",
+      "sources": [
+        "https://www.brabys.com/za/limpopo/polokwane/dalmada/lodges/gae-country-lodge-and-conference-centre",
+        "https://www.thinklocal.co.za/biz/gae-country-lodge-polokwane"
+      ]
     },
     {
       "slug": "galitos-mall-lebo-lebowakgomo",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the Galito's local page (menu flavours, order and takeaway options, address) and the Mall@Lebo directory entry. The menu and service detail is national chain material, and no branch-specific own facts beyond the address were captured."
+      "status": "researched",
+      "sources": [
+        "https://mallatlebo.co.za/business-directory/galitos/"
+      ]
     },
     {
       "slug": "game-mall-of-the-north-bendor",
       "status": "deferred",
-      "reason": "Chain branch. Research holds the Mall of the North store page (phone, weekday and weekend hours, categories) and the mall's About page. No store-specific detail beyond the national retail description was captured."
+      "reason": "The Mall of the North store directory and the mall's own About page confirm Game trades at this location with branch phone and hours, but no source describes this specific branch's current product range or departments -- national Game product information does not stand in for branch-specific stock. Held pending a source describing this branch's own offering."
     },
     {
       "slug": "hillary-construction-ladanna",
-      "status": "deferred",
-      "reason": "Research returned only unrelated tax-exam study pages for the name search. The company's own site and directory pages were not captured, so the CIDB rating and client detail in the batch text cannot be verified."
+      "status": "researched",
+      "sources": [
+        "https://hillary.co.za/contact/"
+      ]
     },
     {
       "slug": "house-of-asante-spa-polokwane-central",
@@ -215,7 +256,7 @@
     {
       "slug": "lifestyle-corner-valet-and-lounge-polokwane-central",
       "status": "deferred",
-      "reason": "Research holds a 2018 news piece about the business opening (car wash, lounge and hair salon) and a Cylex listing. The article is dated, and the current services and location in the batch text are not confirmed by a captured page."
+      "reason": "The only substantive source is a 2018 newspaper article about the business opening as a car wash, lounge and hair salon on Van Warmelo Street, alongside a bare Cylex directory listing. Neither confirms whether the business still trades, at this address, with these services, years on. Held pending confirmation of its current trading status."
     },
     {
       "slug": "limpo-security-seshego",
@@ -233,8 +274,10 @@
     },
     {
       "slug": "local-choice-pharmacy-market-street-polokwane-central",
-      "status": "deferred",
-      "reason": "Research holds the Dis-Chem store page for TLC Market Street (address, dispensary contacts, click and collect, clinic, store hours). The independent-pharmacy and rewards detail is group material, and the description would not reach 100 sourced words without padding."
+      "status": "researched",
+      "sources": [
+        "https://www.dischem.co.za/tlc-market-street-polokwane"
+      ]
     },
     {
       "slug": "martek-roofing-magna-via",
@@ -246,22 +289,22 @@
     {
       "slug": "mj-gateway-lodge-dalmada",
       "status": "deferred",
-      "reason": "Research holds a NearFinder listing (address, phone, a placeholder 24-hour listing) and a Polomap entry. The rentbyowner page for the unit was not captured, so the one-bedroom unit detail in the batch text cannot be verified."
+      "reason": "University of Limpopo accommodation information places MJ Gateway Lodge at 14 Geluk Street, Myngenoegen, Polokwane, not the Dalmada address carried on this listing, leaving the lodge's correct suburb and address unresolved. Held until the address conflict between the batch listing and the university's accommodation information is settled."
     },
     {
       "slug": "moldovanos-swanepoel-schoeman-optometrists-polokwane-central",
       "status": "deferred",
-      "reason": "Research holds a Waze map page and a Medpages practice entry (category, location). The Vision Works branch page was not captured, so the services in the batch text cannot be verified from a source for this practice."
+      "reason": "A Waze map entry and a Medpages practice entry place this optometry practice near Grobler Street in Polokwane Central, but neither confirms its current services or exact practice address with enough specificity, and the Vision Works branch page referenced for the group's service offering was not available. Held pending a source confirming this specific practice's own services and address."
     },
     {
       "slug": "mpitla-printing-and-signage-mankweng",
       "status": "deferred",
-      "reason": "Research returned only home-repair advice pages for the name search. The business's own site and the Localpx listing were not captured, so the batch text's branding and printing detail cannot be sourced."
+      "reason": "A name search returned only unrelated home-repair advice pages, and the business's own site and its Localpx directory listing were not available in usable text, so the printing and signage services, vehicle/trailer branding work and Mankweng address carried on this listing remain unconfirmed. Held pending a source describing this business's own services and location."
     },
     {
       "slug": "polokwane-art-museum-polokwane-central",
       "status": "deferred",
-      "reason": "Research holds one art.co.za gallery listing (address, phone, a short description of the collection). No museum or cultural-centre page was captured, so 100 sourced words are not available."
+      "reason": "Only an art.co.za gallery listing giving the museum's address, phone and a short description of its collection was available; no museum or Danie Hough Cultural Centre page was available to confirm current opening hours or a fuller account of the collection. Held pending a source that confirms the museum's current hours and collection detail."
     },
     {
       "slug": "reconnect-day-spa-fauna-park",
@@ -273,7 +316,7 @@
     {
       "slug": "romeo-juliet-florist-gifts-polokwane-central",
       "status": "deferred",
-      "reason": "Research returned only Sanlam portal pages for the name search. The shop's own business page was not captured in usable text, so the floral and gift detail cannot be sourced."
+      "reason": "A name search returned only unrelated Sanlam portal pages, and the shop's own business-site page was not available in usable text, so its floral and gift range, any delivery service and the Shop 16, Kirkade Arcade, 56 Schoeman Street address remain unconfirmed by a readable source. Held pending a source describing this shop's own offering."
     },
     {
       "slug": "s2-electrical-welgelegen",
@@ -285,7 +328,7 @@
     {
       "slug": "si-hardware-and-sons-superbia",
       "status": "deferred",
-      "reason": "Research holds only the JoJo distributor page for this address and a Facebook link that was not captured. The JoJo page describes the distributor listing, not this store's stock, and the address is also used for a store in batch chunk 014."
+      "reason": "JoJo's own distributor listing confirms SI Hardware And Sons as an official JoJo Tanks distributor at this Superbia address, but that listing only describes the JoJo distributorship, not the store's complete hardware or building-material range, and the address is also used for a separate store in batch chunk 014. Held pending a source describing this store's own full stock and resolving the shared-address question."
     }
   ]
 }

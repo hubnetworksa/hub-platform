@@ -1,42 +1,57 @@
 {
   "city": "polokwane",
   "chunk": 20,
-  "generated_at": "2026-10-04T20:39:25.592Z",
+  "generated_at": "2026-10-05T11:49:31.185Z",
   "items": [
     {
       "slug": "steers-turfloop-plaza-mankweng",
-      "status": "deferred",
-      "reason": "Only chain-level Steers copy, a Tiendeo store listing (hours, phone, address) and a timed-out Steers branch page. No branch-specific services or background found."
+      "status": "researched",
+      "sources": [
+        "https://locations.steers.co.za/restaurants-TurfloopPlaza-SteersTurfloopPlaza",
+        "https://www.tiendeo.co.za/stores/polokwane/steers-shop-no-e-turfloop-plaza-cnr-university-street-houtbosdorp/36086"
+      ]
     },
     {
       "slug": "sterns-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Mall of the North store directory line (phone, hours) and jewellery-chain profile only. Nothing branch-specific to describe."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "sunglass-hut-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Mall directory line and international eyewear-chain background only. Nothing branch-specific."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "thabeng-guest-house-bendor",
-      "status": "deferred",
-      "reason": "Only a booking-aggregator page (check-in and check-out times, rating, airport distance). No text about rooms, facilities or services."
+      "status": "researched",
+      "sources": [
+        "https://www.hotelplanner.com/Hotels/301600/Reservations-Thabeng-Guest-House-Polokwane-19-Schalk-Dr-Bendor-Polokwane-0699-Suite-Number-I-0699",
+        "https://www.travelground.com/accommodation/thabeng-guesthouse"
+      ]
     },
     {
       "slug": "the-body-shop-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Mall directory line and brand-history article only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "the-crazy-store-savannah-mall-fauna-park",
       "status": "deferred",
-      "reason": "Savannah Mall shop directory entry (phone, shop number) and chain homepage only. The directory page timed out."
+      "reason": "Owner-reviewed: the Savannah Mall directory and the Crazy Store chain site confirm this branch's shop number and basic hours, but neither source describes this store's actual product range or anything branch-specific beyond the shop listing. Remains deferred until a source gives real Savannah Mall branch content; nothing generic is being written from the shop number and category alone."
     },
     {
       "slug": "thomas-grobler-attorneys-polokwane-central",
-      "status": "deferred",
-      "reason": "Yep and Brabys pages were directory shells or blocked, and the other results were unrelated (NGI vendor lists, livescore sites). No content about the practice."
+      "status": "researched",
+      "sources": [
+        "https://www.yep.co.za/biz/store/iyp/2625167_2",
+        "https://www.thinklocal.co.za/biz/thomas-grobler-attorneys-polokwane"
+      ]
     },
     {
       "slug": "tony-turner-agencies-ladine",
@@ -47,33 +62,47 @@
     },
     {
       "slug": "topt-seshego",
-      "status": "deferred",
-      "reason": "Chain homepage only (tiles, paints, bathrooms, nationwide delivery). The Seshego store page had no store-specific content."
+      "status": "researched",
+      "sources": [
+        "https://www.topt.co.za/storefinder/store/seshego",
+        "https://www.topt.co.za"
+      ]
     },
     {
       "slug": "torga-optical-bendor",
-      "status": "deferred",
-      "reason": "Mall of the North directory line (phone, shop) only. The Torga pages listed in the batch were not in the research file."
+      "status": "researched",
+      "sources": [
+        "https://torgaoptical.co.za/mall-of-the-north",
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "trevors-haven-preschool-bendor",
-      "status": "deferred",
-      "reason": "Directory listings only (address, phone, opening hours). No text about the programme, staff or facilities."
+      "status": "researched",
+      "sources": [
+        "https://www.cylex.net.za/company/trevor%27s-haven-preschool--creche---aftercare-23836248.html",
+        "https://findmynursery.net/nurseries/trevors-haven-preschool-creche-aftercare/"
+      ]
     },
     {
       "slug": "truworths-elements-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Mall directory line and chain-level store-finder pages only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "unjani-clinic-mankweng-mankweng",
-      "status": "deferred",
-      "reason": "Medpages organisation entry (category and location) only. The Unjani clinic site returned HTTP 500 and no clinic-specific text was found."
+      "status": "researched",
+      "sources": [
+        "https://www.unjaniclinic.co.za/clinic/mankweng/",
+        "https://www.medpages.info/sf/index.php?page=organisation&orgcode=403606"
+      ]
     },
     {
       "slug": "vodacom-shop-mall-of-the-north-bendor",
       "status": "deferred",
-      "reason": "Mall directory line and chain-level Vodacom pages only. No branch-specific facts."
+      "reason": "Shop-number mismatch: Mall of the North's own current store directory lists this branch as Shop L56 (phone 015 265 1458), while a separate Vodacom dealer listing gives Shop L66 (phone 015 265 1457/58) for the same mall. Held until the shop number is reconciled against the live listing data; publishing now risks stating the wrong shop number."
     },
     {
       "slug": "wound-clinic-hospark",
@@ -85,32 +114,38 @@
     {
       "slug": "zone-4-motel-and-spa-seshego-zone-4",
       "status": "deferred",
-      "reason": "Booking.com apartment listing (one bedroom, amenities, address) only. Not enough property or business text for 100 words without padding."
+      "reason": "Current accommodation-platform listings (Booking.com, Hotels.com) describe this property as a single apartment unit -- one bedroom, one bathroom, a kitchen, a terrace/garden and free Wi-Fi -- which does not support the existing '20-room motel and spa' description. Held pending a source that actually confirms room count and spa services; writing from the apartment listing alone would contradict the current description without resolving which is accurate."
     },
     {
       "slug": "ace-auto-salvage-ladanna",
       "status": "deferred",
-      "reason": "Group website describes four branches nationally and no Polokwane or Ladanna branch facts. The listing's own site did not resolve and the yellowpages page was a 404."
+      "reason": "HOLD/VERIFY per owner review: the Ace Auto Group's own site describes four branches nationally with none named in Polokwane or Ladanna, and the listing's own site did not resolve while the Yellow Pages page was a 404. A Polokwane branch forming part of the national group is plausible but not independently confirmed at the Ladanna address given on the listing. Remains deferred until a source actually names the Ladanna branch."
     },
     {
       "slug": "angel-feeds-polokwane-industria",
-      "status": "deferred",
-      "reason": "Africabz directory entry (phone, opening hours, reviews) only. The business website did not resolve."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/limpopo/angel-feeds-polokwane-228185",
+        "https://angelfeeds.co.za"
+      ]
     },
     {
       "slug": "aphane-attorneys-lebowakgomo",
-      "status": "deferred",
-      "reason": "Procompare entry under a different trading name (APHANE AT LAW INCORPORATED), so the link to this listing is not confirmed. Brabys was blocked and the practice-area list is too thin for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.procompare.co.za/providers/aphane-attorneys",
+        "https://www.yep.co.za/biz/store/iyp/17175621_2"
+      ]
     },
     {
       "slug": "atb-chartered-accountants-eduan-park",
       "status": "deferred",
-      "reason": "Infoisinfo listing gives only the address and the activity category."
+      "reason": "HOLD/VERIFY per owner review: the only available source (Infoisinfo) confirms the business exists and its activity category, but not a full customer/service profile, nor the supplied Eduan Park address. The detailed bookkeeping, tax, audit and assurance claims in the current description are not confirmed by any available source. Remains deferred pending a source that substantiates the services and the address."
     },
     {
       "slug": "battery-networx-futura",
       "status": "deferred",
-      "reason": "Facebook page gives the battery types, testing services and address only. Not enough for 100 words without padding."
+      "reason": "HOLD/VERIFY per owner review: the business's Facebook page confirms a battery dealer in Futura with an address and basic battery/testing services, but does not support the current description's specific claims of hi-cycle/deep-cycle/motorcycle batteries, factory guarantees, free battery and alternator testing, or mobile fitment at the customer's premises. Remains deferred until a source backs those specific claims."
     },
     {
       "slug": "becker-attorneys-bendor",
@@ -128,53 +163,76 @@
     },
     {
       "slug": "bmw-polokwane-thornhill-estate",
-      "status": "deferred",
-      "reason": "BMW retailer page gives contact details, sales and service hours and the address, plus generic BMW electric-car pages. Not enough dealership-specific description for 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "https://dealerfloor.co.za/dealer-news/lmg-preparing-for-flagship-bmw-dealership-in-polokwane",
+        "https://www.bmw.co.za/en/retailers-pages/bmw_polokwane.html"
+      ]
     },
     {
       "slug": "body-life-activity-zone-bendor",
       "status": "deferred",
-      "reason": "Only unrelated search results (anatomy and dictionary pages). The directory pages were blocked by anti-bot protection."
+      "reason": "HOLD/VERIFY per owner review: directory entries (Cybo, Polomap) place a Body Life-branded fitness business in Bendor, but the research search results returned only unrelated anatomy/dictionary pages and the relevant directory pages were blocked by anti-bot protection, so the current description's specific boxing, HIIT and functional-training classes are not confirmed. Flagging a pattern for later reconciliation, not merging now: this looks like yet another Body Life-branded listing distinct from Body Life Bendor/Flora Park and from a separately flagged Magazyn Street listing elsewhere in this pipeline. Remains deferred."
     },
     {
       "slug": "capricorn-veterinary-laboratories-flora-park",
-      "status": "deferred",
-      "reason": "Only unrelated search results. The business site returned HTTP 403 and the directory page was blocked."
+      "status": "researched",
+      "sources": [
+        "https://caprivet.co.za/contact/",
+        "https://www.thinklocal.co.za/biz/capricorn-veterinary-laboratories-polokwane"
+      ]
     },
     {
       "slug": "cash-crusaders-paledi-mall-mankweng",
-      "status": "deferred",
-      "reason": "Store page gives address, hours and a few services, but the rest is chain-wide sales copy. Not enough branch-specific content for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://cashcrusaders.co.za/locate-a-store/store/246/Cash%20Crusaders%20Paledi%20Mall",
+        "https://cashcrusaders.co.za/"
+      ]
     },
     {
       "slug": "crispy-fresh-takeaways-mankweng",
-      "status": "deferred",
-      "reason": "Restaurant Guru and delivery-platform pages give a rating and a few menu items only. No description of the business."
+      "status": "researched",
+      "sources": [
+        "https://restaurantguru.com/Crispy-Fresh-Takeaways-Mankweng",
+        "https://www.facebook.com/1579095438836565/posts/located-at-mankweng-business-complex-gate-2-ul-turfloop-we-are-here-to-serve-you/3432218636857560/",
+        "https://www.mrd.com/delivery/restaurant/crispy-fresh-takeaways-mankweng-2-mankweng-f/30081"
+      ]
     },
     {
       "slug": "debonairs-pizza-bendor",
-      "status": "deferred",
-      "reason": "Mall directory line and chain-level Debonairs pages only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://location.debonairspizza.co.za/mall-of-the-north",
+        "https://debonairspizza.co.za/our-story/"
+      ]
     },
     {
       "slug": "exact-lebowakgomo",
-      "status": "deferred",
-      "reason": "Mall@Lebo centre page describes the centre, not this store. The store entry has no specifics beyond its category."
+      "status": "researched",
+      "sources": [
+        "https://mallatlebo.co.za/about/"
+      ]
     },
     {
       "slug": "fnb-bank-savannah-mall-fauna-park",
       "status": "deferred",
-      "reason": "FNB site returned a bot-check captcha, and the Savannah Mall directory gives only the shop entry. Chain-level facts only."
+      "reason": "FNB site returned a bot-check captcha, and the Savannah Mall directory gives only the shop entry. Chain-level facts only. Deeper research pass (Oct 2026) confirmed only a directory phone listing for this branch; the exact shop number and branch-specific services (products offered, hours, staffing) could not be confirmed from any available source. Held pending stronger verification."
     },
     {
       "slug": "hi-q-polokwane-ladine-bendor-park",
-      "status": "deferred",
-      "reason": "Tiendeo listing (address, phone) and generic Hi-Q chain pages only. No branch-specific services or background."
+      "status": "researched",
+      "sources": [
+        "https://hiq.co.za/store-locator/limpopo/hi-q-tyres-&-autocare-polokwane-ladine"
+      ]
     },
     {
       "slug": "high-precision-engineering-works-futura",
-      "status": "deferred",
-      "reason": "Only unrelated dictionary and music results. The Brabys and ThinkLocal pages were blocked."
+      "status": "researched",
+      "sources": [
+        "https://www.brabys.com/za/limpopo/polokwane/precision-engineers/high-precision-engineering-works",
+        "https://www.thinklocal.co.za/biz/high-precision-engineering-polokwane"
+      ]
     },
     {
       "slug": "ingwe-waste-management-dalmada",
@@ -185,8 +243,10 @@
     },
     {
       "slug": "inkmart-copiers-annadale",
-      "status": "deferred",
-      "reason": "Nearfinder and printshop directory entries give address, phone and hours only. Services beyond copiers and supplies are not described anywhere."
+      "status": "researched",
+      "sources": [
+        "https://inkmart.co.za/contact-us/"
+      ]
     },
     {
       "slug": "ivory-lodge-bendor-park",
@@ -197,73 +257,99 @@
     },
     {
       "slug": "key-sound-centre-moregloed",
-      "status": "deferred",
-      "reason": "LocksmithFind directory page with customer reviews. Services are not specified and no business description was found."
+      "status": "researched",
+      "sources": [
+        "https://www.brabys.com/za/limpopo/polokwane/moregloed/sound-systems-equipment/key-sound-centre",
+        "https://www.locksmithfind.co.za/limpopo/polokwane/key-sound-centre"
+      ]
     },
     {
       "slug": "km-mothupi-butchery-chisanyama-seshego",
-      "status": "deferred",
-      "reason": "Facebook page gives the meat range, address and a collection option only. Too little for 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/PolzMot/",
+        "https://www.waze.com/live-map/directions/za/lp/polokwane/k.m.-mothupi-butchery-chisanyama,-zone-2-seshego"
+      ]
     },
     {
       "slug": "kurt-geiger-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Mall directory line and chain-level Kurt Geiger pages only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "lebowa-funeral-parlour-seshego-seshego",
       "status": "deferred",
-      "reason": "Facebook branch post (phone numbers), a findmy directory entry and a founding-year reference only. No description of the funeral services themselves."
+      "reason": "Facebook branch post (phone numbers), a findmy directory entry and a founding-year reference only. No description of the funeral services themselves. Deeper research pass (Oct 2026): a current Think Local listing identifies 'Lebowa Funeral Parlour (Seshego Industrial)' at Stand 3935 Seshego Industrial, phone 015 223 1814, but this does not independently confirm the Seshego branch address on file for this listing, and the detailed burial/cremation/tombstone/catering/funeral-policy claims in the current description still need verification. Held pending confirmation of the correct branch address and service details."
     },
     {
       "slug": "lebowa-kgomo-secondary-school-lebowakgomo",
-      "status": "deferred",
-      "reason": "Schools directory entries give address and status records only. No school profile text."
+      "status": "researched",
+      "sources": [
+        "https://schoolsdigest.co.za/listings/lebowa-kgomo/",
+        "https://www.school-register.co.za/school/lebowa-kgomo/",
+        "https://educationsouthafrica.com/schools/limpopo/polokwane/lebowa-kgomo"
+      ]
     },
     {
       "slug": "lekana-shooting-academy-gun-shop-polokwane-central",
-      "status": "deferred",
-      "reason": "Only unrelated Microsoft support and forum results. The directory pages were blocked or returned 404."
+      "status": "researched",
+      "sources": [
+        "https://guncommunity.co.za/listing/lekana-shooting-academy-gun-shop/",
+        "https://www.thinklocal.co.za/biz/lekana-shooting-academy-gun-shop-polokwane"
+      ]
     },
     {
       "slug": "levubu-cottages-penina-park",
-      "status": "deferred",
-      "reason": "Booking.com apartment listing (renovated apartment, garden, braai) and a business site showing only a coming-soon banner. Not enough for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.booking.com/hotel/za/9-levubu-avenue.en-gb.html",
+        "https://www.lekkeslaap.co.za/accommodation/levubu-cottages"
+      ]
     },
     {
       "slug": "magnolia-guest-house-eduan-park",
       "status": "deferred",
-      "reason": "Facebook page (hotel and B&B category, address, phone) and a Waze link only. No description."
+      "reason": "Facebook page (hotel and B&B category, address, phone) and a Waze link only. No description. Deeper research pass (Oct 2026) confirmed the location but could not confirm room types, self-catering facilities or current amenities beyond what's already in the current description. Held pending verification of room and facility details."
     },
     {
       "slug": "masethe-bh-optometrists-mankweng",
       "status": "deferred",
-      "reason": "Medpages entry for an individual optometrist with no practice description. The GEMS network PDF did not download."
+      "reason": "Medpages entry for an individual optometrist with no practice description. The GEMS network PDF did not download. Deeper research pass (Oct 2026) confirmed the practice exists but could not sufficiently confirm the full service offering or the supplied Usave Complex, Ga-Maja Village location. Held pending verification of services and address."
     },
     {
       "slug": "masters-guest-house-lebowakgomo",
       "status": "deferred",
-      "reason": "Africabz directory entry with a few review snippets and a phone number only. No description of the guest house."
+      "reason": "Africabz directory entry with a few review snippets and a phone number only. No description of the guest house. Deeper research pass (Oct 2026): location and phone confirmed via listings and municipal records, but the claimed room facilities (DStv, air conditioning, Wi-Fi) and route/location advantages could not be confirmed. Held pending verification of amenities."
     },
     {
       "slug": "matrix-warehouse-computers-polokwane-polokwane-central",
-      "status": "deferred",
-      "reason": "Infoisinfo listing gives a generic services list and hours only. Not enough for 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "https://polokwane.infoisinfo.co.za/card/matrix-warehouse-computers-polokwane/561003",
+        "https://www.thinklocal.co.za/biz/matrix-computer-warehouse-polokwane-1"
+      ]
     },
     {
       "slug": "mogau-traveling-agency-polokwane-central",
       "status": "deferred",
-      "reason": "Facebook pages give a short tour and transport description, phone and email. The website did not resolve, so nothing more to build on."
+      "reason": "Facebook pages give a short tour and transport description, phone and email. The website did not resolve, so nothing more to build on. Deeper research pass (Oct 2026) confirmed the tour-operator business via posts describing past packages (e.g. Sun City trips), but current tour packages and the supplied 135 Marshall Street address could not be confirmed. Held pending verification of current offering and address."
     },
     {
       "slug": "motel-villa-africa-hospark",
-      "status": "deferred",
-      "reason": "LekkeSlaap page gives capacity, check-in times and address only. No further description of the guest house."
+      "status": "researched",
+      "sources": [
+        "https://www.lekkeslaap.co.za/accommodation/motel-villa-africa"
+      ]
     },
     {
       "slug": "mr-price-sport-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Mall directory line and chain-level Mr Price pages only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://mrpricegroup.com/mr-price-sport/",
+        "https://mallofthenorth.co.za/stores/"
+      ]
     }
   ]
 }

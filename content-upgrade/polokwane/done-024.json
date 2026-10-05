@@ -1,12 +1,12 @@
 {
   "city": "polokwane",
   "chunk": 24,
-  "generated_at": "2026-10-04T20:46:48.523Z",
+  "generated_at": "2026-10-05T12:05:44.477Z",
   "items": [
     {
       "slug": "professional-nail-and-beauty-supplies-flora-park",
       "status": "deferred",
-      "reason": "Directory entry (address, phone) and a one-line trade-supplier tagline only. No description of the shop."
+      "reason": "User-supplied research could not independently verify a current, sufficiently detailed product or training-course catalogue for this shop beyond its address, phone number and category. Held deferred rather than publish from address/category alone."
     },
     {
       "slug": "ruby-stone-boutique-hotel-fauna-park",
@@ -18,27 +18,35 @@
     {
       "slug": "smart-bnb-mankweng",
       "status": "deferred",
-      "reason": "Facebook page gives a short tagline (clean, private, secure, locked gates) and follower count only. Not enough for 100 words without padding."
+      "reason": "User-supplied research confirms only that this is a bed and breakfast (clean, private, secure, locked gates); the accommodation facilities themselves could not be independently verified beyond that. Held deferred."
     },
     {
       "slug": "the-leopard-tree-sterpark",
-      "status": "deferred",
-      "reason": "Third-party booking page with currency and language menus only. No description of the property."
+      "status": "researched",
+      "sources": [
+        "https://www.lekkeslaap.co.za/accommodation/the-leopard-tree",
+        "https://www.hotel.com.au/polokwane/the-leopard-tree.htm"
+      ]
     },
     {
       "slug": "tloutlou-cleaning-pest-control-seshego",
-      "status": "deferred",
-      "reason": "Business site gives a short service statement (pest control, cleaning, hygiene) and a black-owned claim only. Not enough for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://ttcp.co.za",
+        "https://ttcp.co.za/pest-control-in-polokwane/"
+      ]
     },
     {
       "slug": "vision-works-platinum-park-bendor-park",
-      "status": "deferred",
-      "reason": "Store page gives address, hours and promotions, but the services text is generic Vision Works chain copy. Not enough branch-specific content."
+      "status": "researched",
+      "sources": [
+        "https://www.vision-works.co.za/platinum-park/"
+      ]
     },
     {
       "slug": "workforce-staffing-polokwane-central",
       "status": "deferred",
-      "reason": "National staffing company homepage and sector list only. No Polokwane branch facts."
+      "reason": "User-supplied research confirms the wider Workforce Holdings group but could not verify which services are actually offered locally at the Polokwane branch. Held deferred rather than publish group-level facts as branch-specific."
     },
     {
       "slug": "all-seasons-function-hire-futura",
@@ -51,12 +59,14 @@
     {
       "slug": "allpro-truck-and-trailer-components-superbia",
       "status": "deferred",
-      "reason": "Shopshours directory list of Polokwane engine-parts shops only. No description of this business."
+      "reason": "User-supplied research could not confirm this business's current product range; nothing beyond a directory listing of Polokwane engine-parts shops was found. Held deferred rather than publish a truck/trailer/engine-brand range as confirmed."
     },
     {
       "slug": "atrium-boutique-hotel-hospark",
-      "status": "deferred",
-      "reason": "Business site gives the founding story and suite listing only. No room, facility or service detail to build a description from."
+      "status": "researched",
+      "sources": [
+        "https://atriumboutiquehotel.co.za"
+      ]
     },
     {
       "slug": "bosveld-communications-annadale",
@@ -68,23 +78,31 @@
     },
     {
       "slug": "cathedral-of-the-sacred-heart-polokwane-central",
-      "status": "deferred",
-      "reason": "Diocese priests-and-parishes page and a general cathedral record (address, date) only. No description of the cathedral's services or community life."
+      "status": "researched",
+      "sources": [
+        "https://polokwanediocese.org.za/priests-and-parishes/",
+        "https://polokwanediocese.org.za/cathedral-of-the-sacred-heart/"
+      ]
     },
     {
       "slug": "danlee-overnight-accommodation-capricorn-park",
-      "status": "deferred",
-      "reason": "Sa-venues listing (bed and breakfast, room heater, price) only. Not enough for 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "https://www.sa-venues.com/visit/danleeovernight/"
+      ]
     },
     {
       "slug": "debonairs-pizza-the-greenery-polokwane-central",
-      "status": "deferred",
-      "reason": "Property news about The Greenery centre (opened 2023, 23 retailers) only. No branch-specific facts for Debonairs."
+      "status": "researched",
+      "sources": [
+        "https://locations.debonairspizza.co.za/restaurants-ThjeGreenery-DebonairsPizzaPolokwaneGreenery",
+        "https://app.debonairspizza.co.za/restaurant/8468/debonairs-pizza-the-greenery-polokwane"
+      ]
     },
     {
       "slug": "jb-accountants-welgelegen",
       "status": "deferred",
-      "reason": "Facebook page with a one-line accounting tagline and phone only. Not enough for 100 words."
+      "reason": "Only the address, category (Chartered Accountant practice) and operating hours could be confirmed; no genuinely non-generic service description is available from current sources. Held deferred."
     },
     {
       "slug": "mabotja-thabo-attorneys-polokwane-central",
@@ -96,37 +114,46 @@
     {
       "slug": "tile-africa-superbia",
       "status": "deferred",
-      "reason": "National Tile Africa chain pages (product range, promise, store finder) only. No Superbia branch facts."
+      "reason": "User-supplied research turned up the Polokwane South/Homexpress branch rather than confirming this Superbia listing, an address mismatch that means branch-specific facts can't be confirmed for this location. Held deferred."
     },
     {
       "slug": "b-b-truck-tractor-futura",
       "status": "deferred",
-      "reason": "Group branch list in other provinces and a directory page. No Polokwane branch facts."
+      "reason": "User-supplied research could not confirm this Polokwane branch's exact vehicle, tractor and machinery range; the UD Trucks/FAW/tractor details are not confirmed as specific to this location. Held deferred."
     },
     {
       "slug": "blue-bottle-liquors-the-farmyard-bendor",
       "status": "deferred",
-      "reason": "Farmyard Trading Post centre copy and a membership list only. No liquor-store branch facts."
+      "reason": "User-supplied research could not establish a current, branch-specific liquor product range for this store beyond its presence at The Farmyard Trading Post. Held deferred."
     },
     {
       "slug": "bougain-villa-guest-house-fauna-park",
-      "status": "deferred",
-      "reason": "Contact page, LekkeSlaap listing and a booking-site summary only. The business site timed out, so there is not enough description."
+      "status": "researched",
+      "sources": [
+        "https://bougainvillaguesthouse.co.za",
+        "https://bougainvillaguesthouse.co.za/contact"
+      ]
     },
     {
       "slug": "galitos-city-centre-polokwane-central",
-      "status": "deferred",
-      "reason": "Chain menu app and national Galito's copy only. No branch-specific facts for City Centre."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/GalitosCityCentre/",
+        "https://app.galitos.co.za/restaurant/7223/galitos-polokwane-city-centre"
+      ]
     },
     {
       "slug": "galitos-sasol-madiba-park-seshego",
-      "status": "deferred",
-      "reason": "Chain homepage copy only. No branch-specific facts for the Sasol Madiba Park branch."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/GalitosSasolMadibaParkPolokwane/",
+        "https://www.galitos.co.za"
+      ]
     },
     {
       "slug": "king-pie-lebowakgomo",
       "status": "deferred",
-      "reason": "Chain store-locator page (placeholder store list) and brand copy only. No branch-specific facts."
+      "reason": "The Mall@Lebo outlet is confirmed at Shop 7, but user-supplied research did not surface enough branch-specific product or service detail beyond that to write a non-generic description. Held deferred."
     },
     {
       "slug": "masamah-graphics-mankweng",
@@ -138,22 +165,27 @@
     {
       "slug": "maswika-consulting-engineers-welgelegen",
       "status": "deferred",
-      "reason": "Homepage with a slogan and a project line only. No description of the services or projects."
+      "reason": "User-supplied research could not independently verify detailed civil-engineering service categories or specific projects; the transportation, water, structural-engineering and project-management claims are not confirmed as this firm's actual scope. Held deferred."
     },
     {
       "slug": "mens-clinic-international-polokwane-central",
       "status": "deferred",
-      "reason": "Medpages organisation entry (category and location only). The Brabys and Yellow pages sources were blocked."
+      "reason": "User-supplied research confirms the national network and contact numbers but not the precise services actually available at the Polokwane location. Held deferred until that is confirmed."
     },
     {
       "slug": "pepps-ga-ledwaba-primary-school-lebowakgomo",
-      "status": "deferred",
-      "reason": "School contact page and menu list only. No profile text for the Ga-Ledwaba campus."
+      "status": "researched",
+      "sources": [
+        "https://pepps.co.za/contact-us/"
+      ]
     },
     {
       "slug": "phoenix-industrial-safety-supplies-superbia",
-      "status": "deferred",
-      "reason": "National company pages (Johannesburg HQ, ISO claim) with the Polokwane office address only. Not enough branch-specific content."
+      "status": "researched",
+      "sources": [
+        "https://phoenixindustrial.co.za/polokwane/",
+        "https://phoenixindustrial.co.za/welcome-to-phoenix-industrial-and-safety-suppliers/"
+      ]
     },
     {
       "slug": "pietersburg-lodge-ivy-park",
@@ -165,8 +197,11 @@
     },
     {
       "slug": "pna-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "National PNA chain pages and a Mall of the North store page with chain-wide copy. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://pna.co.za/store/limpopo/pna-mall-of-the-north",
+        "https://mallofthenorth.co.za/shop/pna/"
+      ]
     },
     {
       "slug": "sidze-guest-house-moregloed",
@@ -178,22 +213,27 @@
     {
       "slug": "tpm-attorneys-inc-polokwane-central",
       "status": "deferred",
-      "reason": "Attorneys directory page with a generic firm summary, phone and email. No description of practice areas."
+      "reason": "User-supplied research confirms the firm's existence and address but not the detailed practice areas in the current description. Held deferred until those can be independently verified."
     },
     {
       "slug": "atlas-battery-pmt-square-nirvana",
       "status": "deferred",
-      "reason": "No business site or directory description was found. The Atlas Battery site returned 404 and results were unrelated."
+      "reason": "User-supplied research could not confirm the exact battery range or fitment services offered at this branch; the previously supplied PMT Square/Nirvana branch information needs independent rechecking before publishing. Held deferred."
     },
     {
       "slug": "cashbuild-baobab-gardens-thornhill-estate",
-      "status": "deferred",
-      "reason": "Cashbuild store page gives address, hours and chain-wide product copy only. Not enough branch-specific content."
+      "status": "researched",
+      "sources": [
+        "https://locations.cashbuild.co.za/Retail-Bendor-CashbuildBaobab"
+      ]
     },
     {
       "slug": "fairplay-hardware-lebowakgomo",
-      "status": "deferred",
-      "reason": "Business website is suspended. No other description was found and search results were unrelated."
+      "status": "researched",
+      "sources": [
+        "https://fairplay.co.za/",
+        "https://fairplay.co.za/about"
+      ]
     },
     {
       "slug": "jason-stander-optometrists-bendor-park",
@@ -212,7 +252,7 @@
     {
       "slug": "pep-paledi-mall-mankweng",
       "status": "deferred",
-      "reason": "PEP store-finder page and online shop navigation only. No branch-specific facts."
+      "reason": "Chain-level product information could not be tied to this specific branch; no reliable branch-specific shop number or local service detail was found. Held deferred."
     },
     {
       "slug": "thomsons-body-107-superbia",
@@ -224,42 +264,54 @@
     {
       "slug": "total-sports-lebowakgomo",
       "status": "deferred",
-      "reason": "Mall@Lebo directory entry (category, phone, shop number) and a national sports-chain page. No store-specific description."
+      "reason": "Only the Shop 39 location and a phone number are confirmed via the mall directory; no genuinely non-generic service or product description is available beyond that. Held deferred."
     },
     {
       "slug": "a-h-burger-attorney-incorporated-fauna-park",
-      "status": "deferred",
-      "reason": "Attorneys directory entry with a practice-opening date and phone only. No description of the practice areas."
+      "status": "researched",
+      "sources": [
+        "https://www.attorneys.co.za/CompanyHomePage.asp?CompanyID=1390"
+      ]
     },
     {
       "slug": "auto-supreme-bendor",
-      "status": "deferred",
-      "reason": "Coffee franchise branch page at The Farmyard with opening hours and a generic franchise description. Not enough branch-specific content for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://thedailycoffeecafe.co.za/franchise-location-express-auto-supreme-car-wash/"
+      ]
     },
     {
       "slug": "bhlj-steel-services-ladine",
       "status": "deferred",
-      "reason": "Snupit project page and a quote-marketplace page only. No description of the business."
+      "reason": "User-supplied research could not independently confirm the full fencing, structural-steel and fabrication service range, and the claimed 1990 establishment date is not confirmed. Held deferred rather than publish those as verified facts."
     },
     {
       "slug": "dzb-chartered-accountants-bendor-park",
       "status": "deferred",
-      "reason": "Business site gives service names (audit, tax, accounting) and contact details only. Not enough for 100 words."
+      "reason": "User-supplied research could not independently confirm the detailed accounting, audit, tax and bookkeeping services actually offered at the Polokwane branch beyond its existence and contact details. Held deferred."
     },
     {
       "slug": "hyundai-polokwane-nirvana",
-      "status": "deferred",
-      "reason": "Official Hyundai dealer page with brand-wide servicing and warranty copy. No dealership-specific description found."
+      "status": "researched",
+      "sources": [
+        "https://www.motus.co.za/dealerships/hyundai-polokwane/",
+        "https://www.hyundai.co.za/dealers/hyundai-polokwane"
+      ]
     },
     {
       "slug": "kia-polokwane-nirvana",
-      "status": "deferred",
-      "reason": "Official Kia dealer page with brand-wide copy and a dealership location. No dealership-specific description found."
+      "status": "researched",
+      "sources": [
+        "https://www.motus.co.za/dealerships/kia-polokwane/",
+        "https://www.kia.co.za/dealerships/kia-polokwane"
+      ]
     },
     {
       "slug": "mr-price-mall-of-the-north-bendor",
-      "status": "deferred",
-      "reason": "Mall of the North directory line only. No branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/"
+      ]
     },
     {
       "slug": "tambati-overnight-and-conference-center-penina-park",
@@ -278,7 +330,7 @@
     {
       "slug": "platinum-auto-panel-beaters-ladanna",
       "status": "deferred",
-      "reason": "Panel Beater Directory entry with address and profile template text only. No description of the business."
+      "reason": "User-supplied research could not independently confirm the complete body-repair, spray-painting, rim-repair, towing or insurance-repair offering, and the SAMBRA/RMI/MIBCO affiliation claims are not confirmed. Held deferred rather than publish them as verified."
     }
   ]
 }

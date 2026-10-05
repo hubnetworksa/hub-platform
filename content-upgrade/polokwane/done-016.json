@@ -1,17 +1,19 @@
 {
   "city": "polokwane",
   "chunk": 16,
-  "generated_at": "2026-10-04T20:49:03.508Z",
+  "generated_at": "2026-10-05T11:35:33.026Z",
   "items": [
     {
       "slug": "zebbies-lighting-polokwane-thornhill-estate",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the Zebbies Polokwane store page (ceiling lights, lamps, fans, outdoor and LED categories, delivery threshold) and a directory entry. Only chain-level detail and the category list were captured; not enough branch-specific material for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.zebbies.com/pages/polokwane"
+      ]
     },
     {
       "slug": "3-1-thornhill-thornhill-estate",
       "status": "deferred",
-      "reason": "Chain branch. Research holds only the 3@1 national store-locator list, which names no Thornhill branch details beyond the address. The Facebook and branch pages were not captured."
+      "reason": "Chain branch. Further research confirms the Thornhill branch's location but found no sufficiently detailed current service list for this specific branch; the 3@1 national store-locator and Facebook page still give no branch-specific services beyond the address. Kept deferred."
     },
     {
       "slug": "arabela-legacy-lodge-makhadzi-cloud-lodge-dalmada",
@@ -22,38 +24,44 @@
     },
     {
       "slug": "asian-cuisine-nirvana",
-      "status": "deferred",
-      "reason": "Research holds only a Facebook page (Indian restaurant, phone, a few reviews, one dated photo post) and no own-site menu. The address in the batch text conflicts with the Facebook page, so the location cannot be confirmed."
+      "status": "researched",
+      "sources": [
+        "https://restaurantguru.com/Asian-Cuisine-Polokwane",
+        "https://www.facebook.com/p/Asian-Cuisine-100070026649447/"
+      ]
     },
     {
       "slug": "auto-magic-polokwane-futura",
       "status": "deferred",
-      "reason": "Research holds only InfoIsInfo and Brabys directory entries (category and address). The address in the directory conflicts with the batch address, and no page about the workshop's own services or insurer approvals was captured."
+      "reason": "Further research could not consistently confirm the supplied 45 Lood Street address against available directory sources, and no reliable first-party source confirms the workshop's specific spray-painting services or insurer approvals. Kept deferred pending address verification."
     },
     {
       "slug": "body-life-gym-polokwane-central",
       "status": "deferred",
-      "reason": "Research holds Cylex and Bodylife directory pages for a Flora Park gym and the Bodylife contact link. The address and owner details conflict with the batch listing, and the owner is named in the source, so the description cannot be safely written."
+      "reason": "Available Body Life information associates the Polokwane business with its Flora Park and Bendor facilities rather than confirming a separate 131 Magazyn Street listing; this listing should not be merged with either of those branches without verification. Kept deferred."
     },
     {
       "slug": "boles-overnight-capricorn-park",
       "status": "deferred",
-      "reason": "Research holds a LekkeSlaap page marked as permanently unavailable and a directory entry. No current information about the guesthouse could be sourced."
+      "reason": "The LekkeSlaap listing for this guesthouse is marked permanently unavailable, and no reliable current source confirms it is still operating. Possibly closed, but kept deferred rather than published or marked closed outright pending firmer confirmation."
     },
     {
       "slug": "calculus-accountants-polokwane-central",
       "status": "deferred",
-      "reason": "Research holds only a FindMy category page and directory listings. The services in the batch text (tax, VAT, payroll, estate planning) are not supported by a captured page of the firm's own."
+      "reason": "Accounting category and Polokwane Central location are confirmed, but the firm's VAT, payroll, tax and estate-planning services could not be independently verified from a page of the firm's own. Kept deferred."
     },
     {
       "slug": "cash-converters-polokwane-cbd-polokwane-central",
       "status": "deferred",
-      "reason": "Chain branch. Research holds one older news piece about the store opening (short-term loans, tested second-hand goods, a six-month guarantee quoted from a manager) and a site that returned a server error. The article is dated and the claims are not confirmed on a current page."
+      "reason": "Chain branch. Only older reporting (a dated article on the store's opening) is available; current branch status and services could not be confirmed on a current page. Kept deferred."
     },
     {
       "slug": "cell-c-bendor",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the Mall of the North store directory line and a Tiendeo page for the same mall. No branch-specific detail beyond the chain's national description was captured."
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/",
+        "https://www.tiendeo.co.za/stores/polokwane/cell-c-shop-l-mall-of-the-north-corner-r-and-n-bypass-bendor/9061"
+      ]
     },
     {
       "slug": "crystal-coffee-shop-polokwane-central",
@@ -64,8 +72,10 @@
     },
     {
       "slug": "dadas-world-of-hardware-polokwane-central",
-      "status": "deferred",
-      "reason": "Research holds only a directory page (address, phone, opening times) and a short set of customer reviews praising prices and staff. The company's own site was not captured, so no sourced product or service detail exists."
+      "status": "researched",
+      "sources": [
+        "https://www.dadasworld.co.za/"
+      ]
     },
     {
       "slug": "dalmada-storage-dalmada",
@@ -76,8 +86,10 @@
     },
     {
       "slug": "debonairs-pizza-seshego-circle-seshego",
-      "status": "deferred",
-      "reason": "Chain branch. The Debonairs branch page (address, delivery and takeaway, Triple-Decker and Real Deal ranges) is mostly national chain material. Branch-specific detail beyond the address and service options is not enough for 100 sourced words."
+      "status": "researched",
+      "sources": [
+        "https://locations.debonairspizza.co.za/restaurants-SeshegoCircle-DebonairsPizzaSeshego"
+      ]
     },
     {
       "slug": "diamond-inc-attorneys-bendor",
@@ -89,7 +101,7 @@
     {
       "slug": "dr-mjp-ledwaba-hospark",
       "status": "deferred",
-      "reason": "The listing is a named doctor's practice. Research holds only Recomed and Brabys practitioner pages (paediatric category, address, two patient recommendations), so the description would have to name the practitioner, which is not allowed."
+      "reason": "The listing is a named doctor's practice. Paediatric category and location are confirmed via practitioner-directory pages, but expanding the description further would require naming the individual practitioner, which is not permitted. Kept deferred; do not name the practitioner."
     },
     {
       "slug": "evn-africa-polokwane-central",
@@ -102,12 +114,14 @@
     {
       "slug": "exact-seshego",
       "status": "deferred",
-      "reason": "Research holds only a parked domain page and an unrelated domain-hosting page for the name search. No page about the Seshego Circle store was captured."
+      "reason": "Current Seshego Circle branch status, assortment and facilities could not be sufficiently confirmed; searches for the name return only unrelated parked-domain pages, not a genuine store page. Kept deferred."
     },
     {
       "slug": "fila-bendor",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the Mall of the North store directory line and a FILA Facebook post. No branch-specific detail beyond the national brand description was captured."
+      "status": "researched",
+      "sources": [
+        "https://fila.co.za/"
+      ]
     },
     {
       "slug": "florapark-comprehensive-high-school-flora-park",
@@ -126,8 +140,11 @@
     },
     {
       "slug": "goldwagen-nirvana",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds the Goldwagen Polokwane store page (address, phone, trading hours, categories) and directory reviews about the store. Branch facts are mostly listing data, and the national chain description is not enough for 100 sourced words."
+      "status": "researched",
+      "sources": [
+        "https://www.goldwagen.com/store/goldwagen-polokwane/",
+        "https://za.africabz.com/limpopo/goldwagen-40959"
+      ]
     },
     {
       "slug": "greener-tidings-garden-centre-bendor",
@@ -139,32 +156,40 @@
     {
       "slug": "hadtiit-construction-ladanna",
       "status": "deferred",
-      "reason": "Research returned only unrelated AI-company search results for the name. The company's own site and directory pages were not captured, so the construction services in the batch text cannot be verified."
+      "reason": "No reliable source confirming the company's construction services could be found; searches for the name return only unrelated results. Kept deferred."
     },
     {
       "slug": "hi-fi-corp-bendor",
       "status": "deferred",
-      "reason": "Chain branch. Research holds the Mall of the North store directory line, a Hi-Fi Corp store-locator link and a news item about the mall opening. No branch-specific detail beyond the national retailer description was captured."
+      "reason": "Chain branch. Branch information for Shop L32 at Mall of the North is not sufficiently captured; generic Hi-Fi Corp product information is not treated as proof of stock at this specific branch. Kept deferred."
     },
     {
       "slug": "kfc-mankweng-paledi-mall-mankweng",
-      "status": "deferred",
-      "reason": "Chain branch. Research holds a directory entry with opening times, a few customer reviews about queues and drive-thru speed, and the KFC order page link. The order page itself was not captured, so no own-site branch detail is available."
+      "status": "researched",
+      "sources": [
+        "https://za.near-place.com/kfc-mankweng-corner-r71-makanye-main-road-mankweng"
+      ]
     },
     {
       "slug": "lebowakgomo-post-office-lebowakgomo",
-      "status": "deferred",
-      "reason": "Research holds the postal database entry (counters, rented outlet, motor licence service, online) with partial opening times. No page describing the post office's services in detail was captured, so 100 sourced words are not available."
+      "status": "researched",
+      "sources": [
+        "https://postaldb.net/en/south-africa/post-office/view/688"
+      ]
     },
     {
       "slug": "limpopo-corobrik-factory-dalmada",
-      "status": "deferred",
-      "reason": "Research holds only a Yellosa listing (address, phone, a short product line) and a directory entry. No Corobrik factory page or product detail was captured."
+      "status": "researched",
+      "sources": [
+        "https://www.yellosa.co.za/company/442690/corobrik-limpopo-factory"
+      ]
     },
     {
       "slug": "limpopo-department-of-health-hospark",
-      "status": "deferred",
-      "reason": "Research holds the GovPage head-office entry (address, phone, vacancies, tenders and notices) and unrelated encyclopaedia pages. No description of the department's services beyond the head office was captured."
+      "status": "researched",
+      "sources": [
+        "https://www.govpage.co.za/limpopo-department-of-health.html"
+      ]
     },
     {
       "slug": "m-n-m-guesthouse-mankweng",
@@ -183,7 +208,7 @@
     {
       "slug": "mankweng-lodge-mankweng",
       "status": "deferred",
-      "reason": "Research holds only a Facebook post with nightly rates and a short description (lodge in Turfloop) and unrelated Mankweng township pages. The batch facts about rooms and parking are not supported by a captured page of the lodge's own."
+      "reason": "Accommodation type and area (Turfloop/Mankweng) are confirmed, but private bathrooms, mountain views, Wi-Fi and parking could not be independently verified from a page of the lodge's own. Kept deferred."
     },
     {
       "slug": "mavuna-netshimbupfe-inc-polokwane-central",
@@ -202,7 +227,7 @@
     {
       "slug": "medirite-pharmacy-moregloed",
       "status": "deferred",
-      "reason": "Chain branch. Research holds a Tiendeo store page (trading hours, catalogues, nearby stores) and a shopshours listing. No branch-specific services or own-site detail was captured for the Palm Centre pharmacy."
+      "reason": "Chain branch. The Palm Centre location is confirmed, but additional services such as a clinic, vaccinations or health screening could not be confirmed for this specific branch. Kept deferred."
     },
     {
       "slug": "mosate-lodge-hospark",
@@ -214,7 +239,7 @@
     {
       "slug": "motus-select-nelson-mandela-drive-superbia",
       "status": "deferred",
-      "reason": "Chain branch. Research holds the Cars.co.za dealer page (stock count, popular brands, location) and the Motus Select dealership link. No branch-specific service or sales detail beyond the listing was captured."
+      "reason": "Chain branch. Only a general area association was found for this dealership; the exact address, brands carried and dealership services could not be confirmed. Kept deferred."
     },
     {
       "slug": "nandos-polokwane-cbd-polokwane-central",
@@ -226,7 +251,7 @@
     {
       "slug": "nedbank-lebowakgomo-lebowakgomo",
       "status": "deferred",
-      "reason": "Chain branch. Research holds a Tiendeo store page (trading hours, nearby shops) and a callupcontact directory entry. No branch-specific service detail beyond the address and hours was captured."
+      "reason": "Chain branch. The branch location (Winkel 3, Ingang 2, Cnr R518 & R579, Phasha Shopping Centre) is confirmed, but specific facilities such as an ATM, account-opening or specialist services could not be confirmed. Kept deferred."
     },
     {
       "slug": "nguni-grill-bendor",
@@ -238,42 +263,44 @@
     {
       "slug": "ngwanesho-guest-house-lebowakgomo",
       "status": "deferred",
-      "reason": "Research holds only a NearFinder directory card (phone, address) and a Brabys page. The room, bathroom and parking details in the batch text are not supported by a captured page of the guesthouse's own."
+      "reason": "Name, location and contact details are confirmed, but room configuration, private showers and parking could not be confirmed from a page of the guesthouse's own. Kept deferred."
     },
     {
       "slug": "ntk-limpopo-agric-polokwane-industria",
       "status": "deferred",
-      "reason": "Research holds only the VKB Group's national homepage (group history, entities, incentive model) and an African directory listing. Nothing specific to the Polokwane branch or its products was captured."
+      "reason": "The broader VKB Group/NTK relationship is confirmed, but exactly what the Polokwane Ext 3 branch stocks or offers is not established from available sources. Kept deferred."
     },
     {
       "slug": "ntsoaki-confectionery-ladanna",
       "status": "deferred",
-      "reason": "Research holds only a Waze error page and a polokwane.info directory entry with emergency contact numbers. No description of the confectionery or its products was captured."
+      "reason": "No dependable current business profile, menu or product list could be found for this business. Kept deferred."
     },
     {
       "slug": "p-and-l-hardware-lebowakgomo",
       "status": "deferred",
-      "reason": "Research holds only a JoJo distributor page (address and phone) and a firm directory entry. The hardware and building-materials detail in the batch text cannot be verified from a source."
+      "reason": "The location is confirmed via JoJo distributor information, but that is not proof of the hardware store's own full stock range. Kept deferred."
     },
     {
       "slug": "pep-home-mall-of-the-north-bendor",
       "status": "deferred",
-      "reason": "Chain branch. Research holds the Mall of the North store directory line, a Tiendeo store page and the national PEP Home collection page. No branch-specific detail beyond the chain description was captured."
+      "reason": "Chain branch. Outlet presence at Mall of the North is confirmed, but the exact current product range and the supplied Shop L16 detail could not be confirmed. Kept deferred."
     },
     {
       "slug": "pick-n-pay-liquor-cycad-bendor-park",
       "status": "deferred",
-      "reason": "Chain branch. Research holds a Tiendeo page (trading hours, catalogues) and a Yellosa listing for the wider Cycad store. No liquor-branch-specific description was captured."
+      "reason": "Chain branch. The broader Cycad Shopping Centre / Pick n Pay retail presence is confirmed, but the exact branch location, hours and liquor assortment could not be confirmed. Kept deferred."
     },
     {
       "slug": "pietersburg-funeral-supplies-polokwane-central",
       "status": "deferred",
-      "reason": "Research holds only a Facebook page (funeral services, tombstones, a Market Street address) and directory entries. The batch address and showroom detail conflict or cannot be verified, so no sourced description was written."
+      "reason": "One available source associates a similarly-named funeral-services business with a Market Street address, not the supplied General Joubert Street address; this may not be the same operation. Kept deferred pending verification."
     },
     {
       "slug": "pietersburg-vet-clinic-polokwane-central",
-      "status": "deferred",
-      "reason": "Research holds an Africa Business directory entry (address, phone, hours) and customer reviews. The clinic's own site was not captured, so the services in the batch text cannot be verified."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/limpopo/pietersburg-veterinary-clinic-118471"
+      ]
     },
     {
       "slug": "plumber-polokwane-polokwane-central",
