@@ -1,2 +1,0 @@
--- Owner correction: Die Kantoor is at Willow Way Shopping Centre, Die Wilgers, not Magalieskruin. Guarded on the old address.
-UPDATE businesses SET address = '404 Lynnwood Road, Willow Way Shopping Centre, Die Wilgers, Pretoria', suburb_id = (SELECT id FROM suburbs WHERE slug = 'die-wilgers'), shopping_center_id = (SELECT id FROM shopping_centers WHERE slug = 'willow-way-shopping-centre-de-wilgers') WHERE slug = 'die-kantoor-magalieskruin' AND address = '390 Braam Pretorius St, Magalieskruin Shopping Centre, Pretoria, 0182';

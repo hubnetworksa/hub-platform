@@ -1,2 +1,0 @@
--- Owner correction: LaRu Coffee Essentials sells coffee equipment, not electronics. Guarded on the current category.
-UPDATE business_categories SET category_id = (SELECT id FROM categories WHERE slug = 'general-retail') WHERE business_id = (SELECT id FROM businesses WHERE slug = 'laru-coffee-essentials-rietondale') AND is_primary = 1 AND category_id = (SELECT id FROM categories WHERE slug = 'electronics-appliances');

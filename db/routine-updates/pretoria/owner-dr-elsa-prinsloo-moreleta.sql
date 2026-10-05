@@ -1,3 +1,0 @@
--- Owner correction: Dr Elsa Prinsloo is a dental practice at Moreleta Park, not a GP at Les Marais. Guarded on the old address.
-UPDATE businesses SET address = 'Shop 1a, Timbavati & The Village Corner, Wekker Road, Moreleta Park, Pretoria', suburb_id = (SELECT id FROM suburbs WHERE slug = 'moreleta-park') WHERE slug = 'dr-elsa-prinsloo-les-marais' AND address = '380 Fred Nicholson St, Les Marais, Pretoria, 0084';
-UPDATE business_categories SET category_id = (SELECT id FROM categories WHERE slug = 'dentists') WHERE business_id = (SELECT id FROM businesses WHERE slug = 'dr-elsa-prinsloo-les-marais') AND is_primary = 1;
