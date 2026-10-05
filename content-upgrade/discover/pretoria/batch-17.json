@@ -1,0 +1,983 @@
+{
+  "city": "pretoria",
+  "cityLabel": "Pretoria",
+  "batch": 17,
+  "totalNeed": 153,
+  "suburbs": [
+    {
+      "suburb": "lyttelton",
+      "subLabel": "Lyttelton",
+      "need": 32,
+      "combos": [
+        {
+          "category": "accountants",
+          "catLabel": "Accountants",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Annelien Green Accountants"
+          ]
+        },
+        {
+          "category": "attorneys-legal",
+          "catLabel": "Attorneys & Legal Services",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Weyer & Weyer Attorneys"
+          ]
+        },
+        {
+          "category": "automotive-repairs",
+          "catLabel": "Automotive & Repairs",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Lyttelton Autobody"
+          ]
+        },
+        {
+          "category": "business-consulting",
+          "catLabel": "Business & Management Consulting",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "LDR International",
+            "SA PrimeLink"
+          ]
+        },
+        {
+          "category": "commercial-property-office-space",
+          "catLabel": "Commercial Property & Office Space",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Stor-Age Self Storage Centurion"
+          ]
+        },
+        {
+          "category": "computer-it-services",
+          "catLabel": "Computer & IT Services",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Blue Nile Consulting",
+            "Globex Internet Services"
+          ]
+        },
+        {
+          "category": "electronics-appliances",
+          "catLabel": "Electronics & Appliances",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Allair centurion"
+          ]
+        },
+        {
+          "category": "engineering-surveying",
+          "catLabel": "Engineering & Surveying Services",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Dihlase Consulting Engineers"
+          ]
+        },
+        {
+          "category": "financial-investment-services",
+          "catLabel": "Financial & Investment Services",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Momentum Consult Lyttelton"
+          ]
+        },
+        {
+          "category": "furniture-homeware",
+          "catLabel": "Furniture & Homeware",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Lyttelton Furniture & Pawn Shop"
+          ]
+        },
+        {
+          "category": "general-retail",
+          "catLabel": "General Retail",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Cartridge Hyper Lyttelton (Centurion)",
+            "Lyttelton Engravers"
+          ]
+        },
+        {
+          "category": "hardware-stores",
+          "catLabel": "Hardware Stores",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Alunite Pretoria"
+          ]
+        },
+        {
+          "category": "marketing-advertising",
+          "catLabel": "Marketing & Advertising",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "GraceFilled Media"
+          ]
+        },
+        {
+          "category": "restaurants-takeaways",
+          "catLabel": "Restaurants & Takeaways",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Golden Oak Spur"
+          ]
+        },
+        {
+          "category": "schools-education",
+          "catLabel": "Schools & Education",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "FranklinCovey South Africa",
+            "Lyttelton Firearm Training Centre"
+          ]
+        },
+        {
+          "category": "security-services",
+          "catLabel": "Security Services",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "PRSS Operations Office",
+            "Plug & Play Solutions"
+          ]
+        },
+        {
+          "category": "software-development",
+          "catLabel": "Software Development",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "4Sight Holdings Ltd",
+            "Carma Business Solutions"
+          ]
+        },
+        {
+          "category": "solar-renewable-energy",
+          "catLabel": "Solar & Renewable Energy",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "EEC"
+          ]
+        },
+        {
+          "category": "travel-agents",
+          "catLabel": "Travel Agents",
+          "suburb": "lyttelton",
+          "subLabel": "Lyttelton",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "BlyNet"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "derdepoort",
+      "subLabel": "Derdepoort",
+      "need": 31,
+      "combos": [
+        {
+          "category": "attorneys-legal",
+          "catLabel": "Attorneys & Legal Services",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "NEASA"
+          ]
+        },
+        {
+          "category": "business-consulting",
+          "catLabel": "Business & Management Consulting",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Claricent Consulting Services Pty Ltd"
+          ]
+        },
+        {
+          "category": "commercial-property-office-space",
+          "catLabel": "Commercial Property & Office Space",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Co.Space Entrepreneur Village | Pretoria",
+            "Contain-IT Self Storage"
+          ]
+        },
+        {
+          "category": "electricians",
+          "catLabel": "Electricians",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Rolec Electrical & Generators Contractors CC"
+          ]
+        },
+        {
+          "category": "events-function-venues",
+          "catLabel": "Events & Function Venues",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Stage Effects Group"
+          ]
+        },
+        {
+          "category": "fashion-clothing",
+          "catLabel": "Fashion & Clothing",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Print and Promo Crew"
+          ]
+        },
+        {
+          "category": "fuel-stations",
+          "catLabel": "Fuel Stations & Garages",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "MBT Derdepoort"
+          ]
+        },
+        {
+          "category": "furniture-homeware",
+          "catLabel": "Furniture & Homeware",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Sky Trampoline cc/ Trampoline Parts for SA"
+          ]
+        },
+        {
+          "category": "general-retail",
+          "catLabel": "General Retail",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "BSI Renewable Energy"
+          ]
+        },
+        {
+          "category": "logistics-courier-transport",
+          "catLabel": "Logistics, Courier & Transport",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Legend Removals"
+          ]
+        },
+        {
+          "category": "motor-spares",
+          "catLabel": "Motor Spares",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Protec Energy Solutions",
+            "SimaCab"
+          ]
+        },
+        {
+          "category": "nurseries-garden-centres",
+          "catLabel": "Nurseries & Garden Centres",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Water Depot"
+          ]
+        },
+        {
+          "category": "photographers",
+          "catLabel": "Photographers",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Hussar Security and Defense Solutions"
+          ]
+        },
+        {
+          "category": "restaurants-takeaways",
+          "catLabel": "Restaurants & Takeaways",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Padlangs Restaurant & Bar"
+          ]
+        },
+        {
+          "category": "schools-education",
+          "catLabel": "Schools & Education",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "SA Hunt Training Pty Ltd"
+          ]
+        },
+        {
+          "category": "security-services",
+          "catLabel": "Security Services",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "CEN Group Security",
+            "Sefeko (Pty) Ltd"
+          ]
+        },
+        {
+          "category": "vets-animal-care",
+          "catLabel": "Vets & Animal Care",
+          "suburb": "derdepoort",
+          "subLabel": "Derdepoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Sakabuka Kennels"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "val-de-grace",
+      "subLabel": "Val de Grace",
+      "need": 26,
+      "combos": [
+        {
+          "category": "accountants",
+          "catLabel": "Accountants",
+          "suburb": "val-de-grace",
+          "subLabel": "Val de Grace",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "COMPENDIUM ACCOUNTING SOLUTIONS GROUP"
+          ]
+        },
+        {
+          "category": "clinics-healthcare",
+          "catLabel": "Clinics & Healthcare",
+          "suburb": "val-de-grace",
+          "subLabel": "Val de Grace",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Synexus SA Watermeyer Clinical Research Centre"
+          ]
+        },
+        {
+          "category": "computer-it-services",
+          "catLabel": "Computer & IT Services",
+          "suburb": "val-de-grace",
+          "subLabel": "Val de Grace",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "IT Trust - For Trusted IT Solutions"
+          ]
+        },
+        {
+          "category": "estate-agents",
+          "catLabel": "Estate Agents",
+          "suburb": "val-de-grace",
+          "subLabel": "Val de Grace",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Uniqueco Property Valuers"
+          ]
+        },
+        {
+          "category": "general-retail",
+          "catLabel": "General Retail",
+          "suburb": "val-de-grace",
+          "subLabel": "Val de Grace",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Clicks Watermeyer",
+            "The Crazy Store Watermeyer Park"
+          ]
+        },
+        {
+          "category": "hardware-stores",
+          "catLabel": "Hardware Stores",
+          "suburb": "val-de-grace",
+          "subLabel": "Val de Grace",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Buchel Homes & Paintcor ColourWays Watermeyer"
+          ]
+        },
+        {
+          "category": "industrial-suppliers-manufacturing",
+          "catLabel": "Industrial Suppliers & Manufacturing",
+          "suburb": "val-de-grace",
+          "subLabel": "Val de Grace",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "NC Chemicals"
+          ]
+        },
+        {
+          "category": "plumbers",
+          "catLabel": "Plumbers",
+          "suburb": "val-de-grace",
+          "subLabel": "Val de Grace",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Vortex Plumbing"
+          ]
+        },
+        {
+          "category": "recruitment-hr-services",
+          "catLabel": "Recruitment & HR Services",
+          "suburb": "val-de-grace",
+          "subLabel": "Val de Grace",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Help U Work"
+          ]
+        },
+        {
+          "category": "schools-education",
+          "catLabel": "Schools & Education",
+          "suburb": "val-de-grace",
+          "subLabel": "Val de Grace",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Tsoelopele Leadership Consulting"
+          ]
+        },
+        {
+          "category": "software-development",
+          "catLabel": "Software Development",
+          "suburb": "val-de-grace",
+          "subLabel": "Val de Grace",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Clouds3c Cyber Security",
+            "LegalDev"
+          ]
+        },
+        {
+          "category": "spas-wellness",
+          "catLabel": "Spas & Wellness",
+          "suburb": "val-de-grace",
+          "subLabel": "Val de Grace",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Placecol Watermeyer Park"
+          ]
+        },
+        {
+          "category": "supermarkets-groceries",
+          "catLabel": "Supermarkets & Groceries",
+          "suburb": "val-de-grace",
+          "subLabel": "Val de Grace",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Woolworths Watermeyer Park"
+          ]
+        },
+        {
+          "category": "vets-animal-care",
+          "catLabel": "Vets & Animal Care",
+          "suburb": "val-de-grace",
+          "subLabel": "Val de Grace",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Val de Grace Vet CREW"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "amberfield-valley",
+      "subLabel": "Amberfield Valley",
+      "need": 21,
+      "combos": [
+        {
+          "category": "accountants",
+          "catLabel": "Accountants",
+          "suburb": "amberfield-valley",
+          "subLabel": "Amberfield Valley",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Rassolutions"
+          ]
+        },
+        {
+          "category": "attorneys-legal",
+          "catLabel": "Attorneys & Legal Services",
+          "suburb": "amberfield-valley",
+          "subLabel": "Amberfield Valley",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Kumwenda Attorneys Inc."
+          ]
+        },
+        {
+          "category": "business-consulting",
+          "catLabel": "Business & Management Consulting",
+          "suburb": "amberfield-valley",
+          "subLabel": "Amberfield Valley",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "BizConSA"
+          ]
+        },
+        {
+          "category": "computer-it-services",
+          "catLabel": "Computer & IT Services",
+          "suburb": "amberfield-valley",
+          "subLabel": "Amberfield Valley",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Blue Connect Technology"
+          ]
+        },
+        {
+          "category": "engineering-surveying",
+          "catLabel": "Engineering & Surveying Services",
+          "suburb": "amberfield-valley",
+          "subLabel": "Amberfield Valley",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Moditi Holdings.",
+            "Seboweng Engineering Solutions"
+          ]
+        },
+        {
+          "category": "estate-agents",
+          "catLabel": "Estate Agents",
+          "suburb": "amberfield-valley",
+          "subLabel": "Amberfield Valley",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "TwentyONE Properties"
+          ]
+        },
+        {
+          "category": "events-function-venues",
+          "catLabel": "Events & Function Venues",
+          "suburb": "amberfield-valley",
+          "subLabel": "Amberfield Valley",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Lush Champagne Wall Hire"
+          ]
+        },
+        {
+          "category": "marketing-advertising",
+          "catLabel": "Marketing & Advertising",
+          "suburb": "amberfield-valley",
+          "subLabel": "Amberfield Valley",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Aka Design (Pty) Ltd"
+          ]
+        },
+        {
+          "category": "plumbers",
+          "catLabel": "Plumbers",
+          "suburb": "amberfield-valley",
+          "subLabel": "Amberfield Valley",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Strep plumbing & swimming pools service"
+          ]
+        },
+        {
+          "category": "security-services",
+          "catLabel": "Security Services",
+          "suburb": "amberfield-valley",
+          "subLabel": "Amberfield Valley",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "LBK Security Services"
+          ]
+        },
+        {
+          "category": "software-development",
+          "catLabel": "Software Development",
+          "suburb": "amberfield-valley",
+          "subLabel": "Amberfield Valley",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "ReviewIT Training Institute"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "die-hoewes",
+      "subLabel": "Die Hoewes",
+      "need": 19,
+      "combos": [
+        {
+          "category": "building-construction",
+          "catLabel": "Building & Construction",
+          "suburb": "die-hoewes",
+          "subLabel": "Die Hoewes",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Imbeu Development and Project Management"
+          ]
+        },
+        {
+          "category": "computer-it-services",
+          "catLabel": "Computer & IT Services",
+          "suburb": "die-hoewes",
+          "subLabel": "Die Hoewes",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Accolade Consulting",
+            "Enabling Solutions Pty Ltd"
+          ]
+        },
+        {
+          "category": "estate-agents",
+          "catLabel": "Estate Agents",
+          "suburb": "die-hoewes",
+          "subLabel": "Die Hoewes",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Lomuna group"
+          ]
+        },
+        {
+          "category": "hardware-stores",
+          "catLabel": "Hardware Stores",
+          "suburb": "die-hoewes",
+          "subLabel": "Die Hoewes",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Impa Paints"
+          ]
+        },
+        {
+          "category": "industrial-suppliers-manufacturing",
+          "catLabel": "Industrial Suppliers & Manufacturing",
+          "suburb": "die-hoewes",
+          "subLabel": "Die Hoewes",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Chromex Mining Company (Pty) Ltd"
+          ]
+        },
+        {
+          "category": "insurance",
+          "catLabel": "Insurance",
+          "suburb": "die-hoewes",
+          "subLabel": "Die Hoewes",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Santam"
+          ]
+        },
+        {
+          "category": "marketing-advertising",
+          "catLabel": "Marketing & Advertising",
+          "suburb": "die-hoewes",
+          "subLabel": "Die Hoewes",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "EP Digital SA"
+          ]
+        },
+        {
+          "category": "printing-services",
+          "catLabel": "Printing Services",
+          "suburb": "die-hoewes",
+          "subLabel": "Die Hoewes",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Minuteman Press Centurion CBD"
+          ]
+        },
+        {
+          "category": "recruitment-hr-services",
+          "catLabel": "Recruitment & HR Services",
+          "suburb": "die-hoewes",
+          "subLabel": "Die Hoewes",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Ziyana Group ( Pty) Ltd"
+          ]
+        },
+        {
+          "category": "security-services",
+          "catLabel": "Security Services",
+          "suburb": "die-hoewes",
+          "subLabel": "Die Hoewes",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Ijaba Security Services"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "roseville",
+      "subLabel": "Roseville",
+      "need": 14,
+      "combos": [
+        {
+          "category": "butcheries",
+          "catLabel": "Butcheries",
+          "suburb": "roseville",
+          "subLabel": "Roseville",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Advance Wholesale Meat Market"
+          ]
+        },
+        {
+          "category": "commercial-property-office-space",
+          "catLabel": "Commercial Property & Office Space",
+          "suburb": "roseville",
+          "subLabel": "Roseville",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Zire Fresh Produce Distribution Centre Pretoria"
+          ]
+        },
+        {
+          "category": "fuel-stations",
+          "catLabel": "Fuel Stations & Garages",
+          "suburb": "roseville",
+          "subLabel": "Roseville",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Engen Hadaf West"
+          ]
+        },
+        {
+          "category": "motor-spares",
+          "catLabel": "Motor Spares",
+          "suburb": "roseville",
+          "subLabel": "Roseville",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Camil Suspensions"
+          ]
+        },
+        {
+          "category": "photographers",
+          "catLabel": "Photographers",
+          "suburb": "roseville",
+          "subLabel": "Roseville",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Pro-Video International"
+          ]
+        },
+        {
+          "category": "restaurants-takeaways",
+          "catLabel": "Restaurants & Takeaways",
+          "suburb": "roseville",
+          "subLabel": "Roseville",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Roseville Cafe and Take Away"
+          ]
+        },
+        {
+          "category": "schools-education",
+          "catLabel": "Schools & Education",
+          "suburb": "roseville",
+          "subLabel": "Roseville",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Hillview High School"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "waterkloof-ridge",
+      "subLabel": "Waterkloof Ridge",
+      "need": 10,
+      "combos": [
+        {
+          "category": "accommodation",
+          "catLabel": "Accommodation",
+          "suburb": "waterkloof-ridge",
+          "subLabel": "Waterkloof Ridge",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Montpellier Guest House"
+          ]
+        },
+        {
+          "category": "clinics-healthcare",
+          "catLabel": "Clinics & Healthcare",
+          "suburb": "waterkloof-ridge",
+          "subLabel": "Waterkloof Ridge",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "The Way Recovery"
+          ]
+        },
+        {
+          "category": "hardware-stores",
+          "catLabel": "Hardware Stores",
+          "suburb": "waterkloof-ridge",
+          "subLabel": "Waterkloof Ridge",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Ridge Mica"
+          ]
+        },
+        {
+          "category": "opticians",
+          "catLabel": "Opticians",
+          "suburb": "waterkloof-ridge",
+          "subLabel": "Waterkloof Ridge",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Spec-Savers Waterkloof Ridge"
+          ]
+        },
+        {
+          "category": "restaurants-takeaways",
+          "catLabel": "Restaurants & Takeaways",
+          "suburb": "waterkloof-ridge",
+          "subLabel": "Waterkloof Ridge",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Dros Waterkloof Ridge"
+          ]
+        }
+      ]
+    }
+  ]
+}

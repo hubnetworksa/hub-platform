@@ -1,0 +1,997 @@
+{
+  "city": "pretoria",
+  "cityLabel": "Pretoria",
+  "batch": 8,
+  "totalNeed": 152,
+  "suburbs": [
+    {
+      "suburb": "lynnwood-manor",
+      "subLabel": "Lynnwood Manor",
+      "need": 34,
+      "combos": [
+        {
+          "category": "attorneys-legal",
+          "catLabel": "Attorneys & Legal Services",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Adams & Adams"
+          ]
+        },
+        {
+          "category": "beauty-hair-salons",
+          "catLabel": "Beauty & Hair Salons",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Lapis Lazuli Beauty Bar"
+          ]
+        },
+        {
+          "category": "business-consulting",
+          "catLabel": "Business & Management Consulting",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Water Research Commission"
+          ]
+        },
+        {
+          "category": "butcheries",
+          "catLabel": "Butcheries",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Kings Meat Deli"
+          ]
+        },
+        {
+          "category": "clinics-healthcare",
+          "catLabel": "Clinics & Healthcare",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Ear Institute Lynnwood"
+          ]
+        },
+        {
+          "category": "doctors-gps",
+          "catLabel": "Doctors & GPs",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Amorie Burns Psychologist",
+            "Intercare Glenfair"
+          ]
+        },
+        {
+          "category": "engineering-surveying",
+          "catLabel": "Engineering & Surveying Services",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Aurecon South Africa"
+          ]
+        },
+        {
+          "category": "events-function-venues",
+          "catLabel": "Events & Function Venues",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Atterbury Theatre"
+          ]
+        },
+        {
+          "category": "fashion-clothing",
+          "catLabel": "Fashion & Clothing",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Mr Price Sport"
+          ]
+        },
+        {
+          "category": "fitness-gyms",
+          "catLabel": "Fitness & Gyms",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Planet Fitness Lynnwood"
+          ]
+        },
+        {
+          "category": "general-retail",
+          "catLabel": "General Retail",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "The Pro Shop Lynnwood Superstore"
+          ]
+        },
+        {
+          "category": "hotels",
+          "catLabel": "Hotels",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "City Lodge"
+          ]
+        },
+        {
+          "category": "jewellers",
+          "catLabel": "Jewellers",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Jenna Clifford",
+            "Louie Daniele Diamond Co"
+          ]
+        },
+        {
+          "category": "marketing-advertising",
+          "catLabel": "Marketing & Advertising",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Groot FM 90.5"
+          ]
+        },
+        {
+          "category": "pet-stores",
+          "catLabel": "Pet Stores & Supplies",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "VetsMart Lynnwood Bridge"
+          ]
+        },
+        {
+          "category": "pharmacies",
+          "catLabel": "Pharmacies",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Dis-Chem"
+          ]
+        },
+        {
+          "category": "supermarkets-groceries",
+          "catLabel": "Supermarkets & Groceries",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Woolworths (Lynnwood Bridge)"
+          ]
+        },
+        {
+          "category": "wedding-services",
+          "catLabel": "Wedding Services",
+          "suburb": "lynnwood-manor",
+          "subLabel": "Lynnwood Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Bridal Wardrobe"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "doringkloof",
+      "subLabel": "Doringkloof",
+      "need": 29,
+      "combos": [
+        {
+          "category": "attorneys-legal",
+          "catLabel": "Attorneys & Legal Services",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Van Zyl Incorporated Attorneys / Properties"
+          ]
+        },
+        {
+          "category": "bakeries",
+          "catLabel": "Bakeries",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Doringkloof Vingerlek BPK"
+          ]
+        },
+        {
+          "category": "beauty-hair-salons",
+          "catLabel": "Beauty & Hair Salons",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Kalm Skin + Body Studio: Doringkloof Mall"
+          ]
+        },
+        {
+          "category": "books-stationery",
+          "catLabel": "Books & Stationery",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Compleo",
+            "Forum Stationers Doringkloof"
+          ]
+        },
+        {
+          "category": "commercial-property-office-space",
+          "catLabel": "Commercial Property & Office Space",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Abland Property Developers (Pretoria)"
+          ]
+        },
+        {
+          "category": "engineering-surveying",
+          "catLabel": "Engineering & Surveying Services",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "EQUATE",
+            "ProBlast BS"
+          ]
+        },
+        {
+          "category": "fashion-clothing",
+          "catLabel": "Fashion & Clothing",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Woolworths Irene Link"
+          ]
+        },
+        {
+          "category": "financial-investment-services",
+          "catLabel": "Financial & Investment Services",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Intenda Financial Services"
+          ]
+        },
+        {
+          "category": "fuel-stations",
+          "catLabel": "Fuel Stations & Garages",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Engen Doringkloof Motors"
+          ]
+        },
+        {
+          "category": "furniture-homeware",
+          "catLabel": "Furniture & Homeware",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Furniture Warehouse - Centurion"
+          ]
+        },
+        {
+          "category": "general-retail",
+          "catLabel": "General Retail",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Irene Arms & Outdoor"
+          ]
+        },
+        {
+          "category": "insurance",
+          "catLabel": "Insurance",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "GENRIC Insurance Company Limited"
+          ]
+        },
+        {
+          "category": "mobile-phones",
+          "catLabel": "Mobile Phones & Accessories",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Technomobi (Pty) Ltd."
+          ]
+        },
+        {
+          "category": "pharmacies",
+          "catLabel": "Pharmacies",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Dis-Chem Pharmacy Irene Link",
+            "Dorite"
+          ]
+        },
+        {
+          "category": "printing-services",
+          "catLabel": "Printing Services",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Espress Print and brand"
+          ]
+        },
+        {
+          "category": "supermarkets-groceries",
+          "catLabel": "Supermarkets & Groceries",
+          "suburb": "doringkloof",
+          "subLabel": "Doringkloof",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Checkers Irene Link"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "montana-gardens",
+      "subLabel": "Montana Gardens",
+      "need": 27,
+      "combos": [
+        {
+          "category": "books-stationery",
+          "catLabel": "Books & Stationery",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Graffiti Books"
+          ]
+        },
+        {
+          "category": "commercial-property-office-space",
+          "catLabel": "Commercial Property & Office Space",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Montana Gables Office Park",
+            "RFS Administrators (Pty) Ltd"
+          ]
+        },
+        {
+          "category": "computer-it-services",
+          "catLabel": "Computer & IT Services",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Computer Mania Kolonnade Shopping Centre"
+          ]
+        },
+        {
+          "category": "events-function-venues",
+          "catLabel": "Events & Function Venues",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Ultimate Sky"
+          ]
+        },
+        {
+          "category": "financial-investment-services",
+          "catLabel": "Financial & Investment Services",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Absa | Branch | Montana",
+            "Fin Forum Montana"
+          ]
+        },
+        {
+          "category": "fitness-gyms",
+          "catLabel": "Fitness & Gyms",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Body Guru Montana"
+          ]
+        },
+        {
+          "category": "general-retail",
+          "catLabel": "General Retail",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Camino Living",
+            "West Pack Lifestyle Kolonnade"
+          ]
+        },
+        {
+          "category": "industrial-suppliers-manufacturing",
+          "catLabel": "Industrial Suppliers & Manufacturing",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Pirtek Pretoria Pty Ltd",
+            "Soft-Ice Catering Equipment"
+          ]
+        },
+        {
+          "category": "insurance",
+          "catLabel": "Insurance",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "AVBOB Insurance Montana"
+          ]
+        },
+        {
+          "category": "logistics-courier-transport",
+          "catLabel": "Logistics, Courier & Transport",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Trailarent Montana Pretoria"
+          ]
+        },
+        {
+          "category": "marketing-advertising",
+          "catLabel": "Marketing & Advertising",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Arabest Solutions",
+            "EBC Mobile Media - Digital Business Cards & Digital Marketing Services"
+          ]
+        },
+        {
+          "category": "motor-spares",
+          "catLabel": "Motor Spares",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Zambezi (Montana) Midas"
+          ]
+        },
+        {
+          "category": "nurseries-garden-centres",
+          "catLabel": "Nurseries & Garden Centres",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Nico's Outdoor Equipment"
+          ]
+        },
+        {
+          "category": "physiotherapists",
+          "catLabel": "Physiotherapists",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Boshoff Physiotherapy"
+          ]
+        },
+        {
+          "category": "printing-services",
+          "catLabel": "Printing Services",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Ice Worx Graphix",
+            "Jetline Montana"
+          ]
+        },
+        {
+          "category": "schools-education",
+          "catLabel": "Schools & Education",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Terotechnica Asset Management College"
+          ]
+        },
+        {
+          "category": "software-development",
+          "catLabel": "Software Development",
+          "suburb": "montana-gardens",
+          "subLabel": "Montana Gardens",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Advertising Solutions Web Design | Pretoria",
+            "Digital Universe"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "the-reeds",
+      "subLabel": "The Reeds",
+      "need": 21,
+      "combos": [
+        {
+          "category": "accommodation",
+          "catLabel": "Accommodation",
+          "suburb": "the-reeds",
+          "subLabel": "The Reeds",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Nouvelle Ere Beauty Spa & Boutique Guesthouse"
+          ]
+        },
+        {
+          "category": "accountants",
+          "catLabel": "Accountants",
+          "suburb": "the-reeds",
+          "subLabel": "The Reeds",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "SA Accounting Network - Centurion"
+          ]
+        },
+        {
+          "category": "beauty-hair-salons",
+          "catLabel": "Beauty & Hair Salons",
+          "suburb": "the-reeds",
+          "subLabel": "The Reeds",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Exquiste Hair Salon"
+          ]
+        },
+        {
+          "category": "computer-it-services",
+          "catLabel": "Computer & IT Services",
+          "suburb": "the-reeds",
+          "subLabel": "The Reeds",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Business Growth Marketing Group"
+          ]
+        },
+        {
+          "category": "engineering-surveying",
+          "catLabel": "Engineering & Surveying Services",
+          "suburb": "the-reeds",
+          "subLabel": "The Reeds",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Deedscon Consult"
+          ]
+        },
+        {
+          "category": "financial-investment-services",
+          "catLabel": "Financial & Investment Services",
+          "suburb": "the-reeds",
+          "subLabel": "The Reeds",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Capitec Bank (Blu Valley Mall)"
+          ]
+        },
+        {
+          "category": "furniture-homeware",
+          "catLabel": "Furniture & Homeware",
+          "suburb": "the-reeds",
+          "subLabel": "The Reeds",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "TIMBER TRENDS ZA"
+          ]
+        },
+        {
+          "category": "general-retail",
+          "catLabel": "General Retail",
+          "suburb": "the-reeds",
+          "subLabel": "The Reeds",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Cash Crusaders (Blu Valley Mall)",
+            "The Crazy Store (Blu Valley Mall)"
+          ]
+        },
+        {
+          "category": "restaurants-takeaways",
+          "catLabel": "Restaurants & Takeaways",
+          "suburb": "the-reeds",
+          "subLabel": "The Reeds",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "KFC (Blu Valley Mall)"
+          ]
+        },
+        {
+          "category": "software-development",
+          "catLabel": "Software Development",
+          "suburb": "the-reeds",
+          "subLabel": "The Reeds",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Restec (Pty) Ltd"
+          ]
+        },
+        {
+          "category": "supermarkets-groceries",
+          "catLabel": "Supermarkets & Groceries",
+          "suburb": "the-reeds",
+          "subLabel": "The Reeds",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Pick n Pay (Blu Valley Mall)"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "donkerhoek",
+      "subLabel": "Donkerhoek",
+      "need": 19,
+      "combos": [
+        {
+          "category": "accommodation",
+          "catLabel": "Accommodation",
+          "suburb": "donkerhoek",
+          "subLabel": "Donkerhoek",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Die Skaapkraal Gasteplaas"
+          ]
+        },
+        {
+          "category": "business-consulting",
+          "catLabel": "Business & Management Consulting",
+          "suburb": "donkerhoek",
+          "subLabel": "Donkerhoek",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Virtual Productivity Solutions",
+            "pta oos woonwa kliniek"
+          ]
+        },
+        {
+          "category": "furniture-homeware",
+          "catLabel": "Furniture & Homeware",
+          "suburb": "donkerhoek",
+          "subLabel": "Donkerhoek",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "4 Seasons 4 u"
+          ]
+        },
+        {
+          "category": "general-retail",
+          "catLabel": "General Retail",
+          "suburb": "donkerhoek",
+          "subLabel": "Donkerhoek",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Surplus Warehouse Pty Ltd"
+          ]
+        },
+        {
+          "category": "logistics-courier-transport",
+          "catLabel": "Logistics, Courier & Transport",
+          "suburb": "donkerhoek",
+          "subLabel": "Donkerhoek",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "TASHWE Rollback and crane hire"
+          ]
+        },
+        {
+          "category": "marketing-advertising",
+          "catLabel": "Marketing & Advertising",
+          "suburb": "donkerhoek",
+          "subLabel": "Donkerhoek",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "NICO GROBLER DESIGN AND ADVERTISING"
+          ]
+        },
+        {
+          "category": "museums-heritage-sites",
+          "catLabel": "Museums & Heritage Sites",
+          "suburb": "donkerhoek",
+          "subLabel": "Donkerhoek",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Sammy Marks Museum"
+          ]
+        },
+        {
+          "category": "photographers",
+          "catLabel": "Photographers",
+          "suburb": "donkerhoek",
+          "subLabel": "Donkerhoek",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Mighty Fine Productions"
+          ]
+        },
+        {
+          "category": "software-development",
+          "catLabel": "Software Development",
+          "suburb": "donkerhoek",
+          "subLabel": "Donkerhoek",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Watts Digital"
+          ]
+        },
+        {
+          "category": "solar-renewable-energy",
+          "catLabel": "Solar & Renewable Energy",
+          "suburb": "donkerhoek",
+          "subLabel": "Donkerhoek",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "RenuSec (PTY) Ltd"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "barclay-square",
+      "subLabel": "Barclay Square",
+      "need": 12,
+      "combos": [
+        {
+          "category": "butcheries",
+          "catLabel": "Butcheries",
+          "suburb": "barclay-square",
+          "subLabel": "Barclay Square",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Bronberg"
+          ]
+        },
+        {
+          "category": "clinics-healthcare",
+          "catLabel": "Clinics & Healthcare",
+          "suburb": "barclay-square",
+          "subLabel": "Barclay Square",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Green Cross Clinic"
+          ]
+        },
+        {
+          "category": "doctors-gps",
+          "catLabel": "Doctors & GPs",
+          "suburb": "barclay-square",
+          "subLabel": "Barclay Square",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Dr Og Oyeyemi"
+          ]
+        },
+        {
+          "category": "fashion-clothing",
+          "catLabel": "Fashion & Clothing",
+          "suburb": "barclay-square",
+          "subLabel": "Barclay Square",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "PEP Esselen Road"
+          ]
+        },
+        {
+          "category": "restaurants-takeaways",
+          "catLabel": "Restaurants & Takeaways",
+          "suburb": "barclay-square",
+          "subLabel": "Barclay Square",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Chicken Licken Barclay Square"
+          ]
+        },
+        {
+          "category": "supermarkets-groceries",
+          "catLabel": "Supermarkets & Groceries",
+          "suburb": "barclay-square",
+          "subLabel": "Barclay Square",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "SPAR Barclay Square"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "lynnwood",
+      "subLabel": "Lynnwood",
+      "need": 10,
+      "combos": [
+        {
+          "category": "accommodation",
+          "catLabel": "Accommodation",
+          "suburb": "lynnwood",
+          "subLabel": "Lynnwood",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Farmers Folly Guest House"
+          ]
+        },
+        {
+          "category": "dentists",
+          "catLabel": "Dentists",
+          "suburb": "lynnwood",
+          "subLabel": "Lynnwood",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Dr Bertus van Niekerk Orthodontist",
+            "I Love My Smile"
+          ]
+        },
+        {
+          "category": "estate-agents",
+          "catLabel": "Estate Agents",
+          "suburb": "lynnwood",
+          "subLabel": "Lynnwood",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "ERA Real Estate South Africa"
+          ]
+        },
+        {
+          "category": "funeral-services",
+          "catLabel": "Funeral Services",
+          "suburb": "lynnwood",
+          "subLabel": "Lynnwood",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "AVBOB Funeral Service Pretoria East"
+          ]
+        },
+        {
+          "category": "printing-services",
+          "catLabel": "Printing Services",
+          "suburb": "lynnwood",
+          "subLabel": "Lynnwood",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Minuteman Press Lynnwood"
+          ]
+        },
+        {
+          "category": "restaurants-takeaways",
+          "catLabel": "Restaurants & Takeaways",
+          "suburb": "lynnwood",
+          "subLabel": "Lynnwood",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "LM in the East",
+            "Lucky Rodrigo"
+          ]
+        }
+      ]
+    }
+  ]
+}

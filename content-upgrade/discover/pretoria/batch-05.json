@@ -1,0 +1,997 @@
+{
+  "city": "pretoria",
+  "cityLabel": "Pretoria",
+  "batch": 5,
+  "totalNeed": 152,
+  "suburbs": [
+    {
+      "suburb": "equestria",
+      "subLabel": "Equestria",
+      "need": 35,
+      "combos": [
+        {
+          "category": "automotive-repairs",
+          "catLabel": "Automotive & Repairs",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Car Care Workshop Lynnwood Lane"
+          ]
+        },
+        {
+          "category": "beauty-hair-salons",
+          "catLabel": "Beauty & Hair Salons",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "MO's Barber Shop"
+          ]
+        },
+        {
+          "category": "business-consulting",
+          "catLabel": "Business & Management Consulting",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Quatro Integrated Services (Pty) Ltd"
+          ]
+        },
+        {
+          "category": "catering",
+          "catLabel": "Catering",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Cate-a-Bake Factory Shop Equestria"
+          ]
+        },
+        {
+          "category": "clinics-healthcare",
+          "catLabel": "Clinics & Healthcare",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "HEALth-WorX Medical & Dental Centre Lynnwood"
+          ]
+        },
+        {
+          "category": "computer-it-services",
+          "catLabel": "Computer & IT Services",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Hop"
+          ]
+        },
+        {
+          "category": "estate-agents",
+          "catLabel": "Estate Agents",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Lynx Real Estate"
+          ]
+        },
+        {
+          "category": "hardware-stores",
+          "catLabel": "Hardware Stores",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Granite Warehouse"
+          ]
+        },
+        {
+          "category": "industrial-suppliers-manufacturing",
+          "catLabel": "Industrial Suppliers & Manufacturing",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "LEDworx Solutions Pty Ltd",
+            "McCater Catering Supplies"
+          ]
+        },
+        {
+          "category": "logistics-courier-transport",
+          "catLabel": "Logistics, Courier & Transport",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "PostNet Equestria"
+          ]
+        },
+        {
+          "category": "marketing-advertising",
+          "catLabel": "Marketing & Advertising",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "JPM Digital"
+          ]
+        },
+        {
+          "category": "mobile-phones",
+          "catLabel": "Mobile Phones & Accessories",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Cellucity - The Grove Mall"
+          ]
+        },
+        {
+          "category": "nurseries-garden-centres",
+          "catLabel": "Nurseries & Garden Centres",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Budget Plants"
+          ]
+        },
+        {
+          "category": "opticians",
+          "catLabel": "Opticians",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Vision Works Lynnwood Lane"
+          ]
+        },
+        {
+          "category": "pet-stores",
+          "catLabel": "Pet Stores & Supplies",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Petzone Lynnwood Lane"
+          ]
+        },
+        {
+          "category": "pharmacies",
+          "catLabel": "Pharmacies",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Dis-Chem Pharmacy Lynnwood Lane"
+          ]
+        },
+        {
+          "category": "software-development",
+          "catLabel": "Software Development",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Livex Software"
+          ]
+        },
+        {
+          "category": "supermarkets-groceries",
+          "catLabel": "Supermarkets & Groceries",
+          "suburb": "equestria",
+          "subLabel": "Equestria",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Food Lover's Market Lynnwood Lane"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "willow-park-manor",
+      "subLabel": "Willow Park Manor",
+      "need": 29,
+      "combos": [
+        {
+          "category": "accountants",
+          "catLabel": "Accountants",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "LIAFIN Professional Accountants and Tax Practitioners"
+          ]
+        },
+        {
+          "category": "attorneys-legal",
+          "catLabel": "Attorneys & Legal Services",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Coombe Commercial Incorporated"
+          ]
+        },
+        {
+          "category": "automotive-repairs",
+          "catLabel": "Automotive & Repairs",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Pro Beat Auto Body",
+            "Pro-tec Panel beaters"
+          ]
+        },
+        {
+          "category": "beauty-hair-salons",
+          "catLabel": "Beauty & Hair Salons",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Glamour bar za"
+          ]
+        },
+        {
+          "category": "catering",
+          "catLabel": "Catering",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Mozcater"
+          ]
+        },
+        {
+          "category": "cleaning-services",
+          "catLabel": "Cleaning Services",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Windows Cleaning Projects"
+          ]
+        },
+        {
+          "category": "commercial-property-office-space",
+          "catLabel": "Commercial Property & Office Space",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "NatRent Rentals"
+          ]
+        },
+        {
+          "category": "computer-it-services",
+          "catLabel": "Computer & IT Services",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "IdealiConnect",
+            "TECH TEAM SOLUTIONS (Pty) Ltd"
+          ]
+        },
+        {
+          "category": "electricians",
+          "catLabel": "Electricians",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Cabac Engineering & Electrical (Pty) Ltd"
+          ]
+        },
+        {
+          "category": "engineering-surveying",
+          "catLabel": "Engineering & Surveying Services",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "S4 Integration Pretoria"
+          ]
+        },
+        {
+          "category": "fashion-clothing",
+          "catLabel": "Fashion & Clothing",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "GALXBOY Pretoria East"
+          ]
+        },
+        {
+          "category": "insurance",
+          "catLabel": "Insurance",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "RifleSURE"
+          ]
+        },
+        {
+          "category": "logistics-courier-transport",
+          "catLabel": "Logistics, Courier & Transport",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "DTP562-Group"
+          ]
+        },
+        {
+          "category": "printing-services",
+          "catLabel": "Printing Services",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Cartridge Depot HQ",
+            "PT Signage Pty Ltd"
+          ]
+        },
+        {
+          "category": "spas-wellness",
+          "catLabel": "Spas & Wellness",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Maryna Stevenson Personal Excellence & Refinement"
+          ]
+        },
+        {
+          "category": "supermarkets-groceries",
+          "catLabel": "Supermarkets & Groceries",
+          "suburb": "willow-park-manor",
+          "subLabel": "Willow Park Manor",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Fruit Stop Silverton"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "garsfontein-smallholdings",
+      "subLabel": "Garsfontein Smallholdings",
+      "need": 25,
+      "combos": [
+        {
+          "category": "computer-it-services",
+          "catLabel": "Computer & IT Services",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Click Results Web Design & Digital Marketing"
+          ]
+        },
+        {
+          "category": "electricians",
+          "catLabel": "Electricians",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Garsfontein Pretoria Electricians & Plumbers",
+            "PRETORIA EAST GATE MOTOR REPAIRS/INSTALLATIONS"
+          ]
+        },
+        {
+          "category": "electronics-appliances",
+          "catLabel": "Electronics & Appliances",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "PMC Electronics"
+          ]
+        },
+        {
+          "category": "engineering-surveying",
+          "catLabel": "Engineering & Surveying Services",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Multiprof Property Intelligence (Pty) Ltd",
+            "Terravua"
+          ]
+        },
+        {
+          "category": "insurance",
+          "catLabel": "Insurance",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Eurosure Insurance Consultants CC"
+          ]
+        },
+        {
+          "category": "jewellers",
+          "catLabel": "Jewellers",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Carat Manufacturing Jewellers"
+          ]
+        },
+        {
+          "category": "logistics-courier-transport",
+          "catLabel": "Logistics, Courier & Transport",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "PostNet Garsfontein"
+          ]
+        },
+        {
+          "category": "marketing-advertising",
+          "catLabel": "Marketing & Advertising",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Basadzi Media & Personnel"
+          ]
+        },
+        {
+          "category": "nurseries-garden-centres",
+          "catLabel": "Nurseries & Garden Centres",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "The Pretoria Treefelling Guru & Emergency Tree Service 24/7"
+          ]
+        },
+        {
+          "category": "opticians",
+          "catLabel": "Opticians",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Bril - Pretoria",
+            "Oogappel Optometry"
+          ]
+        },
+        {
+          "category": "physiotherapists",
+          "catLabel": "Physiotherapists",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Well Health Pro - Pretoria"
+          ]
+        },
+        {
+          "category": "printing-services",
+          "catLabel": "Printing Services",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Multi Print Digital CC"
+          ]
+        },
+        {
+          "category": "recruitment-hr-services",
+          "catLabel": "Recruitment & HR Services",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Contact Labour (Pty) Ltd"
+          ]
+        },
+        {
+          "category": "restaurants-takeaways",
+          "catLabel": "Restaurants & Takeaways",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Cheekin Garsfontein",
+            "Platō Coffee - Garsfontein"
+          ]
+        },
+        {
+          "category": "security-services",
+          "catLabel": "Security Services",
+          "suburb": "garsfontein-smallholdings",
+          "subLabel": "Garsfontein Smallholdings",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Fidelity ADT Garsfontein Pretoria New",
+            "Macado Security Viewer"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "the-orchards",
+      "subLabel": "The Orchards",
+      "need": 22,
+      "combos": [
+        {
+          "category": "accountants",
+          "catLabel": "Accountants",
+          "suburb": "the-orchards",
+          "subLabel": "The Orchards",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "BOKAKWENA(PTY)LTD",
+            "Lagab Financial Services"
+          ]
+        },
+        {
+          "category": "building-construction",
+          "catLabel": "Building & Construction",
+          "suburb": "the-orchards",
+          "subLabel": "The Orchards",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Ink Architects"
+          ]
+        },
+        {
+          "category": "business-consulting",
+          "catLabel": "Business & Management Consulting",
+          "suburb": "the-orchards",
+          "subLabel": "The Orchards",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Kingdom Relations Solutions",
+            "MG Executive Protection Services"
+          ]
+        },
+        {
+          "category": "commercial-property-office-space",
+          "catLabel": "Commercial Property & Office Space",
+          "suburb": "the-orchards",
+          "subLabel": "The Orchards",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Eagle Self Storage"
+          ]
+        },
+        {
+          "category": "electricians",
+          "catLabel": "Electricians",
+          "suburb": "the-orchards",
+          "subLabel": "The Orchards",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Kealeboga Projects PTY LTD"
+          ]
+        },
+        {
+          "category": "hardware-stores",
+          "catLabel": "Hardware Stores",
+          "suburb": "the-orchards",
+          "subLabel": "The Orchards",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "HARDWARE & DIY STORE ORCHARDS"
+          ]
+        },
+        {
+          "category": "liquor-stores",
+          "catLabel": "Liquor Stores",
+          "suburb": "the-orchards",
+          "subLabel": "The Orchards",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "TOPS at SPAR Orchards"
+          ]
+        },
+        {
+          "category": "marketing-advertising",
+          "catLabel": "Marketing & Advertising",
+          "suburb": "the-orchards",
+          "subLabel": "The Orchards",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "The Digital Colab"
+          ]
+        },
+        {
+          "category": "pharmacies",
+          "catLabel": "Pharmacies",
+          "suburb": "the-orchards",
+          "subLabel": "The Orchards",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Orchards Pharmacy"
+          ]
+        },
+        {
+          "category": "recruitment-hr-services",
+          "catLabel": "Recruitment & HR Services",
+          "suburb": "the-orchards",
+          "subLabel": "The Orchards",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Field Focus Research"
+          ]
+        },
+        {
+          "category": "schools-education",
+          "catLabel": "Schools & Education",
+          "suburb": "the-orchards",
+          "subLabel": "The Orchards",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Orchards Graduate School",
+            "Wonders Christian preschool(Thia s business enterprise)"
+          ]
+        },
+        {
+          "category": "security-services",
+          "catLabel": "Security Services",
+          "suburb": "the-orchards",
+          "subLabel": "The Orchards",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Omega Risk solutions",
+            "Pankop Security"
+          ]
+        },
+        {
+          "category": "software-development",
+          "catLabel": "Software Development",
+          "suburb": "the-orchards",
+          "subLabel": "The Orchards",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Digital Select Marketing"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "candlewoods-estate",
+      "subLabel": "Candlewoods Estate",
+      "need": 18,
+      "combos": [
+        {
+          "category": "accommodation",
+          "catLabel": "Accommodation",
+          "suburb": "candlewoods-estate",
+          "subLabel": "Candlewoods Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Candlewoods Guest House"
+          ]
+        },
+        {
+          "category": "accountants",
+          "catLabel": "Accountants",
+          "suburb": "candlewoods-estate",
+          "subLabel": "Candlewoods Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "CENTACC ACCOUNTING"
+          ]
+        },
+        {
+          "category": "attorneys-legal",
+          "catLabel": "Attorneys & Legal Services",
+          "suburb": "candlewoods-estate",
+          "subLabel": "Candlewoods Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Wikus Strydom Law"
+          ]
+        },
+        {
+          "category": "building-construction",
+          "catLabel": "Building & Construction",
+          "suburb": "candlewoods-estate",
+          "subLabel": "Candlewoods Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Van Niekerk Construction"
+          ]
+        },
+        {
+          "category": "commercial-property-office-space",
+          "catLabel": "Commercial Property & Office Space",
+          "suburb": "candlewoods-estate",
+          "subLabel": "Candlewoods Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Bondev Office Park, Midstream"
+          ]
+        },
+        {
+          "category": "engineering-surveying",
+          "catLabel": "Engineering & Surveying Services",
+          "suburb": "candlewoods-estate",
+          "subLabel": "Candlewoods Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "GC Drafting Services"
+          ]
+        },
+        {
+          "category": "restaurants-takeaways",
+          "catLabel": "Restaurants & Takeaways",
+          "suburb": "candlewoods-estate",
+          "subLabel": "Candlewoods Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Stoep Restaurant"
+          ]
+        },
+        {
+          "category": "schools-education",
+          "catLabel": "Schools & Education",
+          "suburb": "candlewoods-estate",
+          "subLabel": "Candlewoods Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Lenaka Business Solutions"
+          ]
+        },
+        {
+          "category": "wedding-services",
+          "catLabel": "Wedding Services",
+          "suburb": "candlewoods-estate",
+          "subLabel": "Candlewoods Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Candlewoods Boutique Venue"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "hammanskraal",
+      "subLabel": "Hammanskraal",
+      "need": 14,
+      "combos": [
+        {
+          "category": "furniture-homeware",
+          "catLabel": "Furniture & Homeware",
+          "suburb": "hammanskraal",
+          "subLabel": "Hammanskraal",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Fair Price",
+            "Sheet Street"
+          ]
+        },
+        {
+          "category": "general-retail",
+          "catLabel": "General Retail",
+          "suburb": "hammanskraal",
+          "subLabel": "Hammanskraal",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Woolworths"
+          ]
+        },
+        {
+          "category": "hardware-stores",
+          "catLabel": "Hardware Stores",
+          "suburb": "hammanskraal",
+          "subLabel": "Hammanskraal",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Cashbuild"
+          ]
+        },
+        {
+          "category": "mobile-phones",
+          "catLabel": "Mobile Phones & Accessories",
+          "suburb": "hammanskraal",
+          "subLabel": "Hammanskraal",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "PEP Cell"
+          ]
+        },
+        {
+          "category": "motor-spares",
+          "catLabel": "Motor Spares",
+          "suburb": "hammanskraal",
+          "subLabel": "Hammanskraal",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "AHK Motor Spares"
+          ]
+        },
+        {
+          "category": "pharmacies",
+          "catLabel": "Pharmacies",
+          "suburb": "hammanskraal",
+          "subLabel": "Hammanskraal",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Clicks"
+          ]
+        },
+        {
+          "category": "printing-services",
+          "catLabel": "Printing Services",
+          "suburb": "hammanskraal",
+          "subLabel": "Hammanskraal",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "PostNet Hammanskraal"
+          ]
+        },
+        {
+          "category": "supermarkets-groceries",
+          "catLabel": "Supermarkets & Groceries",
+          "suburb": "hammanskraal",
+          "subLabel": "Hammanskraal",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "SuperSpar Jubilee",
+            "SuperSpar Renbro"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "roodeplaat",
+      "subLabel": "Roodeplaat",
+      "need": 9,
+      "combos": [
+        {
+          "category": "industrial-suppliers-manufacturing",
+          "catLabel": "Industrial Suppliers & Manufacturing",
+          "suburb": "roodeplaat",
+          "subLabel": "Roodeplaat",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "EB Staalwerke",
+            "TSSD Projects"
+          ]
+        },
+        {
+          "category": "nurseries-garden-centres",
+          "catLabel": "Nurseries & Garden Centres",
+          "suburb": "roodeplaat",
+          "subLabel": "Roodeplaat",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Red Tree Garden Centre"
+          ]
+        },
+        {
+          "category": "software-development",
+          "catLabel": "Software Development",
+          "suburb": "roodeplaat",
+          "subLabel": "Roodeplaat",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "FSBGroup"
+          ]
+        },
+        {
+          "category": "vets-animal-care",
+          "catLabel": "Vets & Animal Care",
+          "suburb": "roodeplaat",
+          "subLabel": "Roodeplaat",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Champion Boarding Kennels & Cattery"
+          ]
+        },
+        {
+          "category": "wedding-services",
+          "catLabel": "Wedding Services",
+          "suburb": "roodeplaat",
+          "subLabel": "Roodeplaat",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Kieskeurige Bruidjie"
+          ]
+        }
+      ]
+    }
+  ]
+}

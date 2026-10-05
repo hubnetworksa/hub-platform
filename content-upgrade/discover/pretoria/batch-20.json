@@ -1,0 +1,1022 @@
+{
+  "city": "pretoria",
+  "cityLabel": "Pretoria",
+  "batch": 20,
+  "totalNeed": 153,
+  "suburbs": [
+    {
+      "suburb": "montana-park",
+      "subLabel": "Montana Park",
+      "need": 40,
+      "combos": [
+        {
+          "category": "accountants",
+          "catLabel": "Accountants",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "koma Techs and financials"
+          ]
+        },
+        {
+          "category": "attorneys-legal",
+          "catLabel": "Attorneys & Legal Services",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Baartman & Du Plessis Attorneys",
+            "ML Schoeman Attorneys"
+          ]
+        },
+        {
+          "category": "automotive-repairs",
+          "catLabel": "Automotive & Repairs",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Motomark Service Centre"
+          ]
+        },
+        {
+          "category": "books-stationery",
+          "catLabel": "Books & Stationery",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "PNA Zambezi"
+          ]
+        },
+        {
+          "category": "building-construction",
+          "catLabel": "Building & Construction",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Blast-it Vapour Blasting",
+            "UniNetwork"
+          ]
+        },
+        {
+          "category": "commercial-property-office-space",
+          "catLabel": "Commercial Property & Office Space",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Montana Centre"
+          ]
+        },
+        {
+          "category": "computer-it-services",
+          "catLabel": "Computer & IT Services",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "DIGI ROCK INNOVATIONS (PTY) LTD",
+            "Ring Mobile (Pty) ltd"
+          ]
+        },
+        {
+          "category": "electronics-appliances",
+          "catLabel": "Electronics & Appliances",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Foto Discount World"
+          ]
+        },
+        {
+          "category": "estate-agents",
+          "catLabel": "Estate Agents",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Property Legends"
+          ]
+        },
+        {
+          "category": "general-retail",
+          "catLabel": "General Retail",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Outdoor Warehouse Zambezi",
+            "Wildman Montana"
+          ]
+        },
+        {
+          "category": "insurance",
+          "catLabel": "Insurance",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Western National Insurance"
+          ]
+        },
+        {
+          "category": "jewellers",
+          "catLabel": "Jewellers",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Unlock Capital"
+          ]
+        },
+        {
+          "category": "marketing-advertising",
+          "catLabel": "Marketing & Advertising",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "The At Company"
+          ]
+        },
+        {
+          "category": "motor-spares",
+          "catLabel": "Motor Spares",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "4x4 Megaworld Zambesi"
+          ]
+        },
+        {
+          "category": "pharmacies",
+          "catLabel": "Pharmacies",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Dis-Chem Zambezi Junction"
+          ]
+        },
+        {
+          "category": "printing-services",
+          "catLabel": "Printing Services",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Y2K Print and Design"
+          ]
+        },
+        {
+          "category": "restaurants-takeaways",
+          "catLabel": "Restaurants & Takeaways",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Crawdaddy's Montana"
+          ]
+        },
+        {
+          "category": "security-services",
+          "catLabel": "Security Services",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "IDS - Inhep Digital Security"
+          ]
+        },
+        {
+          "category": "software-development",
+          "catLabel": "Software Development",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "QUASAR HOLDINGS"
+          ]
+        },
+        {
+          "category": "solar-renewable-energy",
+          "catLabel": "Solar & Renewable Energy",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "AME Power Solutions"
+          ]
+        },
+        {
+          "category": "supermarkets-groceries",
+          "catLabel": "Supermarkets & Groceries",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Woolworths Zambezi Junction"
+          ]
+        },
+        {
+          "category": "travel-agents",
+          "catLabel": "Travel Agents",
+          "suburb": "montana-park",
+          "subLabel": "Montana Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Flight Centre Kolonnade"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "thatchfield-estate",
+      "subLabel": "Thatchfield Estate",
+      "need": 28,
+      "combos": [
+        {
+          "category": "accountants",
+          "catLabel": "Accountants",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Manoah Consulting Jhb",
+            "Muofhe Business Accountants"
+          ]
+        },
+        {
+          "category": "attorneys-legal",
+          "catLabel": "Attorneys & Legal Services",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Mathibele Mahlaela Attorneys"
+          ]
+        },
+        {
+          "category": "building-construction",
+          "catLabel": "Building & Construction",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "ECO Paving Centurion"
+          ]
+        },
+        {
+          "category": "car-dealerships",
+          "catLabel": "Car Dealerships",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Teka Famba"
+          ]
+        },
+        {
+          "category": "engineering-surveying",
+          "catLabel": "Engineering & Surveying Services",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "NPH Engineering Consultants"
+          ]
+        },
+        {
+          "category": "estate-agents",
+          "catLabel": "Estate Agents",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Thatchfield Residential Estate.rentals",
+            "Themba Property Group"
+          ]
+        },
+        {
+          "category": "events-function-venues",
+          "catLabel": "Events & Function Venues",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Nomalanga Events"
+          ]
+        },
+        {
+          "category": "liquor-stores",
+          "catLabel": "Liquor Stores",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Checkers Liquor Thatchfield"
+          ]
+        },
+        {
+          "category": "marketing-advertising",
+          "catLabel": "Marketing & Advertising",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Virtue Union"
+          ]
+        },
+        {
+          "category": "opticians",
+          "catLabel": "Opticians",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Vision Works Thatchfield"
+          ]
+        },
+        {
+          "category": "pharmacies",
+          "catLabel": "Pharmacies",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Dis-Chem Thatchfield Pharmacy"
+          ]
+        },
+        {
+          "category": "printing-services",
+          "catLabel": "Printing Services",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "GMK Web Services",
+            "Vivid Hue"
+          ]
+        },
+        {
+          "category": "restaurants-takeaways",
+          "catLabel": "Restaurants & Takeaways",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Bootlegger Thatchfield"
+          ]
+        },
+        {
+          "category": "security-services",
+          "catLabel": "Security Services",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "LAK Security Services"
+          ]
+        },
+        {
+          "category": "supermarkets-groceries",
+          "catLabel": "Supermarkets & Groceries",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Checkers Thatchfield",
+            "Woolworths Food Thatchfield"
+          ]
+        },
+        {
+          "category": "wedding-services",
+          "catLabel": "Wedding Services",
+          "suburb": "thatchfield-estate",
+          "subLabel": "Thatchfield Estate",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "GA Exclussive Holdings"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "clydesdale",
+      "subLabel": "Clydesdale",
+      "need": 24,
+      "combos": [
+        {
+          "category": "attorneys-legal",
+          "catLabel": "Attorneys & Legal Services",
+          "suburb": "clydesdale",
+          "subLabel": "Clydesdale",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "3% Properties - Parris Inc.",
+            "Arnoud van den Bout Inc. Attorneys - Pretoria"
+          ]
+        },
+        {
+          "category": "beauty-hair-salons",
+          "catLabel": "Beauty & Hair Salons",
+          "suburb": "clydesdale",
+          "subLabel": "Clydesdale",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Palladium Hair Company"
+          ]
+        },
+        {
+          "category": "computer-it-services",
+          "catLabel": "Computer & IT Services",
+          "suburb": "clydesdale",
+          "subLabel": "Clydesdale",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Pretoria WISP"
+          ]
+        },
+        {
+          "category": "electricians",
+          "catLabel": "Electricians",
+          "suburb": "clydesdale",
+          "subLabel": "Clydesdale",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Cbee Electrical"
+          ]
+        },
+        {
+          "category": "events-function-venues",
+          "catLabel": "Events & Function Venues",
+          "suburb": "clydesdale",
+          "subLabel": "Clydesdale",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Drake Events"
+          ]
+        },
+        {
+          "category": "hardware-stores",
+          "catLabel": "Hardware Stores",
+          "suburb": "clydesdale",
+          "subLabel": "Clydesdale",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Cassie Gee Investments"
+          ]
+        },
+        {
+          "category": "industrial-suppliers-manufacturing",
+          "catLabel": "Industrial Suppliers & Manufacturing",
+          "suburb": "clydesdale",
+          "subLabel": "Clydesdale",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "COMMUTECH"
+          ]
+        },
+        {
+          "category": "printing-services",
+          "catLabel": "Printing Services",
+          "suburb": "clydesdale",
+          "subLabel": "Clydesdale",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Business Point"
+          ]
+        },
+        {
+          "category": "recruitment-hr-services",
+          "catLabel": "Recruitment & HR Services",
+          "suburb": "clydesdale",
+          "subLabel": "Clydesdale",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "APEX BUSINESS SOLUTIONS"
+          ]
+        },
+        {
+          "category": "schools-education",
+          "catLabel": "Schools & Education",
+          "suburb": "clydesdale",
+          "subLabel": "Clydesdale",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Afrikaanse Hoër Meisieskool"
+          ]
+        },
+        {
+          "category": "security-services",
+          "catLabel": "Security Services",
+          "suburb": "clydesdale",
+          "subLabel": "Clydesdale",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Bull Security",
+            "CSI Security"
+          ]
+        },
+        {
+          "category": "software-development",
+          "catLabel": "Software Development",
+          "suburb": "clydesdale",
+          "subLabel": "Clydesdale",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Roamcode"
+          ]
+        },
+        {
+          "category": "travel-agents",
+          "catLabel": "Travel Agents",
+          "suburb": "clydesdale",
+          "subLabel": "Clydesdale",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Park Travel Agency (Pty) Ltd (Pretoria)"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "alphen-park",
+      "subLabel": "Alphen Park",
+      "need": 20,
+      "combos": [
+        {
+          "category": "accountants",
+          "catLabel": "Accountants",
+          "suburb": "alphen-park",
+          "subLabel": "Alphen Park",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Pretoria.East Taxshop",
+            "Reach Out Financial Services (Pty) Ltd"
+          ]
+        },
+        {
+          "category": "commercial-property-office-space",
+          "catLabel": "Commercial Property & Office Space",
+          "suburb": "alphen-park",
+          "subLabel": "Alphen Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Podium at Menlyn"
+          ]
+        },
+        {
+          "category": "computer-it-services",
+          "catLabel": "Computer & IT Services",
+          "suburb": "alphen-park",
+          "subLabel": "Alphen Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Tshwane Digital Solutions (Pty) Ltd"
+          ]
+        },
+        {
+          "category": "electronics-appliances",
+          "catLabel": "Electronics & Appliances",
+          "suburb": "alphen-park",
+          "subLabel": "Alphen Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Ancil Research Laboratories"
+          ]
+        },
+        {
+          "category": "estate-agents",
+          "catLabel": "Estate Agents",
+          "suburb": "alphen-park",
+          "subLabel": "Alphen Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Seeff Pretoria East"
+          ]
+        },
+        {
+          "category": "fuel-stations",
+          "catLabel": "Fuel Stations & Garages",
+          "suburb": "alphen-park",
+          "subLabel": "Alphen Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "MBT Alphen Park"
+          ]
+        },
+        {
+          "category": "industrial-suppliers-manufacturing",
+          "catLabel": "Industrial Suppliers & Manufacturing",
+          "suburb": "alphen-park",
+          "subLabel": "Alphen Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "EPD Technologies"
+          ]
+        },
+        {
+          "category": "marketing-advertising",
+          "catLabel": "Marketing & Advertising",
+          "suburb": "alphen-park",
+          "subLabel": "Alphen Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Prifactor Creative"
+          ]
+        },
+        {
+          "category": "recruitment-hr-services",
+          "catLabel": "Recruitment & HR Services",
+          "suburb": "alphen-park",
+          "subLabel": "Alphen Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "EPI-USE Africa (Pty) Ltd."
+          ]
+        },
+        {
+          "category": "restaurants-takeaways",
+          "catLabel": "Restaurants & Takeaways",
+          "suburb": "alphen-park",
+          "subLabel": "Alphen Park",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Caraffa Restaurant",
+            "The Wine Shop by Caraffa"
+          ]
+        },
+        {
+          "category": "schools-education",
+          "catLabel": "Schools & Education",
+          "suburb": "alphen-park",
+          "subLabel": "Alphen Park",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Pro Arte Alphen Park Performing and Creative Arts High School"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "leeuwfontein",
+      "subLabel": "Leeuwfontein",
+      "need": 18,
+      "combos": [
+        {
+          "category": "accommodation",
+          "catLabel": "Accommodation",
+          "suburb": "leeuwfontein",
+          "subLabel": "Leeuwfontein",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Gabbata Lodge"
+          ]
+        },
+        {
+          "category": "accountants",
+          "catLabel": "Accountants",
+          "suburb": "leeuwfontein",
+          "subLabel": "Leeuwfontein",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Matzbo Advisory Services"
+          ]
+        },
+        {
+          "category": "butcheries",
+          "catLabel": "Butcheries",
+          "suburb": "leeuwfontein",
+          "subLabel": "Leeuwfontein",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "HOKAAI MEAT MARKET"
+          ]
+        },
+        {
+          "category": "events-function-venues",
+          "catLabel": "Events & Function Venues",
+          "suburb": "leeuwfontein",
+          "subLabel": "Leeuwfontein",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "HBS Team Building and Events"
+          ]
+        },
+        {
+          "category": "marketing-advertising",
+          "catLabel": "Marketing & Advertising",
+          "suburb": "leeuwfontein",
+          "subLabel": "Leeuwfontein",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "ED-Media"
+          ]
+        },
+        {
+          "category": "nurseries-garden-centres",
+          "catLabel": "Nurseries & Garden Centres",
+          "suburb": "leeuwfontein",
+          "subLabel": "Leeuwfontein",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Divine Landscapes",
+            "Plantforum"
+          ]
+        },
+        {
+          "category": "plumbers",
+          "catLabel": "Plumbers",
+          "suburb": "leeuwfontein",
+          "subLabel": "Leeuwfontein",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Plumbou Loodgieters"
+          ]
+        },
+        {
+          "category": "software-development",
+          "catLabel": "Software Development",
+          "suburb": "leeuwfontein",
+          "subLabel": "Leeuwfontein",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Chatbots.Expert South Africa",
+            "Cordys Africa"
+          ]
+        },
+        {
+          "category": "solar-renewable-energy",
+          "catLabel": "Solar & Renewable Energy",
+          "suburb": "leeuwfontein",
+          "subLabel": "Leeuwfontein",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "THE SOLAR BOX"
+          ]
+        },
+        {
+          "category": "tow-trucks-roadside",
+          "catLabel": "Tow Trucks & Roadside Assistance",
+          "suburb": "leeuwfontein",
+          "subLabel": "Leeuwfontein",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Xwi Towing(Angel of The Road)"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "koedoespoort",
+      "subLabel": "Koedoespoort",
+      "need": 13,
+      "combos": [
+        {
+          "category": "accountants",
+          "catLabel": "Accountants",
+          "suburb": "koedoespoort",
+          "subLabel": "Koedoespoort",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "OKSA Chartered Accountants",
+            "Oikonomos"
+          ]
+        },
+        {
+          "category": "automotive-repairs",
+          "catLabel": "Automotive & Repairs",
+          "suburb": "koedoespoort",
+          "subLabel": "Koedoespoort",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "C.V. Repair Services",
+            "Macpro Panelbeaters"
+          ]
+        },
+        {
+          "category": "business-consulting",
+          "catLabel": "Business & Management Consulting",
+          "suburb": "koedoespoort",
+          "subLabel": "Koedoespoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Auto Sound Engineering"
+          ]
+        },
+        {
+          "category": "commercial-property-office-space",
+          "catLabel": "Commercial Property & Office Space",
+          "suburb": "koedoespoort",
+          "subLabel": "Koedoespoort",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "Milnex Group",
+            "Tesk & Amandla Pumps"
+          ]
+        },
+        {
+          "category": "electronics-appliances",
+          "catLabel": "Electronics & Appliances",
+          "suburb": "koedoespoort",
+          "subLabel": "Koedoespoort",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "ERESA (PTY) LTD",
+            "Nuvilux"
+          ]
+        },
+        {
+          "category": "logistics-courier-transport",
+          "catLabel": "Logistics, Courier & Transport",
+          "suburb": "koedoespoort",
+          "subLabel": "Koedoespoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Pretoria Vervoerkonsultante"
+          ]
+        },
+        {
+          "category": "nurseries-garden-centres",
+          "catLabel": "Nurseries & Garden Centres",
+          "suburb": "koedoespoort",
+          "subLabel": "Koedoespoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "A&J Plastics"
+          ]
+        },
+        {
+          "category": "software-development",
+          "catLabel": "Software Development",
+          "suburb": "koedoespoort",
+          "subLabel": "Koedoespoort",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Embriant Software (Pty) Ltd"
+          ]
+        },
+        {
+          "category": "solar-renewable-energy",
+          "catLabel": "Solar & Renewable Energy",
+          "suburb": "koedoespoort",
+          "subLabel": "Koedoespoort",
+          "cityLabel": "Pretoria",
+          "need": 1,
+          "existingNames": [
+            "ANH Technologies (PTY) Ltd",
+            "Deman Solar"
+          ]
+        }
+      ]
+    },
+    {
+      "suburb": "soshanguve",
+      "subLabel": "Soshanguve",
+      "need": 10,
+      "combos": [
+        {
+          "category": "clinics-healthcare",
+          "catLabel": "Clinics & Healthcare",
+          "suburb": "soshanguve",
+          "subLabel": "Soshanguve",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Boitekanelo Private Health Care"
+          ]
+        },
+        {
+          "category": "fashion-clothing",
+          "catLabel": "Fashion & Clothing",
+          "suburb": "soshanguve",
+          "subLabel": "Soshanguve",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Edgars Soshanguve Crossing"
+          ]
+        },
+        {
+          "category": "hardware-stores",
+          "catLabel": "Hardware Stores",
+          "suburb": "soshanguve",
+          "subLabel": "Soshanguve",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Cashbuild Soshanguve Mall"
+          ]
+        },
+        {
+          "category": "museums-heritage-sites",
+          "catLabel": "Museums & Heritage Sites",
+          "suburb": "soshanguve",
+          "subLabel": "Soshanguve",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Tswaing Meteorite Crater"
+          ]
+        },
+        {
+          "category": "pharmacies",
+          "catLabel": "Pharmacies",
+          "suburb": "soshanguve",
+          "subLabel": "Soshanguve",
+          "cityLabel": "Pretoria",
+          "need": 2,
+          "existingNames": [
+            "Dis-Chem Soshanguve Crossing"
+          ]
+        }
+      ]
+    }
+  ]
+}
