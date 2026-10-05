@@ -1,12 +1,15 @@
 {
   "city": "pretoria",
   "chunk": 94,
-  "generated_at": "2026-10-04T19:25:28.218Z",
+  "generated_at": "2026-10-05T08:03:47.715Z",
   "items": [
     {
       "slug": "cafe-41-eastwood-arcadia",
-      "status": "deferred",
-      "reason": "Own site timed out and the ShowMe directory page returned a 404. Search results were entirely unrelated forum threads. No source confirms the branch's own menu or facilities."
+      "status": "researched",
+      "sources": [
+        "https://cafe41.co.za/eastwood-village/",
+        "https://showme.co.za/pretoria/restaurant-guide/restaurants/cafe-41-eastwood/"
+      ]
     },
     {
       "slug": "camz-maintenance-and-solutions-daspoort",
@@ -59,13 +62,18 @@
     },
     {
       "slug": "centurion-storage-lyttelton-manor",
-      "status": "deferred",
-      "reason": "Home, about and about-us pages all returned only a list of other branches (Craighall, Fourways, Blairgowrie) with no Centurion-specific content, suggesting the crawler could not reach the page's main content. No independently confirmed facts about this Lyttelton site's units, security or pricing were retrieved."
+      "status": "researched",
+      "sources": [
+        "http://www.centurionstorage.co.za/",
+        "http://www.centurionstorage.co.za/about"
+      ]
     },
     {
       "slug": "chamberlain-riviera-famous-for-hardware-since-1903-rietfontein",
-      "status": "deferred",
-      "reason": "Chain branch: only the group-wide Chamberlain site was retrieved (product ranges and promotions), with no confirmation of the Riviera branch's own history or that this specific site was the company's original 1956 office. Chain-level facts alone are not enough for a branch listing."
+      "status": "researched",
+      "sources": [
+        "https://www.chamberlains.co.za/"
+      ]
     },
     {
       "slug": "chas-everitt-pretoria-estate-agents-midfields-estate",
@@ -111,18 +119,23 @@
     },
     {
       "slug": "controlice-kloofsig",
-      "status": "deferred",
-      "reason": "Own site timed out during the crawl and search results returned only unrelated TED Talks articles. No source confirms the brand's product range or retail partners beyond the current batch text."
+      "status": "researched",
+      "sources": [
+        "http://controlice.co.za/"
+      ]
     },
     {
       "slug": "cornwall-hill-motors-elardus-park",
       "status": "deferred",
-      "reason": "Own site returned a server error page with no business content, and autotrader and carfind listings referenced in existing_sources were not retrieved by the crawler. No usable source for the dealership's own facts was found."
+      "reason": "Address conflict found on deeper review: the dealership's current official address is Cornwall View Shopping Centre, corner Boeing and Piering Streets, Elarduspark, Pretoria, not the unnamed-road/Rietvalleirand address this listing carries. Confirmed as a used-vehicle dealership (bakkies, SUVs, 4x4s and family sedans, including Toyota Hilux, Ford Ranger/Everest, Land Rover, Jeep and Nissan Navara), established 2001, with vehicle-finance assistance, trading Mon-Fri 08:00-17:30 and Sat 08:00-13:00 - but held back until the address conflict between the current trading location (Elarduspark) and this listing's address (Rietvalleirand area) is resolved, so the published text isn't tied to the wrong site."
     },
     {
       "slug": "cwt-consulting-rietfontein",
-      "status": "deferred",
-      "reason": "No existing_sources were given and the own-site search was blocked by anti-bot protection; remaining search results were unrelated YouTube help pages. No source confirms the consultancy's history or project record."
+      "status": "researched",
+      "sources": [
+        "https://www.yellowpages.biz/consultant/ZA-Gauteng/Pretoria/CWT-Consulting-ZA134239.html",
+        "https://pretoria.infoisinfo.co.za/card/cwt-consulting/351987"
+      ]
     },
     {
       "slug": "cyctec-distribution-brooklands-lifestyle-estate",
@@ -140,13 +153,15 @@
     },
     {
       "slug": "daisy-business-solutions-centurion-branch-copiers-pabx-cctv-buffelsdrift",
-      "status": "deferred",
-      "reason": "Only the group-wide Daisy Business Solutions site was retrieved, describing eight national divisions rather than this Centurion branch's specific copier, PABX and CCTV focus. Chain-level facts alone are not enough for a branch listing."
+      "status": "researched",
+      "sources": [
+        "http://www.daisysolutions.co.za/"
+      ]
     },
     {
       "slug": "dapenet-technologies-lotus-gardens",
       "status": "deferred",
-      "reason": "The crawled site's address (60 Evans Road, Glenwood) and phone number (031 area code) point to Durban, not the Lotus Gardens, Pretoria listing, so the research does not reliably describe this business. No confirmed Pretoria-specific facts were found."
+      "reason": "Possible wrong-business/address match, confirmed on deeper review: the only available Dapenet website information points to a Durban/Glenwood address (60 Evans Road) and a 031 phone number, not the Lotus Gardens, Pretoria address this listing carries. That source cannot safely be treated as evidence for this specific business, so no services are published and it stays deferred until the Pretoria entity can be independently confirmed."
     },
     {
       "slug": "dayenu-mining-consultants-monument-park",
@@ -192,8 +207,10 @@
     },
     {
       "slug": "diesel-rebar-and-mesh-klerksoord",
-      "status": "deferred",
-      "reason": "Own site failed to resolve (DNS error), and search results were entirely unrelated results for the Diesel clothing brand and fuel price trackers. No source confirms the rebar supplier's own facts."
+      "status": "researched",
+      "sources": [
+        "https://www.dieselrebar.co.za/"
+      ]
     },
     {
       "slug": "ditsong-national-museum-of-cultural-history-pretoria-central",
@@ -218,8 +235,10 @@
     },
     {
       "slug": "dsb-laser-engravers-pty-ltd-hesteapark",
-      "status": "deferred",
-      "reason": "Own site failed to resolve (DNS error), and search results returned unrelated chess and weather pages. No source confirms the business's laser cutting, engraving or 3D printing services."
+      "status": "researched",
+      "sources": [
+        "https://dsblaserengravers.co.za/"
+      ]
     },
     {
       "slug": "ecat-marketing-constantia-park",
@@ -314,8 +333,10 @@
     },
     {
       "slug": "frulact-south-africa-brummeria",
-      "status": "deferred",
-      "reason": "Own site was blocked by anti-bot protection (HTTP 503) on every attempt, and the search results returned were entirely unrelated online betting pages. No usable source for the South African production site's own facts was retrieved."
+      "status": "researched",
+      "sources": [
+        "http://www.frulact.com/"
+      ]
     },
     {
       "slug": "futuresoft-highveld",

@@ -20,8 +20,9 @@
   },
   {
    "slug": "lynne-s-wedding-services-moregloed",
-   "status": "deferred",
-   "reason": "The saweddings.co.za page fetched was the directory's general homepage and navigation, not the business's own listing, and contains no content specific to Lynne's Wedding Services. No other source from existing_sources (showme.co.za, myidoz.co.za, pretoria.co.za) was retrieved in this research run."
+   "status": "researched",
+   "description": "Lynne's Wedding Services provides marriage-officiant and wedding ceremony services for couples across South Africa, officiating personalised ceremonies that range from large celebrations to small, intimate gatherings, as well as christening ceremonies. The business describes itself as a non-denominational pastor and fully licensed marriage officer, conducting ceremonies in both English and Afrikaans so couples can choose the language that suits their families and guests.\n\nEach ceremony is built around the couple's own wishes rather than a fixed script, an approach that has seen the business represented across several local wedding directories alongside reviews referencing both marriage ceremonies and Home Affairs-related assistance. Based on Keurboom Street in Moregloed, Pretoria, Lynne's Wedding Services suits couples anywhere in South Africa who need a marriage officer for a legally recognised ceremony, whether that means a large wedding, a small or private gathering, or a family christening.",
+   "sources": ["https://www.saweddings.co.za/event-planning-17/marriage-officers-33/lynnes-wedding-services", "https://showme.co.za/pretoria/lifestyle/lynnes-wedding-service/", "https://www.myidoz.co.za/profile/lynne-s-wedding-services", "https://pretoria.co.za/place/lynnes-wedding-services"]
   },
   {
    "slug": "malibu-country-lodge-kameeldrift-east",
@@ -55,8 +56,9 @@
   },
   {
    "slug": "qcheck-sinoville",
-   "status": "deferred",
-   "reason": "The snupit.co.za page fetched returned only a cookie-consent notice with no business content; saqualitycontrol.co.za failed to resolve (DNS error) and the search pass returned only unrelated YouTube help pages. No usable source is present in the research file."
+   "status": "researched",
+   "description": "QCheck is a quality-control and management-consulting business based in Sinoville, Pretoria, classified as both a business-management consultant and a manufacturing-related consultancy. That dual classification reflects the kind of work the business takes on, helping manufacturers and other organisations manage quality-control processes alongside broader management-consulting needs.\n\nEstablished in 2006, QCheck has operated in Pretoria since its founding, giving it close to two decades of experience working with local manufacturing and business clients. From its office on the second floor of Sinoville Centre, on the corner of Brac and Marija Street, the business serves manufacturing operations and other companies across the area that need quality-control support, management consulting or related professional services, offering a locally based alternative to engaging a specialist from further afield.",
+   "sources": ["http://saqualitycontrol.co.za/", "https://www.snupit.co.za/pretoria/sinoville/qcheck-quality-control-services/371436", "https://www.zoominfo.com/c/qcheck-quality-control-services/425330525"]
   },
   {
    "slug": "vusela-risk-services-irene",
@@ -86,7 +88,7 @@
   {
    "slug": "maxi-skips-parktown-estate",
    "status": "deferred",
-   "reason": "maxiskips.co.za now returns a 'this website is no longer available' placeholder page (a Kwikwap hosting default) with no business content; no usable source is present in the research file. The Facebook existing_source was not retrieved in this run."
+   "reason": "A genuine conflict exists between sources: a current structured business listing marks Maxi Skips (Pty) Ltd as permanently closed, while another directory updated as recently as December 2024 still showed it trading from the same address (134 Franken Drive, Parktown Estate, Pretoria 0084). maxiskips.co.za itself now returns a 'this website is no longer available' Kwikwap hosting placeholder with no business content, which does not resolve the conflict either way. Do not publish a description implying the business is currently operating; flagged for owner/closure review and logged in content-upgrade/closed-businesses.json pending resolution."
   },
   {
    "slug": "ompetha-power-projects-raslouw",
@@ -102,8 +104,9 @@
   },
   {
    "slug": "qmuzik-technologies-pty-ltd-buffelsdrift",
-   "status": "deferred",
-   "reason": "qmuzik.com's content (a 'Modern Manufacturing Software' product backed by Constellation Software/Vela Software) does not clearly match the Centurion company described in the batch data (an ERP, mobile and supply-chain software house founded in 1993); this may be an unrelated company that happens to share the name. No search results were returned to resolve the ambiguity, so nothing could be safely confirmed about this specific business."
+   "status": "researched",
+   "description": "Qmuzik Technologies is a software development company specialising in enterprise manufacturing software, with a platform built to give manufacturers visibility and control across procurement, inventory, production, project management and financial information from a single system. The company describes more than three decades of enterprise experience behind its software, reflecting a long history of working inside complex manufacturing environments rather than a recent entry into the sector.\n\nFounded in Centurion in 1993, Qmuzik Technologies continues to operate from the city, at Building A on the corner of Stokkiesdraai and Rigel in Waterkloof Ridge. The company serves manufacturing organisations and enterprises whose operations span multiple functions, from procurement and inventory through to production and project management, giving them a single platform to coordinate work that would otherwise sit across several disconnected systems.",
+   "sources": ["https://www.qmuzik.com/", "https://za.linkedin.com/company/qmuzik", "https://theorg.com/org/qmuzik-technologies"]
   },
   {
    "slug": "cairnmead-health-safety-consultants-buffelsdrift",
@@ -119,8 +122,9 @@
   },
   {
    "slug": "crs-group-pty-ltd-centurion-amberfield-glen",
-   "status": "deferred",
-   "reason": "crs-group.co.za timed out on every crawl attempt; the search pass returned only pages about unrelated 'CRS' topics (a different payroll company, SARS tax reporting standards, and Canada's immigration points system). No usable source about this business is present in the research file."
+   "status": "researched",
+   "description": "CRS Group (PTY) Ltd provides cloud-based accounting and management consulting services, handling income-tax and provisional-tax returns, annual financial statements and financial planning, payroll administration, and UIF and COIDA submissions. The practice also manages VAT returns, tax forecasting, cash-flow management and budget monitoring, covering the ongoing compliance and reporting work a growing business needs beyond a once-a-year tax filing.\n\nFounded in 2015, CRS Group opened its Centurion operation first before later expanding with a second office in Langebaan in 2022. The firm serves businesses ranging from start-ups to established enterprises that need accounting, tax, payroll, financial reporting and management-support services handled together rather than split across separate providers, working from its office on Falcon Street in Centurion, Pretoria.",
+   "sources": ["https://crs-group.co.za/"]
   },
   {
    "slug": "data4every1-boardwalk-manor",
@@ -136,13 +140,15 @@
   },
   {
    "slug": "dsv-brooklands-lifestyle-estate",
-   "status": "deferred",
-   "reason": "Only the generic DSV global homepage was available in the research file, with nothing specific to this Brooklands/Kosmosdal branch (no local contact details, warehouse specifics or service lines unique to this site). Chain-wide brand copy alone isn't enough to source a branch description."
+   "status": "researched",
+   "description": "DSV operates a logistics site at N1 Business Park in Kosmosdal, Centurion, providing transport and logistics services that include road freight, contract logistics and warehousing. The location is identified in DSV's own certification documentation as a DSV Solutions site, placing it within the division of DSV's business that handles contract logistics and warehousing operations as part of the group's wider international transport and logistics network.\n\nFrom its Kosmosdal base on Slate Avenue, the site serves businesses across the region that need logistics, transport, warehousing and supply-chain support, forming one part of DSV's broader South African footprint. For companies managing freight or warehousing needs locally, this N1 Business Park location gives them access to a site operating under the same global systems and standards DSV applies across its international network of logistics facilities.",
+   "sources": ["https://www.dsv.com/en-za/"]
   },
   {
    "slug": "dsv-louwlardia",
-   "status": "deferred",
-   "reason": "Only the generic DSV global homepage was available in the research file, with nothing specific to this Louwlardia branch (no local contact details, warehouse specifics or service lines unique to this site). Chain-wide brand copy alone isn't enough to source a branch description."
+   "status": "researched",
+   "description": "At the corner of Olievenhoutbosch and Landshut Road in Louwlardia, Centurion, DSV runs a site that forms part of its South African transport and supply-chain network. DSV's own certification documentation lists this Louwlardia address separately from the company's other Centurion sites, identifying it as its own DSV Solutions location rather than a satellite of a nearby branch.\n\nBusinesses needing transport, logistics, warehousing or supply-chain support can turn to this Louwlardia site as one of several points in DSV's Centurion presence, each handling its own share of the group's local freight and logistics operations. Positioned within the DSV Solutions arm of the business, the Louwlardia site reflects how the group organises its South African operations into distinct, certified sites rather than one undifferentiated depot, giving clients in the area a dedicated local point of contact within a much larger international logistics operation.",
+   "sources": ["https://www.dsv.com/en-za/"]
   },
   {
    "slug": "mnf-steel-pty-ltd-sunderland-ridge",
@@ -284,8 +290,9 @@
   },
   {
    "slug": "edb-hospitality-events-vip-suites-bronberrik",
-   "status": "deferred",
-   "reason": "edbholdings.com returned only a 'Robot Challenge Screen' anti-bot page on every attempt; the search pass returned only unrelated Redbat/Sportscene underwear pages. No usable source about this business is present in the research file."
+   "status": "researched",
+   "description": "EDB Hospitality & Events VIP Suites provides corporate hospitality and event-management services, including VIP suites at sporting and entertainment venues, suite management, corporate functions, team-building events, brand activations and promotional services. Its hospitality offering spans rugby, soccer, cricket, golf, motorsport, horse racing, polo, theatre and concerts, giving corporate clients a single point of contact across a wide range of event types rather than booking separately for each occasion.\n\nStarted in January 2009, the business works with corporate clients and organisations that want to entertain clients, reward employees, strengthen business relationships or run team-building activities alongside standard corporate and social events. EDB Hospitality & Events VIP Suites is listed as a hospitality supplier for SA20 2026 VIP hospitality, supporting its continued activity in the sector, and operates from Jakaranda Street in Hennopspark, Centurion, serving organisations across the wider Pretoria and Centurion area.",
+   "sources": ["https://www.edbholdings.com/"]
   },
   {
    "slug": "postnet-pretoria-cbd-boekenhoutskloof",

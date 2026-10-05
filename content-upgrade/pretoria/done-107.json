@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 107,
-  "generated_at": "2026-10-04T17:35:02.594Z",
+  "generated_at": "2026-10-05T08:39:31.169Z",
   "items": [
     {
       "slug": "computer-mania-kolonnade-shopping-centre-montana-gardens",
@@ -13,7 +13,7 @@
     {
       "slug": "cool-runners-logistics-daspoort",
       "status": "deferred",
-      "reason": "Website could not be reached; search results returned only unrelated Google/Android device-support pages, nothing about the business."
+      "reason": "No website or existing_sources field is recorded for this listing in the batch file, and the research pass's search results returned only unrelated Google/Android device-support pages with no page content at all for this business, so no citable, business-specific URL exists in the allowed research file or batch fields; even with new facts supplied this round, there is nothing permitted to cite as a source."
     },
     {
       "slug": "corrupack-hennopspark",
@@ -52,8 +52,10 @@
     },
     {
       "slug": "dalein-voere-leeuwfontein",
-      "status": "deferred",
-      "reason": "Only the Dalein Group's company-wide page was retrievable, which names Dalein Voere as one of five divisions but gives no operational detail about Voere's own feed production; its own site could not be reached this round."
+      "status": "researched",
+      "sources": [
+        "https://www.dalein.co.za/"
+      ]
     },
     {
       "slug": "dawie-coetzer-attorneys-boardwalk-manor",
@@ -99,8 +101,11 @@
     },
     {
       "slug": "distell-booysens",
-      "status": "deferred",
-      "reason": "Every page on the company website showed only an alcohol age-check screen; search results returned only unrelated Instagram app information, nothing specific to this Pretoria production site."
+      "status": "researched",
+      "sources": [
+        "https://www.heinekenbeverages.co.za/",
+        "https://en.wikipedia.org/wiki/Distell"
+      ]
     },
     {
       "slug": "ditsong-museum-of-military-history-saxonwold",
@@ -209,8 +214,10 @@
     },
     {
       "slug": "genlife-financial-services-boardwalk-manor",
-      "status": "deferred",
-      "reason": "Website timed out on every attempt; search results returned only unrelated Vumatel fibre-installation content, nothing about the business."
+      "status": "researched",
+      "sources": [
+        "https://www.genlife.co.za/"
+      ]
     },
     {
       "slug": "gimi-access-amandasig",
@@ -270,8 +277,10 @@
     },
     {
       "slug": "lancet-laboratories-wilgers-hospital-medical-centre-depot-de-wilgers",
-      "status": "deferred",
-      "reason": "Only a directory stub (medpages.info) was retrievable, confirming category and location only; no operational detail about this specific depot or Lancet's wider network was found this round."
+      "status": "researched",
+      "sources": [
+        "https://www.medpages.info/sf/index.php?page=organisation&orgcode=121412"
+      ]
     },
     {
       "slug": "leita-steel-pty-ltd-waltloo",
@@ -317,8 +326,11 @@
     },
     {
       "slug": "mtn-store-wonderpark-shopping-centre-karenpark",
-      "status": "deferred",
-      "reason": "MTN's own website showed a maintenance notice on every page reached; only generic, national MTN brand information was found, nothing specific to the Wonderpark branch."
+      "status": "researched",
+      "sources": [
+        "https://stores.mtn.co.za/mobilephonesanddata-Akasia-Karenpark-5089",
+        "https://www.wonderparkcentre.co.za/storedetail-mtn"
+      ]
     },
     {
       "slug": "mtp-security-services-olievenhoutbosch",
@@ -336,8 +348,10 @@
     },
     {
       "slug": "oasis-water-meyerspark-meyerspark",
-      "status": "deferred",
-      "reason": "The brand's own website could not be reached (timeouts and 404s); search results returned only unrelated content about the band Oasis and other unrelated companies sharing the name."
+      "status": "researched",
+      "sources": [
+        "https://www.oasiswater.co.za/"
+      ]
     }
   ]
 }

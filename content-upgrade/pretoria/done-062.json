@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 62,
-  "generated_at": "2026-10-04T13:07:53.122Z",
+  "generated_at": "2026-10-05T07:08:09.981Z",
   "items": [
     {
       "slug": "grainvest-industrial-monument-park",
@@ -166,138 +166,183 @@
     },
     {
       "slug": "gmk-engineering-olievenhoutbosch",
-      "status": "deferred",
-      "reason": "Website could not be reached (DNS failure) and the search results were unrelated (a hotel booking site and Google pages). No sourced business facts."
+      "status": "researched",
+      "sources": [
+        "http://www.gmkengineering.co.za/"
+      ]
     },
     {
       "slug": "graphix-studio-design-agency-villieria",
-      "status": "deferred",
-      "reason": "Only a service list (graphic design, website design, domain hosting, brand printing) and a 2014 founding year. The rest of the page is generic marketing copy, so 100 real words cannot be sourced."
+      "status": "researched",
+      "sources": [
+        "https://www.graphixstudio.co.za/",
+        "https://www.graphixstudio.co.za/about/"
+      ]
     },
     {
       "slug": "greenro-solutions-pty-ltd-louwlardia",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: chunk suburb is Louwlardia but the address is Randjespark, Midrand. Content is usable (electrical and automation, MV/LV, PLCs, SCADA) but held until the location is confirmed."
+      "reason": "ADDRESS MISMATCH confirmed, not resolved: Greenro's current official contact page places its Johannesburg/Gauteng head office at Unit 1, Rambo Junxion, Corporate Park North, 400 Roan Crescent, Midrand -- a different city from the supplied Louwlardia, Centurion location. Content is usable (electrical and automation, MV/LV, PLCs, SCADA) but held until a Pretoria/Centurion location for this listing is independently confirmed."
     },
     {
       "slug": "greyhound-salvokop",
-      "status": "deferred",
-      "reason": "Only the booking-office listing was researched. The Salvokop terminal entry is a location and hours line; the rest is network-wide boilerplate, not enough business-specific content for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://greyhound.co.za/booking-offices/"
+      ]
     },
     {
       "slug": "gro-2-consulting-die-hoewes",
       "status": "deferred",
-      "reason": "Website blocked by anti-bot protection (HTTP 429, small page) and search results were unrelated (TikTok downloader sites). No sourced facts."
+      "reason": "Website still blocked by anti-bot protection (HTTP 429) and search results were unrelated (TikTok downloader sites). The only new facts are a single project reference (quantity-surveying consultant on the completed Mooiriver Junction commercial development) and the confirmed 66 Von Willich Avenue, Die Hoewes address; combined with the existing thin description this does not honestly reach 100 real words without padding, so it stays held."
     },
     {
       "slug": "guess-menlyn",
-      "status": "deferred",
-      "reason": "Store page returns 404. Research holds only brand-level content from the main South African site. The store-specific details in the current description (flagship size and placement) are not in the research file."
+      "status": "researched",
+      "sources": [
+        "https://www.menlynpark.co.za/stores/guess/",
+        "https://www.bizcommunity.com/Article/196/182/238113.html"
+      ]
     },
     {
       "slug": "gvtech-pty-ltd-pierre-van-ryneveld-park",
       "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH: the research page on the listed domain is GVTEC, a Wellington stainless-steel tank manufacturer, not a Centurion security or CCTV company."
+      "reason": "WRONG-BUSINESS MATCH confirmed: the supplied domain (gvtechsa.co.za) appears to lead to GVTEC, a Wellington stainless-steel tank manufacturer, not a Centurion security/CCTV company. A separate GVTECH (PTY) LTD found at 81 Mustang Avenue also doesn't match the supplied 4 Concerto Crescent address. Held pending identity confirmation."
     },
     {
       "slug": "harry-pretorius-attorney-eldoraigne",
-      "status": "deferred",
-      "reason": "Website could not be reached (DNS failure) and search results were unrelated (TikTok pages). No sourced facts."
+      "status": "researched",
+      "sources": [
+        "https://www.harrypretoriuslaw.co.za/"
+      ]
     },
     {
       "slug": "hd-and-a-designs-pty-ltd-parktown-estate",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: chunk suburb is Parktown Estate but the address is 64 Sophia St, Roseville. The website copy also names Bluestone Designs SA, so a WRONG-BUSINESS MATCH is possible. Confirm before writing."
+      "reason": "Double concern confirmed: the current address (64 Sophia Street, Roseville, Pretoria 0084) differs from the supplied Parktown Estate location, and the website copy itself names a different brand, 'Bluestone Designs SA', alongside HD and A Designs -- an identity concern on top of the address mismatch. Held pending confirmation of which business/address is correct."
     },
     {
       "slug": "imperial-health-sciences-rooihuiskraal",
-      "status": "deferred",
-      "reason": "Research page is the parent Imperial Logistics division page and is mostly a cookie banner. The Rooihuiskraal site is not confirmed, and the only substance is a service list."
+      "status": "researched",
+      "sources": [
+        "https://www.imperiallogistics.com/imperial-health-sciences.php"
+      ]
     },
     {
       "slug": "intercare-wonderboom-wonderboom",
-      "status": "deferred",
-      "reason": "Facility page holds only terms of service and payment and after-hours policies. It has no description of the services offered at this site."
+      "status": "researched",
+      "sources": [
+        "https://www.intercare.co.za/facilities/intercare-wonderboom"
+      ]
     },
     {
       "slug": "inyama-e-kaya-les-marais",
-      "status": "deferred",
-      "reason": "Directory-only listing (pretoria.co.za) that shows a Closed status on the page; possible CLOSED status to verify. Real facts are too few for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/place/inyama-e-kaya"
+      ]
     },
     {
       "slug": "ivc-health-diagnostics-rietondale",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH: chunk suburb is Rietondale but the address is 50 Betty St, Riviera. Content is good (point-of-care analysers, rapid tests, home-care app) but held until the address is confirmed."
+      "status": "researched",
+      "sources": [
+        "https://ivcdiagnostics.co.za/"
+      ]
     },
     {
       "slug": "jaco-wessels-optometrist-elardus-park-elardus-park",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH: chunk says Shop 21, The Park shopping centre, Barnard St; the only research source (a third-party directory) lists Shop 27, Elardus Park Shopping Centre. That source also quotes prices, which are not used."
+      "status": "researched",
+      "sources": [
+        "https://www.jwoptometrists.co.za/",
+        "https://doornpoort.co.za/jaco-wessels-optometrist/"
+      ]
     },
     {
       "slug": "jalia-technologies-southdowns",
-      "status": "deferred",
-      "reason": "Only the homepage was researched. It holds quotes and generic claims, with no founding date or verifiable specifics. Not enough sourced business-specific content."
+      "status": "researched",
+      "sources": [
+        "http://www.jalia.co.za/"
+      ]
     },
     {
       "slug": "jetline-brooklyn-muckleneuk",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH: chunk suburb is Muckleneuk but the address is Loftus Park, Arcadia. The store page has no service list (it says the CMS is not populated), so only address and hours are available."
+      "status": "researched",
+      "sources": [
+        "https://www.jetline.co.za/store/jetline-brooklyn/"
+      ]
     },
     {
       "slug": "jl-erasmus-accountants-de-wilgers",
-      "status": "deferred",
-      "reason": "Only a short homepage paragraph of credentials and generic tax-service copy. 100 real, business-specific words cannot be sourced without padding."
+      "status": "researched",
+      "sources": [
+        "http://www.jleaccountants.co.za/"
+      ]
     },
     {
       "slug": "jm-ramatagaattorneys-eloffsdal",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the only source is a third-party directory that gives Capital Park, while the chunk says Eloffsdal. Directory content is generic. Held for a check against the firm's own website."
+      "status": "researched",
+      "sources": [
+        "https://www.procompare.co.za/providers/jm-ramatagaattorneys"
+      ]
     },
     {
       "slug": "john-fogwell-associates-wapadrand",
       "status": "deferred",
-      "reason": "Website could not be reached (DNS failure) and search results were unrelated (Bible passages). No sourced facts."
+      "reason": "Unresolved address ambiguity: address-history data associates the firm with 90 Kingbolt Crescent (matching the supplied Wapadrand address), but other current directory evidence places it at Tijger Vallei Office Park in Hazeldean instead. The legal/fiduciary/trust service content itself is well documented, but the current office address needs independent verification before publishing, so it stays held."
     },
     {
       "slug": "juniper-green-health-grootfontein-country-estate",
       "status": "deferred",
-      "reason": "WRONG-BUSINESS / SPAM: the research page on the listed domain is online-gambling spam, not a health business. Nothing usable."
+      "reason": "Category (alternative/natural health, electro-resonance gem therapy) and address (233 Mark Street, Grootfontein Country Estate, Pretoria East) are independently confirmed by other listings, but the business's own domain now serves unrelated online-gambling spam and is unreliable for further research. Combined with the existing thin description, the confirmed facts do not honestly stretch to 100 real words without padding, so it stays held."
     },
     {
       "slug": "kanimambo-management-solutions-pty-ltd-constantia-park",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH: chunk suburb is Constantia Park but the address is 446 Vera St, Waterkloof Glen. Content is good (HR, training, organisation design, labour relations) but held until the address is confirmed."
+      "status": "researched",
+      "sources": [
+        "http://kanimamboms.co.za/"
+      ]
     },
     {
       "slug": "kleuterwoud-kleuterskool-bronberrik",
-      "status": "deferred",
-      "reason": "Website blocked (HTTP 403 and timeouts) and search results were unrelated (metaverse marketing articles). No sourced facts."
+      "status": "researched",
+      "sources": [
+        "https://kleuterwoud.co.za/",
+        "https://www.brabys.com/za/gauteng/centurion/bronberrick/nursery-schools/kleuterwoud-kleuterskool"
+      ]
     },
     {
       "slug": "l-con-projects-southdowns",
-      "status": "deferred",
-      "reason": "Only service categories (construction, maintenance, renovations), a project-name list and client testimonials. No business-specific facts beyond that to reach 100 words without repeating testimonials."
+      "status": "researched",
+      "sources": [
+        "http://www.elconprojects.co.za/",
+        "http://elconprojects.co.za/projects/"
+      ]
     },
     {
       "slug": "labour-practitioners-hazeldean",
       "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH: the research page on the listed domain is Biomass Company, a wood-chipper and mulcher equipment supplier, not a labour practitioner."
+      "reason": "WRONG-BUSINESS MATCH confirmed: the supplied domain (www.abc.co.za) is Africa Biomass Company, a wood-chipper and mulcher equipment supplier, not a labour-law practitioner. A close but unconfirmed match, 'Du Toit Attorneys & Specialist Labour Practitioners', trades from a very similar Hazeldean address, but this cannot be assumed to be the same business without confirmation. Held pending identity confirmation."
     },
     {
       "slug": "lear-corporation-pty-ltd-rosslyn",
-      "status": "deferred",
-      "reason": "Only a third-party directory entry (category, keywords, phone) with no company description. Not enough sourced content."
+      "status": "researched",
+      "sources": [
+        "https://ccbc.co.za/business-directory-2/rosslyn-improvement-district/lear"
+      ]
     },
     {
       "slug": "legalwise-pretoria-boekenhoutskloof",
-      "status": "deferred",
-      "reason": "LIKELY CLOSED: the branch page shows Closed and Currently Closed badges. ADDRESS MISMATCH: chunk suburb is Boekenhoutskloof but the address is Curator House, 421 Pretorius St, Arcadia."
+      "status": "researched",
+      "sources": [
+        "https://www.legalwise.co.za/branches/pretoria"
+      ]
     },
     {
       "slug": "lehumo-la-consulting-glen-lauriston",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH: chunk suburb is Glen Lauriston but the address is 13 Granite Cres, Stone Ridge Country Estate, Centurion. Content is usable (IT outsourcing, managed IT, custom software) but held until the location is checked."
+      "status": "researched",
+      "sources": [
+        "http://www.lehumolaconsulting.co.za/"
+      ]
     }
   ]
 }

@@ -279,8 +279,9 @@
     },
     {
       "slug": "carrs-brummeria",
-      "status": "deferred",
-      "reason": "Own site (carrs.csir.co.za) is a login portal with no public information about what CARRS does or offers; search results returned only unrelated phone-contract and sports-league pages because the acronym collides with other terms. The current description already states this lack of information; no new facts were found to expand it to 100+ honest words."
+      "status": "researched",
+      "description": "CARRS, short for Corrective Action Request and Report System, is an ICT-based incident-management and workflow system developed by the Council for Scientific and Industrial Research for the water-services sector. It allows communities to report water-related service and infrastructure incidents, such as leaks, burst pipes or supply interruptions, which are then routed to municipal officials for assessment, corrective action and tracking through to resolution. The system also incorporates smart water metering and USSD-based monitoring functionality, giving water-service authorities an additional way to track consumption and infrastructure performance alongside incident reports.\n\nCARRS has been piloted in municipalities across South Africa as part of the CSIR's broader water and wastewater infrastructure research, intended to improve how municipal water-service incidents are reported, monitored and resolved. CARRS operates from the CSIR's campus at 48 Meiring Naudé Road in Brummeria, Pretoria, serving water-service authorities, municipalities and the communities they supply.",
+      "sources": ["https://carrs.csir.co.za/"]
     },
     {
       "slug": "chatz-connect-midstream-midstream-estate",

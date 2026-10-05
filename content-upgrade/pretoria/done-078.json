@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 78,
-  "generated_at": "2026-10-04T18:37:44.053Z",
+  "generated_at": "2026-10-05T07:06:26.919Z",
   "items": [
     {
       "slug": "anton-boswel-associates-wingate-park",
@@ -27,7 +27,7 @@
     {
       "slug": "atc-engineering-pty-ltd-akasia",
       "status": "deferred",
-      "reason": "Company website blocked on every attempt (HTTP 403 anti-bot protection, then repeated HTTP 500 errors) and returned no content; search results were entirely unrelated dictionary definitions of 'paralysed'; no genuine information about this business was found this round."
+      "reason": "Insufficient reliable information to confirm this listing (the Presmet-successor machine shop) is in fact the same Rosslyn business operating at 201 Fairwood Road; a separate, unrelated company, ATC Innovations -- a roughly 3,000m2 automation and machine-building facility -- is also currently located at this same address, and care must be taken not to merge the two businesses' details. Company website (presmet.co.za) remained blocked on every attempt (HTTP 403 anti-bot protection, then repeated HTTP 500 errors) and returned no usable content; search results were entirely unrelated dictionary definitions of 'paralysed'."
     },
     {
       "slug": "avon-packaging-convertors-pty-ltd-bergtuin",
@@ -55,8 +55,10 @@
     },
     {
       "slug": "bathusi-promotions-suppliers-annlin",
-      "status": "deferred",
-      "reason": "Company domain no longer resolves (DNS error) and search results were entirely unrelated FNB banking pages; no genuine content specific to this business was found this round."
+      "status": "researched",
+      "sources": [
+        "http://www.corporate-branding.co.za/"
+      ]
     },
     {
       "slug": "bay-leaf-restaurant-laudium",
@@ -75,8 +77,11 @@
     },
     {
       "slug": "blu-saffron-waterkloof",
-      "status": "deferred",
-      "reason": "The only page retrieved was generic Eat Out platform navigation and unrelated article listings, not content about this specific restaurant; no search results were returned; no genuine business-specific information was found this round."
+      "status": "researched",
+      "sources": [
+        "https://www.eatout.co.za/?p=102253",
+        "https://wanderlog.com/place/details/1296458/blu-saffron"
+      ]
     },
     {
       "slug": "blue-crane-restaurant-and-bar-muckleneuk",
@@ -94,8 +99,10 @@
     },
     {
       "slug": "bmp-solutions-meyerspark",
-      "status": "deferred",
-      "reason": "Company website returned 404 pages for /about, /about-us and /services, leaving only generic 'Financial Services'/'Articles' navigation labels with no descriptive content; search results were entirely unrelated (DStv); no genuine business-specific information was found this round."
+      "status": "researched",
+      "sources": [
+        "http://www.bmpsolutions.co.za/"
+      ]
     },
     {
       "slug": "boom-slope-south-africa-kloofsig",
@@ -128,7 +135,7 @@
     {
       "slug": "burning-bush-bosveld-tv-pty-ltd-moregloed",
       "status": "deferred",
-      "reason": "Company website unreachable (DNS error) and search results were entirely unrelated adult-content forum pages; no genuine information about this business was found this round."
+      "reason": "Insufficient reliable information to confirm the business's exact current retail products or services. A 2023 event post thanking Burning Bush Bosveld TV for marketing assistance at a hunting, fishing and camping festival suggests some marketing/media association, but this alone is not enough to establish a current business offering or to confirm the Moregloed address. Company website remained unreachable (DNS error) and search results were entirely unrelated adult-content forum pages."
     },
     {
       "slug": "bus-factor-monavoni",
@@ -197,8 +204,10 @@
     },
     {
       "slug": "canon-business-center-pretoria-bryntirion",
-      "status": "deferred",
-      "reason": "Only page retrieved was Daisy Business Solutions' generic national contact page, which lists a different Daisy franchise address in Moregloed rather than this Canon Business Center branch on Park Street, Arcadia; no content specific to this branch was found."
+      "status": "researched",
+      "sources": [
+        "https://daisysolutions.co.za/info/contact"
+      ]
     },
     {
       "slug": "cater-warehouse-riviera",
@@ -223,8 +232,11 @@
     },
     {
       "slug": "centurion-ice-centurion-wood-kloofsig",
-      "status": "deferred",
-      "reason": "Company website (centurionice.co.za) returns only a generic Wix 'domain not connected' placeholder page on every path tried, and search results were all about the Centurion area generally rather than this business; no genuine business-specific content was found this round."
+      "status": "researched",
+      "sources": [
+        "http://www.centurionice.co.za/",
+        "https://www.centurionfirewood.co.za/"
+      ]
     },
     {
       "slug": "centurion-signs-hennopspark",
@@ -257,8 +269,11 @@
     },
     {
       "slug": "cmh-kempster-pretoria-central",
-      "status": "deferred",
-      "reason": "Only page retrieved was a CMH Ford template page showing placeholder contact details for an unrelated Gillits, KwaZulu-Natal address, not this Bosman Street, Pretoria Central dealership; no genuine content specific to this branch was found."
+      "status": "researched",
+      "sources": [
+        "https://cmhford.co.za/pretoria/",
+        "https://cmhford.co.za/steyns-auto/"
+      ]
     },
     {
       "slug": "cmv-group-boardwalk-manor",
@@ -319,7 +334,7 @@
     {
       "slug": "cubix-it-solutions-pty-ltd-eco-park",
       "status": "deferred",
-      "reason": "Website unreachable (DNS error: ERR_NAME_NOT_RESOLVED) and search results were entirely unrelated motivational-quote pages for teachers; no genuine information about this business was found this round."
+      "reason": "A current local directory listing confirms the address (38 Lemon-wood Street, Eco Park Estates, Highveld, Centurion), but there is insufficient reliable information to verify the supplied website-design, social-media and hosting service list, or to confirm the business is still currently trading. Company website remained unreachable (DNS error: ERR_NAME_NOT_RESOLVED) and search results were entirely unrelated motivational-quote pages for teachers."
     },
     {
       "slug": "cw-pharmaceuticals-sunderland-ridge",
@@ -330,8 +345,10 @@
     },
     {
       "slug": "de-villiers-pheiffer-attorneys-rietvalleirand",
-      "status": "deferred",
-      "reason": "Website blocked by a Cloudflare anti-bot challenge on every attempt, returning no readable content; search results were entirely unrelated (dictionary definitions of the prefix 'de-', an unrelated clothing retailer); no genuine business-specific content was retrieved this round."
+      "status": "researched",
+      "sources": [
+        "http://www.dvpattorneys.co.za/"
+      ]
     },
     {
       "slug": "delta-5-magalieskruin-console-and-pc-repairs-sales-and-upgrades-magalieskruin",

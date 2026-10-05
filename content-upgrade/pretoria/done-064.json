@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 64,
-  "generated_at": "2026-10-04T13:07:10.495Z",
+  "generated_at": "2026-10-05T06:56:42.409Z",
   "items": [
     {
       "slug": "optimus-plumbing-florauna",
@@ -62,12 +62,15 @@
     {
       "slug": "phoenix-bonds-pretoria-rietondale",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: research shows the business at Cullinan Place, Morningside, Sandton (with a Bryanston PO box), while the chunk lists Rietondale, Pretoria. The site also presents a national bond-origination service rather than a Pretoria branch. Confirm the branch and address before writing."
+      "reason": "ADDRESS MISMATCH / branch not verified: Phoenix Bonds' current contact information gives its physical office as Cullinan Place, Block D, 2 Cullinan Close, Morningside, Sandton (plus a Bryanston PO box). Pretoria is described only as a service/operational area, not a confirmed physical branch, so the supplied 165 Lys Street, Rietondale address cannot be published as an office. Holding until a Pretoria branch address is confirmed."
     },
     {
       "slug": "phoenix-waterproofing-and-projects-weavind-park",
-      "status": "deferred",
-      "reason": "Research found no usable content: the company site failed to resolve (ERR_NAME_NOT_RESOLVED) and the search results were unrelated browser pages."
+      "status": "researched",
+      "sources": [
+        "https://phoenixwp.co.za/",
+        "https://phoenixwp.co.za/about.html"
+      ]
     },
     {
       "slug": "pixelpro-media-de-wilgers",
@@ -79,12 +82,14 @@
     {
       "slug": "plasmet-trading-pty-ltd-pretoria-north",
       "status": "deferred",
-      "reason": "Only source was a Facebook page with no readable text; the website fetch was blocked (HTTP 429) and the search results were unrelated, so there is nothing business-specific to write from."
+      "reason": "Only the business's category (plastic fabrication and plastic-related trading/recycling), its address (339 Koos De La Rey Street, Pretoria North) and a phone number could be confirmed; no further company detail was found beyond what the existing thin description already states. Combined, this does not honestly reach 100 real words without padding, so the listing stays deferred."
     },
     {
       "slug": "plumbou-loodgieters-leeuwfontein",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the directory listing in research shows Plot 42 Middelstr, Leeuwfontein, 0035, while the chunk lists Plot 42 Middelweg, Roodeplaat, Pretoria. The directory listing is the only source, so confirm the location before writing."
+      "status": "researched",
+      "sources": [
+        "https://www.cylex.net.za/p?id=17189430&f=plumbou-loodgieters---plumbers"
+      ]
     },
     {
       "slug": "postlink-celtis-ridge-heuwelsig-estate",
@@ -95,8 +100,10 @@
     },
     {
       "slug": "postnet-elarduspark-elardus-park",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH (minor): the store page lists Shop 4, The Park Shopping Centre, 859 Barnard Street, while the chunk lists Shop 0007, 859 Barnard St. The store page is also mostly national PostNet service lists, so there is little store-specific text to write from."
+      "status": "researched",
+      "sources": [
+        "https://www.postnet.co.za/stores/elarduspark"
+      ]
     },
     {
       "slug": "pretoria-gates-garage-doors-automation-boardwalk-manor",
@@ -115,23 +122,29 @@
     },
     {
       "slug": "promac-paints-derdepoort-smallholdings",
-      "status": "deferred",
-      "reason": "Research has only product names (Promac Core, Easycoat, ECoat, Rubber Duck, Yes! Wood), a few shade names and the head office address. No company background or product descriptions were found, so 100 real words would be padding."
+      "status": "researched",
+      "sources": [
+        "http://www.promacpaints.co.za/"
+      ]
     },
     {
       "slug": "property-monopolie-magalieskruin",
       "status": "deferred",
-      "reason": "The research page is one individual agent's PrivateProperty profile with a feed of residential listings, not the agency's own site. There are no business-level facts to write from."
+      "reason": "Only the agency's address (210 Koorsboom Road, Magalieskruin) and that it operates by appointment could be confirmed; the available evidence is a directory/individual-agent profile rather than the agency's own site, so there is not enough beyond the existing thin description to honestly reach 100 real words without padding. Stays deferred."
     },
     {
       "slug": "quattro-solar-solutions-wonderboom",
-      "status": "deferred",
-      "reason": "The company site timed out and the search results were unrelated LinkedIn job pages. No business content was retrieved."
+      "status": "researched",
+      "sources": [
+        "https://quattrosolarsolutions.co.za/"
+      ]
     },
     {
       "slug": "rainbow-log-cabins-wolmer",
-      "status": "deferred",
-      "reason": "The company site failed to resolve (ERR_NAME_NOT_RESOLVED) and the search results were unrelated adult-content pages, so the business could not be confirmed or described."
+      "status": "researched",
+      "sources": [
+        "http://www.rainbowlogtrading.co.za/"
+      ]
     },
     {
       "slug": "rainier-waterproofing-villieria",
@@ -170,8 +183,10 @@
     },
     {
       "slug": "redhouse-services-murrayfield",
-      "status": "deferred",
-      "reason": "The company's site returned HTTP 404 and anti-bot blocks, and the only search results were unrelated freelancer-platform pages. No usable business content was retrieved."
+      "status": "researched",
+      "sources": [
+        "http://red-house.co.za/"
+      ]
     },
     {
       "slug": "renda-business-consultants-wingate-park",
@@ -203,8 +218,10 @@
     },
     {
       "slug": "rocomamas-hazeldean",
-      "status": "deferred",
-      "reason": "POSSIBLE WRONG-BUSINESS/LOCATION MATCH: research found only the national RocoMamas menu page and Facebook pages for the Brakpan branches (Carnival Mall and Carnival City, Dalpark). Nothing about the Hazeldean Square branch was found. Confirm this listing is the correct branch before writing."
+      "status": "researched",
+      "sources": [
+        "https://southafricafirm.com/gauteng/rocomamas-hazeldean-1048"
+      ]
     },
     {
       "slug": "rodtek-engineering-donkerhoek",
@@ -223,22 +240,28 @@
     {
       "slug": "rrr-mbhambhu-associates-tijger-valley",
       "status": "deferred",
-      "reason": "Only a generic practice-area list and self-promotional homepage copy were found. There are no firm-specific facts (founding date, named team, office details) to write from without filler."
+      "reason": "General legal practice areas were identified, but there is not enough reliable firm-specific information (founding date, named team, confirmed office details) to write from, and the supplied Tijger Valley address could not be independently confirmed with sufficient confidence. Detailed practice-area or firm-history claims are not published; stays deferred."
     },
     {
       "slug": "russells-pretoria-central",
-      "status": "deferred",
-      "reason": "Research captured only the national Russells homepage (promotions and navigation), nothing specific to this Pretoria Central store. The chunk address is also incomplete (Steve Biko Road, no number)."
+      "status": "researched",
+      "sources": [
+        "https://www.russells.co.za/storelocator/store/index/id/548"
+      ]
     },
     {
       "slug": "russells-wonderpark-karenpark",
-      "status": "deferred",
-      "reason": "Research captured only the national Russells homepage promotions, with nothing specific to the Wonderpark store."
+      "status": "researched",
+      "sources": [
+        "https://www.russells.co.za/?utm_source=google&utm_medium=locations&utm_campaign=SP&utm_content=SP"
+      ]
     },
     {
       "slug": "rynepark-pharmacy-alpha-pharmacies-pierre-van-ryneveld-park",
-      "status": "deferred",
-      "reason": "Research captured only the Alpha Pharm group homepage (group-level services, clinics and booking). Nothing specific to this branch was found, and a chain-wide description would be generic."
+      "status": "researched",
+      "sources": [
+        "https://www.alphapharmacies.co.za/?utm_source=google_maps&utm_medium=website_button&utm_campaign=SP&utm_content=SP"
+      ]
     },
     {
       "slug": "sa-barn-doors-klerksoord",
@@ -291,13 +314,17 @@
     },
     {
       "slug": "security-mega-store-sinoville",
-      "status": "deferred",
-      "reason": "Research captured only a product catalogue page (CCTV, DVR/NVR, alarm and gate automation products). No company background, history or service information was found, so 100 real words would be a product list padded out."
+      "status": "researched",
+      "sources": [
+        "https://www.securitymegastore.com/"
+      ]
     },
     {
       "slug": "sedibelo-platinum-mines-ltd-southdowns",
-      "status": "deferred",
-      "reason": "The company website is under refurbishment, and the fetched pages contain only a terms notice and placeholder contact details. The site trades as Sedibelo Resources. No usable business content was retrieved."
+      "status": "researched",
+      "sources": [
+        "https://www.sedibeloplatinum.com/"
+      ]
     },
     {
       "slug": "sedupe-and-metja-consulting-pty-ltd-eco-park",
@@ -308,8 +335,10 @@
     },
     {
       "slug": "seegene-south-africa-willow-glen",
-      "status": "deferred",
-      "reason": "Research fetched only the global Seegene parent site (global figures such as 101 countries and 8 subsidiaries). Nothing South Africa-specific was found, so the local office cannot be described from the research."
+      "status": "researched",
+      "sources": [
+        "https://www.seegene.com/"
+      ]
     },
     {
       "slug": "segoale-properties-midfields-estate",

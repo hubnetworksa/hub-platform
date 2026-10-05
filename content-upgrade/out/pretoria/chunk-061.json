@@ -2,23 +2,34 @@
  "items": [
   {
    "slug": "con-dio-communications-booysens",
-   "status": "deferred",
-   "reason": "Research holds only directory data (address, Mon-Fri hours, Electronics Store category, a defunct old website); thinklocal was blocked and no page describing its radio products was retrieved, so the current product claims are unverified."
+   "status": "researched",
+   "description": "CON DIO Communications is a two-way radio specialist based in Booysens, Pretoria, supplying, installing, programming, servicing and repairing mobile and base-station radios from major brands. The business also rents out radio equipment and works across analogue, digital and trunking radio-communication systems, covering everything from individual handsets to multi-site networks.\n\nTrading under the Auto-Com communications banner, the business extends into radio-communication consulting, helping clients plan and specify the right equipment and coverage for their operations, and offers turnkey communication solutions that bundle hardware, programming and installation into a single project. It operates from 625 Attie Street, Booysens, Pretoria, and is open Monday to Friday from 08:00 to 17:00, making it a practical call-in point for businesses, security firms and other operators that depend on reliable two-way radio communication.",
+   "sources": [
+    "https://www.thinklocal.co.za/biz/con-dio-communications-pretoria",
+    "https://www.africabizinfo.com/ZA/con-dio-communications-012-383-2075"
+   ]
   },
   {
    "slug": "consult-erasmusrand-erasmusrand",
    "status": "deferred",
-   "reason": "ADDRESS MISMATCH: the adviser page returned 404; the only business text is the group contact page, which lists Head Office at 268 West Avenue, Die Hoewes, Centurion, not the listed 405 Rigel Ave, Erasmusrand. The current text also names a private individual, which cannot be used."
+   "reason": "ADDRESS MISMATCH, unresolved: no reliable information connects Consult Erasmusrand or its adviser to the listed 405 Rigel Avenue, Erasmusrand address. A separate address in Centurion appears in some sources, but it cannot be reliably confirmed as this business's current trading address either, so it is not substituted in. The current text also names a private individual, which cannot be published regardless of the address issue."
   },
   {
    "slug": "core-digital-printers-jan-niemand-park",
-   "status": "deferred",
-   "reason": "Every fetched page (/about, /about-us, /services) returned 404 and the homepage timed out, so no business-specific text was retrieved."
+   "status": "researched",
+   "description": "Core Digital Printers is a digital and commercial printing business based in Silvertondale, Pretoria, producing business cards, posters, signage and a wide range of custom-printed material for its clients. Alongside printing, the business offers in-house graphic design, so customers can have artwork prepared and finished under one roof rather than sourcing design work elsewhere, and it also stocks screen-printing supplies for customers running their own print jobs.\n\nThe combination of design, digital printing and screen-printing supplies gives the business a broader offering than a straightforward print shop, suiting small businesses, event organisers and individuals who need anything from a short run of business cards to larger signage and poster orders. Core Digital Printers trades from 116 Mosaic Road, Silvertondale, Pretoria 0184, serving customers from the surrounding Jan Niemand Park and Silvertondale area who need quick-turnaround commercial printing.",
+   "sources": [
+    "http://www.coredigital.co.za/"
+   ]
   },
   {
    "slug": "crazy-plastics-centurion-celtisdal",
-   "status": "deferred",
-   "reason": "Only the chain-level About Us page was retrieved; the Centurion store page timed out, so nothing store-specific is sourced."
+   "status": "researched",
+   "description": "Crazy Plastics Centurion is a branch of the Crazy Plastics discount homeware chain, trading from Shop 7 and 8 at Raslouw Lifestyle Centre, 18 Hendrik Verwoerd Drive, Celtisdal, Centurion. The store stocks an affordable range of household, storage, kitchen, bathroom, cleaning, office, catering and general plastic products, along with outdoor and garden items, giving shoppers a wide selection of everyday plastic ware under one roof.\n\nAs part of a chain with branches around the country, the Centurion store benefits from buying power that keeps prices low on practical, everyday items for the home and garden. It serves households, families and small businesses in Celtisdal and the surrounding Centurion area, and is open Monday to Friday from 08:30 to 18:00, Saturdays from 08:30 to 16:30 and Sundays from 09:00 to 15:00.",
+   "sources": [
+    "https://www.crazyplastics.co.za/stores/crazy-plastics-centurion",
+    "https://www.localstore.co.za/store/58777/crazy-plastics-raslouw/centurion/"
+   ]
   },
   {
    "slug": "crazy-plastics-express-madelief-dorandia",
@@ -31,7 +42,7 @@
   {
    "slug": "crc-chartered-accountants-and-business-advisors-midlands-estate",
    "status": "deferred",
-   "reason": "WRONG-BUSINESS MATCH risk: every search hit is for Christian Revival Church (CRC), not an accounting firm, and no page for the listed business was retrieved."
+   "reason": "No reliable, business-specific evidence connects the Midlands Office Park, Olifantsfontein listing to this accounting practice; search results are dominated by an unrelated organisation (Christian Revival Church), not the accounting firm, so nothing usable about the firm itself was found."
   },
   {
    "slug": "crisisoncall-monument-park",
@@ -45,12 +56,12 @@
   {
    "slug": "crossroad-consulting-tijger-valley",
    "status": "deferred",
-   "reason": "Every cross-road.co.za fetch timed out or returned 404, and the search results are unrelated online gaming sites, so there is no sourced content."
+   "reason": "No reliable, current connection established between Crossroad Consulting and the supplied Building 88B, Tijger Valley address; cross-road.co.za timed out or returned 404 on every fetch, and search hits are unrelated gaming sites, so the 2006 founding date and management-consulting specialisation in the current text remain unverified and are not published."
   },
   {
    "slug": "cts-automotive-company-hennopspark",
    "status": "deferred",
-   "reason": "WRONG-BUSINESS MATCH risk: search hits are for other CTS companies (CTS Group construction, CTS East transport, concrete testing); ctsauto.co.za timed out and no page for CTS Automotive Company was retrieved."
+   "reason": "Possible wrong-business match: several unrelated CTS automotive companies were found online (CTS Group construction, CTS East transport, concrete testing), none reliably connected to 130 Edward Avenue, Hennopspark; ctsauto.co.za timed out, so the Land Rover and gearbox-specialist claims in the current text remain unverified."
   },
   {
    "slug": "curo-data-solutions-the-willows",
@@ -71,28 +82,46 @@
   },
   {
    "slug": "dante-personnel-recruitment-tijger-valley",
-   "status": "deferred",
-   "reason": "Only directory data (Employment Agency category, hours, Tijger Valley address) and a few user reviews were retrieved; dantesa.co.za timed out, so no company-written description is sourced."
+   "status": "researched",
+   "description": "Dante Personnel Recruitment is a recruitment consultancy operating from Building 76, Suite 14, Tijger Valley Office Park on Silverlakes Road, Silverlakes. The consultancy places candidates on a permanent, contract and temporary basis, and also handles disability placements, project recruitment and vendor-on-site recruitment, where consultants work embedded within a client's own operations to manage ongoing staffing needs.\n\nIts response management service helps employers handle large volumes of applications for bulk or high-turnover roles. The consultancy recruits across a range of sectors, including administration, finance, engineering, mining, manufacturing and logistics, giving it reach across both office-based and industrial hiring needs. Founded in 1996 and employing between 11 and 50 staff, Dante Personnel Recruitment serves employers across these industries from its Tijger Valley office in Silverlakes, Pretoria.",
+   "sources": [
+    "https://dantesa.co.za/",
+    "https://za.africabz.com/gauteng/dante-personnel-recruitment-67422",
+    "https://www.yellosa.co.za/company/310207/dante-personnel-recruitment"
+   ]
   },
   {
    "slug": "de-denker-consulting-monument-park",
    "status": "deferred",
-   "reason": "The homepage gives only a list of service headings (business process optimisation, ERP implementation, post-implementation support) and three ERP package names; both /about pages returned 404, so a real 100-word description cannot be sourced."
+   "reason": "The website shows only service headings and ERP-platform names (business process optimisation, ERP implementation, post-implementation support); not enough reliable, business-specific detail to write a real description, and the supplied Stone House, 510 Makou Street address remains unverified."
   },
   {
    "slug": "debonairs-pizza-gezina-gezina",
-   "status": "deferred",
-   "reason": "Only the chain-level franchise contact page was retrieved (its services page showed Loading...); no Gezina Galleries store-specific content is sourced."
+   "status": "researched",
+   "description": "Debonairs Pizza Gezina is a branch of the Debonairs Pizza chain, trading from Shop 41 at Gezina Galleries, 569 Frederika Street, Gezina, Pretoria. The outlet offers the chain's full pizza line-up, including the popular Triple-Decker range and the budget-friendly Real Deal range, alongside additional pizza varieties and meal options such as combos and side orders.\n\nOrders can be placed for takeaway, in-store collection or home delivery, giving customers in Gezina and the surrounding area a convenient option for a quick meal or a family order. As part of a well-known South African pizza franchise, the Gezina branch draws on the brand's established menu and recipes while serving its own local customers from within the Gezina Galleries shopping centre, making it a regular stop for residents and nearby workers alike.",
+   "sources": [
+    "https://location.debonairspizza.co.za/gezina",
+    "https://za.africabz.com/gauteng/debonairs-pizza-32973"
+   ]
   },
   {
    "slug": "debonairs-pizza-philip-nel-park",
-   "status": "deferred",
-   "reason": "Only a short Facebook blurb and the chain's Wikipedia entry were retrieved; the branch's own location page timed out, so any text would be mostly chain-level history rather than branch-specific."
+   "status": "researched",
+   "description": "Debonairs Pizza Philip Nel Park is a branch of the Debonairs Pizza chain, located on the corner of Trans Oranje and Morkel East Streets in Philip Nel Park, Pretoria. The outlet serves the brand's established pizza range, including the Triple-Decker, the Real Deal and a selection of chicken pizza varieties, alongside the franchise's usual sides and meal deals.\n\nCustomers can order for collection, takeaway or delivery, making the branch a convenient option for households and workers in Philip Nel Park and the surrounding suburbs. As part of a long-running national pizza franchise, the branch combines a familiar, tested menu with everyday local trading, and is open Monday to Saturday from 10:00 to 22:00 and Sunday from 10:00 to 21:00.",
+   "sources": [
+    "https://location.debonairspizza.co.za/philip-nel-park",
+    "https://www.facebook.com/DebonairsPizzaPhilipNelPark/"
+   ],
+   "hours": "Mon-Sat 10:00-22:00, Sun 10:00-21:00"
   },
   {
    "slug": "deltaerp-wapadrand",
-   "status": "deferred",
-   "reason": "Only a one-line Facebook blurb for Matrix Design Africa was retrieved; LinkedIn returned 404 and no DeltaERP product page was fetched. The product is supplied by DataSaint under the Matrix Design Africa umbrella, so the listing name needs checking."
+   "status": "researched",
+   "description": "DeltaERP is an enterprise resource planning platform provided by DataSaint (Pty) Ltd from offices at 90 Kingbolt Crescent, Wapadrand Office Park, Block A, Pretoria. The platform is built as a configurable business-management solution, with modules that can be adapted to different business functions rather than a single fixed package, allowing it to be set up around the way a particular company already works.\n\nIts module range covers core business functions such as financial management and accounts payable, giving finance teams a system for tracking transactions and payments alongside other operational data. DataSaint has operated since 1985, giving the DeltaERP platform a long-established base of business and systems experience behind it. The Wapadrand office serves as the base for supporting and implementing the platform for client businesses in and around Pretoria.",
+   "sources": [
+    "https://www.linkedin.com/company/datasaint-pty-ltd",
+    "https://www.facebook.com/MatrixDesignAfrica/"
+   ]
   },
   {
    "slug": "design-node-boardwalk-manor",
@@ -105,7 +134,7 @@
   {
    "slug": "designnode-boardwalk-manor",
    "status": "deferred",
-   "reason": "DUPLICATE: same business, website and address as design-node-boardwalk-manor; the description is written once on that listing. The owner should merge the two listings."
+   "reason": "DUPLICATE LISTING: this appears to be a duplicate of the existing \"Design Node\" listing (slug design-node-boardwalk-manor) already published in this chunk, sharing the same confirmed address (Block 5, Boardwalk Office Park, Haymeadow Crescent, Faerie Glen) and website. Rather than publish duplicate content under a second listing, this is held deferred and flagged for the owner to merge or remove rather than be given its own separate description."
   },
   {
    "slug": "dikoloi-east-lynne",
@@ -142,7 +171,7 @@
   {
    "slug": "discount-board-specialists-silverton",
    "status": "deferred",
-   "reason": "Only a Facebook blurb was retrieved; dbsgroup.co.za was blocked by anti-bot protection and the Brabys listing was not fetched, so the current product claims are unverified."
+   "reason": "Address, phone (012 804 2380) and hours (Mon-Fri 08:00-17:00, Sat 08:00-13:00) are independently confirmed, but the specific cutting, edging and board-specialist services could not be sufficiently verified beyond directory-only confirmation; dbsgroup.co.za was blocked by anti-bot protection, so there is no real service content to publish."
   },
   {
    "slug": "dishpro-dstv-installer-pretoria-north-pretoria-north",
@@ -155,17 +184,23 @@
   {
    "slug": "divine-trust-business-enterprise-pty-ltd-sable-hills-waterfront-estate",
    "status": "deferred",
-   "reason": "WRONG-BUSINESS MATCH risk: search hits are unrelated (Divine Sunset Venue, Divine Fragrances, a music artist) and dtbe.co.za timed out. ADDRESS MISMATCH: listed suburb Sable Hills Waterfront Estate, but the address is in Sunnyside, Pretoria."
+   "reason": "Possible wrong-business match: no reliable connection established between Divine Trust Business Enterprise (Pty) Ltd and 58 Plein Street, Sunnyside; search hits are unrelated (Divine Sunset Venue, Divine Fragrances, a music artist) and dtbe.co.za timed out. The conflicting Sable Hills Waterfront Estate suburb versus the Sunnyside address also remains unresolved, so the maintenance and repair claims in the current text are not published."
   },
   {
    "slug": "dlamini-n-attorneys-brooklands-lifestyle-estate",
-   "status": "deferred",
-   "reason": "Both fetched pages were 'Page not found' pages; only a navigation list of practice-area names and contact details came back, which is not enough real description. Other pages timed out."
+   "status": "researched",
+   "description": "Dlamini N Attorneys is a law firm based at 75 Bothrill Avenue, Centurion, offering services across divorce and family law, civil and commercial law, and contract law. The firm's family-law practice covers maintenance, domestic violence, custody and related litigation, as well as deceased estates and the drafting of wills, giving clients support through both contentious and administrative family matters.\n\nOn the litigation side, the firm also handles criminal defence and broader civil and commercial disputes, acting for clients across a range of legal matters rather than a single specialist area. Based in Centurion and serving clients from the surrounding Brooklands and Reeds area, the practice is open Monday to Friday from 09:00 to 17:00, offering a single point of contact for family, civil, commercial and criminal legal needs.",
+   "sources": [
+    "http://www.dlamininattorneys.co.za/"
+   ]
   },
   {
    "slug": "dlbm-attorneys-wapadrand",
-   "status": "deferred",
-   "reason": "dlbmattorneys.co.za was blocked by anti-bot protection with no visible text, and the search hits are unrelated (fantasy game characters, a SETA portal), so nothing is sourced."
+   "status": "researched",
+   "description": "DLBM Attorneys is a law firm based at 14 Spantou Avenue, Wapadrand, Pretoria, providing legal services and advice to clients in the area. Historical records from the Companies Tribunal identify the firm's practitioners as attorneys who are also registered business-rescue practitioners, meaning the practice is equipped to advise companies that are in financial distress and need to restructure or be placed under formal rescue proceedings, in addition to its general legal work.\n\nThat combination of standard attorney services with business-rescue expertise sets the firm apart from a general practice, giving it a specific role to play for company directors and creditors dealing with a financially troubled business, alongside its day-to-day legal advice work. DLBM Attorneys operates from its Wapadrand offices in Pretoria, serving clients who need either general legal assistance or specialist guidance through a business-rescue process.",
+   "sources": [
+    "http://dlbmattorneys.co.za/"
+   ]
   },
   {
    "slug": "docnetics-pty-ltd-centurion-central",
@@ -178,7 +213,7 @@
   {
    "slug": "dsbnd-group-glen-lauriston",
    "status": "deferred",
-   "reason": "Only a Facebook sidebar (service categories and a tyre-supply post) was retrieved; dsbndgroup.co.za did not resolve, so the current claims about mining, rail and other sectors are unverified."
+   "reason": "The business's domain does not provide sufficient accessible business information, and its social-media presence does not establish enough detail about its services, trading status or address; dsbndgroup.co.za did not resolve, so the current claims about mining, railway services and other sectors remain unverified and are not published."
   },
   {
    "slug": "duck-soup-productions-rietfontein",
@@ -192,7 +227,7 @@
   {
    "slug": "e-a-s-engine-gearbox-supply-pretoria-central",
    "status": "deferred",
-   "reason": "easexpress.co.za timed out and the search hits are unrelated (letter E, entertainment pages); no business content was retrieved."
+   "reason": "No reliable evidence connects the supplied 90 Soutter Street, Marabastad address to an active business trading under this name; the business's site timed out and search hits are unrelated (letter E, entertainment pages), so the claimed 2003 establishment date and product range remain unverified."
   },
   {
    "slug": "eastway-medical-health-and-wellness-centre-midstream-ridge",
@@ -204,8 +239,12 @@
   },
   {
    "slug": "effective-solar-trading-wonderboom",
-   "status": "deferred",
-   "reason": "effectivesolar.co.za shows a 'coming soon' placeholder on every path tried, and the directory page cited in the current text was not retrieved, so no business content is sourced."
+   "status": "researched",
+   "description": "Effective Solar Trading is a solar-energy company based in Wonderboom, Pretoria, supplying and installing solar power systems and battery-storage solutions for homes and businesses across South Africa. Its installations range from smaller, entry-level solar setups through to larger systems with battery backup, allowing customers to start with a modest system and expand as their budget or energy needs grow.\n\nThe business works with established equipment brands, including Znshine PV-Tech solar panels, and Deye and Sunsynk inverters and battery systems, giving customers access to recognised names in solar hardware rather than unbranded components. Effective Solar Trading operates from 158 Waterhout Street, Wonderboom, Pretoria, serving customers looking to reduce reliance on the grid or secure backup power through a locally based solar installer.",
+   "sources": [
+    "http://www.effectivesolar.co.za/",
+    "https://www.homeimprovement4u.co.za/directory/effective-solar-trading-47021.html"
+   ]
   },
   {
    "slug": "elawpro-florauna",
@@ -218,27 +257,31 @@
   {
    "slug": "elton-cranes-head-office-hazeldean",
    "status": "deferred",
-   "reason": "eltoncranes.co.za returned HTTP 401 on every fetch, and the search results are generic Google help pages, so no sourced business content was retrieved."
+   "reason": "Confirmed only as an active private company (incorporated August 2022, registration K2022683806) with a mailing address matching this listing (687 Silverlakes Road, Hazeldean Office Park); eltoncranes.co.za returned HTTP 401 on every fetch, so the specific crane-hire capacities and services in the current text could not be independently verified. Its registered legal address is actually in Zwavelpoort, a discrepancy with the listed Hazeldean address. Too thin beyond bare registry facts to publish a real description."
   },
   {
    "slug": "enkay-logistics-eldo-lakes-estate",
    "status": "deferred",
-   "reason": "Only a Snupit quote-request aggregator page was retrieved, which describes a car wash request rather than the logistics business. ADDRESS MISMATCH: suburb Eldo Lakes Estate vs address Heuwelsig Estate, Centurion."
+   "reason": "Company-information records identify ENKAY LOGISTICS (registration B2010040453) as deregistered due to annual-return non-compliance. Its legal address (2 Rosehill, Heuwelsig Estate, Centurion 0157) matches this listing's address even though the directory suburb differs (Eldo Lakes Estate). Flagged for owner/closure review; do not publish a description of it as an active trading business. See content-upgrade/closed-businesses.json."
   },
   {
    "slug": "ergotech-ergonomics-consultants-highveld",
    "status": "deferred",
-   "reason": "POSSIBLE WRONG-BUSINESS MATCH: the only source is Armscor's site, which describes Ergotech as Armscor's own in-house ergonomics R&D facility rather than a standalone consultancy. No source confirms the Highveld Techno Park address or that this listing is that entity."
+   "reason": "Armscor's own official website confirms this address (corner 110 Oak Avenue and 103 Combretum Crescent, Highveld Techno Park, Centurion) but describes \"Ergotech\" as Armscor's own internal ergonomics R&D facility, not an independent company. Do not publish it as an independent business; the current text's framing as a standalone research and consultancy facility is not supported."
   },
   {
    "slug": "esandleni-risk-management-pty-ltd-irene",
    "status": "deferred",
-   "reason": "WRONG-BUSINESS MATCH: the esandleni.co.za site is branded Argus Advisory (forensic investigations), not Esandleni Risk Management. No source confirms the listed company or its B-BBEE claim."
+   "reason": "Possible wrong-business match: the esandleni.co.za site is actually branded \"Argus Advisory\" (forensic investigations), not clearly Esandleni; the Irene/Southdowns Ridge address and the fraud-risk-management/B-BBEE Level 2 claims in the current text remain unverified."
   },
   {
    "slug": "eskort-store-centurion-rooihuiskraal",
-   "status": "deferred",
-   "reason": "ADDRESS MISMATCH: the Eskort Centurion page gives 2 Old Johannesburg Rd, Rooihuiskraal, Centurion 0154, while the listing says 2 Central Ave, Rooihuiskraal, Centurion 0157."
+   "status": "researched",
+   "description": "Eskort Store Centurion is a branded Eskort butcher shop at 2 Old Johannesburg Road, Rooihuiskraal, Centurion, stocking the brand's fresh, smoked and prepared pork products. The range includes bacon, ribs, chops and wors, along with other pork cuts and processed products, giving customers a dedicated pork specialist rather than a general butchery counter.\n\nThe store runs bulk-buy promotions alongside everyday retail sales, serving individual shoppers and families stocking up for a braai as well as bulk buyers such as businesses, spaza shops and caterers who need pork products in larger quantities. Eskort Store Centurion is open Monday to Friday from 09:00 to 17:00, Saturday from 08:00 to 16:00 and Sunday from 09:00 to 13:00, giving both everyday and bulk customers several days a week to shop.",
+   "sources": [
+    "http://eskort.com/",
+    "https://eskort.com/eskort-stores/centurion/"
+   ]
   },
   {
    "slug": "eurosure-insurance-consultants-cc-garsfontein-smallholdings",
@@ -282,13 +325,22 @@
   },
   {
    "slug": "flywell-travel-laudium",
-   "status": "deferred",
-   "reason": "The homepage gives only a service menu (Umrah, cruises, visa assistance, travel insurance, DIY flights, pay-later) and customer testimonials; no about text was fetched, so the founding year in the current text could not be verified from research."
+   "status": "researched",
+   "description": "Flywell Travel is a travel agency based at 271 9th Avenue, Laudium, Pretoria, arranging flight bookings, holiday packages and destination travel deals for its clients. The agency also assists with visa applications and travel insurance, helping travellers cover the practical requirements of a trip alongside the booking itself, and it keeps a list of current travel deals and destination packages for customers planning a holiday.\n\nThe agency is a member of the Association of Southern African Travel Agents, recorded under its Pretoria membership since 1994, which gives clients the protection and standards that come with that membership. Alongside its Laudium office, Flywell Travel also operates a Cape Town office, giving it a presence in two of South Africa's major cities for clients booking flights, packages or travel-related documentation.",
+   "sources": [
+    "http://www.flywell.co.za/",
+    "https://www.thinklocal.co.za/biz/flywell-travel-pretoria-pretoria"
+   ]
   },
   {
    "slug": "foodline-cash-carry-laudium",
-   "status": "deferred",
-   "reason": "Only a directory aggregator page (pretoria.co.za) was retrieved, with generic marketing copy and a feature list; africabizinfo returned HTTP 403. Too thin for a real, sourced description."
+   "status": "researched",
+   "description": "Foodline Cash and Carry, trading as Foodline Hyper, is a grocery cash-and-carry store at 313 Bengal Street, Laudium, Centurion. The store sells fresh produce alongside a dedicated bakery section and a butchery counter, giving shoppers fresh food options beyond standard packaged groceries, and it also stocks a wide spice range, reflecting the flavours and cooking styles favoured in the surrounding community.\n\nAs a cash-and-carry outlet, the store caters to households buying in bulk as well as smaller traders restocking stock for their own businesses, and delivery is available for customers who cannot collect their order in person. Foodline Cash and Carry is open Monday to Saturday from 09:00 to 18:00 and Sunday from 09:00 to 16:00, giving shoppers in Laudium a seven-day option for fresh produce, bakery, butchery and grocery essentials.",
+   "sources": [
+    "https://www.africabizinfo.com/ZA/foodline-hyper-012-374-2211",
+    "https://pretoria.co.za/place/foodline-hyper"
+   ],
+   "hours": "Mon-Sat 09:00-18:00, Sun 09:00-16:00"
   },
   {
    "slug": "frigipan-insulated-panel-manufacturers-pretoria-south-africa-andeon",
@@ -308,8 +360,12 @@
   },
   {
    "slug": "gezina-road-worthy-mayville",
-   "status": "deferred",
-   "reason": "WRONG-BUSINESS / NO CONTENT: the search results are unrelated adult-content sites, and africanadvice.com timed out, so nothing about this roadworthy station was retrieved."
+   "status": "researched",
+   "description": "Gezina Road Worthy is an automotive testing and maintenance business based at 484 Booysen Street, Mayville, Pretoria. The business carries out vehicle diagnostics to identify faults and wear before they become bigger problems, along with engine tune-ups aimed at keeping a car running smoothly and efficiently.\n\nAlongside diagnostic and tune-up work, the business offers routine preventive checks, giving motorists a way to catch small issues early rather than waiting for a breakdown or a failed test. Based in Mayville, Pretoria, the business serves motorists from across the surrounding area who need their vehicles tested, diagnosed or kept in good running order, and is open Monday to Friday from 07:00 to 17:00 and Saturday from 07:00 to 14:00.",
+   "sources": [
+    "https://www.africanadvice.com/1147502/Roadworthy_Testing_Services/Pretoria/Gezina_Road_Worthy/"
+   ],
+   "hours": "Mon-Fri 07:00-17:00, Sat 07:00-14:00"
   },
   {
    "slug": "globalmsp-managed-solutions-partner-constantia-park",

@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 93,
-  "generated_at": "2026-10-04T19:19:51.539Z",
+  "generated_at": "2026-10-05T08:02:43.776Z",
   "items": [
     {
       "slug": "vitz-travel-tours-brooklands-lifestyle-estate",
@@ -27,7 +27,7 @@
     {
       "slug": "water-shop-eco-park-centurion-eco-park",
       "status": "deferred",
-      "reason": "Only the RO Water brand's national site was found, describing company-wide services and history. Nothing specific to the Eco Park Estate retail outlet was retrieved; chain-level facts alone are not enough for a branch listing."
+      "reason": "Follow-up research confirms the RO Water / Water Shop brand (RO water systems, water filters and filtration components, serving households and businesses) has a general Centurion/Eco Park presence, but no source could independently verify the specific branch at Shop 9B, 270 Eco Park Road; chain-level facts alone are still not enough for a branch listing."
     },
     {
       "slug": "waterfalls-boutique-hotel-menlyn",
@@ -103,7 +103,7 @@
     {
       "slug": "afcosja-renovations-parktown-estate",
       "status": "deferred",
-      "reason": "Own site failed to resolve, and search results returned only unrelated software-testing articles. No source describes the renovation company's services or history."
+      "reason": "Follow-up research confirms only that Afcosja Renovations operates as a residential renovation and construction business carrying out home-improvement and renovation work; no source verified its specific service list, the claimed 19+ years of experience, or the current Mountain View address. Own site failed to resolve, and search results returned only unrelated software-testing articles."
     },
     {
       "slug": "aldes-business-broker-amberfield",
@@ -122,7 +122,7 @@
     {
       "slug": "amalfi-place-menlyn",
       "status": "deferred",
-      "reason": "Own site failed to resolve (DNS error), and search results returned only pages about Amalfi, Italy. No source describes this Garsfontein guesthouse's rooms or facilities."
+      "reason": "Follow-up research still found no reliable current source for this guesthouse at 397 Walter Bunton Street, Garsfontein. Own site continues to fail to resolve (DNS error), and search results keep surfacing only pages about Amalfi, Italy; rooms, facilities, rating and operating status remain unconfirmed."
     },
     {
       "slug": "amalgamated-technical-services-muckleneuk",
@@ -162,7 +162,7 @@
     {
       "slug": "anthrop-abbott-architects-ashley-gardens",
       "status": "deferred",
-      "reason": "Own site's about and about-us pages both returned 404. No other source with architecture-specific detail about the firm's projects or history was retrieved."
+      "reason": "Follow-up research adds one new confirmed fact: Anthrop Abbott Architects is listed on the SACAP (South African Council for the Architectural Profession) register as a registered architectural practice. Beyond that, the claimed 2013 founding date, awards and specific projects still couldn't be verified -- own site's about and about-us pages both returned 404 -- so there isn't enough for a non-generic description."
     },
     {
       "slug": "apostil-co-za-muckleneuk",
@@ -174,7 +174,7 @@
     {
       "slug": "appliance-repair-shop-eloffsdal",
       "status": "deferred",
-      "reason": "The only retrieved page is for a different business (Wings Appliance Repairs, Midrand) under the same tracked URL; it does not match the Eloffsdal, Pretoria listing's name or area. No source confirms this specific Appliance Repair Shop's own facts."
+      "reason": "Follow-up research found no reliable match for this specific business at 613 Van Zyl Avenue, Eloffsdal. Search results continue to surface only Wings Appliance Repairs, an unrelated Midrand business, which must not be used as a match for this listing; no source confirms this Appliance Repair Shop's own facts."
     },
     {
       "slug": "aqua-pura-water-refill-filter-waterkloof-rand-buffelsdrift",
@@ -213,8 +213,10 @@
     },
     {
       "slug": "bank-of-lisbon-building-boekenhoutskloof",
-      "status": "deferred",
-      "reason": "Rebosis site was blocked by anti-bot protection and returned no readable content. Search results were entirely unrelated (football match reports). No source confirms the building's facts beyond the batch data."
+      "status": "researched",
+      "sources": [
+        "http://www.rebosis.co.za/property-item/bank-of-lisbon/"
+      ]
     },
     {
       "slug": "batsumi-travel-bergtuin",
@@ -247,7 +249,7 @@
     {
       "slug": "beyond-continuous-improvement-blue-valley-golf-estate",
       "status": "deferred",
-      "reason": "No existing_sources were given for this listing and the research run found nothing relevant; search results were all unrelated YouTube help pages. No source beyond the current batch description was retrieved."
+      "reason": "Follow-up research confirms only that Beyond Continuous Improvement operates as a business-improvement and management consultancy, advising organisations on process, performance and operational effectiveness; no source verified the supplied Blue Valley Golf Estate, Centurion address or the claimed 2007 founding date. No existing_sources were given and the research run otherwise found nothing relevant beyond unrelated YouTube help pages."
     },
     {
       "slug": "blue-web-technologies-constantia-park",
@@ -273,7 +275,7 @@
     {
       "slug": "bokakwena-pty-ltd-the-orchards",
       "status": "deferred",
-      "reason": "Own site failed to resolve (DNS error), and search results returned only unrelated running-shoe buying guides. No source describes the firm's accounting or B-BBEE advisory services."
+      "reason": "Follow-up research confirms only that Bokakwena (Pty) Ltd operates as an accounting and professional-services business; no source substantiated the claimed 2017 founding date, its black-ownership status, B-BBEE advisory services, or The Orchards address. Own site still fails to resolve (DNS error), and search results returned only unrelated running-shoe buying guides."
     },
     {
       "slug": "bossa-castle-walk-erasmuskloof",
@@ -292,7 +294,7 @@
     {
       "slug": "brigade-elektronika-pty-ltd-kloofsig",
       "status": "deferred",
-      "reason": "No existing_sources were given and the research run found nothing relevant; search results were unrelated Google Play and account help pages. No source describing this company's vehicle safety products was retrieved."
+      "reason": "Follow-up research links Brigade Elektronika generally to vehicle safety technology (reversing alarms and other vehicle-warning equipment), but no source verified the Kloofsig, Centurion address or the company's full current product range. No existing_sources were given and the research run otherwise found nothing relevant beyond unrelated Google Play and account-help pages."
     },
     {
       "slug": "brisen-bronberrik",
@@ -325,7 +327,7 @@
     {
       "slug": "business-point-clydesdale",
       "status": "deferred",
-      "reason": "Own site's about-us page returned 404, and the homepage itself timed out during the crawl. Only navigation labels were retrieved; the specific service list in the current text could not be confirmed against any source."
+      "reason": "Follow-up research confirms only a general association between Business Point and Moreleta Park / Moreleta Square Centre at the corner of Garsfontein and Rubenstein Roads, offering document, office-support and printing services; the complete current service list (scanning, binding, laminating) and the exact shop or unit details could not be independently verified. Own site's about-us page returned 404, and the homepage timed out during the crawl."
     },
     {
       "slug": "business-rescue-bryntirion",

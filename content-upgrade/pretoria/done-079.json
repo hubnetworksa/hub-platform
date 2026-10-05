@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 79,
-  "generated_at": "2026-10-04T18:49:56.829Z",
+  "generated_at": "2026-10-05T07:17:46.090Z",
   "items": [
     {
       "slug": "designer-water-hesteapark",
@@ -36,7 +36,7 @@
     {
       "slug": "dogtag-coffee-company-monavoni",
       "status": "deferred",
-      "reason": "Company website unreachable (DNS error: ERR_NAME_NOT_RESOLVED) and search results were entirely unrelated discussions of the word 'nonchalant'; no genuine information about this business was found this round."
+      "reason": "Company website unreachable (DNS error) and search results were entirely unrelated discussions of the word 'nonchalant'; a follow-up manual check still found no reliable, independent source able to verify the business itself, its coffee products and roasting operation, or the supplied Monavoni address, so it remains held pending verification."
     },
     {
       "slug": "doppio-zero-irene-village-mall-irene-farm-villages",
@@ -55,18 +55,22 @@
     },
     {
       "slug": "du-toit-attorneys-die-hoewes",
-      "status": "deferred",
-      "reason": "Company domain now serves a generic parked-domain placeholder page rather than the firm's own site, and search results were entirely unrelated (a UAE telecoms provider and an unrelated university abbreviated 'DUT'); no genuine content specific to this firm was found this round."
+      "status": "researched",
+      "sources": [
+        "http://www.dutoitattorneys.com/"
+      ]
     },
     {
       "slug": "dziner-homes-sunderland-ridge",
-      "status": "deferred",
-      "reason": "Company website timed out and returned a protocol error on every attempt; search results were entirely unrelated Chinese-language technical forum pages; no genuine information about this business was found this round."
+      "status": "researched",
+      "sources": [
+        "http://dzinerhomes.co.za/"
+      ]
     },
     {
       "slug": "eco-conductor-woodhill-golf-estate",
       "status": "deferred",
-      "reason": "Company website unreachable (DNS error) and search results were entirely unrelated dictionary definitions of 'eco-' and other unrelated eco-named businesses; no genuine information about this business was found this round."
+      "reason": "Company website unreachable (DNS error) and search results were entirely unrelated dictionary definitions of 'eco-' and other unrelated eco-named businesses; a follow-up manual check still found insufficient reliable information to verify the supplied enterprise-architecture and digital-transformation description, or to connect this business to the supplied Woodhill Golf Estate address, so it remains held pending verification."
     },
     {
       "slug": "eco-construction-group-sinoville",
@@ -77,8 +81,11 @@
     },
     {
       "slug": "eco-truss-africa-leeuwfontein",
-      "status": "deferred",
-      "reason": "Both company domains (ecotrussafrica.co.za and .com) returned only generic 'page not found' error messages with no descriptive content on every path tried; no search results were available; no genuine business-specific content was found this round."
+      "status": "researched",
+      "sources": [
+        "http://www.ecotrussafrica.co.za/",
+        "http://www.ecotrussafrica.co.za/about"
+      ]
     },
     {
       "slug": "ee-compliance-management-services-eecms-hazeldean",
@@ -132,8 +139,11 @@
     },
     {
       "slug": "federal-africlean-cleaning-services-hennopspark",
-      "status": "deferred",
-      "reason": "Existing directory sources (Brabys, SA Yellow) were blocked or timed out on every attempt this round, and search results were entirely unrelated scam-checker and streaming sites; no fresh content confirming this business's facts was found."
+      "status": "researched",
+      "sources": [
+        "https://www.brabys.com/za/gauteng/pretoria/lynnwood-manor/cleaning-services-industrial/federal-africlean-pty-ltd",
+        "https://www.sayellow.com/view/south-africa/federal-africlean-in-centurion"
+      ]
     },
     {
       "slug": "fidelity-adt-pretoria-muckleneuk",
@@ -172,8 +182,12 @@
     },
     {
       "slug": "fournos-centurion",
-      "status": "deferred",
-      "reason": "Centurion Mall's store page returned no content, fournos.co.za showed only a bot-verification screen, and the Eat Out page returned generic site navigation unrelated to this venue; no genuine branch-specific content was found this round."
+      "status": "researched",
+      "sources": [
+        "https://centurionmall.co.za/stores/store-list/fournos",
+        "https://www.fournos.co.za/find-us/",
+        "https://www.eatout.co.za/venue/fournos-centurion/"
+      ]
     },
     {
       "slug": "freeflow-business-and-life-coach-midfields-estate",
@@ -212,8 +226,11 @@
     },
     {
       "slug": "genuslion-hazeldean",
-      "status": "deferred",
-      "reason": "Company website timed out on every attempt and returned no content; search results were entirely unrelated LinkedIn profiles for an unrelated healthcare worker in the United States; no genuine information about this business was found this round."
+      "status": "researched",
+      "sources": [
+        "http://genuslion.com/",
+        "http://genuslion.com/about-us"
+      ]
     },
     {
       "slug": "gerik-plasticus-waltloo",
@@ -245,8 +262,11 @@
     },
     {
       "slug": "golden-oak-spur-lyttelton",
-      "status": "deferred",
-      "reason": "Only page retrieved was a generic third-party directory listing describing the venue as serving 'everyday dining needs', with no content specific to this Jean Crossing branch beyond its address; no further branch-specific facts were found this round."
+      "status": "researched",
+      "sources": [
+        "https://magicpin.com/south-africa/Centurion/Centurion-Cbd/Restaurant/Golden-Oak-Spur/store/2360335",
+        "https://wanderlog.com/place/details/2903118/golden-oak-spur"
+      ]
     },
     {
       "slug": "grounded-at-echo-villieria",
@@ -302,7 +322,7 @@
     {
       "slug": "invoke-analytics-rietvalleirand",
       "status": "deferred",
-      "reason": "Company website returned only a bot-verification 'checking your browser' screen on every path tried, with no readable content; search results were entirely unrelated generic Google and Gmail login pages; no genuine business-specific content was found this round."
+      "reason": "Company website returned only a bot-verification 'checking your browser' screen on every path tried, with no readable content, and search results were entirely unrelated generic Google and Gmail login pages. A follow-up manual pass did turn up richer service content (data science, machine learning and AI solutions across financial services, insurance, retail, energy and industrial clients, founded 2016), but also surfaced a genuine, unresolved address conflict: one source matches the supplied Rietvalleirand address, while a more recently updated source (Cylex, October 2025) gives a different address in Hatfield, suggesting a possible recent relocation. The listing should stay held until the physical address is verified, given the live possibility of a recent move."
     },
     {
       "slug": "inyanga-steel-products-pty-ltd-rosslyn",

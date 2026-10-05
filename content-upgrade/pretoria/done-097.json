@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 97,
-  "generated_at": "2026-10-04T18:16:29.650Z",
+  "generated_at": "2026-10-05T08:08:04.131Z",
   "items": [
     {
       "slug": "wire-worx-manufacturers-koedoespoort",
@@ -231,8 +231,12 @@
     },
     {
       "slug": "body-guru-montana-montana-gardens",
-      "status": "deferred",
-      "reason": "Wrong-business match: the listing's own website (mybodyguru.co.za) is an online supplement store selling protein powders, workout supplements and vitamins under brands like Fully Dosed and My Protein Pantry, with no gym, fitness class or Body Guru Montana content found. A deeper search for gyms in Montana, Pretoria found other real gyms nearby (Planet Fitness Montana Park, Body20 at Montana Value Centre, Virgin Active Montana Park) but no independent trace at all of a gym actually called Body Guru in Montana. The wrong-business-match concern stands; this may need owner follow-up or a closure review rather than further research."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/BodyGuruMontana/about",
+        "https://www.fresha.com/lvp/body-guru-montana-milkplum-avenue-pretoria-kqXL2q",
+        "https://pretoria.co.za/place/yami-cafe"
+      ]
     },
     {
       "slug": "bosboma-country-venue-kameeldrift",
@@ -344,7 +348,7 @@
     {
       "slug": "cb-steelworks-klerksoord",
       "status": "deferred",
-      "reason": "Own website is an empty server directory listing with no content, and directory sources only confirm the address and phone number under the generic 'steelwork design company' category; no services, history, products or specialisation could be found for this specific business. A deeper pass confirmed Klerksoord is a known industrial/heavy-engineering area generally, but found nothing new specific to this business."
+      "reason": "POSSIBLE WRONG-BUSINESS MATCH -- searches for the exact name \"CB Steelworks\" surface a separate CB Steelworks CC with its own company-registration record tied to Milnerton, Cape Town, which cannot safely be attributed to this Klerksoord, Pretoria listing at 35 Sapphire Street. The only other sources found are an empty server-directory listing at the business's own domain and a directory entry confirming only address and phone, with no services, history or specialisation specific to this Pretoria business; fresh searches also surface only unrelated, similarly-named Pretoria businesses (CB Security, CB Stores), not this one. Kept deferred pending confirmation of which company this listing actually belongs to."
     },
     {
       "slug": "champion-boarding-kennels-cattery-roodeplaat",

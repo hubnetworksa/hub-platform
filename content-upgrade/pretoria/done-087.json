@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 87,
-  "generated_at": "2026-10-04T17:39:32.063Z",
+  "generated_at": "2026-10-05T07:31:20.682Z",
   "items": [
     {
       "slug": "priva-waterkloof-heights",
@@ -20,7 +20,7 @@
     {
       "slug": "psg-magalies-north-annlin-annlin-west",
       "status": "deferred",
-      "reason": "Both pages fetched this round were the generic national PSG Financial Services 'About' page (404'd at that URL, content recovered via a redirect), covering the group's three divisions and office count with no facts specific to this Annlin branch. The current one-liner is itself only chain-level (PSG Financial Services generally); per the chains rule a description built only from chain-level facts is not allowed."
+      "reason": "ADDRESS/BUSINESS-MATCH FLAG -- current PSG adviser profiles confirm a practice trading under this name (also referred to as Magalies Noord Wealth) is real, but place it at Cirrus Eco Park, 23 Escallonia Road, Montana Park Ext 12, Pretoria 0182 (tel 012 548 0217) -- not 3 Dorethea Street, Annlin Forum as on this listing. The practice appears to have moved, or this listing's address is outdated; the Montana Park/Cirrus Eco Park address should be verified against the Annlin Forum address before a description tied to the Annlin location is published."
     },
     {
       "slug": "q-kon-highveld",
@@ -172,7 +172,7 @@
     {
       "slug": "shtl-abnormal-transport-jan-niemand-park",
       "status": "deferred",
-      "reason": "The listing's own existing source and website, shtl.co.za, now describes the company as 'currently operating from the Western Cape', which conflicts with the batch's Jan Niemand Park, Pretoria address for this listing. This looks like either a relocated business or a possible address/business mismatch, so no fresh facts from today's crawl can safely be attributed to this Pretoria listing; worth a manual check rather than publishing conflicting location facts."
+      "reason": "ADDRESS/BUSINESS-MATCH FLAG -- SHTL's own website confirms the company is real, established in 2014, offering normal and abnormal load transport (low-beds, step-decks, tri-axles, super-decks), crane truck services, vehicle recovery and rigging, but states it is currently operating from the Western Cape, not Pretoria -- conflicting with this listing's address (307 Henning Street, Silverton, Jan Niemand Park, Pretoria). The Silverton/Pretoria address needs owner verification before this listing is published as a current Pretoria operation."
     },
     {
       "slug": "simply-fleet-rietvalleirand",

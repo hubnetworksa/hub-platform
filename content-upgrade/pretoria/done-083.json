@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 83,
-  "generated_at": "2026-10-04T19:09:41.512Z",
+  "generated_at": "2026-10-05T07:17:38.251Z",
   "items": [
     {
       "slug": "will-consulting-die-hoewes",
@@ -19,8 +19,10 @@
     },
     {
       "slug": "wolo-travel-centurion-centurion-golf-estate",
-      "status": "deferred",
-      "reason": "Research gave only the national WOLO Travel homepage and /about page (Hot Deals, WOLO Split, Fully Loaded trips, Flights + Nights). Nothing describes the Centurion Mall branch itself, so any description would be chain-level only."
+      "status": "researched",
+      "sources": [
+        "https://wolotravel.co.za/"
+      ]
     },
     {
       "slug": "wonderboom-car-service-wonderboom",
@@ -31,8 +33,10 @@
     },
     {
       "slug": "woodhill-college-woodhill-golf-estate",
-      "status": "deferred",
-      "reason": "curro.co.za timed out during research. The only search hits are for Woodhill Golf Estate, its golf club and its accommodation, not the school. No school-specific facts were found, so the Curro and curriculum claims in the current text are unverified."
+      "status": "researched",
+      "sources": [
+        "https://www.curro.co.za/schools/woodhill-college-primary-school/?utm_source=google&utm_medium=organic&utm_campaign=gmb"
+      ]
     },
     {
       "slug": "xenia-pharmaceutical-pty-ltd-rooihuiskraal",
@@ -43,13 +47,15 @@
     },
     {
       "slug": "xiphoss-technology-highveld",
-      "status": "deferred",
-      "reason": "xiphoss.co.za returned only the theme template (dummy About and Contact text), with HTTP 404 and timeout errors on other pages, and no search result describes the company. Nothing in the research supports the current text."
+      "status": "researched",
+      "sources": [
+        "http://xiphoss.co.za/"
+      ]
     },
     {
       "slug": "xpress-batteries-wierda-park-wierdapark",
       "status": "deferred",
-      "reason": "Research has only the national Xpress Batteries chain site (free testing, fitment, product categories) and no page or snippet for the Wierda Park branch. A description would be chain-level only."
+      "reason": "Only the national Xpress Batteries chain site was found (free testing, fitment, product categories); no page or snippet describes this Wierda Park outlet specifically, so there is insufficient reliable branch-specific information to publish, only wider-network evidence."
     },
     {
       "slug": "xs-health-brummeria",
@@ -74,8 +80,11 @@
     },
     {
       "slug": "abacus-divisions-blue-valley-golf-estate",
-      "status": "deferred",
-      "reason": "Research has only the Abacus Divisions homepage (search form and generic commercial property copy for Irene and Villiers) and no page about the firm itself. Founding year, divisions and track record in the current text are not confirmed by any source fetched."
+      "status": "researched",
+      "sources": [
+        "http://www.abacusdivisions.co.za/",
+        "https://www.property24.com/estate-agents/abacus-divisions/27678"
+      ]
     },
     {
       "slug": "abyx-factory-shop-i-waltloo-bergtuin",
@@ -88,7 +97,7 @@
     {
       "slug": "adt-centurion-bronberrik",
       "status": "deferred",
-      "reason": "Research has only the national Fidelity ADT contact page (solutions list, 24-hour contact line). Nothing describes the Centurion branch itself, so any description would be chain-level only."
+      "reason": "Fidelity ADT's national offering is confirmed (monitoring, armed response, access control, camera security), but no source describes this Centurion Medical Centre branch specifically, so there is insufficient branch-specific evidence to publish."
     },
     {
       "slug": "advertising-solutions-web-design-pretoria-montana-gardens",
@@ -99,18 +108,24 @@
     },
     {
       "slug": "african-spirit-trading-71-pty-ltd-celtisdal",
-      "status": "deferred",
-      "reason": "The company website shows only a Coming Soon placeholder on three pages. The web search results are about Africa generally and African Bank, not this company, so no sourced description is possible."
+      "status": "researched",
+      "sources": [
+        "https://africanspirittrading.co.za/"
+      ]
     },
     {
       "slug": "agr-ment-south-africa-infotech-building-bryntirion",
-      "status": "deferred",
-      "reason": "The homepage shows section headings, announcements and certificate counts (242 active certificates) but no sourced statement of what the organisation does. The evaluation and certification wording in the current text is not confirmed by the research."
+      "status": "researched",
+      "sources": [
+        "https://agrement.co.za/"
+      ]
     },
     {
       "slug": "akani-real-estate-woodhill-golf-estate",
-      "status": "deferred",
-      "reason": "The Private Property agency page returned cookie-consent text and category links only. No agency description, team, or area facts were found, and the search results were not checked into a usable source."
+      "status": "researched",
+      "sources": [
+        "https://www.privateproperty.co.za/estate-agency/akani-real-estate/12773"
+      ]
     },
     {
       "slug": "all-storage-annlin",
@@ -150,12 +165,14 @@
     {
       "slug": "anchor-risk-management-ashley-gardens",
       "status": "deferred",
-      "reason": "Every page of the company website returns 'This website has been disabled' (php issue), and the search results are YouTube help pages. No sourced description of the underwriting business is available."
+      "reason": "Every page of the company website returns 'This website has been disabled' and search results are unrelated YouTube help pages. The Ashlea Gardens address is confirmed, but there is insufficient reliable information to verify the underwriting/insurance activities described, and one directory marks the business as closed."
     },
     {
       "slug": "antley-lights-pty-ltd-donkerhoek",
-      "status": "deferred",
-      "reason": "The Antley site describes a lighting manufacturer with a Malmesbury (Western Cape) address and a June 2014 founding date. The listing gives a Donkerhoek address and June 2017. These conflict, so the Donkerhoek location and founding date cannot be confirmed."
+      "status": "researched",
+      "sources": [
+        "http://antley.co.za/"
+      ]
     },
     {
       "slug": "apex-pump-solutions-kilner-park",
@@ -166,8 +183,11 @@
     },
     {
       "slug": "api-property-group-pretoria-eldo-lakes-estate",
-      "status": "deferred",
-      "reason": "Research has only the national API Property Group homepage (industrial and commercial listings, 'since 1984') with no Pretoria or Centurion branch facts. The Centurion area-profile page is not in the research, so the business-node claims cannot be sourced."
+      "status": "researched",
+      "sources": [
+        "https://www.apiproperty.co.za/",
+        "https://www.apiproperty.co.za/area-profiles/centurion/"
+      ]
     },
     {
       "slug": "appcentrix-pty-ltd-centurion-golf-estate",
@@ -178,8 +198,10 @@
     },
     {
       "slug": "aqua-express-water-refill-store-clubview-clubview",
-      "status": "deferred",
-      "reason": "The Aqua Express site was blocked by anti-bot protection (35 visible characters). The search results are about the band Aqua, an Adobe app and an unrelated plant-hire company, so no source describes this refill store."
+      "status": "researched",
+      "sources": [
+        "http://www.aquaexpress.co.za/"
+      ]
     },
     {
       "slug": "arabest-solutions-montana-gardens",
@@ -191,12 +213,14 @@
     {
       "slug": "archaeological-heritage-services-africa-heritage-hill-estate",
       "status": "deferred",
-      "reason": "The company domain did not resolve during research, and the search results are unrelated adult forums and websites. No source describes the heritage consultancy."
+      "reason": "The company domain did not resolve during research, and search results returned unrelated content. There is insufficient reliable information to verify the archaeological/heritage-impact/palaeontological consulting services described, or the supplied address."
     },
     {
       "slug": "asakhe-business-solutions-the-reeds",
-      "status": "deferred",
-      "reason": "The contact page is the only usable page, with the address and phone numbers and no description of services. The other fetches returned 404 or blocked content, and the search results are cricket and TV schedules."
+      "status": "researched",
+      "sources": [
+        "http://asakhebusinesssolutions.co.za/"
+      ]
     },
     {
       "slug": "ashkan-brooklands-lifestyle-estate",
@@ -208,17 +232,19 @@
     {
       "slug": "avbob-funeral-service-centurion-clubview",
       "status": "deferred",
-      "reason": "Research has the national AVBOB about and product pages (funeral services, policies, repatriation). It has no Clubview branch information, and the branch-finder page timed out, so the description would be chain-level only."
+      "reason": "AVBOB's national funeral-service offering is well established (funeral services, policies, repatriation), but no source describes this specific Clubview branch or its branch-level services, so there is insufficient reliable branch-specific evidence to publish."
     },
     {
       "slug": "axis-developments-constantia-park",
       "status": "deferred",
-      "reason": "The axisdev.co.za fetch returned a domain-registrar page for another client, and the Hotfrog listing was not in the research. Nothing in the research describes AXIS DEVELOPMENTS' engineering work."
+      "reason": "The axisdev.co.za fetch returned a domain-registrar page for another client, and no reliable current source links this Moreleta Park listing to the described mechanical/structural/automotive/FEA/CFD engineering services, so those claims cannot be published."
     },
     {
       "slug": "bakers-bin-garsfontein-garsfontein-smallholdings",
-      "status": "deferred",
-      "reason": "Research has the national Bakers Bin site (founded in Pretoria in 1999, retail shops and bulk wholesale). No Garsfontein shop page or store facts were found, so the description would be chain-level only."
+      "status": "researched",
+      "sources": [
+        "http://www.bakersbin.co.za/"
+      ]
     },
     {
       "slug": "baobab-cafe-grill-wonderboom",
@@ -280,12 +306,14 @@
     {
       "slug": "borckenhagen-and-louw-quantity-surveyors-rietvalleirand",
       "status": "deferred",
-      "reason": "The Brabys listing is blocked by a Cloudflare challenge, and the search results are YouTube pages. No source describes the quantity surveying practice, so the 1932 and B&L network claims cannot be confirmed."
+      "reason": "Historical professional sources confirm this was a quantity-surveying practice in Pretoria decades ago, but its current trading status and the supplied Rietvalleirand address are not confirmed by any reliable current source; the Brabys listing is blocked by a Cloudflare challenge."
     },
     {
       "slug": "boston-city-campus-pretoria-north-pretoria-north",
-      "status": "deferred",
-      "reason": "Research has the national Boston City Campus site (online accredited qualifications, 50 support centres, short courses). Nothing describes the Pretoria North support centre itself, so a description would be chain-level only."
+      "status": "researched",
+      "sources": [
+        "https://www.boston.ac.za/"
+      ]
     },
     {
       "slug": "brinant-group-erasmusrand",
@@ -304,7 +332,7 @@
     {
       "slug": "budget-aluminium-and-glass-daspoort",
       "status": "deferred",
-      "reason": "The company website was blocked (HTTP 503 with an anti-bot page), and the search results are for Budget car rental, Budget insurance and the national budget. Nothing describes Budget Aluminium and Glass."
+      "reason": "The company website was blocked (HTTP 503 with an anti-bot page), and search results returned unrelated 'Budget' brands (car rental, insurance, national budget). There is insufficient reliable current information about the business itself to verify the aluminium windows/doors/shopfronts/installation services list, and the address and trading status remain unconfirmed."
     },
     {
       "slug": "business-data-communication-bronberrik",

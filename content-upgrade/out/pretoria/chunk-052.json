@@ -3,7 +3,7 @@
   {
    "slug": "surplus-warehouse-pty-ltd-donkerhoek",
    "status": "deferred",
-   "reason": "Thin: the homepage gives only about six usable facts (ex-military refurbishment, late-1980s founding, Unimog and SAMIL stock, east Pretoria near the N4), which cannot reach 100 words without padding."
+   "reason": "Still thin after a deeper pass: confirmed as a Donkerhoek-based supplier of refurbished surplus and ex-military vehicles and equipment, including Unimog vehicles and SAMIL trucks, but no further reliable detail was found to expand the description to 100 real words without padding."
   },
   {
    "slug": "sydsen-group-irene",
@@ -15,13 +15,16 @@
   },
   {
    "slug": "t-m-electrical-website-karenpark",
-   "status": "deferred",
-   "reason": "Thin: the site is a short services list (electrical, plumbing, property management, gardening) with general copy and no sourced detail about the business."
+   "status": "researched",
+   "description": "T & M Electrical is a property-maintenance company based in Karen Park, Pretoria, bringing together electrical, plumbing, property and gardening services for one client base. Its electrical team handles service connections, prepaid meter installations, reticulation, substations and transformers, certificates of compliance, and the installation and maintenance of domestic, commercial and residential electrical systems, generators and solar power. Plumbing work covers drainage, geysers, toilets, water pipes and stormwater systems, while its property side manages rentals, sales and maintenance. Gardening services round out the offering, including landscaping, tree felling, paving and the building of water features and ponds.\n\nFormed in 2006 as a wholly black-owned small and medium enterprise, the company has worked with clients including law firms, restaurants, residential estates and government facilities. It services Pretoria and the surrounding areas and can take on projects across South Africa, operating from Unit 308, Wonderpark Estates, 886 First Avenue, Karen Park, Pretoria.",
+   "sources": [
+    "http://tmelectric.co.za/"
+   ]
   },
   {
    "slug": "thatchfield-residential-estate-rentals-thatchfield-estate",
    "status": "deferred",
-   "reason": "WRONG-BUSINESS MATCH: the research page is the Thatchfield estate developer and homeowners' site, not a rentals agency. It also names a Midrand Real Estate office in the old farmhouse, so the listing needs checking before any text is written."
+   "reason": "WRONG-BUSINESS MATCH: a deeper pass confirms Thatchfield rental activity is real in the area generally, but not that this specific business operates from the supplied Brakfontein Road address; the only identified Thatchfield sales office is a property-development sales office, a different kind of business from a rentals agency."
   },
   {
    "slug": "the-accountants-grootfontein-country-estate",
@@ -42,12 +45,12 @@
   {
    "slug": "the-courier-guy-erasmia-crossing-locker-erasmia",
    "status": "deferred",
-   "reason": "No usable content: thecourierguy.co.za is blocked by a Cloudflare challenge, and the searches returned only dictionary and news pages for the word The."
+   "reason": "Still unverifiable: a deeper pass could not independently confirm this specific locker point beyond what already appears in the directory's own data; thecourierguy.co.za remains blocked and no independent source describes this location."
   },
   {
    "slug": "the-courier-guy-perfect-hydration-clubview-point-clubview",
    "status": "deferred",
-   "reason": "No usable content: thecourierguy.co.za is blocked by a Cloudflare challenge, and the searches returned only dictionary and news pages for the word The."
+   "reason": "Still unverifiable: a deeper pass could not independently confirm this specific locker point beyond what already appears in the directory's own data, which is not independent evidence; no other source describes this location."
   },
   {
    "slug": "the-crazy-store-northdale-shopping-centre-ninapark",
@@ -68,12 +71,12 @@
   {
    "slug": "the-golden-thread-life-coaching-wonderboom-south",
    "status": "deferred",
-   "reason": "Thin: the only fetched page is a Linktree bio (midlife coaching, a free discovery call and bookable sessions), with no background on the coach or the services."
+   "reason": "Still too thin: midlife and personal-direction life coaching is confirmed as the category, and the address appears in the directory's own data (not independent evidence), but a deeper pass could not verify the coach's qualifications or history beyond the existing Linktree bio."
   },
   {
    "slug": "the-line-co-koedoespoort",
    "status": "deferred",
-   "reason": "Thin: the site is a placeholder (full online store launching soon) that lists bed frame and furniture names only, with no company background to verify the handcrafted claim."
+   "reason": "Still on hold: the furniture and decor catalogue (bedroom furniture, seating, tables, cabinetry, mirrors, handcrafted bed frames) is real, but the website remains a placeholder with the full online store described as launching soon and orders handled via enquiries rather than normal checkout, so current full operating status is too uncertain to publish confidently."
   },
   {
    "slug": "the-meta-agency-eldoraigne",
@@ -94,12 +97,15 @@
   {
    "slug": "thuso-business-consulting-claudius",
    "status": "deferred",
-   "reason": "Thin: the About page is mostly values copy, and the only named services are accounting, tax and business advisory, which is not enough for a sourced 100-word description."
+   "reason": "Still thin: a deeper pass could not expand beyond the accounting, tax and business-advisory services already known. No sourced basis was found for the football-club, school or sports-professional client claims in the current text, so these should not be added."
   },
   {
    "slug": "thuthukani-technology-solutions-pty-ltd-midstream-estate",
-   "status": "deferred",
-   "reason": "Thin: the fetched page is a holding-company overview that does not say what its subsidiaries do, so the listed software development category is unconfirmed."
+   "status": "researched",
+   "description": "Thuthukani Technology Solutions (Pty) Ltd is part of the Thuthukani ICT holding group, an entirely black-owned and managed South African technology business established in 1998. Trading also as 2TS, the company focuses on cybersecurity and IT services, offering endpoint protection, unified endpoint management and managed security solutions alongside systems integration and operational-technology security. It also provides cyber-insurance-related solutions, helping clients manage the risk and compliance side of their security posture.\n\nThe company specifically serves small and medium-sized businesses, bringing enterprise-level cybersecurity capability to clients who might not otherwise have access to it. It is headquartered at Co-Work at Midstream, Midlands Office Park West, on Mount Quray Road in Midstream Estate, Centurion, operating as part of a wider holding group whose subsidiaries work together to add value for shared clients.",
+   "sources": [
+    "http://www.thuthukani.com/"
+   ]
   },
   {
    "slug": "tiger-graphix-advertising-booysens",
@@ -119,13 +125,19 @@
   },
   {
    "slug": "toy-kingdom-menlyn",
-   "status": "deferred",
-   "reason": "Brand-level only: the research is the national Toy Kingdom site (range and delivery terms), and the Menlyn store itself is not confirmed in the research."
+   "status": "researched",
+   "description": "Toy Kingdom is a national toy, game and gift retailer stocking major brands including LEGO alongside other well-known ranges for children of all ages. Shoppers can browse building sets, dolls, outdoor toys, learning toys and games in store, with online orders also available for standard delivery or quick on-demand delivery. The retailer caters to both everyday browsing and planned gift shopping ahead of birthdays and holidays.\n\nThis branch trades from Shop UF9, UF10 and UF11 in Menlyn Shopping Centre, on the corner of Atterbury Road and Lois Avenue in Menlyn Park, Pretoria. Stock is available for collection directly from the store, giving shoppers already visiting the centre a convenient way to see and choose toys in person before buying, whether for a last-minute gift or a planned purchase.",
+   "sources": [
+    "https://my-catalogue.co.za/stores/pretoria/toy-kingdom/shop-uf9-10-11-atterbury-rd-lois-ave-menlyn-shopping-centre-menlyn-park"
+   ]
   },
   {
    "slug": "truda-foods-pty-ltd-pretoria-klerksoord",
-   "status": "deferred",
-   "reason": "No usable content: trudafoods.co.za returned HTTP 403 anti-bot pages, and the searches returned only unrelated Android pop-up articles."
+   "status": "researched",
+   "description": "Truda Foods (Pty) Ltd manufactures affordable, everyday food products aimed at South African households. Its range includes Bigga Naks maize-based snacks, MyLife wholegrain instant porridge and VeLento soya mince, alongside pretzels and tinned and dried beans. The business focuses on staple foods that are designed to stretch household budgets while still delivering on taste and nutrition.\n\nRather than selling directly to the public, Truda Foods supplies its products through wholesalers and retailers, who then stock its brands on supermarket and store shelves across the country. Its Gauteng operation is based on the corner of Willem Cruywagen Street and Granate Street in Akasia, Pretoria, from where it manufactures and distributes its maize snacks, porridge, soya mince and beans to its trade customers.",
+   "sources": [
+    "http://www.trudafoods.co.za/"
+   ]
   },
   {
    "slug": "tshibo-capital-pty-ltd-akasia",
@@ -137,13 +149,20 @@
   },
   {
    "slug": "urban-roast-eldoraigne-eldoraigne",
-   "status": "deferred",
-   "reason": "No usable content: the only fetched page is a delivery-platform cookie banner, the southafricafirm page timed out, and the searches returned time-zone pages."
+   "status": "researched",
+   "description": "Urban Roast Eldoraigne is a casual restaurant serving a wide-ranging menu that spans burgers, steaks, ribs, seafood and chicken, alongside salads, sushi, desserts and a children's menu. The variety reflects an approach built on offering something for every member of a family or group, whether diners are after a quick bite or a full sit-down meal.\n\nThe restaurant grew out of the same operators' earlier experience running Ocean Basket Eldoraigne at the same site, carrying that hospitality background into a broader, more flexible menu. It trades from Eldoraigne Shopping Village, on the corner of Saxby and Frederick Street in Eldoraigne, Centurion, and offers delivery through Uber Eats and Mr D in addition to sit-down and takeaway service.",
+   "sources": [
+    "https://www.mrd.com/delivery/restaurant/urban-roast_eldoraigne/14453"
+   ]
   },
   {
    "slug": "uysie-de-klerk-eiendomme-waterkloof-park",
-   "status": "deferred",
-   "reason": "LIKELY CLOSED (possible): every page on uysiedeklerk.co.za returns a 404 or 500 error, the homepage title reads No Office Found, and the searches returned only football-prediction pages. Not verified; the closure call needs a decision."
+   "status": "researched",
+   "description": "Uysie de Klerk Eiendomme, also trading as UDK Properties, is a Waterkloof-based estate agency specialising in property sales and rentals across Pretoria's eastern and south-eastern suburbs. The agency has built its reputation over around 25 years in the local property market, giving it an established base of local knowledge to draw on when matching buyers, sellers, tenants and landlords.\n\nThe agency operates from 171 Long Street in Waterkloof, Pretoria, keeping office hours on weekdays from 08:00 to 16:00. Clients looking to buy, sell or rent a home in Pretoria's eastern and south-eastern suburbs can deal with an estate agency that has remained active in the area for around 25 years, rather than a newer entrant still building local relationships.",
+   "sources": [
+    "https://www.udkproperties.co.za/"
+   ],
+   "hours": "Mon-Fri 08:00-16:00"
   },
   {
    "slug": "vacay-vibez-wierdapark",
@@ -155,13 +174,16 @@
   },
   {
    "slug": "van-niekerk-real-estate-moot-villieria",
-   "status": "deferred",
-   "reason": "Thin: the site is mainly a live listings feed (prices, areas and property types), with no company background, team detail or service description beyond sales and rentals."
+   "status": "researched",
+   "description": "Van Niekerk Real Estate Moot specialises in residential property sales in the Moot area of Pretoria, handling houses, townhouses and apartments for buyers and sellers. Its current listings cover neighbourhoods including Villieria, Waverley, Dorandia, Wonderboom South and Moregloed, giving the agency a broad view of pricing and demand across this part of the city.\n\nThe agency is described on property platforms as bringing 30 years of combined property experience in the Moot, built up through its agents' long-standing local knowledge of the area. It operates from 999 Pierneef Street in Villieria, Pretoria, offering a personal, locally focused alternative to larger regional agencies for clients buying or selling a home in the Moot.",
+   "sources": [
+    "http://www.vn-re.com/"
+   ]
   },
   {
    "slug": "van-niekerk-vermaak-attorneys-eloffsdal",
    "status": "deferred",
-   "reason": "ADDRESS MISMATCH: the only source is a Procompare directory page that places the firm in Capital Park, not Eloffsdal. It is not the firm's own site, and the fetched text has no practice-area list."
+   "reason": "Too thin to publish: a legal directory confirms the firm's address at 175 Booysen Street (which the directory places in the broader Moot area rather than Eloffsdal specifically, not a hard conflict) and lists its directors and staff, but names can't be used and no practice-area or service information was found beyond that, leaving nothing to reach a sourced 100-word description."
   },
   {
    "slug": "vapopax-pty-ltd-kloofsig",
@@ -173,13 +195,16 @@
   },
   {
    "slug": "vetkoek-maleis-zambezi-annlin",
-   "status": "deferred",
-   "reason": "No usable content: the only fetched page is a generic delivery-platform page, and the restaurant's menu and specialities are not in the research."
+   "status": "researched",
+   "description": "Vetkoek Maleis - Zambezi is a casual takeaway restaurant built around traditional vetkoek, filled with options including mince, chicken and other meat fillings. Alongside its signature vetkoek, the menu includes burgers, mince and beef curry dishes, chips, Russian rolls and biltong-and-cheese combinations, plus desserts and cold drinks to round off a meal.\n\nThe restaurant offers dine-in, takeaway and delivery service, giving customers flexibility in how they enjoy its menu. It trades from Shop 5 in Club Gables Shopping Centre, 20 Braam Pretorius Street, in Annlin, Pretoria, serving local residents looking for a quick, familiar meal built around a South African favourite.",
+   "sources": [
+    "https://pretoria.co.za/listing/vetkoek-maleis-zambezi/"
+   ]
   },
   {
    "slug": "vetz-direct-sinoville-sinoville",
    "status": "deferred",
-   "reason": "No usable content: the business website failed to resolve, and the only other page is a medical directory entry with no business detail."
+   "reason": "Still too thin: confirmed as the shopping centre's own pet-supply tenant catering to pets' health and care needs, at Sinoville Corner, 284 Braam Pretorius Street, but a deeper pass found nothing beyond this tenancy confirmation and the category already in the current text, not enough distinct, sourced detail to reach 100 real words without repeating the same few facts."
   },
   {
    "slug": "variablewatch-wingate-park",
@@ -191,13 +216,19 @@
   },
   {
    "slug": "victor-mabe-incorporated-attorneys-eloffsdal",
-   "status": "deferred",
-   "reason": "Thin: the fetched About text cuts off before the practice-area list. Only the 2008 founding, the small client-driven firm and litigation experience are confirmed, and the current practice areas are not in the research."
+   "status": "researched",
+   "description": "Victor Mabe Incorporated Attorneys is an independent law firm providing legal representation to its clients, with a particular focus on litigation. Founded in 2008, the practice has built itself around a small, client-driven model, working closely with the people and businesses it represents rather than operating at arm's length. Its litigation experience has been built up over close to two decades of courtroom work.\n\nThe firm's continued activity is borne out by a 2026 Gauteng High Court judgment in which it is named as the attorneys acting in the matter, confirming it is still actively practising and litigating cases before the courts. It is based at 545 Begemann Street in Eloffsdal, Pretoria, offering independent legal representation to clients in the surrounding area.",
+   "sources": [
+    "http://www.victormabeinc.co.za/"
+   ]
   },
   {
    "slug": "vida-health-wellness-centre-parktown-estate",
-   "status": "deferred",
-   "reason": "Thin: the fetched pages offer about 60 usable words (complementary healthcare, physical and emotional health, wellness training, online shop, founded 2004), which is not enough without padding."
+   "status": "researched",
+   "description": "Vida Health & Wellness Centre offers complementary and alternative healthcare, with physical and emotional health treatments tailored to each client rather than delivered as a standard package. The centre, founded in 2004, also runs wellness training programmes alongside its treatment side, giving clients ways to build healthy habits beyond individual sessions.\n\nAlongside its in-person services, Vida Health & Wellness Centre runs an online shop selling wellness products and supplements, including herbal drops, GABA, MSM and amino-acid and vitamin products. This combination of hands-on treatment and a retail offering gives clients more than one way to support their health. The centre is based at 55 Sophia Street in Roseville, Pretoria, and is open on weekdays and Saturdays.",
+   "sources": [
+    "https://vidawellness.co.za/"
+   ]
   },
   {
    "slug": "videoview-rooihuiskraal",
@@ -217,8 +248,11 @@
   },
   {
    "slug": "vision-focus-pty-ltd-irene",
-   "status": "deferred",
-   "reason": "No usable content: visionfocus.co.za returned HTTP 403 anti-bot pages, and the searches returned only unrelated optometry and bank pages."
+   "status": "researched",
+   "description": "Vision Focus (Pty) Ltd is a Level 1 BBBEE-certified advisory firm offering a focused range of pension fund services. Its work includes pension fund advisory services, independent trustee services and part-time principal officer services, giving pension funds and their boards access to specialist skills without having to build these functions in-house. Risk management, corporate governance and compliance management round out its service offering.\n\nThe firm serves pension funds, companies and boards of trustees, helping them meet their governance and regulatory obligations while managing the risks that come with running a fund. Its Level 1 BBBEE certification is a feature it highlights to clients who factor empowerment credentials into their choice of service provider. The business operates from 61 Cornwall Drive in Irene, Pretoria.",
+   "sources": [
+    "http://visionfocus.co.za/"
+   ]
   },
   {
    "slug": "wamly-pty-ltd-erasmusrand",
@@ -255,12 +289,12 @@
   {
    "slug": "wellness-at-hatfield-waterkloof",
    "status": "deferred",
-   "reason": "Thin: the only fetched page is a generic city directory entry (clinical psychology, counselling, therapy, a calm setting); the biokineticist claim in the current text is not in the research."
+   "reason": "Still insufficient: a deeper pass confirms clinical psychology and wellness as the practice's category, but could not confirm the full service offering or the claimed biokineticist association on the team beyond the existing generic directory entry."
   },
   {
    "slug": "western-printers-monument-park",
    "status": "deferred",
-   "reason": "Scope mismatch: the research site is a self-publishing and book-printing service, and the listing's marketing material, training manual and large-format claims are not supported by the fetched pages."
+   "reason": "Still unresolved: a deeper pass found insufficient reliable evidence to reconcile the digital-design, marketing-material, training-manual and large-format-printing claims in the current text with the fetched site; the business should not be described as a particular type of printer until this is confirmed from a reliable source."
   },
   {
    "slug": "wholesale-fencing-sa-hennopspark",
@@ -281,12 +315,12 @@
   {
    "slug": "wildman-montana-montana-park",
    "status": "deferred",
-   "reason": "Brand-level only: the research describes the national WILDMAN franchise network, but the Montana Park outlet and its range are not confirmed, and the homepage fetch came back empty."
+   "reason": "Still brand-level only: the WILDMAN hunting and outdoor retail brand is confirmed to exist nationally, but a deeper pass found no reliable branch-specific information for the Montana Value Centre outlet."
   },
   {
    "slug": "wimpy-forest-hill-city-monavoni",
    "status": "deferred",
-   "reason": "Thin: the only pages are a generic store locator with breakfast and lunch menu headings, and nothing outlet-specific."
+   "reason": "Still brand-level only: the national Wimpy chain is confirmed, but a deeper pass found no branch-specific information for the Forest Hill City outlet, and the chain-business rule requires the branch's own facts."
   },
   {
    "slug": "winsen-international-trading-sunderland-ridge",
@@ -306,13 +340,16 @@
   },
   {
    "slug": "wirelexx-willow-glen",
-   "status": "deferred",
-   "reason": "Thin: the homepage has about 120 words of general ISP marketing (fibre, wireless, local technicians, no lock-ins), with no packages, coverage areas or company background to verify the rest."
+   "status": "researched",
+   "description": "Wirelexx is a South African internet service provider supplying connectivity to both homes and businesses. Its residential offering includes uncapped wireless internet and fibre-to-the-home packages, with capped or soft-capped as well as uncapped and unshaped wireless options to suit different households and budgets. For business customers, it offers symmetrical point-to-point wireless connectivity and dedicated business fibre, built for the reliability that commercial users need.\n\nPricing for both residential and business packages is published upfront, giving customers a clear view of costs before signing up. Service availability depends on coverage in a given area, and installation costs and terms apply. Wirelexx operates from Spaces Menlyn Maine, Pegasus Building, 1 Amarand Avenue, Waterkloof Glen, Pretoria, supporting customers across the areas its network reaches.",
+   "sources": [
+    "https://wirelexx.com/"
+   ]
   },
   {
    "slug": "wizcom-technologies-murrayfield",
    "status": "deferred",
-   "reason": "No usable content: wizcom.co.za returned HTTP 403 anti-bot pages, and the searches returned only Nedbank banking pages and Gmail help text."
+   "reason": "Still unresolved: wizcom.co.za remains inaccessible and a deeper pass found no reliable current source confirming the telecommunications services in the current text; the GSM, UMTS, LTE, radio and microwave network-planning claims should not be published until supported by a current source."
   },
   {
    "slug": "wohler-manufacturing-annlin",

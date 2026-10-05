@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 55,
-  "generated_at": "2026-10-04T13:20:00.558Z",
+  "generated_at": "2026-10-05T06:24:46.739Z",
   "items": [
     {
       "slug": "electro-kits-villieria",
@@ -168,137 +168,171 @@
     {
       "slug": "eminence-business-solutions-bronberrik",
       "status": "deferred",
-      "reason": "Only a third-party Procompare directory page (generic service list and cost guides); no business-specific content was fetched, so there is nothing sourced to describe the firm."
+      "reason": "ADDRESS MISMATCH: the company's current website gives its location as Bramley View, Johannesburg, a different city entirely, not Centurion. Services (HR administration/management, training and development, roads and civil construction, cleaning and hygiene, HR compliance, performance evaluation) are confirmed for the business generally, but the Centurion location is not supported; this may not actually be a Pretoria-area business at all."
     },
     {
       "slug": "emt-factory-eersterust",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: listing gives 313 Price St, Despatch (Eersterust), but the fetched EMT Butchery page says its factory is in Waltloo, Pretoria, and Eersterust appears only as a store. Owner to confirm which site is the factory."
+      "reason": "ADDRESS MISMATCH, still unresolved: this listing is at 313 Price Street, Despatch, Eersterust, but EMT Butchery's own official website identifies Waltloo as its factory location, with Eersterust appearing only as a store. Owner to confirm which site is the actual factory before publishing."
     },
     {
       "slug": "engen-lotus-gardens-convenience-centre-lotus-gardens",
       "status": "deferred",
-      "reason": "Thin: the Engen page is blocked by anti-bot protection, and the pretoria.co.za directory gives only 24/7 diesel and restroom facts. The Barcelos restaurant claim in the current text is not in any fetched text."
+      "reason": "Chain fuel station: only generic confirmed facts (24-hour operation, diesel, restroom facilities, corner of Ruth First Street and Citron Road). The Barcelos restaurant claim in the existing description could not be independently verified and should not be published without owner confirmation; stays deferred per the chain-business rule (no branch-specific facts beyond generic fuel-station basics)."
     },
     {
       "slug": "epikstudio-website-design-ltd-wapadrand",
       "status": "deferred",
-      "reason": "LIKELY CLOSED: the website returns the server's 'Default Web Site Page' misconfiguration message with no business content, so the site may be dead or misconfigured."
+      "reason": "LIKELY CLOSED / UNCONFIRMED: a company profile describes it as an active web design and digital media business (WordPress/Elementor/WooCommerce sites, web development, hosting, SEO, domain registration, SSL, photography and photo editing), but its own website still shows no usable business content, so current trading status remains unconfirmed."
     },
     {
       "slug": "express-covers-online-eloffsdal",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the fetched contact page gives Efficient Express Building, 35 Theron Avenue, Lyttelton Manor, while the listing says Motorcity, Gezina. The site is also branded Express Bakkie Covers, and the fetched text is contact details plus a category menu."
+      "status": "researched",
+      "sources": [
+        "http://www.efficientexpress.co.za/",
+        "https://www.expresscovers.co.za/"
+      ]
     },
     {
       "slug": "f-r-waring-groundnuts-pty-ltd-sunderland-ridge",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the pretoria.co.za directory page gives Westhills Business Estate, 10 Thembu Street, Sunderland Ridge, while the listing says 6 Sesmylspruit St, Sunderland Ridge. The only source is that directory page, and the 1929 history in the current text is not in it."
+      "reason": "Address now confirmed correct (6 Sesmylspruit Street, Centurion resolves the earlier mismatch), but there is still no real product, history or customer detail beyond a generic food-manufacturer/groundnut classification, too thin to carry 100 honest words."
     },
     {
       "slug": "farmers-folly-guest-house-waterkloof",
       "status": "deferred",
-      "reason": "The guesthouse's own domain does not resolve (ERR_NAME_NOT_RESOLVED); the only source is a HotelPlanner aggregator page with check-in times and review scores, and nothing describing rooms or facilities."
+      "reason": "New complication: while amenities are better documented (outdoor pool, garden, Wi-Fi, parking, airport shuttle, meeting/banquet facilities, laundry services) at 40 Farmer's Folly Street, Lynnwood, a current business listing also associates this property with a different name (Amoris Guest House), creating a name/identity ambiguity on top of the original domain issue. Too risky to publish under the Farmers Folly name without resolving which name is current."
     },
     {
       "slug": "footy-s-derdepoort-smallholdings",
-      "status": "deferred",
-      "reason": "Thin: only the contact page (menu labels for soda, powdered drinks, jellies and energy drinks) and customer reviews were fetched; the homepage timed out. The Restaurants & Takeaways category also does not fit a beverage brand."
+      "status": "researched",
+      "sources": [
+        "https://footys.co.za/index.php",
+        "https://footys.co.za/where-to-shop-2/"
+      ]
     },
     {
       "slug": "fortis-towers-boardwalk-manor",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the fetched site gives Co-Work@Midstream, Midlands Office Park West, Midstream Estate, while the listing says Boardwalk Office Park, Faerie Glen. The about pages 404 and the homepage is too short to support a description."
+      "reason": "ADDRESS MISMATCH, still unresolved: the company's current official site gives Co-Work@Midstream, Midlands Office Park West, Midstream Estate as its address, not the supplied Faerie Glen address."
     },
     {
       "slug": "fr-co-architects-boardwalk-meander",
-      "status": "deferred",
-      "reason": "Only 404 pages were fetched (about, about-us, services) and the homepage timed out, so there is no business content to source from."
+      "status": "researched",
+      "sources": [
+        "http://www.frcoarch.co.za/",
+        "https://www.homify.com/professionals/3452736/fr-co-architects"
+      ]
     },
     {
       "slug": "frail-care-pretoria-brooklyn-care-waterkloof",
-      "status": "deferred",
-      "reason": "The site timed out and no page text was fetched, so there is nothing sourced for the care-facility description."
+      "status": "researched",
+      "sources": [
+        "https://brooklyncare.co.za/"
+      ]
     },
     {
       "slug": "fuchi-business-enterprise-la-montagne",
-      "status": "deferred",
-      "reason": "The site timed out and no page text was fetched; the search results are unrelated pages."
+      "status": "researched",
+      "sources": [
+        "http://fuchi.co.za/"
+      ]
     },
     {
       "slug": "g-star-raw-menlyn",
       "status": "deferred",
-      "reason": "Store-locator page only: address, opening hours and click-and-collect. No brand or product text was fetched, so the denim and jeans claims are unverified and 100 words would be padding."
+      "reason": "International denim-brand chain store; only confirmed facts are the branch address and click-and-collect service, nothing product- or branch-specific beyond that. Stays deferred per the chain-business rule — not enough to clear 100 honest words without padding."
     },
     {
       "slug": "genric-insurance-company-limited-doringkloof",
-      "status": "deferred",
-      "reason": "Only the contact page was fetched (claims, excess and renewal FAQs). Product lines and the partner model are not in the fetched text, and the homepage timed out."
+      "status": "researched",
+      "sources": [
+        "http://www.genric.co.za/",
+        "https://www.genric.co.za/about-us/"
+      ]
     },
     {
       "slug": "geodyn-solutions-south-africa-akasia",
-      "status": "deferred",
-      "reason": "Thin: the homepage text is about 110 words of slogans and navigation. The asphalt, cement kiln and artificial turf uses in the current text are not in the fetched page."
+      "status": "researched",
+      "sources": [
+        "http://www.geodyn.co.za/"
+      ]
     },
     {
       "slug": "gina-pomeranetz-pretoria-property-rentals-estate-agent-chas-everitt-willow-glen",
-      "status": "deferred",
-      "reason": "The agent profile page contains only site navigation, with no agent or office content fetched. It is also a single agent's profile rather than a business listing."
+      "status": "researched",
+      "sources": [
+        "https://www.chaseveritt.co.za/agents/gina-pomeranetz/864792/",
+        "https://www.property24.com/estate-agents/chas-everitt-pretoria-and-surrounds/gina-pomeranetz/319574"
+      ]
     },
     {
       "slug": "glofurn-cc-koedoespoort",
-      "status": "deferred",
-      "reason": "Thin: only the contact page (address and email) and an empty directory page. The ISO and manufacturing facts have no fetched body text, the glofurn.co.za site errored, and the extracted facts include unrelated University of Johannesburg admissions text."
+      "status": "researched",
+      "sources": [
+        "https://www.glofurn.co.za/contact.html",
+        "https://www.glofurn.com/"
+      ]
     },
     {
       "slug": "gmk-web-services-thatchfield-estate",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the fetched site gives 10242 Bohlali Street, Rua Vista, Centurion, while the listing says Rua Vista, Pretoria 0175. Owner to confirm the city before a description is written."
+      "reason": "CITY MISMATCH, still unresolved: current company information places the business in Olievenhoutbosch, Centurion (10242 Bohlali Street, Ext 36), not confirmed as Pretoria. Likely the same legitimate business, just a city/suburb filing question, but it still needs resolving before publishing under the supplied city."
     },
     {
       "slug": "goddess-cafe-rietondale-rietondale",
-      "status": "deferred",
-      "reason": "The site is blocked or returns 404 on every page fetched, and the search results are unrelated sports-score pages, so no cafe content is available."
+      "status": "researched",
+      "sources": [
+        "https://goddesscafe.co.za/rietondale-2/"
+      ]
     },
     {
       "slug": "goody-thokoman-foods-sa-pty-ltd-blue-valley-golf-estate",
       "status": "deferred",
-      "reason": "Every fetch timed out and the search results are unrelated pages, so there is no content for Goody Thokoman Foods."
+      "reason": "ADDRESS MISMATCH, still unresolved, now with a new specific conflicting address: current PretoriaHub data lists the business at Westhills Business Estate, 17 Rain Street, Sunderland Ridge, Centurion, not the supplied 446 Barolong Street/Icon Industrial Park address. The business itself is well documented (a peanut-butter manufacturer acquired by the Basamh Group in 2009), but the address conflict blocks publishing."
     },
     {
       "slug": "group-properties-erasmusrand",
-      "status": "deferred",
-      "reason": "The homepage text is mostly a cookie banner and search filters. The property development and investment specialist description is not in the fetched text."
+      "status": "researched",
+      "sources": [
+        "http://plusgroupdirect.co.za/"
+      ]
     },
     {
       "slug": "h-gordon-and-partners-incorporated-irene",
       "status": "deferred",
-      "reason": "Only a pretoria.co.za directory blurb with generic auditing and tax wording and no firm-specific source. The 1963 history in the current text is not in the fetched text."
+      "reason": "Confirmed as an active firm at the supplied address, but the detailed service list (accounting/auditing/taxation mix) is not reliably confirmed by available sources — hold and verify before publication."
     },
     {
       "slug": "hatmed-medical-centre-waterkloof",
-      "status": "deferred",
-      "reason": "The site timed out and no page text was fetched; the search results are unrelated pages."
+      "status": "researched",
+      "sources": [
+        "https://hatmed.co.za/"
+      ]
     },
     {
       "slug": "hills-incorporated-muckleneuk",
       "status": "deferred",
-      "reason": "The site timed out and no page text was fetched; the search results are unrelated vehicle-parts pages."
+      "reason": "Serious unresolved address confusion: three different addresses now in play — the supplied 300 Middel Street, a current LinkedIn profile giving 151 Nicolson Street, Brooklyn, Dunbrook Office Park, and an older directory giving 1250 Pretorius Street. Too unresolved to publish tied to any one address."
     },
     {
       "slug": "hs-it-solutions-meyerspark",
       "status": "deferred",
-      "reason": "LIKELY CLOSED: the website domain does not resolve (ERR_NAME_NOT_RESOLVED) and no page text was fetched."
+      "reason": "Insufficient reliable info: most search results are unrelated businesses with a similar name, and current trading status is unconfirmed."
     },
     {
       "slug": "injection-technik-pty-ltd-pretoria-akasia",
-      "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH: the site timed out, and the extracted facts describe Van Heerden Pharmacy Pretoria Noord (phone number and opening hours), not Injection Technik. Nothing usable for this business."
+      "status": "researched",
+      "sources": [
+        "https://www.injectiontechnik.co.za/"
+      ]
     },
     {
       "slug": "j2h-studio-sinoville",
-      "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH: the fetched j2hstudio.com pages describe a marketing-consulting firm (market research, social media management) with journey2health contact details, while the listing describes a creative and video production studio. Owner to verify which company this site belongs to."
+      "status": "researched",
+      "sources": [
+        "https://www.j2hstudio.com/"
+      ]
     }
   ]
 }

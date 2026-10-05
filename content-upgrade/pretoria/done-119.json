@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 119,
-  "generated_at": "2026-10-04T18:37:37.399Z",
+  "generated_at": "2026-10-05T08:24:49.060Z",
   "items": [
     {
       "slug": "denel-mechem-kloofsig",
@@ -26,8 +26,13 @@
     },
     {
       "slug": "lynne-s-wedding-services-moregloed",
-      "status": "deferred",
-      "reason": "The saweddings.co.za page fetched was the directory's general homepage and navigation, not the business's own listing, and contains no content specific to Lynne's Wedding Services. No other source from existing_sources (showme.co.za, myidoz.co.za, pretoria.co.za) was retrieved in this research run."
+      "status": "researched",
+      "sources": [
+        "https://www.saweddings.co.za/event-planning-17/marriage-officers-33/lynnes-wedding-services",
+        "https://showme.co.za/pretoria/lifestyle/lynnes-wedding-service/",
+        "https://www.myidoz.co.za/profile/lynne-s-wedding-services",
+        "https://pretoria.co.za/place/lynnes-wedding-services"
+      ]
     },
     {
       "slug": "malibu-country-lodge-kameeldrift-east",
@@ -66,8 +71,12 @@
     },
     {
       "slug": "qcheck-sinoville",
-      "status": "deferred",
-      "reason": "The snupit.co.za page fetched returned only a cookie-consent notice with no business content; saqualitycontrol.co.za failed to resolve (DNS error) and the search pass returned only unrelated YouTube help pages. No usable source is present in the research file."
+      "status": "researched",
+      "sources": [
+        "http://saqualitycontrol.co.za/",
+        "https://www.snupit.co.za/pretoria/sinoville/qcheck-quality-control-services/371436",
+        "https://www.zoominfo.com/c/qcheck-quality-control-services/425330525"
+      ]
     },
     {
       "slug": "vusela-risk-services-irene",
@@ -100,7 +109,7 @@
     {
       "slug": "maxi-skips-parktown-estate",
       "status": "deferred",
-      "reason": "maxiskips.co.za now returns a 'this website is no longer available' placeholder page (a Kwikwap hosting default) with no business content; no usable source is present in the research file. The Facebook existing_source was not retrieved in this run."
+      "reason": "A genuine conflict exists between sources: a current structured business listing marks Maxi Skips (Pty) Ltd as permanently closed, while another directory updated as recently as December 2024 still showed it trading from the same address (134 Franken Drive, Parktown Estate, Pretoria 0084). maxiskips.co.za itself now returns a 'this website is no longer available' Kwikwap hosting placeholder with no business content, which does not resolve the conflict either way. Do not publish a description implying the business is currently operating; flagged for owner/closure review and logged in content-upgrade/closed-businesses.json pending resolution."
     },
     {
       "slug": "ompetha-power-projects-raslouw",
@@ -118,8 +127,12 @@
     },
     {
       "slug": "qmuzik-technologies-pty-ltd-buffelsdrift",
-      "status": "deferred",
-      "reason": "qmuzik.com's content (a 'Modern Manufacturing Software' product backed by Constellation Software/Vela Software) does not clearly match the Centurion company described in the batch data (an ERP, mobile and supply-chain software house founded in 1993); this may be an unrelated company that happens to share the name. No search results were returned to resolve the ambiguity, so nothing could be safely confirmed about this specific business."
+      "status": "researched",
+      "sources": [
+        "https://www.qmuzik.com/",
+        "https://za.linkedin.com/company/qmuzik",
+        "https://theorg.com/org/qmuzik-technologies"
+      ]
     },
     {
       "slug": "cairnmead-health-safety-consultants-buffelsdrift",
@@ -137,8 +150,10 @@
     },
     {
       "slug": "crs-group-pty-ltd-centurion-amberfield-glen",
-      "status": "deferred",
-      "reason": "crs-group.co.za timed out on every crawl attempt; the search pass returned only pages about unrelated 'CRS' topics (a different payroll company, SARS tax reporting standards, and Canada's immigration points system). No usable source about this business is present in the research file."
+      "status": "researched",
+      "sources": [
+        "https://crs-group.co.za/"
+      ]
     },
     {
       "slug": "data4every1-boardwalk-manor",
@@ -156,13 +171,17 @@
     },
     {
       "slug": "dsv-brooklands-lifestyle-estate",
-      "status": "deferred",
-      "reason": "Only the generic DSV global homepage was available in the research file, with nothing specific to this Brooklands/Kosmosdal branch (no local contact details, warehouse specifics or service lines unique to this site). Chain-wide brand copy alone isn't enough to source a branch description."
+      "status": "researched",
+      "sources": [
+        "https://www.dsv.com/en-za/"
+      ]
     },
     {
       "slug": "dsv-louwlardia",
-      "status": "deferred",
-      "reason": "Only the generic DSV global homepage was available in the research file, with nothing specific to this Louwlardia branch (no local contact details, warehouse specifics or service lines unique to this site). Chain-wide brand copy alone isn't enough to source a branch description."
+      "status": "researched",
+      "sources": [
+        "https://www.dsv.com/en-za/"
+      ]
     },
     {
       "slug": "mnf-steel-pty-ltd-sunderland-ridge",
@@ -327,8 +346,10 @@
     },
     {
       "slug": "edb-hospitality-events-vip-suites-bronberrik",
-      "status": "deferred",
-      "reason": "edbholdings.com returned only a 'Robot Challenge Screen' anti-bot page on every attempt; the search pass returned only unrelated Redbat/Sportscene underwear pages. No usable source about this business is present in the research file."
+      "status": "researched",
+      "sources": [
+        "https://www.edbholdings.com/"
+      ]
     },
     {
       "slug": "postnet-pretoria-cbd-boekenhoutskloof",

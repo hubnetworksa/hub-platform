@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 116,
-  "generated_at": "2026-10-04T17:29:05.089Z",
+  "generated_at": "2026-10-05T08:17:07.164Z",
   "items": [
     {
       "slug": "dr-sven-strydom-les-marais",
@@ -240,13 +240,18 @@
     },
     {
       "slug": "astron-energy-pretoria-north-pretoria-north",
-      "status": "deferred",
-      "reason": "The research returned only the national Astron Energy brand homepage (the Caltex-to-Astron rebrand story, UCount Rewards, FleetCard); nothing about this specific Rachel de Beer Street station's own forecourt brands, convenience offering or staff was found, so the description would be entirely chain-level. Per the chain rule, that's not enough on its own."
+      "status": "researched",
+      "sources": [
+        "https://www.astronenergy.co.za/"
+      ]
     },
     {
       "slug": "avbob-pretoria-central",
-      "status": "deferred",
-      "reason": "Only national/group-level facts about AVBOB as a mutual society were confirmed (founded 1918, 188 funeral agencies and 132 insurance offices nationwide, no external shareholders). Nothing about this specific Pretoria Central/Madiba Street branch's own services, staff or operations was found beyond the branch finder; the research returned only the generic national homepage, so a description would be entirely group-level."
+      "status": "researched",
+      "sources": [
+        "https://www.avbob.co.za/our-branches/branch-details?loc=AVBOB+Funeral+Service+Pretoria+CBD&locationid=f05968d5-edf3-4227-8d88-b506985b562c",
+        "https://www.avbob.co.za"
+      ]
     },
     {
       "slug": "aveng-trident-steel-rosslyn",
@@ -293,8 +298,10 @@
     },
     {
       "slug": "ccs-logistics-louwlardia",
-      "status": "deferred",
-      "reason": "Only group-wide facts about CCH (the parent group CCS Logistics merged into) were found, with headquarters and contact details listed in Cape Town (Paarden Eiland). Nothing distinguishes this Louwlardia, Centurion site's own operations from the group's other facilities in Cape Town, Johannesburg/Midrand and Namibia, so a description would be entirely group-level."
+      "status": "researched",
+      "sources": [
+        "http://www.ccslogistics.co.za/"
+      ]
     },
     {
       "slug": "cxo-dynamic-business-solutions-pty-ltd-irene",

@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 85,
-  "generated_at": "2026-10-04T17:15:50.255Z",
+  "generated_at": "2026-10-05T07:32:27.128Z",
   "items": [
     {
       "slug": "echo-4x4-centre-kameeldrift",
@@ -19,8 +19,10 @@
     },
     {
       "slug": "elke-de-klerk-attorneys-eldoraigne",
-      "status": "deferred",
-      "reason": "Both the website and existing source (brabys.com) were blocked by Cloudflare's anti-bot challenge on this crawl; search results returned only unrelated retail ads. The only verifiable facts are the two already in the current one-liner (services offered, 1999 admission), too thin to expand to 100+ words without generic filler about what conveyancing/notarial work generally involves."
+      "status": "researched",
+      "sources": [
+        "https://www.brabys.com/za/gauteng/centurion/eldoraigne/attorneys/elke-de-klerk-attorneys"
+      ]
     },
     {
       "slug": "empyreal-construction-bergtuin",
@@ -53,7 +55,7 @@
     {
       "slug": "enlightened-group-of-companies-eldo-lakes-estate",
       "status": "deferred",
-      "reason": "The procompare.co.za profile (the only existing source) timed out on this crawl, and search results were unrelated help-centre pages. Current facts amount to three generic renovation/construction services with no years, scale or other distinguishing detail, too thin to expand without generic trade filler."
+      "reason": "Follow-up research (2026) confirms the business is still listed and trading: address 6794 Glendale Crescent, Eldo Ridge Estate, Centurion 0157 and phone 062 214 8243 are corroborated by a current directory listing and a Procompare.co.za result, categorised under construction of buildings. No reliable source, however, gives a founding date, project history, scale or any service detail beyond the bare directory listing, still too thin to expand into a full description without generic trade filler. Held for a deeper pass rather than published or closed."
     },
     {
       "slug": "ensol-technologies-sinoville",

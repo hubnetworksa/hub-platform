@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 86,
-  "generated_at": "2026-10-04T17:27:56.976Z",
+  "generated_at": "2026-10-05T07:33:09.730Z",
   "items": [
     {
       "slug": "kai-thai-spa-centurion-eldoraigne",
@@ -149,8 +149,11 @@
     },
     {
       "slug": "moyo-die-hoewes",
-      "status": "deferred",
-      "reason": "The website (moyo.co, also the existing source) was blocked by anti-bot protection (HTTP 403) on every attempt this crawl, and search results returned unrelated WhatsApp/Microsoft forum threads. The three known facts (2019 founding, three service areas, five client sectors) are too thin to expand into 100+ honest words without generic filler reasoning about why those sectors need the services."
+      "status": "researched",
+      "sources": [
+        "https://www.moyo.co/",
+        "https://moyo.co/about-us/"
+      ]
     },
     {
       "slug": "mpileng-group-highveld",

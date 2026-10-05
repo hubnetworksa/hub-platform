@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 54,
-  "generated_at": "2026-10-04T13:18:59.026Z",
+  "generated_at": "2026-10-05T06:27:28.205Z",
   "items": [
     {
       "slug": "bootlegger-thatchfield-thatchfield-estate",
@@ -147,8 +147,10 @@
     },
     {
       "slug": "design-a-cake-amandasig",
-      "status": "deferred",
-      "reason": "Thin: the one page (designacakesa.co.za) holds a short tagline, a flavour list and a cake-stand hire line, about 70 sourced words; no owned description of the business, team or history."
+      "status": "researched",
+      "sources": [
+        "http://www.designacakesa.co.za/"
+      ]
     },
     {
       "slug": "dexitt-brand-design-amberfield-glen",
@@ -203,112 +205,142 @@
     {
       "slug": "brick-and-motta-projects-pty-ltd-lotus-gardens",
       "status": "deferred",
-      "reason": "Website fails to resolve (ERR_NAME_NOT_RESOLVED); searches returned only unrelated car-parts sellers, nothing on this business."
+      "reason": "No reliable external source confirms the construction services in the current description; the business's own website fails to resolve (ERR_NAME_NOT_RESOLVED), and appearing only in PretoriaHub's own directory text isn't independent evidence. Held pending independent confirmation."
     },
     {
       "slug": "builders-express-wonderpark-karenpark",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH: listing says Wonderpark Shopping Centre, Doreg Ave, but the only source (doornpoort.co.za) places the store on the corner of Brits Road and Heinrich Avenue; that page is also generic Builders chain copy with no verified branch details. Builders.co.za blocked."
+      "status": "researched",
+      "sources": [
+        "https://www.builders.co.za/?utm_source=google_maps&utm_medium=website_link&utm_campaign=SP&utm_content=SP",
+        "https://doornpoort.co.za/builders-express-wonderpark/"
+      ]
     },
     {
       "slug": "bulkhead-solutions-koedoespoort",
-      "status": "deferred",
-      "reason": "LIKELY CLOSED: bulkheadsolutions.co.za shows 'This account has been suspended'; searches returned only unrelated people and job pages."
+      "status": "researched",
+      "sources": [
+        "http://bulkheadsolutions.co.za/"
+      ]
     },
     {
       "slug": "business-boutique-copperleaf-golf-estate",
       "status": "deferred",
-      "reason": "Thin: homepage gives only a service list and blog teasers, with no firm details (team, history, clients) to write 100 sourced words from; the Copperleaf address is not on the page."
+      "reason": "Could not independently confirm that the Copperleaf Golf Estate address matches the business's own website; the service information found (business-boutique.co.za) is self-described only, with no independent source tying it to this address. Held pending confirmation."
     },
     {
       "slug": "cash-crusaders-schubart-pretoria-central",
-      "status": "deferred",
-      "reason": "Only third-party catalogue pages (Tiendeo, Yep) with trading hours and promotions; nothing sourced describes this store's range or services beyond a sector label."
+      "status": "researched",
+      "sources": [
+        "https://www.yep.co.za/biz/store/iyp/4569015_2",
+        "https://www.cylex.net.za/company/cash-crusaders-schubart-street-23688258.html"
+      ]
     },
     {
       "slug": "ccrs-legal-pty-ltd-monument-park",
       "status": "deferred",
-      "reason": "LIKELY CLOSED: both ccrslegal.co.za pages show an Afrihost 'Domain Inactive' notice, so there is no live content."
+      "reason": "Likely inactive: both ccrslegal.co.za pages still show an Afrihost 'Domain Inactive' notice, and no reliable source connects this name or address to an active practice. Not assumed closed from an inactive site alone, but not published either; held for a deeper pass or owner confirmation."
     },
     {
       "slug": "ceiling-experts-queenswood",
       "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH?: page title reads 'Ceiling and Drywall Installation Experts Pretoria - Jock Ceilings' while the body and listing say Ceiling Experts; confirm the site belongs to this business before publishing."
+      "reason": "Wrong-business-match concern: the only source found for this address/category identifies a different business, 'Jock Ceilings / Ceiling and Drywall Installation Experts Pretoria', not clearly this Ceiling Experts listing. Held until the business behind this listing can be confirmed."
     },
     {
       "slug": "chamberlain-waterkloof-glen-famous-for-hardware-since-1903-waterkloof-glen",
-      "status": "deferred",
-      "reason": "Chain website only (chamberlains.co.za): a product-grid and promotions page with no branch details, history text or Waterkloof Glen information; nothing usable beyond a category list."
+      "status": "researched",
+      "sources": [
+        "https://www.chamberlains.co.za/"
+      ]
     },
     {
       "slug": "checkers-clubview-clubview",
-      "status": "deferred",
-      "reason": "Only the generic Checkers Sixty60 about-us page was found; it says nothing about the Clubview store, and checkers.co.za store pages returned 404."
+      "status": "researched",
+      "sources": [
+        "https://www.checkers.co.za/store-directory-and-leaflets/store-details/83785",
+        "https://www.tiendeo.co.za/stores/centurion/checkers-lyttelton-road-cnr-von-willich-ave/66131"
+      ]
     },
     {
       "slug": "checkers-hyper-mayville-hyper-mayville",
-      "status": "deferred",
-      "reason": "Only the generic Checkers Sixty60 about-us page was found; nothing about the Mayville Hyper branch, and its store pages returned 404."
+      "status": "researched",
+      "sources": [
+        "https://www.checkers.co.za/store-directory-and-leaflets/store-details/7743",
+        "https://za.near-place.com/checkers-hyper-mayville-cnr-van-rensburg-street-nienaber-avenue-mayville-pretoria"
+      ]
     },
     {
       "slug": "clear-creative-lizelle-la-montagne",
-      "status": "deferred",
-      "reason": "Website pages are only a WordPress login screen; searches returned unrelated companies with the word clear in their names."
+      "status": "researched",
+      "sources": [
+        "http://www.clearcreative.co.za/"
+      ]
     },
     {
       "slug": "clicks-watermeyer-val-de-grace",
-      "status": "deferred",
-      "reason": "Only a business directory entry (africabizinfo.com) with address, phone and category labels; no owned page or description of the store's range."
+      "status": "researched",
+      "sources": [
+        "https://www.africabizinfo.com/ZA/clicks-retail-watermeyer-park-012-804-0445",
+        "https://healthandmedical.co.za/view/clicks-pharmacy-watermeyer-park"
+      ]
     },
     {
       "slug": "coalvest-monument-park",
       "status": "deferred",
-      "reason": "Website shows only a default CentOS-WebPanel HTTP test page, with no business content."
+      "reason": "Status concern: National Credit Regulator records show its credit-provider registration was voluntarily cancelled on 30 September 2015, and there is insufficient evidence it is still operating as an active coal trader. Held pending confirmation the business is still trading."
     },
     {
       "slug": "columbus-consulting-southdowns",
       "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH? (unconfirmed): columbussa.co.za describes IT security, training and resourcing under the name Columbus, but never mentions Columbus Consulting or the Regus Southdowns Ridge, Irene location."
+      "reason": "Wrong-business-match concern: could not confirm that the IT security, training and resourcing business trading as Columbus (columbussa.co.za) is the same company as this Southdowns Ridge, Irene listing; that site never mentions Columbus Consulting or the Regus location. Held pending confirmation."
     },
     {
       "slug": "crowd1centurion-celtisdal",
       "status": "deferred",
-      "reason": "No website found; searches returned only unrelated Odin and Samsung flashing-tool pages."
+      "reason": "Do not publish as an ordinary consulting business: South Africa's Financial Sector Conduct Authority (FSCA) publicly warned in 2020 that Crowd1 was not authorised to provide the financial services it offered and was suspected of operating as a pyramid scheme, referring it to the SA Reserve Bank for investigation; the COMESA Competition Commission separately issued its own consumer alert. This listing must not be described as a legitimate consulting business without independent confirmation that current Centurion operations are lawful and unconnected to those regulatory findings. Held pending that confirmation."
     },
     {
       "slug": "da-graphix-valhalla",
-      "status": "deferred",
-      "reason": "Only a short generic about page (on graphixonline.co.za, a different domain name) listing print services; not enough sourced business-specific content for 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "https://graphixonline.co.za/"
+      ]
     },
     {
       "slug": "deedscon-consult-the-reeds",
-      "status": "deferred",
-      "reason": "Homepage is one generic sentence about a team of technical professionals; other pages 404 and searches returned unrelated YouTube help pages."
+      "status": "researched",
+      "sources": [
+        "http://www.deedscon.co.za/"
+      ]
     },
     {
       "slug": "delacon-doringkloof",
-      "status": "deferred",
-      "reason": "Website blocked or 404 on every page; searches returned only Polokwane restaurant listings, nothing on this business."
+      "status": "researched",
+      "sources": [
+        "http://www.delacon.co.za/",
+        "https://www.communityguardian.co.za/businesses/delacon-group/"
+      ]
     },
     {
       "slug": "dorbyl-international-hesteapark",
       "status": "deferred",
-      "reason": "Website returns HTTP 409 on every page; searches returned only unrelated games and Reddit pages."
+      "reason": "No reliable source connects this listing to the website-development, e-commerce, SEO and branding services in the current description; similarly-named Dorbyl businesses exist but must not be used as a source for this listing. Held pending confirmation of what this specific business does."
     },
     {
       "slug": "douglasdale-dairy-pty-ltd-hennopspark",
-      "status": "deferred",
-      "reason": "Homepage holds only cookie and privacy boilerplate; no products or business description were captured."
+      "status": "researched",
+      "sources": [
+        "http://www.douglasdale.co.za/"
+      ]
     },
     {
       "slug": "dr-c-c-khan-eersterust",
       "status": "deferred",
-      "reason": "Homepage gives only the address (390 Yukon Ave, Eersterust); about pages 404 and no specialty or services are stated. Searches returned unrelated Durban doctors."
+      "reason": "Thin even after a deeper pass: Medpages confirms the practice type (GP) and the 390 Yukon Avenue, Eersterust address, with its record updated 14 August 2025 (so clearly current), but no services, specialism or hours detail was found beyond that, which isn't enough to carry a full, non-padded description. Held pending more detail."
     },
     {
       "slug": "dream-dynasty-lifestyle-hub-lotus-gardens",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: listing says 72 Ruth First St, Lotus Gardens, but the only source (Facebook) gives Central Towers, Office 506, Pretorius Street; the page also has only category labels (printing, construction, events) and no service description."
+      "reason": "Address mismatch: the only source (Facebook, as 'Dream Dynasty Group') gives Central Towers, Office 506, Pretorius Street, not the listed 72 Ruth First Street, Lotus Gardens address; its category labels (printing, construction, events) are too broad to know what this specific listing does. Held pending a reliable source for this address."
     }
   ]
 }

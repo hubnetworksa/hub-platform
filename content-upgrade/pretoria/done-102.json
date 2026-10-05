@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 102,
-  "generated_at": "2026-10-04T19:22:49.037Z",
+  "generated_at": "2026-10-05T07:56:53.420Z",
   "items": [
     {
       "slug": "grandmark-international-pretoria-zandfontein",
@@ -241,8 +241,10 @@
     },
     {
       "slug": "plumblink-karenpark-karenpark",
-      "status": "deferred",
-      "reason": "Own site (plumblink.co.za) returned only generic chain homepage content and a 404 on its about page; research found no branch-specific facts (hours, staff, services beyond the generic chain range) beyond the shopping centre location already in the batch data. Current description is chain-level only, so per the chain-business rule this needs a genuine branch fact before it can be rewritten."
+      "status": "researched",
+      "sources": [
+        "https://www.plumblink.co.za/store/plumblink-karenpark"
+      ]
     },
     {
       "slug": "ppc-mooiplaas-aggregate-mine-erasmia",

@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 114,
-  "generated_at": "2026-10-04T19:55:17.698Z",
+  "generated_at": "2026-10-05T08:14:05.840Z",
   "items": [
     {
       "slug": "crane-s-nest-waterkloof",
@@ -50,8 +50,10 @@
     },
     {
       "slug": "deneys-zeederberg-attorneys-midstream-estate",
-      "status": "deferred",
-      "reason": "The firm's own site (dzalaw.co.za) returned HTTP 403 anti-bot blocks on every attempt. Every search result that did come back was for an unrelated, much larger firm also named 'Deneys' (the 2026 rebrand of Norton Rose Fulbright South Africa), not this Midstream Estate practice, so no usable facts about this specific business were found."
+      "status": "researched",
+      "sources": [
+        "http://www.dzalaw.co.za/"
+      ]
     },
     {
       "slug": "diep-consultants-irene",
@@ -69,13 +71,15 @@
     },
     {
       "slug": "digistics-centurion-dc-brooklands-lifestyle-estate",
-      "status": "deferred",
-      "reason": "Research only surfaced company-wide marketing content for Digistics as a whole (24+ years in business, group service lines, head-office contact details); nothing specific to the Centurion distribution centre itself (its size, local services or staffing) was found, so a description would be chain-level facts only."
+      "status": "researched",
+      "sources": [
+        "http://www.digistics.co.za/"
+      ]
     },
     {
       "slug": "digital-companion-collective-dcc-claudius",
       "status": "deferred",
-      "reason": "The business's own site (dccollective.co.za) could not be reached (DNS resolution failure), and every search result returned was an unrelated dictionary/Wikipedia definition of the word 'digital' or other unrelated sites; no information about this specific consulting business was found."
+      "reason": "The business's own site (dccollective.co.za) still could not be reached (DNS resolution failure), and search results remained unrelated dictionary/Wikipedia definitions of the word 'digital'. Follow-up research confirmed only that the business operates as a business-management consultant at 1 Alkantrant Road, Lynnwood Manor, Pretoria 0081; there is still not enough reliable, current information to verify the detailed software-development, concept-design, business-consulting and change-management service network described in the existing listing, so it remains deferred."
     },
     {
       "slug": "dndm-electrical-kirkney",
@@ -171,8 +175,10 @@
     },
     {
       "slug": "matrix-design-africa-wapadrand",
-      "status": "deferred",
-      "reason": "The business's own domain (matrixteam.africa) returned HTTP 521 errors on every crawl attempt, and the search results that came back were for an unrelated company, Matrix Vehicle Tracking (matrix.co.za), not this Wapadrand software business; nothing reliable about Matrix Design Africa itself was found."
+      "status": "researched",
+      "sources": [
+        "http://www.matrixteam.africa/"
+      ]
     },
     {
       "slug": "mcdonalds-atteridgeville-atteridgeville",
@@ -373,8 +379,10 @@
     },
     {
       "slug": "astron-energy-eloffsdal-eloffsdal",
-      "status": "deferred",
-      "reason": "Only chain-wide rebranding history for the Astron Energy brand (the 2021 rebrand of former Caltex stations after Astron Energy's 2018 takeover from Chevron) was found; nothing specific to this Eloffsdal station itself (its own forecourt services, shop or hours) was found, so a description would be chain-level facts only."
+      "status": "researched",
+      "sources": [
+        "https://www.astronenergy.co.za/"
+      ]
     }
   ]
 }

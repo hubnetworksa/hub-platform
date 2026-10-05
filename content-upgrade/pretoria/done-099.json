@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 99,
-  "generated_at": "2026-10-04T18:53:11.137Z",
+  "generated_at": "2026-10-05T07:54:00.210Z",
   "items": [
     {
       "slug": "macpro-manufacturing-projects-pty-ltd-sunderland-ridge",
@@ -86,7 +86,7 @@
     {
       "slug": "monument-park-monument-park",
       "status": "deferred",
-      "reason": "The listing's website (monument-park.co.za) currently serves content for an unrelated residential rental business trading as 'Monument Park (Pty) Ltd' (apartment blocks such as Magnolia, Moepel and Maroela), not the Monument Office Park commercial building on Steenbok Avenue described in the current listing. No page matching the actual office park could be found this round, so nothing new could be confirmed without risking conflating the two different businesses."
+      "reason": "The commercial address is now confirmed independently: Suite 2-205, Block 2, Monument Office Park, 71 Steenbok Avenue, Monument Park, Pretoria 0181 is corroborated by current tenants (eKhaya Search, mCadastre and Rosema Bricks) listed at the same office park, so this is genuinely the Monument Office Park commercial building and not a mismatched address. However, no sufficiently authoritative source describing the office park's own facilities, services or property offering as a whole was found this round, so a proper description still cannot be written. IMPORTANT trap: monument-park.co.za must never be used as a source for this listing — it belongs to an unrelated residential apartment-rental business trading as 'Monument Park (Pty) Ltd' (apartment blocks such as Magnolia, Moepel and Maroela), not this commercial office park. Kept deferred pending a source describing the office park itself."
     },
     {
       "slug": "mrt-marketing-annlin",
@@ -157,7 +157,7 @@
     {
       "slug": "oasis-water-pretoria-express-at-plastix-east-lynne",
       "status": "deferred",
-      "reason": "oasiswater.co.za only returned the national franchise homepage (reverse-osmosis purified water, 360+ outlets); no page or listing specific to the East Lynne / Plastix outlet was found, and search results were mostly about the band Oasis. As a franchise branch, it needs its own facts (its own hours, the host store it trades from) rather than chain-wide copy."
+      "reason": "Oasis Water is confirmed as a real purified-water retail franchise operating generally (reverse-osmosis purified water, 360+ outlets across South Africa, Botswana, Namibia, Eswatini and Lesotho), and other Pretoria outlets exist (Doornpoort, Annlin, Karenpark, Kilner Park, Villieria), but no reliable source specifically confirms the Express at Plastix outlet at 62 Baviaanspoort Road, East Lynne, or its current trading status and host-store relationship with Plastix. Those other Pretoria branches must not be used as evidence for this specific East Lynne outlet, so it stays deferred pending a source naming this branch directly."
     },
     {
       "slug": "oil-shoppe-gauteng-montana-park",
@@ -205,8 +205,11 @@
     },
     {
       "slug": "pirtek-pretoria-pty-ltd-montana-gardens",
-      "status": "deferred",
-      "reason": "pirtek.co.za returned only the Pirtek Africa group's national marketing page; no branch-specific page, hours or confirmation of which industries this Montana Gardens centre actually services was found beyond the group-wide copy already in the old description. Pirtek operates as a franchised network, so the branch needs its own facts, which could not be confirmed this round."
+      "status": "researched",
+      "sources": [
+        "https://pirtek.co.za/centres/south-africa/gauteng/pretoria",
+        "http://www.pirtek.co.za/"
+      ]
     },
     {
       "slug": "podium-at-menlyn-alphen-park",

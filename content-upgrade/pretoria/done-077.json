@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 77,
-  "generated_at": "2026-10-04T17:38:21.038Z",
+  "generated_at": "2026-10-05T06:52:36.664Z",
   "items": [
     {
       "slug": "transducer-developments-co-pty-ltd-the-willows",
@@ -68,8 +68,10 @@
     },
     {
       "slug": "vox-pretoria-waterkloof-glen",
-      "status": "deferred",
-      "reason": "The site crawl returned only generic company-wide navigation and a 404 blog page (not real branch content); the only hours-like text found is a generic national call-centre line ('Call us Monday to Friday, 08:00-17:00'), not specific to the Waterkloof Glen branch. No Pretoria-branch-specific facts were found."
+      "status": "researched",
+      "sources": [
+        "http://vox.co.za/"
+      ]
     },
     {
       "slug": "water-wise-monavoni",
@@ -80,13 +82,17 @@
     },
     {
       "slug": "waterkloof-mansion-boutique-hotel-waterkloof",
-      "status": "deferred",
-      "reason": "Both existing_sources (booking.com, hotels.com) were blocked by anti-bot protection or rate-limited in this crawl; search results were entirely irrelevant (University of Pretoria student portal pages). No facts beyond the existing short description could be confirmed."
+      "status": "researched",
+      "sources": [
+        "https://www.booking.com/hotel/za/waterkloof-mansion-waterkloof-boutique.html"
+      ]
     },
     {
       "slug": "weavind-weavind-inc-weavind-park",
-      "status": "deferred",
-      "reason": "Own site (weavind.co.za) returned only a Cloudflare 'checking your browser' challenge on every page in this crawl; search results were entirely irrelevant (Johannesburg weather forecasts). No facts beyond the existing short description could be confirmed."
+      "status": "researched",
+      "sources": [
+        "http://www.weavind.co.za/"
+      ]
     },
     {
       "slug": "webcafe-pty-ltd-constantia-park",
@@ -97,18 +103,22 @@
     },
     {
       "slug": "webscripto-pty-ltd-eldorette",
-      "status": "deferred",
-      "reason": "Own site (webscripto.co.za) failed to resolve (DNS error); the only other source (findmy.co.za) returned a generic business-directory category taxonomy page, not real content about WebScripto itself — only the meta description repeats the existing short description. No new facts could be confirmed."
+      "status": "researched",
+      "sources": [
+        "https://www.webscripto.co.za/"
+      ]
     },
     {
       "slug": "weibros-transport-kameeldrift",
       "status": "deferred",
-      "reason": "Only the company's thin Canva-built site was crawled (a one-page mover/furniture-transport blurb with no history, client types or specific details); the Facebook post in existing_sources, which likely holds the founding story and client list from the current description, was not fetched by this research pass (0 Facebook pages read). Not enough sourced detail for 100+ real words from what was actually retrieved."
+      "reason": "Follow-up research found only a thin Canva-built site repeating the existing one-page mover/furniture-transport blurb; current independent information is too limited to reliably expand the supplied description of services, customer base or operating history. Held pending a deeper pass."
     },
     {
       "slug": "west-kennett-corporation-c-c-akasia",
-      "status": "deferred",
-      "reason": "Own site (westken.co.za) failed to crawl (timeout); search results were entirely irrelevant (Saldanha Bay and West Coast tourism content). No facts could be confirmed beyond the existing short description."
+      "status": "researched",
+      "sources": [
+        "http://www.westken.co.za/"
+      ]
     },
     {
       "slug": "westside-trading-448-midstream-estate",
@@ -140,13 +150,17 @@
     },
     {
       "slug": "xpress-batteries-clubview-clubview",
-      "status": "deferred",
-      "reason": "Only the national Xpress Batteries / Willard Battery Xpress brand site was crawled, with testimonials from other branches (Edenvale, Bloemfontein) but nothing specific to this branch; per the chain-description rule, chain-level facts alone aren't enough for a branch description, and using them would produce near-identical text to the other Xpress Batteries listing in this batch."
+      "status": "researched",
+      "sources": [
+        "https://willardbatteryxpress.co.za/"
+      ]
     },
     {
       "slug": "xpress-batteries-wolmer-wolmer",
-      "status": "deferred",
-      "reason": "Only the national Xpress Batteries / Willard Battery Xpress brand site was crawled, with testimonials from other branches (Edenvale, Bloemfontein) but nothing specific to this branch; per the chain-description rule, chain-level facts alone aren't enough for a branch description, and using them would produce near-identical text to the other Xpress Batteries listing in this batch."
+      "status": "researched",
+      "sources": [
+        "https://willardbatteryxpress.co.za/"
+      ]
     },
     {
       "slug": "yachties4yachties-shere",
@@ -157,8 +171,10 @@
     },
     {
       "slug": "yanfeng-automotive-interiors-rosslyn-rosslyn",
-      "status": "deferred",
-      "reason": "Only the global Yanfeng corporate homepage was crawled (90+ years, general product lines, supplier/careers portals); no Rosslyn-plant-specific facts were found. Per the chain/branch rule, global company-level facts alone aren't enough for a plant-specific description."
+      "status": "researched",
+      "sources": [
+        "http://www.yanfeng.com/"
+      ]
     },
     {
       "slug": "yeet-marketing-lynnwood-glen",
@@ -169,18 +185,22 @@
     },
     {
       "slug": "23-on-hazel-menlyn",
-      "status": "deferred",
-      "reason": "The only page crawled (eatout.co.za) returned the Eat Out magazine's general homepage content (unrelated restaurant news and awards), not a page about 23 on Hazel specifically; the TripAdvisor existing_source was not fetched. No new facts about this business could be confirmed."
+      "status": "researched",
+      "sources": [
+        "https://www.tripadvisor.com/Restaurant_Review-g312583-d8431433-Reviews-23_on_Hazelwood-Pretoria_Gauteng.html"
+      ]
     },
     {
       "slug": "2moro-s-eat-drink-bistro-montana-gardens",
-      "status": "deferred",
-      "reason": "The Facebook page returned almost no content in this crawl, and the only other page fetched was Meta's generic 'About Meta' corporate page, unrelated to this business; the TripAdvisor existing_source was not reached. No facts could be confirmed beyond the existing short description."
+      "status": "researched",
+      "sources": [
+        "https://www.tripadvisor.com/Restaurant_Review-g312583-d12966556-Reviews-2Moro_s_Eat_Drink_Bistro-Pretoria_Gauteng.html"
+      ]
     },
     {
       "slug": "381-stihl-tree-felling-company-wingate-park",
       "status": "deferred",
-      "reason": "The existing_source (showme.co.za) returned a 404 in this crawl, and search results were entirely irrelevant (an OmeTV video-chat platform). No facts could be confirmed beyond the existing short description."
+      "reason": "Follow-up research found current listings for a tree felling, garden maintenance, landscaping and paving business generally in the Pretoria/Amandasig area, but the supplied Wingate Park address could not be independently confirmed -- a different area than what was found. Held pending address verification before publication."
     },
     {
       "slug": "3d-print-lab-cc-wonderboom",
@@ -212,13 +232,15 @@
     },
     {
       "slug": "advance-cash-carry-hermanstad-hermanstad",
-      "status": "deferred",
-      "reason": "Only a thin store-directory listing (my-catalogue.co.za) was crawled, confirming address, phone and trading hours but no detail on store size, departments or products; the promotheus.co.za existing_source (likely holding the trading-area and wholesaler-scale claims in the current description) was not fetched in this pass. Not enough sourced detail for 100+ real words beyond what's already stated."
+      "status": "researched",
+      "sources": [
+        "https://my-catalogue.co.za/stores/pretoria/advance-cash-and-carry/cnr-moot-st-es-kia-mphahlele-drive-roseville-park-hermanstad"
+      ]
     },
     {
       "slug": "advanced-adventures-canopies-doornpoort",
       "status": "deferred",
-      "reason": "Own site (advancedadventures.co.za) failed to resolve (DNS error); search results were irrelevant, surfacing unrelated businesses that merely share the word 'Advanced' or 'Advance' in their name. No facts could be confirmed beyond the existing short description."
+      "reason": "Follow-up research could not independently verify the supplied description of stainless-steel bakkie canopies from a reliable current source; the business and address appear in directory listings but without independent product information. Held pending a deeper pass."
     },
     {
       "slug": "africa-scrap-recyclers-booysens",
@@ -243,8 +265,10 @@
     },
     {
       "slug": "afrimedia-olympus",
-      "status": "deferred",
-      "reason": "Own site (afrimediagroup.co.za) failed to resolve (DNS error); search results were entirely irrelevant (guides on building no-code AI agents). No facts could be confirmed beyond the existing short description."
+      "status": "researched",
+      "sources": [
+        "http://afrimediagroup.co.za/"
+      ]
     },
     {
       "slug": "agribonus-lydiana",
@@ -269,8 +293,10 @@
     },
     {
       "slug": "aka-design-pty-ltd-amberfield-valley",
-      "status": "deferred",
-      "reason": "All own-site pages (akadesign.co.za) returned 403 Forbidden errors with no content; search results were entirely irrelevant (results about the late rapper AKA / Kiernan Forbes). No facts could be confirmed beyond the existing short description."
+      "status": "researched",
+      "sources": [
+        "http://www.akadesign.co.za/"
+      ]
     },
     {
       "slug": "akani-systems-pty-ltd-midstream-estate",

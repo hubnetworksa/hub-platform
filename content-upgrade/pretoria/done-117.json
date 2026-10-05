@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 117,
-  "generated_at": "2026-10-04T17:39:26.750Z",
+  "generated_at": "2026-10-05T08:19:13.981Z",
   "items": [
     {
       "slug": "german-development-cooperation-giz-south-africa-bryntirion",
@@ -118,7 +118,7 @@
     {
       "slug": "sl-accounting-services-pty-ltd-clubview",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the firm's own website states it is based in Paulshof, Sandton, not Clubview, Centurion as listed here. The service facts (bookkeeping, tax compliance, payroll, company secretarial, led by a SAICA-registered accountant) match the current text, but the base-address conflict needs confirming before writing a description tied to this specific office."
+      "reason": "ADDRESS MISMATCH, confirmed by further research: the firm's own website states it is now based in Paulshof, Sandton, and current business information places it specifically at 4 Queens Place, Paulshof, Sandton 2191 (5.0 rating from 22 reviews, tel 079 190 4913), not at Unit 64, Mont Valon, 166 Von Willich Avenue, Clubview, Centurion as listed here. A separate directory still lists the older/alternative Clubview address, so this listing should not be assumed closed or wrong, but the correct current operating address needs confirming before publishing a description tied to the Clubview office. Services (accounting, bookkeeping, payroll, tax consulting and tax preparation) are confirmed generally for the business. Keeping deferred pending address confirmation."
     },
     {
       "slug": "super-rafts-donkerhoek",
@@ -206,8 +206,10 @@
     },
     {
       "slug": "dhi-south-africa-pretoria-office-blue-valley-golf-estate",
-      "status": "deferred",
-      "reason": "Only global DHI Group / MIKE software content was found (international case studies in Singapore and India, the group's water-cycle mission); nothing about this Pretoria office's own staff, local projects or specific South African work. The current text already flags that this is mainly a brand/product description, so it would be entirely group-level."
+      "status": "researched",
+      "sources": [
+        "http://www.dhigroup.com/"
+      ]
     },
     {
       "slug": "j-r-kopano-engineering-rosslyn",
@@ -337,8 +339,10 @@
     },
     {
       "slug": "cartridge-hyper-elardus-park-elardus-park",
-      "status": "deferred",
-      "reason": "Only chain-level facts (established 2003, generic and compatible printer cartridges for major brands) were available; the store's own page returned only a loading placeholder with no content, and search results were generic chain copy and competitor adverts, with nothing specific to the Elardus Park branch. Per the chain rule, chain-level facts alone aren't enough."
+      "status": "researched",
+      "sources": [
+        "https://cartridgehyper.co.za/store/cartridge.hyper.elardus.park"
+      ]
     },
     {
       "slug": "ccl-global-annlin",

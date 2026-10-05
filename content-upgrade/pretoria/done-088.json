@@ -1,17 +1,22 @@
 {
   "city": "pretoria",
   "chunk": 88,
-  "generated_at": "2026-10-04T18:30:48.100Z",
+  "generated_at": "2026-10-05T07:54:36.517Z",
   "items": [
     {
       "slug": "toppan-security-pty-ltd-southdowns",
-      "status": "deferred",
-      "reason": "Only the global TOPPAN Security corporate site was reachable (worldwide identity/payment statistics, group news); no page or snippet describes this Southdowns/Irene office's own local operations, services or staff. A fuller description would only repeat global corporate facts already implied by the current one-liner, so it is held back rather than padded."
+      "status": "researched",
+      "sources": [
+        "https://africa.toppangravity.com/",
+        "https://toppansecurity.com/"
+      ]
     },
     {
       "slug": "tru-trac-rollers-pty-ltd-sunderland-ridge",
-      "status": "deferred",
-      "reason": "The company's own site (home, /about, /about-us) returned only a bot-challenge screen on every attempt, and searches returned entirely unrelated results (Truworths, Tru FM radio, Thompson Rivers University, TruHome). No usable facts beyond the existing one-line description were found."
+      "status": "researched",
+      "sources": [
+        "http://www.tru-trac.com/"
+      ]
     },
     {
       "slug": "trytsman-attorneys-wierdapark",
@@ -23,8 +28,10 @@
     },
     {
       "slug": "tshwane-digital-solutions-pty-ltd-alphen-park",
-      "status": "deferred",
-      "reason": "The company's own site timed out on every attempt, and searches returned only City of Tshwane municipal pages (e-Tshwane, careers, Wikipedia entry for the municipality) with nothing about this business."
+      "status": "researched",
+      "sources": [
+        "http://www.tds-roland.co.za/"
+      ]
     },
     {
       "slug": "tsipe-engineering-pty-ltd-klerksoord",
@@ -56,8 +63,10 @@
     },
     {
       "slug": "up-a-tone-events-agency-bryntirion",
-      "status": "deferred",
-      "reason": "The company's own site timed out on every attempt (four separate failures), and searches returned only University of Pretoria pages. No business-specific content beyond the existing description was found in this pass."
+      "status": "researched",
+      "sources": [
+        "http://www.upatone.co.za/"
+      ]
     },
     {
       "slug": "vharanani-boitshoko-jv-site-camp-annlin-west",
@@ -83,28 +92,38 @@
     },
     {
       "slug": "vmk-managed-solution-weavind-park",
-      "status": "deferred",
-      "reason": "The company's domain failed to resolve (DNS error), and searches returned entirely unrelated results (a gambling/lottery site). No facts about this business were found."
+      "status": "researched",
+      "sources": [
+        "http://vmksolution.co.za/"
+      ]
     },
     {
       "slug": "volt-trans-electrical-kilner-park",
-      "status": "deferred",
-      "reason": "Only a brief two-sentence homepage summary was found (electrical and solar installer, registered with the Department of Labour and the ECB); every other page (about, services, gallery, contact) returned HTTP 404. No service specifics or additional detail were available to expand into a full description without padding."
+      "status": "researched",
+      "sources": [
+        "https://www.volttrans.co.za/"
+      ]
     },
     {
       "slug": "voltex-electrical-wholesaler-centurion-hennopspark",
-      "status": "deferred",
-      "reason": "Research returned only the generic Voltex corporate homepage and a Cylex page for Voltex's Durban branch; nothing about this Hennopspark/Centurion branch's own hours, stock or services was found, and chain branches need their own facts, not another branch's."
+      "status": "researched",
+      "sources": [
+        "https://www.voltex.co.za/"
+      ]
     },
     {
       "slug": "voltex-electrical-wholesaler-pretoria-north-heatherview",
-      "status": "deferred",
-      "reason": "Research returned only the generic Voltex corporate homepage (which failed to load) and the same Cylex page for Voltex's Durban branch; nothing about this Pretoria North/Heatherview branch's own hours, stock or services was found."
+      "status": "researched",
+      "sources": [
+        "https://www.voltex.co.za/"
+      ]
     },
     {
       "slug": "voltex-electrical-wholesaler-pretoria-rietfontein",
-      "status": "deferred",
-      "reason": "Research returned only the generic Voltex corporate homepage and the same Cylex page for Voltex's Durban branch; nothing about this Rietfontein/Villieria branch's own hours, stock or services was found."
+      "status": "researched",
+      "sources": [
+        "https://www.voltex.co.za/"
+      ]
     },
     {
       "slug": "vula-concrete-pty-ltd-donkerhoek-donkerhoek",
@@ -124,12 +143,14 @@
     {
       "slug": "water-systems-eco-park-eco-park",
       "status": "deferred",
-      "reason": "The only content found was the RO Water SA brand's general about-us page (20+ years of experience, water treatment plants aimed at commercial and industrial clients); nothing specific to this Eco Park Estate retail outlet's own hours, in-store offering or local service area was found, and chain outlets need their own facts."
+      "reason": "A current Eco Boulevard tenant directory confirms 'RO Water Systems' as an active tenant at Eco Park, which supports this listing being that business, but the specific Shop 9B, 270 Eco Park Road address, in-store product range, trading hours and local service area could not be independently confirmed beyond the RO Water SA brand's general about-us page (20+ years of experience, water treatment plants aimed at commercial/industrial clients). Held back pending branch-specific confirmation."
     },
     {
       "slug": "waterpump-services-daspoort",
-      "status": "deferred",
-      "reason": "The company's own site failed to load, and searches returned entirely unrelated results (YouTube Shorts help pages). No facts about this business were found."
+      "status": "researched",
+      "sources": [
+        "http://waterpumpservices.co.za/"
+      ]
     },
     {
       "slug": "welman-attorneys-inc-garsfontein-smallholdings",
@@ -263,7 +284,7 @@
     {
       "slug": "aphiwe-business-systems-pty-ltd-akasia",
       "status": "deferred",
-      "reason": "The company's own site failed to load (timeout/navigation error), and searches returned only generic Facebook login pages. No facts about this business were found."
+      "reason": "The company itself is confirmed active -- IT, cybersecurity, telecoms, information security, data recovery/backup and custom software, and a 2025 public-sector bidder including a CCMA e-board-pack solution and the SA Tourism digital-services panel -- but a current business listing places Aphiwe Business Systems at B04 05 Moshate Gardens, Rosslyn, Pretoria, not the 93 Cunningham Lane, The Orchards address on file, and that conflict could not be resolved. Held back pending address confirmation rather than published against an unverified address."
     },
     {
       "slug": "apogee-boutique-hotel-and-spa-waterkloof-ridge",
@@ -288,8 +309,10 @@
     },
     {
       "slug": "arjo-huntleigh-south-africa-pty-ltd-klerksoord",
-      "status": "deferred",
-      "reason": "Only the global Arjo corporate site was found (worldwide dementia-care and VTE-prevention campaigns, global product lines); nothing about this Klerksoord/Akasia branch's own local operations, contact history or South African product range was found. The facts available are chain-level only."
+      "status": "researched",
+      "sources": [
+        "https://www.arjo.com/en-ZA/"
+      ]
     },
     {
       "slug": "at-the-river-zwartkop",
@@ -314,8 +337,12 @@
     },
     {
       "slug": "avbob-funeral-service-lynnwood",
-      "status": "deferred",
-      "reason": "Only the national AVBOB corporate homepage was found (mutual society structure, policyholder benefits, national product range); no page specific to the Pretoria East/Lynnwood branch's own services, history or facilities was retrieved, and a chain branch needs its own facts rather than company-wide ones."
+      "status": "researched",
+      "sources": [
+        "https://www.netpages.co.za/Pretoria/AvbobFuneral+ArrangementsPretoria+BranchesPretoria+East+359+Lynnwood+Rd+Lynnwood-316854.html",
+        "https://www.yellosa.co.za/company/615231/avbob-pretoria-east",
+        "https://www.avbob.co.za/our-branches/branch-details?loc=AVBOB+Funeral+Service+Pretoria+East&locationid=7788ce1d-7f28-48be-afdd-714c2c2758b7"
+      ]
     },
     {
       "slug": "baartman-du-plessis-attorneys-montana-park",

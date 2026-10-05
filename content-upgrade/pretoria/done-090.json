@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 90,
-  "generated_at": "2026-10-04T19:18:32.879Z",
+  "generated_at": "2026-10-05T07:52:18.734Z",
   "items": [
     {
       "slug": "eagle-elevators-pty-ltd-amandasig",
@@ -12,8 +12,10 @@
     },
     {
       "slug": "earth-gleam-eco-park",
-      "status": "deferred",
-      "reason": "The company's own site says its head office is in Midrand, not Eco-Park, Centurion, and gives no Centurion branch details. The location in the current text cannot be confirmed from this source."
+      "status": "researched",
+      "sources": [
+        "https://www.earthgleam.co.za/"
+      ]
     },
     {
       "slug": "eastlynne-gamazin-factory-shop-east-lynne",
@@ -67,7 +69,7 @@
     {
       "slug": "emlek-technologies-pty-ltd-hazeldean",
       "status": "deferred",
-      "reason": "emlekonline.com did not resolve during research, and the search results are unrelated forum threads. No source describes this telecommunications and managed services provider."
+      "reason": "emlekonline.com did not resolve during research, and the search results are unrelated forum threads. A follow-up research pass also found insufficient reliable current evidence for this telecommunications and managed-services provider's service range, or to confirm the supplied Hazeldean Office Park/Silverlakes Road address and founding details. Held for verification; no description written."
     },
     {
       "slug": "eris-property-group-menlyn",
@@ -78,13 +80,17 @@
     },
     {
       "slug": "ese-manufacturing-east-lynne",
-      "status": "deferred",
-      "reason": "ese-sa.co.za timed out during research. Only a single search snippet (established 1998, family business, industrial supplies) was usable, which is not enough to reach 100 real words without padding."
+      "status": "researched",
+      "sources": [
+        "http://www.ese-sa.co.za/"
+      ]
     },
     {
       "slug": "esquire-technologies-louwlardia",
-      "status": "deferred",
-      "reason": "The Esquire site is an online shop listing products (computer chassis, motherboards, CCTV, kettles, stationery) with no company description or history. No source supports the distribution and reseller claims in the current text."
+      "status": "researched",
+      "sources": [
+        "https://www.esquire.co.za/"
+      ]
     },
     {
       "slug": "evolving-marketing-solutions-pty-ltd-wingate-park",
@@ -95,8 +101,10 @@
     },
     {
       "slug": "falke-hosiery-rosslyn",
-      "status": "deferred",
-      "reason": "falke.co.za is FALKE SA's online store (sport and fashion sock ranges), with no mention of the Rosslyn manufacturing plant, its 1974 establishment or the German Falke group link. The manufacturing-facility claims in the current text are not supported by this source."
+      "status": "researched",
+      "sources": [
+        "https://falke.co.za/"
+      ]
     },
     {
       "slug": "faw-trucks-pretoria-west-zandfontein",
@@ -184,18 +192,25 @@
     },
     {
       "slug": "guard4sure-security-services-pty-ltd-rietondale",
-      "status": "deferred",
-      "reason": "guard4sure.co.za did not resolve during research, and the search results are unrelated Stack Overflow programming questions about Instagram logins. No source describes this security company."
+      "status": "researched",
+      "sources": [
+        "http://guard4sure.co.za/"
+      ]
     },
     {
       "slug": "hbe-consulting-rietvalleirand",
-      "status": "deferred",
-      "reason": "hbeconsulting.co.za timed out during research, and the search results are Edgars fragrance and clothing product pages. No source describes this SHEQ and project management consultancy."
+      "status": "researched",
+      "sources": [
+        "http://hbeconsulting.co.za/",
+        "https://hbeconsulting.co.za/about-us/"
+      ]
     },
     {
       "slug": "hensoldt-optronics-highveld",
-      "status": "deferred",
-      "reason": "The HENSOLDT South Africa homepage leads with a public notice about information security incidents and group financial results (revenue, EBITDA, dividend). No page describes the Centurion optronics division's own products, such as the gimbals, rangefinders or helmet-tracking systems in the current text, so none of those specific claims can be sourced."
+      "status": "researched",
+      "sources": [
+        "https://www.hensoldt.co.za/"
+      ]
     },
     {
       "slug": "iritron-pty-ltd-brummeria",
@@ -206,8 +221,11 @@
     },
     {
       "slug": "irrigation-pretoria-la-montagne",
-      "status": "deferred",
-      "reason": "Irrigation Pretoria's about and services pages are 404s, and the only working page (contact) shows a Postnet address in Die Wilgers under the Justgreen name, not La Montagne. The 22-years and La Montagne location claims in the current text cannot be confirmed."
+      "status": "researched",
+      "sources": [
+        "http://www.irrigationpretoria.co.za/about-us",
+        "http://www.irrigationpretoria.co.za/services"
+      ]
     },
     {
       "slug": "itr-technology-pty-ltd-blue-valley-golf-estate",
@@ -232,8 +250,10 @@
     },
     {
       "slug": "kaalvoet-studio-wingate-park",
-      "status": "deferred",
-      "reason": "Only the Facebook page description (one-stop shop for design, decor products and laser cutting, 1,232 followers) was usable; procompare.co.za timed out, and the search results are unrelated Sao Paulo airport taxi pages. That single line is not enough to reach 100 real words without padding."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/KaalvoetStudio/"
+      ]
     },
     {
       "slug": "khulandle-consulting-engineers-sa-pierre-van-ryneveld-park",
@@ -272,8 +292,10 @@
     },
     {
       "slug": "ledworx-solutions-pty-ltd-equestria",
-      "status": "deferred",
-      "reason": "ledworx.co.za returns a default hosting error page with no company content, and no search results were returned. The founding year and sourcing claims in the current text are not supported by any fetched source."
+      "status": "researched",
+      "sources": [
+        "http://www.ledworx.co.za/"
+      ]
     },
     {
       "slug": "m-tech-training-consultants-wapadrand",
@@ -312,13 +334,16 @@
     },
     {
       "slug": "markham-wonderpark-karenpark",
-      "status": "deferred",
-      "reason": "The Markham store page was blocked by a Cloudflare security challenge, and no search results were returned. No source describes the Wonderpark store itself, so a chain-only description is not allowed."
+      "status": "researched",
+      "sources": [
+        "https://www.markham.co.za/?utm_source=google&utm_medium=stores&utm_campaign=wonderpark",
+        "https://www.tiendeo.co.za/stores/pretoria/markham-shop-cnr-heinrich-old-brits-rd-wonderpark/41110"
+      ]
     },
     {
       "slug": "mattress-company-pretoria-silver-lakes-shere",
       "status": "deferred",
-      "reason": "The Mattress Company page is mostly Google reviews praising delivery staff and a bed-size product menu; it does not confirm the Silver Lakes or Stocks Centre location, or the pricing and service claims in the current text."
+      "reason": "The Mattress Company page is mostly Google reviews praising delivery staff and a bed-size product menu; it does not confirm the Silver Lakes or Stocks Centre location, or the pricing and service claims in the current text. A follow-up check against the company's own official store locator confirms a real Silver Lakes branch exists, but at Stocks Centre, Pretoria East -- not at the listing's current address (5 Graham Road, Lynnwood). The branch is real but the listing's address needs correcting to Stocks Centre, Pretoria East before this can be published; kept deferred pending an address fix."
     },
     {
       "slug": "mebu-office-furniture-eloffsdal",

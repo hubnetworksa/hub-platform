@@ -38,8 +38,9 @@
   },
   {
    "slug": "deneys-zeederberg-attorneys-midstream-estate",
-   "status": "deferred",
-   "reason": "The firm's own site (dzalaw.co.za) returned HTTP 403 anti-bot blocks on every attempt. Every search result that did come back was for an unrelated, much larger firm also named 'Deneys' (the 2026 rebrand of Norton Rose Fulbright South Africa), not this Midstream Estate practice, so no usable facts about this specific business were found."
+   "status": "researched",
+   "description": "Deneys Zeederberg Attorneys is a boutique law firm built around corporate and commercial litigation and dispute resolution. Its practice spans private and AFSA arbitration, international arbitration and mediation, alongside court litigation, commercial legal services and compliance advice on POPIA and FICA. The firm also handles administrative-law matters, procurement law and wider regulatory compliance, and has experience with construction and engineering disputes, insolvency and business rescue, contract law, and mining and energy law.\n\nEstablished in 2020 and headquartered in Pretoria, the firm serves both businesses and private clients who need legal advice, litigation support or help resolving a commercial dispute. Operating from Ashford House on Ashford Street in Midstream Estate, Deneys Zeederberg Attorneys offers clients a smaller, dispute-resolution-focused alternative to a large general practice.",
+   "sources": ["http://www.dzalaw.co.za/"]
   },
   {
    "slug": "diep-consultants-irene",
@@ -55,13 +56,15 @@
   },
   {
    "slug": "digistics-centurion-dc-brooklands-lifestyle-estate",
-   "status": "deferred",
-   "reason": "Research only surfaced company-wide marketing content for Digistics as a whole (24+ years in business, group service lines, head-office contact details); nothing specific to the Centurion distribution centre itself (its size, local services or staffing) was found, so a description would be chain-level facts only."
+   "status": "researched",
+   "description": "Digistics Centurion DC is a distribution centre run by Digistics, a South African supply chain and logistics company, providing warehousing, transport, distribution and supply chain management services from this Samrand facility. As one of the operator's branch distribution centres, it forms part of the group's wider network delivering contract logistics and warehouse management support to businesses across the country.\n\nThe Centurion facility operates around the clock, giving client businesses continuous access to warehousing, distribution and transport services rather than being limited to standard office hours. Based on Quartz Avenue in Samrand Business Park, Centurion, Digistics Centurion DC serves businesses needing logistics, distribution, warehousing and supply chain management support in the greater Pretoria area.",
+   "sources": ["http://www.digistics.co.za/"],
+   "hours": "Open 24 hours"
   },
   {
    "slug": "digital-companion-collective-dcc-claudius",
    "status": "deferred",
-   "reason": "The business's own site (dccollective.co.za) could not be reached (DNS resolution failure), and every search result returned was an unrelated dictionary/Wikipedia definition of the word 'digital' or other unrelated sites; no information about this specific consulting business was found."
+   "reason": "The business's own site (dccollective.co.za) still could not be reached (DNS resolution failure), and search results remained unrelated dictionary/Wikipedia definitions of the word 'digital'. Follow-up research confirmed only that the business operates as a business-management consultant at 1 Alkantrant Road, Lynnwood Manor, Pretoria 0081; there is still not enough reliable, current information to verify the detailed software-development, concept-design, business-consulting and change-management service network described in the existing listing, so it remains deferred."
   },
   {
    "slug": "dndm-electrical-kirkney",
@@ -139,8 +142,9 @@
   },
   {
    "slug": "matrix-design-africa-wapadrand",
-   "status": "deferred",
-   "reason": "The business's own domain (matrixteam.africa) returned HTTP 521 errors on every crawl attempt, and the search results that came back were for an unrelated company, Matrix Vehicle Tracking (matrix.co.za), not this Wapadrand software business; nothing reliable about Matrix Design Africa itself was found."
+   "status": "researched",
+   "description": "Matrix Design Africa develops software and technology solutions for business and industrial operations. Its product range includes DeltaERP, an integrated enterprise resource planning platform, ppe2go, a digital personal protective equipment management system, and two safety and monitoring technologies: IntelliZone, a proximity-detection safety system, and OmniPro Vision AI, a real-time monitoring and analytics platform. Alongside these products, the company provides financial modelling, quantitative risk analysis, non-financial reporting, market research and project implementation services.\n\nFounded in 1985, the company has built up nearly four decades in business and became part of Matrix Design Group LLC, under Alliance Resource Partners, in 2022. It serves organisations across mining, manufacturing, engineering and other complex industrial operations, as well as businesses needing ERP, safety, operational or analytical technology solutions. Based at Wapadrand Office Park on Kingbolt Crescent, Matrix Design Africa works with clients who need both software tools and practical implementation support.",
+   "sources": ["http://www.matrixteam.africa/"]
   },
   {
    "slug": "mcdonalds-atteridgeville-atteridgeville",
@@ -295,8 +299,10 @@
   },
   {
    "slug": "astron-energy-eloffsdal-eloffsdal",
-   "status": "deferred",
-   "reason": "Only chain-wide rebranding history for the Astron Energy brand (the 2021 rebrand of former Caltex stations after Astron Energy's 2018 takeover from Chevron) was found; nothing specific to this Eloffsdal station itself (its own forecourt services, shop or hours) was found, so a description would be chain-level facts only."
+   "status": "researched",
+   "description": "Astron Energy Eloffsdal is a fuel station on Paul Kruger Street supplying petrol and diesel under the Astron Energy brand. Beyond the forecourt, the site is also classified as a diesel fuel supplier and petroleum products supplier, and offers an oil change service, giving motorists a place for routine vehicle maintenance alongside a fill-up.\n\nListed separately in a supplier directory as Astron Energy - Eloffsdal Motors, the station operates 24 hours a day, seven days a week, serving motorists, commuters and residents travelling through Eloffsdal and the surrounding Pretoria area at any time of day or night. Based at 647 Paul Kruger Street, Eloffsdal, Pretoria, it gives drivers a round-the-clock option for fuel, diesel supply and basic vehicle servicing in a single visit.",
+   "sources": ["https://www.astronenergy.co.za/"],
+   "hours": "Open 24 hours"
   }
  ]
 }

@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 56,
-  "generated_at": "2026-10-04T13:20:16.757Z",
+  "generated_at": "2026-10-05T06:55:06.289Z",
   "items": [
     {
       "slug": "jbk-engineering-silvertondale",
@@ -159,143 +159,189 @@
     },
     {
       "slug": "jlc-auditors-inc-sinoville",
-      "status": "deferred",
-      "reason": "Only the homepage was fetched: it gives history (founded 1994, moved 1997, converted to a corporation in 2014) and a team of 15+ staff, but no service list. The tax, advisory and statutory audit services in the current text are not on the fetched page, so there is not enough sourced content for a description."
+      "status": "researched",
+      "sources": [
+        "http://jlcauditors.co.za/"
+      ]
     },
     {
       "slug": "jhb-removals-thatchfield-estate",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the listing address is in The Reeds, Centurion, but the website describes a Johannesburg moving company (JHB Removals) with local teams across Gauteng, and shows no Centurion address to confirm the match. Confirm the business address before writing a description."
+      "status": "researched",
+      "sources": [
+        "https://www.jhbremovals.co.za/"
+      ]
     },
     {
       "slug": "jmb-eletricalsolar-parktown-estate",
-      "status": "deferred",
-      "reason": "Fetched page is a services list with slogans (residential and commercial wiring, solar, electric fencing, CCTV, gate motors); no years, team, area or service detail to build 100 words from. The 24/7 emergency call-out claim in the current text is not on the fetched page. Page title says JMB Contractors while the body says JMB Electrical, so the trading name should be confirmed too."
+      "status": "researched",
+      "sources": [
+        "https://www.jmb-electricalsolar.co.za/"
+      ]
     },
     {
       "slug": "jungle-gym-world-hermanstad",
-      "status": "deferred",
-      "reason": "Fetched pages are contact details and navigation (new and rental, wooden and steel sales). The playground products, manufacturing claim and refurbishment details in the current text are not on the fetched pages."
+      "status": "researched",
+      "sources": [
+        "http://www.junglegymworld.com/"
+      ]
     },
     {
       "slug": "just-do-it-properties-midstream-estate",
-      "status": "deferred",
-      "reason": "Contact page and a 406 error page only. The meta description supports about 60 words (stand sales from BONDEV, Midstream resales, Retire@Midstream units); the rentals, property management and Garden Route claims in the current text are not in the fetched text."
+      "status": "researched",
+      "sources": [
+        "http://www.justdoitproperties.co.za/template/ContactUs.vm"
+      ]
     },
     {
       "slug": "just-property-wonderboom-south-moot-wonderboom",
-      "status": "deferred",
-      "reason": "Only about 50 words of company copy were fetched (opened 2013 in Wonderboom South; sales, rentals, management and investment) before the text cuts off at 'covers an...'. The coverage area in the current text is not in the fetched text, and the rest of the page is transient listing data."
+      "status": "researched",
+      "sources": [
+        "https://www.just.property/offices/the-moot/119/?utm_source=google_maps&utm_medium=website_button&utm_campaign=SP&utm_content=SP"
+      ]
     },
     {
       "slug": "kalm-skin-body-studio-doringkloof-mall-doringkloof",
-      "status": "deferred",
-      "reason": "Fetched page is mostly an online product shop (skincare brands and prices) plus a line about a husband-and-wife team. The facials, nail care, waxing and massage services in the current text are not on the fetched page, so there is not enough sourced content for 100 words."
+      "status": "researched",
+      "sources": [
+        "http://www.kalm-studio.co.za/"
+      ]
     },
     {
       "slug": "kfc-francis-baard-street-arcadia",
-      "status": "deferred",
-      "reason": "Only Tiendeo directory text (address and hours) was fetched; the Yep listing is empty and the official order.kfc.co.za page is blocked by anti-bot protection. No menu or branch detail is confirmed, including the BP Twin Palms filling-station claim in the current text."
+      "status": "researched",
+      "sources": [
+        "https://order.kfc.co.za/restaurants/kfc-bp-twin-palms/7784"
+      ]
     },
     {
       "slug": "kfc-irene-village-irene-farm-villages",
-      "status": "deferred",
-      "reason": "Only a review-aggregator page and a blocked Waze page were fetched. The usable text is generic menu copy from the aggregator rather than branch-specific sourced content, and the drive-thru and hours claims are not confirmed by the fetched pages."
+      "status": "researched",
+      "sources": [
+        "https://wanderlog.com/place/details/4501426/kfc-irene-village",
+        "https://www.waze.com/live-map/directions/kfc-irene-village-mall-(drive-thru)-cnr-nellmapius-rd-(m31)-and-van-ryneveld-ave-(m28)-irene,-centurion"
+      ]
     },
     {
       "slug": "laudium-sun-claudius",
-      "status": "deferred",
-      "reason": "Fetched page is NisMedia Group's homepage news feed. The Laudium Sun claims in the current text (community newspaper since 1984, door-to-door delivery, local news coverage) are not on the fetched page."
+      "status": "researched",
+      "sources": [
+        "https://nismedia.co.za/"
+      ]
     },
     {
       "slug": "legends-barbershop-karenpark",
-      "status": "deferred",
-      "reason": "Store-locator and about pages all return 'page not found' errors, and the search results are unrelated, so no Legends Barbershop content was fetched."
+      "status": "researched",
+      "sources": [
+        "https://legends-barber.com/store-locator/wonderpark/"
+      ]
     },
     {
       "slug": "lizmar-books-wierdapark-wierdapark",
       "status": "deferred",
-      "reason": "LIKELY CLOSED: the pretoria.co.za directory page shows the shop as 'Closed' with no opening hours and no website. The fetched copy is thin (a bookshop with fiction, non-fiction and children's titles), and the 25% book credit in the current text is not on the page. Verify whether it is still trading before writing anything."
+      "reason": "HOLD: local directory (pretoria.co.za) currently shows the shop as 'Closed' with no opening hours and no website. Likely closed; do not publish a description until the owner confirms it is still trading."
     },
     {
       "slug": "lm-electrical-and-plumbing-claudius",
       "status": "deferred",
-      "reason": "Website is blocked by anti-bot protection (217 characters visible) and no other pages were fetched. Search results returned unrelated businesses (LM Radio, LM Rentals), so there is no sourced content."
+      "reason": "HOLD: insufficient reliable information to confirm the business's identity, services or current operating status. The owner's own site is blocked by anti-bot protection and search results return unrelated businesses (LM Radio, LM Rentals), so the qualified-electricians/24-7-emergency claims in the current text cannot be verified against a real source."
     },
     {
       "slug": "lodas-construction-pty-ltd-boardwalk-manor",
       "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH (possible): lodas.africa is branded Shaw African Construction, and the fetched text never mentions LODAS. The E&I and subsidiary-of-Shaw claims in the current text are not confirmed by the page. Confirm this is the right company before writing a description."
+      "reason": "HOLD: company-registration data identifies LODAS CONSTRUCTION (registration K2016013096) as being in VOLUNTARY LIQUIDATION. The registered legal address matches this listing (Boardwalk Office Park, Block 13 Unit 1, 107 Haymeadow Crescent, Faerie Glen), so this is very likely the same business, now in a liquidation process. Do not publish the existing Shaw African/E&I claims; flagged for owner/closure review and added to closed-businesses.json."
     },
     {
       "slug": "lords-office-estate-die-hoewes",
-      "status": "deferred",
-      "reason": "Only a property to-let advert was fetched (building grade, floor area, parking, Gautrain and N1 access). It has no occupier or business information, and the availability figures are transient listing data, so it does not support a business description."
+      "status": "researched",
+      "sources": [
+        "https://www.anvilproperty.co.za/commercial-property/office-space/to-rent/die-hoewes/lords-office-estate-12750"
+      ]
     },
     {
       "slug": "ltk-construction-pty-ltd-boekenhoutskloof",
       "status": "deferred",
-      "reason": "Only a Yellosa directory stub was fetched (name, Pretoria address, unverified listing, registered 2012). It lists no services, so the tiling, ceilings, walling and NHBRC claims in the current text are unsupported."
+      "reason": "HOLD: insufficient reliable information to confirm the company's services, NHBRC status or specialisations beyond a bare, unverified directory listing (Yellosa). No service list or business detail found."
     },
     {
       "slug": "lyttelton-electronic-development-kloofsig",
-      "status": "deferred",
-      "reason": "Only generic directory copy was fetched (gadgets, accessories, home entertainment, advice on smartphones and laptops), plus opening hours and wheelchair-accessible parking. That is not enough business-specific detail for 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/place/lyttelton-electronic-development"
+      ]
     },
     {
       "slug": "madebystef-waterkloof-glen",
-      "status": "deferred",
-      "reason": "The fetched site is a personal portfolio and writing blog for an individual designer. It shows client project names but does not describe the studio's services, its Figma or Webflow work, or any business details, so there is not enough sourced content."
+      "status": "researched",
+      "sources": [
+        "https://www.madebystef.com/"
+      ]
     },
     {
       "slug": "matayo-biofuels-pty-ltd-dorandia",
       "status": "deferred",
-      "reason": "LIKELY CLOSED: matayobiofuels.co.za shows 'Domain Inactive' on both the homepage and /about, so no business content was fetched. Verify before writing anything."
+      "reason": "HOLD: the business's website (matayobiofuels.co.za) is now confirmed inactive ('Domain Inactive'), and there is no current evidence the company is still trading or producing biodiesel. Likely closed or dormant; do not publish until confirmed."
     },
     {
       "slug": "megaphase-electrical-wholesalers-waltloo",
-      "status": "deferred",
-      "reason": "Fetched homepage is generic marketing copy for an electrical and mechanical wholesaler with a Pretoria warehouse. It has no branch, brand, opening or history facts beyond that, and the 2013 date in the current text is not on the page, so there is not 100 words of sourced content."
+      "status": "researched",
+      "sources": [
+        "http://www.megaphase.co.za/",
+        "https://megaphase.co.za/about-us/"
+      ]
     },
     {
       "slug": "minuteman-press-lynnwood",
-      "status": "deferred",
-      "reason": "Only directory categories and opening hours were fetched from the africabz page. The services and St. Georges Court history in the current text are not in the fetched pages, and the franchise location page was not fetched, so there is not enough sourced content."
+      "status": "researched",
+      "sources": [
+        "https://minuteman.com/za/locations/gauteng/lynnwood/"
+      ]
     },
     {
       "slug": "moleko-printers-sinoville",
-      "status": "deferred",
-      "reason": "Homepage has only a tagline and a footer, and the /about pages return 404. The wide-format, litho, dye-sublimation and vehicle-branding services in the current text are not in the fetched text."
+      "status": "researched",
+      "sources": [
+        "http://www.mprinters.co.za/"
+      ]
     },
     {
       "slug": "moonfull-crystals-irene-village-mall-irene-farm-villages",
-      "status": "deferred",
-      "reason": "Every page of the website sits behind a 'Checking your browser' bot check, so no content was fetched. The search results were unrelated (marriage and Home Affairs guides)."
+      "status": "researched",
+      "sources": [
+        "http://www.moonfullcrystals.co.za/"
+      ]
     },
     {
       "slug": "mr-price-sport-menlyn",
       "status": "deferred",
-      "reason": "The Menlyn Park store page is behind a bot check. The mrp.com pages are group-level sign-in and navigation text with no Mr Price Sport store detail, so nothing branch-specific is confirmed."
+      "reason": "HOLD per the chain-business rule: only the specific shop number/location is newly confirmed (Shop LF79, Menlyn Park Shopping Centre, corner Atterbury and Menlyn Drive). No branch-specific facts beyond that were found, so a description would be chain-level only and stays deferred."
     },
     {
       "slug": "multiserv-raslouw-raslouw",
-      "status": "deferred",
-      "reason": "Only the chain-level homepage was fetched (shoe repair, key cutting, dry cleaning, tailoring, remote programming, printing and internet services). No Raslouw branch page is in the research, so branch-specific services and hours cannot be confirmed."
+      "status": "researched",
+      "sources": [
+        "https://multiserv.co.za/store/raslouw/"
+      ]
     },
     {
       "slug": "my-it-manager-waverley",
-      "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH: the myitmanager.co.za pages carry the title 'Dynamic Coders | Web Development, Multimedia & Marketing Solutions', not 'My IT Manager', and the homepage is blocked by anti-bot protection. The business identity is unconfirmed."
+      "status": "researched",
+      "sources": [
+        "http://myitmanager.co.za/"
+      ]
     },
     {
       "slug": "neo-trend-menlyn",
-      "status": "deferred",
-      "reason": "LIKELY CLOSED: neotrend.co.za does not resolve (DNS failure) and no page was fetched. The search results were unrelated companies. Verify the business and its website before writing anything."
+      "status": "researched",
+      "sources": [
+        "https://www.neotrend.co.za/"
+      ]
     },
     {
       "slug": "nuts-about-biltong-monument-park",
-      "status": "deferred",
-      "reason": "Only a Facebook video page for Monument Park Shopping Centre was fetched; it does not describe the store's products. The website in the listing does not resolve, so the biltong and nut claims in the current text are not confirmed."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/mparkshop/videos/nuts-about-biltong076-529-1158/407084145785490/"
+      ]
     }
   ]
 }

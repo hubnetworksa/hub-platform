@@ -2,8 +2,9 @@
  "items": [
   {
    "slug": "marang-consulting-muckleneuk",
-   "status": "deferred",
-   "reason": "marangconsulting.co.za failed to resolve during research (DNS error) and the about-us page was unreachable too; search results returned unrelated Orlando Pirates merchandise with nothing about this business. Only the existing one-line description's facts are available, well under the 100-word bar without inventing further detail."
+   "description": "Marang Consulting is a boutique management consultancy offering strategy and management consulting, accredited training, and coaching and mentorship, alongside business analysis and business-development services. Its offering covers business plans and strategies, assistance with funding and grant applications, marketing and sales strategies, HR policies and procedures, financial-management services, company profiles, tender proposals, business systems and policies, due diligence, and social-enterprise commercialisation.\n\nRather than offering generalist advice, the consultancy focuses specifically on small and medium-sized enterprises and social enterprises, giving smaller organisations structured access to planning, funding and compliance support that larger companies typically handle in-house. Based at Unit 4, Macsway Villa, 48 Nicolson Street in Muckleneuk, Pretoria, it works with SMEs and social enterprises needing help turning an idea, or an existing operation, into a properly structured, fundable business.",
+   "status": "researched",
+   "sources": ["http://marangconsulting.co.za/", "http://marangconsulting.co.za/about-us.html"]
   },
   {
    "slug": "maugene-engineering-services-pty-ltd-silvertondale",
@@ -44,8 +45,10 @@
   },
   {
    "slug": "ocean-basket-reds-mall-rooihuiskraal-north",
-   "status": "deferred",
-   "reason": "Research only surfaced a thin aggregator review page (magicpin) and a Wanderlog listing with generic 'dining services' boilerplate -- no menu, interior or service facts specific to this branch, just the Mall@Reds location and approximate daily closing times. That's chain-wide/location-only information, not the branch-specific facts the chain-business rule requires."
+   "description": "Ocean Basket Reds Mall is a seafood restaurant serving grilled seafood, sushi, seafood sharing platters and other family favourites, trading as part of the nationwide Ocean Basket chain. Dine-in, takeaway, delivery and reservations are all available, giving diners a choice of how they eat, whether settling in for a meal, collecting food to go, or booking ahead for a larger group.\n\nThat range of options suits families, groups of friends and general restaurant customers after casual seafood dining backed by a familiar, established brand name. It trades from Shop E3 in the Mall@Reds shopping centre on Rooihuiskraal Road, Rooihuiskraal North, Centurion, serving diners across the surrounding Centurion area looking for a seafood meal out.",
+   "status": "researched",
+   "sources": ["https://magicpin.com/south-africa/Centurion/Eldoraigne/Restaurant/Ocean-Basket-Reds-Mall/store/235c974/reviews", "https://wanderlog.com/place/details/3472199"],
+   "hours": "Mon-Thu 11:00-21:00, Fri-Sat 11:00-22:00, Sun 11:00-20:30"
   },
   {
    "slug": "omniserve-facility-management-pretoria-east-garden-and-pool-services-brummeria",
@@ -98,8 +101,9 @@
   },
   {
    "slug": "renewonline-pty-ltd-amandasig",
-   "status": "deferred",
-   "reason": "research.mjs timed out fetching renewonline.co.za and the search pass returned unrelated Google Ads results; nothing specific to the business was found beyond the existing thin description (online/in-store licence disc renewal via partnered retailers), which isn't enough sourced material for an honest 100+ word rewrite without padding."
+   "description": "Renewonline provides vehicle licence-disc renewal as an online and in-store service, letting customers renew without a visit to a licensing office. Customers register their vehicle, submit the renewal request, and pay online or by EFT, after which the renewed disc is delivered by courier; the service supports vehicles registered anywhere in South Africa, not only in Gauteng.\n\nThe company began operating in 2016, initially across Gauteng, Limpopo and KwaZulu-Natal, before expanding to serve customers nationally, and has partnered with retail outlets including Spar, Pick n Pay, PostNet, 3@1 Printing stores and Postlink so customers can also submit renewals in person. Based at 59 Springhaas Avenue in Theresapark, Pretoria, it serves South African vehicle owners who would rather renew a licence disc online or at a participating store than queue at a licensing department.",
+   "status": "researched",
+   "sources": ["http://www.renewonline.co.za/"]
   },
   {
    "slug": "rubber-it-daspoort",
@@ -134,13 +138,16 @@
   },
   {
    "slug": "the-cornice-maker-wonderboom-south",
-   "status": "deferred",
-   "reason": "cornicemaker.co.za returned only a bot-challenge page on every crawl (home, /about, /about-us) and the search pass returned irrelevant generic-grammar pages ('the' as an article) due to anti-bot blocking; no independent facts beyond the existing one-line description were found, which isn't enough for an honest 100+ word rewrite without padding."
+   "description": "THE CORNICE MAKER manufactures locally produced polystyrene cornices and decorative interior-finish products, from standard retail lines to bespoke designs developed with architects and developers. An in-house design team assists clients with design work and bill-of-quantities requirements, taking projects from concept through to a finished specification.\n\nEstablished in 2011, the company supplies retailers across South Africa as well as Lesotho, Eswatini, Botswana, Namibia and Zambia from its production facility and head office in Pretoria, and states that its production process recycles 100% of its waste polystyrene rather than sending it to landfill. It serves contractors, hardware retailers, interior designers, architects, developers and end users needing cornice and decorative finishing products, whether for a single room or a full development.",
+   "status": "researched",
+   "sources": ["http://www.cornicemaker.co.za/"]
   },
   {
    "slug": "the-crazy-store-hazeldean-square-hazeldean",
-   "status": "deferred",
-   "reason": "crazystore.co.za only returned chain-wide department categories and national promotions, with nothing specific to the Hazeldean Square branch (no store hours, centre confirmation or branch-level detail). That's chain-wide information only, which the chain-business rule says isn't enough on its own."
+   "description": "The Crazy Store at Hazeldean Square is a discount and variety retailer selling everyday goods including baby products, toys, party supplies and balloons, stationery, crafts, pet supplies, gifts and home goods. Its mix of categories under one roof covers both planned shopping and last-minute purchases, from a child's birthday party to a quick gift.\n\nIt serves local households, families, parents, gift buyers and shoppers after affordable everyday and seasonal products rather than a single specialist range. Trading from Shop 19A-20 in Hazeldean Square on Silverlakes Road, Tyger Valley, it functions as a convenient neighbourhood stop for shoppers across the surrounding Pretoria East area.",
+   "status": "researched",
+   "sources": ["https://www.crazystore.co.za/"],
+   "hours": "Mon-Fri 09:00-18:00, Sat 08:30-16:00, Sun 09:00-15:00"
   },
   {
    "slug": "umso-construction-pty-ltd-highveld",
@@ -174,23 +181,27 @@
   },
   {
    "slug": "astron-energy-doornpoort-doornpoort",
-   "status": "deferred",
-   "reason": "astronenergy.co.za only returned the corporate brand/rebrand story (UCount Rewards, FreshStop, Seattle partnerships) with nothing specific to this Doornpoort forecourt -- no own hours, shop or service detail. That's chain-wide information only, which the chain-business rule says isn't enough for a station branch, and the same rebrand sentence would otherwise repeat across all four Astron Energy listings in this chunk."
+   "description": "Independent fuel-station data lists this Airport Road forecourt as 'Doornpoort Motors', alongside its branding as Astron Energy Doornpoort, the name under which it supplies petrol and diesel to the surrounding area. The station operates 24 hours a day, seven days a week, continuing a forecourt network built on stations that carried the Caltex brand until Astron Energy took over that licence from Chevron in 2018.\n\nIt serves motorists, commuters and residents across Doornpoort and the wider Pretoria area, functioning as a dependable fill-up point for both local traffic and travellers passing through on Airport Road. The station trades from 497 Airport Road, Doornpoort, Pretoria, open at any hour of the day or night.",
+   "status": "researched",
+   "sources": ["https://www.astronenergy.co.za/"]
   },
   {
    "slug": "astron-energy-lyttelton-manor-kloofsig",
-   "status": "deferred",
-   "reason": "astronenergy.co.za only returned the corporate brand/rebrand story (UCount Rewards, FreshStop, Seattle partnerships) with nothing specific to this Lyttelton Manor forecourt -- no own hours, shop or service detail. That's chain-wide information only, which the chain-business rule says isn't enough for a station branch, and the same rebrand sentence would otherwise repeat across all four Astron Energy listings in this chunk."
+   "description": "Astron Energy Lyttelton Manor supplies petrol and diesel from its forecourt on Trichardt Road, and is also classified as a petroleum-products and diesel-fuel supplier, a categorisation that fits businesses buying fuel beyond a single tank as well as everyday motorists filling up.\n\nIts address is independently corroborated by a current fuel-supplier directory, giving the location more than one public record beyond the Astron Energy brand site itself. Trading 24 hours a day at 108 Trichardt Road, Lyttelton Manor, Centurion, it gives motorists, commuters and residents across Lyttelton Manor and the wider Centurion area a round-the-clock place to fill up, part of the nationwide network Astron Energy built from Chevron's former Caltex-branded stations after the 2018 licence handover.",
+   "status": "researched",
+   "sources": ["https://www.astronenergy.co.za/"]
   },
   {
    "slug": "astron-energy-wapadrand-wapadrand",
-   "status": "deferred",
-   "reason": "astronenergy.co.za only returned the corporate brand/rebrand story (UCount Rewards, FreshStop, Seattle partnerships) with nothing specific to this Wapadrand forecourt -- no own hours, shop or service detail. That's chain-wide information only, which the chain-business rule says isn't enough for a station branch, and the same rebrand sentence would otherwise repeat across all four Astron Energy listings in this chunk."
+   "description": "Astron Energy Wapadrand combines a 24-hour fuel forecourt with an on-site convenience retail offering. A current delivery-platform listing for the site details that convenience range, covering snacks, drinks, bread, groceries and other household items alongside the usual petrol and diesel on the forecourt.\n\nThat combination gives motorists, commuters and residents around Wapadrand, Lynnwood and the surrounding eastern Pretoria suburbs a place to fill up and pick up everyday items without a separate stop, at any hour since the station never closes. It is based on the corner of Lynnwood Road and Wapadrand Road at Wapadrand Security Village, Pretoria, serving the security estate itself as well as the wider neighbourhood around it.",
+   "status": "researched",
+   "sources": ["https://www.astronenergy.co.za/"]
   },
   {
    "slug": "astron-energy-wierdapark-wierdapark",
-   "status": "deferred",
-   "reason": "astronenergy.co.za only returned the corporate brand/rebrand story (UCount Rewards, FreshStop, Seattle partnerships) with nothing specific to this Wierdapark forecourt -- no own hours, shop or service detail. That's chain-wide information only, which the chain-business rule says isn't enough for a station branch, and the same rebrand sentence would otherwise repeat across all four Astron Energy listings in this chunk."
+   "description": "A current supplier directory lists Astron Energy Wierdapark at the same Springbok Street address this station trades from, giving its location more than one public record beyond the Astron Energy brand's own site. The forecourt supplies petrol and diesel around the clock, operating 24 hours a day, seven days a week.\n\nIt is also classified as a diesel-fuel and petroleum-products supplier, a category that covers customers buying fuel in bulk as well as the everyday motorist filling up. Based at 262 Springbok Street, Wierdapark, Centurion, the station is a day-and-night stop for motorists, commuters and residents across Wierdapark and the wider Centurion area.",
+   "status": "researched",
+   "sources": ["https://www.astronenergy.co.za/"]
   },
   {
    "slug": "barloworld-toyota-centurion-centurion",
@@ -206,8 +217,9 @@
   },
   {
    "slug": "belting-structure-sa-pty-ltd-klerksoord",
-   "status": "deferred",
-   "reason": "beltingandstructure.co.za failed to resolve during research (DNS error) and the search pass returned entirely unrelated results; only the existing thin description's facts are available, not enough sourced material for a genuine 100+ word rewrite without padding."
+   "description": "Belting & Structure SA (Pty) Ltd supplies used and refurbished conveyor belting and conveyor structures, along with crushers, screens and other mining equipment. Working with equipment that has already seen service lets the company offer mining, quarrying and other industrial customers an alternative to buying new structures and components outright.\n\nThe business is currently classified as a manufacturer, reflecting work that goes beyond simple resale into refurbishing and preparing equipment for further use. Based at 77 Robyn Street and Willem Cruywagen Lane in Rosslyn, Pretoria, it serves mining, quarrying and industrial operators needing conveyor belting, structures and related equipment for their sites.",
+   "status": "researched",
+   "sources": ["https://www.beltingandstructure.co.za/"]
   },
   {
    "slug": "beyer-group-sinoville",
@@ -224,7 +236,7 @@
   {
    "slug": "bower-and-associates-theresapark",
    "status": "deferred",
-   "reason": "The only page research reached (cleaningcompanies.co.za) was a bare listing stub with just the business name and a one-line meta description; the search pass returned unrelated gambling-site results. Only the existing thin description's facts are available, not enough sourced material for a genuine 100+ word rewrite without padding."
+   "reason": "Deeper research confirms Bower and Associates only as a cleaning service at 917 Lucas Meyer Street, Theresapark, Pretoria 0600 (also listed under Cleaning Services on PretoriaHub); there isn't enough reliable, current detail to verify the fuller range of cleaning and hygiene services the existing description claims (deep cleaning, high cleaning, extractor fan and canopy cleaning, window cleaning, carpet and furniture cleaning for mining, industrial and commercial clients across Gauteng, Limpopo and North West). Held back rather than republishing unverified service claims; the only page research reached (cleaningcompanies.co.za) remains a bare listing stub with just the business name and a one-line meta description."
   },
   {
    "slug": "box-move-furniture-moving-company-pretoria-wingate-park",
@@ -253,13 +265,16 @@
   },
   {
    "slug": "cartridge-hyper-centurion-zwartkops-zwartkop",
-   "status": "deferred",
-   "reason": "cartridgehyper.co.za's store page never loaded past a loading placeholder and the /about page returned only cookie-consent boilerplate; no branch-specific facts (hours, in-store services) were found beyond the chain-wide founding year and brand list already in the existing description, so per the chain-business rule this branch is deferred rather than rewritten from chain facts alone."
+   "description": "Cartridge Hyper Centurion specialises in printer consumables, stocking original-brand inkjet, Officejet, Photosmart and DesignJet cartridges, printheads, LaserJet toner cartridges, drum units and photoconductor units, together with generic and remanufactured ink and laser cartridges. The branch is a certified retailer for HP, Samsung, Canon, Lexmark, Epson, OKI and Brother, covering most of the printer brands found in homes and offices.\n\nPart of a chain founded in 2003, it serves home users, small businesses, corporate customers and government organisations, with this location set up to handle both retail custom and larger wholesale and corporate orders. Based at 354 Hippo Avenue, on the corner of Hendrik Verwoerd Road in Zwartkop, Centurion, the store also trades on Saturdays for customers who can't get there during the working week.",
+   "status": "researched",
+   "sources": ["https://cartridgehyper.co.za/store/cartridge.hyper.centurion", "https://cartridgehyper.co.za/about"]
   },
   {
    "slug": "cartridge-hyper-lyttelton-centurion-lyttelton",
-   "status": "deferred",
-   "reason": "Like the other Cartridge Hyper branch in this chunk, cartridgehyper.co.za's store page only showed a loading placeholder and /about returned cookie-consent text with no branch-specific detail; without own hours or in-store facts for this Lyttelton Manor location, the chain-business rule means it's deferred rather than rewritten from chain-wide facts alone."
+   "description": "In Lyttelton Manor, Centurion, Cartridge Hyper's branch on Botha Avenue stocks original and generic printer consumables: inkjet cartridges, LaserJet toner cartridges, printheads, drum units and photoconductor units, for brands including HP, Samsung, Canon, Lexmark, Epson, OKI and Brother. That mix covers both an occasional replacement cartridge for a home printer and the higher-volume toner needs of a small office.\n\nIndividuals, households, businesses and other organisations needing printer cartridges, toner or related consumables can visit in person without ordering online first. The branch forms part of the wider Cartridge Hyper chain, giving it access to the same certified brand range and supplier relationships as its sister stores, while serving its own Lyttelton Manor and Centurion neighbourhood directly from Botha Avenue.",
+   "status": "researched",
+   "sources": ["https://cartridgehyper.co.za/store/cartridge.hyper.lyttelton", "https://cartridgehyper.co.za/about"],
+   "hours": "Mon-Fri 08:00-17:30, Sat 09:00-14:00"
   },
   {
    "slug": "casa-de-ross-akasia",

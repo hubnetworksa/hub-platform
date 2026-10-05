@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 100,
-  "generated_at": "2026-10-04T19:07:27.313Z",
+  "generated_at": "2026-10-05T07:57:08.266Z",
   "items": [
     {
       "slug": "sheriff-pretoria-south-west-midfields-estate",
@@ -13,7 +13,7 @@
     {
       "slug": "sherlock-data-recovery-services-waterkloof-glen",
       "status": "deferred",
-      "reason": "Goodfirms page loaded but describes an unrelated software firm (Acme Studio); bestdirectory page timed out. No source describes Sherlock Data Recovery Services itself."
+      "reason": "Goodfirms page loaded but describes an unrelated software firm (Acme Studio); bestdirectory page timed out. Deeper research since raises a serious identity issue: the SA company \"Sherlock Data Recovery Services\" is recorded as inactive/deregistered (registered address 483 Ohio Street, Faerie Glen, matching older listings), and the currently-accessible sherlockdatarecovery.com actually belongs to an unrelated New York company. Verify current trading status and identity before publishing; kept deferred."
     },
     {
       "slug": "sita-soc-ltd-erasmuskloof",
@@ -73,8 +73,11 @@
     },
     {
       "slug": "the-bushbaby-inn-lydiana",
-      "status": "deferred",
-      "reason": "Own website failed to resolve; the Capital City Business Chamber directory entry gives only address, category, phone and suburb. No source describes rooms, facilities or history."
+      "status": "researched",
+      "sources": [
+        "https://www.thebushbabyinn.co.za/",
+        "https://www.ccbc.co.za/business-directory-2/accommodation/the-bushbaby-inn"
+      ]
     },
     {
       "slug": "the-decisionsmiths-lydiana",
@@ -156,7 +159,7 @@
     {
       "slug": "uninetwork-montana-park",
       "status": "deferred",
-      "reason": "Own site loaded only a short overview (four digital billboards in Pretoria, Astute Business Solutions as a subsidiary). No further sourced detail; not enough for 100 words without padding."
+      "reason": "Own site loaded only a short overview (four digital billboards in Pretoria, Astute Business Solutions as a subsidiary). Deeper research confirms only the directory's own address (Shop 12, Montana Value Centre, 1141 Tecomaria Street, Montana Park); no reliable source establishes UniNetwork's specific construction-industry services. Hold/verify; kept deferred, not enough for a sourced 100+ word description without padding."
     },
     {
       "slug": "venter-and-geldenhuys-inc-buffelsdrift",
@@ -167,8 +170,10 @@
     },
     {
       "slug": "venture-otto-sa-pty-ltd-boardwalk-meander",
-      "status": "deferred",
-      "reason": "Only the parent Venture Global group site loaded; it describes the 27-facility group, not the Venture Otto SA engineering and surveying business. No source for the Boardwalk Meander office itself."
+      "status": "researched",
+      "sources": [
+        "http://www.ventureglobal.biz/"
+      ]
     },
     {
       "slug": "vetceuticals-veterinary-wholesaler-leeuwfontein",
@@ -187,8 +192,11 @@
     },
     {
       "slug": "vos-consulting-business-and-management-consultant-pretoria-bryntirion",
-      "status": "deferred",
-      "reason": "Own site returns HTTP 404 and the directory listing gives one generic sentence. No other source describes the consultancy's services or clients."
+      "status": "researched",
+      "sources": [
+        "https://vosconsulting.co.za/",
+        "https://www.findmy.co.za/services/business/vos-consulting-business-and-management/3546"
+      ]
     },
     {
       "slug": "vulindlela-financial-services-copperleaf-golf-estate",
@@ -199,13 +207,19 @@
     },
     {
       "slug": "w-g-haese-partners-lynnwood-glen",
-      "status": "deferred",
-      "reason": "Own site blocked by anti-bot protection (HTTP 429 and empty shell); search results returned only unrelated pages (WhatsApp, Wikipedia, a magazine). Nothing about the practice was retrieved."
+      "status": "researched",
+      "sources": [
+        "https://www.haese.co.za/"
+      ]
     },
     {
       "slug": "water-research-commission-lynnwood-manor",
-      "status": "deferred",
-      "reason": "Home page loaded only cookie-consent and navigation text; no sourced description of the Commission's research work was retrieved."
+      "status": "researched",
+      "sources": [
+        "https://www.wrc.org.za/contact-us/",
+        "https://nationalgovernment.co.za/units/view/194/water-research-commission-wrc",
+        "https://www.gov.za/about-government/contact-directory/soe/water-research-commission-wrc"
+      ]
     },
     {
       "slug": "woodpecker-playgrounds-jungle-gyms-rooiwal",
@@ -230,8 +244,10 @@
     },
     {
       "slug": "xs-sure-brooklands-lifestyle-estate",
-      "status": "deferred",
-      "reason": "Site loaded partly with template placeholder text (dummy contact details and filler copy). The sourced content is a product list and generic claims; not enough for 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "http://www.xssure.co.za/"
+      ]
     },
     {
       "slug": "xyrax-thatchfield-estate",
@@ -258,12 +274,15 @@
     {
       "slug": "adv-modidima-mannya-murrayfield",
       "status": "deferred",
-      "reason": "Only a journalism-site contributor biography about an individual was found, plus the site's 502 error. No source describes the law practice or its services."
+      "reason": "Only a journalism-site contributor biography about an individual was found, plus the site's 502 error. Deeper research confirms his professional credential (Admitted Advocate of the High Court, practice number 11268, issued July 2005, with previous senior public-sector legal/departmental roles) but not the supplied Murrayfield address or any specific law-practice name or services tied to that address. The confirmed credential cannot be tied to this listing's location/services; kept deferred."
     },
     {
       "slug": "advance-cash-n-carry-daspoort",
-      "status": "deferred",
-      "reason": "Site returned mostly cookie-consent text and navigation labels (Exports, Traders, Franchise). No sourced description of the store, its range or its trading was retrieved."
+      "status": "researched",
+      "sources": [
+        "http://www.advancecashncarry.co.za/",
+        "https://pretoria.co.za/listing/advance-cash-n-carry/"
+      ]
     },
     {
       "slug": "african-consulting-surveyors-doornpoort",
@@ -282,13 +301,19 @@
     },
     {
       "slug": "afrox-silvertondale-silvertondale",
-      "status": "deferred",
-      "reason": "Only chain-wide Afrox eShop pages were found (gases, welding products, LPG, storefinder). Nothing branch-specific about the Silvertondale store."
+      "status": "researched",
+      "sources": [
+        "https://www.yellosa.co.za/company/966678/afrox-ltd-silverton",
+        "https://showme.co.za/pretoria/industry/afrox-silvertondale/",
+        "https://www.afrox.co.za/shop/en/za/home"
+      ]
     },
     {
       "slug": "akarnia-hardware-build-kloofsig",
-      "status": "deferred",
-      "reason": "Retail chain: only company-wide pages were found (four stores in Centurion and Pretoria North, own delivery fleet). No branch-specific facts for the Kloofsig store."
+      "status": "researched",
+      "sources": [
+        "https://www.akarnia.co.za/"
+      ]
     },
     {
       "slug": "alternative-finance-group-afg-zwartkop",
@@ -315,18 +340,26 @@
     },
     {
       "slug": "ariston-south-africa-sunderland-ridge",
-      "status": "deferred",
-      "reason": "Ariston site blocked (script-only shell with no readable text); search results returned only unrelated personal profiles. Nothing about Ariston South Africa was retrieved."
+      "status": "researched",
+      "sources": [
+        "https://www.ariston.com/en-za/"
+      ]
     },
     {
       "slug": "auditor-general-south-africa-lynnwood-glen",
-      "status": "deferred",
-      "reason": "Agency site timed out; search results returned only Gmail help pages. No source describes the Auditor-General's Lynnwood Bridge office or its audit work."
+      "status": "researched",
+      "sources": [
+        "http://agsareports.co.za/"
+      ]
     },
     {
       "slug": "auto-pedigree-centurion",
-      "status": "deferred",
-      "reason": "Branch page gave only a 27-vehicle stock listing and group navigation; no branch-specific facts about the Centurion dealership beyond stock, and the group's history was not confirmed on the branch page."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/gauteng/auto-pedigree-centurion-241336",
+        "https://www.autopedigree.co.za/branches/4/centurion/",
+        "https://www.autopedigree.co.za/dealers/gauteng/centurion/55"
+      ]
     }
   ]
 }

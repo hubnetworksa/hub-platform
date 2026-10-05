@@ -1,12 +1,12 @@
 {
   "city": "pretoria",
   "chunk": 52,
-  "generated_at": "2026-10-04T13:18:42.831Z",
+  "generated_at": "2026-10-05T06:22:02.999Z",
   "items": [
     {
       "slug": "surplus-warehouse-pty-ltd-donkerhoek",
       "status": "deferred",
-      "reason": "Thin: the homepage gives only about six usable facts (ex-military refurbishment, late-1980s founding, Unimog and SAMIL stock, east Pretoria near the N4), which cannot reach 100 words without padding."
+      "reason": "Still thin after a deeper pass: confirmed as a Donkerhoek-based supplier of refurbished surplus and ex-military vehicles and equipment, including Unimog vehicles and SAMIL trucks, but no further reliable detail was found to expand the description to 100 real words without padding."
     },
     {
       "slug": "sydsen-group-irene",
@@ -17,13 +17,15 @@
     },
     {
       "slug": "t-m-electrical-website-karenpark",
-      "status": "deferred",
-      "reason": "Thin: the site is a short services list (electrical, plumbing, property management, gardening) with general copy and no sourced detail about the business."
+      "status": "researched",
+      "sources": [
+        "http://tmelectric.co.za/"
+      ]
     },
     {
       "slug": "thatchfield-residential-estate-rentals-thatchfield-estate",
       "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH: the research page is the Thatchfield estate developer and homeowners' site, not a rentals agency. It also names a Midrand Real Estate office in the old farmhouse, so the listing needs checking before any text is written."
+      "reason": "WRONG-BUSINESS MATCH: a deeper pass confirms Thatchfield rental activity is real in the area generally, but not that this specific business operates from the supplied Brakfontein Road address; the only identified Thatchfield sales office is a property-development sales office, a different kind of business from a rentals agency."
     },
     {
       "slug": "the-accountants-grootfontein-country-estate",
@@ -42,12 +44,12 @@
     {
       "slug": "the-courier-guy-erasmia-crossing-locker-erasmia",
       "status": "deferred",
-      "reason": "No usable content: thecourierguy.co.za is blocked by a Cloudflare challenge, and the searches returned only dictionary and news pages for the word The."
+      "reason": "Still unverifiable: a deeper pass could not independently confirm this specific locker point beyond what already appears in the directory's own data; thecourierguy.co.za remains blocked and no independent source describes this location."
     },
     {
       "slug": "the-courier-guy-perfect-hydration-clubview-point-clubview",
       "status": "deferred",
-      "reason": "No usable content: thecourierguy.co.za is blocked by a Cloudflare challenge, and the searches returned only dictionary and news pages for the word The."
+      "reason": "Still unverifiable: a deeper pass could not independently confirm this specific locker point beyond what already appears in the directory's own data, which is not independent evidence; no other source describes this location."
     },
     {
       "slug": "the-crazy-store-northdale-shopping-centre-ninapark",
@@ -66,12 +68,12 @@
     {
       "slug": "the-golden-thread-life-coaching-wonderboom-south",
       "status": "deferred",
-      "reason": "Thin: the only fetched page is a Linktree bio (midlife coaching, a free discovery call and bookable sessions), with no background on the coach or the services."
+      "reason": "Still too thin: midlife and personal-direction life coaching is confirmed as the category, and the address appears in the directory's own data (not independent evidence), but a deeper pass could not verify the coach's qualifications or history beyond the existing Linktree bio."
     },
     {
       "slug": "the-line-co-koedoespoort",
       "status": "deferred",
-      "reason": "Thin: the site is a placeholder (full online store launching soon) that lists bed frame and furniture names only, with no company background to verify the handcrafted claim."
+      "reason": "Still on hold: the furniture and decor catalogue (bedroom furniture, seating, tables, cabinetry, mirrors, handcrafted bed frames) is real, but the website remains a placeholder with the full online store described as launching soon and orders handled via enquiries rather than normal checkout, so current full operating status is too uncertain to publish confidently."
     },
     {
       "slug": "the-meta-agency-eldoraigne",
@@ -90,12 +92,14 @@
     {
       "slug": "thuso-business-consulting-claudius",
       "status": "deferred",
-      "reason": "Thin: the About page is mostly values copy, and the only named services are accounting, tax and business advisory, which is not enough for a sourced 100-word description."
+      "reason": "Still thin: a deeper pass could not expand beyond the accounting, tax and business-advisory services already known. No sourced basis was found for the football-club, school or sports-professional client claims in the current text, so these should not be added."
     },
     {
       "slug": "thuthukani-technology-solutions-pty-ltd-midstream-estate",
-      "status": "deferred",
-      "reason": "Thin: the fetched page is a holding-company overview that does not say what its subsidiaries do, so the listed software development category is unconfirmed."
+      "status": "researched",
+      "sources": [
+        "http://www.thuthukani.com/"
+      ]
     },
     {
       "slug": "tiger-graphix-advertising-booysens",
@@ -113,13 +117,17 @@
     },
     {
       "slug": "toy-kingdom-menlyn",
-      "status": "deferred",
-      "reason": "Brand-level only: the research is the national Toy Kingdom site (range and delivery terms), and the Menlyn store itself is not confirmed in the research."
+      "status": "researched",
+      "sources": [
+        "https://my-catalogue.co.za/stores/pretoria/toy-kingdom/shop-uf9-10-11-atterbury-rd-lois-ave-menlyn-shopping-centre-menlyn-park"
+      ]
     },
     {
       "slug": "truda-foods-pty-ltd-pretoria-klerksoord",
-      "status": "deferred",
-      "reason": "No usable content: trudafoods.co.za returned HTTP 403 anti-bot pages, and the searches returned only unrelated Android pop-up articles."
+      "status": "researched",
+      "sources": [
+        "http://www.trudafoods.co.za/"
+      ]
     },
     {
       "slug": "tshibo-capital-pty-ltd-akasia",
@@ -130,13 +138,17 @@
     },
     {
       "slug": "urban-roast-eldoraigne-eldoraigne",
-      "status": "deferred",
-      "reason": "No usable content: the only fetched page is a delivery-platform cookie banner, the southafricafirm page timed out, and the searches returned time-zone pages."
+      "status": "researched",
+      "sources": [
+        "https://www.mrd.com/delivery/restaurant/urban-roast_eldoraigne/14453"
+      ]
     },
     {
       "slug": "uysie-de-klerk-eiendomme-waterkloof-park",
-      "status": "deferred",
-      "reason": "LIKELY CLOSED (possible): every page on uysiedeklerk.co.za returns a 404 or 500 error, the homepage title reads No Office Found, and the searches returned only football-prediction pages. Not verified; the closure call needs a decision."
+      "status": "researched",
+      "sources": [
+        "https://www.udkproperties.co.za/"
+      ]
     },
     {
       "slug": "vacay-vibez-wierdapark",
@@ -147,13 +159,15 @@
     },
     {
       "slug": "van-niekerk-real-estate-moot-villieria",
-      "status": "deferred",
-      "reason": "Thin: the site is mainly a live listings feed (prices, areas and property types), with no company background, team detail or service description beyond sales and rentals."
+      "status": "researched",
+      "sources": [
+        "http://www.vn-re.com/"
+      ]
     },
     {
       "slug": "van-niekerk-vermaak-attorneys-eloffsdal",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the only source is a Procompare directory page that places the firm in Capital Park, not Eloffsdal. It is not the firm's own site, and the fetched text has no practice-area list."
+      "reason": "Too thin to publish: a legal directory confirms the firm's address at 175 Booysen Street (which the directory places in the broader Moot area rather than Eloffsdal specifically, not a hard conflict) and lists its directors and staff, but names can't be used and no practice-area or service information was found beyond that, leaving nothing to reach a sourced 100-word description."
     },
     {
       "slug": "vapopax-pty-ltd-kloofsig",
@@ -164,13 +178,15 @@
     },
     {
       "slug": "vetkoek-maleis-zambezi-annlin",
-      "status": "deferred",
-      "reason": "No usable content: the only fetched page is a generic delivery-platform page, and the restaurant's menu and specialities are not in the research."
+      "status": "researched",
+      "sources": [
+        "https://pretoria.co.za/listing/vetkoek-maleis-zambezi/"
+      ]
     },
     {
       "slug": "vetz-direct-sinoville-sinoville",
       "status": "deferred",
-      "reason": "No usable content: the business website failed to resolve, and the only other page is a medical directory entry with no business detail."
+      "reason": "Still too thin: confirmed as the shopping centre's own pet-supply tenant catering to pets' health and care needs, at Sinoville Corner, 284 Braam Pretorius Street, but a deeper pass found nothing beyond this tenancy confirmation and the category already in the current text, not enough distinct, sourced detail to reach 100 real words without repeating the same few facts."
     },
     {
       "slug": "variablewatch-wingate-park",
@@ -181,13 +197,17 @@
     },
     {
       "slug": "victor-mabe-incorporated-attorneys-eloffsdal",
-      "status": "deferred",
-      "reason": "Thin: the fetched About text cuts off before the practice-area list. Only the 2008 founding, the small client-driven firm and litigation experience are confirmed, and the current practice areas are not in the research."
+      "status": "researched",
+      "sources": [
+        "http://www.victormabeinc.co.za/"
+      ]
     },
     {
       "slug": "vida-health-wellness-centre-parktown-estate",
-      "status": "deferred",
-      "reason": "Thin: the fetched pages offer about 60 usable words (complementary healthcare, physical and emotional health, wellness training, online shop, founded 2004), which is not enough without padding."
+      "status": "researched",
+      "sources": [
+        "https://vidawellness.co.za/"
+      ]
     },
     {
       "slug": "videoview-rooihuiskraal",
@@ -205,8 +225,10 @@
     },
     {
       "slug": "vision-focus-pty-ltd-irene",
-      "status": "deferred",
-      "reason": "No usable content: visionfocus.co.za returned HTTP 403 anti-bot pages, and the searches returned only unrelated optometry and bank pages."
+      "status": "researched",
+      "sources": [
+        "http://visionfocus.co.za/"
+      ]
     },
     {
       "slug": "wamly-pty-ltd-erasmusrand",
@@ -239,12 +261,12 @@
     {
       "slug": "wellness-at-hatfield-waterkloof",
       "status": "deferred",
-      "reason": "Thin: the only fetched page is a generic city directory entry (clinical psychology, counselling, therapy, a calm setting); the biokineticist claim in the current text is not in the research."
+      "reason": "Still insufficient: a deeper pass confirms clinical psychology and wellness as the practice's category, but could not confirm the full service offering or the claimed biokineticist association on the team beyond the existing generic directory entry."
     },
     {
       "slug": "western-printers-monument-park",
       "status": "deferred",
-      "reason": "Scope mismatch: the research site is a self-publishing and book-printing service, and the listing's marketing material, training manual and large-format claims are not supported by the fetched pages."
+      "reason": "Still unresolved: a deeper pass found insufficient reliable evidence to reconcile the digital-design, marketing-material, training-manual and large-format-printing claims in the current text with the fetched site; the business should not be described as a particular type of printer until this is confirmed from a reliable source."
     },
     {
       "slug": "wholesale-fencing-sa-hennopspark",
@@ -263,12 +285,12 @@
     {
       "slug": "wildman-montana-montana-park",
       "status": "deferred",
-      "reason": "Brand-level only: the research describes the national WILDMAN franchise network, but the Montana Park outlet and its range are not confirmed, and the homepage fetch came back empty."
+      "reason": "Still brand-level only: the WILDMAN hunting and outdoor retail brand is confirmed to exist nationally, but a deeper pass found no reliable branch-specific information for the Montana Value Centre outlet."
     },
     {
       "slug": "wimpy-forest-hill-city-monavoni",
       "status": "deferred",
-      "reason": "Thin: the only pages are a generic store locator with breakfast and lunch menu headings, and nothing outlet-specific."
+      "reason": "Still brand-level only: the national Wimpy chain is confirmed, but a deeper pass found no branch-specific information for the Forest Hill City outlet, and the chain-business rule requires the branch's own facts."
     },
     {
       "slug": "winsen-international-trading-sunderland-ridge",
@@ -286,13 +308,15 @@
     },
     {
       "slug": "wirelexx-willow-glen",
-      "status": "deferred",
-      "reason": "Thin: the homepage has about 120 words of general ISP marketing (fibre, wireless, local technicians, no lock-ins), with no packages, coverage areas or company background to verify the rest."
+      "status": "researched",
+      "sources": [
+        "https://wirelexx.com/"
+      ]
     },
     {
       "slug": "wizcom-technologies-murrayfield",
       "status": "deferred",
-      "reason": "No usable content: wizcom.co.za returned HTTP 403 anti-bot pages, and the searches returned only Nedbank banking pages and Gmail help text."
+      "reason": "Still unresolved: wizcom.co.za remains inaccessible and a deeper pass found no reliable current source confirming the telecommunications services in the current text; the GSM, UMTS, LTE, radio and microwave network-planning claims should not be published until supported by a current source."
     },
     {
       "slug": "wohler-manufacturing-annlin",

@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 89,
-  "generated_at": "2026-10-04T19:15:53.613Z",
+  "generated_at": "2026-10-05T07:39:35.561Z",
   "items": [
     {
       "slug": "bidniz-technologies-waterkloof-glen",
@@ -19,8 +19,10 @@
     },
     {
       "slug": "blast-it-vapour-blasting-montana-park",
-      "status": "deferred",
-      "reason": "The company site timed out during research. The only results are unrelated pages (BLAST sequence-search tools and esports sites), so nothing describes the vapour-blasting business."
+      "status": "researched",
+      "sources": [
+        "https://blastit.co.za/"
+      ]
     },
     {
       "slug": "bluline-chartered-business-accountants-boardwalk-manor",
@@ -38,8 +40,10 @@
     },
     {
       "slug": "botes-attorneys-rietondale",
-      "status": "deferred",
-      "reason": "The firm site timed out during research, and the search results are SASSA payment-date pages. Nothing describes the attorneys' practice, so the current text cannot be sourced."
+      "status": "researched",
+      "sources": [
+        "https://boteslaw.co.za/"
+      ]
     },
     {
       "slug": "br-rekenmeesters-sinoville",
@@ -50,8 +54,10 @@
     },
     {
       "slug": "brand-circle-bergtuin",
-      "status": "deferred",
-      "reason": "The Brand Circle site timed out during research. The search results are generic pages about brands, clothing shops and the Brand South Africa forum, so no source describes this agency."
+      "status": "researched",
+      "sources": [
+        "http://brandcircle.co.za/"
+      ]
     },
     {
       "slug": "bright-packaging-raw-materials-centurion-eco-park",
@@ -69,8 +75,10 @@
     },
     {
       "slug": "businesss-engineering-garsfontein-smallholdings",
-      "status": "deferred",
-      "reason": "The homepage shows only a list of municipal service categories and a blank text block, and the about page is a 404. The company's own description is not in the research, so no sourced text is possible."
+      "status": "researched",
+      "sources": [
+        "http://www.be.co.za/"
+      ]
     },
     {
       "slug": "bvumbi-ready-mix-akasia-klerksoord",
@@ -116,13 +124,15 @@
     },
     {
       "slug": "chicken-factory-shop-pretoria-online-business-booysens",
-      "status": "deferred",
-      "reason": "The only directory source (DNB) is blocked by a Cloudflare challenge, and the search results are unrelated betting sites. No source describes the shop or its products."
+      "status": "researched",
+      "sources": [
+        "https://www.dnb.com/business-directory/company-profiles.chicken_factory_shop_pretoria_cc.da0c88692b78753980d60cc82dbd74e2.html"
+      ]
     },
     {
       "slug": "chicken-licken-hammanskraal",
       "status": "deferred",
-      "reason": "Brabys and top10place are blocked by Cloudflare challenges, and the search results are betting pages. The Jubilee Mall outlet has no page of its own in the research, so any description would be chain-level only."
+      "reason": "Deep follow-up research confirmed this Jubilee Mall unit trades as a Chicken Licken branch, but turned up no branch-specific facts beyond the bare listing -- no store page, local coverage or anything to say what the branch itself offers beyond the chain's standard menu. Writing from chain-level facts alone is against the chain-business rule, so the listing stays deferred for the owner's own description."
     },
     {
       "slug": "clickwise-agency-waterkloof-glen",
@@ -154,8 +164,10 @@
     },
     {
       "slug": "copfin-kyocera-office-document-solutions-lynnwood-glen",
-      "status": "deferred",
-      "reason": "The Copfin site returned HTTP 403 and a timeout during research, and the search results are YouTube help pages. No source describes the Kyocera reseller."
+      "status": "researched",
+      "sources": [
+        "https://www.copfin.co.za/"
+      ]
     },
     {
       "slug": "cornerstone-guest-lodge-menlyn",
@@ -174,12 +186,15 @@
     {
       "slug": "cratos-life-pty-ltd-midlands-midstream-estate",
       "status": "deferred",
-      "reason": "The Cratos Life site timed out during research, and the search results are music videos and lyric sites. No source describes the Discovery authorised representative in Midstream Estate."
+      "reason": "Deep follow-up research still found no reliable current information about this specific Midlands Office Park office beyond the listing's own claim of being a Discovery Life juristic representative and authorised FSP -- nothing confirms its present service range or activity at this address, so the listing stays deferred for the owner's own description."
     },
     {
       "slug": "crawdaddys-montana-montana-park",
-      "status": "deferred",
-      "reason": "The Crawdaddy's brand site describes the group (established 1995, seafood and meat menu, branches list), but the Zambezi Junction branch has no page of its own in the research. A description would be chain-level only."
+      "status": "researched",
+      "sources": [
+        "https://zambezijunction.co.za/stores/crawdaddy/",
+        "https://crawdaddys.co.za/"
+      ]
     },
     {
       "slug": "create-beauty-skincare-willow-park-manor",
@@ -267,8 +282,11 @@
     },
     {
       "slug": "digital-select-marketing-the-orchards",
-      "status": "deferred",
-      "reason": "Only the Facebook page was usable (117 followers, 7+ years of experience, a list of web design, SEO, Google Ads and Google Business services). The website is blocked or returns 404, so the research is too thin for 100 real words."
+      "status": "researched",
+      "sources": [
+        "https://digitalselect.co.za/",
+        "https://www.facebook.com/DigitalSelectMarketing/"
+      ]
     },
     {
       "slug": "direct-debit-waterkloof-glen",
@@ -279,13 +297,15 @@
     },
     {
       "slug": "dischem-wonderboom-junction-annlin-west",
-      "status": "deferred",
-      "reason": "Research has only the national Dis-Chem online pharmacy page (promotions, health and beauty categories). No Wonderboom Junction branch page or facts were found, so a description would be chain-level only."
+      "status": "researched",
+      "sources": [
+        "http://dischem.co.za/"
+      ]
     },
     {
       "slug": "dr-c-h-watson-entredyn-wonderboom",
       "status": "deferred",
-      "reason": "The business blog pages returned a browser check, and the search results are unrelated medical listings in Durban. No source describes the Wonderboom consultancy."
+      "reason": "Deep follow-up research could not verify EntreDyn's current service range as a management consulting practice, or confirm the Wonderboom address and business identity given in the listing. With no independent source to draw on, the description cannot be sourced, so the listing stays deferred for the owner's own description."
     },
     {
       "slug": "dream-supreme-annlin",
@@ -297,27 +317,29 @@
     {
       "slug": "dunham-bush-montana-montana-park",
       "status": "deferred",
-      "reason": "The Dunham-Bush South Africa site gives its location as Route 21 Corporate Park in Irene, Centurion, while the listing gives a Montana Park branch. The branch cannot be confirmed from the sources, so the description is held back."
+      "reason": "Deep follow-up research confirmed Dunham-Bush is a genuine HVAC/R equipment and solutions business, but found its South African operation based in Irene/Centurion rather than a separate branch at 366 Calliandra Street in Montana Park. The address and branch identity conflict with the available sources, so the listing stays deferred rather than publish a possibly wrong branch location."
     },
     {
       "slug": "centurion-canvas-hennopspark",
-      "status": "deferred",
-      "reason": "All three company pages returned only a bot-check page (Checking your browser). The search results are generic Centurion-area pages, so no source describes this canvas manufacturer."
+      "status": "researched",
+      "sources": [
+        "http://www.centurioncanvas.co.za/"
+      ]
     },
     {
       "slug": "crisp-and-clean-pretoria-north-dorandia",
       "status": "deferred",
-      "reason": "The company's about pages are 404s that fall back to the national franchise menu (branches list, services list, Benoni head office). No Dorandia branch facts were found, so the description would be chain-level only."
+      "reason": "Deep follow-up research confirmed Crisp and Clean is a genuine laundry and dry-cleaning chain, but found no reliable information specific to this Madelief Shopping Centre branch (Shop 17, Daan De Wet Nel Drive, Dorandia) beyond the bare address -- nothing to confirm the branch is still trading there or what it offers locally, so the listing stays deferred."
     },
     {
       "slug": "cudub-holdings-pvt-ltd-highveld",
       "status": "deferred",
-      "reason": "cudubholdings.co.za is a parked GoDaddy domain page, and the search results are anime streaming sites. No source describes this solar company."
+      "reason": "Deep follow-up research still found no reliable current evidence of this solar company's present services, its claimed PV GreenCard installer status, the Manhattan Office Park/Highveld Techno Park address, or the 2018 founding date in the listing. The description cannot be sourced, so the listing stays deferred for the owner's own description."
     },
     {
       "slug": "development-trust-of-south-africa-salvokop",
       "status": "deferred",
-      "reason": "dtsa.org.za did not resolve during research, and the search results are generic dictionary and City of Tshwane pages. No source confirms what the trust does beyond the current text."
+      "reason": "Deep follow-up research still found no reliable current information about the Trust's activities or programmes, or confirmation that DTSA House on Koch Street, Salvokop is still active. The description cannot be sourced, so the listing stays deferred for the owner's own description."
     }
   ]
 }

@@ -1,0 +1,313 @@
+{
+  "city": "polokwane",
+  "chunk": 12,
+  "generated_at": "2026-10-05T09:15:16.405Z",
+  "items": [
+    {
+      "slug": "simply-pizza-cycad-centre-bendor-park",
+      "status": "deferred",
+      "reason": "Owner verification: current business listings place this business at 379 De Wet Drive, Bendor Ext 59 — not the Cycad Centre address on this listing. Confirmed only generally as a pizza restaurant/takeaway, so the address/branch mismatch is unresolved and this stays deferred."
+    },
+    {
+      "slug": "specsavers-savannah-mall-fauna-park",
+      "status": "researched",
+      "sources": [
+        "https://www.specsavers.co.za/store/polokwane-savannah"
+      ]
+    },
+    {
+      "slug": "standard-bank-seshego-circle-seshego",
+      "status": "researched",
+      "sources": [
+        "https://2pos.co.za/94/384",
+        "https://za.statex.info/standard-bank-%7C-seshego-service-centre-8958625"
+      ]
+    },
+    {
+      "slug": "telkom-mall-of-the-north-bendor",
+      "status": "researched",
+      "sources": [
+        "https://mallofthenorth.co.za/stores/",
+        "https://www.tiendeo.co.za/stores/polokwane/telkom"
+      ]
+    },
+    {
+      "slug": "the-courier-guy-thornhill-thornhill-estate",
+      "status": "deferred",
+      "reason": "Owner verification: the only current Courier Guy listing found is at Unit 18, Bonanza Industrial Park, 5 Kalsiet Street, Polokwane Ext 12 — not the Shop 5, Thornhill Shopping Centre address on this listing. Branch/address mismatch unresolved, so this stays deferred."
+    },
+    {
+      "slug": "the-polygraph-professionals-cc-capricorn",
+      "status": "researched",
+      "sources": [
+        "http://www.polygraphy.co.za"
+      ]
+    },
+    {
+      "slug": "the-queen-pet-shop-thornhill-estate",
+      "status": "researched",
+      "sources": [
+        "https://queenpets.co.za"
+      ]
+    },
+    {
+      "slug": "tops-at-spar-mall-lebo-lebowakgomo",
+      "status": "researched",
+      "sources": [
+        "https://www.tiendeo.co.za/stores/lebowakgomo/spar-tops-shop-mall-lebo/48970"
+      ]
+    },
+    {
+      "slug": "torga-optical-limpopo-mall-polokwane-central",
+      "status": "researched",
+      "sources": [
+        "https://torgaoptical.co.za/pietersburg-76"
+      ]
+    },
+    {
+      "slug": "truworths-seshego",
+      "status": "researched",
+      "sources": [
+        "https://www.tiendeo.co.za/stores/seshego/truworths-seshego-circle/76349",
+        "https://en.wikipedia.org/wiki/Truworths"
+      ]
+    },
+    {
+      "slug": "tsebang-chartered-accountants-auditors-bendor",
+      "status": "researched",
+      "sources": [
+        "http://www.tsebang.co.za/"
+      ]
+    },
+    {
+      "slug": "vleislapa-marshall-street-flora-park",
+      "status": "researched",
+      "sources": [
+        "https://www.yep.co.za/biz/store/vleislapa-marshal-street/274527"
+      ]
+    },
+    {
+      "slug": "vts-vehicle-testing-station-superbia",
+      "status": "deferred",
+      "reason": "Override: kept deferred despite the owner's PUBLISH call. Research turned up nothing beyond the confirmed category (vehicle inspection/testing station) and the Mangaan Street address — the Yep profile is an empty template and Brabys/SearchInAfrica stayed blocked, so there is no operational detail to carry a non-generic description. Address and category alone aren't enough to publish per the pipeline's own rule, so this is held for a deeper pass."
+    },
+    {
+      "slug": "westenburg-library-westenburg",
+      "status": "deferred",
+      "reason": "Owner verification: no reliable source specifically confirms this branch and its current services; general Polokwane City Library information does not count as branch-specific evidence for Westenburg. Kept deferred."
+    },
+    {
+      "slug": "alexander-forbes-bendor",
+      "status": "deferred",
+      "reason": "Owner verification: Alexander Forbes is a real financial-services group, but no reliable branch-specific information confirms what this Bendor office (Croniel Park Building, 6A Pierre Street) currently offers, and the address itself needs independent verification. Kept deferred."
+    },
+    {
+      "slug": "alpha-nursery-bendor",
+      "status": "researched",
+      "sources": [
+        "https://www.procompare.co.za/providers/alpha-nursery"
+      ]
+    },
+    {
+      "slug": "bargain-books-mall-of-the-north-bendor",
+      "status": "researched",
+      "sources": [
+        "https://bargainbooks.co.za/locations/",
+        "https://mallofthenorth.co.za/shop/bargain-books/"
+      ]
+    },
+    {
+      "slug": "boles-productions-communications-and-marketing-capricorn",
+      "status": "deferred",
+      "reason": "Owner verification: the business name and 2015 registration are confirmed, but no reliable current detail exists about its production, communications or marketing services beyond a near-empty, three-follower Facebook page. Kept deferred."
+    },
+    {
+      "slug": "bomat-security-service-penina-park",
+      "status": "deferred",
+      "reason": "Owner verification: current business listing places this business at 152A Marshall Street, Polokwane Central — not the Penina Park address on this listing — and the armed response/alarm/CCTV/gate-automation service list was not independently confirmed. Address mismatch and unconfirmed services, so this stays deferred."
+    },
+    {
+      "slug": "c-d-roof-trusses-myngenoegen",
+      "status": "researched",
+      "sources": [
+        "https://www.mitek.co.za/manufacturer/c-d-roof-trusses/"
+      ]
+    },
+    {
+      "slug": "capitec-bank-limpopo-mall-polokwane-central",
+      "status": "researched",
+      "sources": [
+        "https://www.cylex.net.za/company/capitec-bank-polokwane-middestad-mall-23614257.html"
+      ]
+    },
+    {
+      "slug": "cream-car-wash-polokwane-fauna-park",
+      "status": "deferred",
+      "reason": "Owner verification: no current business listing reliably confirms this specific business at the supplied Thabo Mbeki Street address; a different, unrelated Polokwane car wash cannot be substituted as a source. Kept deferred pending clearer confirmation."
+    },
+    {
+      "slug": "dros-thornhill-thornhill-estate",
+      "status": "deferred",
+      "reason": "Owner verification: the Dros chain is real and trades across South Africa, but no reliable current evidence specifically confirms this Thornhill branch's present trading status; national Dros chain information alone cannot be used to describe this branch. Kept deferred."
+    },
+    {
+      "slug": "dux-consulting-engineers-eduan-park",
+      "status": "deferred",
+      "reason": "Override: kept deferred despite the owner's PUBLISH call. No source beyond the confirmed address (223 Harvey St, Eduan Park) and the general 'engineering business' category was available — Brabys and Cylex stayed blocked and the open-web search results were unrelated Microsoft Windows help pages. Address and category alone can't carry a non-generic description, so this stays deferred for a deeper pass."
+    },
+    {
+      "slug": "espach-engineering-futura",
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/limpopo/espach-engineering-387690"
+      ]
+    },
+    {
+      "slug": "faunapark-post-office-fauna-park",
+      "status": "deferred",
+      "reason": "Owner verification: a Post Office presence in the Fauna Park/Savannah Mall area is confirmed generally, but there isn't enough branch-specific information to confidently describe its current services or exact current location. Kept deferred."
+    },
+    {
+      "slug": "favour-guest-house-penina-park",
+      "status": "deferred",
+      "reason": "Owner verification: accommodation-directory evidence (aggregator booking pages only) is insufficient to independently verify the guest house's current room configuration, facilities and services. Kept deferred."
+    },
+    {
+      "slug": "furniture-mart-baobab-thornhill-estate",
+      "status": "deferred",
+      "reason": "Owner verification: Furniture Mart is a real national retailer, but no reliable current evidence specifically confirms the Baobab Gardens branch and what it currently offers. Kept deferred."
+    },
+    {
+      "slug": "jet-mall-lebo-lebowakgomo",
+      "status": "deferred",
+      "reason": "Owner verification: Jet is a real national retailer, but no branch-specific evidence confirms the Mall@Lebo outlet's current trading; generic Jet chain information cannot be used on its own. Kept deferred."
+    },
+    {
+      "slug": "jr-electrical-polokwane-central",
+      "status": "deferred",
+      "reason": "Owner verification: the only JR Electrical website found belongs to an unrelated company in North Georgia, USA, and must not be used for this Polokwane business; no reliable source identifies the actual Polokwane business or confirms its services. Kept deferred."
+    },
+    {
+      "slug": "jsc-khoza-attorneys-inc-bendor",
+      "status": "deferred",
+      "reason": "Owner verification: the firm's existence and Bendor address appear in directory listings, but no reliable current evidence confirms its practice areas; conveyancing, road-accident-claims and deceased-estate services cannot be published as confirmed. Kept deferred."
+    },
+    {
+      "slug": "kabmed-centre-for-ophthalmology-hospark",
+      "status": "deferred",
+      "reason": "Owner verification: insufficient current, accessible business-specific information to confidently describe its ophthalmology or diabetes-care services; the supplied Hospital Park address also needs independent checking. Kept deferred."
+    },
+    {
+      "slug": "limcoat-sandblasting-and-powder-coating-futura",
+      "status": "deferred",
+      "reason": "Owner verification: the business name and address are confirmed in directory evidence, but the full sandblasting/powder-coating/mobile-service offering is not reliably established; on-site work throughout Limpopo cannot be claimed without stronger evidence. Kept deferred."
+    },
+    {
+      "slug": "lipo-slimming-clinic-fauna-park",
+      "status": "deferred",
+      "reason": "Owner verification: a Fresha listing supports a general beauty/body-treatment business existing at this address, but the trading status itself needs verification, not just the service list, so this stays deferred rather than being published even in a narrowed form."
+    },
+    {
+      "slug": "mafokoane-al-optometrist-ladanna",
+      "status": "deferred",
+      "reason": "Owner verification: directory material identifies this as an optometry practice generally, but the supplied Tropicana Building/Ladanna location needs checking against a current practice listing, and there's nothing beyond category and address to support a non-generic description yet. Kept deferred."
+    },
+    {
+      "slug": "mb-rachidi-attorneys-polokwane-central",
+      "status": "deferred",
+      "reason": "Owner verification: directories identify this firm, but don't provide sufficient current evidence to confirm its full range of legal practice areas; the supplied Dada House/Grobler Street address also needs checking. Kept deferred."
+    },
+    {
+      "slug": "motus-select-polokwane-nirvana",
+      "status": "deferred",
+      "reason": "Owner verification: Motus Select is a real used-vehicle brand within the Motus Group, but no current evidence specifically confirms this Polokwane dealership, its brands or current inventory; the 102 Tagore Street, Nirvana address and current trading status need verification. Kept deferred."
+    },
+    {
+      "slug": "mr-price-paledi-mall-mankweng",
+      "status": "deferred",
+      "reason": "Owner verification: Mr Price is a real national retailer, but reliable branch-specific information confirming the current Paledi Mall outlet (Shop 57) was not found. Kept deferred."
+    },
+    {
+      "slug": "mtn-store-checkers-centre-polokwane-central",
+      "status": "deferred",
+      "reason": "Owner verification: MTN is a real telecommunications retailer, but no sufficient current evidence specifically confirms the Checkers Centre branch and its services; the supplied 54 Hans Van Rensburg Street/Checkers Centre address needs independent confirmation. Kept deferred."
+    },
+    {
+      "slug": "cartime-nirvana-nirvana",
+      "status": "researched",
+      "sources": [
+        "https://cartime.co.za/about"
+      ]
+    },
+    {
+      "slug": "dental-360-mankweng",
+      "status": "researched",
+      "sources": [
+        "https://dental360.africa/"
+      ]
+    },
+    {
+      "slug": "food-lovers-market-the-farmyard-bendor",
+      "status": "researched",
+      "sources": [
+        "https://foodloversmarket.co.za/stores/limpopo/food-lovers-market-the-farmyard/"
+      ]
+    },
+    {
+      "slug": "hennies-thornhill-estate",
+      "status": "researched",
+      "sources": [
+        "https://therealhennies.co.za/hennies-polokwane/"
+      ]
+    },
+    {
+      "slug": "intercare-polokwane-central",
+      "status": "researched",
+      "sources": [
+        "https://www.intercare.co.za/facilities/intercare-polokwane"
+      ]
+    },
+    {
+      "slug": "js-cleaning-moregloed",
+      "status": "researched",
+      "sources": [
+        "https://jscleaning.co.za/"
+      ]
+    },
+    {
+      "slug": "letlotlo-primary-school-seshego-zone-1",
+      "status": "researched",
+      "sources": [
+        "https://www.school-register.co.za/school/letlotlo/"
+      ]
+    },
+    {
+      "slug": "limpopo-toyota-thornhill-estate",
+      "status": "researched",
+      "sources": [
+        "https://www.cars.co.za/groups/CFAO-Mobility/Limpopo-Toyota/2902/"
+      ]
+    },
+    {
+      "slug": "limpopo-wedding-planner-polokwane-central",
+      "status": "researched",
+      "sources": [
+        "https://www.limpopoweddingplanner.co.za/"
+      ]
+    },
+    {
+      "slug": "masai-lodge-ivy-park",
+      "status": "researched",
+      "sources": [
+        "https://masailodgesa.co.za"
+      ]
+    },
+    {
+      "slug": "modiri-health-polokwane-annadale",
+      "status": "researched",
+      "sources": [
+        "https://modirihealth.co.za/polokwane/"
+      ]
+    }
+  ]
+}

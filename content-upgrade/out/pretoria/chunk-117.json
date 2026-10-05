@@ -100,7 +100,7 @@
   {
    "slug": "sl-accounting-services-pty-ltd-clubview",
    "status": "deferred",
-   "reason": "ADDRESS MISMATCH: the firm's own website states it is based in Paulshof, Sandton, not Clubview, Centurion as listed here. The service facts (bookkeeping, tax compliance, payroll, company secretarial, led by a SAICA-registered accountant) match the current text, but the base-address conflict needs confirming before writing a description tied to this specific office."
+   "reason": "ADDRESS MISMATCH, confirmed by further research: the firm's own website states it is now based in Paulshof, Sandton, and current business information places it specifically at 4 Queens Place, Paulshof, Sandton 2191 (5.0 rating from 22 reviews, tel 079 190 4913), not at Unit 64, Mont Valon, 166 Von Willich Avenue, Clubview, Centurion as listed here. A separate directory still lists the older/alternative Clubview address, so this listing should not be assumed closed or wrong, but the correct current operating address needs confirming before publishing a description tied to the Clubview office. Services (accounting, bookkeeping, payroll, tax consulting and tax preparation) are confirmed generally for the business. Keeping deferred pending address confirmation."
   },
   {
    "slug": "super-rafts-donkerhoek",
@@ -176,8 +176,9 @@
   },
   {
    "slug": "dhi-south-africa-pretoria-office-blue-valley-golf-estate",
-   "status": "deferred",
-   "reason": "Only global DHI Group / MIKE software content was found (international case studies in Singapore and India, the group's water-cycle mission); nothing about this Pretoria office's own staff, local projects or specific South African work. The current text already flags that this is mainly a brand/product description, so it would be entirely group-level."
+   "status": "researched",
+   "description": "DHI South Africa's Pretoria office provides environmental and water-related consulting, engineering, modelling and software solutions, built around the MIKE suite of modelling and decision-support software used for water, environmental and climate-related applications. Locally it is classified across several related fields at once, as an environmental consultant, a computer consultant, a model-design company and a software company, reflecting how closely its consulting work and its modelling tools are tied together in practice.\n\nIndependent current business directories list this Route 21 Business Park office specifically among Pretoria's environmental consultants, a local listing pointing to an active Pretoria operation rather than only a reference to the worldwide DHI Group and its MIKE software brand. Based in the Route 21 Business Park in Pretoria, the office serves organisations that need water, environmental, modelling, engineering or specialist software and consulting support, from engineering practices and environmental teams through to public and private bodies managing water-related risk.",
+   "sources": ["http://www.dhigroup.com/"]
   },
   {
    "slug": "j-r-kopano-engineering-rosslyn",
@@ -289,8 +290,10 @@
   },
   {
    "slug": "cartridge-hyper-elardus-park-elardus-park",
-   "status": "deferred",
-   "reason": "Only chain-level facts (established 2003, generic and compatible printer cartridges for major brands) were available; the store's own page returned only a loading placeholder with no content, and search results were generic chain copy and competitor adverts, with nothing specific to the Elardus Park branch. Per the chain rule, chain-level facts alone aren't enough."
+   "status": "researched",
+   "description": "Cartridge Hyper Elardus Park stocks original-brand and generic or compatible inkjet and laser cartridges, toner, printheads, drum units and photoconductor units, and holds certified-retailer status for HP, Samsung, Canon, Lexmark, Epson, OKI and Brother, covering both branded consumables and the parts needed to keep an older printer running.\n\nRather than relying on the chain's own store locator, this branch's presence is independently confirmed through The Park Shopping Centre's own tenant directory, which lists Cartridge Hyper among its current tenants under the same contact number, a confirmation that comes from the centre itself rather than the retailer describing its own footprint. Trading from The Park Shopping Centre at the corner of Delmas Road and Barnard Street in Elardus Park, Pretoria, the store serves households, offices and businesses needing printer cartridges, toner and related consumables, and is open Monday to Friday from 8am to 5:30pm and Saturdays from 9am to 2pm.",
+   "sources": ["https://cartridgehyper.co.za/store/cartridge.hyper.elardus.park"],
+   "hours": "Mon-Fri 08:00-17:30, Sat 09:00-14:00, Sun Closed"
   },
   {
    "slug": "ccl-global-annlin",

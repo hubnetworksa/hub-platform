@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 81,
-  "generated_at": "2026-10-04T19:38:26.652Z",
+  "generated_at": "2026-10-05T07:13:56.840Z",
   "items": [
     {
       "slug": "obc-group-pty-ltd-louwlardia",
@@ -12,8 +12,10 @@
     },
     {
       "slug": "ocean-basket-irene-village-irene-farm-villages",
-      "status": "deferred",
-      "reason": "Only the national oceanbasket.co.za brand page was read, giving generic menu categories and brand story. No facts specific to the Irene Village Mall branch (its square-facing seating, play area or live music, already in the current listing) were found in this run. Chain-wide facts alone are not allowed."
+      "status": "researched",
+      "sources": [
+        "https://oceanbasket.co.za/our-restaurants/ocean-basket-irene/"
+      ]
     },
     {
       "slug": "ons-winkel-sinoville-sinoville",
@@ -40,7 +42,7 @@
     {
       "slug": "osbro-pretoria-central",
       "status": "deferred",
-      "reason": "The only page read is a brief Facebook post stub giving the phone, fax, address and partial hours (Mon-Fri 08:30-17:00, Sat 08:30-14:00); osbro.co.za itself timed out. Not enough new, store-specific content beyond contact details already covered by the current listing."
+      "reason": "Insufficient current info beyond identifying it generally as a furniture/homeware retailer; the business's own website (osbro.co.za) was not accessible, and the supplied history and employee figures remain unverified."
     },
     {
       "slug": "ott-technologies-mooiplaats",
@@ -66,8 +68,10 @@
     },
     {
       "slug": "phala-sanitary-engineers-cc-murrayfield",
-      "status": "deferred",
-      "reason": "The only page read is a Procompare directory profile. Its 'recent leads' examples are for other cities (Waterfall, Durban, Cape Town, Chatsworth) and are not about this business; the only real content is a short services tag list that duplicates the current listing's own facts, with no story, history or other new detail to add."
+      "status": "researched",
+      "sources": [
+        "https://www.procompare.co.za/providers/phala-sanitary-engineers-cc"
+      ]
     },
     {
       "slug": "pharma-valu-sunnyside-sunnyside",
@@ -115,8 +119,10 @@
     },
     {
       "slug": "postnet-pretoria-north-ninapark-akasia",
-      "status": "deferred",
-      "reason": "Only the national postnet.co.za home page was read (475 characters, generic chain navigation and services). No facts specific to the NinaPark/Pretoria North branch were found; cybo.com was not successfully read. Chain-wide facts alone are not allowed."
+      "status": "researched",
+      "sources": [
+        "http://postnet.co.za/"
+      ]
     },
     {
       "slug": "practice-perfect-medical-software-pty-ltd-boardwalk-manor",
@@ -149,8 +155,10 @@
     },
     {
       "slug": "property-legends-montana-park",
-      "status": "deferred",
-      "reason": "The only page read is the agency's property-search results page (price-range filter dropdowns and listing widgets), with no about-us or agent-story text. No new facts beyond what the current listing already states were found."
+      "status": "researched",
+      "sources": [
+        "http://propertylegends.co.za/"
+      ]
     },
     {
       "slug": "pure-water-components-gauteng-zwartkop",
@@ -211,7 +219,7 @@
     {
       "slug": "rooted-pedestals-solutions-doornpoort",
       "status": "deferred",
-      "reason": "rootedpedestalssol.co.za returns an 'Account Suspended' hosting message on every page (home, /about, /about-us). No usable content about the firm was found."
+      "reason": "Insufficient reliable info to verify the consulting, legal-document, governance and leadership-development services described, or the supplied Doornpoort address; the company's website currently shows an account-suspended hosting message on every page (home, /about, /about-us)."
     },
     {
       "slug": "rosslyn-improvement-districts-rid-boekenhoutskloof",
@@ -229,8 +237,10 @@
     },
     {
       "slug": "run-walk-for-life-rietondale-rietondale",
-      "status": "deferred",
-      "reason": "Only the national runwalkforlife.co.za home page was read, covering the franchise's programme and history generally. No facts specific to the Rietondale club (its own coaches, session times or members) were found. Chain-wide facts alone are not allowed."
+      "status": "researched",
+      "sources": [
+        "https://runwalkforlife.co.za/"
+      ]
     },
     {
       "slug": "rx-health-the-willows",

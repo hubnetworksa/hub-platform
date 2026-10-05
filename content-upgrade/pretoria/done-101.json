@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 101,
-  "generated_at": "2026-10-04T19:29:55.804Z",
+  "generated_at": "2026-10-05T08:10:30.727Z",
   "items": [
     {
       "slug": "bamolapisi-construction-and-plant-services-boardwalk-manor",
@@ -12,8 +12,11 @@
     },
     {
       "slug": "battery-fix-solar-heuweloord",
-      "status": "deferred",
-      "reason": "Own site returned only a bot-challenge screen on every page, and search results were generic battery articles and unrelated retailers. No source confirms the business's own battery reconditioning or solar services."
+      "status": "researched",
+      "sources": [
+        "https://www.batteryfix.co.za",
+        "https://www.batteryfix.co.za/about-us"
+      ]
     },
     {
       "slug": "berg-projects-pty-ltd-woodhill-golf-estate",
@@ -115,8 +118,10 @@
     },
     {
       "slug": "cabstrut-pretoria-rietfontein",
-      "status": "deferred",
-      "reason": "Only the group-wide Cabstrut site was retrieved, with contact details for its Alberton head office rather than this Rietfontein branch. No confirmed Pretoria-specific facts for this location were found."
+      "status": "researched",
+      "sources": [
+        "http://www.cabstrut.co.za/"
+      ]
     },
     {
       "slug": "caileb-construction-pty-ltd-amandasig",
@@ -127,8 +132,11 @@
     },
     {
       "slug": "cape-union-mart-wonderpark-karenpark",
-      "status": "deferred",
-      "reason": "Own site returned only a generic landing page and a Wikipedia summary of the national chain's history. No branch-specific facts for the Wonderpark Shopping Centre store were retrieved."
+      "status": "researched",
+      "sources": [
+        "https://www.capeunionmart.co.za/?utm_source=google_maps&utm_medium=website_button&utm_campaign=SP&utm_content=SP",
+        "https://en.wikipedia.org/wiki/Cape_Union_Mart"
+      ]
     },
     {
       "slug": "car-inspection-montana-gardens",
@@ -237,8 +245,10 @@
     },
     {
       "slug": "daisy-business-solutions-pretoria-north-copiers-pabx-cctv-sinoville",
-      "status": "deferred",
-      "reason": "Only the group-wide Daisy Business Solutions site was retrieved, describing eight national divisions rather than this Pretoria North branch's specific copier, PABX and CCTV focus. Chain-level facts alone are not enough for a branch listing."
+      "status": "researched",
+      "sources": [
+        "http://www.daisysolutions.co.za/"
+      ]
     },
     {
       "slug": "dela-plast-koedoespoort",
@@ -305,8 +315,10 @@
     },
     {
       "slug": "era-real-estate-south-africa-waterkloof",
-      "status": "deferred",
-      "reason": "The ERA Group profile page retrieved for this franchise gives a different physical address (Lombardy Business Park, Cole Road) from the listing's Lynnwood Road address, so the research cannot reliably confirm this specific office's facts. Own branch site also failed to resolve."
+      "status": "researched",
+      "sources": [
+        "https://www.era.co.za/estate-agency/era-pretoria-east/12437"
+      ]
     },
     {
       "slug": "foto-discount-world-montana-park",

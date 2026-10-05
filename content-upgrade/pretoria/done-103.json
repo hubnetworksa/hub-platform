@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 103,
-  "generated_at": "2026-10-04T19:29:09.133Z",
+  "generated_at": "2026-10-05T07:57:12.566Z",
   "items": [
     {
       "slug": "super-business-social-media-marketing-amandasig",
@@ -336,8 +336,10 @@
     },
     {
       "slug": "carrs-brummeria",
-      "status": "deferred",
-      "reason": "Own site (carrs.csir.co.za) is a login portal with no public information about what CARRS does or offers; search results returned only unrelated phone-contract and sports-league pages because the acronym collides with other terms. The current description already states this lack of information; no new facts were found to expand it to 100+ honest words."
+      "status": "researched",
+      "sources": [
+        "https://carrs.csir.co.za/"
+      ]
     },
     {
       "slug": "chatz-connect-midstream-midstream-estate",

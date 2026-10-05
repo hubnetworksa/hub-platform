@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 92,
-  "generated_at": "2026-10-04T19:12:42.437Z",
+  "generated_at": "2026-10-05T08:03:57.009Z",
   "items": [
     {
       "slug": "resmoke-services-pty-ltd-valhalla",
@@ -12,13 +12,18 @@
     },
     {
       "slug": "ringpharm-pharmacy-centurion-crescent-zwartkop",
-      "status": "deferred",
-      "reason": "Only the magicpin and medpages directory pages were found, and they describe the Ringpharm group in general terms. Nothing branch-specific about the Centurion Crescent pharmacy's services or trading hours was retrieved."
+      "status": "researched",
+      "sources": [
+        "https://magicpin.com/south-africa/Centurion/Samrand/Pharmacy/Ringpharm-Centurion-Crescent-Pharmacy/store/23c4818",
+        "https://www.medpages.info/sf/index.php?page=organisation&orgcode=1837504"
+      ]
     },
     {
       "slug": "roelf-s-auto-electrical-rietfontein",
-      "status": "deferred",
-      "reason": "Own site was not found; the only source is an auto-repair directory profile with a single 5-star review and no service detail. The specialisms in the current text are not confirmed by any retrieved page."
+      "status": "researched",
+      "sources": [
+        "https://www.autorepairdirectory.co.za/listing.php?listings_id=2055"
+      ]
     },
     {
       "slug": "safety-and-overall-warehouse-karenpark",
@@ -113,18 +118,24 @@
     },
     {
       "slug": "sana-properties-hazeldean",
-      "status": "deferred",
-      "reason": "About page gives only a general line (property development, facility management, sales and rentals across South Africa) repeated twice. No office park, project or track-record specifics for the Hazeldean office were retrieved; the page's own text would need padding to reach 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.sanaproperties.co.za/about"
+      ]
     },
     {
       "slug": "stapelberg-property-eloffsdal",
-      "status": "deferred",
-      "reason": "Site gave only property search drop-downs and a short about line, which names a different office location (Mayville) from the listing address. Not enough consistent sourced detail on the agency's areas or services."
+      "status": "researched",
+      "sources": [
+        "http://stapelbergprop.co.za/"
+      ]
     },
     {
       "slug": "starpack-pretoria-glen-lauriston",
-      "status": "deferred",
-      "reason": "Site is marked as a work in progress and gives only category names and a generic supplier paragraph. The 30-year claim is the only specific fact, and a description built on that would be padding."
+      "status": "researched",
+      "sources": [
+        "http://www.starpack.co.za/"
+      ]
     },
     {
       "slug": "strategic-marketing-tribe-storybrand-certified-agency-in-south-africa-waterkloof-glen",
@@ -143,7 +154,7 @@
     {
       "slug": "super-lite-paraffin-distributors-andeon",
       "status": "deferred",
-      "reason": "Own site did not resolve. The only other source is a directory entry with no description, and the remaining search results are SPAR catalogues and dictionary pages. No source describes the Pretoria West business."
+      "reason": "Own site did not resolve, and the only other sourced result is a directory entry with no description. A current Waze listing confirms the business still trades at 84 Retief Street, Pretoria West, with a phone number and trading hours, but gives no reliable detail on its current range of fuels, lubricants or gas products, so the existing description's specifics can't be confirmed or republished. Held pending verification of the current product range."
     },
     {
       "slug": "superpump-pretoria-boekenhoutskloof",
@@ -162,7 +173,7 @@
     {
       "slug": "tax-accounting-advisory-firm-sme-tax-midstream-estate",
       "status": "deferred",
-      "reason": "Only the site's pricing URL was targeted, and it timed out. The About page returned 404, and the only text retrieved was navigation and footer copy. The fixed-fee package claims were not confirmed on any retrieved page."
+      "reason": "Further research confirms SME.TAX's SA head office at Cowork@Midstream, Midlands West Office Park, Mount Quray Street, Midstream Estate, Midrand — which matches this listing's address — operating through a network of SME.TAX offices and franchisees; a separate Pretoria East franchise was confirmed at 642 Cicely Street, Garsfontein, which does not match this listing. Since this listing's address is the Midrand head office rather than the Garsfontein franchise, a description can't be confidently written for it as a Pretoria East branch. Held pending confirmation of which SME.TAX entity this specific listing represents."
     },
     {
       "slug": "team-building-go-ashley-gardens",
@@ -229,13 +240,18 @@
     },
     {
       "slug": "totalsports-irene-village-mall-irene-farm-villages",
-      "status": "deferred",
-      "reason": "Site was blocked by Cloudflare on every request. Only chain-wide pages (brands, group ownership) were found in search results; nothing about the Irene Village Mall store itself."
+      "status": "researched",
+      "sources": [
+        "https://www.yep.co.za/biz/store/iyp/16976863_2",
+        "https://mallguide.co.za/shops/view/9079/irene-village-mall/totalsports"
+      ]
     },
     {
       "slug": "totalsports-wonderboom-wonderboom",
-      "status": "deferred",
-      "reason": "Store page is blocked by Cloudflare and no other source describes the Wonderboom Junction branch. Chain-wide facts alone are not allowed for a retail branch."
+      "status": "researched",
+      "sources": [
+        "https://www.totalsports.co.za/?utm_source=google&utm_medium=store&utm_campaign=pretoria"
+      ]
     },
     {
       "slug": "tritechnium-rietondale",
@@ -267,8 +283,10 @@
     },
     {
       "slug": "ubs-silverton-unlimited-building-supplies-sa-silvertondale",
-      "status": "deferred",
-      "reason": "Chain branch: only company-wide UBS pages were found (ceiling and partitioning supply, national brands). Nothing branch-specific about the Silverton store."
+      "status": "researched",
+      "sources": [
+        "http://www.ubssa.co.za/"
+      ]
     },
     {
       "slug": "ubuntu-ewaste-recycling-derdepoort-smallholdings",

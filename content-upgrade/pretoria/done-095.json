@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 95,
-  "generated_at": "2026-10-04T17:15:47.059Z",
+  "generated_at": "2026-10-05T08:03:37.794Z",
   "items": [
     {
       "slug": "gegrond-hazeldean",
@@ -39,8 +39,11 @@
     },
     {
       "slug": "hilti-store-silverton-bergtuin",
-      "status": "deferred",
-      "reason": "Research only returned Hilti's corporate/global site content (Nuron cordless platform, fleet management, firestop systems, 30 years of experience) with no Silverton-branch-specific facts. The only existing source is the same corporate hilti.co.za homepage; no store page, branch hours or Silverton-specific services were found. Chain-level facts alone aren't enough per the branch rule, so this is held back."
+      "status": "researched",
+      "sources": [
+        "https://www.hilti.co.za/",
+        "https://www.hilti.co.za/stores"
+      ]
     },
     {
       "slug": "icam-video-telematics-blue-valley-golf-estate",
@@ -222,8 +225,11 @@
     },
     {
       "slug": "metropolitan-wonderpark-karenpark",
-      "status": "deferred",
-      "reason": "Research only returned Metropolitan's generic WhatsApp self-service branch-locator page (policy management, claims, premiums), which isn't specific to this location. The existing sources (the Metropolitan branch locator and Emira's Wonderpark Shopping Centre portfolio page) only confirm the mall's size, not anything specific to this branch's own services, consultants or hours. Only chain- and mall-level facts are available, which the chain rule excludes."
+      "status": "researched",
+      "sources": [
+        "https://www.metropolitan.co.za/public/TestLocationDetails/?location=Wonderpark",
+        "https://www.wonderparkcentre.co.za/storedetail-metropolitan"
+      ]
     },
     {
       "slug": "meyerspark-mica-meyerspark",

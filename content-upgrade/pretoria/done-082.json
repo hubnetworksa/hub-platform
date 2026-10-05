@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 82,
-  "generated_at": "2026-10-04T19:38:26.982Z",
+  "generated_at": "2026-10-05T08:28:54.026Z",
   "items": [
     {
       "slug": "struben-street-motors-mayville",
@@ -40,8 +40,10 @@
     },
     {
       "slug": "sure-guard-security-services-cc-laudium",
-      "status": "deferred",
-      "reason": "sureguardcc.co.za failed to resolve, and no other source was fetched. No usable content about the company's history or services was found."
+      "status": "researched",
+      "sources": [
+        "http://sureguardcc.co.za/aboutus.html"
+      ]
     },
     {
       "slug": "swartboer-business-enterprises-cc-silverton",
@@ -59,8 +61,10 @@
     },
     {
       "slug": "syncro-dynamics-zwartkop",
-      "status": "deferred",
-      "reason": "syncrodynamics.com timed out on every attempt; the only extracted fact was an unrelated '18 years and older' eligibility fragment. No usable content about the company's security services was found."
+      "status": "researched",
+      "sources": [
+        "https://syncrodynamics.com/"
+      ]
     },
     {
       "slug": "talkr-communications-mayville",
@@ -135,8 +139,10 @@
     },
     {
       "slug": "the-francis-brokerage-centurion-golf-estate",
-      "status": "deferred",
-      "reason": "Only the agency's home page was read, which repeats the same generic buyer call-to-action twice and otherwise lists only nav items (listings, email alerts, bond calculator, meet the team, blog headlines). No agency-specific story or detail beyond what the current listing already states was found."
+      "status": "researched",
+      "sources": [
+        "http://www.francisbrokerage.co.za/"
+      ]
     },
     {
       "slug": "the-hearing-clinic-pretoria-hazeldean",
@@ -176,7 +182,7 @@
     {
       "slug": "tianclaassens-pty-ltd-muckleneuk",
       "status": "deferred",
-      "reason": "tianclaassens.co.za failed to resolve. No other source was available. No usable content beyond the current listing's own facts was found."
+      "reason": "Follow-up research confirms TianClaassens (Pty) Ltd only as a business-management consulting firm at 3rd Floor, Steven House, Brooklyn Bridge Office Park, 570 Fehrsen Street, Brooklyn, Pretoria 0181. The more specific claims in the current listing about infrastructure-financing, municipal infrastructure or social-infrastructure consulting could not be independently verified from any source. Kept deferred pending stronger sourcing for those specific claims."
     },
     {
       "slug": "tma-express-road-brooklands-lifestyle-estate",
@@ -187,13 +193,17 @@
     },
     {
       "slug": "trailarent-montana-pretoria-montana",
-      "status": "deferred",
-      "reason": "Only the national trailarent.co.za home page was read: nationwide branch list, pricelist and generic chain copy. No facts specific to the Montana branch (its own stock, staff or hours beyond the generic chain-wide schedule) were found. Chain-wide facts alone are not allowed."
+      "status": "researched",
+      "sources": [
+        "https://www.jamii.co.za/380-pretoria-north-east-trailer-rental-service-trailarent-bakkie-trailer-rental",
+        "https://www.cybo.com/ZA-biz/trailarent-montana-pretoria",
+        "http://www.trailarent.co.za/"
+      ]
     },
     {
       "slug": "trailarent-montana-pretoria-montana-gardens",
       "status": "deferred",
-      "reason": "Same listing/address as the separate 'Trailarent Montana Pretoria' entry in this chunk; only the national trailarent.co.za home page was read, with nationwide branch list and pricelist but no Montana-specific facts. Chain-wide facts alone are not allowed."
+      "reason": "Duplicate of another listing for the same Trailarent Montana branch at this address — flagged for the directory owner to merge or remove one of the two entries; not an address conflict or closure."
     },
     {
       "slug": "trenstar-sa-head-office-bronberrik",
@@ -239,13 +249,15 @@
     },
     {
       "slug": "urban-property-group-wonderboom",
-      "status": "deferred",
-      "reason": "Only the agency's property-search results page was read (a scrolling list of current listings with prices), with no about-us or agent-story text. No new facts beyond what the current listing already states were found."
+      "status": "researched",
+      "sources": [
+        "http://www.urbanpropgroup.co.za/"
+      ]
     },
     {
       "slug": "v-cor-group-raslouw",
       "status": "deferred",
-      "reason": "vcor.co.za timed out on every attempt. No other source was available. No usable content beyond the current listing's own facts was found."
+      "reason": "Follow-up research confirms V Cor Group only as a human-resources consulting business at 147 Gouws Avenue, Raslouw, Centurion 0157. The broader divisions claimed in the current listing — security, cleaning, promotional products, workplace safety risk management and SME accounting — could not be independently verified from any source. Kept deferred pending stronger sourcing for those divisions."
     },
     {
       "slug": "van-aswegen-attorney-pretoria-florauna",
@@ -298,8 +310,10 @@
     },
     {
       "slug": "voltex-electrical-wholesaler-montana-montana-gardens",
-      "status": "deferred",
-      "reason": "voltex.co.za (home, /about, /about-us) all returned only a 'Loading Page...' placeholder with no content. The only other source, a Cylex listing, is for Voltex's Durban branch, not Montana. No facts specific to the Montana branch were found. Chain-wide facts alone are not allowed."
+      "status": "researched",
+      "sources": [
+        "https://www.voltex.co.za/"
+      ]
     },
     {
       "slug": "waterkloof-corner-pharmacy-waterkloof",
@@ -331,8 +345,10 @@
     },
     {
       "slug": "wierdapark-city-cleaning-services-maid-services-wierdapark",
-      "status": "deferred",
-      "reason": "The only page read is a bare directory profile (name, category, address, 'no records found') followed by generic category copy about window cleaning services in Centurion in general, not written about this specific business. No business-specific content was found."
+      "status": "researched",
+      "sources": [
+        "https://cleaningcompanies.co.za/organisations/wierdapark-city-cleaning-services-maid-services/"
+      ]
     }
   ]
 }

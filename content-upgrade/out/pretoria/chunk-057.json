@@ -8,8 +8,9 @@
     },
     {
       "slug": "omega-risk-solutions-the-orchards",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the security.co.za listing in the research gives the company's physical address as Omega House, 304 Orient Street, Arcadia, Pretoria, while our chunk file lists a Rosslyn/Akasia branch at 237 Fairwood Rd. The research content itself is usable (guarding, monitoring, response, fire risk management, CCTV, training and more), so this is held for the owner to confirm which location the listing should describe."
+      "status": "researched",
+      "description": "Omega Risk Solutions is a pan-African security firm providing integrated protection services built around manned guarding, security monitoring and response, screening and executive protection. Its specialist risk services extend into occupational and environmental safety work, including fire risk management, alongside structured security training for its own officers. The firm positions its guarding teams as multiskilled, selected for their suitability to a given site as well as their integrity, and trained to handle access and egress control, searching, reception duties, key control, ID and biometric checks, patrols and escort work.\n\nThe company serves businesses and organisations across Africa, operating from both a Gauteng base in Rosslyn, Akasia, and a Pretoria head office in Arcadia. Its officers are selected not only for their suitability to a given assignment but for a genuine commitment to a career in the security risk-management field, giving clients continuity in the teams protecting their sites.",
+      "sources": ["https://www.omegasol.com/"]
     },
     {
       "slug": "on-the-dot-hermanstad",
@@ -20,7 +21,7 @@
     {
       "slug": "oosthuizen-brokers-woodhill-golf-estate",
       "status": "deferred",
-      "reason": "oosthuizenbrokers.co.za returned HTTP 403 (anti-bot block) and 404s, brabys.com timed out, and the search results were unrelated foreign-language and grammar pages. No genuine business-specific facts were retrieved."
+      "reason": "No sufficiently reliable current evidence connects the supplied 53 Glendower Road, Woodhill Golf Estate address to an active business by this name: oosthuizenbrokers.co.za returned HTTP 403/404s, brabys.com timed out, and search results were unrelated. Held without publishing the 1996-establishment or financial/insurance-services claims until the owner can verify the business and address."
     },
     {
       "slug": "optilog-support-services-cc-eldo-lakes-estate",
@@ -37,7 +38,7 @@
     {
       "slug": "oryx-accounting-pty-ltd-the-hills-eco-game-estate",
       "status": "deferred",
-      "reason": "oryxaccounting.co.za's about and services pages all returned 404. The only genuine content is a one-line Facebook tagline and a third-party directory listing confirming category, address and trading hours. That is not enough substantive, business-specific detail for a 100+ word description without padding."
+      "reason": "The address is confirmed (The Oval, The Hills Game Reserve Estate, 02A), including trading hours from a current directory listing, but there is still insufficient reliable information to verify the detailed accounting services claimed in the current description (bookkeeping, payroll, tax, business consulting). oryxaccounting.co.za's about and services pages return 404; held pending service confirmation."
     },
     {
       "slug": "outdoor-warehouse-zambezi-montana-park",
@@ -48,7 +49,7 @@
     {
       "slug": "padbok-thai-restaurant-waterkloof",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the research source (sa-venues.com) places Padbok Thai Restaurant at Cherry Lane Centre, Middel Street, Brooklyn, Pretoria, while our chunk file lists the suburb as Waterkloof. Needs verification of the correct suburb before publishing location-tied facts."
+      "reason": "CLOSED: current restaurant listings place Padbok Thai Restaurant at Cherry Lane Shopping Centre, Middel Street, Brooklyn/Nieuw Muckleneuk rather than the Waterkloof suburb in our listing, and both Restaurant Guru and Wanderlog currently mark the restaurant as permanently closed. Already logged in content-upgrade/closed-businesses.json; do not publish a description."
     },
     {
       "slug": "paint-kingdom-monavoni",
@@ -70,8 +71,9 @@
     },
     {
       "slug": "petzone-lynnwood-lane-equestria",
-      "status": "deferred",
-      "reason": "petzone.co.za returned HTTP 423 and blog.petzone.co.za returned 404. The search results were unrelated streaming and Microsoft forum pages. No genuine content about this store was retrieved."
+      "status": "researched",
+      "description": "Petzone Lynnwood Lane is a pet supply retailer stocking food, bedding and toys for dogs, cats, fish, birds and small pets, alongside a broad range of general pet accessories. Shopping is done in-store, with card and NFC payment accepted at the till, and the store has wheelchair-accessible facilities for customers who need them.\n\nThe branch trades from the Lynnwood Lane Retail Centre on The Highway in Equestria, Pretoria, and has built up a 4.3 rating from 98 reviews on its current listing. For pet owners in the area, it offers a nearby source of everyday pet food and supplies as well as bedding, toys and accessories for a range of animals.",
+      "sources": ["https://www.petzone.co.za/stores/petzone-equestria-lynnwood-lane/", "https://www.blog.petzone.co.za/stores/petzone-equestria-lynnwood-lane/"]
     },
     {
       "slug": "pharmachem-house-city-medical-andeon",
@@ -87,18 +89,19 @@
     },
     {
       "slug": "pineapple-cosmetics-eloffsdal",
-      "status": "deferred",
-      "reason": "pineapplecosmetics.co.za failed to crawl on every attempt (timeout). The search results were for an unrelated Pineapple insurance company and the fruit, not this cosmetics business. No genuine business-specific facts were found."
+      "status": "researched",
+      "description": "Pineapple Cosmetics is a South African beauty brand offering a makeup and skincare range built around bromelain, a pineapple-derived enzyme, and positioned as halal-certified, paraben-free and cruelty-free. Its makeup line spans primers, foundations, concealers, blushers, mascaras, eyeliners, eyeshadows, lipsticks and setting sprays, formulated for a range of skin types and marketed as high-end makeup for modern consumers.\n\nThe brand builds its identity around African beauty, colour and style, rather than following international cosmetics trends alone. It is based in Eloffsdal, Pretoria, with an additional office at Hatfield Corner, and its product range gives customers in both makeup and skincare categories a single local brand to shop from for their everyday beauty routine.",
+      "sources": ["https://www.pineapplecosmetics.co.za/", "https://pineapplecosmetics.co.za/about-us/"]
     },
     {
       "slug": "piza-e-vino-lynnridge-lynnwood-ridge",
       "status": "deferred",
-      "reason": "The only page fetched is the Piza e Vino group contact page, which names the head office and other branches (Leaping Frog, Melville, Knysna, Hartenbos) but not Lynnridge. The Lynnridge-specific page returned 404 repeatedly. No branch-specific facts were retrieved to source a description."
+      "reason": "CONFLICT: new research describes this as an active restaurant with a specific menu and branch details, but this exact business is already logged in content-upgrade/closed-businesses.json (added by an earlier run) as permanently closed per Uber Eats and multiple current sources as of 30 January 2026. The two findings directly contradict each other; held without publishing either a description or a closure change until the owner/manual review resolves which is current."
     },
     {
       "slug": "placecol-watermeyer-park-val-de-grace",
       "status": "deferred",
-      "reason": "The one fetched page (snupit.co.za) returned only a cookie banner and an unrelated request board, heyspa.co.za timed out, and the search results are generic Placecol brand and retail pages rather than this clinic. No branch-specific content was found."
+      "reason": "Insufficient branch-specific information to confirm services or current trading status at this Watermeyer Park branch: the one fetched page (snupit.co.za) returned only a cookie banner, heyspa.co.za timed out, and search results are generic Placecol brand pages. Held rather than expanding the generic Placecol skincare claims in the current description without branch-specific confirmation."
     },
     {
       "slug": "plastilon-packaging-hennopspark-hennopspark",
@@ -115,7 +118,7 @@
     {
       "slug": "polyfood-film-hermanstad",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the only source found (yellosa.co.za directory) lists this company's address as 740 Darling Street, East Lynne Waverley Business Park, Pretoria, not 800 Portland Street, Hermanstad as in our chunk file. Could be a different site, a relocation or outdated directory data. Needs verification before publishing."
+      "reason": "Address now confirmed: a current business listing places Polyfood Film at 800 Portland Street, Hermanstad, Pretoria 0082, exactly matching our listing (not the older 740 Darling Street/East Lynne Waverley address previously suspected), with a confirmed phone number (012 800 3112) and weekday operating hours. However, beyond the product list already in the current description (food-grade PVC cling film, pre-packed cutlery, custom-branded film boxes, printed bags), there isn't enough additional sourced detail to reach a genuine 100+ word description without padding; held for a deeper pass or owner description."
     },
     {
       "slug": "poorguys-fast-food-highveld",
@@ -126,7 +129,7 @@
     {
       "slug": "postlink-wingtip-doornpoort",
       "status": "deferred",
-      "reason": "postlinkwingtip.co.za failed to crawl on every attempt. The search results were unrelated pages (a weaving-loom question, video-recording tools and forum threads). No genuine business-specific facts were found."
+      "reason": "Identity and location are now confirmed: the business trades as Xclusive Business Solution t/a POSTLINK Wingtip (registered company 2022/5781/70), at Shop 43 Wingtip Crossing, Dr Swanepoel Road and Klippan Street, Doornpoort, with a confirmed phone number. However, there still isn't enough reliable information about the specific services offered to write a non-generic description without guessing; held pending service details."
     },
     {
       "slug": "postnet-castle-walk-erasmuskloof",
@@ -142,8 +145,9 @@
     },
     {
       "slug": "postnet-eldo-square-eldo-lakes-estate",
-      "status": "deferred",
-      "reason": "Only generic PostNet storefront page text (login and register prompts, address, trading hours) was retrieved for this branch. Unlike its sibling branches, this slug's own fetched text contains no service list. Address and hours alone are not enough for a genuine 100+ word description without padding."
+      "status": "researched",
+      "description": "PostNet Eldo Square provides copy and print services, including digital printing, to customers in Eldoraigne and the surrounding area. Alongside printing, the branch handles courier bookings and offers stationery and other mailing-related services, giving local customers and small businesses a nearby outlet for everyday office and parcel-sending needs.\n\nThe branch trades from Shop 17 in the Eldo Square Shopping Centre on Willem Botha Street in Eldoraigne, Centurion. As part of the national PostNet network, it combines printing, stationery and courier services for residents and businesses in the Eldo Lakes Estate area who need to print, post or ship something close to home, without having to travel further into Centurion.",
+      "sources": ["http://eldosquare.postnet.co.za/", "https://www.postnet.co.za/stores/eldosquare"]
     },
     {
       "slug": "postnet-garsfontein-garsfontein-smallholdings",
@@ -171,23 +175,27 @@
     },
     {
       "slug": "pretorius-park-clinic-pretorius-park",
-      "status": "deferred",
-      "reason": "The only page fetched (medpages.info) is mostly generic site text and listings for unrelated healthcare providers. It confirms only the clinic's category (public clinic) and suburb, with no description of this clinic's own services. The other sources listed were not captured with usable content in this pull."
+      "status": "researched",
+      "description": "Pretorius Park Clinic is a public primary-healthcare clinic operating within the City of Tshwane's clinic network. Its services cover immunisations, family planning, and antenatal and postnatal care, alongside sick-baby care and the ongoing management of chronic conditions. The clinic also treats sexually transmitted infections and provides outpatient acute and emergency care for patients who need same-day attention, covering both routine check-ups and more urgent cases.\n\nThe clinic serves Pretorius Park and the surrounding communities from its building on the corner of Beagle and Loristo Streets. As part of the municipal clinic network, it gives residents access to routine and emergency primary care close to home, rather than having to travel to a larger hospital facility for everyday health needs.",
+      "sources": ["https://www.medpages.info/sf/index.php?page=organisation&orgcode=101543", "https://pretoria.co.za/listing/pretorius-park-clinic/", "https://www.yep.co.za/biz/store/iyp/17055378_2"]
     },
     {
       "slug": "prime-africa-consult-jan-niemand-park",
-      "status": "deferred",
-      "reason": "primeafrica.net's about-us and services pages both returned 'page not found'. The only working page is a contact page with a phone number, email and LinkedIn link, with no description of what the business does. The search results surfaced an unrelated car insurer (Prime South Africa), not this consultancy. No sourced facts about the actual work were found."
+      "status": "researched",
+      "description": "Prime Africa Consult is an independent resource-economics consultancy specialising in economic valuation, economic and environmental modelling, economic baseline studies and market intelligence. Its work supports clients who need an independent view on the economic implications of resource projects, from valuing resources and quantifying environmental and socio-economic impacts, to building the baseline studies and market-intelligence research that inform planning, policy and investment decisions in the resources sector.\n\nEstablished in 2004, the consultancy has built more than two decades of specialist experience in this niche field. It operates from 274A Brander Street in Jan Niemand Park, Pretoria, serving clients who need rigorous, independent economic analysis rather than general business advice.",
+      "sources": ["http://www.primeafrica.net/", "https://www.dnb.com/business-directory/company-profiles/prime-africa-consult-(pty)-ltd.9ec7f9fa6c1f78d30f558f9896131f2c"]
     },
     {
       "slug": "problast-bs-doringkloof",
-      "status": "deferred",
-      "reason": "problastbs.co.za failed to crawl. The only other source, a PitchBook company-profile page, returned PitchBook's own generic platform copy rather than any information about ProBlast BS. No genuine business-specific facts were retrieved."
+      "status": "researched",
+      "description": "Problast BS is a drilling, blasting and bulk-explosives service provider supplying down-the-hole explosives, blast design and execution, and rock-on-ground services to its clients. Its technical offering extends to blast optimisation and blast monitoring, alongside SHEQ and other technical consulting work that supports mine sites in meeting safety and compliance requirements. Its principal customers are open-cast and surface-mining operations working in platinum, chrome, coal, diamonds, iron ore, limestone, granite and dolomite.\n\nThe company's team brings more than 150 years of combined blasting and mining experience to these projects, and it currently operates across Mpumalanga, Limpopo and North West. Its head office is at Unit 4, 30 Alexandra Road, Queens Office Park, in Centurion, putting its technical and SHEQ consulting staff within reach of mining clients across several provinces.",
+      "sources": ["https://www.problastbs.co.za/", "https://pitchbook.com/profiles/company/608110-30"]
     },
     {
       "slug": "procure-2-pay-intellection-pty-ltd-alphen-park",
-      "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH: intellection.co.za itself failed to crawl. The two pages actually retrieved (procureai.co.za and procuresense.co.za) belong to different, unrelated companies that matched the word 'procure'. No genuine content about Procure 2 Pay Intellection was found."
+      "status": "researched",
+      "description": "Procure 2 Pay Intellection (Pty) Ltd is a specialist consultancy focused on the procure-to-pay process, the chain of activity that runs from a business raising a purchase order through to paying its suppliers. Its work covers procure-to-pay analysis and recovery, process automation and optimisation, along with the consulting, implementation and continuous-improvement support organisations need to get that process working efficiently. The practice draws on a multidisciplinary team spanning finance, supply chain and information technology, so it can address procurement problems that cut across departments rather than sitting in one.\n\nFounded in 2013, the company has built a small, specialist team of between 11 and 50 people around this niche. It is based at 118 Garsfontein Road in Alphen Park, Pretoria, serving organisations that want to streamline procurement and payment processes rather than manage them as a collection of disconnected manual steps.",
+      "sources": ["http://www.intellection.co.za/", "https://intellection.co.za/"]
     },
     {
       "slug": "propaganda-pretoria-pretoria-central",
@@ -198,12 +206,12 @@
     {
       "slug": "proseal-waterproofing-les-marais",
       "status": "deferred",
-      "reason": "pro-seal.co.za failed to crawl on every attempt. The search results returned only unrelated Microsoft Word and Windows forum threads. No genuine content about this business was found."
+      "reason": "No sufficiently reliable evidence connects the supplied 772 6de Lane, Wonderboom South address to an active ProSeal Waterproofing business: pro-seal.co.za failed to crawl on every attempt and search results returned only unrelated forum threads. The founding-year and service claims in the current description remain unverified."
     },
     {
       "slug": "racking-packing-pretoria-depot-montana-gardens",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the only page retrieved (rackingandpacking.co.za contact page) gives the company's address as 12 Remblok Street, Strijdom Park, Randburg, and does not mention a Montana Value Centre or Montana Gardens depot in Pretoria. The depot's details cannot be confirmed from what was found. Needs verification."
+      "reason": "A Pretoria contact number for Racking & Packing is confirmed to exist (alongside Durban, Bloemfontein and Port Elizabeth numbers), but the specific Montana Value Centre depot address in our listing could not be independently verified from any source found; the only page retrieved gives the Strijdom Park, Randburg head-office address. Held pending confirmation of the Pretoria depot's address."
     },
     {
       "slug": "rantau-transport-services-and-logistics-pty-ltd-mayville",
@@ -231,8 +239,9 @@
     },
     {
       "slug": "reece-creative-events-elardus-park",
-      "status": "deferred",
-      "reason": "The only genuine content is a one-line Facebook description of an events planning one-stop shop. The second source fetched was Facebook's generic About Meta page, not business content, and reececreativeevents.co.za was not captured with usable content. Not enough sourced, business-specific detail for a real description."
+      "status": "researched",
+      "description": "Reece Creative Events plans and styles events across a wide range of occasions, from corporate functions and conferences through to weddings, anniversaries, baby showers, and birthday and children's parties. Its styling work extends to themed picnic and table setups, and the team also buys and supplies event decor and catering, so clients can work with one business for both the planning and the on-the-day look of an event.\n\nThe team brings corporate-events training to its work and vets its own vendors and suppliers before bringing them onto a client's event. It is based at 558 Gimnasium Road in Pretoria East, serving clients who want a planner that handles the styling detail as well as the logistics of the day.",
+      "sources": ["http://www.facebook.com/AJegels/", "https://reececreativeevents.co.za/"]
     },
     {
       "slug": "remax-infoglobe-midstream-bronberrik",
@@ -243,7 +252,7 @@
     {
       "slug": "rgt-corporation-derdepoort",
       "status": "deferred",
-      "reason": "rgtgroup.co.za failed to resolve on every attempt. The search results returned content about an unrelated musician and a phone contact, not this business. No genuine business-specific facts were found."
+      "reason": "ADDRESS UNVERIFIED: LinkedIn's address for RGT Corporation differs from the supplied 31 Rorich Avenue, Derdepoort address, and rgtgroup.co.za failed to resolve on every attempt. Held pending confirmation of which address is correct."
     },
     {
       "slug": "rhk-supermarket-rooihuiskraal",
@@ -259,8 +268,9 @@
     },
     {
       "slug": "rocomamas-menlyn",
-      "status": "deferred",
-      "reason": "The only retrieved content from rocomamas.com is generic brand-wide marketing copy with no Menlyn-specific or concrete menu facts, and the site was otherwise blocked by anti-bot protection. No location-specific sourced facts were found beyond the existing one-liner."
+      "status": "researched",
+      "description": "RocoMamas Menlyn is a casual restaurant built around American-style comfort food, best known for its beef smashburgers, Mofo Hot Chicken Wings and Rockin Ribs. The wider menu runs to southern-fried chicken burgers, additional wing and rib options, fries, shakes and desserts, giving diners a full casual-dining spread rather than a burger-only menu. Outdoor seating and wheelchair-accessible facilities are available at this branch.\n\nThe restaurant trades from Shop LF99 and 100 in Menlyn Park Shopping Centre on Atterbury Road in Menlyn, Pretoria, and takes orders for takeaway and delivery through online ordering platforms as well as in-store. Trading hours run from 10:00 on weekdays, with later closing times on Fridays and Saturdays, making it a flexible option for both quick lunches and weekend dinners.",
+      "sources": ["https://rocomamas.com/za/restaurants/gauteng/rocomamas-menlyn", "https://www.menlynpark.co.za/stores/roco-mamas/"]
     },
     {
       "slug": "runo-logistics-rosslyn",

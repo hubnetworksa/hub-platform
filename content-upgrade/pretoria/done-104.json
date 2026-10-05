@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 104,
-  "generated_at": "2026-10-04T19:35:12.395Z",
+  "generated_at": "2026-10-05T08:04:39.817Z",
   "items": [
     {
       "slug": "clicks-sunnyside-sunnyside",
@@ -287,8 +287,10 @@
     },
     {
       "slug": "leon-de-kock-garage-doors-kameeldrift",
-      "status": "deferred",
-      "reason": "No website or existing_sources were provided in the batch data for this listing, and the research run found no page or snippet about this business at all (search results returned unrelated results for the 1994 film 'Léon'). With no citable source of any kind, a researched description cannot be written."
+      "status": "researched",
+      "sources": [
+        "https://www.procompare.co.za/providers/leon-de-kock-garage-doors"
+      ]
     },
     {
       "slug": "liafin-professional-accountants-and-tax-practitioners-willow-park-manor",

@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 105,
-  "generated_at": "2026-10-04T17:13:56.657Z",
+  "generated_at": "2026-10-05T08:32:43.425Z",
   "items": [
     {
       "slug": "melitha-consultants-eloffsdal",
@@ -26,8 +26,11 @@
     },
     {
       "slug": "mont-paradiso-guesthouse-waverley",
-      "status": "deferred",
-      "reason": "Own website (montparadiso.co.za) timed out on every crawl attempt; the only other source, a meeting-venue directory page, returned no specific content about the guesthouse (just generic site navigation and newsletter text)."
+      "status": "researched",
+      "sources": [
+        "https://www.montparadiso.co.za",
+        "https://www.successfulmeetings.com/Meeting-Event-Venues/Pretoria-South-Africa/Convention-Hotel/Mont-Paradiso-Guesthouse-p55347089"
+      ]
     },
     {
       "slug": "mooiplaats-landfill-disposal-recycling-site-pretoria-johannesburg-blue-valley-golf-estate",
@@ -45,13 +48,19 @@
     },
     {
       "slug": "murrayfield-tax-consulting-murrayfield",
-      "status": "deferred",
-      "reason": "Website (murrayfieldconsulting.co.za) returned a default/parked hosting error page with no business content; no other sources were available to the research pass."
+      "status": "researched",
+      "sources": [
+        "http://murrayfieldconsulting.co.za/",
+        "https://www.nichemarket.co.za/finance/murrayfield-tax-consulting"
+      ]
     },
     {
       "slug": "mybi-pty-ltd-willow-glen",
-      "status": "deferred",
-      "reason": "Website blocked by anti-bot protection on every attempt; search results returned only an unrelated book title ('100 Things We've Lost to the Internet'), nothing about the business."
+      "status": "researched",
+      "sources": [
+        "http://www.mybi.co.za/",
+        "https://www.capterra.com/p/216855/Mybi/"
+      ]
     },
     {
       "slug": "n2-steel-works-waltloo",
@@ -84,7 +93,7 @@
     {
       "slug": "ocean-basket-newlands-plaza-newlands",
       "status": "deferred",
-      "reason": "The eatout.co.za source returned only generic News24/Eat Out site navigation and unrelated articles, not branch-specific content; no other usable source was retrieved for this location."
+      "reason": "Current structured business information and Restaurant Guru both independently mark this Newlands Plaza branch as permanently closed. Do not publish a description implying it is currently operating; flagged for deletion/closure review (see closed-businesses.json)."
     },
     {
       "slug": "organisation-development-international-odi-highveld",
@@ -130,13 +139,19 @@
     },
     {
       "slug": "powerbuild-doornpoort-doornpoort",
-      "status": "deferred",
-      "reason": "Website (diycrafts.co.za) blocked by anti-bot protection on every attempt; search results returned only unrelated WhatsApp forum discussions, nothing about the business."
+      "status": "researched",
+      "sources": [
+        "http://www.diycrafts.co.za/",
+        "https://powerbuild.africa/power-stores/diyhardwareandcraftsdoornpoort/"
+      ]
     },
     {
       "slug": "profection-manufacturers-silvertondale",
-      "status": "deferred",
-      "reason": "Website pages mostly failed to load (404/timeout on services and about pages); the only retrievable text was a generic 'turnkey solutions' tagline and contact details, not enough to support specific, sourced claims about the company's processes or industries served."
+      "status": "researched",
+      "sources": [
+        "https://www.profection.co.za/contact-us/",
+        "https://www.brabys.com/za/gauteng/pretoria/silvertondale/engineers-contractors/profection-manufactures-cc"
+      ]
     },
     {
       "slug": "pure-joy-guest-lodge-kameeldrift-east",
@@ -155,7 +170,7 @@
     {
       "slug": "rcm-strategic-sustainment-consulting-eloffsdal",
       "status": "deferred",
-      "reason": "Domain (rcmssconsulting.com) failed to resolve (DNS error) on every attempt; search results returned only unrelated Marriage Act legal content."
+      "reason": "Confirmed only as a business-management consulting company at 755 Killick Avenue, Mayville, Pretoria 0084; the detailed facilities-management service list (plumbing, electrical work, irrigation and landscaping, and air conditioning) in the current description could not be independently verified from any available source. Held pending verification of the specific service offering."
     },
     {
       "slug": "ream-insurance-brokers-pty-ltd-waterkloof-glen",
@@ -209,8 +224,10 @@
     },
     {
       "slug": "sece-brummeria",
-      "status": "deferred",
-      "reason": "Website (sece.co.za) timed out on every attempt; search results returned only unrelated sports-scores content, nothing about the business."
+      "status": "researched",
+      "sources": [
+        "https://sece.co.za/"
+      ]
     },
     {
       "slug": "senses-beauty-spa-erasmia",
@@ -221,8 +238,10 @@
     },
     {
       "slug": "silver-star-laser-engraving-and-cutting-dorandia",
-      "status": "deferred",
-      "reason": "Website timed out on every attempt; search results returned only unrelated Google Docs sign-in pages, nothing about the business."
+      "status": "researched",
+      "sources": [
+        "https://silverstarlaser.co.za/"
+      ]
     },
     {
       "slug": "soft-ice-catering-equipment-montana-gardens",
@@ -233,13 +252,17 @@
     },
     {
       "slug": "solar-security-nerd-pty-ltd-moot-pretoria-mp-dorandia",
-      "status": "deferred",
-      "reason": "Website (nerd.africa) timed out on every attempt; search results returned only generic competing solar companies, nothing about this business specifically."
+      "status": "researched",
+      "sources": [
+        "http://www.nerd.africa/"
+      ]
     },
     {
       "slug": "spar-les-marais-les-marais",
-      "status": "deferred",
-      "reason": "Only source retrieved was a thin directory listing (fyple.co.za) confirming address, phone number and category with no operational detail; not enough branch-specific content to support a non-generic description of this particular SPAR."
+      "status": "researched",
+      "sources": [
+        "https://www.fyple.co.za/company/spar-les-marais-18ve6gw/"
+      ]
     },
     {
       "slug": "stallion-turbos-dorandia",
@@ -264,8 +287,10 @@
     },
     {
       "slug": "techfusion-pty-ltd-die-wilgers",
-      "status": "deferred",
-      "reason": "Website blocked by anti-bot protection (HTTP 403) on every attempt; search results returned only unrelated distance-calculator pages, nothing about the business."
+      "status": "researched",
+      "sources": [
+        "http://www.techfusion.co.za/"
+      ]
     },
     {
       "slug": "thai-summit-autoparts-industry-south-africa-ltd-the-willows",
@@ -285,7 +310,7 @@
     {
       "slug": "the-iglobe-group-doringkloof",
       "status": "deferred",
-      "reason": "Website timed out on every attempt; search results returned only dictionary definitions of the word 'the', nothing about the business."
+      "reason": "Confirmed as a geospatial/spatial-data technology company (Spatial Data Platform for 3D digital-twin and asset-monitoring work, plus hydro, tailings-management, surveying, geospatial and data-management consulting), but the company's own current official contact page gives its head office as 30 Alexandra Road, Queens Office Park, Building 2, Irene, Centurion 0157 -- not the 20 Impala Avenue, Doringkloof, Centurion 0157 address on this listing. Held pending resolution of this address conflict; do not publish a description tied to the Doringkloof address."
     },
     {
       "slug": "the-iv-bar-silver-lakes-hazeldean",
@@ -310,8 +335,11 @@
     },
     {
       "slug": "tileba-vleismark-tileba",
-      "status": "deferred",
-      "reason": "Only source retrieved was a thin meat-supplier directory listing (worldofmeats.co.za) confirming category, phone number and address with no detail about products, services or operations beyond what's already in the current listing."
+      "status": "researched",
+      "sources": [
+        "http://tilebavleis.co.za/",
+        "https://www.worldofmeats.co.za/view/tileba-vleismark-cc"
+      ]
     },
     {
       "slug": "timber-maintenance-wapadrand",

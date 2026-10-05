@@ -1,27 +1,35 @@
 {
   "city": "pretoria",
   "chunk": 61,
-  "generated_at": "2026-10-04T13:07:17.755Z",
+  "generated_at": "2026-10-05T06:44:08.525Z",
   "items": [
     {
       "slug": "con-dio-communications-booysens",
-      "status": "deferred",
-      "reason": "Research holds only directory data (address, Mon-Fri hours, Electronics Store category, a defunct old website); thinklocal was blocked and no page describing its radio products was retrieved, so the current product claims are unverified."
+      "status": "researched",
+      "sources": [
+        "https://www.thinklocal.co.za/biz/con-dio-communications-pretoria",
+        "https://www.africabizinfo.com/ZA/con-dio-communications-012-383-2075"
+      ]
     },
     {
       "slug": "consult-erasmusrand-erasmusrand",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the adviser page returned 404; the only business text is the group contact page, which lists Head Office at 268 West Avenue, Die Hoewes, Centurion, not the listed 405 Rigel Ave, Erasmusrand. The current text also names a private individual, which cannot be used."
+      "reason": "ADDRESS MISMATCH, unresolved: no reliable information connects Consult Erasmusrand or its adviser to the listed 405 Rigel Avenue, Erasmusrand address. A separate address in Centurion appears in some sources, but it cannot be reliably confirmed as this business's current trading address either, so it is not substituted in. The current text also names a private individual, which cannot be published regardless of the address issue."
     },
     {
       "slug": "core-digital-printers-jan-niemand-park",
-      "status": "deferred",
-      "reason": "Every fetched page (/about, /about-us, /services) returned 404 and the homepage timed out, so no business-specific text was retrieved."
+      "status": "researched",
+      "sources": [
+        "http://www.coredigital.co.za/"
+      ]
     },
     {
       "slug": "crazy-plastics-centurion-celtisdal",
-      "status": "deferred",
-      "reason": "Only the chain-level About Us page was retrieved; the Centurion store page timed out, so nothing store-specific is sourced."
+      "status": "researched",
+      "sources": [
+        "https://www.crazyplastics.co.za/stores/crazy-plastics-centurion",
+        "https://www.localstore.co.za/store/58777/crazy-plastics-raslouw/centurion/"
+      ]
     },
     {
       "slug": "crazy-plastics-express-madelief-dorandia",
@@ -33,7 +41,7 @@
     {
       "slug": "crc-chartered-accountants-and-business-advisors-midlands-estate",
       "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH risk: every search hit is for Christian Revival Church (CRC), not an accounting firm, and no page for the listed business was retrieved."
+      "reason": "No reliable, business-specific evidence connects the Midlands Office Park, Olifantsfontein listing to this accounting practice; search results are dominated by an unrelated organisation (Christian Revival Church), not the accounting firm, so nothing usable about the firm itself was found."
     },
     {
       "slug": "crisisoncall-monument-park",
@@ -46,12 +54,12 @@
     {
       "slug": "crossroad-consulting-tijger-valley",
       "status": "deferred",
-      "reason": "Every cross-road.co.za fetch timed out or returned 404, and the search results are unrelated online gaming sites, so there is no sourced content."
+      "reason": "No reliable, current connection established between Crossroad Consulting and the supplied Building 88B, Tijger Valley address; cross-road.co.za timed out or returned 404 on every fetch, and search hits are unrelated gaming sites, so the 2006 founding date and management-consulting specialisation in the current text remain unverified and are not published."
     },
     {
       "slug": "cts-automotive-company-hennopspark",
       "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH risk: search hits are for other CTS companies (CTS Group construction, CTS East transport, concrete testing); ctsauto.co.za timed out and no page for CTS Automotive Company was retrieved."
+      "reason": "Possible wrong-business match: several unrelated CTS automotive companies were found online (CTS Group construction, CTS East transport, concrete testing), none reliably connected to 130 Edward Avenue, Hennopspark; ctsauto.co.za timed out, so the Land Rover and gearbox-specialist claims in the current text remain unverified."
     },
     {
       "slug": "curo-data-solutions-the-willows",
@@ -70,28 +78,41 @@
     },
     {
       "slug": "dante-personnel-recruitment-tijger-valley",
-      "status": "deferred",
-      "reason": "Only directory data (Employment Agency category, hours, Tijger Valley address) and a few user reviews were retrieved; dantesa.co.za timed out, so no company-written description is sourced."
+      "status": "researched",
+      "sources": [
+        "https://dantesa.co.za/",
+        "https://za.africabz.com/gauteng/dante-personnel-recruitment-67422",
+        "https://www.yellosa.co.za/company/310207/dante-personnel-recruitment"
+      ]
     },
     {
       "slug": "de-denker-consulting-monument-park",
       "status": "deferred",
-      "reason": "The homepage gives only a list of service headings (business process optimisation, ERP implementation, post-implementation support) and three ERP package names; both /about pages returned 404, so a real 100-word description cannot be sourced."
+      "reason": "The website shows only service headings and ERP-platform names (business process optimisation, ERP implementation, post-implementation support); not enough reliable, business-specific detail to write a real description, and the supplied Stone House, 510 Makou Street address remains unverified."
     },
     {
       "slug": "debonairs-pizza-gezina-gezina",
-      "status": "deferred",
-      "reason": "Only the chain-level franchise contact page was retrieved (its services page showed Loading...); no Gezina Galleries store-specific content is sourced."
+      "status": "researched",
+      "sources": [
+        "https://location.debonairspizza.co.za/gezina",
+        "https://za.africabz.com/gauteng/debonairs-pizza-32973"
+      ]
     },
     {
       "slug": "debonairs-pizza-philip-nel-park",
-      "status": "deferred",
-      "reason": "Only a short Facebook blurb and the chain's Wikipedia entry were retrieved; the branch's own location page timed out, so any text would be mostly chain-level history rather than branch-specific."
+      "status": "researched",
+      "sources": [
+        "https://location.debonairspizza.co.za/philip-nel-park",
+        "https://www.facebook.com/DebonairsPizzaPhilipNelPark/"
+      ]
     },
     {
       "slug": "deltaerp-wapadrand",
-      "status": "deferred",
-      "reason": "Only a one-line Facebook blurb for Matrix Design Africa was retrieved; LinkedIn returned 404 and no DeltaERP product page was fetched. The product is supplied by DataSaint under the Matrix Design Africa umbrella, so the listing name needs checking."
+      "status": "researched",
+      "sources": [
+        "https://www.linkedin.com/company/datasaint-pty-ltd",
+        "https://www.facebook.com/MatrixDesignAfrica/"
+      ]
     },
     {
       "slug": "design-node-boardwalk-manor",
@@ -103,7 +124,7 @@
     {
       "slug": "designnode-boardwalk-manor",
       "status": "deferred",
-      "reason": "DUPLICATE: same business, website and address as design-node-boardwalk-manor; the description is written once on that listing. The owner should merge the two listings."
+      "reason": "DUPLICATE LISTING: this appears to be a duplicate of the existing \"Design Node\" listing (slug design-node-boardwalk-manor) already published in this chunk, sharing the same confirmed address (Block 5, Boardwalk Office Park, Haymeadow Crescent, Faerie Glen) and website. Rather than publish duplicate content under a second listing, this is held deferred and flagged for the owner to merge or remove rather than be given its own separate description."
     },
     {
       "slug": "dikoloi-east-lynne",
@@ -136,7 +157,7 @@
     {
       "slug": "discount-board-specialists-silverton",
       "status": "deferred",
-      "reason": "Only a Facebook blurb was retrieved; dbsgroup.co.za was blocked by anti-bot protection and the Brabys listing was not fetched, so the current product claims are unverified."
+      "reason": "Address, phone (012 804 2380) and hours (Mon-Fri 08:00-17:00, Sat 08:00-13:00) are independently confirmed, but the specific cutting, edging and board-specialist services could not be sufficiently verified beyond directory-only confirmation; dbsgroup.co.za was blocked by anti-bot protection, so there is no real service content to publish."
     },
     {
       "slug": "dishpro-dstv-installer-pretoria-north-pretoria-north",
@@ -148,17 +169,21 @@
     {
       "slug": "divine-trust-business-enterprise-pty-ltd-sable-hills-waterfront-estate",
       "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH risk: search hits are unrelated (Divine Sunset Venue, Divine Fragrances, a music artist) and dtbe.co.za timed out. ADDRESS MISMATCH: listed suburb Sable Hills Waterfront Estate, but the address is in Sunnyside, Pretoria."
+      "reason": "Possible wrong-business match: no reliable connection established between Divine Trust Business Enterprise (Pty) Ltd and 58 Plein Street, Sunnyside; search hits are unrelated (Divine Sunset Venue, Divine Fragrances, a music artist) and dtbe.co.za timed out. The conflicting Sable Hills Waterfront Estate suburb versus the Sunnyside address also remains unresolved, so the maintenance and repair claims in the current text are not published."
     },
     {
       "slug": "dlamini-n-attorneys-brooklands-lifestyle-estate",
-      "status": "deferred",
-      "reason": "Both fetched pages were 'Page not found' pages; only a navigation list of practice-area names and contact details came back, which is not enough real description. Other pages timed out."
+      "status": "researched",
+      "sources": [
+        "http://www.dlamininattorneys.co.za/"
+      ]
     },
     {
       "slug": "dlbm-attorneys-wapadrand",
-      "status": "deferred",
-      "reason": "dlbmattorneys.co.za was blocked by anti-bot protection with no visible text, and the search hits are unrelated (fantasy game characters, a SETA portal), so nothing is sourced."
+      "status": "researched",
+      "sources": [
+        "http://dlbmattorneys.co.za/"
+      ]
     },
     {
       "slug": "docnetics-pty-ltd-centurion-central",
@@ -170,7 +195,7 @@
     {
       "slug": "dsbnd-group-glen-lauriston",
       "status": "deferred",
-      "reason": "Only a Facebook sidebar (service categories and a tyre-supply post) was retrieved; dsbndgroup.co.za did not resolve, so the current claims about mining, rail and other sectors are unverified."
+      "reason": "The business's domain does not provide sufficient accessible business information, and its social-media presence does not establish enough detail about its services, trading status or address; dsbndgroup.co.za did not resolve, so the current claims about mining, railway services and other sectors remain unverified and are not published."
     },
     {
       "slug": "duck-soup-productions-rietfontein",
@@ -183,7 +208,7 @@
     {
       "slug": "e-a-s-engine-gearbox-supply-pretoria-central",
       "status": "deferred",
-      "reason": "easexpress.co.za timed out and the search hits are unrelated (letter E, entertainment pages); no business content was retrieved."
+      "reason": "No reliable evidence connects the supplied 90 Soutter Street, Marabastad address to an active business trading under this name; the business's site timed out and search hits are unrelated (letter E, entertainment pages), so the claimed 2003 establishment date and product range remain unverified."
     },
     {
       "slug": "eastway-medical-health-and-wellness-centre-midstream-ridge",
@@ -194,8 +219,11 @@
     },
     {
       "slug": "effective-solar-trading-wonderboom",
-      "status": "deferred",
-      "reason": "effectivesolar.co.za shows a 'coming soon' placeholder on every path tried, and the directory page cited in the current text was not retrieved, so no business content is sourced."
+      "status": "researched",
+      "sources": [
+        "http://www.effectivesolar.co.za/",
+        "https://www.homeimprovement4u.co.za/directory/effective-solar-trading-47021.html"
+      ]
     },
     {
       "slug": "elawpro-florauna",
@@ -207,27 +235,30 @@
     {
       "slug": "elton-cranes-head-office-hazeldean",
       "status": "deferred",
-      "reason": "eltoncranes.co.za returned HTTP 401 on every fetch, and the search results are generic Google help pages, so no sourced business content was retrieved."
+      "reason": "Confirmed only as an active private company (incorporated August 2022, registration K2022683806) with a mailing address matching this listing (687 Silverlakes Road, Hazeldean Office Park); eltoncranes.co.za returned HTTP 401 on every fetch, so the specific crane-hire capacities and services in the current text could not be independently verified. Its registered legal address is actually in Zwavelpoort, a discrepancy with the listed Hazeldean address. Too thin beyond bare registry facts to publish a real description."
     },
     {
       "slug": "enkay-logistics-eldo-lakes-estate",
       "status": "deferred",
-      "reason": "Only a Snupit quote-request aggregator page was retrieved, which describes a car wash request rather than the logistics business. ADDRESS MISMATCH: suburb Eldo Lakes Estate vs address Heuwelsig Estate, Centurion."
+      "reason": "Company-information records identify ENKAY LOGISTICS (registration B2010040453) as deregistered due to annual-return non-compliance. Its legal address (2 Rosehill, Heuwelsig Estate, Centurion 0157) matches this listing's address even though the directory suburb differs (Eldo Lakes Estate). Flagged for owner/closure review; do not publish a description of it as an active trading business. See content-upgrade/closed-businesses.json."
     },
     {
       "slug": "ergotech-ergonomics-consultants-highveld",
       "status": "deferred",
-      "reason": "POSSIBLE WRONG-BUSINESS MATCH: the only source is Armscor's site, which describes Ergotech as Armscor's own in-house ergonomics R&D facility rather than a standalone consultancy. No source confirms the Highveld Techno Park address or that this listing is that entity."
+      "reason": "Armscor's own official website confirms this address (corner 110 Oak Avenue and 103 Combretum Crescent, Highveld Techno Park, Centurion) but describes \"Ergotech\" as Armscor's own internal ergonomics R&D facility, not an independent company. Do not publish it as an independent business; the current text's framing as a standalone research and consultancy facility is not supported."
     },
     {
       "slug": "esandleni-risk-management-pty-ltd-irene",
       "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH: the esandleni.co.za site is branded Argus Advisory (forensic investigations), not Esandleni Risk Management. No source confirms the listed company or its B-BBEE claim."
+      "reason": "Possible wrong-business match: the esandleni.co.za site is actually branded \"Argus Advisory\" (forensic investigations), not clearly Esandleni; the Irene/Southdowns Ridge address and the fraud-risk-management/B-BBEE Level 2 claims in the current text remain unverified."
     },
     {
       "slug": "eskort-store-centurion-rooihuiskraal",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the Eskort Centurion page gives 2 Old Johannesburg Rd, Rooihuiskraal, Centurion 0154, while the listing says 2 Central Ave, Rooihuiskraal, Centurion 0157."
+      "status": "researched",
+      "sources": [
+        "http://eskort.com/",
+        "https://eskort.com/eskort-stores/centurion/"
+      ]
     },
     {
       "slug": "eurosure-insurance-consultants-cc-garsfontein-smallholdings",
@@ -266,13 +297,19 @@
     },
     {
       "slug": "flywell-travel-laudium",
-      "status": "deferred",
-      "reason": "The homepage gives only a service menu (Umrah, cruises, visa assistance, travel insurance, DIY flights, pay-later) and customer testimonials; no about text was fetched, so the founding year in the current text could not be verified from research."
+      "status": "researched",
+      "sources": [
+        "http://www.flywell.co.za/",
+        "https://www.thinklocal.co.za/biz/flywell-travel-pretoria-pretoria"
+      ]
     },
     {
       "slug": "foodline-cash-carry-laudium",
-      "status": "deferred",
-      "reason": "Only a directory aggregator page (pretoria.co.za) was retrieved, with generic marketing copy and a feature list; africabizinfo returned HTTP 403. Too thin for a real, sourced description."
+      "status": "researched",
+      "sources": [
+        "https://www.africabizinfo.com/ZA/foodline-hyper-012-374-2211",
+        "https://pretoria.co.za/place/foodline-hyper"
+      ]
     },
     {
       "slug": "frigipan-insulated-panel-manufacturers-pretoria-south-africa-andeon",
@@ -290,8 +327,10 @@
     },
     {
       "slug": "gezina-road-worthy-mayville",
-      "status": "deferred",
-      "reason": "WRONG-BUSINESS / NO CONTENT: the search results are unrelated adult-content sites, and africanadvice.com timed out, so nothing about this roadworthy station was retrieved."
+      "status": "researched",
+      "sources": [
+        "https://www.africanadvice.com/1147502/Roadworthy_Testing_Services/Pretoria/Gezina_Road_Worthy/"
+      ]
     },
     {
       "slug": "globalmsp-managed-solutions-partner-constantia-park",

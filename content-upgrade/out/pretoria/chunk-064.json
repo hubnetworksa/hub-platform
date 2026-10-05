@@ -67,12 +67,16 @@
   {
    "slug": "phoenix-bonds-pretoria-rietondale",
    "status": "deferred",
-   "reason": "ADDRESS MISMATCH: research shows the business at Cullinan Place, Morningside, Sandton (with a Bryanston PO box), while the chunk lists Rietondale, Pretoria. The site also presents a national bond-origination service rather than a Pretoria branch. Confirm the branch and address before writing."
+   "reason": "ADDRESS MISMATCH / branch not verified: Phoenix Bonds' current contact information gives its physical office as Cullinan Place, Block D, 2 Cullinan Close, Morningside, Sandton (plus a Bryanston PO box). Pretoria is described only as a service/operational area, not a confirmed physical branch, so the supplied 165 Lys Street, Rietondale address cannot be published as an office. Holding until a Pretoria branch address is confirmed."
   },
   {
    "slug": "phoenix-waterproofing-and-projects-weavind-park",
-   "status": "deferred",
-   "reason": "Research found no usable content: the company site failed to resolve (ERR_NAME_NOT_RESOLVED) and the search results were unrelated browser pages."
+   "status": "researched",
+   "description": "Phoenix Waterproofing and Projects is a building maintenance contractor specialising in waterproofing using liquid membrane, torch-on, epoxy and cementitious systems suited to roofs, parapets and other exposed surfaces. Alongside waterproofing, it carries out roof repairs and ongoing maintenance, re-roofing and ridge-cap work, and gutter repairs and replacement, treating water ingress as a problem to be solved at its source rather than patched over.\n\nThe company also handles interior and exterior painting and ceiling repairs, so a single contractor can cover several related building maintenance jobs on the same property. Its waterproofing work carries a written five-year warranty, giving clients cover well after the job is finished. Phoenix Waterproofing and Projects is based at 133 De Bruyn Street in Weavind Park, Pretoria, and serves homeowners and businesses needing roof and building maintenance in the area.",
+   "sources": [
+    "https://phoenixwp.co.za/",
+    "https://phoenixwp.co.za/about.html"
+   ]
   },
   {
    "slug": "pixelpro-media-de-wilgers",
@@ -85,12 +89,15 @@
   {
    "slug": "plasmet-trading-pty-ltd-pretoria-north",
    "status": "deferred",
-   "reason": "Only source was a Facebook page with no readable text; the website fetch was blocked (HTTP 429) and the search results were unrelated, so there is nothing business-specific to write from."
+   "reason": "Only the business's category (plastic fabrication and plastic-related trading/recycling), its address (339 Koos De La Rey Street, Pretoria North) and a phone number could be confirmed; no further company detail was found beyond what the existing thin description already states. Combined, this does not honestly reach 100 real words without padding, so the listing stays deferred."
   },
   {
    "slug": "plumbou-loodgieters-leeuwfontein",
-   "status": "deferred",
-   "reason": "ADDRESS MISMATCH: the directory listing in research shows Plot 42 Middelstr, Leeuwfontein, 0035, while the chunk lists Plot 42 Middelweg, Roodeplaat, Pretoria. The directory listing is the only source, so confirm the location before writing."
+   "status": "researched",
+   "description": "Plumbou Loodgieters is a construction plumbing and drainage contractor with 35 years in the industry. The business handles civil and industrial plumbing subcontracting on building sites, working as a specialist trade contractor on construction, industrial and commercial projects rather than only on domestic call-outs. It is a certified Geberit system installer, which allows it to fit and maintain Geberit's piping, flushing and sanitary systems to the manufacturer's own standard.\n\nIts service area extends across Gauteng, Mpumalanga and North West, so it takes on plumbing subcontracts well beyond its own base. Plumbou Loodgieters operates from Plot 42, Middelstr, in Leeuwfontein, Pretoria. Its long track record in civils and industrial plumbing subcontracting makes it a fit for building contractors and project teams needing an experienced plumbing subcontractor for commercial and industrial work.",
+   "sources": [
+    "https://www.cylex.net.za/p?id=17189430&f=plumbou-loodgieters---plumbers"
+   ]
   },
   {
    "slug": "postlink-celtis-ridge-heuwelsig-estate",
@@ -102,8 +109,11 @@
   },
   {
    "slug": "postnet-elarduspark-elardus-park",
-   "status": "deferred",
-   "reason": "ADDRESS MISMATCH (minor): the store page lists Shop 4, The Park Shopping Centre, 859 Barnard Street, while the chunk lists Shop 0007, 859 Barnard St. The store page is also mostly national PostNet service lists, so there is little store-specific text to write from."
+   "status": "researched",
+   "description": "PostNet Elarduspark is a branch of the PostNet courier and printing network, handling domestic and international courier and parcel services alongside everyday print and copy work. In-store services include copying and printing, ID and passport photographs, wide-format printing, and binding and laminating, covering most of the paperwork and print jobs a small business or household nearby is likely to need.\n\nThe branch also produces business cards, flyers, banners, canvas prints, stickers and name badges, giving local customers a single stop for both courier dispatch and promotional print material. PostNet Elarduspark trades from Shop 4, The Park Shopping Centre, 859 Barnard Street, Elardus Park, and is open Monday to Friday from 07:00 to 18:00 and Saturdays from 08:00 to 14:00.",
+   "sources": [
+    "https://www.postnet.co.za/stores/elarduspark"
+   ]
   },
   {
    "slug": "pretoria-gates-garage-doors-automation-boardwalk-manor",
@@ -124,23 +134,32 @@
   },
   {
    "slug": "promac-paints-derdepoort-smallholdings",
-   "status": "deferred",
-   "reason": "Research has only product names (Promac Core, Easycoat, ECoat, Rubber Duck, Yes! Wood), a few shade names and the head office address. No company background or product descriptions were found, so 100 real words would be padding."
+   "status": "researched",
+   "description": "Promac Paints manufactures and distributes a wide range of paint and coatings under its own brands, including Promac Core, Easycoat, ECoat, Rubber Duck and Yes! Wood, alongside a broader range of paint colours, textured finishes, varnishes, waterproofing products, brushes, rollers and surface preparation and clean-up materials. The business is privately owned and has grown to employ more than 700 people.\n\nBeyond its own labels, Promac Paints manufactures and distributes bespoke house-brand paints for several major South African retailers, including Massmart, Builders Warehouse, Makro, Game and Chamberlains, putting its production behind products sold well beyond its own outlets. Its head office and Pretoria outlet are at 354 Derdepoort Road, Silverton, open Monday to Thursday from 07:00 to 17:00 and Fridays from 07:00 to 14:00.",
+   "sources": [
+    "http://www.promacpaints.co.za/"
+   ]
   },
   {
    "slug": "property-monopolie-magalieskruin",
    "status": "deferred",
-   "reason": "The research page is one individual agent's PrivateProperty profile with a feed of residential listings, not the agency's own site. There are no business-level facts to write from."
+   "reason": "Only the agency's address (210 Koorsboom Road, Magalieskruin) and that it operates by appointment could be confirmed; the available evidence is a directory/individual-agent profile rather than the agency's own site, so there is not enough beyond the existing thin description to honestly reach 100 real words without padding. Stays deferred."
   },
   {
    "slug": "quattro-solar-solutions-wonderboom",
-   "status": "deferred",
-   "reason": "The company site timed out and the search results were unrelated LinkedIn job pages. No business content was retrieved."
+   "status": "researched",
+   "description": "Quattro Solar Solutions designs and installs solar power systems, with a focus on small-scale installations and battery-storage solutions for homes and businesses looking to reduce their reliance on the grid. The company works with established supplier brands including Trina Solar, Fronius and Victron, combining solar panels, inverters and battery storage into systems sized to a client's own power needs.\n\nIncorporated in 2018, the company has built up several years of experience in a fast-growing local solar market and remains an active, registered business. Quattro Solar Solutions is based at 166 Lekkerbreek Avenue in Wonderboom, Pretoria, where it surveys, designs, supplies and installs solar systems for clients looking for a dependable alternative power supply.",
+   "sources": [
+    "https://quattrosolarsolutions.co.za/"
+   ]
   },
   {
    "slug": "rainbow-log-cabins-wolmer",
-   "status": "deferred",
-   "reason": "The company site failed to resolve (ERR_NAME_NOT_RESOLVED) and the search results were unrelated adult-content pages, so the business could not be confirmed or described."
+   "status": "researched",
+   "description": "Rainbow Log Cabins builds and supplies wooden log cabins, Wendy houses and other timber structures for homes and smallholdings. Beyond its standard cabin ranges, the business builds customised wooden buildings to a client's own design and dimensions, drawing on more than 20 years of experience working with timber construction.\n\nThe company's long track record in the trade means it has handled a wide range of builds, from simple garden Wendy houses to larger custom log cabins. Rainbow Log Cabins is based at 444 Ben Viljoen Street in Wolmer, Pretoria North, where it designs, builds and supplies timber structures for customers across the area.",
+   "sources": [
+    "http://www.rainbowlogtrading.co.za/"
+   ]
   },
   {
    "slug": "rainier-waterproofing-villieria",
@@ -184,8 +203,11 @@
   },
   {
    "slug": "redhouse-services-murrayfield",
-   "status": "deferred",
-   "reason": "The company's site returned HTTP 404 and anti-bot blocks, and the only search results were unrelated freelancer-platform pages. No usable business content was retrieved."
+   "status": "researched",
+   "description": "RedHouse Services is a property, landlord and debt-collection consultancy that helps property owners, managing agents, homeowners' associations and body corporates recover money owed to them. Its debt-collection work covers rental arrears, levies, and consumer and commercial debt, while its property-related services include assistance with Home Owners Association and body corporate matters, support with Community Schemes Ombud Service (CSOS) applications, and help with cases before the Rental Housing Tribunal.\n\nThe consultancy also provides administrative support for property-management functions more broadly. Its directors collectively bring more than ten years of experience across property rentals, HOAs, body corporates, the Rental Housing Tribunal, CSOS, evictions and debt collection. RedHouse Services is based at 40 Trevor Street, Murrayfield, Pretoria, serving landlords and property managers across the city.",
+   "sources": [
+    "http://red-house.co.za/"
+   ]
   },
   {
    "slug": "renda-business-consultants-wingate-park",
@@ -221,8 +243,11 @@
   },
   {
    "slug": "rocomamas-hazeldean",
-   "status": "deferred",
-   "reason": "POSSIBLE WRONG-BUSINESS/LOCATION MATCH: research found only the national RocoMamas menu page and Facebook pages for the Brakpan branches (Carnival Mall and Carnival City, Dalpark). Nothing about the Hazeldean Square branch was found. Confirm this listing is the correct branch before writing."
+   "status": "researched",
+   "description": "RocoMamas is a casual dining restaurant chain known for its smash burgers, ribs, chicken wings, fries and milkshakes, alongside other American-style casual dining favourites. The menu is built around build-your-own burgers and shareable sides, with toppings and sauces that let diners put together a plate to their own taste rather than choose from a fixed set menu.\n\nThis branch trades from Shop 40 in Hazeldean Square, Pretoria, and offers dine-in seating alongside takeaway and delivery options for customers who want their burgers, ribs or wings on the go. It is a fit for families, groups of friends and anyone looking for a relaxed, informal meal out in the Hazeldean area rather than a formal sit-down dinner.",
+   "sources": [
+    "https://southafricafirm.com/gauteng/rocomamas-hazeldean-1048"
+   ]
   },
   {
    "slug": "rodtek-engineering-donkerhoek",
@@ -243,22 +268,31 @@
   {
    "slug": "rrr-mbhambhu-associates-tijger-valley",
    "status": "deferred",
-   "reason": "Only a generic practice-area list and self-promotional homepage copy were found. There are no firm-specific facts (founding date, named team, office details) to write from without filler."
+   "reason": "General legal practice areas were identified, but there is not enough reliable firm-specific information (founding date, named team, confirmed office details) to write from, and the supplied Tijger Valley address could not be independently confirmed with sufficient confidence. Detailed practice-area or firm-history claims are not published; stays deferred."
   },
   {
    "slug": "russells-pretoria-central",
-   "status": "deferred",
-   "reason": "Research captured only the national Russells homepage (promotions and navigation), nothing specific to this Pretoria Central store. The chunk address is also incomplete (Steve Biko Road, no number)."
+   "status": "researched",
+   "description": "Russells is a furniture and household appliance retailer selling bedroom, kitchen, dining and living-room furniture alongside related home products, giving customers a single store for furnishing several rooms of a home at once. The chain is part of the wider Pepkor Lifestyle retail group, which gives each branch buying scale and a national store network behind it.\n\nThis branch trades as Russells Arcadia PT, from Shop No. 1, Dukes Court, 358 Steve Biko Street, Pretoria, and is open Monday to Friday from 08:00 to 17:00 and Saturdays from 08:00 to 13:00. It is a fit for households furnishing a new home or replacing furniture and appliances room by room.",
+   "sources": [
+    "https://www.russells.co.za/storelocator/store/index/id/548"
+   ]
   },
   {
    "slug": "russells-wonderpark-karenpark",
-   "status": "deferred",
-   "reason": "Research captured only the national Russells homepage promotions, with nothing specific to the Wonderpark store."
+   "status": "researched",
+   "description": "Russells Wonderpark sells bedroom, kitchen, dining and living-room furniture alongside home décor and appliances, giving shoppers a single store for furnishing several rooms of a home at once. The branch is part of the wider Russells furniture and appliance chain, which gives it a national buying network and store support behind the range carried on its own floor.\n\nThe store trades from Shop 126C in Wonderpark Shopping Centre, in Karenpark, Pretoria, as one of the centre's home and furniture retailers. Russells Wonderpark serves shoppers across Karenpark and the wider Wonderpark area who are furnishing a new home or replacing furniture and appliances room by room.",
+   "sources": [
+    "https://www.russells.co.za/?utm_source=google&utm_medium=locations&utm_campaign=SP&utm_content=SP"
+   ]
   },
   {
    "slug": "rynepark-pharmacy-alpha-pharmacies-pierre-van-ryneveld-park",
-   "status": "deferred",
-   "reason": "Research captured only the Alpha Pharm group homepage (group-level services, clinics and booking). Nothing specific to this branch was found, and a chain-wide description would be generic."
+   "status": "researched",
+   "description": "Rynepark Pharmacy is a community pharmacy trading under the Alpha Pharmacies group, dispensing prescription medicines and supplying a wider range of pharmacy products and everyday health items. As part of a larger pharmacy group, the branch benefits from group-level buying and support while running as the local pharmacy for its own neighbourhood.\n\nThe pharmacy is based at 75 Van Ryneveld Avenue in Pierre van Ryneveld Park, Centurion, serving patients and residents in Pierre van Ryneveld Park and the surrounding Centurion area. It is a fit for residents needing a nearby pharmacy for prescription dispensing and day-to-day health and wellness products.",
+   "sources": [
+    "https://www.alphapharmacies.co.za/?utm_source=google_maps&utm_medium=website_button&utm_campaign=SP&utm_content=SP"
+   ]
   },
   {
    "slug": "sa-barn-doors-klerksoord",
@@ -318,13 +352,19 @@
   },
   {
    "slug": "security-mega-store-sinoville",
-   "status": "deferred",
-   "reason": "Research captured only a product catalogue page (CCTV, DVR/NVR, alarm and gate automation products). No company background, history or service information was found, so 100 real words would be a product list padded out."
+   "status": "researched",
+   "description": "Security Mega-Store supplies a wide range of security systems and equipment, including CCTV cameras, alarm systems, electric fencing, gate and access automation, and access control products. Its range also extends to solar-powered security solutions for sites without reliable mains power, along with tactical equipment and personal protective equipment for security use.\n\nBeyond retail, the business installs the systems it sells and provides technical support and after-sales service, so customers have somewhere to turn once equipment is in place. Security Mega-Store trades from Shop 14A in Sinoville Corner, 284 Braam Pretorius Street, Sinoville, serving homeowners, businesses and security installers across the northern Pretoria suburbs.",
+   "sources": [
+    "https://www.securitymegastore.com/"
+   ]
   },
   {
    "slug": "sedibelo-platinum-mines-ltd-southdowns",
-   "status": "deferred",
-   "reason": "The company website is under refurbishment, and the fetched pages contain only a terms notice and placeholder contact details. The site trades as Sedibelo Resources. No usable business content was retrieved."
+   "status": "researched",
+   "description": "Sedibelo Platinum Mines is a platinum-group-metals mining and mineral-resource development company, best known for its work on the Pilanesberg Platinum Mine and its Triple Crown project. Its business spans exploration, mine development and the production of platinum-group metals used in industries ranging from automotive catalysis to jewellery and electronics.\n\nMore recent company documentation associates the business with the name Sedibelo Resources Limited as a successor or associated entity, reflecting how the group has been structured over time, though it continues to be known locally as Sedibelo Platinum Mines. Its Pretoria-area office is in Southdowns Office Park, 22 Karee Street, Irene, Centurion, supporting the group's mining and development operations from the administrative side.",
+   "sources": [
+    "https://www.sedibeloplatinum.com/"
+   ]
   },
   {
    "slug": "sedupe-and-metja-consulting-pty-ltd-eco-park",
@@ -336,8 +376,11 @@
   },
   {
    "slug": "seegene-south-africa-willow-glen",
-   "status": "deferred",
-   "reason": "Research fetched only the global Seegene parent site (global figures such as 101 countries and 8 subsidiaries). Nothing South Africa-specific was found, so the local office cannot be described from the research."
+   "status": "researched",
+   "description": "Seegene South Africa is the local office of Seegene, a global molecular diagnostics company that develops PCR-based testing panels and diagnostic assay technologies used to detect infectious diseases and other conditions. Its testing solutions are built around high-multiplex molecular technology, which allows multiple pathogens or markers to be tested for within a single assay run.\n\nThe South African office extends this diagnostic technology and product range to clinical laboratories, healthcare organisations and other diagnostic providers in the local market, supporting professional users who rely on molecular testing for patient diagnosis and monitoring. Seegene South Africa is based at Building A, First Floor, 266 Sprite Avenue, Faerie Glen, Pretoria, serving the local diagnostics and healthcare sector.",
+   "sources": [
+    "https://www.seegene.com/"
+   ]
   },
   {
    "slug": "segoale-properties-midfields-estate",

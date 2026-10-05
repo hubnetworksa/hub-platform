@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 57,
-  "generated_at": "2026-10-04T13:04:49.579Z",
+  "generated_at": "2026-10-05T06:33:57.612Z",
   "items": [
     {
       "slug": "oab-chartered-accountants-raslouw",
@@ -12,8 +12,10 @@
     },
     {
       "slug": "omega-risk-solutions-the-orchards",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the security.co.za listing in the research gives the company's physical address as Omega House, 304 Orient Street, Arcadia, Pretoria, while our chunk file lists a Rosslyn/Akasia branch at 237 Fairwood Rd. The research content itself is usable (guarding, monitoring, response, fire risk management, CCTV, training and more), so this is held for the owner to confirm which location the listing should describe."
+      "status": "researched",
+      "sources": [
+        "https://www.omegasol.com/"
+      ]
     },
     {
       "slug": "on-the-dot-hermanstad",
@@ -25,7 +27,7 @@
     {
       "slug": "oosthuizen-brokers-woodhill-golf-estate",
       "status": "deferred",
-      "reason": "oosthuizenbrokers.co.za returned HTTP 403 (anti-bot block) and 404s, brabys.com timed out, and the search results were unrelated foreign-language and grammar pages. No genuine business-specific facts were retrieved."
+      "reason": "No sufficiently reliable current evidence connects the supplied 53 Glendower Road, Woodhill Golf Estate address to an active business by this name: oosthuizenbrokers.co.za returned HTTP 403/404s, brabys.com timed out, and search results were unrelated. Held without publishing the 1996-establishment or financial/insurance-services claims until the owner can verify the business and address."
     },
     {
       "slug": "optilog-support-services-cc-eldo-lakes-estate",
@@ -44,7 +46,7 @@
     {
       "slug": "oryx-accounting-pty-ltd-the-hills-eco-game-estate",
       "status": "deferred",
-      "reason": "oryxaccounting.co.za's about and services pages all returned 404. The only genuine content is a one-line Facebook tagline and a third-party directory listing confirming category, address and trading hours. That is not enough substantive, business-specific detail for a 100+ word description without padding."
+      "reason": "The address is confirmed (The Oval, The Hills Game Reserve Estate, 02A), including trading hours from a current directory listing, but there is still insufficient reliable information to verify the detailed accounting services claimed in the current description (bookkeeping, payroll, tax, business consulting). oryxaccounting.co.za's about and services pages return 404; held pending service confirmation."
     },
     {
       "slug": "outdoor-warehouse-zambezi-montana-park",
@@ -56,7 +58,7 @@
     {
       "slug": "padbok-thai-restaurant-waterkloof",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the research source (sa-venues.com) places Padbok Thai Restaurant at Cherry Lane Centre, Middel Street, Brooklyn, Pretoria, while our chunk file lists the suburb as Waterkloof. Needs verification of the correct suburb before publishing location-tied facts."
+      "reason": "CLOSED: current restaurant listings place Padbok Thai Restaurant at Cherry Lane Shopping Centre, Middel Street, Brooklyn/Nieuw Muckleneuk rather than the Waterkloof suburb in our listing, and both Restaurant Guru and Wanderlog currently mark the restaurant as permanently closed. Already logged in content-upgrade/closed-businesses.json; do not publish a description."
     },
     {
       "slug": "paint-kingdom-monavoni",
@@ -82,8 +84,11 @@
     },
     {
       "slug": "petzone-lynnwood-lane-equestria",
-      "status": "deferred",
-      "reason": "petzone.co.za returned HTTP 423 and blog.petzone.co.za returned 404. The search results were unrelated streaming and Microsoft forum pages. No genuine content about this store was retrieved."
+      "status": "researched",
+      "sources": [
+        "https://www.petzone.co.za/stores/petzone-equestria-lynnwood-lane/",
+        "https://www.blog.petzone.co.za/stores/petzone-equestria-lynnwood-lane/"
+      ]
     },
     {
       "slug": "pharmachem-house-city-medical-andeon",
@@ -101,18 +106,21 @@
     },
     {
       "slug": "pineapple-cosmetics-eloffsdal",
-      "status": "deferred",
-      "reason": "pineapplecosmetics.co.za failed to crawl on every attempt (timeout). The search results were for an unrelated Pineapple insurance company and the fruit, not this cosmetics business. No genuine business-specific facts were found."
+      "status": "researched",
+      "sources": [
+        "https://www.pineapplecosmetics.co.za/",
+        "https://pineapplecosmetics.co.za/about-us/"
+      ]
     },
     {
       "slug": "piza-e-vino-lynnridge-lynnwood-ridge",
       "status": "deferred",
-      "reason": "The only page fetched is the Piza e Vino group contact page, which names the head office and other branches (Leaping Frog, Melville, Knysna, Hartenbos) but not Lynnridge. The Lynnridge-specific page returned 404 repeatedly. No branch-specific facts were retrieved to source a description."
+      "reason": "CONFLICT: new research describes this as an active restaurant with a specific menu and branch details, but this exact business is already logged in content-upgrade/closed-businesses.json (added by an earlier run) as permanently closed per Uber Eats and multiple current sources as of 30 January 2026. The two findings directly contradict each other; held without publishing either a description or a closure change until the owner/manual review resolves which is current."
     },
     {
       "slug": "placecol-watermeyer-park-val-de-grace",
       "status": "deferred",
-      "reason": "The one fetched page (snupit.co.za) returned only a cookie banner and an unrelated request board, heyspa.co.za timed out, and the search results are generic Placecol brand and retail pages rather than this clinic. No branch-specific content was found."
+      "reason": "Insufficient branch-specific information to confirm services or current trading status at this Watermeyer Park branch: the one fetched page (snupit.co.za) returned only a cookie banner, heyspa.co.za timed out, and search results are generic Placecol brand pages. Held rather than expanding the generic Placecol skincare claims in the current description without branch-specific confirmation."
     },
     {
       "slug": "plastilon-packaging-hennopspark-hennopspark",
@@ -131,7 +139,7 @@
     {
       "slug": "polyfood-film-hermanstad",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the only source found (yellosa.co.za directory) lists this company's address as 740 Darling Street, East Lynne Waverley Business Park, Pretoria, not 800 Portland Street, Hermanstad as in our chunk file. Could be a different site, a relocation or outdated directory data. Needs verification before publishing."
+      "reason": "Address now confirmed: a current business listing places Polyfood Film at 800 Portland Street, Hermanstad, Pretoria 0082, exactly matching our listing (not the older 740 Darling Street/East Lynne Waverley address previously suspected), with a confirmed phone number (012 800 3112) and weekday operating hours. However, beyond the product list already in the current description (food-grade PVC cling film, pre-packed cutlery, custom-branded film boxes, printed bags), there isn't enough additional sourced detail to reach a genuine 100+ word description without padding; held for a deeper pass or owner description."
     },
     {
       "slug": "poorguys-fast-food-highveld",
@@ -143,7 +151,7 @@
     {
       "slug": "postlink-wingtip-doornpoort",
       "status": "deferred",
-      "reason": "postlinkwingtip.co.za failed to crawl on every attempt. The search results were unrelated pages (a weaving-loom question, video-recording tools and forum threads). No genuine business-specific facts were found."
+      "reason": "Identity and location are now confirmed: the business trades as Xclusive Business Solution t/a POSTLINK Wingtip (registered company 2022/5781/70), at Shop 43 Wingtip Crossing, Dr Swanepoel Road and Klippan Street, Doornpoort, with a confirmed phone number. However, there still isn't enough reliable information about the specific services offered to write a non-generic description without guessing; held pending service details."
     },
     {
       "slug": "postnet-castle-walk-erasmuskloof",
@@ -161,8 +169,11 @@
     },
     {
       "slug": "postnet-eldo-square-eldo-lakes-estate",
-      "status": "deferred",
-      "reason": "Only generic PostNet storefront page text (login and register prompts, address, trading hours) was retrieved for this branch. Unlike its sibling branches, this slug's own fetched text contains no service list. Address and hours alone are not enough for a genuine 100+ word description without padding."
+      "status": "researched",
+      "sources": [
+        "http://eldosquare.postnet.co.za/",
+        "https://www.postnet.co.za/stores/eldosquare"
+      ]
     },
     {
       "slug": "postnet-garsfontein-garsfontein-smallholdings",
@@ -195,23 +206,36 @@
     },
     {
       "slug": "pretorius-park-clinic-pretorius-park",
-      "status": "deferred",
-      "reason": "The only page fetched (medpages.info) is mostly generic site text and listings for unrelated healthcare providers. It confirms only the clinic's category (public clinic) and suburb, with no description of this clinic's own services. The other sources listed were not captured with usable content in this pull."
+      "status": "researched",
+      "sources": [
+        "https://www.medpages.info/sf/index.php?page=organisation&orgcode=101543",
+        "https://pretoria.co.za/listing/pretorius-park-clinic/",
+        "https://www.yep.co.za/biz/store/iyp/17055378_2"
+      ]
     },
     {
       "slug": "prime-africa-consult-jan-niemand-park",
-      "status": "deferred",
-      "reason": "primeafrica.net's about-us and services pages both returned 'page not found'. The only working page is a contact page with a phone number, email and LinkedIn link, with no description of what the business does. The search results surfaced an unrelated car insurer (Prime South Africa), not this consultancy. No sourced facts about the actual work were found."
+      "status": "researched",
+      "sources": [
+        "http://www.primeafrica.net/",
+        "https://www.dnb.com/business-directory/company-profiles/prime-africa-consult-(pty)-ltd.9ec7f9fa6c1f78d30f558f9896131f2c"
+      ]
     },
     {
       "slug": "problast-bs-doringkloof",
-      "status": "deferred",
-      "reason": "problastbs.co.za failed to crawl. The only other source, a PitchBook company-profile page, returned PitchBook's own generic platform copy rather than any information about ProBlast BS. No genuine business-specific facts were retrieved."
+      "status": "researched",
+      "sources": [
+        "https://www.problastbs.co.za/",
+        "https://pitchbook.com/profiles/company/608110-30"
+      ]
     },
     {
       "slug": "procure-2-pay-intellection-pty-ltd-alphen-park",
-      "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH: intellection.co.za itself failed to crawl. The two pages actually retrieved (procureai.co.za and procuresense.co.za) belong to different, unrelated companies that matched the word 'procure'. No genuine content about Procure 2 Pay Intellection was found."
+      "status": "researched",
+      "sources": [
+        "http://www.intellection.co.za/",
+        "https://intellection.co.za/"
+      ]
     },
     {
       "slug": "propaganda-pretoria-pretoria-central",
@@ -223,12 +247,12 @@
     {
       "slug": "proseal-waterproofing-les-marais",
       "status": "deferred",
-      "reason": "pro-seal.co.za failed to crawl on every attempt. The search results returned only unrelated Microsoft Word and Windows forum threads. No genuine content about this business was found."
+      "reason": "No sufficiently reliable evidence connects the supplied 772 6de Lane, Wonderboom South address to an active ProSeal Waterproofing business: pro-seal.co.za failed to crawl on every attempt and search results returned only unrelated forum threads. The founding-year and service claims in the current description remain unverified."
     },
     {
       "slug": "racking-packing-pretoria-depot-montana-gardens",
       "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the only page retrieved (rackingandpacking.co.za contact page) gives the company's address as 12 Remblok Street, Strijdom Park, Randburg, and does not mention a Montana Value Centre or Montana Gardens depot in Pretoria. The depot's details cannot be confirmed from what was found. Needs verification."
+      "reason": "A Pretoria contact number for Racking & Packing is confirmed to exist (alongside Durban, Bloemfontein and Port Elizabeth numbers), but the specific Montana Value Centre depot address in our listing could not be independently verified from any source found; the only page retrieved gives the Strijdom Park, Randburg head-office address. Held pending confirmation of the Pretoria depot's address."
     },
     {
       "slug": "rantau-transport-services-and-logistics-pty-ltd-mayville",
@@ -261,8 +285,11 @@
     },
     {
       "slug": "reece-creative-events-elardus-park",
-      "status": "deferred",
-      "reason": "The only genuine content is a one-line Facebook description of an events planning one-stop shop. The second source fetched was Facebook's generic About Meta page, not business content, and reececreativeevents.co.za was not captured with usable content. Not enough sourced, business-specific detail for a real description."
+      "status": "researched",
+      "sources": [
+        "http://www.facebook.com/AJegels/",
+        "https://reececreativeevents.co.za/"
+      ]
     },
     {
       "slug": "remax-infoglobe-midstream-bronberrik",
@@ -274,7 +301,7 @@
     {
       "slug": "rgt-corporation-derdepoort",
       "status": "deferred",
-      "reason": "rgtgroup.co.za failed to resolve on every attempt. The search results returned content about an unrelated musician and a phone contact, not this business. No genuine business-specific facts were found."
+      "reason": "ADDRESS UNVERIFIED: LinkedIn's address for RGT Corporation differs from the supplied 31 Rorich Avenue, Derdepoort address, and rgtgroup.co.za failed to resolve on every attempt. Held pending confirmation of which address is correct."
     },
     {
       "slug": "rhk-supermarket-rooihuiskraal",
@@ -292,8 +319,11 @@
     },
     {
       "slug": "rocomamas-menlyn",
-      "status": "deferred",
-      "reason": "The only retrieved content from rocomamas.com is generic brand-wide marketing copy with no Menlyn-specific or concrete menu facts, and the site was otherwise blocked by anti-bot protection. No location-specific sourced facts were found beyond the existing one-liner."
+      "status": "researched",
+      "sources": [
+        "https://rocomamas.com/za/restaurants/gauteng/rocomamas-menlyn",
+        "https://www.menlynpark.co.za/stores/roco-mamas/"
+      ]
     },
     {
       "slug": "runo-logistics-rosslyn",

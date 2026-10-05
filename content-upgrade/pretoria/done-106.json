@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 106,
-  "generated_at": "2026-10-04T17:25:58.105Z",
+  "generated_at": "2026-10-05T08:08:11.738Z",
   "items": [
     {
       "slug": "tms-redec-irene",
@@ -19,8 +19,11 @@
     },
     {
       "slug": "uloans-the-willows",
-      "status": "deferred",
-      "reason": "Website (web.uloans.co) failed to resolve (DNS error); search results returned only unrelated furniture/sleeper-couch listings, nothing about the business."
+      "status": "researched",
+      "sources": [
+        "https://web.uloans.co/",
+        "https://www.uloansbusiness.com/home-page"
+      ]
     },
     {
       "slug": "valuetec-property-valuers-gauteng-head-office-rietfontein",
@@ -38,8 +41,10 @@
     },
     {
       "slug": "verimark-wonderpark-karenpark",
-      "status": "deferred",
-      "reason": "Own website blocked by anti-bot protection on every page; the only usable content was generic, national Verimark brand/product information (search results, Takealot/PnP listings), with nothing specific to the Wonderpark branch."
+      "status": "researched",
+      "sources": [
+        "https://verimark.co.za/"
+      ]
     },
     {
       "slug": "vibro-bricks-and-paving-pta-east-zwavelpoort",
@@ -50,13 +55,19 @@
     },
     {
       "slug": "victoria-hotel-pretoria-central",
-      "status": "deferred",
-      "reason": "Website returned HTTP 404 on every page; the directory source was blocked by Cloudflare, and search results returned only unrelated Queen Victoria/Victoria's Secret content."
+      "status": "researched",
+      "sources": [
+        "http://victoriahotel.co.za",
+        "https://www.openstreetmap.org/node/6585742760",
+        "https://en.planetofhotels.com/south-africa/pretoria/victoria-hotel"
+      ]
     },
     {
       "slug": "vida-e-caff-hazeldean-square-hazeldean",
-      "status": "deferred",
-      "reason": "Only the vida e caffè national brand homepage was retrievable; it covers the franchise generally (menu, sustainability, rewards app) but has no detail specific to the Hazeldean Square branch."
+      "status": "researched",
+      "sources": [
+        "http://vidaecaffe.com/"
+      ]
     },
     {
       "slug": "voortrekker-monument-groenkloof",
@@ -81,8 +92,10 @@
     },
     {
       "slug": "weldhagen-eggs-pty-ltd-warehouse-wholesaler-kameeldrift",
-      "status": "deferred",
-      "reason": "Website (weldhagen.co.za) blocked by anti-bot protection on every attempt; search results returned only unrelated football-club forum content."
+      "status": "researched",
+      "sources": [
+        "http://www.weldhagen.co.za/"
+      ]
     },
     {
       "slug": "whm-labour-law-advisors-eldorette",
@@ -93,8 +106,12 @@
     },
     {
       "slug": "woolworths-midrand-distribution-centre-louwlardia",
-      "status": "deferred",
-      "reason": "Only the generic Woolworths online-shopping homepage was retrievable (sign-in, orders, FAQs); nothing specific to the Midrand Distribution Centre itself was found this round."
+      "status": "researched",
+      "sources": [
+        "http://www.woolworths.co.za/",
+        "https://www.globalroofs.co.za/post/woolworths-70-000m2-distribution-centre-completed",
+        "https://www.solareff.co.za/projects/woolworths-distribution-centre/"
+      ]
     },
     {
       "slug": "wrapsa-packaging-manufacturing-hennopspark",
@@ -119,8 +136,11 @@
     },
     {
       "slug": "africlock-eldoraigne",
-      "status": "deferred",
-      "reason": "Only a software-downloads page was retrievable (sample reports, install files, help documents); no company description, history or client detail was found to support a non-generic description."
+      "status": "researched",
+      "sources": [
+        "https://www.clock.co.za/",
+        "https://www.africlock.co.za/products/"
+      ]
     },
     {
       "slug": "amantle-property-management-eloffsdal",
@@ -145,8 +165,12 @@
     },
     {
       "slug": "aroma-gourmet-coffee-roastery-waterkloof",
-      "status": "deferred",
-      "reason": "The retrievable content covered the brand generally and gave detailed hours for a different branch (Aroma Hazelwood); no Brooklyn-specific detail was found this round."
+      "status": "researched",
+      "sources": [
+        "https://www.aromacoffee.co.za",
+        "https://www.openstreetmap.org/node/3816811674",
+        "https://aromacoffee.co.za/"
+      ]
     },
     {
       "slug": "arrie-nel-annlin-pharmacy-annlin",
@@ -157,13 +181,15 @@
     },
     {
       "slug": "arrow-park-kosmosdal",
-      "status": "deferred",
-      "reason": "Only the developer's (SOM) general company profile was retrievable, naming its directors; no Arrow Park-specific confirmation of its own facilities, timeline or security features was found this round."
+      "status": "researched",
+      "sources": [
+        "https://som.co.za/"
+      ]
     },
     {
       "slug": "ashley-paulse-ashley-gardens",
       "status": "deferred",
-      "reason": "Website (ashleypaulse.com) shows an 'Account Suspended' hosting error on every page; search results returned only unrelated song lyrics."
+      "reason": "Confirmed only as a business-management consultant at 937 Francis Baard Street, Arcadia, Pretoria. The detailed claims in the current description (taxi-industry-owned energy infrastructure, banking and fintech solutions) could not be independently substantiated from any reliable current source: the business's own website (ashleypaulse.com) shows an 'Account Suspended' hosting error on every page, and search results returned only unrelated song-lyric pages. Kept deferred rather than publishing a thin or generic description built only from the address and category."
     },
     {
       "slug": "backyard-pots-and-plants-rietfontein",
@@ -181,8 +207,10 @@
     },
     {
       "slug": "berry-astrapak-marcom-rosslyn",
-      "status": "deferred",
-      "reason": "The only page retrieved was the global Amcor/Astrapak parent corporate site, covering company-wide news with nothing specific to the Rosslyn Berry Astrapak MARCOM facility."
+      "status": "researched",
+      "sources": [
+        "https://rpc-astrapak.com/"
+      ]
     },
     {
       "slug": "best-enough-trading-projects-amandasig",
@@ -200,8 +228,11 @@
     },
     {
       "slug": "bigtime-strategic-group-alphen-park",
-      "status": "deferred",
-      "reason": "Website failed to resolve (DNS error) on every attempt; search results returned only unrelated Airbnb community forum content."
+      "status": "researched",
+      "sources": [
+        "http://bigtimestrategicgroup.co.za/",
+        "https://www.bigtimestrategic.co.za/"
+      ]
     },
     {
       "slug": "brandxtreme-wapadrand",
@@ -220,7 +251,7 @@
     {
       "slug": "cafe-41-rigel-erasmusrand",
       "status": "deferred",
-      "reason": "The eatout.co.za source returned only generic News24/Eat Out site navigation and unrelated articles, not branch-specific content."
+      "reason": "The supplied address (Waterkloof Rand Centre, 45 Buffelsdrift Street & Rigel Avenue, Erasmusrand) is confirmed by current and historical listings, and the cafe-restaurant concept (breakfast, sandwiches, burgers, salads, pasta, platters, coffee, vegetarian/vegan options) is well documented historically. However, Restaurant Guru currently marks this specific branch as permanently closed, while other platforms still show active menus and hours for it -- a genuine unresolved conflict on current trading status. Kept deferred and not published as a currently operating restaurant pending owner/closure review; logged in closed-businesses.json for that review."
     },
     {
       "slug": "capital-craft-beer-academy-menlo-park",
@@ -245,8 +276,12 @@
     },
     {
       "slug": "cash-crusaders-blu-valley-mall-the-reeds",
-      "status": "deferred",
-      "reason": "The only Cash Crusaders page retrieved was for a different branch (Centurion Mall); no Blu Valley Mall-specific confirmation was found this round."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/cashcrusadersbluvalley/",
+        "https://www.sayellow.com/view/south-africa/cash-crusaders-blu-valley-in-centurion",
+        "https://cashcrusaders.co.za/locate-a-store/store/105/centurion"
+      ]
     },
     {
       "slug": "cavanagh-richards-attorneys-bronberrik",
@@ -278,8 +313,10 @@
     },
     {
       "slug": "chauke-tree-felling-midstream-estate",
-      "status": "deferred",
-      "reason": "Website timed out on every attempt; search results returned only unrelated university student-portal login pages."
+      "status": "researched",
+      "sources": [
+        "http://www.chauke-treefelling.co.za/"
+      ]
     },
     {
       "slug": "check-your-business-value-elardus-park",

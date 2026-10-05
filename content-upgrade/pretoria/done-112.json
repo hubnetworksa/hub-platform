@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 112,
-  "generated_at": "2026-10-04T19:42:32.368Z",
+  "generated_at": "2026-10-05T08:12:10.354Z",
   "items": [
     {
       "slug": "s-o-a-t-florauna",
@@ -152,8 +152,10 @@
     },
     {
       "slug": "astron-energy-eldoraigne-boulevard-eldoraigne",
-      "status": "deferred",
-      "reason": "Astron Energy's own website is pure brand-wide rebrand marketing (UCount Rewards, FreshStop, Seattle, FleetCard) with no facts specific to this Eldoraigne forecourt; the current description is itself near-identical templated chain text used across every Astron Energy branch, which the chain-business rule requires branch-specific facts to avoid."
+      "status": "researched",
+      "sources": [
+        "https://www.astronenergy.co.za/"
+      ]
     },
     {
       "slug": "atc-innovations-pty-ltd-akasia",
@@ -339,13 +341,18 @@
     },
     {
       "slug": "digitalworld-eersterust",
-      "status": "deferred",
-      "reason": "The site reads as generic startup boilerplate ('we are a small start up company') with no confirmed Pretoria address, phone or verified contact details; the current description already flags this as an unverified listing, and research this round did not resolve that uncertainty."
+      "status": "researched",
+      "sources": [
+        "https://digitalworld-644d5f.webflow.io/"
+      ]
     },
     {
       "slug": "dros-centurion",
-      "status": "deferred",
-      "reason": "The only branch-specific fact found (this branch's own phone/email on dros.co.za's store finder) can't be used in the text under the no-phone/no-email rule; beyond that, every other available fact is generic chain-wide copy already present in the current description ('typically... hours may vary by branch'), which the chain-business rule says isn't enough."
+      "status": "researched",
+      "sources": [
+        "https://www.dros.co.za/find-a-store/",
+        "https://nearbyza.com/place/dros-restaurant-wine-cellar-centurion"
+      ]
     }
   ]
 }

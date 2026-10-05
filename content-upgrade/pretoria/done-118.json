@@ -1,12 +1,14 @@
 {
   "city": "pretoria",
   "chunk": 118,
-  "generated_at": "2026-10-04T18:23:36.524Z",
+  "generated_at": "2026-10-05T08:21:17.990Z",
   "items": [
     {
       "slug": "cds-ceiling-and-drywall-supplies-pretoria-central-eloffsdal",
-      "status": "deferred",
-      "reason": "cdsupplies.co.za timed out on every crawl attempt and could not be read; the search pass returned only unrelated 'Now You See Me 2' movie results. No genuine source about this business is present in the research file to write or cite from."
+      "status": "researched",
+      "sources": [
+        "http://www.cdsupplies.co.za/"
+      ]
     },
     {
       "slug": "ceeit-solutions-sinoville",
@@ -66,8 +68,10 @@
     },
     {
       "slug": "meet-the-minis-kameeldrift",
-      "status": "deferred",
-      "reason": "meettheminis.co.za was blocked by anti-bot protection (HTTP 403) on every attempt; the search pass returned only unrelated Google Meet video-conferencing results. No usable source about this business is present in the research file."
+      "status": "researched",
+      "sources": [
+        "https://meettheminis.co.za/"
+      ]
     },
     {
       "slug": "mega-books-faerie-glen",
@@ -120,8 +124,10 @@
     },
     {
       "slug": "africa-wildlife-tracking-rietondale",
-      "status": "deferred",
-      "reason": "awt.co.za timed out on every crawl attempt; the search pass returned only generic 'Africa' continent and geography pages, nothing about this specific business. No usable source is present in the research file."
+      "status": "researched",
+      "sources": [
+        "http://www.awt.co.za/"
+      ]
     },
     {
       "slug": "afrit-parts-accessories-rosslyn-rosslyn",
@@ -147,7 +153,7 @@
     {
       "slug": "cafe-41-groenkloof",
       "status": "deferred",
-      "reason": "cafe41.co.za timed out on every crawl attempt; the search pass returned only unrelated football live-scores pages. No usable source about this restaurant is present in the research file."
+      "reason": "HOLD -- confirmed likely closure. Multiple independent current sources (a general current business-information source and Restaurant Guru) both mark this specific restaurant (Shop 1, 49 George Storrar Drive, Groenkloof) as permanently closed. This is stronger, more consistent evidence than a typical single-source flag, so no description is published implying it is currently operating; it is flagged for deletion/closure review and logged in content-upgrade/closed-businesses.json rather than held as an ordinary owner-verification hold."
     },
     {
       "slug": "centurion-cricket-company-bronberrik",
@@ -229,13 +235,17 @@
     },
     {
       "slug": "astron-energy-monument-park-monument-park",
-      "status": "deferred",
-      "reason": "Only the generic Astron Energy brand homepage was available in the research file, with no branch-specific facts for this Monument Park station (no hours, forecourt amenities or in-store offering). Chain-wide brand copy alone isn't enough to source a branch description."
+      "status": "researched",
+      "sources": [
+        "https://www.astronenergy.co.za/"
+      ]
     },
     {
       "slug": "astron-energy-sinoville-sinoville",
-      "status": "deferred",
-      "reason": "Only the generic Astron Energy brand homepage was available in the research file, with no branch-specific facts for this Sinoville station (no hours, forecourt amenities or in-store offering). Chain-wide brand copy alone isn't enough to source a branch description."
+      "status": "researched",
+      "sources": [
+        "https://www.astronenergy.co.za/"
+      ]
     },
     {
       "slug": "aurecon-south-africa-lynnwood-manor",
@@ -274,8 +284,10 @@
     },
     {
       "slug": "ddp-property-valuations-gauteng-head-office-midfields-estate",
-      "status": "deferred",
-      "reason": "ddp.co.za was blocked by anti-bot protection (HTTP 403) on every attempt; the search pass returned only unrelated NSFAS student-funding pages. No usable source about this business is present in the research file."
+      "status": "researched",
+      "sources": [
+        "https://ddp.co.za/?utm_source=DDP+GMB+Tracking&utm_medium=Website+link&utm_campaign=DDP+GMB+Tracking&utm_id=DDP+GMB+Tracking"
+      ]
     },
     {
       "slug": "dna-eor-sterrewag",
@@ -286,8 +298,10 @@
     },
     {
       "slug": "lmv-attorneys-pretoria-rietfontein",
-      "status": "deferred",
-      "reason": "lmvattorneys.co.za is now an unconnected, parked Wix domain with no business content, and the search pass returned only unrelated YouTube results. No genuine, business-specific source is present in the research file to write from."
+      "status": "researched",
+      "sources": [
+        "http://lmvattorneys.co.za/"
+      ]
     },
     {
       "slug": "moolman-group-midfields-estate",
@@ -298,8 +312,10 @@
     },
     {
       "slug": "msf-trailer-manufacturers-jan-niemand-park",
-      "status": "deferred",
-      "reason": "msftrailers.co.za returned 404 Not Found on every page fetched (home, about, services); the search pass matched only the unrelated NGO Médecins Sans Frontières. No usable content about this trailer manufacturer is present in the research file."
+      "status": "researched",
+      "sources": [
+        "http://www.msftrailers.co.za/"
+      ]
     },
     {
       "slug": "q-sol-pharma-pty-ltd-waltloo",

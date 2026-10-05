@@ -1,17 +1,22 @@
 {
   "city": "pretoria",
   "chunk": 108,
-  "generated_at": "2026-10-04T18:21:01.289Z",
+  "generated_at": "2026-10-05T08:12:41.514Z",
   "items": [
     {
       "slug": "oasis-water-pretoria-kilner-park-express-at-superspar-kilner-park",
-      "status": "deferred",
-      "reason": "Website returned timeouts and 404s on every page; search results were entirely about the band Oasis, nothing about this water-refill kiosk."
+      "status": "researched",
+      "sources": [
+        "http://www.oasiswater.co.za/"
+      ]
     },
     {
       "slug": "oasis-water-pretoria-villieria-villieria",
-      "status": "deferred",
-      "reason": "Website returned timeouts and 404s on every page, and the cavaonline.org listing failed to crawl; search results were entirely about the band Oasis, nothing specific to this branch."
+      "status": "researched",
+      "sources": [
+        "http://www.oasiswater.co.za/",
+        "https://www.cavaonline.org/listing/oasis-water-pretoria-villieria-2/"
+      ]
     },
     {
       "slug": "onderstepoort-biological-products-obp-the-home-of-onderstepoort-vaccines-onderstepoort",
@@ -57,8 +62,11 @@
     },
     {
       "slug": "pna-castle-gate-lifestyle-wingate-park",
-      "status": "deferred",
-      "reason": "Only PNA's national homepage was retrieved (chain-wide stock, rewards and delivery info); the branch-specific store locator page for Castle Gate Lifestyle wasn't reachable this round, and chain-level facts alone aren't enough for this branch."
+      "status": "researched",
+      "sources": [
+        "https://pna.co.za/store-locator/pna-castle-gate-lifestyle/",
+        "https://www.pna.co.za/"
+      ]
     },
     {
       "slug": "postnet-eldoraigne-eldoraigne",
@@ -69,8 +77,11 @@
     },
     {
       "slug": "pressed-in-time-eco-boulevard-centurion-eco-park",
-      "status": "deferred",
-      "reason": "Only the branch's own Instagram bio was retrievable (dry cleaning, laundry, carpet and sneaker cleaning); the brand's own website timed out and search returned unrelated security-company results, leaving too little branch-specific detail for a full description."
+      "status": "researched",
+      "sources": [
+        "https://www.pressedintime.co.za/",
+        "https://www.instagram.com/pressedintime_ecoboulevard/"
+      ]
     },
     {
       "slug": "pretoria-east-testing-station-jan-niemand-park",
@@ -102,8 +113,11 @@
     },
     {
       "slug": "pt-signage-pty-ltd-willow-park-manor",
-      "status": "deferred",
-      "reason": "The site's about page returned only generic branding/rebranding mission and vision statements; the services page listing actual sign types and products wasn't retrieved this round, so there's no concrete, non-generic detail to write from."
+      "status": "researched",
+      "sources": [
+        "http://www.ptsignage.co.za/",
+        "https://pretoria.co.za/listing/pt-signage-pty-ltd/"
+      ]
     },
     {
       "slug": "ptp-building-services-derdepoort-smallholdings",
@@ -114,8 +128,11 @@
     },
     {
       "slug": "puricentric-eloffsdal",
-      "status": "deferred",
-      "reason": "Every page on the website was blocked by Anubis anti-bot protection, returning only a cookie/JavaScript challenge notice; the Facebook source wasn't retrieved either, so no business-specific content was found."
+      "status": "researched",
+      "sources": [
+        "http://www.puricentric.co.za/",
+        "https://www.facebook.com/puricentric/"
+      ]
     },
     {
       "slug": "quatro-integrated-services-pty-ltd-equestria",
@@ -133,8 +150,11 @@
     },
     {
       "slug": "radio-communication-consultants-eloffsdal",
-      "status": "deferred",
-      "reason": "Website failed to load (navigation timeout); search results were entirely about virtual credit and debit cards, nothing about this two-way radio supplier."
+      "status": "researched",
+      "sources": [
+        "http://www.rcctwowayradios.co.za/",
+        "https://www.thinklocal.co.za/biz/radio-communication-consultants-pretoria"
+      ]
     },
     {
       "slug": "rbm-kontrakteurs-pty-ltd-waverley",
@@ -250,13 +270,18 @@
     },
     {
       "slug": "type-dev-bronberrik",
-      "status": "deferred",
-      "reason": "Website timed out on every attempt; search results were entirely about unrelated streaming APIs and tools, nothing about this software studio."
+      "status": "researched",
+      "sources": [
+        "https://typedev.io/",
+        "https://typedev.co.za/"
+      ]
     },
     {
       "slug": "unique-painters-waverley",
-      "status": "deferred",
-      "reason": "Website blocked by anti-bot protection (HTTP 403) on every attempt; search results were entirely about unrelated companies and dictionary definitions sharing the word 'unique', nothing about this painting contractor."
+      "status": "researched",
+      "sources": [
+        "http://www.uniquepainters.co.za/"
+      ]
     },
     {
       "slug": "val-de-grace-vet-crew-val-de-grace",
@@ -281,8 +306,10 @@
     },
     {
       "slug": "view-world-studios-meyerspark",
-      "status": "deferred",
-      "reason": "Website failed to load (timeout); search results were entirely generic 'view' results (Street View, dictionary definitions, a trading platform), nothing about this photography studio."
+      "status": "researched",
+      "sources": [
+        "https://www.viewworldstudios.co.za/"
+      ]
     },
     {
       "slug": "vizin-group-wierdapark",

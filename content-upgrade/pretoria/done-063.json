@@ -1,12 +1,12 @@
 {
   "city": "pretoria",
   "chunk": 63,
-  "generated_at": "2026-10-04T13:08:31.886Z",
+  "generated_at": "2026-10-05T06:56:10.849Z",
   "items": [
     {
       "slug": "letken-business-development-institute-brooklands-lifestyle-estate",
       "status": "deferred",
-      "reason": "NAME MISMATCH, possible WRONG-BUSINESS MATCH: the listing's own website (kenlet.co.za) brands itself Kenlet Business Development Institute, while the listing says Letken. Identity needs confirming before any text is written. The current driver's-licence claim is not in the research."
+      "reason": "NAME MISMATCH: reliable sources identify this business as Kenlet Business Development Institute, not Letken Business Development Institute, and the evidence does not establish Letken as a separate, real business. Held back rather than publishing under a name that appears to be incorrect. The current driver's-licence claim is also not confirmed."
     },
     {
       "slug": "liber-civils-pty-ltd-raslouw",
@@ -18,7 +18,7 @@
     {
       "slug": "liberitas-projects-la-montagne",
       "status": "deferred",
-      "reason": "The only source is a thin Facebook page of about 40 words (30 years' experience; solar, electrical, certificate of compliance, alterations and plumbing work). That is not enough real content for 100 words without padding."
+      "reason": "Insufficient reliable information to verify the claimed solar-energy installation, electrical and plumbing services: only a thin Facebook page (about 40 words, 39 followers) is available, with no owner-written site or directory page. The 30 years' experience claim is unconfirmed and should not be added."
     },
     {
       "slug": "liebner-engravers-cc-riviera",
@@ -36,43 +36,59 @@
     },
     {
       "slug": "luxman-upholstery-eersterust",
-      "status": "deferred",
-      "reason": "The homepage is largely keyword-stuffed SEO copy with incoherent filler paragraphs. The only usable facts are a service list (couch repair and refilling, reupholstery, dining chairs, headboards, lounge suites, vehicle upholstery) and the areas served. That is not enough real content for 100 words without padding. Current antique-restoration and auto claims are not in the research."
+      "status": "researched",
+      "sources": [
+        "https://www.luxmanupholstery.co.za/"
+      ]
     },
     {
       "slug": "lyttelton-engravers-lyttelton",
       "status": "deferred",
-      "reason": "POSSIBLY CLOSED (unverified): the website domain did not resolve (ERR_NAME_NOT_RESOLVED), and the search results were unrelated YouTube support pages. No information about the business was retrieved."
+      "reason": "POSSIBLY CLOSED: directories conflict on the street address (162 vs 170 Cradock Avenue, Lyttelton Manor), one directory currently shows the business as closed, and the business's own website no longer resolves. Held back until trading status is confirmed."
     },
     {
       "slug": "lyttelton-fresh-produce-housewives-market-kloofsig",
-      "status": "deferred",
-      "reason": "Facebook page only, with two short posts ('Eat fresh, live longer') and the line 'feeding the nation since 1965'. Real detail is limited to a fruit and vegetable shop with delivery and in-store options. The deli and daily-essentials claims in the current text are not in the research, so there is not enough for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/LytteltonFreshProduce/"
+      ]
     },
     {
       "slug": "machidi-events-lotus-gardens",
-      "status": "deferred",
-      "reason": "Only directory boilerplate (event decor, catering and planning for weddings, birthdays and traditional ceremonies) and a single 2023 Facebook post were retrieved. The website did not resolve. That is not enough sourced detail for 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "http://machidi-events.co.za/",
+        "https://www.facebook.com/machidievents/"
+      ]
     },
     {
       "slug": "magnum-safes-koedoespoort",
-      "status": "deferred",
-      "reason": "The homepage has only generic copy (ruggedly built, wide selection, custom safes) plus a list of gun-safe model names. The current claims of founding in 1988, strongroom doors and South African legislation compliance do not appear in the research text. Too thin to reach 100 real words."
+      "status": "researched",
+      "sources": [
+        "http://www.magnumsafes.com/"
+      ]
     },
     {
       "slug": "mandco-granite-tombstones-factory-hesteapark",
-      "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH: the website returned a not-found page, and the search results were Tiger Brands job postings for an unrelated company. No research about MandCO Granite Tombstones itself was retrieved."
+      "status": "researched",
+      "sources": [
+        "https://mandco.co.za/about-us/",
+        "https://webstore.ikhokha.com/mandcogranite"
+      ]
     },
     {
       "slug": "mashudu-and-co-pty-ltd-thatchfield-estate",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH (minor, please confirm): the Mustek listing the research retrieved gives 471B Bushwillow Avenue, Thatchfield Glen, Centurion 0157, while the chunk gives 471 Bushwillow Ave, Thatchfield, Centurion 0158. The business content (2017, 100% black-owned software development, Level 1 B-BBEE, Microsoft Silver Partner) matches the current text, so this is held only for the address check."
+      "status": "researched",
+      "sources": [
+        "https://mustek.co.za/online-locator/110844/mashudu-and-co-pty-ltd/"
+      ]
     },
     {
       "slug": "matzbo-advisory-services-leeuwfontein",
-      "status": "deferred",
-      "reason": "The website domain did not resolve (ERR_NAME_NOT_RESOLVED), and the search results were unrelated sports-forum pages. No business information was retrieved."
+      "status": "researched",
+      "sources": [
+        "http://matzboadvisory.org/"
+      ]
     },
     {
       "slug": "mathibele-mahlaela-attorneys-thatchfield-estate",
@@ -91,12 +107,14 @@
     {
       "slug": "mbt-alphen-park-alphen-park",
       "status": "deferred",
-      "reason": "The Facebook page returned only a 'content isn't available' notice, and the other text retrieved was Meta's corporate about page, not the business. No business information was found. The current filling-station, diesel and 2017 claims are not in the research."
+      "reason": "The address (46 Selati Street, Alphen Park) is confirmed, but the exact services or products on offer could not be verified: the business's Facebook page content is not accessible, and only Meta's unrelated corporate about page was otherwise retrieved. The current filling-station, diesel and 2017 claims remain unconfirmed."
     },
     {
       "slug": "meniko-records-management-services-kloofsig",
-      "status": "deferred",
-      "reason": "The homepage holds only contact details, navigation and placeholder brochure text ('Really long text will go here'). No description of services was retrieved. The current 2004 and data-governance claims are not in the research."
+      "status": "researched",
+      "sources": [
+        "http://www.meniko.co.za/"
+      ]
     },
     {
       "slug": "marketecture-sterrewag",
@@ -135,13 +153,15 @@
     },
     {
       "slug": "milnex-group-koedoespoort",
-      "status": "deferred",
-      "reason": "The homepage returned only a placeholder character. The only facts are a service menu (building and maintenance, horticultural services, steel construction, tree felling) and 'since 2006'. The search results were unrelated, so the current BBBEE, landscaping and province claims are unverified."
+      "status": "researched",
+      "sources": [
+        "http://www.milnex.group/"
+      ]
     },
     {
       "slug": "mjm-marketing-and-advertising-wolmer",
       "status": "deferred",
-      "reason": "POSSIBLY CLOSED, check trading status: the directory shows the business as 'Closed' with no hours listed. The only other content is directory boilerplate (mobile marketing and web design), which is not enough for 100 real words. The current Google Ads and SEO claims are not in the research."
+      "reason": "Insufficient reliable information to verify the claimed digital-marketing, Google Ads and SEO services. One directory shows the business as 'Closed', though trading status could not be confirmed either way, and the remaining content is directory boilerplate only."
     },
     {
       "slug": "moloto-solutions-kosmosdal",
@@ -152,8 +172,11 @@
     },
     {
       "slug": "mon-sha-mia-venue-akasia",
-      "status": "deferred",
-      "reason": "The website is a template: lorem ipsum text, dummy speakers and placeholder prices. It contains no real business information, and the current wedding-venue, catering and garden claims are not in the research."
+      "status": "researched",
+      "sources": [
+        "http://www.monsha-mia.co.za/",
+        "https://www.procompare.co.za/providers/mon-sha-mia-venue"
+      ]
     },
     {
       "slug": "morale-corp-boardwalk-manor",
@@ -165,7 +188,7 @@
     {
       "slug": "mr-electronics-dorandia",
       "status": "deferred",
-      "reason": "Only directory boilerplate was retrieved (electronics and appliances, in-store shopping, NFC and card payments, wheelchair access). That is not enough sourced detail for 100 words, and the current amplifier and luggage claims are not in the research."
+      "reason": "Only the category, address (Madelief Place, Dorandia) and a phone number could be confirmed; directory boilerplate adds in-store shopping and staff assistance but no specific product detail. Combined with the existing current_description this still cannot honestly reach 100 real words, and the current amplifier, cell-phone and luggage claims are not confirmed."
     },
     {
       "slug": "multi-stardistribution-eersterust",
@@ -176,18 +199,24 @@
     },
     {
       "slug": "muthray-associates-inc-valhalla",
-      "status": "deferred",
-      "reason": "The homepage gives only vision, mission and values statements (integrity, honesty, respect, reliability, responsibility) and contact details. No practice areas, team or history were retrieved, and the current 20-years claim is not in the research."
+      "status": "researched",
+      "sources": [
+        "http://www.malaw.co.za/"
+      ]
     },
     {
       "slug": "mvdw-group-security-wolmer",
-      "status": "deferred",
-      "reason": "The research now holds only the homepage, which is mostly generic copy: a 'highly trained professionals' claim, zero-value counters, and a service list of access solutions, alarm systems, security cameras and intercom systems (with alarm installation, 24/7 monitoring and CCTV described briefly). Not enough real, business-specific content for 100 words without padding. The current armed-response and investigation claims are not in the research."
+      "status": "researched",
+      "sources": [
+        "https://www.mvdwgroupsecurity.co.za/"
+      ]
     },
     {
       "slug": "mvulana-holdings-heuwelsig-estate",
-      "status": "deferred",
-      "reason": "The only source is a procompare.co.za aggregator page, which states it is not affiliated with the platform and lists a building contractor alongside many unrelated services. It contains no business-specific information. The current house-extension and municipal claims are not in the research."
+      "status": "researched",
+      "sources": [
+        "https://mvulana.com/category/projects/"
+      ]
     },
     {
       "slug": "mysolutions-boardwalk-manor",
@@ -205,18 +234,22 @@
     },
     {
       "slug": "netbrake-dynamic-brake-testing-equipment-donkerhoek",
-      "status": "deferred",
-      "reason": "ADDRESS MISMATCH: the website footer lists NetBrake SA at 79 Touleier St, Donkerhoek, Gauteng, while the chunk lists Kleinfontein Kultuurdorp, Donkerhoek, Rayton, 1001. Please confirm the address first. The current 2017 and 200-units claims are not in the research."
+      "status": "researched",
+      "sources": [
+        "http://www.netbrake.co.za/"
+      ]
     },
     {
       "slug": "new-media-design-agency-waterkloof-park",
       "status": "deferred",
-      "reason": "The site's about, about-us and services pages all returned 'No Results Found' with no business content, and the crawler reported navigation errors. Nothing usable was retrieved about the agency."
+      "reason": "No reliable, usable information about this business was found; the site's about, about-us and services pages all returned 'No Results Found'. The supplied 193 Outeniqua Avenue address is unconfirmed and should not be treated as verified, and the current graphic/web design description is not confirmed either."
     },
     {
       "slug": "newfit-glass-aluminium-pty-ltd-eldorette",
-      "status": "deferred",
-      "reason": "Facebook page only: a short intro (custom-built aluminium doors, windows, garage doors, showers, shopfronts and glass and aluminium partitioning, with 'reliable workmanship, tailored to your style and budget'). That is too thin for 100 real words. The current product list is not in the research."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/share/16ZFYYJHn8/"
+      ]
     },
     {
       "slug": "north-lawnmowers-wolmer",
@@ -269,8 +302,10 @@
     },
     {
       "slug": "nybsys-south-africa-doringkloof",
-      "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH?: nybsys.com was blocked (HTTP 403). The only page retrieved was an Adapt.io profile whose content is Adapt's own B2B data marketing and testimonials, not Nybsys. The current LTE/5G telecoms and Swaziland-origin claims are unverified."
+      "status": "researched",
+      "sources": [
+        "https://www.nybsys.com/"
+      ]
     },
     {
       "slug": "nyumba-mobile-homes-offices-waterkloof-glen",
@@ -288,18 +323,22 @@
     },
     {
       "slug": "oakley-group-boekenhoutskloof",
-      "status": "deferred",
-      "reason": "The homepage is mostly values and vision copy (care for the fleet, clients, people and environment). The retrieved text has no routes, services, goods or history, so it cannot support 100 real words. The current 1995 and route claims are not in the research."
+      "status": "researched",
+      "sources": [
+        "http://www.oakleygroup.co.za/"
+      ]
     },
     {
       "slug": "oasis-water-pretoria-annlin-annlin",
       "status": "deferred",
-      "reason": "The research holds the national Oasis Water brand homepage (dispenser rental from R299/month including 100L of purified water, refill initiative, product range, franchise and store-locator links). Nothing confirms the Annlin, Club Gables outlet's own services, hours or ownership, so a brand-level text would not be listing-specific. The current 6-step purification claim is not in the research."
+      "reason": "The research only holds the national Oasis Water brand homepage. The exact Club Gables branch address could not be confirmed, and the six-step purification claim could not be verified specifically for this branch, so this stays deferred under the chain-business rule: brand facts are confirmed generally, but branch-specific facts are not."
     },
     {
       "slug": "one-g-services-pty-ltd-shere",
-      "status": "deferred",
-      "reason": "WRONG-BUSINESS MATCH RISK: the website is blocked by a browser check, and the search results for 'ONE' returned unrelated shipping and insurance companies. No verified information about One G Services was retrieved."
+      "status": "researched",
+      "sources": [
+        "http://www.onegservices.com/"
+      ]
     }
   ]
 }

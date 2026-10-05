@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 84,
-  "generated_at": "2026-10-04T19:12:42.417Z",
+  "generated_at": "2026-10-05T07:20:53.406Z",
   "items": [
     {
       "slug": "c-s-consulting-engineers-val-de-grace",
@@ -26,13 +26,15 @@
     },
     {
       "slug": "care-ict-waverley",
-      "status": "deferred",
-      "reason": "careict.co.za timed out during research. The only results are dictionary pages and a care-services site, not this ICT company, so no sourced description is possible."
+      "status": "researched",
+      "sources": [
+        "https://www.careict.co.za/about-us/"
+      ]
     },
     {
       "slug": "carel-coetsee-boomsloping-treefelling-pretoria-eloffsdal",
       "status": "deferred",
-      "reason": "The tree-care website timed out, and the search results are school directories for George in the Western Cape. Nothing about this Pretoria business was found."
+      "reason": "Insufficient reliable information was found to verify the tree, palm and hedge felling, trimming, chemical treatment and stump-removal services this business offers, or the supplied Les Marais/Eloffsdal address. The tree-care website timed out, and the search results are school directories for George in the Western Cape, so nothing relevant to this specific Pretoria business was found."
     },
     {
       "slug": "carports-4-u-kameeldrift",
@@ -50,8 +52,10 @@
     },
     {
       "slug": "cemstone-monavoni",
-      "status": "deferred",
-      "reason": "The About page covers history only (founded in Durbanville in 2004, production at Blackheath). The research has no product or showroom page, so the text would not reach 100 real words without padding."
+      "status": "researched",
+      "sources": [
+        "http://www.cemstone.co.za/"
+      ]
     },
     {
       "slug": "cen-storage-annlin",
@@ -63,12 +67,12 @@
     {
       "slug": "centa-mercfire-hermanstad",
       "status": "deferred",
-      "reason": "The research has only the CENTA Group site, which is group-level (30 years, 15 African countries, leadership). Centa Mercfire and its Hermanstad branch do not appear on any fetched page, so the description would be chain-level only."
+      "reason": "Only CENTA Group-level facts could be confirmed (a fire-safety group operating more than 30 years across 15+ African countries, under its own leadership). No reliable source describes Centa Mercfire's own product or service range, or confirms anything about its Hermanstad branch specifically beyond the address, phone number and approximate weekday trading hours already on file, so a description would be chain-level only rather than specific to this branch."
     },
     {
       "slug": "centurion-carports-and-steel-weldings-olievenhoutbosch",
       "status": "deferred",
-      "reason": "The business website did not resolve (ERR_NAME_NOT_RESOLVED), and the search results are Centurion area, property and access-control pages. No source describes this steel fabrication business."
+      "reason": "No reliable source describes this steel fabrication and carport business, or confirms the supplied Olievenhoutbosch address. The business website did not resolve (ERR_NAME_NOT_RESOLVED), and the search results are generic Centurion-area, property and access-control pages unrelated to this specific business."
     },
     {
       "slug": "centurion-micro-electronics-cme-celtisdal",
@@ -80,7 +84,7 @@
     {
       "slug": "chamberlain-centurion-famous-for-hardware-since-1903-hennopspark",
       "status": "deferred",
-      "reason": "Research has only the national Chamberlain site (paint specials and product categories). It has no Centurion store page or branch facts, so the description would be chain-level only."
+      "reason": "Unlike other Chamberlain branches researched elsewhere, this specific Centurion/Hennopspark branch's own details could not be verified beyond the well-established national chain information. Research has only the national Chamberlain site (paint specials and product categories), with no Centurion store page or branch-specific facts, so the description would be chain-level only rather than specific to this branch."
     },
     {
       "slug": "chempure-pty-ltd-the-willows",
@@ -98,13 +102,17 @@
     },
     {
       "slug": "city-property-pretoria-central",
-      "status": "deferred",
-      "reason": "The research pages are the company's cookie-consent text and Johannesburg apartment listings. Nothing confirms the Pretoria head office or the company's history, so the claims in the current text cannot be sourced."
+      "status": "researched",
+      "sources": [
+        "https://www.cityproperty.co.za/"
+      ]
     },
     {
       "slug": "civec-civil-engineering-consultants-constantia-park",
-      "status": "deferred",
-      "reason": "The homepage gives the service headings (water resources, urban and rural development, structures), the three provinces and registrations only. That is not enough for 100 real words without padding."
+      "status": "researched",
+      "sources": [
+        "http://www.civec.net/"
+      ]
     },
     {
       "slug": "cjb-alarms-theresapark",
@@ -122,13 +130,20 @@
     },
     {
       "slug": "clothing-hazeldean-hazeldean",
-      "status": "deferred",
-      "reason": "Research has the national Pick n Pay Clothing site and an infoisinfo directory card with hours. Nothing describes the Hazeldean Square shop itself, so the description would be chain-level only."
+      "status": "researched",
+      "sources": [
+        "http://www.pnp.co.za/",
+        "https://pretoria.infoisinfo.co.za/card/clothing-hazeldean/793344",
+        "https://www.jamii.co.za/6567-pretoria-east-clothing-fashion-pick-n-pay-clothing-hazeldean-square"
+      ]
     },
     {
       "slug": "cmh-foton-menlyn-newlands",
-      "status": "deferred",
-      "reason": "The branch page is mostly model banners and brand copy (Tunland, G7, eView, passenger and energy range, pre-owned, service and parts). The sourced facts fall well short of 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "https://cmhfoton.co.za/cmh-foton-menlyn/",
+        "https://www.cars.co.za/groups/CMH/CMH-Honda,-Mitsubishi,-Foton-Menlyn/1688/"
+      ]
     },
     {
       "slug": "comfort-digital-pty-ltd-akasia",
@@ -147,22 +162,24 @@
     {
       "slug": "consult-pretoria-north-car-home-business-insurance-brokerage-bergtuin",
       "status": "deferred",
-      "reason": "Research has the national Consult Insure pages (online quotes, Die Hoewes head office) and a 404 for the broker page. Nothing describes the Montana Park practice, so the description would be chain-level only."
+      "reason": "National Consult Insure/Momentum Consult services (online quotes, Die Hoewes head office) are confirmed, but no source describes this specific Montana Park/Bergtuin practice; the broker-specific page returned a 404. A description would have to attribute national-level claims to this listing without support, so it stays deferred."
     },
     {
       "slug": "cool-runnings-hatfield",
       "status": "deferred",
-      "reason": "The Cylex listing marks the business as reported closed, and the Songkick page lists only concerts. The venue's own site returned nothing usable, so its trading status and the bar and live-music claims cannot be confirmed."
+      "reason": "A Cylex listing explicitly records this business, as 'Cool Runnings Cafe', as reported closed at 1071 Burnett Street, Hatfield; an address-history source separately records it as having closed in 2016. A Songkick page lists only past concerts with no current trading signal, and the venue's own site returned nothing usable. Other directory data is inconsistent about its present status, but given the specific 2016 closure record, it should not be published as an active bar/live-music venue. Flagged for owner/closure review before publishing as active; added to content-upgrade/closed-businesses.json."
     },
     {
       "slug": "cornice-and-more-pty-ltd-wonderboom-south-wonderboom-south",
-      "status": "deferred",
-      "reason": "The company site returned only a bot-check page on all three URLs, and the search results are unrelated YouTube, forum and music pages. No source describes the store."
+      "status": "researched",
+      "sources": [
+        "http://www.corniceandmore.co.za/"
+      ]
     },
     {
       "slug": "costa-zervas-projects-c-c-bryntirion",
       "status": "deferred",
-      "reason": "Research has one pretoria.co.za directory card with a single 5-star review, a Closed status when crawled, and generic development copy. The 40-year and 19-block claims are not in any fetched source."
+      "reason": "The only source, a pretoria.co.za directory card, confirms the address and phone number and gives a single 5-star review, but explicitly shows the business as Closed when crawled. The 40-year and 19-multi-storey-block claims in the current description are not in any fetched source; historical quantity-surveyor project records tie the company to the Duncan Court development in Hatfield, which confirms past activity only, not current trading status. Current trading status should be verified before publication."
     },
     {
       "slug": "crazy-plastics-express-mayville-mayville",
@@ -222,8 +239,11 @@
     },
     {
       "slug": "datsun-menlyn",
-      "status": "deferred",
-      "reason": "The Motus Nissan Menlyn dealer page gives the address, phone and menu labels (vehicles, pre-owned, specials, service, parts) only. Datsun is not mentioned in any fetched source, so the description would not reach 100 real words."
+      "status": "researched",
+      "sources": [
+        "https://www.motusnissan.co.za/dealers/motus-nissan-menlyn",
+        "https://www.cybo.com/ZA-biz/motus-nissan-menlyn"
+      ]
     },
     {
       "slug": "deovolent-it-solutions-wolmer",
@@ -249,7 +269,7 @@
     {
       "slug": "die-kweekhuis-rooihuiskraal-north",
       "status": "deferred",
-      "reason": "The restaurant homepage gives its atmosphere, a Monday pizza offer (two pizzas for R200 from 15:00) and booking links only. The menu, play area and cashless claims in the current text are not in research, so there are not enough sourced facts."
+      "reason": "The business's existence and restaurant presence in the Rockfields precinct, Centurion is confirmed by its own site, but that site gives only atmosphere copy, a Monday pizza offer and booking links. The supervised children's play area, full brunch menu and cashless/card-only claims in the current description could not be independently verified, and there is not enough additional confirmed detail to write a new, non-generic description without those specifics."
     },
     {
       "slug": "digital-interactive-graphic-design-studio-pretoria-brummeria",
@@ -260,8 +280,10 @@
     },
     {
       "slug": "dinoko-it-solutions-heuweloord",
-      "status": "deferred",
-      "reason": "The company site lists four services (custom software development, software testing to IEEE 829 and IEC/EIA 12207, consulting and equipment distribution) and nothing else. That is not enough for 100 real words without padding."
+      "status": "researched",
+      "sources": [
+        "http://dinoko.co.za/"
+      ]
     },
     {
       "slug": "dis-chem-irene-village-mall-irene-farm-villages",
@@ -272,8 +294,12 @@
     },
     {
       "slug": "diy-depot-kameeldrift",
-      "status": "deferred",
-      "reason": "The branch's own site is temporarily unavailable. Research has only the national DIY Depot site (over 140 stores, building products, franchise information). Nothing describes the Kameeldrift branch, so the description would be chain-level only."
+      "status": "researched",
+      "sources": [
+        "https://www.africabizinfo.com/ZA/diy-depot-kameeldrift-012-547-1627",
+        "http://craftshopssa.co.za/listing/diy-depot-kameeldrift/",
+        "https://inverters.co.za/listings/diy-depot-kameeldrift/"
+      ]
     },
     {
       "slug": "dp-du-plessis-inc-lyttelton-manor",
@@ -298,8 +324,11 @@
     },
     {
       "slug": "duson-print-signs-daspoort",
-      "status": "deferred",
-      "reason": "The pretoria.co.za directory card gives the services, a 4.30 rating from 19 reviews and in-store payment options. The company's own site did not resolve, so the sourced facts fall short of 100 words without padding."
+      "status": "researched",
+      "sources": [
+        "http://www.dusonprint.co.za/Home/Contact",
+        "https://pretoria.co.za/listing/duson-print-signs/"
+      ]
     },
     {
       "slug": "duster-dollies-pty-ltd-pierre-van-ryneveld-park",
@@ -310,8 +339,12 @@
     },
     {
       "slug": "ebbul-foods-processing-hermanstad",
-      "status": "deferred",
-      "reason": "The company site returned HTTP 403 and 404 errors, and the search results are unrelated LinkedIn and veterinary pages. No source describes Ebbul Foods Processing."
+      "status": "researched",
+      "sources": [
+        "http://www.ebbulfoods.co.za/",
+        "https://ebbulfoods.co.za/",
+        "https://www.brabys.com/za/gauteng/pretoria/hermanstad/vegetables/ebbul-foods"
+      ]
     }
   ]
 }

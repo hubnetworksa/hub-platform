@@ -1,7 +1,7 @@
 {
   "city": "pretoria",
   "chunk": 115,
-  "generated_at": "2026-10-04T17:16:10.244Z",
+  "generated_at": "2026-10-05T08:17:44.780Z",
   "items": [
     {
       "slug": "atterbury-theatre-lynnwood-manor",
@@ -43,8 +43,11 @@
     },
     {
       "slug": "cartridge-hyper-magalieskruin-magalieskruin",
-      "status": "deferred",
-      "reason": "Only chain-level facts (established 2003, generic and compatible printer cartridges for major brands) were available; the store's own page would not load beyond a cookie banner, and no branch-specific detail (own hours, staff, in-store services) was found for the Magalieskruin store itself. Per the chain rule, chain-level facts alone aren't enough for a listing description."
+      "status": "researched",
+      "sources": [
+        "https://cartridgehyper.co.za/store/cartridge.hyper.magalieskruin",
+        "https://cartridgehyper.co.za/about"
+      ]
     },
     {
       "slug": "cellsecure-interactive-management-solutions-pty-ltd-jan-niemand-park",
@@ -218,8 +221,12 @@
     },
     {
       "slug": "msc-business-college-pretoria-midfields-estate",
-      "status": "deferred",
-      "reason": "Only group-level facts (founded 1991 in East London, now 18 campuses nationwide) were confirmed; the directories found gave an address (Shop 3, Bothongo Plaza East, Pretoria Central) that does not match this listing's Hatfield, Francis Baard Street address, so nothing about this specific campus's own courses, staff or facilities could be confirmed. The 'small classes' claim in the current text is not supported by sourced detail."
+      "status": "researched",
+      "sources": [
+        "http://www.msccollege.co.za/",
+        "https://www.ccbc.co.za/business-directory-2/education/where-to-study/msc-business-college",
+        "https://rsa.worldorgs.com/catalog/pretoria/college/msc-business-college-pretoria"
+      ]
     },
     {
       "slug": "omnigo-pty-ltd-bergtuin",
@@ -230,8 +237,11 @@
     },
     {
       "slug": "rcl-foods-sugar-milling-division-andeon",
-      "status": "deferred",
-      "reason": "The only confirmed facts describe this Pretoria West address as RCL Foods' Sugar & Milling division administrative offices; the website's own content returned only group-wide scam warnings and other regional depot addresses (Westville, Hammersdale), with no detail about this office's own staff, function or history. The division's actual milling operations are in Mpumalanga and KwaZulu-Natal, so a description would be almost entirely generic, group-level content rather than facts about this address."
+      "status": "researched",
+      "sources": [
+        "https://www.rclfoods.com/",
+        "https://www.cybo.com/ZA-biz/rcl-foods-sugar-milling-division"
+      ]
     },
     {
       "slug": "rozelle-embroidery-and-crafts-elardus-park",
@@ -270,8 +280,10 @@
     },
     {
       "slug": "astron-energy-waterkloof-glen-waterkloof-glen",
-      "status": "deferred",
-      "reason": "The research returned only the national Astron Energy brand homepage (the Caltex-to-Astron rebrand story, UCount Rewards, FleetCard); nothing about this specific Roslyn Avenue station's own forecourt brands, convenience offering or staff was found, so the description would be entirely chain-level. Per the chain rule, that's not enough on its own."
+      "status": "researched",
+      "sources": [
+        "https://www.astronenergy.co.za/"
+      ]
     },
     {
       "slug": "bio-engineering-africa-consulting-and-training-academy-pty-ltd-waterkloof-glen",
