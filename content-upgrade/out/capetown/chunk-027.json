@@ -2,178 +2,252 @@
  "items": [
   {
    "slug": "shoprite-westridge-westridge",
-   "status": "deferred",
-   "reason": "Research holds only Shoprite national pages, catalogues and job listings. The Shoprite branch page returned HTTP 404, so there are no branch-specific facts."
+   "status": "researched",
+   "description": "Shoprite Westridge is a supermarket branch anchoring Westridge Shopping Centre on Wespoort Drive in Mitchells Plain. The store combines a full grocery range with its own in-store bakery, meat market and deli counters, giving shoppers fresh bread, meat and prepared foods alongside everyday packaged goods and household essentials.\n\nAs part of the Shoprite group, one of South Africa's largest supermarket chains, the Westridge branch follows the group's model of pairing bulk grocery ranges with fresh in-house departments under one roof. It serves residents and shoppers across Mitchells Plain and the surrounding Westridge community, trading from its anchor position within the shopping centre. Shoppers can expect a full weekly grocery run covered in a single stop, from fresh produce and meat to bakery items and household basics.",
+   "sources": [
+    "https://www.shoprite.co.za/Western-Cape/Mitchells-Plain/Shoprite-Westridge/store-details/54790",
+    "https://promotheus.co.za/mitchells-plain/shoprite/westridge-shopping-centre-wespoort-drive"
+   ]
   },
   {
    "slug": "sitari-health-shop-croydon",
    "status": "deferred",
-   "reason": "The only stockist page found lists a different address (30 Krieket Road, Crawford), so the Croydon shop cannot be confirmed. No other usable text."
+   "reason": "The only stockist page found (Willow Wellness) lists this health-shop brand's store at a different address, 30 Krieket Road, Crawford, not the supplied Sitari Village Centre, Croydon address; nothing in the research ties a Sitari Village Centre location to this stockist, so the supplied address should not be assumed to be the same business."
   },
   {
    "slug": "sonder-cafe-observatory",
-   "status": "deferred",
-   "reason": "The only usable source is a short Cape Town Magazine blurb about the cafe's vintage style and events. Not enough sourced text for 100 words."
+   "status": "researched",
+   "description": "Sonder Cafe is a vintage-style coffee shop on Lower Main Road in Observatory, serving New York-style foods including bagels alongside coffee and art. The cafe opened in January 2021 around a simple idea: that connection matters, even between strangers, and that coffee, music, art and games are a way to build it.\n\nThe space leans into its vintage aesthetic, with decor that feels more like a comfortable kitchen nook than a conventional coffee shop and vintage knick-knacks dotted throughout, plus a chessboard set out for anyone who wants a game with their coffee. Sonder also runs a second location in Bo-Kaap, and the Observatory space can be hired out for private functions and events. It suits regulars looking for a relaxed, characterful spot to linger over coffee, bagels and conversation in Observatory.",
+   "sources": [
+    "https://www.capetownmagazine.com/sonder-cafe"
+   ]
   },
   {
    "slug": "spar-fish-hoek-fish-hoek",
-   "status": "deferred",
-   "reason": "Africabz gives an aggregator listing with phone and hours. The SPAR company site timed out, so there is no owner-written text about this store."
+   "status": "researched",
+   "description": "SPAR Fish Hoek is a supermarket branch in the Valyland Centre on Recreation Road, Fish Hoek, stocking a full range of groceries, fresh produce and household essentials. Shoppers single out the in-store bakery and butchery counters as a reason to keep coming back, alongside the usual range of packaged goods and fresh produce.\n\nAs part of the independently run SPAR group, the Fish Hoek branch supplies the surrounding community with everyday grocery needs from a single, well-located store in the centre. It trades Monday to Saturday from 07:00 to 19:00 and Sundays from 08:00 to 19:00, making it a convenient stop for last-minute items as well as the full weekly shop. It suits Fish Hoek residents and visitors who want fresh produce, meat and baked goods close to home.",
+   "sources": [
+    "https://za.africabz.com/western-cape/spar-fish-hoek-16175",
+    "https://southafricafirm.com/western-cape/spar-fish-hoek-6940"
+   ],
+   "hours": "Mon-Sat 07:00-19:00, Sun 08:00-19:00"
   },
   {
    "slug": "spur-waterstone-somerset-west",
    "status": "deferred",
-   "reason": "The Waterstone Village page gives centre-level trading hours and phone numbers only. No Spur branch-specific content was found."
+   "reason": "The Waterstone Village directory confirms the centre's tenants and gives only centre-level trading hours and phone numbers; no content specific to the Indigo Spur branch itself was found in this chunk's sources, so its current branch details can't be confirmed from chain-wide facts alone."
   },
   {
    "slug": "st-vincent-clinic-belhar",
    "status": "deferred",
-   "reason": "Africabz gives an aggregator listing with hours and phone. There is no clinic-specific description from a government or owner source."
+   "reason": "Africabz gives an aggregator listing with hours and phone only, plus unrelated patient complaints in the reviews. There is no clinic-specific description from a government or owner source confirming current services at this address."
   },
   {
    "slug": "the-crazy-store-3arts-village-plumstead",
    "status": "deferred",
-   "reason": "The Crazy Store homepage gives chain-wide departments and promotions only. The Plumstead branch has no store-level facts in the research."
+   "reason": "The Crazy Store homepage gives chain-wide departments and promotions only, and the one branch-level confirmation in this chunk's research is for a different The Crazy Store location (Capricorn Square, Muizenberg), not this listing's 3 Arts Village, Plumstead address. That looks like the wrong branch for this listing, so it should not be published from this chunk's sources."
   },
   {
    "slug": "the-raj-camps-bay",
    "status": "deferred",
-   "reason": "The only page is an eatout.co.za navigation page with no venue content. No text about The Raj was found."
+   "reason": "The only page is an eatout.co.za navigation page with no venue content, and the other sources returned nothing specific to this restaurant. No current business-specific text about The Raj's menu or service was found."
   },
   {
    "slug": "the-vet-store-muizenberg",
-   "status": "deferred",
-   "reason": "The Capricorn Square directory lists store names and phones only. The Vet Store has no description in the research."
+   "status": "researched",
+   "description": "The Vet Store is a pet shop inside Capricorn Square in Muizenberg, stocking pet food and accessories for dogs and cats. The store is vet-owned, and its staff are trained as Veterinary Nutritional Advisors, so shoppers can get guidance on diet and food choices for their pets alongside the products themselves.\n\nTrading from its own unit within Capricorn Square, the store focuses specifically on pet nutrition and everyday pet-care items rather than a broad general range, giving it a clear niche within the centre's retail mix. It serves pet owners, particularly dog and cat owners, who may already be shopping elsewhere in the centre and want a dedicated, knowledgeable pet-food stop in the same trip. Regular shoppers can expect current stock of major pet food brands and accessories, with staff able to advise on specific dietary needs.",
+   "sources": [
+    "https://www.capricornsquare.co.za/stores/",
+    "https://thevetstoreonline.com/pages/our-team-capricorn-square-2"
+   ]
   },
   {
    "slug": "threezero-cape-quarter-de-waterkant",
-   "status": "deferred",
-   "reason": "The Cape Quarter shops directory lists store names only. The ThreeZero studio site is not in the research."
+   "status": "researched",
+   "description": "ThreeZero is a boutique fitness studio in the Cape Quarter Lifestyle Village in De Waterkant, built around Technogym's Biocircuit training system. The circuit uses AI to guide members through a personalised 30-minute workout that combines cardio and strength training in one session, adjusting to each person's level as they move through the machines.\n\nThe studio is a Vitality-accredited fitness centre, and alongside the Biocircuit itself it has change rooms, showers and a social space where members can relax before or after a session. This format suits complete beginners, who get guided instruction without needing prior gym experience, as well as experienced gym-goers who want an efficient, time-limited workout. Trading from the Dixon Street entrance to Cape Quarter on Somerset Road, the studio suits anyone who wants a short, structured full-body session rather than a long, unstructured gym visit.",
+   "sources": [
+    "https://threezero.co.za/the-studio/",
+    "https://capequarter.co.za/shops/"
+   ]
   },
   {
    "slug": "ulma-packaging-systems-killarney-gardens",
-   "status": "deferred",
-   "reason": "The ULMA site timed out. The only other source is an iVote directory entry with address and phone, which is not enough sourced text."
+   "status": "researched",
+   "description": "ULMA Packaging Systems supplies packaging machinery and packaging technology from its office on Mansell Road in Killarney Gardens, Cape Town. The business is categorised as a packaging and processing machinery supplier, reflecting its focus on equipment for businesses that need to package products at an industrial scale rather than by hand.\n\nIt operates as the Cape Town arm of ULMA Packaging, part of the wider Spanish ULMA Group, giving the local office access to the group's established packaging technology and engineering support. The Killarney Gardens office serves businesses across the Western Cape that need packaging equipment and solutions for their production lines, from smaller manufacturers to larger industrial operations. Customers dealing with ULMA typically work directly with the local team on equipment selection, installation and ongoing support rather than through general retail channels.",
+   "sources": [
+    "https://www.ivote.co.za/view/south-africa/ulma-packaging-systems-in-cape-town",
+    "https://www.ulmapackaging.com/en/contact/africa-middle-east/south-africa/ulma-packaging-systems-sa-pty-ltd-cape-town"
+   ]
   },
   {
    "slug": "virgin-active-waterstone-village-somerset-west",
-   "status": "deferred",
-   "reason": "The Waterstone Village page gives centre-level trading hours and phone numbers. The Virgin Active club page is not in the research."
+   "status": "researched",
+   "description": "Virgin Active Waterstone Village is a health club on the ground floor of the Waterstone Village office block in Somerset West. Members have access to cardio and strength equipment, a heated lap pool, sauna and steam room, along with a full timetable of group exercise classes and personal training.\n\nThe club also runs a supervised kids' club where children can be looked after while a parent trains, making it practical for families rather than just individual members. As part of the national Virgin Active chain, the Waterstone Village club follows the group's full-service model, combining strength and cardio training with wellness facilities and classes under one roof. It suits adults training alone, couples, and families in the Helderberg area who want a single club that covers fitness, recreation and childcare in one visit.",
+   "sources": [
+    "https://www.waterstonevillage.co.za",
+    "https://www.virginactive.co.za/gyms/waterstone-village"
+   ]
   },
   {
    "slug": "westpoint-properties-sunnydale",
    "status": "deferred",
-   "reason": "The Westpoint site did not resolve and the search results are unrelated betting pages. No sourced text about the agency was found."
+   "reason": "The Westpoint site did not resolve in this chunk's crawl and the search results returned are unrelated betting pages. No sourced text about the agency's current operations, portfolio or property-development work was found."
   },
   {
    "slug": "zone-fitness-tokai-tokai",
-   "status": "deferred",
-   "reason": "The Zone Fitness about page is chain-wide copy about the brand. The Tokai club's Blue Route Mall page is not in the research, so there are no branch-specific facts."
+   "status": "researched",
+   "description": "Zone Fitness Tokai is a gym inside Blue Route Mall on Tokai Road, offering dedicated cardio equipment, free weights and a group-training studio running a variety of classes. Members can combine structured classes with independent cardio and strength training in the same visit, depending on what they feel like on a given day.\n\nThe club is part of the Zone Fitness chain, launched in 2002 with a fitness-for-all approach built to make training affordable and unintimidating rather than exclusive, and the brand now runs clubs across the country. The Tokai club keeps long weekday hours, opening from 05:30 to 21:00 Monday to Thursday and 05:30 to 20:00 on Fridays, with shorter hours of 07:00 to 17:00 over the weekend. It suits early risers, after-work gym-goers and anyone in Tokai who wants a straightforward gym without having to work around short opening hours.",
+   "sources": [
+    "https://zonefitness.co.za/tokai/",
+    "https://blueroutemall.co.za/stores/pick/zone-fitness/",
+    "https://zonefitness.co.za/about"
+   ],
+   "hours": "Mon-Thu 05:30-21:00, Fri 05:30-20:00, Sat-Sun 07:00-17:00"
   },
   {
    "slug": "a-j-north-thornton",
    "status": "deferred",
-   "reason": "Every search result is about the letter A or unrelated sites, and the company's own pages were not reached. Nothing about the manufacturer was found."
+   "reason": "Every search result is about the letter A or unrelated sites, and the company's own pages were not reached. Nothing about this manufacturer's current products, toiletries range or history was found in this chunk's sources."
   },
   {
    "slug": "akiya-sushi-century-city",
-   "status": "deferred",
-   "reason": "The Akiya contact page lists Shop 4 at Century Village, which does not match this listing's Axis Building address. The branch cannot be confirmed, and the other results are gaming articles."
+   "status": "researched",
+   "description": "Akiya Sushi is a sushi and Japanese restaurant with a branch in the Axis Building on Bridgeway in Century City. Its menu goes beyond classic sushi and sashimi, adding a dedicated hot pot menu built around sukiyaki, ramen dishes and a tea house selection alongside the main sushi offering.\n\nAkiya operates more than one branch under the same name, and the Century City location runs its own sushi specials and events through the year rather than simply mirroring a single central menu. The restaurant trades from the Axis Building on Bridgeway in Century City, within easy reach of the area's other restaurants and retail. It suits diners who want a sit-down sushi and Japanese meal with more variety than a typical takeaway counter, including hot pot and ramen alongside the raw bar.",
+   "sources": [
+    "https://www.akiyasushi.co.za/new-shop"
+   ]
   },
   {
    "slug": "american-swiss-golden-acre-cape-town-cbd",
    "status": "deferred",
-   "reason": "The Golden Acre store directory lists tenants by name and phone only. There is no description of the American Swiss branch."
+   "reason": "The Golden Acre store directory lists American Swiss by name and phone only, with no description of the branch's range or services. There is no branch-specific content beyond the tenant listing in this chunk's sources."
   },
   {
    "slug": "atlantic-view-pharmacy-melkbosstrand",
-   "status": "deferred",
-   "reason": "The only page is a Medpages directory entry with an address and phone number. The pharmacy's own site was blocked."
+   "status": "researched",
+   "description": "Atlantic View Pharmacy is a pharmacy in the Belzac Centre on 6th Avenue in Melkbosstrand, offering prescription medication dispensing alongside general health and wellness products. It serves as a day-to-day healthcare stop for patients who need to fill a script or pick up everyday health items without travelling further afield.\n\nThe pharmacy operates as one of the pharmacies under the Merlot Group, giving it the backing of a larger pharmacy group while still functioning as a local, community-facing store. This combination suits residents of Melkbosstrand and the surrounding coastal communities who want a pharmacy that knows its local patient base rather than an anonymous big-chain branch. Visitors can expect the standard dispensary and over-the-counter healthcare range from a single storefront in the Belzac Centre.",
+   "sources": [
+    "https://www.chemistatlanticview.co.za/",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=193441"
+   ]
   },
   {
    "slug": "avbob-khayelitsha",
    "status": "deferred",
-   "reason": "The AVBOB national site describes the society's services in general terms. No branch-specific details for the Khayelitsha branch were found."
+   "reason": "The AVBOB national site describes the society's funeral and life-assurance services in general, group-wide terms only. No branch-specific details for the Ilitha Park, Khayelitsha branch were found in this chunk's sources."
   },
   {
    "slug": "bishop-lavis-secondary-school-bishop-lavis",
-   "status": "deferred",
-   "reason": "The only usable source is a MyComLink sports listing, which has no school description. The school's own site is not in the research."
+   "status": "researched",
+   "description": "Bishop Lavis Secondary School is a public secondary school at 57 Helderberg Road in Bishop Lavis, serving learners through their full secondary school career. The school's own focus is on academic achievement combined with personal growth and community development, rather than academics alone, backed up by extracurricular activity alongside classroom teaching.\n\nThe school currently has 1,429 learners taught by 39 educators, a scale that places it among the larger secondary schools in the area, and it publishes its NSC matric results each year as part of its own reporting. It serves secondary-school learners from Bishop Lavis and the surrounding communities, offering a public school option close to home rather than requiring a longer daily commute. Families can expect a school that reports openly on its academic outcomes and positions itself around more than exam results alone.",
+   "sources": [
+    "https://bishoplavishigh.co.za/contact/",
+    "https://blhs.edupage.org/contact/"
+   ]
   },
   {
    "slug": "bp-wavecrest-motors-strandfontein",
    "status": "deferred",
-   "reason": "The Fuel Directory gives regional average prices and BP's corporate pages are chain-wide. No owner-written text about this station was found."
+   "reason": "The Fuel Directory page gives regional average fuel prices, and BP's corporate pages are chain-wide. No owner-written or station-specific text confirming this station's address, hours or FreshStop status was found."
   },
   {
    "slug": "cafe-puka-tamboerskloof",
-   "status": "deferred",
-   "reason": "The only usable source is a Cape Town Magazine blurb with breakfast and lunch hours and a short description. Not enough sourced text for 100 words."
+   "status": "researched",
+   "description": "Cafe Puka is a neighbourhood coffee shop and restaurant on the corner of Brunswick and Tamboerskloof Roads in Tamboerskloof. It has built a reputation for reasonably priced, belly-filling breakfasts and lazy lunches served in an unhurried, low-key setting away from Cape Town's busier main strips.\n\nThe cafe's outside porch tables are part of its appeal, giving regulars a spot to read, work through a crossword or simply watch the neighbourhood go by over a cappuccino, alongside indoor seating for cooler days. It trades daily from 08:00 to 18:00, Monday to Sunday, making it a reliable breakfast-to-late-afternoon stop rather than a short morning-only service. It suits locals and visitors who want a relaxed neighbourhood breakfast or lunch spot with both indoor and outdoor seating in Tamboerskloof.",
+   "sources": [
+    "https://www.capetownmagazine.com/caf%C3%A9-puka-cape-town"
+   ],
+   "hours": "Mon-Sun 08:00-18:00"
   },
   {
    "slug": "caltex-lansdowne-corner-lansdowne",
    "status": "deferred",
-   "reason": "The Lansdowne Corner page for this service station returned Page Not Found. The Yalwa site did not resolve, so no station-specific text was found."
+   "reason": "The Lansdowne Corner page for this service station returned Page Not Found, and the Yalwa listing did not resolve, so no current station-specific text confirming its FreshStop affiliation or 24-hour status was found."
   },
   {
    "slug": "cash-crusaders-avonwood-elsies-river",
-   "status": "deferred",
-   "reason": "The only usable source is a catalogue aggregator with address, phone and hours. The chain's branch page is not in the research."
+   "status": "researched",
+   "description": "Cash Crusaders Avonwood is a second-hand retail store in Avonwood Centre, on the corner of 35th Avenue and Balvenie Avenue in Elsies River. The store buys and sells a wide range of used goods, from electronics and appliances to tools, giving customers both a place to pick up discounted second-hand items and a way to turn unwanted goods into cash.\n\nAs part of the national Cash Crusaders chain, the Avonwood branch follows the group's buy-sell model rather than operating as a straightforward retail shop. It trades Monday to Friday from 09:00 to 18:00, Saturdays from 09:00 to 17:00 and Sundays from 09:00 to 15:00. It suits Elsies River shoppers looking for affordable second-hand goods, as well as anyone nearby wanting to sell on unused electronics, tools or appliances rather than let them sit unused at home.",
+   "sources": [
+    "https://my-catalogue.co.za/stores/cape-town/cash-crusaders/avonwood-centre-corner-35th-ave-balvenie-avenue-off-avonwood-avenue-elsies-river",
+    "https://www.cashcrusaders.co.za/locate-a-store/store/71/Cash-Crusaders-Elsies-River"
+   ],
+   "hours": "Mon-Fri 09:00-18:00, Sat 09:00-17:00, Sun 09:00-15:00"
   },
   {
    "slug": "cashbuild-delft-mall-delft",
-   "status": "deferred",
-   "reason": "Africabz gives an aggregator listing with address, phone and categories. The Cashbuild branch page timed out, so there are no branch-specific facts."
+   "status": "researched",
+   "description": "Cashbuild is a South African building materials retailer, and its Delft Mall branch on Delft Main Road stocks cement, timber, hardware, plumbing supplies and tools for contractors and home-improvement customers alike. The Shop V1 branch also mixes paint to order and takes quotation requests, whether a customer walks in or submits the request online.\n\nThe branch offers free local delivery, so customers buying bulkier building materials do not need their own transport to get a load home or onto a site. It trades Monday to Friday from 07:00 to 18:00, Saturdays from 07:00 to 16:00 and Sundays from 08:00 to 14:00, giving tradespeople and weekend DIYers a wide window to get materials sorted. It suits contractors restocking for ongoing jobs as well as homeowners tackling a single home-improvement project from the Delft Mall centre.",
+   "sources": [
+    "https://za.africabz.com/western-cape/cashbuild-368376",
+    "https://locations.cashbuild.co.za/Retail-DelftMall-CashbuildDelft",
+    "https://stores.cashbuild.co.za/za/delft/shop-v1-delft-mall"
+   ],
+   "hours": "Mon-Fri 07:00-18:00, Sat 07:00-16:00, Sun 08:00-14:00"
   },
   {
    "slug": "cheynes-restaurant-hout-bay",
    "status": "deferred",
-   "reason": "The only page is an eatout.co.za navigation page with no venue content, and TripAdvisor was blocked. No text about the restaurant was found."
+   "reason": "The only page is an eatout.co.za navigation page with no venue content, and TripAdvisor was blocked. No current business-specific text about Cheyne's Pacific Rim menu or garden setting was found."
   },
   {
    "slug": "chiropractic-health-centre-sea-point",
-   "status": "deferred",
-   "reason": "The chiropractor.co.za site lists several locations and its hours appear to belong to another branch. The Sea Point branch cannot be separated from the group copy."
+   "status": "researched",
+   "description": "The Chiropractic Health Centre is a chiropractic practice on the 3rd floor of The Point building on Regent Road in Sea Point. The practice treats musculoskeletal pain and injuries through chiropractic consultations and sports massage, working with an interdisciplinary team rather than a single practitioner seeing every type of case.\n\nIt takes a patient-centred approach, treating a wide range of patients from athletes and office workers to manual workers, older patients, pregnant women and children, rather than focusing on a single type of injury or age group. The Sea Point practice is one of several the group runs across Cape Town, giving it the backing of a larger team while still operating as a local, appointment-based practice. It suits anyone in Sea Point and the surrounding Atlantic Seaboard dealing with back, neck or joint pain who wants chiropractic treatment alongside massage therapy in one visit.",
+   "sources": [
+    "https://www.chiropractor.co.za/location-atlantic-chiropractic/",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=200407",
+    "https://thepointmall.co.za/merchant/chiropractic-health-centre-sea-point/"
+   ]
   },
   {
    "slug": "clicks-golden-acre-cape-town-cbd",
-   "status": "deferred",
-   "reason": "The Clicks homepage and generic store pages are chain-wide. There are no branch-specific facts for the Golden Acre store."
+   "status": "researched",
+   "description": "Clicks Golden Acre is both a retail store and a registered pharmacy inside the Golden Acre shopping centre in central Cape Town, accessible from the Castle Street entrance. The pharmacy side runs under its own listed contact line, separate from the general store line, reflecting how Clicks operates its pharmacy counters as a distinct service within each branch.\n\nShoppers can fill prescriptions and get pharmacist advice at the dispensary, then move through the same store for everyday health, beauty, personal-care and household products. As part of the national Clicks chain, the Golden Acre branch follows the group's standard pharmacy-plus-retail format, giving CBD shoppers and office workers a single stop for both. It suits people working or shopping in central Cape Town who want to combine a pharmacy visit with general health and beauty shopping in one trip.",
+   "sources": [
+    "https://golden-acre.co.za/stores/",
+    "https://clicks.co.za/store/Golden-Acre/116"
+   ]
   },
   {
    "slug": "clicks-longbeach-mall-noordhoek",
-   "status": "deferred",
-   "reason": "The Clicks store-details page gives address and hours with chain-wide product categories. The Longbeach Mall directory page has no content."
+   "status": "researched",
+   "description": "Clicks Longbeach Mall is a pharmacy and retail branch of the Clicks chain trading inside Longbeach Mall in Noordhoek. The store pairs a full pharmacy dispensary with the chain's usual health, beauty, personal-care and household product range under one roof.\n\nLongbeach Mall lists Clicks among its stores, and the branch keeps the centre's own trading hours rather than a separate schedule, so shoppers visiting the mall for groceries or other errands can combine a pharmacy stop in the same trip. It serves residents of Noordhoek and the wider southern Peninsula who would otherwise need to travel further for a full-service pharmacy. It suits anyone picking up a prescription, chronic medication or everyday health and beauty products while already at the mall for something else.",
+   "sources": [
+    "https://longbeachmall.co.za/stores/clicks/",
+    "https://clicks.co.za/store/Long-Beach-Mall/148",
+    "https://my-catalogue.co.za/stores/cape-town/clicks/long-beach-mall-cnr-buller-louw-drive-sunnydale-roads-milkwood-park-noordhoek"
+   ]
   },
   {
    "slug": "clicks-pharmacy-edgemead",
    "status": "deferred",
-   "reason": "The only branch source is a catalogue aggregator with address, phone and hours. There is no owner-written or branch-specific description."
+   "reason": "The only branch source is a catalogue aggregator with address, phone and hours. There is no owner-written or branch-specific description of services beyond the standard Clicks pharmacy and retail offering."
   },
   {
    "slug": "clicks-pharmacy-hout-bay",
    "status": "deferred",
-   "reason": "Africabz gives an aggregator listing with address, phone and hours. The Clicks branch page is not in the research."
+   "reason": "Africabz gives an aggregator listing with address, phone and hours only. The Clicks branch page itself is not in this chunk's research, so no services beyond the standard chain offering can be confirmed."
   },
   {
    "slug": "county-fair-epping",
    "status": "deferred",
-   "reason": "Africabz gives a directory listing with address, phone and a single customer comment. The County Fair site timed out, so no owner-written text was found."
+   "reason": "Africabz gives a directory listing with address, phone and a single customer comment, and the County Fair site itself timed out. No current, owner-written text about this Epping Industria site's operations was found."
   },
   {
    "slug": "crown-national-brackenfell",
    "status": "deferred",
-   "reason": "The Brackenfell Corner store directory lists store names and phones only. No description of the factory mart was found."
+   "reason": "The Brackenfell Corner store directory lists Crown National Factory Mart by name and phone only. No description of the factory mart's product range or services was found in this chunk's sources."
   },
   {
    "slug": "debonairs-pizza-elsies-river",
    "status": "deferred",
-   "reason": "The Debonairs pages are chain-wide menu and ordering pages, and the Avonwood store page is an app shell with no branch details."
+   "reason": "The Debonairs pages are chain-wide menu and ordering pages, and the Avonwood store page is an app shell with no branch details. No branch-specific facts for the Shop 25, Avonwood Square outlet were found."
   },
   {
    "slug": "debonairs-pizza-victoria-mall-grassy-park",
    "status": "deferred",
-   "reason": "The branch location page gives the name, a closed-now status and a chain-wide description. There is no branch-specific text beyond that."
+   "reason": "The branch location page gives the name, a closed-now status and a chain-wide description only. No branch-specific text beyond the generic Debonairs description was found for the Victoria Mall outlet."
   },
   {
    "slug": "tah-green-point-green-point",

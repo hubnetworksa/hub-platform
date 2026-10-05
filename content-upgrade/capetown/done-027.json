@@ -1,182 +1,234 @@
 {
   "city": "capetown",
   "chunk": 27,
-  "generated_at": "2026-10-05T05:41:04.174Z",
+  "generated_at": "2026-10-05T17:20:55.780Z",
   "items": [
     {
       "slug": "shoprite-westridge-westridge",
-      "status": "deferred",
-      "reason": "Research holds only Shoprite national pages, catalogues and job listings. The Shoprite branch page returned HTTP 404, so there are no branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://www.shoprite.co.za/Western-Cape/Mitchells-Plain/Shoprite-Westridge/store-details/54790",
+        "https://promotheus.co.za/mitchells-plain/shoprite/westridge-shopping-centre-wespoort-drive"
+      ]
     },
     {
       "slug": "sitari-health-shop-croydon",
       "status": "deferred",
-      "reason": "The only stockist page found lists a different address (30 Krieket Road, Crawford), so the Croydon shop cannot be confirmed. No other usable text."
+      "reason": "The only stockist page found (Willow Wellness) lists this health-shop brand's store at a different address, 30 Krieket Road, Crawford, not the supplied Sitari Village Centre, Croydon address; nothing in the research ties a Sitari Village Centre location to this stockist, so the supplied address should not be assumed to be the same business."
     },
     {
       "slug": "sonder-cafe-observatory",
-      "status": "deferred",
-      "reason": "The only usable source is a short Cape Town Magazine blurb about the cafe's vintage style and events. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.capetownmagazine.com/sonder-cafe"
+      ]
     },
     {
       "slug": "spar-fish-hoek-fish-hoek",
-      "status": "deferred",
-      "reason": "Africabz gives an aggregator listing with phone and hours. The SPAR company site timed out, so there is no owner-written text about this store."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/spar-fish-hoek-16175",
+        "https://southafricafirm.com/western-cape/spar-fish-hoek-6940"
+      ]
     },
     {
       "slug": "spur-waterstone-somerset-west",
       "status": "deferred",
-      "reason": "The Waterstone Village page gives centre-level trading hours and phone numbers only. No Spur branch-specific content was found."
+      "reason": "The Waterstone Village directory confirms the centre's tenants and gives only centre-level trading hours and phone numbers; no content specific to the Indigo Spur branch itself was found in this chunk's sources, so its current branch details can't be confirmed from chain-wide facts alone."
     },
     {
       "slug": "st-vincent-clinic-belhar",
       "status": "deferred",
-      "reason": "Africabz gives an aggregator listing with hours and phone. There is no clinic-specific description from a government or owner source."
+      "reason": "Africabz gives an aggregator listing with hours and phone only, plus unrelated patient complaints in the reviews. There is no clinic-specific description from a government or owner source confirming current services at this address."
     },
     {
       "slug": "the-crazy-store-3arts-village-plumstead",
       "status": "deferred",
-      "reason": "The Crazy Store homepage gives chain-wide departments and promotions only. The Plumstead branch has no store-level facts in the research."
+      "reason": "The Crazy Store homepage gives chain-wide departments and promotions only, and the one branch-level confirmation in this chunk's research is for a different The Crazy Store location (Capricorn Square, Muizenberg), not this listing's 3 Arts Village, Plumstead address. That looks like the wrong branch for this listing, so it should not be published from this chunk's sources."
     },
     {
       "slug": "the-raj-camps-bay",
       "status": "deferred",
-      "reason": "The only page is an eatout.co.za navigation page with no venue content. No text about The Raj was found."
+      "reason": "The only page is an eatout.co.za navigation page with no venue content, and the other sources returned nothing specific to this restaurant. No current business-specific text about The Raj's menu or service was found."
     },
     {
       "slug": "the-vet-store-muizenberg",
-      "status": "deferred",
-      "reason": "The Capricorn Square directory lists store names and phones only. The Vet Store has no description in the research."
+      "status": "researched",
+      "sources": [
+        "https://www.capricornsquare.co.za/stores/",
+        "https://thevetstoreonline.com/pages/our-team-capricorn-square-2"
+      ]
     },
     {
       "slug": "threezero-cape-quarter-de-waterkant",
-      "status": "deferred",
-      "reason": "The Cape Quarter shops directory lists store names only. The ThreeZero studio site is not in the research."
+      "status": "researched",
+      "sources": [
+        "https://threezero.co.za/the-studio/",
+        "https://capequarter.co.za/shops/"
+      ]
     },
     {
       "slug": "ulma-packaging-systems-killarney-gardens",
-      "status": "deferred",
-      "reason": "The ULMA site timed out. The only other source is an iVote directory entry with address and phone, which is not enough sourced text."
+      "status": "researched",
+      "sources": [
+        "https://www.ivote.co.za/view/south-africa/ulma-packaging-systems-in-cape-town",
+        "https://www.ulmapackaging.com/en/contact/africa-middle-east/south-africa/ulma-packaging-systems-sa-pty-ltd-cape-town"
+      ]
     },
     {
       "slug": "virgin-active-waterstone-village-somerset-west",
-      "status": "deferred",
-      "reason": "The Waterstone Village page gives centre-level trading hours and phone numbers. The Virgin Active club page is not in the research."
+      "status": "researched",
+      "sources": [
+        "https://www.waterstonevillage.co.za",
+        "https://www.virginactive.co.za/gyms/waterstone-village"
+      ]
     },
     {
       "slug": "westpoint-properties-sunnydale",
       "status": "deferred",
-      "reason": "The Westpoint site did not resolve and the search results are unrelated betting pages. No sourced text about the agency was found."
+      "reason": "The Westpoint site did not resolve in this chunk's crawl and the search results returned are unrelated betting pages. No sourced text about the agency's current operations, portfolio or property-development work was found."
     },
     {
       "slug": "zone-fitness-tokai-tokai",
-      "status": "deferred",
-      "reason": "The Zone Fitness about page is chain-wide copy about the brand. The Tokai club's Blue Route Mall page is not in the research, so there are no branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://zonefitness.co.za/tokai/",
+        "https://blueroutemall.co.za/stores/pick/zone-fitness/",
+        "https://zonefitness.co.za/about"
+      ]
     },
     {
       "slug": "a-j-north-thornton",
       "status": "deferred",
-      "reason": "Every search result is about the letter A or unrelated sites, and the company's own pages were not reached. Nothing about the manufacturer was found."
+      "reason": "Every search result is about the letter A or unrelated sites, and the company's own pages were not reached. Nothing about this manufacturer's current products, toiletries range or history was found in this chunk's sources."
     },
     {
       "slug": "akiya-sushi-century-city",
-      "status": "deferred",
-      "reason": "The Akiya contact page lists Shop 4 at Century Village, which does not match this listing's Axis Building address. The branch cannot be confirmed, and the other results are gaming articles."
+      "status": "researched",
+      "sources": [
+        "https://www.akiyasushi.co.za/new-shop"
+      ]
     },
     {
       "slug": "american-swiss-golden-acre-cape-town-cbd",
       "status": "deferred",
-      "reason": "The Golden Acre store directory lists tenants by name and phone only. There is no description of the American Swiss branch."
+      "reason": "The Golden Acre store directory lists American Swiss by name and phone only, with no description of the branch's range or services. There is no branch-specific content beyond the tenant listing in this chunk's sources."
     },
     {
       "slug": "atlantic-view-pharmacy-melkbosstrand",
-      "status": "deferred",
-      "reason": "The only page is a Medpages directory entry with an address and phone number. The pharmacy's own site was blocked."
+      "status": "researched",
+      "sources": [
+        "https://www.chemistatlanticview.co.za/",
+        "https://www.medpages.info/sf/index.php?page=organisation&orgcode=193441"
+      ]
     },
     {
       "slug": "avbob-khayelitsha",
       "status": "deferred",
-      "reason": "The AVBOB national site describes the society's services in general terms. No branch-specific details for the Khayelitsha branch were found."
+      "reason": "The AVBOB national site describes the society's funeral and life-assurance services in general, group-wide terms only. No branch-specific details for the Ilitha Park, Khayelitsha branch were found in this chunk's sources."
     },
     {
       "slug": "bishop-lavis-secondary-school-bishop-lavis",
-      "status": "deferred",
-      "reason": "The only usable source is a MyComLink sports listing, which has no school description. The school's own site is not in the research."
+      "status": "researched",
+      "sources": [
+        "https://bishoplavishigh.co.za/contact/",
+        "https://blhs.edupage.org/contact/"
+      ]
     },
     {
       "slug": "bp-wavecrest-motors-strandfontein",
       "status": "deferred",
-      "reason": "The Fuel Directory gives regional average prices and BP's corporate pages are chain-wide. No owner-written text about this station was found."
+      "reason": "The Fuel Directory page gives regional average fuel prices, and BP's corporate pages are chain-wide. No owner-written or station-specific text confirming this station's address, hours or FreshStop status was found."
     },
     {
       "slug": "cafe-puka-tamboerskloof",
-      "status": "deferred",
-      "reason": "The only usable source is a Cape Town Magazine blurb with breakfast and lunch hours and a short description. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.capetownmagazine.com/caf%C3%A9-puka-cape-town"
+      ]
     },
     {
       "slug": "caltex-lansdowne-corner-lansdowne",
       "status": "deferred",
-      "reason": "The Lansdowne Corner page for this service station returned Page Not Found. The Yalwa site did not resolve, so no station-specific text was found."
+      "reason": "The Lansdowne Corner page for this service station returned Page Not Found, and the Yalwa listing did not resolve, so no current station-specific text confirming its FreshStop affiliation or 24-hour status was found."
     },
     {
       "slug": "cash-crusaders-avonwood-elsies-river",
-      "status": "deferred",
-      "reason": "The only usable source is a catalogue aggregator with address, phone and hours. The chain's branch page is not in the research."
+      "status": "researched",
+      "sources": [
+        "https://my-catalogue.co.za/stores/cape-town/cash-crusaders/avonwood-centre-corner-35th-ave-balvenie-avenue-off-avonwood-avenue-elsies-river",
+        "https://www.cashcrusaders.co.za/locate-a-store/store/71/Cash-Crusaders-Elsies-River"
+      ]
     },
     {
       "slug": "cashbuild-delft-mall-delft",
-      "status": "deferred",
-      "reason": "Africabz gives an aggregator listing with address, phone and categories. The Cashbuild branch page timed out, so there are no branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/cashbuild-368376",
+        "https://locations.cashbuild.co.za/Retail-DelftMall-CashbuildDelft",
+        "https://stores.cashbuild.co.za/za/delft/shop-v1-delft-mall"
+      ]
     },
     {
       "slug": "cheynes-restaurant-hout-bay",
       "status": "deferred",
-      "reason": "The only page is an eatout.co.za navigation page with no venue content, and TripAdvisor was blocked. No text about the restaurant was found."
+      "reason": "The only page is an eatout.co.za navigation page with no venue content, and TripAdvisor was blocked. No current business-specific text about Cheyne's Pacific Rim menu or garden setting was found."
     },
     {
       "slug": "chiropractic-health-centre-sea-point",
-      "status": "deferred",
-      "reason": "The chiropractor.co.za site lists several locations and its hours appear to belong to another branch. The Sea Point branch cannot be separated from the group copy."
+      "status": "researched",
+      "sources": [
+        "https://www.chiropractor.co.za/location-atlantic-chiropractic/",
+        "https://www.medpages.info/sf/index.php?page=organisation&orgcode=200407",
+        "https://thepointmall.co.za/merchant/chiropractic-health-centre-sea-point/"
+      ]
     },
     {
       "slug": "clicks-golden-acre-cape-town-cbd",
-      "status": "deferred",
-      "reason": "The Clicks homepage and generic store pages are chain-wide. There are no branch-specific facts for the Golden Acre store."
+      "status": "researched",
+      "sources": [
+        "https://golden-acre.co.za/stores/",
+        "https://clicks.co.za/store/Golden-Acre/116"
+      ]
     },
     {
       "slug": "clicks-longbeach-mall-noordhoek",
-      "status": "deferred",
-      "reason": "The Clicks store-details page gives address and hours with chain-wide product categories. The Longbeach Mall directory page has no content."
+      "status": "researched",
+      "sources": [
+        "https://longbeachmall.co.za/stores/clicks/",
+        "https://clicks.co.za/store/Long-Beach-Mall/148",
+        "https://my-catalogue.co.za/stores/cape-town/clicks/long-beach-mall-cnr-buller-louw-drive-sunnydale-roads-milkwood-park-noordhoek"
+      ]
     },
     {
       "slug": "clicks-pharmacy-edgemead",
       "status": "deferred",
-      "reason": "The only branch source is a catalogue aggregator with address, phone and hours. There is no owner-written or branch-specific description."
+      "reason": "The only branch source is a catalogue aggregator with address, phone and hours. There is no owner-written or branch-specific description of services beyond the standard Clicks pharmacy and retail offering."
     },
     {
       "slug": "clicks-pharmacy-hout-bay",
       "status": "deferred",
-      "reason": "Africabz gives an aggregator listing with address, phone and hours. The Clicks branch page is not in the research."
+      "reason": "Africabz gives an aggregator listing with address, phone and hours only. The Clicks branch page itself is not in this chunk's research, so no services beyond the standard chain offering can be confirmed."
     },
     {
       "slug": "county-fair-epping",
       "status": "deferred",
-      "reason": "Africabz gives a directory listing with address, phone and a single customer comment. The County Fair site timed out, so no owner-written text was found."
+      "reason": "Africabz gives a directory listing with address, phone and a single customer comment, and the County Fair site itself timed out. No current, owner-written text about this Epping Industria site's operations was found."
     },
     {
       "slug": "crown-national-brackenfell",
       "status": "deferred",
-      "reason": "The Brackenfell Corner store directory lists store names and phones only. No description of the factory mart was found."
+      "reason": "The Brackenfell Corner store directory lists Crown National Factory Mart by name and phone only. No description of the factory mart's product range or services was found in this chunk's sources."
     },
     {
       "slug": "debonairs-pizza-elsies-river",
       "status": "deferred",
-      "reason": "The Debonairs pages are chain-wide menu and ordering pages, and the Avonwood store page is an app shell with no branch details."
+      "reason": "The Debonairs pages are chain-wide menu and ordering pages, and the Avonwood store page is an app shell with no branch details. No branch-specific facts for the Shop 25, Avonwood Square outlet were found."
     },
     {
       "slug": "debonairs-pizza-victoria-mall-grassy-park",
       "status": "deferred",
-      "reason": "The branch location page gives the name, a closed-now status and a chain-wide description. There is no branch-specific text beyond that."
+      "reason": "The branch location page gives the name, a closed-now status and a chain-wide description only. No branch-specific text beyond the generic Debonairs description was found for the Victoria Mall outlet."
     },
     {
       "slug": "tah-green-point-green-point",

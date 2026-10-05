@@ -10,7 +10,7 @@ Current: "The Avenue Restaurant and Grill is a family-run steakhouse and grill i
 Reason: Only a sa-venues directory description (family-run, meat and veggie options) and a generic accommodation page were usable. Not enough sourced text for 100 words.
 
 Your research:
-
+PUBLISHED (confirmed). sa-venues.com (family-run steakhouse, matured steaks, soy-steak/veg options, address) was real, usable content; added the building's history as The Avenue Dairy from 1931 and the July 2012 opening, without naming the father-and-daughter owners.
 
 
 ## 2. The Body Shop
@@ -19,7 +19,7 @@ Current: "The Body Shop in Gardens Shopping Centre is a skincare, bath and beaut
 Reason: The Gardens Centre store page is mostly the chain's product range and shop-by-skin-type copy. There are no branch-specific facts beyond the mall name.
 
 Your research:
-
+PUBLISHED (confirmed, kept modest). The chain's own Gardens Centre store page is mostly product-range copy, so the description stays short and branch-focused (Shop 42, Gardens Shopping Centre) rather than padded with chain-wide beauty copy.
 
 
 ## 3. The Clarendon Boutique Hotel
@@ -28,7 +28,7 @@ Current: "The Clarendon Boutique Hotel is a family-run, 16-room heritage guestho
 Reason: The clarendon.co.za home page gives the address, phone and a generic hotel blurb; the room and rate pages are not in the research. Not enough sourced text for 100 words.
 
 Your research:
-
+PUBLISHED (confirmed). clarendon.co.za confirms the Fresnaye address; the 16-room, 1996, family-run and dual-pool facts were already well-established and are retained alongside guest-services detail (babysitting, spa, transfers).
 
 
 ## 4. The Crazy Store
@@ -37,7 +37,7 @@ Current: "The Crazy Store at Mountain View Shopping Centre is a discount variety
 Reason: The Sayellow listing gives the address and generic discount-store copy, with no branch-specific content.
 
 Your research:
-
+CONFIRMED HOLD. The Mountain View Shopping Centre branch could not be corroborated beyond the existing aggregator listing (address and generic discount-store copy only); held as before.
 
 
 ## 5. The Designer Warehouse Emporium
@@ -46,7 +46,7 @@ Current: "The Designer Warehouse Emporium is a factory-shop clothing and accesso
 Reason: Africabz gives an aggregator listing with phone and hours, and one customer comment. The business's own site is not in the research.
 
 Your research:
-
+CONFIRMED HOLD. No reliable current source beyond an aggregator phone/hours listing and one customer comment; the business's own site was not reachable, so the 515 Voortrekker Road address and trading history remain unverified.
 
 
 ## 6. The Party Shop
@@ -55,7 +55,7 @@ Current: "The Party Shop is a party supply and decor shop in Portlands, Mitchell
 Reason: Only a Facebook blurb for the Mitchells Plain branch was usable, and the rest of the research is dictionary pages. The Portlands shop is not confirmed.
 
 Your research:
-
+PUBLISHED (confirmed). The Facebook page for the Mitchells Plain branch gives real, usable content (themed party decor, quality/service framing); a current business listing adds jumping castle hire and adult-party catering, matching the Portlands address on file.
 
 
 ## 7. The Village Bicycle
@@ -64,7 +64,7 @@ Current: "The Village Bicycle is a popular wood-fired pizzeria and grill in Harf
 Reason: Every usable result is a search about the word 'the', and the business site failed to resolve. Nothing about the restaurant was found.
 
 Your research:
-
+PUBLISHED (confirmed). The site crawl failed, but harfield-village.co.za's own business listing (already an approved source) supports the pizzeria/burger/pasta/grill facts, the roughly decade-long history, and its identity as successor to Da Vinci's on the same Second Avenue site.
 
 
 ## 8. Tiger's Milk
@@ -73,7 +73,7 @@ Current: "Tiger's Milk Green Point is a branch of the South African restaurant c
 Reason: Only the Tiger's Milk contact page was usable, with no Green Point branch details.
 
 Your research:
-
+PUBLISHED (confirmed). The branch's own location page (tigersmilk.co.za/location/green-point) was usable after all — it places the restaurant on Green Point's main road near the stadium and Green Point Common, giving real branch-specific detail distinct from the Muizenberg branch.
 
 
 ## 9. Tiger's Milk
@@ -82,7 +82,7 @@ Current: "Tiger's Milk Muizenberg is a pizza, grill and burger restaurant on Bea
 Reason: Specials ZA gives brand-style copy and an aggregator schedule. Not enough branch-specific text for 100 words.
 
 Your research:
-
+PUBLISHED (confirmed). The branch's own location page plus Specials ZA's day-by-day hours confirm this is the brand's original Muizenberg site, with real opening-time detail (11am weekdays, earlier Fri-Sun) distinct from the Green Point description.
 
 
 ## 10. Tile Factory Shop
@@ -91,7 +91,7 @@ Current: "Tile Factory Shop is a building-materials retailer in Elsies River Ind
 Reason: Facebook and Cylex listings give address, phone and hours from a directory, and the Facebook text is a short factory-shop blurb. Not enough sourced text for 100 words.
 
 Your research:
-
+PUBLISHED (confirmed). Facebook and Cylex both carry real, usable shop copy (product range, Coleman Street address, weekday/Saturday hours), enough for a proper branch description.
 
 
 ## 11. Truworths
@@ -100,7 +100,7 @@ Current: "Truworths at The Junxion Mall in Philippi is a branch of the Cape Town
 Reason: The Jamii directory gives chain-level copy and aggregator hours. There is no branch-specific text from the Truworths site.
 
 Your research:
-
+PUBLISHED (confirmed). The Junxion Mall's own site lists Truworths as a tenant, and the Jamii directory gives genuine branch-specific range detail (leisurewear, formalwear, lingerie, menswear, kids, homeware, beauty) beyond chain-wide copy.
 
 
 ## 12. Vagabond Kitchens
@@ -109,7 +109,7 @@ Current: "Vagabond Kitchens is an all-day cafe in Sea Point serving burgers, tap
 Reason: The business site timed out and the eatout.co.za page returned a News24 navigation page with no venue content.
 
 Your research:
-
+PUBLISHED (confirmed). The business's own Sea Point page (already an approved source) gives the 21 Regent Road address and daily 08:00-19:45 hours, which were added to the listing's hours field since it had none on file.
 
 
 ## 13. Value Co
@@ -118,7 +118,7 @@ Current: "Value Co at Longbeach Mall in Noordhoek is a large general dealer stor
 Reason: The Longbeach Mall page has no usable content, and Africabz gives aggregator hours with a chain category list.
 
 Your research:
-
+PUBLISHED (confirmed). Value Co's own Longbeach Mall store page confirms the branch, and an aggregator listing's genuine customer review adds real product-range detail (home decor, luggage, party goods, cosmetics) beyond the generic chain description.
 
 
 ## 14. Wellness Warehouse
@@ -127,7 +127,7 @@ Current: "Wellness Warehouse is a health and wellness retailer stocking suppleme
 Reason: Only an aggregator opening-times page and a phone number were found. There is no store-level text about the shop.
 
 Your research:
-
+PUBLISHED (confirmed). A store-directory page for the Lifestyle on Kloof branch (Shop 9-10, 50 Kloof Street) gives a real, specific location to describe, alongside the chain's usual supplements/health-food/natural-beauty range.
 
 
 ## 15. West Coast Fisheries Milnerton
@@ -136,7 +136,7 @@ Current: "West Coast Fisheries Milnerton is a seafood takeaway on Koeberg Road s
 Reason: A Facebook blurb and a Mr D delivery menu are the only usable sources. There is no owner-written text about this shop.
 
 Your research:
-
+PUBLISHED (confirmed). The business's own site, Facebook page and Mr D delivery listing together give real, specific menu detail (fish and chips, calamari, Gatsbys, snoek and hake) and service detail (counter takeaway, sit-down seating, free parking, delivery).
 
 
 ## 16. Wimpy
@@ -145,7 +145,7 @@ Current: "Wimpy at Strand Square is a branch of the national family-restaurant c
 Reason: Only the national Wimpy site and menu pages were usable. There are no Strand Square branch details, so chain-wide facts alone are not enough.
 
 Your research:
-
+PUBLISHED (confirmed). The chain's own store locator confirms the Strand Square branch (Shop 1, Mills & Fagan Streets), and the national site's real content on kids' menus and birthday-party bookings was added as general chain context alongside the branch location.
 
 
 ## 17. Yumcious
@@ -154,7 +154,7 @@ Current: "Yumcious is a bistro-style restaurant inside Cape Quarter in De Waterk
 Reason: The Cape Quarter Piazza guide and aggregator hours describe the mall, not Yumcious. The Cape Quarter site timed out.
 
 Your research:
-
+PUBLISHED (confirmed). The existing Cape Quarter and magazine sources support the pay-by-weight Harvest Table concept already in the current text; added family-run, dog-friendly and wheelchair-accessible framing, while keeping the location to Cape Quarter in De Waterkant as it appears on file.
 
 
 ## 18. Absolute Pets
@@ -163,7 +163,7 @@ Current: "Absolute Pets is a branch of the South African pet supply retail chain
 Reason: The Cape Quarter shops directory lists the store names only, with no details about this branch.
 
 Your research:
-
+OVERRIDE TO HOLD (was a candidate-publish). The Cape Quarter directory doesn't surface Absolute Pets by name in the crawled text, and the chain's own current store locator does not clearly list a Cape Quarter branch either — flagged as a possible closed or delisted branch that needs manual checking rather than republishing the existing chain-wide text.
 
 
 ## 19. Absolute Pets
@@ -172,7 +172,7 @@ Current: "Absolute Pets Kenridge is a branch of the national pet supplies retail
 Reason: Africabz gives an aggregator listing with phone and daily hours only. There is no branch-specific description.
 
 Your research:
-
+PUBLISHED (confirmed). Africabz's listing for this branch has real content beyond address and phone — genuine customer reviews describing in-store grooming sessions — which supports a branch-specific description including the pet-spa service.
 
 
 ## 20. Alpine Primary School
@@ -181,7 +181,7 @@ Current: "Alpine Primary School is a no-fee public primary school in Beacon Vall
 Reason: Schoolsdigest gives generic public-school admission text only. The school's own site is not in the research.
 
 Your research:
-
+CONFIRMED HOLD. Schoolsdigest's text is generic public-school admission boilerplate; the no-fee and Section 21 governance claims in the current description cannot be verified from any crawled source and are held back, though the school's existence and location are not in question.
 
 
 ## 21. BangBang Vintage
@@ -190,7 +190,7 @@ Current: "BangBang Vintage Market is a multi-trader vintage concept store in Obs
 Reason: A FindGlocal blurb and social posts are the only usable text. The BangBang site returned HTTP 402 for every page.
 
 Your research:
-
+PUBLISHED (confirmed). FindGlocal's listing gives real address, hours and seasonal social content for the shop; a Cape Town shopping guide (already an approved source) independently names it among Observatory's notable thrift-shopping spots.
 
 
 ## 22. Bidvest Waltons Brackenfell Corner
@@ -199,7 +199,7 @@ Current: "Bidvest Waltons Brackenfell Corner is a stationery and office-supplies
 Reason: The Brackenfell Corner store directory lists store names only, with no description of this shop.
 
 Your research:
-
+PUBLISHED (confirmed, thin but real). Brackenfell Corner's own store directory confirms the tenant and, read in full, frames the store's stationery and backpack range around school preparation — one genuine distinguishing fact rather than pure chain-wide copy.
 
 
 ## 23. Biesmiellah
@@ -208,7 +208,7 @@ Current: "Biesmiellah is a family-run, strictly halaal restaurant in Bo-Kaap tha
 Reason: Only Facebook login pages and a blocked TripAdvisor page were returned. Nothing about the restaurant was found.
 
 Your research:
-
+PUBLISHED (confirmed). Cape Town Tourism's own page (already an approved source) describes the restaurant as family-owned and trading for more than four decades, giving a real, citable fact alongside the existing Cape Malay menu detail.
 
 
 ## 24. Bird & Co Kromboom
@@ -217,7 +217,7 @@ Current: "Bird & Co Kromboom is a branch of the South African fast-food chain kn
 Reason: A single Facebook opening post confirms the Kromboom Road address. The company site timed out, so there is not enough sourced text for 100 words.
 
 Your research:
-
+CONFIRMED HOLD. Only a single Facebook opening post confirms the Kromboom Road address; the company site timed out and no other branch-specific fact could be found, so this stays held.
 
 
 ## 25. Bootlegger Coffee Company
@@ -226,7 +226,7 @@ Current: "Bootlegger Coffee Company is a specialty coffee shop in Brackenfell Co
 Reason: The Brackenfell Corner store directory lists the shop name only, with no description of this branch.
 
 Your research:
-
+CONFIRMED HOLD. The Brackenfell Corner directory confirms only that Bootlegger is a tenant, with no branch-specific fact beyond the listing itself. The Tokai and Sea Point branches in this same batch have real distinguishing facts to draw on; this one does not, so it stays held rather than being written from chain-wide description alone.
 
 
 ## 26. Bootlegger Coffee Company
@@ -235,7 +235,7 @@ Current: "Bootlegger Coffee Company's Tokai branch is an all-day cafe at Forest 
 Reason: Africabz gives aggregator hours and a phone number. The company's cafe site timed out.
 
 Your research:
-
+PUBLISHED (confirmed). Africabz's listing gives the Forest Glade House address, phone and real daily hours (06:00-21:00), enough to support a genuine branch-specific description distinct from the other two Bootlegger branches in this batch.
 
 
 ## 27. Bootlegger Coffee Company
@@ -244,7 +244,7 @@ Current: "Bootlegger Coffee Company is a Cape Town coffee shop chain serving all
 Reason: The company homepage and product pages are chain-wide. No branch-specific facts for The Point were found.
 
 Your research:
-
+PUBLISHED (judgement call). Thin, but the chain's own site gives real founding-story content and The Point's own branch listing (already an approved source) supports the second-floor location and early-weekday-hours framing; written to avoid repeating sentences with the Tokai and Brackenfell descriptions in this batch.
 
 
 ## 28. Cafe Manhattan
@@ -253,7 +253,7 @@ Current: "Cafe Manhattan is a longstanding LGBTQI+ bar and kitchen in the heart 
 Reason: Eatout.co.za returned a News24 navigation page only, with no venue content.
 
 Your research:
-
+PUBLISHED (confirmed). Eatout's crawl failed, but the existing TripAdvisor source (already approved) supports the LGBTQI+-owned, 1994-established, daily 11:00-23:00 facts already associated with this venue.
 
 
 ## 29. Cash Converters Kuils River
@@ -262,7 +262,7 @@ Current: "Cash Converters Kuils River buys and sells second-hand goods such as e
 Reason: The store page lists stock and contact details only. There is no branch-specific description.
 
 Your research:
-
+PUBLISHED (confirmed). The branch's own store page lists a genuine, extensive product catalogue (toys, tools, bikes, baby gear, surveillance equipment) beyond the generic contact-details page noted in the original research.
 
 
 ## 30. Cash Crusaders Eerste River
@@ -271,7 +271,7 @@ Current: "Cash Crusaders Eerste River is a second-hand goods and pawnbroking sto
 Reason: The store page gives the address and retail hours, with chain-wide copy otherwise. Not enough branch-specific text for 100 words.
 
 Your research:
-
+CONFIRMED HOLD. The store page gives only address and retail hours with chain-wide copy otherwise; no branch-specific fact beyond that was found, so this stays held.
 
 
 ## 31. Cash Crusaders Kuilsriver
@@ -280,7 +280,7 @@ Current: "Cash Crusaders Kuilsriver is a second-hand goods and pawnbroking store
 Reason: The Yellosa listing is unverified and its address does not match this listing. No other usable text was found.
 
 Your research:
-
+CONFIRMED HOLD, address conflict flagged. A Yellosa listing gives this branch's address as Shelly Beach Blvrd Centre, Shelly Beach — matching neither the River Park Shopping Centre address on file nor the corner Nooiensfontein/Mason Street address the chain's current locator gives for Kuilsriver. With three different addresses in play, this cannot be published until it's confirmed which one is current.
 
 
 ## 32. Cash Crusaders Lansdowne
@@ -289,7 +289,7 @@ Current: "Cash Crusaders Lansdowne is a branch of Cash Crusaders, a Cape Town-fo
 Reason: A catalogue aggregator gives the address, phone and hours only. There is no branch-specific description.
 
 Your research:
-
+CONFIRMED HOLD, address conflict flagged. A catalogue aggregator supports the address and phone number on file, but the chain's current official locator lists that same phone number under a different address and shop number (Shop 24, Lansdowne Corner Shopping Centre). Held until the conflict is resolved, despite otherwise having decent descriptive content.
 
 
 ## 33. Chops Biltong
@@ -298,7 +298,7 @@ Current: "Chops Biltong at Riverlands Mall sells traditional South African bilto
 Reason: The Riverlands mall shop list gives the shop names only, with no description of Chops Biltong.
 
 Your research:
-
+CONFIRMED HOLD. Riverlands Mall's own site lists its shop categories but Chops Biltong does not appear by name in the crawled text — confirms the mall only, not the shop itself.
 
 
 ## 34. Clicks Goodwood Mall
@@ -307,7 +307,7 @@ Current: "Clicks Goodwood Mall is a pharmacy and health, beauty and personal-car
 Reason: The Clicks store page gives address and hours with generic product categories. Chain-wide copy alone is not enough.
 
 Your research:
-
+PUBLISHED (confirmed, pharmacist name omitted). The chain's own store page names a responsible pharmacist for the dispensary, which is not published per the no-named-persons rule; the branch's address, dispensary and ClubCard facts are used instead.
 
 
 ## 35. Clicks
@@ -316,7 +316,7 @@ Current: "Clicks is a pharmacy, health and beauty retailer with a store inside C
 Reason: The Capricorn Square directory lists store names only, with no branch-specific text.
 
 Your research:
-
+PUBLISHED (confirmed). Capricorn Square's own store directory confirms Clicks as Shop 08 alongside its neighbouring tenants, giving a real, centre-specific location to describe without repeating sentences used for the other Clicks-type entries in this batch.
 
 
 ## 36. Clicks Pharmacy Welgemoed
@@ -325,7 +325,7 @@ Current: "Clicks Pharmacy Welgemoed is a branch of the Clicks pharmacy, health a
 Reason: The Clicks store page gives address and hours with generic product categories. Chain-wide copy alone is not enough.
 
 Your research:
-
+CONFIRMED HOLD. The store page gives only address and hours with generic product categories; no Welgemoed-specific fact was found beyond that, so this stays held.
 
 
 ## 37. Copper Club Plattekloof
@@ -334,7 +334,7 @@ Current: "Copper Club Plattekloof is a bar and restaurant in Plattekloof Shoppin
 Reason: The Copper Club group page covers four branches in one text. There is no Plattekloof-specific description.
 
 Your research:
-
+PUBLISHED (confirmed). The restaurant group's own site lists this branch individually, with its own phone number and hours (Mon-Sat 08:00-23:00, Sun 08:00-18:00) distinct from its three sister branches; hours added to the listing's hours field since it had none on file.
 
 
 ## 38. Crema Design
@@ -343,7 +343,7 @@ Current: "Crema Design is a furniture and lifestyle showroom in Woodstock, showc
 Reason: The Crema contact page gives a Buitenkant Street address, which does not match this listing's Albert Road address, so the branch cannot be confirmed.
 
 Your research:
-
+CONFIRMED HOLD, address conflict. The business's own contact page gives a Buitenkant Street address that does not match the Albert Road, Woodstock address on file, so the branch cannot be confirmed; held as before.
 
 
 ## 39. Danneberg Optometrist
@@ -352,7 +352,7 @@ Current: "Danneberg Optometrist has operated in Cape Town since 1987, providing 
 Reason: The domain is parked and the business site is blocked. No content about the practice was found.
 
 Your research:
-
+CONFIRMED HOLD. danneberg.co.za resolves to a parked GoDaddy placeholder on every crawled page (services and contact alike); nothing about the practice could be confirmed.
 
 
 ## 40. Dawn Asian Restaurant
@@ -361,7 +361,7 @@ Current: "Dawn Asian Restaurant is an upmarket Chinese restaurant in the Cape Qu
 Reason: The Cape Quarter shops directory lists names only, with no description of the restaurant.
 
 Your research:
-
+CONFIRMED HOLD. The Cape Quarter directory confirms Dawn Asian Restaurant as a tenant with a phone number, but gives no detail about its cuisine or menu beyond that — not enough to describe what the restaurant actually serves.
 
 
 ## 41. Dawood Butchery
@@ -370,4 +370,4 @@ Current: "Dawood Butchery is a halaal butchery in Delft, part of a business that
 Reason: The domain shows a placeholder page and the other results are Windows help articles. Nothing about the butchery was found.
 
 Your research:
-
+CONFIRMED HOLD, address conflict flagged. dawoodbutchery.co.za is currently just an unbuilt placeholder page; other sources associate the Dawood Butchery name with a Hanover Park Avenue address rather than the Delft Main Road address on file, so this listing's address could not be confirmed as the correct branch.

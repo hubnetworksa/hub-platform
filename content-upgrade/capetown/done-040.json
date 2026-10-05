@@ -1,12 +1,14 @@
 {
   "city": "capetown",
   "chunk": 40,
-  "generated_at": "2026-10-05T05:55:22.626Z",
+  "generated_at": "2026-10-05T17:20:58.996Z",
   "items": [
     {
       "slug": "wimpy-false-bay-engen-1-stop-macassar",
-      "status": "deferred",
-      "reason": "Chain restaurant at a fuel stop. The only content is national Wimpy marketing copy ('everyone's kind of place', Famous Ribs at R139.90) rather than facts specific to this Macassar branch. Chain-wide facts alone are not allowed."
+      "status": "researched",
+      "sources": [
+        "https://www.cylex.net.za/company/wimpy-17617715.html"
+      ]
     },
     {
       "slug": "wink-cafe-eaton-square-diep-river",
@@ -73,7 +75,7 @@
     {
       "slug": "dc-meat-beacon-valley",
       "status": "deferred",
-      "reason": "Only a Yellosa directory entry (address, phone, unverified listing, no description) was found. No facts about the butchery's products or services were sourced."
+      "reason": "Only a Yellosa directory entry (address, phone, unverified listing, no description) was found, with no facts about the butchery's products or services. A possible branch mismatch was also flagged: DC Meat's official store locator is understood to list its Mitchells Plain branch at a different address (A Z Berman Drive) than the Bravo Street, Beacon Valley address on file, but the official site was not reachable in this research pass to confirm either way."
     },
     {
       "slug": "ellerman-house-bantry-bay",

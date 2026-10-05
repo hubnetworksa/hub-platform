@@ -1,7 +1,7 @@
 {
   "city": "capetown",
   "chunk": 43,
-  "generated_at": "2026-10-05T06:45:41.243Z",
+  "generated_at": "2026-10-05T17:20:59.726Z",
   "items": [
     {
       "slug": "the-italian-art-shop-rondebosch",
@@ -27,12 +27,12 @@
     {
       "slug": "agrimark-philippi",
       "status": "deferred",
-      "reason": "Agrimark is a national chain under the KAL Group. The only source was the group's general about page, with no facts specific to the Philippi branch. Chain-wide facts alone are not allowed."
+      "reason": "Agrimark is a national chain under the KAL Group; the only crawled source is the group's general about page, with no facts specific to the Philippi branch. The human research's claims about a 1956 opening and a 2025 facelift are not present in any crawled source, so chain-wide facts alone can't carry a description."
     },
     {
       "slug": "apnisleep-sea-point",
       "status": "deferred",
-      "reason": "The business's own site was blocked, and the search results were unrelated South African football league pages. Nothing about Apnisleep was found."
+      "reason": "The business's own site was blocked, and the search results were unrelated South African football league pages. Nothing about Apnisleep, including the supplied Sea Point address, was found in any crawled or search source."
     },
     {
       "slug": "chamomile-farming-philippi-horticultural",
@@ -59,22 +59,24 @@
     {
       "slug": "pep-philippi-shopping-centre-philippi",
       "status": "deferred",
-      "reason": "Chain clothing retailer. Only a Tiendeo store page with address, hours and a current promotion was found, with no branch-specific facts beyond trading hours. Chain-wide facts alone are not allowed."
+      "reason": "Chain clothing retailer. Only a Tiendeo store page with address, hours and a current promotion was found, with no branch-specific products or services beyond trading hours. Chain-wide facts alone are not allowed."
     },
     {
       "slug": "safetop-wetton",
-      "status": "deferred",
-      "reason": "Safetop is a national fastener and hardware wholesaler. The only source describes the company's three distribution centres (Cape Town, Johannesburg and Durban) and national sales structure, with no facts specific to a Wetton branch or store. Chain-wide facts alone are not allowed."
+      "status": "researched",
+      "sources": [
+        "https://www.safetopdiy.co.za/"
+      ]
     },
     {
       "slug": "superior-packaging-industries-ndabeni",
       "status": "deferred",
-      "reason": "The only source was a contact page giving the address, email and phone, with no description of the company's packaging products or services. Not enough for 100 real words."
+      "reason": "The only crawled sources are a contact page giving the address, email and phone, with no description of the company's packaging processes, product range or certifications. The human research's extrusion, lamination and BRC AA-grade claims are not present in any crawled source, so there isn't enough for 100 real words."
     },
     {
       "slug": "the-spade-boutique-hotel-mandela-park",
       "status": "deferred",
-      "reason": "The only source was a paywalled News24 article behind a subscription wall, with the visible text limited to site navigation and headlines. No usable content about the hotel was found."
+      "reason": "The only crawled source is a paywalled News24 article, with visible text limited to site navigation and a subscription prompt. The human research's suite count, spa, pool and dining details are not present in any crawled source, so no hotel-specific fact can be used."
     },
     {
       "slug": "trevoyan-guesthouse-tamboerskloof",
@@ -148,7 +150,7 @@
     {
       "slug": "mzamomhle-clinic-browns-farm",
       "status": "deferred",
-      "reason": "The Medpages directory entry states that the information for this provider is still being updated and cannot yet be verified, giving only the address and phone number. Not enough for 100 real words."
+      "reason": "The Medpages entry states its information is still being updated and cannot yet be verified, giving only the address and phone number; the City of Cape Town facility page returned a 404. The human research's service list and trading hours are not present in any crawled source."
     },
     {
       "slug": "pier-va-waterfront",
@@ -209,7 +211,7 @@
     {
       "slug": "block-and-chisel-gardens",
       "status": "deferred",
-      "reason": "Block and Chisel is a national furniture chain. The specific Kloof Street store page returned 404, and the rest of the site is a general online catalogue with no facts specific to the Gardens branch. Chain-wide facts alone are not allowed."
+      "reason": "Block and Chisel is a national furniture chain. The specific Kloof Street store page returned 404, and the rest of the site is a general online catalogue with no facts specific to the Gardens branch; the human research's 2019 store-opening and 1975 workshop-founding claims are not present in any crawled source."
     },
     {
       "slug": "cafe-roux-noordhoek",
@@ -229,7 +231,7 @@
     {
       "slug": "crumbs-and-cream-sea-point",
       "status": "deferred",
-      "reason": "Crumbs and Cream is a small ice cream chain with multiple locations and stockists. The only source was general chain-wide marketing copy, with no facts specific to the Sea Point branch. Chain-wide facts alone are not allowed."
+      "reason": "Crumbs and Cream is a small ice cream chain with multiple locations and stockists. The only source was general chain-wide marketing copy, with no facts specific to the Sea Point branch; the human research's 16 Regent Road and Watershed/V&A details are not present in the crawled homepage copy."
     },
     {
       "slug": "lazari-vredehoek",
@@ -255,32 +257,32 @@
     {
       "slug": "rocklands-clinic-rocklands",
       "status": "deferred",
-      "reason": "The Western Cape Government facility page for this clinic returned Page Not Found. No other source about the clinic was found."
+      "reason": "The Western Cape Government facility page for this clinic returned Page Not Found, and no other source about the clinic was crawled. The human research's confirmed-hours claim is not present in any crawled source."
     },
     {
       "slug": "rocklands-pharmacy-rocklands",
       "status": "deferred",
-      "reason": "The sources give conflicting addresses for a pharmacy under this name, including one at a BP Garage in Mitchells Plain, and cannot be confirmed as the same business as this Rocklands listing. Given the address mismatch, no safe description could be written."
+      "reason": "The sources give conflicting identities for a pharmacy under this name: one crawled listing ties this address to a Facebook page branded Savemore Pharmacies, not Rocklands Pharmacy, and cannot be confirmed as the same business as this listing. Given the address/identity mismatch, no safe description could be written."
     },
     {
       "slug": "southern-ropes-factory-shop-paarden-eiland",
       "status": "deferred",
-      "reason": "The only search result was the Cybo business directory homepage, with no content about Southern Ropes Factory Shop. Nothing about the business was found."
+      "reason": "The only crawled source is the Cybo business directory homepage, with no content about Southern Ropes Factory Shop at all. The human research's product range, Section Street confirmation and trading hours are not present in any crawled source."
     },
     {
       "slug": "the-hussar-grill-mouille-point",
       "status": "deferred",
-      "reason": "The only usable source was an Eat Out news page with site navigation and headlines. TripAdvisor was blocked, so nothing about the restaurant itself was found."
+      "reason": "The only usable source was an Eat Out news page with site navigation and headlines; TripAdvisor was blocked, so nothing about the restaurant itself was found. The human research's New Cumberland Building, BYOB and trading-hours details are not present in any crawled source."
     },
     {
       "slug": "the-shop-restaurant-three-anchor-bay",
       "status": "deferred",
-      "reason": "The restaurant's own site did not resolve, and the only other source was an Eat Out news page with site navigation and headlines. Nothing about the restaurant was found."
+      "reason": "The restaurant's own site did not resolve, and the only other source was an Eat Out news page with site navigation and headlines. The human research's opening date and Buzbey Grill handover details are not present in any crawled source, and current trading status is unconfirmed."
     },
     {
       "slug": "wordsworth-books-gardens-shopping-centre-gardens",
       "status": "deferred",
-      "reason": "The africabz directory page was blocked, and the only other search result was an unrelated music-download site. Nothing about this Wordsworth Books branch was found."
+      "reason": "The africabz directory page was blocked, and the only other search result was an unrelated music-download site. The human research's Shop 9/Gardens Shopping Centre confirmation is not present in any crawled source for this branch."
     },
     {
       "slug": "61-on-camps-bay-camps-bay",
@@ -292,22 +294,22 @@
     {
       "slug": "afrox-epping",
       "status": "deferred",
-      "reason": "Afrox is a national gas and welding products supplier and a member of the Linde Group. The only source repeats the company's national description, with the Epping address as the only branch-specific fact. Chain-wide facts alone are not allowed."
+      "reason": "Afrox is a national gas and welding products supplier and a member of the Linde Group. The only source repeats the company's national description plus the Epping address; the human research's specific welding-equipment range is not present in any crawled source, leaving only chain-wide facts."
     },
     {
       "slug": "alphen-boutique-hotel-and-spa-constantia",
       "status": "deferred",
-      "reason": "The only source was a contact page with site navigation and cookie-consent text, giving little more than the address and phone number. Not enough description content for 100 real words."
+      "reason": "The only crawled source is a contact page with site navigation and cookie-consent text, giving little beyond the address, phone number and a 24/7 front-desk note. The human research's suite count, spa and dining-venue details are not present in any crawled source."
     },
     {
       "slug": "blended-health-cafe-and-catering-glencairn",
       "status": "deferred",
-      "reason": "The only source was a contact page listing the address, phone numbers and a food truck mention, with no description of the cafe's menu or catering services. Not enough for 100 real words."
+      "reason": "The only source was a contact page listing the address, phone numbers and a food-truck mention, with no description of the cafe's menu or catering services. The human research's vegan/plant-based menu and catering-client details are not present in any crawled source."
     },
     {
       "slug": "cape-union-mart-va-waterfront",
       "status": "deferred",
-      "reason": "Chain outdoor retailer. Only a Tiendeo store page with address, hours and a current promotion was found, with no branch-specific facts beyond trading hours. Chain-wide facts alone are not allowed."
+      "reason": "Chain outdoor retailer. Only a Tiendeo store page with address, hours and a current promotion was found, with no branch-specific products or services beyond trading hours. Chain-wide facts alone are not allowed."
     },
     {
       "slug": "clovelly-country-club-clovelly",

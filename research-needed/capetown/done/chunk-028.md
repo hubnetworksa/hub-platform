@@ -9,9 +9,7 @@ Shop 13, Okavango Crossing, Corner Okavango & Langeberg Road, Kraaifontein, Cape
 Current: "Dis-Chem Pharmacy Okavango Crossing is a pharmacy inside Okavango Crossing shopping centre in Kraaifontein, part of the Dis-Chem chain, offering a dispensary and health, beauty and wellness products."
 Reason: The Dis-Chem store page gives address and phone, plus a closure notice for a 2025 stock take. The rest is chain-wide copy, so there are no current branch-specific facts.
 
-Your research:
-
-
+Your research: PUBLISHED (confirmed). The store's own page (dischem.co.za) confirms Shop 13 at the corner of Okavango and Langeberg Road, a Click & Collect service, and full weekly trading hours. Hours added to the listing since the field was empty.
 
 ## 2. Distell
 120 Bofors Circle, Epping Industria, Cape Town, 7460
@@ -20,6 +18,7 @@ Reason: The only branch source is a 2018 property-news item about a Distell leas
 
 Your research:
 
+CONFIRMED HOLD. The only branch source is a 2018 property-news item about a Distell lease at a different Epping-area park; it does not independently confirm this listing's 120 Bofors Circle address as a current Distell facility. Address could not be verified, so no branch-specific claims were published.
 
 
 ## 3. Eagle Lighting Somerset West
@@ -29,6 +28,7 @@ Reason: Africabz gives an aggregator listing with address, phone and hours. The 
 
 Your research:
 
+CONFIRMED HOLD. Only an aggregator listing (address, phone, hours) is available; no current official Eagle Lighting branch source confirms this Somerset Decor Centre store's product range.
 
 
 ## 4. Eagles' Nest
@@ -38,6 +38,7 @@ Reason: The estate's about page is the only usable source, and it describes the 
 
 Your research:
 
+PUBLISHED (confirmed). The estate's own about-us page confirms the farm's history from the late 1600s, the 2000 fire and replanting, and current wines, tastings and wine club.
 
 
 ## 5. Ellies Electronics
@@ -47,6 +48,7 @@ Reason: The Ellies homepage describes the group's lighting and surge-protection 
 
 Your research:
 
+CONFIRMED HOLD. The Ellies homepage only describes the group's range in general terms; nothing branch-specific for the 47 Morningside Road, Ndabeni address was found.
 
 
 ## 6. Eversdal Primary School
@@ -56,6 +58,7 @@ Reason: The school's contact page gives address, phones and reception hours only
 
 Your research:
 
+PUBLISHED (confirmed). The school's own contact page confirms the Stepping Stonesweg address, aftercare, dedicated academic/sport/learner-care contacts and 2026 learner hours by grade.
 
 
 ## 7. Exclusive Books
@@ -65,6 +68,7 @@ Reason: The Constantia Village directory, Facebook page and national site are ei
 
 Your research:
 
+PUBLISHED (confirmed, short). Facebook and the Constantia Village directory confirm the Shop 46 branch and its Mon-Fri/Sat hours; kept to a shorter, honest description built around the branch confirmation rather than padding with unsourced chain detail.
 
 
 ## 8. Fabric Friends
@@ -74,6 +78,7 @@ Reason: Africabz gives an aggregator listing with address, phone and hours. The 
 
 Your research:
 
+CONFIRMED HOLD. Only an aggregator listing (address, phone, hours) is available; the shop's own site is not in the research, so no owner-written fabric/haberdashery range could be confirmed.
 
 
 ## 9. Famous Kalahari Biltong
@@ -83,6 +88,7 @@ Reason: The store locator gives address and phone, and the delivery page is chai
 
 Your research:
 
+PUBLISHED (confirmed). The official store locator confirms the Richmond Corner branch, and a delivery-platform listing confirms its product range (biltong, droewors, meat sticks) and delivery availability.
 
 
 ## 10. Fisherman's Lane
@@ -92,6 +98,7 @@ Reason: The Capricorn Square directory lists store names and phones only. No des
 
 Your research:
 
+CONFIRMED HOLD (judgement call). The Capricorn Square directory confirms Fisherman's Lane as tenant Shop 13 but gives nothing beyond the shop name and phone number — the same bare tenant-directory pattern held in prior chunks (e.g. Markham, SPAR, Sorbet in chunk 24). Too thin to clear the bar for 100+ genuine words.
 
 
 ## 11. Formentos Bakery & Take-Aways
@@ -101,6 +108,7 @@ Reason: The only usable pages are a Yep directory shell and unrelated search res
 
 Your research:
 
+CONFIRMED HOLD. Only a Yep directory shell and unrelated search results are available; the bakery's own site is not in the research.
 
 
 ## 12. Formula 1 Fitment Centre
@@ -110,6 +118,7 @@ Reason: The only source is a FindGlocal directory listing with address and phone
 
 Your research:
 
+CONFIRMED HOLD. Only a FindGlocal directory listing (address, phone) is available; the Thinklocal page was blocked and no owner-written source was found.
 
 
 ## 13. Foxcroft
@@ -119,6 +128,7 @@ Reason: The only usable source is a Cape Town Magazine feature about the restaur
 
 Your research:
 
+ADDRESS CHANGE — DEFERRED, NOT PUBLISHED. Foxcroft's official site confirms the restaurant has relocated to Constantia Nek; the supplied High Constantia Centre address is out of date. Flagged for an address correction rather than a republished description of the old location.
 
 
 ## 14. Frying Nemo
@@ -128,6 +138,7 @@ Reason: Every search result is a Canva page, and the Frying Nemo listing pages r
 
 Your research:
 
+CONFIRMED HOLD. Every search result is an unrelated Canva page, and the Frying Nemo listing pages 404'd or were blocked; nothing current was found.
 
 
 ## 15. Giant Hyper
@@ -137,6 +148,7 @@ Reason: The Giant Hyper about page describes the group and its CapeGate store, b
 
 Your research:
 
+ADDRESS/BRANCH VERIFY — HELD. The Giant Hyper site documents only its CapeGate store; the supplied Gunners Circle, Epping address is not confirmed as a current Giant Hyper branch, and the brand's 2001 Epping origin story is not a substitute for that confirmation.
 
 
 ## 16. Goldfish Cafe & Eatery
@@ -146,6 +158,7 @@ Reason: The Facebook page gives an award line and follower count, and the eatout
 
 Your research:
 
+CONFIRMED HOLD. The Facebook page gives only an award line and follower count, and the eatout page returned unrelated News24 navigation content; not enough sourced text for 100 words.
 
 
 ## 17. The Greek Club Restaurant
@@ -155,6 +168,7 @@ Reason: Africabz gives an aggregator listing with hours and phone, and the nusal
 
 Your research:
 
+PUBLISHED (confirmed). Africabz confirms the address, phone, hours and reviews, and EatOut (already an existing source for this listing) confirms the Greek menu items and facilities used in the description.
 
 
 ## 18. Gringo's Cantina
@@ -164,6 +178,7 @@ Reason: Africabz gives an aggregator listing with hours, categories and phone. N
 
 Your research:
 
+CONFIRMED HOLD. Only an aggregator listing (hours, categories, phone) is available; no owner-written source confirms the current menu or games offering.
 
 
 ## 19. Health on Point
@@ -173,6 +188,7 @@ Reason: The Medpages listing describes a pharmacy at a Spar in Mouille Point, wh
 
 Your research:
 
+PUBLISHED (confirmed). The pharmacy's own site and about page support the boutique-pharmacy description; its extended daily trading hours were added since the listing's hours field was empty.
 
 
 ## 20. High Constantia Wine Cellar
@@ -182,6 +198,7 @@ Reason: The homepage gives an age gate and short tasting-room copy only. The win
 
 Your research:
 
+PUBLISHED (confirmed). The estate's own site, together with its existing sources, confirms the 1693 history, current wine range (including Cabernet Franc) and outdoor-patio tasting setup (no restaurant on site). Winemaker's name omitted per the no-person-names rule.
 
 
 ## 21. High Street Lingerie
@@ -191,6 +208,7 @@ Reason: The Cape Quarter shops directory lists store names only. There is no des
 
 Your research:
 
+CONFIRMED HOLD. The Cape Quarter shops directory lists the store name only; no description of High Street Lingerie's current range was found.
 
 
 ## 22. Hungry Lion Steenberg
@@ -200,6 +218,7 @@ Reason: The Hungry Lion store page gives a founding date and a chain-wide descri
 
 Your research:
 
+PUBLISHED (confirmed). The official Hungry Lion store locator and the branch's own Facebook page confirm the Steenberg Centre branch and its focus on value and flavour; chain facts (founded 1997, menu range) support the rest.
 
 
 ## 23. Italo's
@@ -209,6 +228,7 @@ Reason: The only usable source is an insideguide.co.za feature about the deli an
 
 Your research:
 
+PUBLISHED (confirmed). The insideguide.co.za feature gives genuine, specific branch detail (deli range, butchery, dog-friendly, opened January 2020); the founder's name was omitted per the no-person-names rule.
 
 
 ## 24. Joon Restaurant
@@ -218,6 +238,7 @@ Reason: The restaurant's own site is blocked and the only other source is an afr
 
 Your research:
 
+PUBLISHED (confirmed). Africabz confirms the branch, hours and specific dishes via customer reviews after its relaunch as Joon Mediterranean Muizenberg; the restaurant's own site (an existing source) supports the pizza, catering and community-events detail.
 
 
 ## 25. Kenridge Pre-Primary School
@@ -227,6 +248,7 @@ Reason: The school's homepage gives a short introduction and programme names. No
 
 Your research:
 
+PUBLISHED (confirmed). The school's own homepage confirms the dual-medium Pre-Grade R/Grade R programme, play-based approach and aftercare.
 
 
 ## 26. Kirstenhof Car Sales
@@ -236,6 +258,7 @@ Reason: Every result is a music-download site or a blocked directory. Nothing ab
 
 Your research:
 
+CONFIRMED HOLD. Every result is an unrelated music-download site or a blocked directory; nothing about the dealership was found.
 
 
 ## 27. La Marzocco South Africa
@@ -245,6 +268,7 @@ Reason: The Old Biscuit Mill tenant page gives the brand's general mission and t
 
 Your research:
 
+PUBLISHED (confirmed). The Old Biscuit Mill tenant page confirms the Woodstock showroom and brand mission; the brand's own site (an existing source) supports the espresso machine/grinder range and Accademia del Caffe Espresso detail.
 
 
 ## 28. La Perla
@@ -254,6 +278,7 @@ Reason: The restaurant's homepage gives only the address, phones and take-away n
 
 Your research:
 
+CONFIRMED HOLD. The restaurant's homepage gives only address, phone numbers and a takeaway note; the rest of the site 404'd, so the current menu could not be verified.
 
 
 ## 29. Lion's Bread
@@ -263,6 +288,7 @@ Reason: The bakery's site places its baking in Gardens and its pick-up point on 
 
 Your research:
 
+PUBLISHED (confirmed, address corrected). The bakery's own site confirms it was founded in the Bo-Kaap in 2024 and that Bo-Kaap is among its current locations, resolving the earlier Gardens/Clare Street conflict.
 
 
 ## 30. Look Its Me Hair Design
@@ -272,6 +298,7 @@ Reason: The only usable source is a Fresha service list, with no owner-written d
 
 Your research:
 
+STATUS CONCERN — HELD, NOT CONFIRMED CLOSED. A public company-information record lists this business as deregistered for annual-return non-compliance. This does not confirm the salon has closed, but it needs manual or owner verification before publishing.
 
 
 ## 31. Mark One Hair Design
@@ -281,6 +308,7 @@ Reason: The Fresha listing gives a service list (balayage, keratin, women's hair
 
 Your research:
 
+PUBLISHED (confirmed). The Fresha listing confirms the Strand Pavilion branch, its balayage/keratin/haircut services and its Tuesday-Saturday hours; hours added since the listing's hours field was empty. The unsourced '30 years trading' claim was dropped.
 
 
 ## 32. Markham Vangate Mall
@@ -290,6 +318,7 @@ Reason: The sayellow listing gives the address and chain-wide copy about the men
 
 Your research:
 
+CONFIRMED HOLD. The Sayellow listing gives only the address and chain-wide Markham copy; no branch-specific facts for Vangate Mall were found.
 
 
 ## 33. Merrypak & Print
@@ -299,6 +328,7 @@ Reason: The company's showroom page returned Page Not Found, and the Yellosa lis
 
 Your research:
 
+PUBLISHED (confirmed). Cybo (an existing source) and the Yellosa listing confirm the two-building Ndabeni operation (production plus a retail store, Print & Copy counter and Good Food Cafe) alongside the manufacturer's own packaging description.
 
 
 ## 34. Migal Vanas Photography
@@ -308,6 +338,7 @@ Reason: The Palms tenant list gives the studio name only. The studio's own site 
 
 Your research:
 
+PUBLISHED (confirmed). The photographer's own contact page (an existing source) confirms the Unit A042 Palms Emporium studio and international work in 60+ countries; the business's own name is a person's name, so it is used, but no other individual is named.
 
 
 ## 35. Mr Fish
@@ -317,6 +348,7 @@ Reason: The Hotfrog directory shows a 'Monday to Sunday Closed' line that contra
 
 Your research:
 
+CONFIRMED HOLD. A Hotfrog listing shows a 'Monday to Sunday Closed' line conflicting with this listing being open; no owner-written source resolves whether the branch is still trading, flagged for manual checking.
 
 
 ## 36. Mr Tekkie Somerset West
@@ -326,6 +358,7 @@ Reason: Africabz gives an aggregator listing with address, phone and categories.
 
 Your research:
 
+CONFIRMED HOLD. Only an aggregator listing (address, phone, categories) is available; the Mr Tekkie site is chain-wide, so no branch-specific range was confirmed.
 
 
 ## 37. Nampak Flexible Packaging
@@ -335,6 +368,7 @@ Reason: The usable pages are Nampak corporate media and history pages, and the d
 
 Your research:
 
+CONFIRMED HOLD. Only Nampak corporate media/history pages are available, and directory listings for this address are blocked; the Ndabeni plant could not be confirmed as this specific operation.
 
 
 ## 38. Neighbourgood 84 Harrington
@@ -344,6 +378,7 @@ Reason: The contact page is generic and the other source is a Property24 rental 
 
 Your research:
 
+CONFIRMED HOLD. The contact page is generic and the only other source is a single-unit Property24 rental listing; the aparthotel's full facilities could not be confirmed.
 
 
 ## 39. Ocean View Civic Centre
@@ -353,6 +388,7 @@ Reason: The only usable source is a municipal halls-for-hire directory entry wit
 
 Your research:
 
+CONFIRMED HOLD. Only a municipal halls-for-hire directory entry (no description) is available, and the city's own page 404'd; the hall's facilities and booking arrangements could not be verified.
 
 
 ## 40. Pedros Grassy Park
@@ -361,4 +397,6 @@ Current: "Pedros Grassy Park is a branch of the flame-grilled chicken chain serv
 Reason: The only usable source is a restaurant directory blurb about the grill menu, which is generic. The brand's own branch page is not in the research.
 
 Your research:
+
+CONFIRMED HOLD. The only usable source is a generic restaurant-directory blurb about the chain's flame-grilled menu; the brand's own branch page is not in the research, so outdoor-seating/delivery claims for this branch could not be verified.
 

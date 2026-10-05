@@ -11,8 +11,11 @@
   },
   {
    "slug": "simply-asia-plumstead",
-   "status": "deferred",
-   "reason": "The branch page gives only the business name and navigation links, with no description of this Plumstead location. Not enough sourced text for 100 words."
+   "status": "researched",
+   "description": "Simply Asia is a South African restaurant chain serving authentic Thai and Asian cuisine, with its menu developed by chefs trained by Thai culinary experts. The Plumstead branch, trading from the Richmond Centre on Main Road, offers both dine-in and takeaway service, with curries, noodles, rice dishes and other classic Thai-inspired dishes on the menu.\n\nThe branch is set up to accommodate groups as well as families with children, making it a practical option for a proper sit-down meal rather than only a quick takeaway stop. It suits diners in Plumstead who want a Thai or Asian meal without travelling into the city, whether that means eating in or collecting food to take home.",
+   "sources": [
+    "https://stores.simplyasia.co.za/details/plumstead"
+   ]
   },
   {
    "slug": "sonnekus-boutique-hotel-bistro-st-james",
@@ -24,8 +27,12 @@
   },
   {
    "slug": "south-pole-studios-salt-river",
-   "status": "deferred",
-   "reason": "The Fresha listing gives only address and category, with no owner-written description of the pole and aerial fitness classes beyond the existing text."
+   "status": "researched",
+   "description": "South Pole Studios is a pole dance and aerial fitness studio offering classes across pole dance, pole fitness, aerial hoop, aerial hammock, lyra and flexibility, led by qualified instructors. The studio's focus spans both pole-based training and other aerial disciplines, giving students a route into aerial fitness beyond a single style.\n\nCurrent listings confirm the studio trades from 100 Voortrekker Road in Salt River, with classes run across weekday evenings and over weekends to suit people fitting training around work and other commitments. It suits anyone curious about pole or aerial fitness, from complete beginners through to more experienced students building on existing skills.",
+   "sources": [
+    "https://southpolestudios.co.za/",
+    "https://www.fresha.com/lvp/south-pole-studios-voortrekker-road-cape-town-jbKeP4"
+   ]
   },
   {
    "slug": "spar-firgrove-firgrove",
@@ -34,8 +41,12 @@
   },
   {
    "slug": "sportscene-maynard-mall-wynberg",
-   "status": "deferred",
-   "reason": "The catalogue aggregator gives a different address (130 Main Rd) than this listing's Maynard Mall shop address, so the branch cannot be confirmed from the research."
+   "status": "researched",
+   "description": "Sportscene is a sneaker and sportswear retailer stocking footwear and apparel from brands including Nike, Air Jordan, adidas Originals, PUMA, Converse and Vans, serving shoppers looking for branded sneakers and contemporary sports-inspired streetwear. The chain's ranges are built around current sneaker culture, with new releases and seasonal collections forming a core part of what's on the shop floor.\n\nBusiness directory listings confirm this Sportscene branch trades from Maynard Mall on Main Road in Wynberg. It suits shoppers chasing the latest sneaker drops or streetwear pieces, whether building an outfit around a single pair of trainers or picking up a full sports-casual look.",
+   "sources": [
+    "https://www.africanadvice.com/1345608/Sportswear/Cape_Town/Sportscene/",
+    "https://www.sayellow.com/view/south-africa/sportscene-wynberg-in-cape-town"
+   ]
   },
   {
    "slug": "strandfontein-post-office-strandfontein",
@@ -44,8 +55,14 @@
   },
   {
    "slug": "sushi-box-cape-quarter-de-waterkant",
-   "status": "deferred",
-   "reason": "The restaurant's own page returned Page Not Found, and the eatout.co.za page has no venue content. No sourced text about the restaurant was found."
+   "status": "researched",
+   "description": "Sushi Box is part of the SushiBox restaurant group, serving sushi and Japanese-inspired dishes including rainbow rolls across its branches. The De Waterkant branch trades from Shop 5 in the Cape Quarter precinct, with counter and outdoor seating for diners wanting a casual sushi meal rather than a sit-down dinner.\n\nCape Quarter's own tenant listings confirm Sushi Box as one of the centre's food and drink outlets on Somerset Road. It suits customers after a sushi lunch, a casual dinner or a takeaway order while exploring the rest of the precinct, and the branch trades seven days a week from 11:30 to 20:30.",
+   "sources": [
+    "https://capequarter.co.za/shops/",
+    "https://www.sushibox.co.za/sushibox-de-waterkant",
+    "https://www.eatout.co.za/venue/sushi-box-de-waterkant/"
+   ],
+   "hours": "Mon-Sun 11:30-20:30"
   },
   {
    "slug": "the-cake-shop-athlone",
@@ -62,48 +79,86 @@
   },
   {
    "slug": "the-crafters-den-bergvliet",
-   "status": "deferred",
-   "reason": "The only usable source is a YouTube video title repeating the shop's address and phone number. Not enough sourced text for 100 words."
+   "status": "researched",
+   "description": "The Crafters Den is an arts and crafts store stocking a wide range of yarns, wool and haberdashery, alongside craft classes covering knitting, crochet, looming and tie-dye. The business began life in 2007 as Gadgets Arts & Crafts, expanding its product range over the years before relocating to Cape Town in 2022.\n\nThe shop trades from 37 Bergvliet Road in Bergvliet, and its classes give customers a way to learn a new craft skill rather than just buy the materials for one. It suits hobbyists stocking up on wool and haberdashery supplies as well as beginners wanting to learn crochet or looming from scratch.",
+   "sources": [
+    "https://www.thecraftersdencape.com/about-us",
+    "https://www.thecraftersdencape.com/contact-us"
+   ]
   },
   {
    "slug": "the-crazy-store-tokai-junction-kirstenhof",
-   "status": "deferred",
-   "reason": "The Hotfrog directory listing gives the shop name and phone only, with no description of the store's range beyond the existing text."
+   "status": "researched",
+   "description": "The Crazy Store is a variety and discount retailer selling everyday household items, stationery, toys, gifts and general merchandise at affordable prices. The Tokai Junction branch forms part of a current, large nationwide network of stores trading under the same discount-variety format, with ranges running from kids' toys and party supplies to home accessories, seasonal costumes and gifting lines.\n\nThe shop trades from Shop G21 in Tokai Junction on Main Road, Kirstenhof, as confirmed by both the centre's own tenant information and the store's own business listing. It suits shoppers after an affordable top-up on household basics, party supplies, toys or small gifts without needing a special trip to a bigger retailer.",
+   "sources": [
+    "https://www.hotfrog.co.za/company/1381718103420928/the-crazy-store-tokai-junction/kirstenhof-cape-town/retail-stores",
+    "https://za.africabz.com/western-cape/the-crazy-store-tokai-junction-113307"
+   ]
   },
   {
    "slug": "totalsports-vangate-mall-athlone",
-   "status": "deferred",
-   "reason": "Tiendeo gives an aggregator listing with hours and phone. The Totalsports branch page is not in the research, so there is no owner-written text."
+   "status": "researched",
+   "description": "Totalsports is a sportswear and sporting goods retailer selling clothing, footwear and equipment for everyday training and fitness as well as for sports such as football and running. The brand trades as part of the TFG retail group, giving the Vangate Mall branch the backing of one of South Africa's larger clothing and footwear groups, with ranges that span multiple sporting codes rather than a single speciality.\n\nCurrent location sources confirm this branch trades from Shop 23 in Vangate Mall on Jakes Gerwel Drive in Athlone. It suits shoppers kitting out for a specific sport, as well as those simply after everyday sports-inspired clothing, trainers and accessories for casual wear.",
+   "sources": [
+    "https://www.cybo.com/ZA-biz/totalsports-vangate-mall",
+    "https://www.tiendeo.co.za/stores/cape-town/totalsports-vangate-mall-jakes-gerwel-drive/72799",
+    "https://en.wikipedia.org/wiki/TFG_Limited"
+   ]
   },
   {
    "slug": "trenton-paarden-eiland",
-   "status": "deferred",
-   "reason": "The homepage is an e-commerce product listing with prices for individual UGG items, and no description of the Paarden Eiland showroom itself beyond what the existing description already covers."
+   "status": "researched",
+   "description": "Trenton is a footwear retailer and South Africa's official distributor for a group of international brands, including UGG, Hunter, Løci, Holster, TOMS and FitFlop. Its range spans boots, sneakers, sandals and other footwear accessories across these brands under one roof, rather than stocking a single label.\n\nThe company's showroom trades from 82 Marine Drive in Paarden Eiland, with further Trenton stores in other parts of Cape Town and in Johannesburg. Customers can also browse the brand's online range for current season styles, with returns and exchanges handled through the same channel. It suits shoppers looking for genuine stock of these international footwear brands in one place, rather than searching out each brand separately.",
+   "sources": [
+    "https://trenton.co.za/pages/our-stores",
+    "https://trenton.co.za/"
+   ]
   },
   {
    "slug": "truth-coffee-cape-town-cbd",
-   "status": "deferred",
-   "reason": "The business site was blocked and the eatout.co.za page returned a News24 navigation page with no venue content. No sourced text about the cafe was found."
+   "status": "researched",
+   "description": "Truth Coffee is an artisan coffee roastery and café serving breakfast, lunch, brunch and coffee-based drinks from a three-storey Victorian warehouse on Buitenkant Street. The space combines its roasting operation with sit-down dining, giving visitors a chance to see where the coffee they're drinking is roasted.\n\nOn selected evenings the café also runs Truth After.Dark, an after-hours concept offering coffee cocktails and mocktails alongside live jazz, extending the venue beyond its daytime café hours. It suits coffee drinkers and diners after a distinctive setting for a meal or a drink, whether visiting for a weekday breakfast or an evening session with live music.",
+   "sources": [
+    "https://truth.coffee/pages/contact-us",
+    "https://www.eatout.co.za/venue/truth-coffee-roasting-hq/"
+   ]
   },
   {
    "slug": "twigs-nursery-coffee-shop-harfield-village",
-   "status": "deferred",
-   "reason": "The sa-venues page is a general Harfield Village things-to-do listing with limited nursery-specific detail. Not enough sourced text for 100 words."
+   "status": "researched",
+   "description": "Twigs Nursery & Coffee Shop combines a plant nursery and gift shop with a casual coffee shop, set in a bohemian garden-style space well suited to a slow visit. The nursery stocks plants, succulents, flowers, herbs and vegetables such as chillies, tomatoes and basil, alongside a gift-shop selection of handcrafted and handpicked arts and crafts.\n\nThe coffee shop side serves baked goods including carrot cake, cupcakes and ginger biscuits, plus vegan options and organic apple juice, alongside the usual coffee, tea and snacks. The business trades from Shop 5 on Second Avenue in Harfield Village. It suits plant shoppers, gift buyers and anyone wanting a relaxed coffee stop in a garden setting.",
+   "sources": [
+    "https://www.sa-venues.com/things-to-do/westerncape/twigs-nursery/"
+   ]
   },
   {
    "slug": "umami-sushi-kommetjie",
-   "status": "deferred",
-   "reason": "The only page is an eatout.co.za navigation page with no venue content, and the Imhoff Farm site timed out. No text about the restaurant was found."
+   "status": "researched",
+   "description": "Umami Sushi has served sushi and Asian-inspired cuisine from the Imhoff Farm property in Kommetjie since 2015, with a focus on fresh seafood and sushi prepared to order. The restaurant offers both a garden courtyard and an indoor dining area, giving diners a choice between an outdoor farm setting and a more sheltered space.\n\nBeyond regular dining, the restaurant also caters for small private functions, making it an option for a family celebration or small gathering rather than only a casual meal out. It suits local residents and visitors to Imhoff Farm looking for sushi or Asian-style food, and it trades seven days a week from midday until 9pm.",
+   "sources": [
+    "https://imhofffarm.co.za/umami-sushi/",
+    "https://www.eatout.co.za/venue/umami-sushi/"
+   ],
+   "hours": "Mon-Sun 12:00-21:00"
   },
   {
    "slug": "umi-camps-bay",
-   "status": "deferred",
-   "reason": "The only page is an eatout.co.za navigation page with no venue content, and TripAdvisor was blocked. No text about the restaurant was found."
+   "status": "researched",
+   "description": "Umi is a modern Japanese restaurant on the upper deck of the Marly Hotel in Camps Bay, serving sushi and other Japanese dishes either à la carte or through set menus. The restaurant looks out over the bay, with a terrace and ocean views forming part of the dining experience alongside the food.\n\nThe venue also offers secure parking and space for larger private events, making it an option for a group booking as well as a regular dinner out. It suits diners after a sushi or Japanese meal with a view, whether for a casual dinner or a bigger private occasion.",
+   "sources": [
+    "https://www.tripadvisor.com/Restaurant_Review-g312658-d5966649-Reviews-Umi-Camps_Bay_Western_Cape.html",
+    "https://www.capetownmagazine.com/news/umi-restaurant-in-camps-bay/10_22_19114"
+   ]
   },
   {
    "slug": "veloce-luxury-car-rental-de-waterkant",
-   "status": "deferred",
-   "reason": "The Cape Quarter shops directory lists store names only. There is no description of Veloce beyond the existing text."
+   "status": "researched",
+   "description": "Veloce Luxury Car Rental offers self-drive and chauffeur-driven luxury vehicles, including supercars, sports cars, luxury SUVs, 4x4s, convertibles and executive cars, drawn from a fleet of more than 50 vehicles. Beyond standard rentals, the company also arranges airport vehicle delivery and transport for events such as matric dances, giving clients options beyond simply picking up a car from a counter.\n\nThe showroom trades from the Cape Quarter Lifestyle Village on Somerset Road in De Waterkant, alongside the centre's other shops and restaurants. It suits visitors and tourists wanting a self-drive luxury car for their stay, as well as executives and event clients who prefer chauffeur-driven travel over driving themselves, whatever the occasion.",
+   "sources": [
+    "https://www.veloceluxurycarrental.co.za/about",
+    "https://www.findmy.co.za/services/business/veloce-luxury-car-rental/2892",
+    "https://capequarter.co.za/shops/"
+   ]
   },
   {
    "slug": "venture-workspace-constantia-emporium-constantia",
@@ -115,8 +170,13 @@
   },
   {
    "slug": "vida-e-caffe-edgemead",
-   "status": "deferred",
-   "reason": "The Wikipedia article describes the vida e caffe chain generally, with no Edgemead branch-specific facts. The Facebook result is for the Edgemead Village Centre, not the cafe itself."
+   "status": "researched",
+   "description": "Vida e Caffe is a South African café franchise, founded in 2001 and inspired by the style of Portuguese espresso bars, serving coffee and light food. It has grown into the largest café chain in the country by number of outlets, now operating around 400 stores across South Africa and several neighbouring African countries, and trades today as part of the Shoprite Holdings group. The brand also operates sweetbeet, a smaller, health-focused restaurant chain under the same parent company.\n\nThe Edgemead branch trades as Shop 10 in Edgemead Village Centre, confirmed by the centre's own tenant listing. It suits local residents and shoppers after a quick coffee or a light bite while running errands around the village centre, rather than a sit-down restaurant meal.",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Vida_e_Caff%C3%A8",
+    "https://za.africabz.com/western-cape/vida-e-caffe-edgemead-village-445093",
+    "https://www.facebook.com/EdgemeadVillageCentre/"
+   ]
   },
   {
    "slug": "voltmill-ndabeni",
@@ -142,13 +202,21 @@
   },
   {
    "slug": "woodville-primary-school-woodlands",
-   "status": "deferred",
-   "reason": "Every search result is unrelated LinkedIn profiles, and the directory pages were blocked. Nothing about the school was found."
+   "status": "researched",
+   "description": "Woodville Primary School is a primary school serving learners and their families in the Woodlands area of Mitchells Plain. A school-issued document setting out its ethos describes an aim to provide a safe and diverse educational experience, with the stated goal of developing well-rounded individuals rather than focusing on academic results alone.\n\nThe school is based on Juno Street in Woodlands, Mitchells Plain, within the wider Mitchells Plain community it draws most of its learners from. It suits families in the area looking for a local primary school with a clearly stated focus on learners' broader development, alongside their everyday classroom education.",
+   "sources": [
+    "https://www.schoolguide.co.za/schools/ordinary-schools/woodville-primary-school.html",
+    "https://pathfinda.com/en/mitchells-plain/woodlands/shops-services/woodville-primary-school"
+   ]
   },
   {
    "slug": "woolworths-waterstone-village-somerset-west",
-   "status": "deferred",
-   "reason": "The Waterstone Village page gives centre-level trading hours and phone numbers only. There are no Woolworths branch-specific facts beyond the existing text."
+   "status": "researched",
+   "description": "Woolworths at Waterstone Village is a large-format Woolworths Food store selling fresh produce, bakery products, prepared meals and other Woolworths food lines, alongside an in-store sushi bar. At its 2013 expansion, Woolworths Holdings described the branch as its largest Woolworths Food Market at the time, spanning almost 2,500m² with 19 tills, including five express lanes.\n\nThe store also includes a WCafé, serving meals, pastries, breads, coffee and other drinks for shoppers wanting to eat in rather than just shop. Woolworths remains one of the main tenants at Waterstone Village in Somerset West. It suits shoppers after a full grocery shop, fresh food or a WCafé meal in a single visit, without needing a smaller-format store as well.",
+   "sources": [
+    "https://www.waterstonevillage.co.za",
+    "https://www.woolworthsholdings.co.za/woolworths-adds-another-new-concept-store-at-waterstone-village/"
+   ]
   },
   {
    "slug": "zeetan-turkish-restaurant-sea-point",
@@ -186,8 +254,13 @@
   },
   {
    "slug": "arora-lights-ysterplaat",
-   "status": "deferred",
-   "reason": "The Northgate Estate page lists tenant names only, with no description of Arora Lights' product range beyond the existing text. Not enough sourced text for 100 words."
+   "status": "researched",
+   "description": "Arora Lights is a lighting retailer supplying indoor and outdoor lighting, including chandeliers, pendants, ceiling fittings, wall lights, downlights, spotlights, fans, garden lighting, floodlights and solar lighting. The business has traded since 1987 and has grown into one of the larger lighting retailers in the Western Cape, serving residential, commercial and other customers who need both products and advice on fittings.\n\nA projects division handles lighting design, sourcing and installation for larger jobs, alongside walk-in retail sales from the showroom. The current branch trades from Unit 1 on Gold Street in Northgate Estate, Ysterplaat. It suits homeowners replacing a single fitting as well as businesses needing a full lighting design and installation service.",
+   "sources": [
+    "https://aroralights.co.za/",
+    "https://aroralights.co.za/contact/",
+    "https://northgateestate.co.za/arora-lights/"
+   ]
   },
   {
    "slug": "backyard-brew-coffee-co-kenwyn",
@@ -209,8 +282,12 @@
   },
   {
    "slug": "banana-jam-cafe-harfield-village",
-   "status": "deferred",
-   "reason": "The restaurant's own homepage is mostly a navigation shell, and its about pages return 404. Not enough sourced text beyond what the existing description already covers."
+   "status": "researched",
+   "description": "Banana Jam Café is a Caribbean-inspired restaurant and brewpub serving its own beer alongside curries, cocktails and barbecue-style food, with spit braais among its offerings. A local business directory listing describes a venue built around regular happy-hour promotions, barbecues, beer festivals and private events, on top of its everyday food and drinks menu.\n\nThe café trades from Second Avenue, giving it an easy, laid-back setting for a casual meal or a drink. It suits groups after a relaxed spot for cocktails, Caribbean-style food and its own-brewed beer, as well as anyone wanting to catch one of its regular happy-hour or beer-festival events.",
+   "sources": [
+    "https://www.bananajamcafe.co.za/",
+    "https://cape-town.infoisinfo.co.za/card/banana-jam-cafe/222358"
+   ]
   },
   {
    "slug": "barstaurant-glencairn",
@@ -255,18 +332,30 @@
   },
   {
    "slug": "black-oak-computers-sunnydale",
-   "status": "deferred",
-   "reason": "The only usable source is a one-line Facebook intro mentioning desktop and notebook repairs. Not enough sourced text for 100 words."
+   "status": "researched",
+   "description": "Black Oak Computers provides computer repair, diagnostics and IT consulting services, covering everything from desktop and notebook repairs and upgrades to assessing troublesome PCs and laptops. Common software issues such as errors and blue screens are part of its day-to-day repair work, alongside hardware-related problems and upgrades for older machines.\n\nBusiness directories also classify the company as a computer systems and related-services provider, and separately list it as a used-computer retailer. It trades from 23 Sunnydale Road in Sunnydale. It suits customers with a malfunctioning computer or laptop who want it assessed and repaired locally, rather than simply replaced outright with something new.",
+   "sources": [
+    "https://www.facebook.com/BlackOakComputers",
+    "https://www.cybo.com/ZA-biz/black-oak-computers"
+   ]
   },
   {
    "slug": "bootlegger-bakoven",
-   "status": "deferred",
-   "reason": "Wanderlog gives a short aggregator description locating the cafe in Camps Bay rather than Bakoven specifically, which does not confirm this listing's exact branch. Not enough sourced text for 100 words."
+   "status": "researched",
+   "description": "Bootlegger Coffee Company's Bakoven branch serves specialty-grade coffee alongside all-day breakfast, lunch and brunch, trading seven days a week. The café also offers takeaway for customers who want their coffee and food on the go rather than sitting in.\n\nA travel-review listing for the branch describes it as a trendy, laid-back coffee spot known for sourcing and roasting its own beans, with breakfast options including a build-your-own breakfast and a classic eggs Benedict with salmon. The branch trades from 38 Victoria Road in Bakoven. It suits anyone wanting a relaxed coffee stop with a proper breakfast menu rather than just a quick espresso.",
+   "sources": [
+    "https://wanderlog.com/place/details/2263423/bootlegger-bakoven",
+    "https://ourcafes.bootlegger.coffee/FoodDrink-CapeTown-BootleggerBakoven"
+   ]
   },
   {
    "slug": "bootlegger-dean-street-newlands",
-   "status": "deferred",
-   "reason": "The Coffeedec directory page is a generic listing template with no real description of the Dean Street branch beyond its name and location. Not enough sourced text for 100 words."
+   "status": "researched",
+   "description": "Bootlegger – Dean Street is a specialty coffee café inside the Dean Street Arcade in Newlands, part of the wider Bootlegger Coffee Company chain. The branch serves all-day breakfast, lunch and brunch, with free Wi-Fi and a kids' menu among its facilities, plus takeaway for customers who prefer to eat on the move.\n\nA local coffee-shop directory lists the branch as a reliable choice for coffee in Newlands, trading from Shop T16 in the Dean Street Arcade. It suits families and regulars looking for a dependable neighbourhood coffee spot, whether for a sit-down breakfast or a takeaway coffee on the way through the arcade.",
+   "sources": [
+    "https://coffeedec.com/shop/listing/bootlegger-dean-street-newlands-cape-town-coffee-shop/",
+    "https://ourcafes.bootlegger.coffee/FoodDrink-CapeTown-BootleggerDeanStreet"
+   ]
   },
   {
    "slug": "bootlegger-three-anchor-bay",
@@ -308,13 +397,21 @@
   },
   {
    "slug": "clicks-delft-mall-delft",
-   "status": "deferred",
-   "reason": "Tiendeo gives an aggregator listing with hours and phone. The Clicks branch page is not in the research, so there is no owner-written text."
+   "status": "researched",
+   "description": "Clicks Delft Mall is a branch of the South African health, beauty and personal-care retail chain, combining general Clicks retail with an in-store pharmacy. The pharmacy offers prescription dispensing and other pharmacy services alongside the wider store's personal care, beauty and over-the-counter health ranges, plus the chain's usual loyalty and rewards programme.\n\nThe branch's own store page confirms it trades from Shop 7 in Delft Mall on Hindle Road, Delft, as both a retail store and a registered pharmacy. It suits shoppers in Delft after everyday health, beauty and personal-care products, as well as anyone needing a prescription filled or pharmacy advice close to home.",
+   "sources": [
+    "https://clicks.co.za/store/Delft/1859",
+    "https://www.tiendeo.co.za/stores/cape-town/clicks-delft-mall-shop-delft-mall-hindle-road/55798"
+   ]
   },
   {
    "slug": "clicks-pharmacy-the-junction-mall-philippi",
-   "status": "deferred",
-   "reason": "The Clicks store page gives address and hours with generic product categories. Chain-wide copy alone is not enough for a branch-specific description."
+   "status": "researched",
+   "description": "Clicks Pharmacy is a retail pharmacy operating as part of the national Clicks health, beauty and personal-care chain, combining dispensing services with the wider store's beauty and everyday health ranges. The Philippi branch gives shoppers at The Junxion Mall access to both a pharmacy and general Clicks retail under one roof.\n\nMedpages' listing for this branch, last updated in mid-2026, and current map data both confirm the store trading from Shop 21 in The Junxion Mall, on the corner of Govan Mbeki and New Eisleben Road. It suits shoppers at the mall who want to pick up a prescription or pharmacy advice alongside their usual shopping.",
+   "sources": [
+    "https://clicks.co.za/store/The-Junction-Mall/1856",
+    "https://www.medpages.info/sf/index.php?page=organisation&orgcode=403703"
+   ]
   },
   {
    "slug": "colosseum-hotel-century-city",

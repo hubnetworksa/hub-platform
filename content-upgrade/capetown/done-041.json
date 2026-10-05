@@ -1,7 +1,7 @@
 {
   "city": "capetown",
   "chunk": 41,
-  "generated_at": "2026-10-05T06:04:39.442Z",
+  "generated_at": "2026-10-05T17:20:59.254Z",
   "items": [
     {
       "slug": "ieglaasi-nieyah-primary-school-beacon-valley",
@@ -195,8 +195,10 @@
     },
     {
       "slug": "el-burro-taqueria-tamboerskloof",
-      "status": "deferred",
-      "reason": "Only the africabz directory entry (address, hours, phone) and user reviews (praise for tacos, margaritas and vegan options) were found. The restaurant's own site elburro.co.za was not fetched, so there is not enough beyond review quotes for 100 real words."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/el-burro-taqueria-kloof-nek-457"
+      ]
     },
     {
       "slug": "epping-industrial-suppliers-epping",
@@ -290,8 +292,10 @@
     },
     {
       "slug": "sports-concept-store-de-waterkant",
-      "status": "deferred",
-      "reason": "Chain-style sports retailer. The own site is mostly an online product catalogue and brand list (Asics, HOKA, On, Under Armour) with no facts specific to the De Waterkant store, and the Cape Quarter directory page timed out."
+      "status": "researched",
+      "sources": [
+        "https://thesportsconceptstore.co.za/pages/about-us"
+      ]
     },
     {
       "slug": "technoline-projects-thornton",

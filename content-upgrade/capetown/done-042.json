@@ -1,7 +1,7 @@
 {
   "city": "capetown",
   "chunk": 42,
-  "generated_at": "2026-10-05T06:22:48.826Z",
+  "generated_at": "2026-10-05T17:20:59.497Z",
   "items": [
     {
       "slug": "the-sunshine-food-sprouting-co-african-vegan-cafe-three-anchor-bay",
@@ -13,7 +13,7 @@
     {
       "slug": "villa-portuguese-restaurant-vredehoek",
       "status": "deferred",
-      "reason": "The only usable source was an Eat Out news page with site navigation and headlines. Nothing about the restaurant itself was found."
+      "reason": "The only crawled source is eatout.co.za's site-navigation shell (News24 headlines), not restaurant content. The business's own site, villaportugueserestaurant.com, returned nothing in the research file, so the suggested happy-hour and dish facts can't be verified; nothing beyond the existing address is sourced."
     },
     {
       "slug": "wembley-bakery-athlone",
@@ -39,7 +39,7 @@
     {
       "slug": "ackermans-philippi-shopping-centre-philippi",
       "status": "deferred",
-      "reason": "Chain clothing retailer. The sources address this store as being in Crossroads rather than confirming the Philippi Shopping Centre address in the listing, and no branch-specific facts beyond hours were found. Chain-wide facts alone are not allowed."
+      "reason": "ADDRESS CONFLICT: the only branch-specific sources (Facebook, Tiendeo) both place this Ackermans in Crossroads, not the supplied Philippi Shopping Centre address, and give only hours and a phone number beyond that. Chain-wide facts alone are not enough, so this stays deferred pending address confirmation."
     },
     {
       "slug": "constantia-uitsig-constantia",
@@ -58,7 +58,7 @@
     {
       "slug": "faithjuice-noordhoek",
       "status": "deferred",
-      "reason": "The only source was a contact page listing the Noordhoek Farm Village address, phone and a single navigation item for cleanses, with no description of the juice bar's products or services. Not enough for 100 real words."
+      "reason": "The only crawled page is the contact page (address, phone, and a Home/About/Cleanses/Menu/Contact nav), with no description of the juice bar's actual drinks, food or cleanse programme. The richer garden/jars/compost detail attributed to thefarmvillage.co.za was never fetched in the research file. Not enough for 100 real words."
     },
     {
       "slug": "fresnaye-sports-club-fresnaye",
@@ -70,12 +70,12 @@
     {
       "slug": "ganesh-observatory",
       "status": "deferred",
-      "reason": "The only usable source was an Eat Out news page for a differently named venue (Cafe Ganesh Restaurant Bar), with site navigation and headlines rather than content about the restaurant. Nothing usable was found."
+      "reason": "The only crawled source is eatout.co.za's site-navigation shell (News24 headlines) for a differently named venue, Cafe Ganesh Restaurant Bar, with no restaurant content. No Cape Town Tourism page appears anywhere in the research file or the listing's existing sources, so the suggested menu and location facts can't be verified."
     },
     {
       "slug": "hungry-lion-langa-junction-langa",
       "status": "deferred",
-      "reason": "Chain fast-food outlet. The location page is mostly templated FAQ copy shared across all Hungry Lion stores, with only the address specific to this Langa Junction branch. Chain-wide facts alone are not allowed."
+      "reason": "The location page is the same templated FAQ copy (family buckets, kids' meals, delivery partners) reused across every Hungry Lion branch, with only the address swapped in; its listed hours are also broken (every day shows an identical 08:00-10:00 slot). No fact specific to this Langa Junction branch was found."
     },
     {
       "slug": "just-africa-scuba-gordons-bay",
@@ -130,7 +130,7 @@
     {
       "slug": "pep-eerste-river",
       "status": "deferred",
-      "reason": "Chain clothing retailer. Only a Tiendeo store page with address, hours and a current promotion was found, with no branch-specific facts beyond trading hours. Chain-wide facts alone are not allowed."
+      "reason": "The only branch page is a Tiendeo store listing with address, hours and a current promotion; no branch-specific product or service fact was found beyond that."
     },
     {
       "slug": "pirates-steakhouse-and-pub-plumstead",
@@ -149,7 +149,7 @@
     {
       "slug": "poetry-va-waterfront",
       "status": "deferred",
-      "reason": "Chain clothing retailer. Only a directory page with the Victoria Wharf branch's hours and phone number was found, with no branch-specific product or service facts. Chain-wide facts alone are not allowed."
+      "reason": "The only source, shopshours.co.za, confirms this Victoria Wharf branch's own address, phone and hours, but gives no product or service detail beyond that. Its actual hours (Mon-Sat 09:00-18:00, Sun closed) also contradict a suggested 09:00-22:00 figure that isn't supported anywhere in the research file; the verified hours were used instead."
     },
     {
       "slug": "steel-pipes-for-africa-epping",
@@ -168,12 +168,12 @@
     {
       "slug": "superdry-va-waterfront",
       "status": "deferred",
-      "reason": "Chain clothing retailer. The only source gives store hours and a chain-wide brand description, with no facts specific to the Victoria Wharf branch beyond its address and hours. Chain-wide facts alone are not allowed."
+      "reason": "The only source, the brand's own store locator, gives this Victoria Wharf branch's address, phone and hours, but its 'About' text is the same chain-wide brand copy repeated on every Superdry store page in the same crawl (Canal Walk, Cavendish Square); no fact specific to this branch's range was found."
     },
     {
       "slug": "sure-2-travel-rondebosch",
       "status": "deferred",
-      "reason": "The sources are mostly the national Sure Travel chain site, listing destinations rather than facts about this Rondebosch agency. No branch-specific facts were found."
+      "reason": "The only content is the national Sure Travel site's destination list and a near-empty Yep mall-directory page; neither mentions the Rondebosch office, its claimed 2007 founding or its Riverside Mall location. No branch-specific fact was found."
     },
     {
       "slug": "the-labia-gardens",
@@ -227,7 +227,7 @@
     {
       "slug": "du-noon-community-health-centre-dunoon",
       "status": "deferred",
-      "reason": "The Western Cape Government facility page gives only the address, phone and a 24-hour operating note, with no services described. Not enough content for an honest 100-word description."
+      "reason": "The Western Cape Government facility page confirms the supplied address (236 Potsdam Road) and a 24-hour operating note, but files the facility under 'Killarney Gardens' rather than Dunoon as its locality and describes no clinical services at all. Not enough content for an honest description; the specific chronic-disease/child-health service list isn't sourced anywhere."
     },
     {
       "slug": "elvey-security-technologies-brooklyn",
@@ -244,7 +244,7 @@
     {
       "slug": "goldies-deli-sea-point",
       "status": "deferred",
-      "reason": "The only usable source was an Eat Out news page with site navigation and headlines. Nothing about the deli itself was found."
+      "reason": "The only crawled source is eatout.co.za's site-navigation shell (News24 headlines), not deli content. No Cape Town Tourism kosher-guide page appears anywhere in the research file or the listing's existing sources, so the 174 vs 176 Main Road address question can't be checked either way, and no menu or service fact was found."
     },
     {
       "slug": "harcourts-maynard-burgoyne-edgemead-edgemead",
@@ -297,12 +297,12 @@
     {
       "slug": "rage-cape-town-cbd",
       "status": "deferred",
-      "reason": "The Golden Acre store directory lists only Rage's phone number among dozens of other stores. No branch-specific facts were found."
+      "reason": "Golden Acre's own current store directory does list a Rage phone number among its Fashion-section tenants, so there's no sign of delisting here; but that directory gives nothing beyond the phone number, and no branch-specific product fact was found."
     },
     {
       "slug": "s-and-h-optometrists-fish-hoek",
       "status": "deferred",
-      "reason": "The practice's own site returned a redirect loop, and the sayellow directory page lists unrelated Fish Hoek businesses rather than this optometrist. Nothing about S and H Optometrists was found."
+      "reason": "The practice's own site (optomfishhoek.co.za) failed to resolve (redirect loop), so its address can't be confirmed from a fetched page; the sayellow page returned unrelated Fish Hoek businesses (CNA, AV Digital, a stationer) rather than this optometrist. Nothing about S & H Optometrists itself was found."
     },
     {
       "slug": "tannin-cape-town-cbd",

@@ -1,7 +1,7 @@
 {
   "city": "capetown",
   "chunk": 37,
-  "generated_at": "2026-10-05T05:39:36.525Z",
+  "generated_at": "2026-10-05T17:20:58.321Z",
   "items": [
     {
       "slug": "hillside-properties-kenridge",
@@ -94,8 +94,10 @@
     },
     {
       "slug": "never-new-observatory",
-      "status": "deferred",
-      "reason": "Only the Facebook page was found (retro and vintage clothing, new boho and Indian pieces, locally made festival wear, Lower Main Road address). About 60 words of real content, and no own site."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/nevernewstore/"
+      ]
     },
     {
       "slug": "o-on-kloof-bantry-bay",
@@ -192,8 +194,10 @@
     },
     {
       "slug": "the-waterside-va-waterfront",
-      "status": "deferred",
-      "reason": "Only the V&A Waterfront venue page was found: fine seafood at the Pierhead Deck, harbour views, a 4.7 Google rating from 410 reviews and two meal-time sittings. That is about 70 words of real content, and the restaurant's own site was not fetched."
+      "status": "researched",
+      "sources": [
+        "https://www.waterfront.co.za/eat-and-drink/the-waterside"
+      ]
     },
     {
       "slug": "the-welgemoed-guesthouse-welgemoed",
@@ -204,8 +208,10 @@
     },
     {
       "slug": "tifgifts-paarden-eiland",
-      "status": "deferred",
-      "reason": "Only the africabz directory entry (wholesaler and gift shop at 10 Industry Road, hours, cash-only comments) and six user reviews (bathroom products, prices) were found. The site wixsite page was not fetched, so there is not enough for 100 real words."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/tifgifts-factory-shop-163134"
+      ]
     },
     {
       "slug": "tops-at-spar-woodstock-quarter-woodstock",
@@ -214,8 +220,10 @@
     },
     {
       "slug": "wellington-fruit-growers-wetton",
-      "status": "deferred",
-      "reason": "The contact page gives the Wetton Road unit, phone numbers and a delivery note (3 to 5 working days). The product categories were only listed, and the own site wellingtonfruitgrowers.co.za timed out, so there is not enough for 100 real words."
+      "status": "researched",
+      "sources": [
+        "https://wellingtonfruitgrowers.co.za/contact"
+      ]
     },
     {
       "slug": "algarve-restaurant-bar-kuils-river",
@@ -229,8 +237,10 @@
     },
     {
       "slug": "asserum-electronics-fish-hoek",
-      "status": "deferred",
-      "reason": "Only the AiYellow directory entry (cellphone and electronics sales and repairs, Town Square on Main Road, servicing Kommetjie) and the textmap page (no resolve) were found. About 60 words of real content, and no own site."
+      "status": "researched",
+      "sources": [
+        "https://www.aiyellow.com/asserum/"
+      ]
     },
     {
       "slug": "atlas-trading-company-bo-kaap",
@@ -286,8 +296,10 @@
     },
     {
       "slug": "dawood-butchery-hanover-park",
-      "status": "deferred",
-      "reason": "The own website shows only a placeholder page. The only other sources are an africabz directory entry (address, hours, phone) and user reviews about a mom-and-pop butchery with affordable mince, sausages and frozen items. Review quotes alone are not enough for an honest 100-word description."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/dawood-muslim-butchery-116887"
+      ]
     }
   ]
 }

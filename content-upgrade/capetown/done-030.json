@@ -1,22 +1,31 @@
 {
   "city": "capetown",
   "chunk": 30,
-  "generated_at": "2026-10-05T05:50:44.530Z",
+  "generated_at": "2026-10-05T17:22:02.702Z",
   "items": [
     {
       "slug": "cash-crusaders-maitland-maitland",
-      "status": "deferred",
-      "reason": "The national Cash Crusaders homepage describes the chain's buy, sell and pawn model generally. There are no Maitland Square branch-specific facts in the research."
+      "status": "researched",
+      "sources": [
+        "https://cashcrusaders.co.za/storedetails?location=Maitland",
+        "https://www.cashcrusaders.co.za/"
+      ]
     },
     {
       "slug": "cashbuild-lansdowne-corner-lansdowne",
-      "status": "deferred",
-      "reason": "Tiendeo gives an aggregator listing with hours. The Cashbuild branch page timed out, so there is no owner-written description."
+      "status": "researched",
+      "sources": [
+        "https://stores.cashbuild.co.za/za/western-cape/cape-town/shop-1-lansdowne-corner",
+        "https://www.tiendeo.co.za/stores/cape-town/cashbuild-corner-of-jan-smuts-and-govan-mbeki-road-lansdowne-cape-town/49264"
+      ]
     },
     {
       "slug": "caxton-books-lansdowne",
-      "status": "deferred",
-      "reason": "Firmania gives a directory listing with hours only. There is no owner-written description of the bookshop's range or services."
+      "status": "researched",
+      "sources": [
+        "https://caxtonbooks.co.za/",
+        "https://firmania.co.za/cape-town/caxton-books-lansdowne-87845"
+      ]
     },
     {
       "slug": "cellucity-the-point-sea-point",
@@ -34,8 +43,10 @@
     },
     {
       "slug": "chinook-spur-plattekloof",
-      "status": "deferred",
-      "reason": "The Spur branch page gives the address, hours and booking link, with the rest being chain-wide copy about the Spur brand. Not enough branch-specific sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.spursteakranches.com/za/restaurant/western-cape/cape-town/plattekloof/chinook-spur"
+      ]
     },
     {
       "slug": "craftart-emporium-simons-town",
@@ -51,8 +62,11 @@
     },
     {
       "slug": "debonairs-pizza-golden-acre-cape-town-cbd",
-      "status": "deferred",
-      "reason": "The Golden Acre store directory lists tenants and phone numbers only. There is no description of this Debonairs branch."
+      "status": "researched",
+      "sources": [
+        "https://golden-acre.co.za/stores/",
+        "https://location.debonairspizza.co.za/golden-acre-express"
+      ]
     },
     {
       "slug": "debt-scan-woodstock",
@@ -73,18 +87,22 @@
     },
     {
       "slug": "essential-health-pharmacy-kuils-river",
-      "status": "deferred",
-      "reason": "The pharmacy's contact page gives the address and a contact form only, with no description of its services beyond the existing text. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://essentialhealth.co.za/pages/kuils-river-contact-page"
+      ]
     },
     {
       "slug": "exact-cape-town-cbd",
       "status": "deferred",
-      "reason": "The Facebook post confirms a Golden Acre kids store opening but gives no further detail, and the rest of the research is unrelated Exact Online software pages. Not enough sourced text for 100 words."
+      "reason": "Current Golden Acre tenant information lists Mr Price Clothing, Ackermans and other major retailers, but no current source confirms Exact itself as a branch tenant with any shop number or product detail. The Facebook post confirms a Golden Acre kids store opening but gives no further detail, and the rest of the research is unrelated Exact Online software pages."
     },
     {
       "slug": "fishaways-zevenwacht-mall-kuils-river",
-      "status": "deferred",
-      "reason": "Every search result is about a MovieBox app, and the Fishaways branch pages were blocked or timed out. Nothing about the restaurant was found."
+      "status": "researched",
+      "sources": [
+        "https://location.fishaways.co.za/zevenwacht-mall"
+      ]
     },
     {
       "slug": "future-tool-thornton",
@@ -93,13 +111,18 @@
     },
     {
       "slug": "gusto-urban-italian-century-city",
-      "status": "deferred",
-      "reason": "The restaurant's homepage gives only a brief Italian-word definition of 'gusto' and a short intro line. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.gustourbanitalian.co.za/",
+        "https://insideguide.co.za/cape-town/restaurants/gusto-urban-italian/"
+      ]
     },
     {
       "slug": "hello-sailor-observatory",
-      "status": "deferred",
-      "reason": "The restaurant's own site did not resolve. The Cape Town Magazine article covers the bistro's early opening and vibe, and is not current enough to support 100 real words about its current menu."
+      "status": "researched",
+      "sources": [
+        "https://www.capetownmagazine.com/hello-sailor"
+      ]
     },
     {
       "slug": "honest-hardware-athlone",
@@ -117,18 +140,23 @@
     },
     {
       "slug": "istore-somerset-west-somerset-west",
-      "status": "deferred",
-      "reason": "The iStore locator gives address, hours and phone only, with chain-wide product copy elsewhere. Not enough branch-specific sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.istore.co.za/storelocator/somerset"
+      ]
     },
     {
       "slug": "jj-cale-premiere-tobacconist-sea-point",
-      "status": "deferred",
-      "reason": "The shop's own site lists product categories only, with no description of the business. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://jjcale.co.za/stores/",
+        "https://jjcale.co.za"
+      ]
     },
     {
       "slug": "jumbo-clothing-bellville",
       "status": "deferred",
-      "reason": "The Jumbo Clothing homepage gives chain-wide news and quick links, with no Bellville branch-specific facts. The Foursquare page requires a login and has no content."
+      "reason": "The brabys.com listing confirms the address and phone number only, classifying it as a clothing store; the Jumbo Clothing homepage gives chain-wide news with no Bellville branch facts, and the Foursquare page requires a login. Address and category alone don't verify the supplied menswear, womenswear and children's range claim."
     },
     {
       "slug": "kalkys-kalk-bay",
@@ -137,33 +165,49 @@
     },
     {
       "slug": "kind-regards-observatory",
-      "status": "deferred",
-      "reason": "The Facebook page gives a short tagline and follower count, and the FindGlocal page gives category and address only. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/p/Kind-Regards-Obz-100086205529254/",
+        "http://www.findglocal.com/ZA/Cape-Town/664023184061476/Kind-Regards-CPT"
+      ]
     },
     {
       "slug": "knead-bakery-cafe-kenilworth",
       "status": "deferred",
-      "reason": "The only page is an eatout.co.za navigation page with no venue content. No text about Knead's Kenilworth branch was found."
+      "reason": "The only page is an eatout.co.za navigation page with no venue content, and no source confirms the Pick n Pay/Pam Golding on Main unit is still trading under the Knead name. This is a possible name or status change, not just thin sourcing."
     },
     {
       "slug": "kromboom-medical-practice-crawford",
-      "status": "deferred",
-      "reason": "The RecoMed page is a generic booking-platform shell with no practice-specific content. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://kromboommedical.co.za/about/",
+        "https://www.recomed.co.za/private-practice/southern-suburbs/kromboom-medical-practice/9700/"
+      ]
     },
     {
       "slug": "lavender-hill-community-centre-lavender-hill",
-      "status": "deferred",
-      "reason": "The only usable source is a municipal halls-for-hire directory entry with no venue description. The city's own page returned 404."
+      "status": "researched",
+      "sources": [
+        "https://resource.capetown.gov.za/documentcentre/Documents/Forms,%20notices,%20tariffs%20and%20lists/Rec_and_Parks_Facility_Contact_List.pdf",
+        "https://community-services.blaauwberg.net/halls-venue-hire/halls-and-venues-for-hire-cape-town/Lavender-Hill-Community-Centre"
+      ]
     },
     {
       "slug": "lira-fynn-somerset-west",
-      "status": "deferred",
-      "reason": "The Waterstone Village page gives centre-level trading hours and phone numbers only. The boutique's own page is not in the research."
+      "status": "researched",
+      "sources": [
+        "https://www.waterstonevillage.co.za",
+        "https://lirafynn.com/pages/about-us"
+      ]
     },
     {
       "slug": "livecopper-brooklyn",
-      "status": "deferred",
-      "reason": "The homepage is an e-commerce shell with cart and promotion placeholders, and no description of the business or showroom. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.livecopper.co.za/",
+        "https://www.livecopper.co.za/pages/contact-us",
+        "https://www.livecopper.co.za/pages/our-stores"
+      ]
     },
     {
       "slug": "mantellis-direct-fish-hoek",
@@ -180,18 +224,25 @@
     },
     {
       "slug": "millennium-foods-killarney-gardens",
-      "status": "deferred",
-      "reason": "The Killarney Gardens directory page returned 404, and the other listing gives only an address and phone with no reviews. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.brabys.com/za/western-cape/milnerton/killarney-gardens/food-manufacturers-distributors/millennium-foods-pty-ltd",
+        "https://www.just-food.com/news/libstar-adds-frozen-meals-capability-to-millennium-foods/",
+        "https://nearfinderza.com/business/western-cape/cape-town/millennium-foods-pty-ltd_591561+2.html"
+      ]
     },
     {
       "slug": "mobile-mate-de-waterkant",
-      "status": "deferred",
-      "reason": "The Cape Quarter shops directory lists store names only. No description of Mobile Mate was found."
+      "status": "researched",
+      "sources": [
+        "https://capequarter.co.za/shops/",
+        "https://mobilemate.co.za/contact-us/"
+      ]
     },
     {
       "slug": "mr-price-golden-acre-cape-town-cbd",
       "status": "deferred",
-      "reason": "The Mr Price about page is chain-wide shopping-site copy with no Golden Acre branch facts. The brand's site was also blocked for deeper pages."
+      "reason": "The Golden Acre tenant list confirms Mr Price Clothing as a current centre tenant, but gives no shop number, product range or other branch-specific fact; the Mr Price about page is chain-wide shopping-site copy only."
     },
     {
       "slug": "neighbourhood-cafe-ramasibi-panorama",
@@ -217,8 +268,11 @@
     },
     {
       "slug": "ohana-cafe-kalk-bay",
-      "status": "deferred",
-      "reason": "The only usable source is a Facebook intro describing the cafe as sunny with ocean views. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/ohana.kalkbay",
+        "https://www.capetown.travel/listing/ohana-cafe/"
+      ]
     },
     {
       "slug": "old-bakery-market-lakeside",
@@ -240,32 +294,46 @@
     {
       "slug": "pet-kin-vredehoek",
       "status": "deferred",
-      "reason": "The shop's own site returned unrelated gambling content, and no other usable source was found. Nothing about the pet shop was confirmed."
+      "reason": "Raw Love Pets stockist-list page and Mdzananda donation-drop-off page cited for this business could not be verified: the stockist URL returns 404 and the clinic domain does not resolve. No other usable source confirms the business beyond its name, category and address."
     },
     {
       "slug": "pharmacy-at-spar-bergvliet-bergvliet",
-      "status": "deferred",
-      "reason": "The Medpages listing gives only address and phone, duplicating facts already in the current description. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.medpages.info/sf/index.php?page=organisation&orgcode=385391",
+        "https://www.sayellow.com/view/south-africa/bergvliet-pharmacy-at-spar-in-cape-town"
+      ]
     },
     {
       "slug": "pick-n-pay-constantia-village-constantia",
-      "status": "deferred",
-      "reason": "The Constantia Village and Africabz pages give address, phone and category only, with no branch-specific description beyond the existing text."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/pick-n-pay-constantia-29632",
+        "https://constantiavillage.co.za/stores/pick-n-pay/"
+      ]
     },
     {
       "slug": "pick-n-pay-waterstone-village-somerset-west",
-      "status": "deferred",
-      "reason": "The Waterstone Village page gives centre-level trading hours and phone numbers only. There are no Pick n Pay branch-specific facts."
+      "status": "researched",
+      "sources": [
+        "https://www.waterstonevillage.co.za",
+        "https://www.callupcontact.com/b/Supermarkets/Pick_39n_Pay_Waterstone/168"
+      ]
     },
     {
       "slug": "pizzeria-villaggio-pinelands",
-      "status": "deferred",
-      "reason": "The Novacircle listing is a generic directory page with limited specific detail, and the TripAdvisor source was blocked. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.sluurpy.co.za/pinelands/restaurant/5030747/pizzeria-villaggio",
+        "https://www.pinelandsdirectory.co.za/howardcentre/dir/villaggio.php"
+      ]
     },
     {
       "slug": "plumb-crazy-salt-river",
-      "status": "deferred",
-      "reason": "The Hotfrog directory gives an address that does not match this listing's Voortrekker Road address in Salt River. The branch cannot be confirmed."
+      "status": "researched",
+      "sources": [
+        "https://www.hotfrog.co.za/company/1099860609650688/plumb-crazy-plumbing-sanitaryware-and-hardware/cape-town/home-improvement"
+      ]
     },
     {
       "slug": "point-s-kuilsriver-kuils-river",
@@ -276,8 +344,10 @@
     },
     {
       "slug": "postnet-table-view-west-coast-village-bloubergstrand",
-      "status": "deferred",
-      "reason": "The PostNet store pages give the address only, under a login wall, with no description of in-store services. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.postnet.co.za/stores/tableviewwestcoastvillage"
+      ]
     }
   ]
 }

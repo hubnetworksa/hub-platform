@@ -1,7 +1,7 @@
 {
   "city": "capetown",
   "chunk": 31,
-  "generated_at": "2026-10-05T05:53:58.022Z",
+  "generated_at": "2026-10-05T17:20:56.780Z",
   "items": [
     {
       "slug": "pure-skin-and-body-kenridge",
@@ -32,8 +32,10 @@
     },
     {
       "slug": "saveur-restaurant-simons-town",
-      "status": "deferred",
-      "reason": "The only page is an eatout.co.za navigation page with no venue content, and TripAdvisor was blocked. No text about the restaurant was found."
+      "status": "researched",
+      "sources": [
+        "https://www.tripadvisor.co.za/Restaurant_Review-g319718-d7195583-Reviews-Saveur_Restaurant-Simon_s_Town_Western_Cape.html"
+      ]
     },
     {
       "slug": "sbg-cape-town-noordhoek",
@@ -62,13 +64,17 @@
     },
     {
       "slug": "sorbet-salon-kenilworth-on-main-kenilworth",
-      "status": "deferred",
-      "reason": "Africabz gives an aggregator listing with address and phone. There is no owner-written description of the salon beyond the existing text."
+      "status": "researched",
+      "sources": [
+        "https://stores.salonssorbet.co.za/western-cape/cape-town/pam-golding-on-main-shop-g004"
+      ]
     },
     {
       "slug": "southern-sun-cape-sun-cape-town-cbd",
-      "status": "deferred",
-      "reason": "The hotel's homepage is mostly loyalty-programme and booking copy, with no specific description of the Cape Sun property's rooms or facilities beyond the existing text."
+      "status": "researched",
+      "sources": [
+        "https://www.southernsun.com/southern-sun-cape-sun"
+      ]
     },
     {
       "slug": "spar-gugulethu-square-gugulethu",
@@ -84,13 +90,17 @@
     },
     {
       "slug": "standard-bank-golden-acre-cape-town-cbd",
-      "status": "deferred",
-      "reason": "The Standard Bank homepage is national product copy about accounts, loans and investments. There are no Golden Acre branch-specific facts in the research."
+      "status": "researched",
+      "sources": [
+        "https://za.bankopenhours.com/golden-acre/"
+      ]
     },
     {
       "slug": "surf-emporium-muizenberg",
-      "status": "deferred",
-      "reason": "The business site timed out and every search result is about unrelated surfing games or global surf forecast sites. Nothing about the Muizenberg business was found."
+      "status": "researched",
+      "sources": [
+        "https://surfemporium.co.za/"
+      ]
     },
     {
       "slug": "telecom-installations-stellenberg",
@@ -99,13 +109,17 @@
     },
     {
       "slug": "the-counselling-hub-woodstock",
-      "status": "deferred",
-      "reason": "The Palms tenant list gives the organisation's name and floor only. There is no description of its counselling services beyond the existing text."
+      "status": "researched",
+      "sources": [
+        "https://counsellinghub.org.za/"
+      ]
     },
     {
       "slug": "the-hussar-grill-waterstone-somerset-west",
-      "status": "deferred",
-      "reason": "The Waterstone Village page gives centre-level trading hours and phone numbers only. The Hussar Grill's own page is not in the research."
+      "status": "researched",
+      "sources": [
+        "https://www.dineplan.com/restaurants/the-hussar-grill-somerset-west"
+      ]
     },
     {
       "slug": "the-lookout-hout-bay",
@@ -116,8 +130,10 @@
     },
     {
       "slug": "the-tux-tailor-riverlands-observatory",
-      "status": "deferred",
-      "reason": "The Riverlands mall shop list gives shop names only, with no description of The Tux Tailor. No branch-specific text was found."
+      "status": "researched",
+      "sources": [
+        "https://riverlands.capetown/mall/"
+      ]
     },
     {
       "slug": "timbuild-somerset-west-somerset-west",
@@ -128,8 +144,10 @@
     },
     {
       "slug": "vida-e-caffe-3arts-village-plumstead",
-      "status": "deferred",
-      "reason": "The vida e caffe homepage is brand-wide copy about the chain's Portuguese-inspired concept. There are no 3 Arts Village branch-specific facts in the research."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/vida-e-caffe-3arts-village-468701"
+      ]
     },
     {
       "slug": "village-skincare-medi-spa-meadowridge",
@@ -139,7 +157,7 @@
     {
       "slug": "vredenhof-organic-estate-firgrove",
       "status": "deferred",
-      "reason": "Africabz gives an aggregator listing with address, phone and category. There is no owner-written description of the farm restaurant beyond the existing text."
+      "reason": "The africabz listing confirms the Organic Food Store category and address, but its crawled hours (Tue-Fri 09:00-15:00 only) conflict with the other trading hours found for this business, and the rest is customer reviews describing a farm stall and playground. Not enough reliable, consistent sourced material to safely write 100 words without repeating the farm-restaurant and wine claims the research couldn't verify."
     },
     {
       "slug": "wetton-hardware-wetton",
@@ -163,7 +181,7 @@
     {
       "slug": "xciter-sports-bergvliet",
       "status": "deferred",
-      "reason": "The Xciter Sports site describes stores in Rosebank and George, not Bergvliet, so this branch's facts cannot be confirmed as belonging to the same chain location."
+      "reason": "Possible branch mismatch: Xciter Sports' own site identifies store locations other than Bergvliet (Rosebank and George), with nothing confirming the Sherwood Centre address as a current Xciter Sports branch. Held pending verification that this listing's address and brand are still correctly matched, rather than published on an unconfirmed branch."
     },
     {
       "slug": "zone-fitness-westgate-mall-westgate",
@@ -181,13 +199,17 @@
     },
     {
       "slug": "african-elite-properties-de-waterkant",
-      "status": "deferred",
-      "reason": "The Cape Quarter shops directory lists store names only. There is no description of African Elite Properties beyond the existing text."
+      "status": "researched",
+      "sources": [
+        "https://africaneliteproperties.com/stay-with-us/"
+      ]
     },
     {
       "slug": "algina-wholesale-nursery-firgrove",
-      "status": "deferred",
-      "reason": "The only usable source is a short Facebook intro describing locally grown seasonal plants. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.yellowpages.net.za/phone,27-746183901,Wholesale-Plant-Nursery,Cape-Town,ZA33547.html"
+      ]
     },
     {
       "slug": "anysberg-biltong-and-deli-durbanville",
@@ -206,7 +228,7 @@
     {
       "slug": "barnyard-theatre-willowbridge-bellville",
       "status": "deferred",
-      "reason": "The usable page is for the Barnyard Theatre's Tyger Valley venue contact details, not confirmed as the same Willowbridge Shopping Centre listing. The branch cannot be safely matched to this address."
+      "reason": "The Barnyard Theatre's own site confirms the Cape Town venue relocated from Willowbridge Shopping Centre to Tyger Valley Shopping Centre in September 2019, so this listing's Willowbridge address is years out of date. This needs an address correction, not just a description update, so it is held rather than published against the old location."
     },
     {
       "slug": "be-dazzle-hair-and-beauty-salon-kenilworth",
@@ -216,7 +238,7 @@
     {
       "slug": "billy-now-de-waterkant",
       "status": "deferred",
-      "reason": "The Cape Quarter shops directory lists store names only. There is no description of Billy Now beyond the existing text."
+      "reason": "The Cape Quarter directory confirms Billy Now as a fashion, jewellery and accessories tenant, but that is the only business-specific fact available. The supplied claims about limited-run, locally designed and manufactured shirts and jackets are not independently confirmed, and the tenant-category fact alone cannot honestly carry 100 words without padding."
     },
     {
       "slug": "bluebottle-guesthouse-muizenberg",

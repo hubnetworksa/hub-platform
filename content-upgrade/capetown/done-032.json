@@ -1,7 +1,7 @@
 {
   "city": "capetown",
   "chunk": 32,
-  "generated_at": "2026-10-05T05:58:01.891Z",
+  "generated_at": "2026-10-05T17:20:57.086Z",
   "items": [
     {
       "slug": "codfather-seafood-and-sushi-camps-bay",
@@ -19,8 +19,10 @@
     },
     {
       "slug": "debonairs-pizza-town-centre-mitchells-plain",
-      "status": "deferred",
-      "reason": "The NearFinderZA directory entry gives an address at Promenade Mall, Lentegeur, which does not match this listing's Town Centre, Katdoring Street address. The branch cannot be confirmed from the research."
+      "status": "researched",
+      "sources": [
+        "https://locations.debonairspizza.co.za/restaurants-OKMall-DebonairsPizzaMitchellsPlainExpress"
+      ]
     },
     {
       "slug": "delft-community-health-centre-delft",
@@ -29,8 +31,11 @@
     },
     {
       "slug": "den-anker-va-waterfront",
-      "status": "deferred",
-      "reason": "The Waterfront page is mostly a list of similar restaurants at the Waterfront, with limited specific detail about Den Anker itself. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://denanker.co.za/",
+        "https://www.waterfront.co.za/food_and_drinks/den-anker-restaurant-bar/"
+      ]
     },
     {
       "slug": "deon-stuart-electronics-and-installations-rocklands",
@@ -53,8 +58,11 @@
     },
     {
       "slug": "district-six-museum-district-six",
-      "status": "deferred",
-      "reason": "The business site timed out and the sa-venues page is a general Western Cape things-to-do list, not specific to the museum. No usable description was found."
+      "status": "researched",
+      "sources": [
+        "https://districtsix.co.za",
+        "https://citysightseeing.co.za/en/cape-town/district-six-museum"
+      ]
     },
     {
       "slug": "dr-c-podges-incorporated-welgemoed",
@@ -63,8 +71,11 @@
     },
     {
       "slug": "durbanville-fisheries-durbanville",
-      "status": "deferred",
-      "reason": "The Durbanville Town Centre store list gives a different tenant's hours and address, with no description of Durbanville Fisheries itself. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://durbanvillefisheries.co.za/contact-us/",
+        "https://www.durbanvilletowncentre.co.za/stores/durbanville-fisheries/"
+      ]
     },
     {
       "slug": "el-burro-green-point",
@@ -82,28 +93,39 @@
     },
     {
       "slug": "equibox-noordhoek",
-      "status": "deferred",
-      "reason": "The FindGlocal listing repeats brand names (Shires Equestrian, Premier Equine) already in the existing description, with no further sourced detail. Not enough new sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "http://www.findglocal.com/ZA/Cape-Town/194032367439841/Equibox"
+      ]
     },
     {
       "slug": "ergonomics-direct-paarden-eiland",
-      "status": "deferred",
-      "reason": "The company's homepage is generic ergonomic-furniture marketing copy repeated across several banners, with no Paarden Eiland-specific detail beyond what the existing description already covers."
+      "status": "researched",
+      "sources": [
+        "https://ergonomicsdirect.co.za"
+      ]
     },
     {
       "slug": "estora-home-woodstock",
-      "status": "deferred",
-      "reason": "The Palms tenant page timed out and the only other results were unrelated adult content. No sourced text about Estora Home was found."
+      "status": "researched",
+      "sources": [
+        "https://www.estorahome.co.za/",
+        "https://estorahome.co.za/product-category/couches/sleeper-couches/"
+      ]
     },
     {
       "slug": "exclusive-books-va-waterfront",
-      "status": "deferred",
-      "reason": "Tiendeo lists several Exclusive Books branches with distances and status, but gives no Victoria Wharf branch-specific description beyond the existing text."
+      "status": "researched",
+      "sources": [
+        "https://www.waterfront.co.za/stores/exclusive-books-2"
+      ]
     },
     {
       "slug": "fps-attorneys-brackenfell",
-      "status": "deferred",
-      "reason": "The Hotfrog directory lists category tags (marketing law, financial planning, property law) with no description of the firm's actual services beyond the existing text. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://fpslaw.co.za/"
+      ]
     },
     {
       "slug": "golden-arrow-bus-services-epping",
@@ -114,8 +136,11 @@
     },
     {
       "slug": "good-thyme-cafe-milnerton",
-      "status": "deferred",
-      "reason": "The only usable source is a short Facebook intro describing it as a local cafe in Milnerton. The rest of the search results are unrelated dictionary definitions of the word 'good'. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/goodthymecafe/",
+        "https://www.tripadvisor.com/Restaurant_Review-g312665-d19240618-Reviews-Good_Thyme_Cafe-Milnerton_Western_Cape.html"
+      ]
     },
     {
       "slug": "happy-rooster-muizenberg",
@@ -129,13 +154,18 @@
     },
     {
       "slug": "hypermed-pharmacy-green-point",
-      "status": "deferred",
-      "reason": "The Medpages listing gives only address and phone, duplicating facts already in the existing description. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.medpages.info/sf/index.php?page=organisation&orgcode=88430",
+        "https://www.facebook.com/AlphaPharmHypermedPharmacy/"
+      ]
     },
     {
       "slug": "jumbo-cash-and-carry-ottery",
-      "status": "deferred",
-      "reason": "The catalogue aggregator gives address, phone and a specials period only. There is no owner-written description of the store beyond the existing text."
+      "status": "researched",
+      "sources": [
+        "https://my-catalogue.co.za/stores/cape-town/jumbo-cash-and-carry/old-ottery-road-ottery"
+      ]
     },
     {
       "slug": "kristens-kick-ass-ice-cream-noordhoek",
@@ -146,18 +176,28 @@
     },
     {
       "slug": "la-femme-health-and-beauty-noordhoek",
-      "status": "deferred",
-      "reason": "The only usable source is a short Facebook intro describing the salon as tucked away in the Noordhoek Garden Emporium. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://lafemmebeauty.co.za/",
+        "https://www.fresha.com/lvp/la-femme-health-and-beauty-katzenellenbogen-street-cape-town-G57kbP"
+      ]
     },
     {
       "slug": "little-fox-constantia",
-      "status": "deferred",
-      "reason": "The eatout.co.za article confirms the opening and its relationship to Foxcroft but gives little further operational detail. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.eatout.co.za/article/la-colombe-group-opens-little-fox-their-new-restaurant-in-constantia/",
+        "https://www.ewn.co.za/2026/03/01/little-fox-now-offers-second-dining-option-at-historic-constantia-nek"
+      ]
     },
     {
       "slug": "lnr-computers-plattekloof-village-shopping-centre-plattekloof",
-      "status": "deferred",
-      "reason": "The Yellow Pages listing gives address and phone only, duplicating facts already in the existing description. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.yellowpages.net.za/phone-27-215584428-computer-store-Cape-Town-ZA10960.html",
+        "https://lnrcomputers.co.za/",
+        "https://za.africabz.com/western-cape/lnr-computers-237778"
+      ]
     },
     {
       "slug": "lotus-river-community-health-centre-lotus-river",
@@ -166,13 +206,18 @@
     },
     {
       "slug": "lotz-of-joy-guesthouse-panorama",
-      "status": "deferred",
-      "reason": "The guesthouse's own site did not resolve, and every search result is unrelated adult content. Nothing about the guesthouse was found."
+      "status": "researched",
+      "sources": [
+        "https://www.tripadvisor.co.za/Hotel_Review-g2427781-d4154221-Reviews-Lotz_of_Joy-Panorama_Western_Cape.html",
+        "https://www.capetown.travel/listing/lotz-of-joy-guesthouse/"
+      ]
     },
     {
       "slug": "m-l-panelbeaters-elsies-river",
-      "status": "deferred",
-      "reason": "The workshop's own site timed out and every search result is about the letter M or an unrelated retailer. Nothing about the panel beaters was found."
+      "status": "researched",
+      "sources": [
+        "https://www.mlpanelbeaters.co.za/"
+      ]
     },
     {
       "slug": "malok-woodstock",
@@ -205,13 +250,18 @@
     },
     {
       "slug": "mediclinic-constantiaberg-plumstead",
-      "status": "deferred",
-      "reason": "The only usable source is a general Wikipedia article about the Plumstead suburb, with no hospital-specific content. No sourced text about Mediclinic Constantiaberg was found."
+      "status": "researched",
+      "sources": [
+        "https://www.mediclinic.co.za/en/constantiaberg/service-offering.html"
+      ]
     },
     {
       "slug": "moksh-indian-restaurant-plumstead",
-      "status": "deferred",
-      "reason": "The restaurant's own site timed out and every other result is unrelated YouTube help content. Nothing about the restaurant was found."
+      "status": "researched",
+      "sources": [
+        "https://mokshrestaurants.com/plumstead/",
+        "https://www.tripadvisor.com/Restaurant_Review-g6776488-d33219893-Reviews-Moksh_Indian_Restaurant_Plumstead-Plumstead_Western_Cape.html"
+      ]
     },
     {
       "slug": "montague-gardens-hardware-and-steel-montague-gardens",
@@ -222,8 +272,10 @@
     },
     {
       "slug": "mr-os-motor-spares-portland",
-      "status": "deferred",
-      "reason": "The Yep listing gives no content, and the search results are all about the unrelated Mr Price retail chain. Nothing about Mr O's Motor Spares was found."
+      "status": "researched",
+      "sources": [
+        "https://www.thinklocal.co.za/biz/mr-os-motor-spares-mitchells-plain"
+      ]
     },
     {
       "slug": "mulholland-interior-solutions-woodstock",
@@ -269,8 +321,10 @@
     },
     {
       "slug": "postnet-gardens-shopping-centre-gardens",
-      "status": "deferred",
-      "reason": "The PostNet store page is behind a login wall with address only, and the rest of the research is chain-wide courier and tracking copy. Not enough branch-specific sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.postnet.co.za/stores/gardensshoppingcentre"
+      ]
     },
     {
       "slug": "rare-grill-harfield-village",
@@ -280,7 +334,7 @@
     {
       "slug": "red-sofa-cafe-vredehoek",
       "status": "deferred",
-      "reason": "The cafe's own site shows the domain as temporarily unavailable and its about pages return Page Not Found. No sourced text about the cafe was found."
+      "reason": "The cafe's own website domain is shown as temporarily unavailable and its About and About-Us pages return Page Not Found, raising a concern the business may have closed down; verify current trading status before publishing any description."
     },
     {
       "slug": "empire-cafe-muizenberg",

@@ -1,17 +1,17 @@
 {
   "city": "capetown",
   "chunk": 44,
-  "generated_at": "2026-10-05T06:51:46.464Z",
+  "generated_at": "2026-10-05T17:20:59.992Z",
   "items": [
     {
       "slug": "coffee-time-oranjezicht",
       "status": "deferred",
-      "reason": "The only usable source was an Eat Out news page with site navigation and headlines. TripAdvisor and the africabz directory were both blocked, so nothing about the cafe itself was found."
+      "reason": "The only usable source is an Eat Out news page with pure site navigation and headlines, zero content about the cafe; TripAdvisor and the africabz directory were both blocked by anti-bot protection. The kosher-supervision, Astra Centre and parking facts proposed in further research do not appear in any crawled source and were not published."
     },
     {
       "slug": "dentist-on-wenlock-inc-kuils-river",
       "status": "deferred",
-      "reason": "The research returned content about an unrelated dentist and dental practice in Westdene, Bloemfontein, rather than this Kuils River practice. The Facebook page for the correct business had no visible text, so no reliable facts about Dentist on Wenlock Inc were found."
+      "reason": "The research returned content about an unrelated dentist and dental practice in Westdene, Bloemfontein, rather than this Kuils River practice; the Facebook page for the correct business gave only an address and follower count, no services. An address-only Medpages listing (1 Wenlock Street, Kuils River) adds no treatment-range or practice-specific fact, so there is still not enough sourced text for 100 words."
     },
     {
       "slug": "the-pantry-plumstead-plumstead",
@@ -30,7 +30,7 @@
     {
       "slug": "traders-camps-bay",
       "status": "deferred",
-      "reason": "The only source found was The Bay Hotel's general contact page, with site navigation and cookie-consent text rather than content about the Traders venue itself. Not enough for 100 real words."
+      "reason": "The only source found was The Bay Hotel's general contact page, with site navigation and cookie-consent text rather than content about the Traders venue itself. No cigar-bar, wine-cellar or drinks-menu fact for Traders appears in any crawled source; not enough for 100 real words."
     },
     {
       "slug": "transcape-steels-epping",
@@ -42,7 +42,7 @@
     {
       "slug": "arambrook-boutique-hotel-bishopscourt",
       "status": "deferred",
-      "reason": "The business's own domain showed only a generic hosting provider page, and the search results were unrelated pages about sewing patterns and PDF tools. Nothing about the hotel was found."
+      "reason": "The business's own domain (arambrook.co.za) returns only a generic hosting-provider parking page, and the search results are entirely unrelated (sewing-pattern forums, PDF-converter threads). Expedia and TripAdvisor were both blocked by anti-bot protection. No room, pool, restaurant or rating fact for this hotel is verifiable in the crawled data."
     },
     {
       "slug": "charlys-bakery-zonnebloem",
@@ -68,7 +68,7 @@
     {
       "slug": "portuguese-club-rugby",
       "status": "deferred",
-      "reason": "The only source was a Yellow Pages listing with an address and phone number but no description of the club's activities or facilities. Not enough content for 100 real words."
+      "reason": "The only source is a Yellow Pages listing giving address, phone and the generic keywords \"club, rugby, rugby club\", with no description of the club's restaurant, function rooms or catering; africabz was blocked. The function-room capacity and catering facts proposed in further research do not appear in any crawled source. Not enough content for 100 real words."
     },
     {
       "slug": "sa-metal-group-epping",
@@ -122,12 +122,12 @@
     {
       "slug": "lwandle-migrant-labour-museum-lwandle",
       "status": "deferred",
-      "reason": "The Western Cape Government facility page for this museum returned Page Not Found, and the museum's own site returned a server error. Nothing usable about the museum was found."
+      "reason": "The Western Cape Government facility page for this museum returned a Page Not Found error, and the museum's own site (lwandlemuseum.co.za) returned an HTTP 500 server error, so neither is readable. No crawled source confirms the opening date, Hostel 33 preservation detail, or any other museum-specific fact, so none of it can be published even though it is plausible."
     },
     {
       "slug": "maartens-guesthouse-fresnaye",
       "status": "deferred",
-      "reason": "The only source was a contact page listing room names, a booking calendar and a direct-booking discount, with no description of the guesthouse's facilities or setting. Not enough for 100 real words."
+      "reason": "The only source is the guesthouse's own contact page, which lists room names, a booking calendar and a direct-booking discount, with no description of the pool, Wi-Fi, laundry service, tours or the property's setting. Not enough sourced text for 100 real words."
     },
     {
       "slug": "the-clothing-bank-thornton",
@@ -139,7 +139,7 @@
     {
       "slug": "a-touch-of-madness-observatory",
       "status": "deferred",
-      "reason": "The only usable source was an Eat Out news page with site navigation and headlines. Nothing about the restaurant itself was found."
+      "reason": "The only usable source is an Eat Out news page with pure site navigation and headlines, zero content about the restaurant. No food, drink or events fact for this business appears in any crawled source."
     },
     {
       "slug": "cape-town-market-epping",
@@ -158,7 +158,7 @@
     {
       "slug": "maneos-bb-and-catering-langa",
       "status": "deferred",
-      "reason": "The sa-venues page states there are no bed and breakfasts listed in Langa and instead lists alternatives in nearby Pinelands. Nothing about MaNeo's B&B and Catering itself was found."
+      "reason": "The sa-venues page states there are currently no bed and breakfasts listed in Langa and instead lists alternatives in nearby Pinelands, raising a real possibility this business is no longer trading under this name rather than simply being under-documented. Nothing current about MaNeo's B&B and Catering itself was found, so the existing historical claims (opened 1999, three guest rooms) are not republished without verification."
     },
     {
       "slug": "mitchells-scottish-ale-house-va-waterfront",
@@ -177,7 +177,7 @@
     {
       "slug": "the-hollow-tree-on-oxford-durbanville",
       "status": "deferred",
-      "reason": "The only usable source was an Eat Out news page with site navigation and headlines. Nothing about the restaurant itself was found."
+      "reason": "The only usable source is an Eat Out news page with pure site navigation and headlines, zero content about the restaurant. No building-history, menu or facility fact for this business appears in any crawled source."
     },
     {
       "slug": "belly-of-the-beast-district-six",
@@ -196,7 +196,7 @@
     {
       "slug": "inzame-zabantu-community-health-clinic-browns-farm",
       "status": "deferred",
-      "reason": "The only source was a Medpages directory entry giving the address and phone number, with no services or description. Not enough for 100 real words."
+      "reason": "The only source is a Medpages listing giving address and phone only, under the generic category \"Clinics - Public\", with no services or description; thinklocal.co.za was blocked by anti-bot protection and the Western Cape Government facility page returned HTTP 404 (so the suggested Mon-Fri 07:00-16:00 operating hours are not actually confirmed anywhere in the crawled data). Address and category alone are not enough for a sourced 100-word description."
     },
     {
       "slug": "la-grange-interiors-woodstock",
@@ -208,7 +208,7 @@
     {
       "slug": "lavender-hill-high-school-lavender-hill",
       "status": "deferred",
-      "reason": "The schools directory gives only quintile, fee-paying status and generic admissions and uniform boilerplate shared across many school listings. No programmes or history specific to this school were found."
+      "reason": "The schools directory gives only quintile, fee-paying status and generic admissions and uniform boilerplate shared across many school listings. No programmes, facilities or history specific to this school were found."
     },
     {
       "slug": "pahari-african-restaurant-salt-river",
@@ -220,12 +220,12 @@
     {
       "slug": "lentegeur-hospital-lentegeur",
       "status": "deferred",
-      "reason": "The Western Cape Government facility page and the Medpages directory entry give only the address, phone number and a 24-hour operating note, with no services described. Not enough content for an honest 100-word description."
+      "reason": "The Western Cape Government facility page and the Medpages directory entry confirm the address, that it is specifically a psychiatric hospital, and that it operates 24 hours every day, but neither page offers any descriptive text about services, departments or programmes beyond that contact-record data. Address, category and hours alone do not clear the bar for a sourced description, and the bed-count and department claims in the current description remain unverified in this chunk's research."
     },
     {
       "slug": "virgin-active-steenberg-westlake",
       "status": "deferred",
-      "reason": "This listing's sources are identical to those already used for the Virgin Active Steenberg listing covered in an earlier chunk (same gym page, same facilities), and nothing in the research distinguishes a separate Westlake branch. Writing another description from the same source risks an unintended duplicate rather than a genuinely separate business."
+      "reason": "This listing's sources are identical to those already used for virgin-active-steenberg-steenberg, published in chunk 39 from the same virginactive.co.za/gyms/steenberg page and the same Otto Close, Westlake Business Park address -- confirmed directly against that chunk's output. Nothing in the research distinguishes a genuinely separate Westlake branch, so this looks like the same physical gym duplicated across two directory listings, a data/admin issue rather than a content-research gap; held rather than publishing a near-duplicate description."
     },
     {
       "slug": "eziko-restaurant-langa",
@@ -249,7 +249,7 @@
     {
       "slug": "anchor-bay-workation-three-anchor-bay",
       "status": "deferred",
-      "reason": "The only source was an Airbnb listing page showing generic platform help-centre navigation, with no description of the Anchor Bay Workation property itself. Not enough for 100 real words."
+      "reason": "The business's own domain (anchorbayworkation.co.za) redirects to generic Airbnb help-centre navigation text rather than content about the property, and the search results are entirely unrelated businesses (an investment firm, bookkeeping software, a marine-hardware company, a yeast brand, dictionary definitions). No room-category, capacity or check-in fact for this guest house is verifiable in the crawled data."
     },
     {
       "slug": "lelapa-restaurant-langa",

@@ -1,7 +1,7 @@
 {
   "city": "capetown",
   "chunk": 33,
-  "generated_at": "2026-10-05T06:01:46.348Z",
+  "generated_at": "2026-10-05T17:20:57.372Z",
   "items": [
     {
       "slug": "redemption-burgers-woodstock",
@@ -12,8 +12,10 @@
     },
     {
       "slug": "simply-asia-plumstead",
-      "status": "deferred",
-      "reason": "The branch page gives only the business name and navigation links, with no description of this Plumstead location. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://stores.simplyasia.co.za/details/plumstead"
+      ]
     },
     {
       "slug": "sonnekus-boutique-hotel-bistro-st-james",
@@ -24,8 +26,11 @@
     },
     {
       "slug": "south-pole-studios-salt-river",
-      "status": "deferred",
-      "reason": "The Fresha listing gives only address and category, with no owner-written description of the pole and aerial fitness classes beyond the existing text."
+      "status": "researched",
+      "sources": [
+        "https://southpolestudios.co.za/",
+        "https://www.fresha.com/lvp/south-pole-studios-voortrekker-road-cape-town-jbKeP4"
+      ]
     },
     {
       "slug": "spar-firgrove-firgrove",
@@ -34,8 +39,11 @@
     },
     {
       "slug": "sportscene-maynard-mall-wynberg",
-      "status": "deferred",
-      "reason": "The catalogue aggregator gives a different address (130 Main Rd) than this listing's Maynard Mall shop address, so the branch cannot be confirmed from the research."
+      "status": "researched",
+      "sources": [
+        "https://www.africanadvice.com/1345608/Sportswear/Cape_Town/Sportscene/",
+        "https://www.sayellow.com/view/south-africa/sportscene-wynberg-in-cape-town"
+      ]
     },
     {
       "slug": "strandfontein-post-office-strandfontein",
@@ -44,8 +52,12 @@
     },
     {
       "slug": "sushi-box-cape-quarter-de-waterkant",
-      "status": "deferred",
-      "reason": "The restaurant's own page returned Page Not Found, and the eatout.co.za page has no venue content. No sourced text about the restaurant was found."
+      "status": "researched",
+      "sources": [
+        "https://capequarter.co.za/shops/",
+        "https://www.sushibox.co.za/sushibox-de-waterkant",
+        "https://www.eatout.co.za/venue/sushi-box-de-waterkant/"
+      ]
     },
     {
       "slug": "the-cake-shop-athlone",
@@ -61,48 +73,76 @@
     },
     {
       "slug": "the-crafters-den-bergvliet",
-      "status": "deferred",
-      "reason": "The only usable source is a YouTube video title repeating the shop's address and phone number. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.thecraftersdencape.com/about-us",
+        "https://www.thecraftersdencape.com/contact-us"
+      ]
     },
     {
       "slug": "the-crazy-store-tokai-junction-kirstenhof",
-      "status": "deferred",
-      "reason": "The Hotfrog directory listing gives the shop name and phone only, with no description of the store's range beyond the existing text."
+      "status": "researched",
+      "sources": [
+        "https://www.hotfrog.co.za/company/1381718103420928/the-crazy-store-tokai-junction/kirstenhof-cape-town/retail-stores",
+        "https://za.africabz.com/western-cape/the-crazy-store-tokai-junction-113307"
+      ]
     },
     {
       "slug": "totalsports-vangate-mall-athlone",
-      "status": "deferred",
-      "reason": "Tiendeo gives an aggregator listing with hours and phone. The Totalsports branch page is not in the research, so there is no owner-written text."
+      "status": "researched",
+      "sources": [
+        "https://www.cybo.com/ZA-biz/totalsports-vangate-mall",
+        "https://www.tiendeo.co.za/stores/cape-town/totalsports-vangate-mall-jakes-gerwel-drive/72799",
+        "https://en.wikipedia.org/wiki/TFG_Limited"
+      ]
     },
     {
       "slug": "trenton-paarden-eiland",
-      "status": "deferred",
-      "reason": "The homepage is an e-commerce product listing with prices for individual UGG items, and no description of the Paarden Eiland showroom itself beyond what the existing description already covers."
+      "status": "researched",
+      "sources": [
+        "https://trenton.co.za/pages/our-stores",
+        "https://trenton.co.za/"
+      ]
     },
     {
       "slug": "truth-coffee-cape-town-cbd",
-      "status": "deferred",
-      "reason": "The business site was blocked and the eatout.co.za page returned a News24 navigation page with no venue content. No sourced text about the cafe was found."
+      "status": "researched",
+      "sources": [
+        "https://truth.coffee/pages/contact-us",
+        "https://www.eatout.co.za/venue/truth-coffee-roasting-hq/"
+      ]
     },
     {
       "slug": "twigs-nursery-coffee-shop-harfield-village",
-      "status": "deferred",
-      "reason": "The sa-venues page is a general Harfield Village things-to-do listing with limited nursery-specific detail. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.sa-venues.com/things-to-do/westerncape/twigs-nursery/"
+      ]
     },
     {
       "slug": "umami-sushi-kommetjie",
-      "status": "deferred",
-      "reason": "The only page is an eatout.co.za navigation page with no venue content, and the Imhoff Farm site timed out. No text about the restaurant was found."
+      "status": "researched",
+      "sources": [
+        "https://imhofffarm.co.za/umami-sushi/",
+        "https://www.eatout.co.za/venue/umami-sushi/"
+      ]
     },
     {
       "slug": "umi-camps-bay",
-      "status": "deferred",
-      "reason": "The only page is an eatout.co.za navigation page with no venue content, and TripAdvisor was blocked. No text about the restaurant was found."
+      "status": "researched",
+      "sources": [
+        "https://www.tripadvisor.com/Restaurant_Review-g312658-d5966649-Reviews-Umi-Camps_Bay_Western_Cape.html",
+        "https://www.capetownmagazine.com/news/umi-restaurant-in-camps-bay/10_22_19114"
+      ]
     },
     {
       "slug": "veloce-luxury-car-rental-de-waterkant",
-      "status": "deferred",
-      "reason": "The Cape Quarter shops directory lists store names only. There is no description of Veloce beyond the existing text."
+      "status": "researched",
+      "sources": [
+        "https://www.veloceluxurycarrental.co.za/about",
+        "https://www.findmy.co.za/services/business/veloce-luxury-car-rental/2892",
+        "https://capequarter.co.za/shops/"
+      ]
     },
     {
       "slug": "venture-workspace-constantia-emporium-constantia",
@@ -113,8 +153,12 @@
     },
     {
       "slug": "vida-e-caffe-edgemead",
-      "status": "deferred",
-      "reason": "The Wikipedia article describes the vida e caffe chain generally, with no Edgemead branch-specific facts. The Facebook result is for the Edgemead Village Centre, not the cafe itself."
+      "status": "researched",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Vida_e_Caff%C3%A8",
+        "https://za.africabz.com/western-cape/vida-e-caffe-edgemead-village-445093",
+        "https://www.facebook.com/EdgemeadVillageCentre/"
+      ]
     },
     {
       "slug": "voltmill-ndabeni",
@@ -137,13 +181,19 @@
     },
     {
       "slug": "woodville-primary-school-woodlands",
-      "status": "deferred",
-      "reason": "Every search result is unrelated LinkedIn profiles, and the directory pages were blocked. Nothing about the school was found."
+      "status": "researched",
+      "sources": [
+        "https://www.schoolguide.co.za/schools/ordinary-schools/woodville-primary-school.html",
+        "https://pathfinda.com/en/mitchells-plain/woodlands/shops-services/woodville-primary-school"
+      ]
     },
     {
       "slug": "woolworths-waterstone-village-somerset-west",
-      "status": "deferred",
-      "reason": "The Waterstone Village page gives centre-level trading hours and phone numbers only. There are no Woolworths branch-specific facts beyond the existing text."
+      "status": "researched",
+      "sources": [
+        "https://www.waterstonevillage.co.za",
+        "https://www.woolworthsholdings.co.za/woolworths-adds-another-new-concept-store-at-waterstone-village/"
+      ]
     },
     {
       "slug": "zeetan-turkish-restaurant-sea-point",
@@ -175,8 +225,12 @@
     },
     {
       "slug": "arora-lights-ysterplaat",
-      "status": "deferred",
-      "reason": "The Northgate Estate page lists tenant names only, with no description of Arora Lights' product range beyond the existing text. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://aroralights.co.za/",
+        "https://aroralights.co.za/contact/",
+        "https://northgateestate.co.za/arora-lights/"
+      ]
     },
     {
       "slug": "backyard-brew-coffee-co-kenwyn",
@@ -194,8 +248,11 @@
     },
     {
       "slug": "banana-jam-cafe-harfield-village",
-      "status": "deferred",
-      "reason": "The restaurant's own homepage is mostly a navigation shell, and its about pages return 404. Not enough sourced text beyond what the existing description already covers."
+      "status": "researched",
+      "sources": [
+        "https://www.bananajamcafe.co.za/",
+        "https://cape-town.infoisinfo.co.za/card/banana-jam-cafe/222358"
+      ]
     },
     {
       "slug": "barstaurant-glencairn",
@@ -234,18 +291,27 @@
     },
     {
       "slug": "black-oak-computers-sunnydale",
-      "status": "deferred",
-      "reason": "The only usable source is a one-line Facebook intro mentioning desktop and notebook repairs. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/BlackOakComputers",
+        "https://www.cybo.com/ZA-biz/black-oak-computers"
+      ]
     },
     {
       "slug": "bootlegger-bakoven",
-      "status": "deferred",
-      "reason": "Wanderlog gives a short aggregator description locating the cafe in Camps Bay rather than Bakoven specifically, which does not confirm this listing's exact branch. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://wanderlog.com/place/details/2263423/bootlegger-bakoven",
+        "https://ourcafes.bootlegger.coffee/FoodDrink-CapeTown-BootleggerBakoven"
+      ]
     },
     {
       "slug": "bootlegger-dean-street-newlands",
-      "status": "deferred",
-      "reason": "The Coffeedec directory page is a generic listing template with no real description of the Dean Street branch beyond its name and location. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://coffeedec.com/shop/listing/bootlegger-dean-street-newlands-cape-town-coffee-shop/",
+        "https://ourcafes.bootlegger.coffee/FoodDrink-CapeTown-BootleggerDeanStreet"
+      ]
     },
     {
       "slug": "bootlegger-three-anchor-bay",
@@ -282,13 +348,19 @@
     },
     {
       "slug": "clicks-delft-mall-delft",
-      "status": "deferred",
-      "reason": "Tiendeo gives an aggregator listing with hours and phone. The Clicks branch page is not in the research, so there is no owner-written text."
+      "status": "researched",
+      "sources": [
+        "https://clicks.co.za/store/Delft/1859",
+        "https://www.tiendeo.co.za/stores/cape-town/clicks-delft-mall-shop-delft-mall-hindle-road/55798"
+      ]
     },
     {
       "slug": "clicks-pharmacy-the-junction-mall-philippi",
-      "status": "deferred",
-      "reason": "The Clicks store page gives address and hours with generic product categories. Chain-wide copy alone is not enough for a branch-specific description."
+      "status": "researched",
+      "sources": [
+        "https://clicks.co.za/store/The-Junction-Mall/1856",
+        "https://www.medpages.info/sf/index.php?page=organisation&orgcode=403703"
+      ]
     },
     {
       "slug": "colosseum-hotel-century-city",

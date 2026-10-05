@@ -1,17 +1,19 @@
 {
   "city": "capetown",
   "chunk": 36,
-  "generated_at": "2026-10-05T05:37:06.161Z",
+  "generated_at": "2026-10-05T17:20:58.089Z",
   "items": [
     {
       "slug": "scratch-patch-and-mineral-world-glencairn",
-      "status": "deferred",
-      "reason": "The Scratch Patch and Topstones pages describe the online shop (categories, shipping in two working days, requests by email) and the chain's shops in general. The Glencairn shop itself was not described, and chain-wide facts alone are not allowed."
+      "status": "researched",
+      "sources": [
+        "https://www.scratchpatch.co.za"
+      ]
     },
     {
       "slug": "shin-thai-asian-kitchen-marina-da-gama",
       "status": "deferred",
-      "reason": "The Mr D Food page is for Shin Thai Asian Kitchen Sushi in Muizenberg, not the Marina da Gama branch. TripAdvisor and Dining Out were blocked. No Marina da Gama facts were found."
+      "reason": "The only crawled page (Mr D Food) is for Shin Thai Asian Kitchen Sushi in Muizenberg, a different branch, and lists only generic delivery-platform cuisine tags. A research note claimed official-site menu, address and hours detail for the Marina da Gama branch, but none of that appears anywhere in the crawled sources; TripAdvisor and Dining Out were blocked."
     },
     {
       "slug": "shoprite-nyanga-junction-manenberg",
@@ -21,17 +23,17 @@
     {
       "slug": "skin-renewal-cape-quarter-de-waterkant",
       "status": "deferred",
-      "reason": "The Cape Quarter store directory does not list Skin Renewal, and no other source about the business was found."
+      "reason": "The Cape Quarter store directory does not list Skin Renewal by name, and no other source about the business was found (confidence: none). A research note described a full treatment menu and service-area list, but none of that traces to any crawled source for this branch."
     },
     {
       "slug": "southern-boards-hardware-wetton",
       "status": "deferred",
-      "reason": "Only the Cylex directory profile was found (timber merchant and building materials at 137 Wetton Road, hours, categories). The southernboards.co.za site was not fetched, and that is not enough for 100 real words."
+      "reason": "Only the Cylex directory profile was found (timber merchant and building materials at 137 Wetton Road, hours, categories, no distinguishing service detail). The southernboards.co.za site was not fetched. A research note also raised a conflicting address (135 vs 137 Wetton Road) that the crawled sources don't resolve either way, so the address should be checked before this listing is revisited."
     },
     {
       "slug": "spar-express-at-shell-firgrove-firgrove",
       "status": "deferred",
-      "reason": "Hotfrog and iGlobal directory pages describe a SPAR Express in partnership with Shell (forecourt shopping, Bean Tree coffee, snacks, fuel). That is too thin for a branch description, and the SPAR store-view page was only a link."
+      "reason": "Hotfrog and iGlobal directory pages describe a SPAR Express in partnership with Shell (forecourt shopping, Bean Tree coffee, snacks, fuel), but that text reads as the standard SPAR Express/Shell brand copy rather than a Firgrove-specific fact, and the SPAR store-view page was only a link. A research note added fast food, ATM and 24-hour claims that don't appear in any crawled source."
     },
     {
       "slug": "sportsmans-warehouse-sea-point",
@@ -46,7 +48,7 @@
     {
       "slug": "synergy-pharmacy-kirstenhof",
       "status": "deferred",
-      "reason": "Only the africabz directory entry (address, hours, phone) and user reviews were found. The pharmacy belongs to a chain (Alpha Pharmacies) and the chain site was not fetched. Review quotes are not enough for 100 real words."
+      "reason": "Only the africabz directory entry (address, hours, phone) and user reviews were found. The pharmacy belongs to a chain (Alpha Pharmacies, trading as Synergy Megapharm) and the chain site was not fetched, so the detailed clinic-services list in a research note is unverified. Review quotes are not enough for 100 real words."
     },
     {
       "slug": "the-book-shoppe-plumstead",
@@ -56,17 +58,19 @@
     {
       "slug": "the-candle-factory-shop-kensington",
       "status": "deferred",
-      "reason": "Directory pages only: a family-run factory outlet and wholesaler for candles and accessories, with three Cape Town stores serving the public and event, catering, hospitality, spa and florist trades. The directories give other addresses (Maitland, Retreat-Tokai, Brackenfell) and the Kensington branch was not confirmed. About 75 words of real content."
+      "reason": "Directory pages only: a family-run factory outlet and wholesaler for candles and accessories, serving the public and the event, catering, hospitality, spa and florist trades. The only branch list found names Maitland, Retreat-Tokai and Brackenfell in Cape Town plus Meadowdale in Johannesburg; Kensington does not appear among them, so this branch's address could not be confirmed from the crawled sources."
     },
     {
       "slug": "the-coffee-station-and-bakery-scarborough",
-      "status": "deferred",
-      "reason": "The Village Hub page gives only the Coffee Station's opening times (7:30 in summer, 8:00 in winter), freshly baked croissants and muffins, and cycling pit-stop use. That is not enough for 100 real words."
+      "status": "researched",
+      "sources": [
+        "https://www.thevillagehub.co.za/coffee-station/"
+      ]
     },
     {
       "slug": "the-daily-coffee-cafe-melkbosstrand",
       "status": "deferred",
-      "reason": "Franchise chain contact page only (franchise enquiries, head office, bold South African flavour). No Melkbosstrand branch facts were found, and chain-wide facts alone are not allowed."
+      "reason": "Franchise chain contact page only (franchise enquiries, head office, bold South African flavour, weak/thin page). No Melkbosstrand branch facts were found, and a research note's Balzac Building address and specific trading hours for this branch don't appear in the crawled source at all."
     },
     {
       "slug": "ou-meul-bakery-oranjezicht",
@@ -76,12 +80,12 @@
     {
       "slug": "pick-n-pay-3arts-village-plumstead",
       "status": "deferred",
-      "reason": "Only an africabz directory entry and user reviews (mixed comments about stock and service). Chain-wide Pick n Pay facts alone are not allowed, and no 3Arts Village branch-specific services were found."
+      "reason": "Only an africabz directory entry (address, hours, phone) and mixed user reviews about stock and service were found, with no distinguishing branch-specific fact beyond that, consistent with how similar chain-supermarket aggregator listings were held elsewhere in this run. A research note's suggested hours do not match the crawled source, which gives Mon-Fri 09:00-19:00, Sat 09:00-18:00, Sun 09:00-17:00 instead."
     },
     {
       "slug": "playtex-factory-shop-salt-river",
       "status": "deferred",
-      "reason": "Only an africabz directory entry (address, hours, lingerie store) and user reviews, which are mixed about fitting rooms and returns. The factoryshops.co.za page was not fetched. Not enough for 100 real words without padding."
+      "reason": "Only an africabz directory entry (address, hours, lingerie store) and user reviews, which are mixed about fitting rooms and returns. The factoryshops.co.za page was not fetched, so there is no distinguishing branch fact beyond address and hours. A research note's Friday hours do not match the crawled source, which gives Friday as 08:30-12:00, not 08:30-14:00."
     },
     {
       "slug": "roamwork-zonnebloem",
@@ -120,8 +124,10 @@
     },
     {
       "slug": "the-fat-cactus-cafe-mowbray",
-      "status": "deferred",
-      "reason": "The own contact page gives the Mowbray branch address (47 Durban Road), phone and daily hours only. The menu and branch pages on fatcactus.co.za returned 404 or were blocked, and the directory entries had no descriptive content. Chain-wide facts alone are not allowed."
+      "status": "researched",
+      "sources": [
+        "https://fatcactus.co.za/contact"
+      ]
     },
     {
       "slug": "the-foodbarn-cafe-and-tapas-noordhoek",
@@ -150,7 +156,7 @@
     {
       "slug": "tops-at-spar-firgrove-firgrove",
       "status": "deferred",
-      "reason": "Chain liquor store. Only the my-catalogue listing (R102 Main Road address, trading hours and phone) and catalogue pages were found. No branch-specific services or products were sourced."
+      "reason": "Chain liquor store. Only the my-catalogue listing (R102 Main Road address, trading hours and phone) and catalogue pages were found, with no branch-specific services or products; the neighbouring SPAR Express/Shell partnership facts don't carry over to this separate TOPS outlet."
     },
     {
       "slug": "u-turn-thrift-shop-durbanville",
@@ -161,13 +167,17 @@
     },
     {
       "slug": "urban-men-de-waterkant",
-      "status": "deferred",
-      "reason": "Only the africabz directory entry (hair salon and barber, hours, phone) and about 49 user reviews. The urban-men.com site did not resolve. Review quotes alone are not enough for 100 real words."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/urban-men-19718"
+      ]
     },
     {
       "slug": "west-coast-personnel-table-view",
-      "status": "deferred",
-      "reason": "Only the africabz directory entry (recruiter and employment consultant, hours, phone) and user reviews. The company site westcoastpersonnel.co.za was not fetched, so no firm-specific services were found."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/west-coast-personnel-38157"
+      ]
     },
     {
       "slug": "wilcote-cape-town-killarney-gardens",
@@ -179,7 +189,7 @@
     {
       "slug": "wordsworth-books-dean-street-newlands",
       "status": "deferred",
-      "reason": "Only the sayellow directory entry (independent bookshop franchise established 1993, hours, Dean Street Arcade address). The shop's own site was not found, and the directory copy alone is about 70 words."
+      "reason": "Only the sayellow directory entry (independent bookshop franchise established 1993, hours, Dean Street Arcade address) was found, and its descriptive text is franchise-wide tagline copy, not branch-specific stock or range detail. The shop's own site was not found, so the directory copy alone is not enough."
     },
     {
       "slug": "african-oils-and-vinegar-paarden-eiland",
@@ -190,8 +200,10 @@
     },
     {
       "slug": "ak-knit-elsies-river",
-      "status": "deferred",
-      "reason": "Factory Shops SA and Yep directory entries give conflicting trading hours (Mon-Thu 08:00-16:00 and Fri 08:00-13:00 versus Mon-Fri 08:00-17:00), and the akknit.co.za site is blocked. The only product facts are a short list of fabrics (babywear, cotton, fleece, jersey, towelling). That is not enough for 100 real words."
+      "status": "researched",
+      "sources": [
+        "https://www.factoryshopssa.co.za/directory/ak-knit/"
+      ]
     },
     {
       "slug": "alphen-veterinary-hospital-constantia",
@@ -239,7 +251,7 @@
     {
       "slug": "clarkes-bookshop-cape-town-cbd",
       "status": "deferred",
-      "reason": "Only the Apple Maps listing (used bookstore at 199 Long Street, phone and hours) was found. The shop website clarkesbooks.co.za was not in the research, so no description content could be sourced."
+      "reason": "Only the Apple Maps listing (used bookstore at 199 Long Street, phone and hours) was found; that is category, address and hours only, with no distinguishing fact. A research note's founding date and Africana-specialist/institutional-supplier claims don't appear anywhere in the crawled source and were not published."
     },
     {
       "slug": "coy-va-waterfront",
@@ -281,7 +293,7 @@
     {
       "slug": "ghazala-food-cafe-walmer-estate",
       "status": "deferred",
-      "reason": "Only the africabz directory entry and user reviews (takeaway, biryani and tikka comments, some negative). The ghazalas.co.za site was not in the research. Review quotes alone are not enough for 100 real words."
+      "reason": "Only the africabz directory entry and user reviews (takeaway, biryani and tikka comments, some negative) were found. The ghazalas.co.za site was not in the research. Review quotes alone are not enough for 100 real words."
     },
     {
       "slug": "hartlief-gourmet-gardens-shopping-centre-gardens",

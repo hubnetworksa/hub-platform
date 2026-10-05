@@ -1,12 +1,15 @@
 {
   "city": "capetown",
   "chunk": 29,
-  "generated_at": "2026-10-05T05:47:48.827Z",
+  "generated_at": "2026-10-05T17:20:56.280Z",
   "items": [
     {
       "slug": "pep-delft-mall-delft",
-      "status": "deferred",
-      "reason": "Tiendeo gives an aggregator listing with phone and hours. The PEP branch page is not in the research, so there is no owner-written text."
+      "status": "researched",
+      "sources": [
+        "https://www.tiendeo.co.za/stores/cape-town/pep-stores-shop-delft-mall-cnr-hindle-delft-main-road-delft-cape-town-western-cape/69682",
+        "https://www.pepstores.com/"
+      ]
     },
     {
       "slug": "pixel-place-copy-and-print-kenridge",
@@ -49,7 +52,7 @@
     {
       "slug": "rose-lodge-bo-kaap",
       "status": "deferred",
-      "reason": "The sa-venues page says this listing is no longer on the platform and gives only generic booking-site copy. No sourced text about the lodge itself was found."
+      "reason": "The sa-venues page states this listing is no longer live on the platform, and the Bo-Kaap heritage site gives only generic copy with no current operational detail. This raises a possible-closure or no-longer-trading concern that could not be resolved from available sources, so the existing three-room guesthouse description should not be republished as current."
     },
     {
       "slug": "ryan-boon-speciality-meats-newlands",
@@ -81,8 +84,10 @@
     },
     {
       "slug": "st-francis-veterinary-clinic-bergvliet",
-      "status": "deferred",
-      "reason": "Africabz gives an aggregator listing with address, phone and hours. The clinic's own site is not in the research."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/st-francis-veterinary-clinic-82188"
+      ]
     },
     {
       "slug": "swimmattix-swim-school-bergvliet",
@@ -93,8 +98,10 @@
     },
     {
       "slug": "the-good-food-cafe-ndabeni",
-      "status": "deferred",
-      "reason": "The Merrypak site describes the packaging business, not the cafe inside it. No cafe-specific text was found."
+      "status": "researched",
+      "sources": [
+        "https://merrypak.co.za"
+      ]
     },
     {
       "slug": "the-grillfather-westridge-westridge",
@@ -149,8 +156,10 @@
     },
     {
       "slug": "vadivelu-gardens",
-      "status": "deferred",
-      "reason": "The insideguide.co.za article is mostly about the restaurant's atmosphere and slogan, without enough specific menu or service detail. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://insideguide.co.za/cape-town/restaurants/vadivelu/"
+      ]
     },
     {
       "slug": "van-schaik-bookstore-rondebosch",
@@ -160,7 +169,7 @@
     {
       "slug": "vees-video-lakeside",
       "status": "deferred",
-      "reason": "Every search result is about English grammar for describing weather, and the shop's own pages were blocked or timed out. Nothing about the video store was found."
+      "reason": "Every search result is unrelated (English-grammar pages about describing weather), and the shop's own pages were blocked or timed out, leaving no current evidence the DVD and games rental business is still trading. This is a possible-closure or outdated-listing concern that could not be resolved from available sources."
     },
     {
       "slug": "village-harbour-and-pizza-house-strandfontein",

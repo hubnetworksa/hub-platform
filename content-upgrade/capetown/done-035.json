@@ -1,7 +1,7 @@
 {
   "city": "capetown",
   "chunk": 35,
-  "generated_at": "2026-10-05T05:32:47.859Z",
+  "generated_at": "2026-10-05T17:20:57.884Z",
   "items": [
     {
       "slug": "totalsports-the-junxion-mall-philippi",
@@ -60,8 +60,10 @@
     },
     {
       "slug": "bolton-shoes-elsies-river",
-      "status": "deferred",
-      "reason": "The boltonshoes.co.za site gives chain-wide facts (brand since 1859, departments, delivery terms) and a head-office style address on Malherbe Street. No store-specific facts for this Elsies River branch were found."
+      "status": "researched",
+      "sources": [
+        "https://www.boltonshoes.co.za"
+      ]
     },
     {
       "slug": "bootlegger-xs-salt-river-salt-river",
@@ -76,7 +78,7 @@
     {
       "slug": "cape-care-pharmacy-parklands",
       "status": "deferred",
-      "reason": "The business website did not resolve (DNS error). Search results were unrelated pages about Cape Town and outdoor shops."
+      "reason": "The business's own site (capecarepharm.co.za) failed to resolve (DNS error) and there are no search results at all. The only page in the research file is a Medpages listing giving an address and phone number only, with generic Medpages-platform boilerplate; no hours, services, delivery or SAPC-registration fact is verifiable."
     },
     {
       "slug": "cape-paradise-lodge-and-apartments-higgovale",
@@ -123,12 +125,12 @@
     {
       "slug": "de-kelder-restaurant-winery-plattekloof",
       "status": "deferred",
-      "reason": "The own site gives two locations, event packages for celebrations and corporate events, and generic marketing copy. No dishes, wine list or specific services were found, so 100 real words cannot be sourced."
+      "reason": "The business's own site (dekelderrestaurant.com) timed out and was never actually fetched; the only page in the research file is an Eat Out news/navigation page with no venue content at all. No dishes, wine list, event-package detail or any other De Kelder-specific fact is verifiable in the crawled data, so 100 real words cannot be sourced."
     },
     {
       "slug": "dinkel-bakery-tamboerskloof",
       "status": "deferred",
-      "reason": "Only an africabz directory entry and user reviews (almond croissants, German-style bakery) were found. The own site dinkelbakery.co.za was not fetched, and review quotes alone are not enough for an honest description."
+      "reason": "The africabz listing gives real hours and review content, but its address (13 Newport St, Gardens) does not match the supplied address (91 Kloof Nek Road, Tamboerskloof) - a possible wrong-branch or data-conflict concern that needs checking before publishing. The own site dinkelbakery.co.za was not fetched, so review quotes and an unverified address are not enough for an honest description."
     },
     {
       "slug": "ecco-il-caffe-salt-river",
@@ -145,17 +147,21 @@
     {
       "slug": "hacienda-coastal-mexican-cape-town-cbd",
       "status": "deferred",
-      "reason": "The only source was an Eat Out news page with site navigation and headlines. The restaurant's own website and any menu content were not found."
+      "reason": "No page was actually fetched for this business: eatout.co.za, tripadvisor.com and hacienda.co.za all timed out or were blocked, so the research file holds zero pages. The only search results returned are unrelated legal articles about constitutional 'entrenchment', with nothing about the restaurant. Nothing verifiable exists in this chunk's source data."
     },
     {
       "slug": "hair-freedom-kenilworth",
-      "status": "deferred",
-      "reason": "Only an africabz directory entry (address, categories, hours) and about 25 user reviews were found. The business's own site was not fetched, and review quotes alone are not enough for a 100-word description."
+      "status": "researched",
+      "sources": [
+        "https://partnershair.co.za/pages/hair-freedom-hair-salon-kenilworth"
+      ]
     },
     {
       "slug": "harbour-house-va-waterfront",
-      "status": "deferred",
-      "reason": "Only the V&A Waterfront venue page was found: seafood with Mediterranean influences, harbour views, Quays District location and a 4.2 Google rating. That is about 70 words, and the restaurant's own site was not fetched."
+      "status": "researched",
+      "sources": [
+        "https://www.corner.inc/place/22361"
+      ]
     },
     {
       "slug": "hard-rock-cafe-cape-town-camps-bay",
@@ -186,7 +192,7 @@
     {
       "slug": "jackys-chinese-restaurant-bothasig",
       "status": "deferred",
-      "reason": "Sources were a Cape Town nightlife article that mentions the restaurant only in passing (spicy noodles and dim sum), a restaurant directory blurb and a blocked Dining Out page. The Facebook page was empty. No dishes, history or services were supported well enough for 100 words."
+      "reason": "The Facebook page confirms only the category (a Chinese and sushi buffet and takeaway restaurant) and one operational post about staying open during load shedding; Dining Out was blocked and search results add nothing else. That is real but too thin to carry an honest 100-word description without inventing dishes or history, so it stays deferred."
     },
     {
       "slug": "jamaica-me-crazy-woodstock",
@@ -226,7 +232,7 @@
     {
       "slug": "la-frontiere-zimborders-sea-point",
       "status": "deferred",
-      "reason": "The Point Mall page describes La Frontiere & Zimborders only as an operational and management vehicle for border-terminal upgrades. The rest of that page is other merchants' hours and menus, and the listing's business consulting category does not match what was found."
+      "reason": "The Point Mall page was only captured up to other merchants' hours and menus (Kauai, NV-80 Grill, Poke Co, SCHOON Bakery); the crawled text is truncated before it reaches La Frontiere & Zimborders' own entry, so neither the supplied business-consulting description nor a border-terminal-management framing can be confirmed from this chunk's data. Category mismatch is a real concern and should be checked before publishing either version."
     },
     {
       "slug": "le-pickle-de-waterkant",
@@ -235,8 +241,10 @@
     },
     {
       "slug": "mama-africa-cape-town-cbd",
-      "status": "deferred",
-      "reason": "Only the Mama Africa contact page was found, with address, daily live-entertainment times, parking and booking details. The menu, story and experience pages were not fetched, so no honest 100-word description of the restaurant could be written."
+      "status": "researched",
+      "sources": [
+        "https://mamaafricacpt.com/contact"
+      ]
     },
     {
       "slug": "mancelles-locksmiths-thornton",
@@ -246,7 +254,7 @@
     {
       "slug": "matrix-warehouse-ysterplaat",
       "status": "deferred",
-      "reason": "Matrix Warehouse pages are chain-wide (product ranges, store list, online pricing). The store list shows Cape Town, Brooklyn and Mossel Bay but not Ysterplaat, so no branch-specific facts were found."
+      "reason": "The only page actually fetched is a generic Cylex directory advertisement for Cylex's own listing products, with no Matrix Warehouse content at all; the Ysterplaat branch could not be independently confirmed as a current, active Matrix Warehouse store from any source in this chunk's research data. Possible wrong-branch or closed-branch concern: hold until the Ysterplaat branch itself can be verified."
     },
     {
       "slug": "mediclinic-panorama",
@@ -275,7 +283,7 @@
     {
       "slug": "mlv-law-somerset-west",
       "status": "deferred",
-      "reason": "The firm's site and Facebook page give practice areas (family, commercial, property, conveyancing, labour, wills and trusts, litigation), a Somerset West address and phone. The Facebook page says the firm is 'opening soon'. No firm-specific history or approach was found."
+      "reason": "The firm's own site (mlvlaw.co.za) timed out and its Facebook page returned no usable text; the only search results are unrelated (post office listings). No practice-area, history or branch-specific fact for this firm is verifiable anywhere in the crawled data."
     }
   ]
 }

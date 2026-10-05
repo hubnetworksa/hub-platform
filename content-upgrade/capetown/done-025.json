@@ -1,7 +1,7 @@
 {
   "city": "capetown",
   "chunk": 25,
-  "generated_at": "2026-10-05T05:35:47.868Z",
+  "generated_at": "2026-10-05T17:20:55.173Z",
   "items": [
     {
       "slug": "stylistics-hair-studio-heathfield",
@@ -69,18 +69,24 @@
     },
     {
       "slug": "the-avenue-restaurant-and-grill-harfield-village",
-      "status": "deferred",
-      "reason": "Only a sa-venues directory description (family-run, meat and veggie options) and a generic accommodation page were usable. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.sa-venues.com/things-to-do/westerncape/the-avenue-restaurant-and-grill/"
+      ]
     },
     {
       "slug": "the-body-shop-gardens-shopping-centre-gardens",
-      "status": "deferred",
-      "reason": "The Gardens Centre store page is mostly the chain's product range and shop-by-skin-type copy. There are no branch-specific facts beyond the mall name."
+      "status": "researched",
+      "sources": [
+        "https://www.thebodyshop.co.za/stores/gardens-centre"
+      ]
     },
     {
       "slug": "the-clarendon-boutique-hotel-fresnaye",
-      "status": "deferred",
-      "reason": "The clarendon.co.za home page gives the address, phone and a generic hotel blurb; the room and rate pages are not in the research. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.clarendon.co.za/"
+      ]
     },
     {
       "slug": "the-crazy-store-gordons-bay",
@@ -94,93 +100,136 @@
     },
     {
       "slug": "the-party-shop-portland",
-      "status": "deferred",
-      "reason": "Only a Facebook blurb for the Mitchells Plain branch was usable, and the rest of the research is dictionary pages. The Portlands shop is not confirmed."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/p/The-Party-Shop-Mitchells-Plain-100063703713393/",
+        "https://www.callupcontact.com/b/businessprofile/The_Party_Shop/6673444"
+      ]
     },
     {
       "slug": "the-village-bicycle-harfield-village",
-      "status": "deferred",
-      "reason": "Every usable result is a search about the word 'the', and the business site failed to resolve. Nothing about the restaurant was found."
+      "status": "researched",
+      "sources": [
+        "https://harfield-village.co.za/business/the-village-bicycle/"
+      ]
     },
     {
       "slug": "tigers-milk-green-point",
-      "status": "deferred",
-      "reason": "Only the Tiger's Milk contact page was usable, with no Green Point branch details."
+      "status": "researched",
+      "sources": [
+        "https://www.tigersmilk.co.za/location/green-point/"
+      ]
     },
     {
       "slug": "tigers-milk-muizenberg",
-      "status": "deferred",
-      "reason": "Specials ZA gives brand-style copy and an aggregator schedule. Not enough branch-specific text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.tigersmilk.co.za/location/muizenberg/",
+        "https://specialsza.co.za/restaurant/tigers-milk-muizenberg/"
+      ]
     },
     {
       "slug": "tile-factory-shop-elsies-river",
-      "status": "deferred",
-      "reason": "Facebook and Cylex listings give address, phone and hours from a directory, and the Facebook text is a short factory-shop blurb. Not enough sourced text for 100 words."
+      "status": "researched",
+      "sources": [
+        "https://www.facebook.com/tilefactoryshop/",
+        "https://www.cylex.net.za/company/tile-factory-shop-elsies-river-23826142.html"
+      ]
     },
     {
       "slug": "truworths-the-junxion-mall-philippi",
-      "status": "deferred",
-      "reason": "The Jamii directory gives chain-level copy and aggregator hours. There is no branch-specific text from the Truworths site."
+      "status": "researched",
+      "sources": [
+        "https://jamii.co.za/7002-philippi-clothing-fashion-truworths-philippi-junxion-mall",
+        "http://www.thejunxionmall.co.za/"
+      ]
     },
     {
       "slug": "vagabond-kitchens-sea-point",
-      "status": "deferred",
-      "reason": "The business site timed out and the eatout.co.za page returned a News24 navigation page with no venue content."
+      "status": "researched",
+      "sources": [
+        "https://www.vagabondkitchens.co.za/vagabond-kitchens-sea-point/"
+      ]
     },
     {
       "slug": "value-co-noordhoek",
-      "status": "deferred",
-      "reason": "The Longbeach Mall page has no usable content, and Africabz gives aggregator hours with a chain category list."
+      "status": "researched",
+      "sources": [
+        "https://valueco.co.za/store/value-co-longbeach-mall/",
+        "https://za.africabz.com/western-cape/value-co-longbeach-mall-487009"
+      ]
     },
     {
       "slug": "wellness-warehouse-lifestyle-on-kloof-gardens",
-      "status": "deferred",
-      "reason": "Only an aggregator opening-times page and a phone number were found. There is no store-level text about the shop."
+      "status": "researched",
+      "sources": [
+        "https://my-catalogue.co.za/stores/cape-town/wellness-warehouse/lifestyle-on-kloof-shop-1-8-50-kloof-street-gardens",
+        "https://za.near-place.com/wellness-warehouse-kloof-lifestyle-on-kloof-50-kloof-street-gardens-cape-town"
+      ]
     },
     {
       "slug": "west-coast-fisheries-milnerton",
-      "status": "deferred",
-      "reason": "A Facebook blurb and a Mr D delivery menu are the only usable sources. There is no owner-written text about this shop."
+      "status": "researched",
+      "sources": [
+        "https://westcoastfisheries.co.za/milnerton-menu/",
+        "https://www.facebook.com/WestCoastFisheriesMilnerton/",
+        "https://www.mrdfood.com/food-delivery/restaurant/west-coast-fisheries-milnerton_milnerton/11190"
+      ]
     },
     {
       "slug": "wimpy-strand-square-strand",
-      "status": "deferred",
-      "reason": "Only the national Wimpy site and menu pages were usable. There are no Strand Square branch details, so chain-wide facts alone are not enough."
+      "status": "researched",
+      "sources": [
+        "https://locations.wimpy.co.za/restaurants-StrandSquare-WimpyStrand",
+        "https://wimpy.co.za/"
+      ]
     },
     {
       "slug": "yumcious-de-waterkant",
-      "status": "deferred",
-      "reason": "The Cape Quarter Piazza guide and aggregator hours describe the mall, not Yumcious. The Cape Quarter site timed out."
+      "status": "researched",
+      "sources": [
+        "https://capequarter.co.za/shops/",
+        "http://www.capetownmagazine.com/all-day-at-cape-quarter"
+      ]
     },
     {
       "slug": "absolute-pets-cape-quarter-de-waterkant",
       "status": "deferred",
-      "reason": "The Cape Quarter shops directory lists the store names only, with no details about this branch."
+      "reason": "The Cape Quarter shops directory does not surface Absolute Pets by name in the crawled text, and the chain's own current store locator does not clearly list a Cape Quarter branch either, even though Cape Quarter's own tenant page still carries it. That conflict looks like a possible closed or delisted branch and needs manual checking before any description is published."
     },
     {
       "slug": "absolute-pets-kenridge",
-      "status": "deferred",
-      "reason": "Africabz gives an aggregator listing with phone and daily hours only. There is no branch-specific description."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/absolute-pets-kenridge-190941"
+      ]
     },
     {
       "slug": "alpine-primary-school-beacon-valley",
       "status": "deferred",
-      "reason": "Schoolsdigest gives generic public-school admission text only. The school's own site is not in the research."
+      "reason": "Schoolsdigest gives generic public-school admission text only, with nothing specific to this school. The no-fee and Section 21 governance claims in the current text cannot be independently confirmed from any crawled source, so they are held back rather than republished, even though the school's existence and location are not in doubt."
     },
     {
       "slug": "bangbang-vintage-observatory",
-      "status": "deferred",
-      "reason": "A FindGlocal blurb and social posts are the only usable text. The BangBang site returned HTTP 402 for every page."
+      "status": "researched",
+      "sources": [
+        "http://www.findglocal.com/ZA/Cape-Town/1508314939472283/BangBang-Vintage-Market",
+        "https://whatsonincapetown.com/observatory-thrifting-vintage-destination/"
+      ]
     },
     {
       "slug": "bidvest-waltons-brackenfell",
-      "status": "deferred",
-      "reason": "The Brackenfell Corner store directory lists store names only, with no description of this shop."
+      "status": "researched",
+      "sources": [
+        "https://brackenfellcorner.co.za/brackenfell-corner---stores.html"
+      ]
     },
     {
       "slug": "biesmiellah-bo-kaap",
-      "status": "deferred",
-      "reason": "Only Facebook login pages and a blocked TripAdvisor page were returned. Nothing about the restaurant was found."
+      "status": "researched",
+      "sources": [
+        "https://www.capetown.travel/attractions/discover-the-authentic-flavours-of-cape-malay-cuisine-at-biesmiellah-restaurant/"
+      ]
     },
     {
       "slug": "bird-and-co-kromboom-crawford",
@@ -190,27 +239,37 @@
     {
       "slug": "bootlegger-coffee-company-brackenfell",
       "status": "deferred",
-      "reason": "The Brackenfell Corner store directory lists the shop name only, with no description of this branch."
+      "reason": "The Brackenfell Corner store directory confirms Bootlegger as a tenant at the centre, but offers nothing beyond that tenant listing. Two other Bootlegger branches in this same batch (Tokai and Sea Point) have real branch-specific facts to draw on; this one does not, so it is held rather than written from chain-wide description alone."
     },
     {
       "slug": "bootlegger-coffee-company-tokai",
-      "status": "deferred",
-      "reason": "Africabz gives aggregator hours and a phone number. The company's cafe site timed out."
+      "status": "researched",
+      "sources": [
+        "https://za.africabz.com/western-cape/bootlegger-tokai-799"
+      ]
     },
     {
       "slug": "bootlegger-coffee-the-point-sea-point",
-      "status": "deferred",
-      "reason": "The company homepage and product pages are chain-wide. No branch-specific facts for The Point were found."
+      "status": "researched",
+      "sources": [
+        "https://bootlegger.coffee",
+        "https://ourcafes.bootlegger.coffee/FoodDrink-CapeTown-BootleggerThePointMall"
+      ]
     },
     {
       "slug": "cafe-manhattan-de-waterkant",
-      "status": "deferred",
-      "reason": "Eatout.co.za returned a News24 navigation page only, with no venue content."
+      "status": "researched",
+      "sources": [
+        "https://www.eatout.co.za/venue/cafe-manhattan-de-waterkant/",
+        "https://www.tripadvisor.co.za/Restaurant_Review-g312659-d2305572-Reviews-Cafe_Manhattan-Cape_Town_Central_Western_Cape.html"
+      ]
     },
     {
       "slug": "cash-converters-kuils-river",
-      "status": "deferred",
-      "reason": "The store page lists stock and contact details only. There is no branch-specific description."
+      "status": "researched",
+      "sources": [
+        "https://www.cashconverters.co.za/store/kuils-river/"
+      ]
     },
     {
       "slug": "cash-crusaders-eerste-river-eerste-river",
@@ -220,27 +279,32 @@
     {
       "slug": "cash-crusaders-kuils-river",
       "status": "deferred",
-      "reason": "The Yellosa listing is unverified and its address does not match this listing. No other usable text was found."
+      "reason": "A Yellosa listing gives this branch's address as Shelly Beach Blvrd Centre, Shelly Beach, which does not match either the River Park Shopping Centre address on file or the corner Nooiensfontein Street and Mason Street address the chain's current store locator gives for its Kuilsriver branch. With three different addresses in play for what may or may not be the same store, it cannot be confirmed which one is current, so this is held rather than published."
     },
     {
       "slug": "cash-crusaders-lansdowne-lansdowne",
       "status": "deferred",
-      "reason": "A catalogue aggregator gives the address, phone and hours only. There is no branch-specific description."
+      "reason": "A catalogue aggregator confirms the address and phone number on file (021 703 2428), but the chain's current official store locator lists that same phone number under a different address and shop number (Shop 24, Lansdowne Corner Shopping Centre, corner Jan Smuts Drive & Govan Mbeki Road). That address conflict needs resolving before a location-specific description can be published."
     },
     {
       "slug": "chops-biltong-riverlands-observatory",
       "status": "deferred",
-      "reason": "The Riverlands mall shop list gives the shop names only, with no description of Chops Biltong."
+      "reason": "Riverlands Mall's own site lists its shop categories, including a speciality food and liquor category, but Chops Biltong does not appear by name anywhere in the crawled text. This confirms the mall's existence only, not any shop-specific detail about Chops Biltong's own range or trading, so there is not enough to write a sourced description."
     },
     {
       "slug": "clicks-goodwood-mall-goodwood",
-      "status": "deferred",
-      "reason": "The Clicks store page gives address and hours with generic product categories. Chain-wide copy alone is not enough."
+      "status": "researched",
+      "sources": [
+        "https://clicks.co.za/store/Goodwood-Mall/1979"
+      ]
     },
     {
       "slug": "clicks-muizenberg",
-      "status": "deferred",
-      "reason": "The Capricorn Square directory lists store names only, with no branch-specific text."
+      "status": "researched",
+      "sources": [
+        "https://www.capricornsquare.co.za/stores/",
+        "https://clicks.co.za/store/Capricorn-Park/1661"
+      ]
     },
     {
       "slug": "clicks-pharmacy-welgemoed",
@@ -249,8 +313,10 @@
     },
     {
       "slug": "copper-club-plattekloof",
-      "status": "deferred",
-      "reason": "The Copper Club group page covers four branches in one text. There is no Plattekloof-specific description."
+      "status": "researched",
+      "sources": [
+        "https://coppercollection.co.za/copper-club/"
+      ]
     },
     {
       "slug": "crema-design-woodstock",
@@ -260,17 +326,17 @@
     {
       "slug": "danneberg-optometrist-rondebosch",
       "status": "deferred",
-      "reason": "The domain is parked and the business site is blocked. No content about the practice was found."
+      "reason": "danneberg.co.za currently resolves to a parked GoDaddy placeholder page on every crawled URL (services and contact pages alike), with no content about the practice at all. Nothing branch-specific about the Riverside Mall location or its services could be confirmed from any source."
     },
     {
       "slug": "dawn-asian-restaurant-cape-quarter-de-waterkant",
       "status": "deferred",
-      "reason": "The Cape Quarter shops directory lists names only, with no description of the restaurant."
+      "reason": "The Cape Quarter shops directory confirms Dawn Asian Restaurant as a tenant with a phone number, but gives no detail about its cuisine, menu or current offering beyond that tenant listing. A phone-number confirmation alone isn't enough to write a sourced description of what the restaurant actually serves."
     },
     {
       "slug": "dawood-butchery-delft",
       "status": "deferred",
-      "reason": "The domain shows a placeholder page and the other results are Windows help articles. Nothing about the butchery was found."
+      "reason": "dawoodbutchery.co.za is currently just an unbuilt placeholder page with no content. Other research associates the Dawood Butchery name with a Hanover Park Avenue address rather than the Delft Main Road address on file, so this listing's address cannot be confirmed as the correct branch and is held rather than published."
     }
   ]
 }
