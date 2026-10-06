@@ -206,6 +206,19 @@ jobs:
           cp wrangler.${{ matrix.site }}.jsonc wrangler.jsonc
           npx wrangler pages deploy dist --project-name=${{ matrix.pages_project }} --branch=main --commit-dirty=true
 
+      # Only now has this site's listing actually gone live, so this is the
+      # one place the "you're live" owner email is allowed to fire from —
+      # functions/api/owner-confirm-listing.ts only queues it (see
+      # pending_live_emails). continue-on-error: a stuck/failed send must
+      # never fail the deploy; the row stays queued and the next deploy of
+      # this site retries it.
+      - name: Email owners whose listings just went live
+        continue-on-error: true
+        run: |
+          HOST=$(node -e "const s = require('./sites/${{ matrix.site }}.json'); console.log(s.domainLive ? s.domain : s.pagesDevHost);")
+          curl -sS -f -X POST "https://$HOST/api/admin/send-live-emails" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+
       # The other half of the _headers fix (assets/sites/<site>/_headers):
       # even with `must-revalidate` on every HTML response, a visitor's
       # first request after a deploy still pays one stale-then-revalidate

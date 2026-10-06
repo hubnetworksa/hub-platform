@@ -3,7 +3,6 @@ import { generateUniqueSlug, insertApprovedBusiness, shoppingCenterIdForSlug } f
 import { getSite, type Site } from '../_lib/site';
 import { triggerRebuild, rebuildTarget } from '../_lib/deploy-hook';
 import { sendEmail } from '../_lib/send-email';
-import { listingLiveEmailHtml } from '../_lib/email-template';
 import { logActivity } from '../_lib/activity-log';
 import { closePaidSubmission } from '../_lib/paid-submission';
 
@@ -117,13 +116,14 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     detail: `Now live: ${listingUrl}`,
   });
   if (row.email) {
-    await sendEmail(context.env, {
-      from: `${site.siteName} <${site.contactEmail}>`,
-      to: row.email,
-      subject: `You're live on ${site.siteName}: ${row.name}`,
-      text: `Thanks for confirming — "${row.name}" is now published on ${site.siteName}.\n\nView your listing: ${listingUrl}`,
-      html: listingLiveEmailHtml(site, { businessName: row.name, listingUrl }),
-    });
+    // Queued, not sent here — the site hasn't rebuilt yet, so the listing
+    // isn't actually live until deploy.yml's "Email owners whose listings
+    // just went live" step drains this via functions/api/admin/send-live-emails.ts,
+    // right after this site's own build+deploy succeeds.
+    await db
+      .prepare('INSERT INTO pending_live_emails (business_name, owner_email, listing_url) VALUES (?, ?, ?)')
+      .bind(row.name, row.email, listingUrl)
+      .run();
   }
 
   return html(site, `<h1>Published!</h1><p>Thanks for confirming — "${escapeHtml(row.name)}" is going live now: <a href="${listingUrl}">view listing</a>. It may take a few minutes to appear while the site rebuilds.</p>`);
