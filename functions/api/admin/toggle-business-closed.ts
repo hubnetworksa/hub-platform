@@ -3,6 +3,7 @@ import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { triggerRebuild, rebuildTarget } from '../../_lib/deploy-hook';
 import { logActivity } from '../../_lib/activity-log';
 import { clearBusinessSponsorSlots } from '../../_lib/sponsorships';
+import { markBusinessesChanged } from '../../_lib/quality-cache';
 import type { PayfastEnv } from '../../_lib/payfast';
 
 interface Env extends PayfastEnv {
@@ -46,6 +47,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // keep an exclusive sponsor spot it's no longer showing up to fill.
   if (closed) await clearBusinessSponsorSlots(context.env, db, businessId, business.name, `cleared — marked closed by admin (${user.email})`);
 
+  await markBusinessesChanged(db);
   await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
 
   return json({ ok: true });

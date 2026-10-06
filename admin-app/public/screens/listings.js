@@ -149,13 +149,17 @@ function cityReport(ui, r) {
                     type: 'button',
                     onclick: async (e) => {
                       if (!confirm('Mark this as not a duplicate? It won’t be flagged again.')) return;
-                      e.currentTarget.disabled = true;
+                      // Captured now: e.currentTarget is only live for the
+                      // synchronous part of the handler — by the time the
+                      // awaited call below resolves it's already null.
+                      const btn = e.currentTarget;
+                      btn.disabled = true;
                       try {
                         await ui.api('/api/dismiss-duplicate', 'POST', { site: r.site, groupKey: g.groupKey });
                         li.remove();
                       } catch (err) {
                         alert(err.message);
-                        e.currentTarget.disabled = false;
+                        btn.disabled = false;
                       }
                     },
                   },

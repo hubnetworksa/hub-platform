@@ -3,6 +3,7 @@ import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { triggerRebuild, rebuildTarget } from '../../_lib/deploy-hook';
 import { logActivity } from '../../_lib/activity-log';
 import { clearBusinessSponsorSlots } from '../../_lib/sponsorships';
+import { markBusinessesChanged } from '../../_lib/quality-cache';
 import type { PayfastEnv } from '../../_lib/payfast';
 
 interface Env extends PayfastEnv {
@@ -48,6 +49,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // is untouched; it's the business's own listing, not a shared spot.
   if (!makePublic) await clearBusinessSponsorSlots(context.env, db, businessId, business?.name ?? null, `cleared — business hidden by admin (${user.email})`);
 
+  await markBusinessesChanged(db);
   await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
 
   return json({ ok: true });

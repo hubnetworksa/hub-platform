@@ -7,6 +7,7 @@ import { formatPhoneZA, whatsappDigitsZA } from '../../../src/lib/phone';
 import { SOCIAL_KINDS, SOCIAL_LABELS, normalizeSocial } from '../../_lib/social';
 import { looksLikeEmail } from '../../_lib/messages';
 import { descriptionLimitError, toSingleParagraph } from '../../../src/lib/rich-text';
+import { markBusinessesChanged } from '../../_lib/quality-cache';
 
 interface Env {
   DB: D1Database;
@@ -306,6 +307,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     if ((current?.subscription_tier ?? 0) !== tier) await applyTierOverride(db, id, tier);
 
     await logActivity(db, 'business_edited', name, `Edited by admin (${user.email}).`);
+    await markBusinessesChanged(db);
     await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
     return json({ ok: true, id });
   }
@@ -341,6 +343,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (created && tier > 0) await applyTierOverride(db, created.id, tier);
 
   await logActivity(db, 'business_created', name, `Added by admin (${user.email}).`);
+  await markBusinessesChanged(db);
   await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
   return json({ ok: true, id: created?.id ?? null, slug });
 };

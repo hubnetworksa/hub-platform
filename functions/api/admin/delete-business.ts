@@ -3,6 +3,7 @@ import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { triggerRebuild, rebuildTarget } from '../../_lib/deploy-hook';
 import type { PayfastEnv } from '../../_lib/payfast';
 import { prepareBusinessDeletion, finishBusinessDeletion, isForeignKeyError, findBlockingTable, BUSINESS_DEPENDENT_TABLES } from '../../_lib/business-deletion';
+import { markBusinessesChanged } from '../../_lib/quality-cache';
 
 interface Env extends PayfastEnv {
   DB: D1Database;
@@ -45,6 +46,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   await finishBusinessDeletion(context.env, db, prepared.deletion, user.email);
+  await markBusinessesChanged(db);
   await triggerRebuild(context.env.GITHUB_DISPATCH_TOKEN, rebuildTarget(context.env));
 
   return json({ ok: true });
