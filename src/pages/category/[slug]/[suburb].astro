@@ -65,6 +65,7 @@ const showsPaid = businesses.some(isPaidListing) || !!categorySponsor || !!subur
   title={`${category.name} in ${suburb.name}`}
   titleOverride={metaTitle}
   description={metaDescription}
+  noindex={businesses.length <= 2}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
