@@ -29,13 +29,21 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return json({ ok: false, error: 'Invalid request body.' }, 400);
   }
 
-  const businessId = Number(body.businessId);
+  // businessId (the native Manage Businesses page) or slug (Hub Admin's
+  // Listings screen, which only ever carries a slug — quality.ts's Listing
+  // type has no id) — whichever this caller has to hand.
+  const bodyBusinessId = Number(body.businessId) || null;
+  const slug = typeof body.slug === 'string' ? body.slug.trim() : '';
   const closed = body.closed === true;
-  if (!businessId) return json({ ok: false, error: 'Missing business.' }, 400);
+  if (!bodyBusinessId && !slug) return json({ ok: false, error: 'Missing business.' }, 400);
 
   const db = context.env.DB;
-  const business = await db.prepare('SELECT name FROM businesses WHERE id = ?').bind(businessId).first<{ name: string }>();
+  const business = await db
+    .prepare(bodyBusinessId ? 'SELECT id, name FROM businesses WHERE id = ?' : 'SELECT id, name FROM businesses WHERE slug = ?')
+    .bind(bodyBusinessId ?? slug)
+    .first<{ id: number; name: string }>();
   if (!business) return json({ ok: false, error: 'Business not found.' }, 404);
+  const businessId = business.id;
 
   await db
     .prepare(`UPDATE businesses SET closed_at = ${closed ? "datetime('now')" : 'NULL'} WHERE id = ?`)

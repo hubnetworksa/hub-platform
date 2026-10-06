@@ -89,35 +89,47 @@ function cityReport(ui, r) {
       placeholder: 'e.g. Mon–Fri 08:00–17:00, Sat 09:00–13:00',
       style: 'flex:1;min-width:180px;padding:6px 9px;border:2px solid var(--border);border-radius:7px;font:inherit;font-size:12.5px;color:var(--text);background:var(--bg-card)',
     });
+    const saveBtn = h('button', { class: 'btn small', type: 'button' }, 'Save');
+    const closeBtn = h('button', { class: 'btn small', type: 'button', style: 'color:var(--danger)' }, 'Mark closed');
     const li = h(
       'li',
       {},
       h('a', { href: `${site}/business/${l.slug}/`, target: '_blank', rel: 'noopener' }, l.name),
       h('span', { class: 'meta' }, l.suburb ? ` · ${l.suburb}` : ''),
-      h('div', { style: 'display:flex;gap:7px;margin-top:6px;flex-wrap:wrap' },
-        input,
-        h('button', {
-          class: 'btn small',
-          type: 'button',
-          onclick: async (e) => {
-            const hours = input.value.trim();
-            if (!hours) return input.focus();
-            const btn = e.currentTarget;
-            btn.disabled = true;
-            input.disabled = true;
-            try {
-              await ui.api('/api/set-business-hours', 'POST', { site: r.site, slug: l.slug, hours });
-              li.remove();
-              if (pill) pill.textContent = String(Math.max(0, Number(pill.textContent.replace(/[^\d]/g, '')) - 1));
-            } catch (err) {
-              alert(err.message);
-              btn.disabled = false;
-              input.disabled = false;
-            }
-          },
-        }, 'Save')
-      )
+      h('div', { style: 'display:flex;gap:7px;margin-top:6px;flex-wrap:wrap' }, input, saveBtn, closeBtn)
     );
+    const done = () => {
+      li.remove();
+      if (pill) pill.textContent = String(Math.max(0, Number(pill.textContent.replace(/[^\d]/g, '')) - 1));
+    };
+    const busy = (b) => {
+      input.disabled = b;
+      saveBtn.disabled = b;
+      closeBtn.disabled = b;
+    };
+    saveBtn.onclick = async () => {
+      const hours = input.value.trim();
+      if (!hours) return input.focus();
+      busy(true);
+      try {
+        await ui.api('/api/set-business-hours', 'POST', { site: r.site, slug: l.slug, hours });
+        done();
+      } catch (err) {
+        alert(err.message);
+        busy(false);
+      }
+    };
+    closeBtn.onclick = async () => {
+      if (!confirm(`Mark "${l.name}" as closed? It comes off the site and out of the research routines immediately — reopening it later takes one click (Manage Businesses).`)) return;
+      busy(true);
+      try {
+        await ui.api('/api/toggle-business-closed', 'POST', { site: r.site, slug: l.slug, closed: true });
+        done();
+      } catch (err) {
+        alert(err.message);
+        busy(false);
+      }
+    };
     return li;
   };
   const tone = r.score >= 85 ? 'good' : r.score >= 65 ? 'ok' : 'bad';
