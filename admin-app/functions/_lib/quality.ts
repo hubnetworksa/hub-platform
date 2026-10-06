@@ -99,13 +99,17 @@ export async function qualityReport(site: HubSite) {
     return d && !SHARED_DOMAINS.test(d) ? d : '';
   });
   groupBy('Same name in the same suburb', (b) => (b.suburb ? `${b.name.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()}|${b.suburb}` : ''));
-  // A pair found by two reasons is shown once (the first reason).
+  // A pair found by two reasons is shown once (the first reason). The sorted
+  // slugs also double as this group's dismissal key (dismissed_duplicates,
+  // see api/admin/dismiss-duplicate.ts) — stable regardless of which reason
+  // flagged it or in what order.
+  const dismissed = new Set((await rows<{ group_key: string }>(site.db, `SELECT group_key FROM dismissed_duplicates`)).map((r) => r.group_key));
   const seen = new Set<string>();
-  const dupes = groups.filter((g) => {
-    const id = g.listings.map((l) => l.slug).sort().join(',');
-    if (seen.has(id)) return false;
-    seen.add(id);
-    return true;
+  const dupes = groups.flatMap((g) => {
+    const groupKey = g.listings.map((l) => l.slug).sort().join(',');
+    if (seen.has(groupKey) || dismissed.has(groupKey)) return [];
+    seen.add(groupKey);
+    return [{ ...g, groupKey }];
   });
 
   const ageDays = (t: string | null) => (t ? (Date.now() - new Date(`${t.replace(' ', 'T')}${t.includes('Z') ? '' : 'Z'}`).getTime()) / 86400000 : Infinity);

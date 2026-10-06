@@ -137,7 +137,33 @@ function cityReport(ui, r) {
         ? h(
             'ul',
             { class: 'rows' },
-            r.duplicates.groups.map((g) => h('li', {}, h('div', { class: 'row-main' }, h('span', { class: 'meta' }, `${g.reason}${g.reason === 'Same name in the same suburb' ? '' : `: ${g.key}`}`), h('ul', { class: 'linklist' }, g.listings.map(listingLink)))))
+            r.duplicates.groups.map((g) => {
+              const li = h(
+                'li',
+                {},
+                h('div', { class: 'row-main' }, h('span', { class: 'meta' }, `${g.reason}${g.reason === 'Same name in the same suburb' ? '' : `: ${g.key}`}`), h('ul', { class: 'linklist' }, g.listings.map(listingLink))),
+                h(
+                  'button',
+                  {
+                    class: 'btn small',
+                    type: 'button',
+                    onclick: async (e) => {
+                      if (!confirm('Mark this as not a duplicate? It won’t be flagged again.')) return;
+                      e.currentTarget.disabled = true;
+                      try {
+                        await ui.api('/api/dismiss-duplicate', 'POST', { site: r.site, groupKey: g.groupKey });
+                        li.remove();
+                      } catch (err) {
+                        alert(err.message);
+                        e.currentTarget.disabled = false;
+                      }
+                    },
+                  },
+                  'Not duplicate'
+                )
+              );
+              return li;
+            })
           )
         : h('div', { class: 'empty' }, h('b', {}, 'No duplicates found'), 'Same phone, same website or same name in the same suburb.'),
       h('p', { class: 'note' }, 'Branches of one business can share a phone or website: only merge or hide the ones that are really the same place.')
