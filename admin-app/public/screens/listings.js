@@ -81,6 +81,45 @@ function cityReport(ui, r) {
     h('label', { class: 'pick', title: 'Select' }, h('input', { type: 'checkbox', 'aria-label': 'Select listing', checked: picked.has(slug), onchange: (e) => (e.target.checked ? picked.add(slug) : picked.delete(slug), syncBar()) }));
   const listingLink = (l) => h('li', {}, pick(l.slug), h('a', { href: `${site}/business/${l.slug}/`, target: '_blank', rel: 'noopener' }, l.name), h('span', { class: 'meta' }, [l.suburb, l.detail].filter(Boolean).map((x) => ` · ${x}`).join('')));
   const more = (count, shown) => (count > shown ? h('li', { class: 'meta' }, `…and ${count - shown} more`) : null);
+  // The "No opening hours" check's own row: type them in and save right
+  // here, instead of opening the full Edit modal just for one field.
+  const hoursRow = (l, pill) => {
+    const input = h('input', {
+      type: 'text',
+      placeholder: 'e.g. Mon–Fri 08:00–17:00, Sat 09:00–13:00',
+      style: 'flex:1;min-width:180px;padding:6px 9px;border:2px solid var(--border);border-radius:7px;font:inherit;font-size:12.5px;color:var(--text);background:var(--bg-card)',
+    });
+    const li = h(
+      'li',
+      {},
+      h('a', { href: `${site}/business/${l.slug}/`, target: '_blank', rel: 'noopener' }, l.name),
+      h('span', { class: 'meta' }, l.suburb ? ` · ${l.suburb}` : ''),
+      h('div', { style: 'display:flex;gap:7px;margin-top:6px;flex-wrap:wrap' },
+        input,
+        h('button', {
+          class: 'btn small',
+          type: 'button',
+          onclick: async (e) => {
+            const hours = input.value.trim();
+            if (!hours) return input.focus();
+            const btn = e.currentTarget;
+            btn.disabled = true;
+            input.disabled = true;
+            try {
+              await ui.api('/api/set-business-hours', 'POST', { site: r.site, slug: l.slug, hours });
+              li.remove();
+              if (pill) pill.textContent = String(Math.max(0, Number(pill.textContent.replace(/[^\d]/g, '')) - 1));
+            } catch (err) {
+              alert(err.message);
+              btn.disabled = false;
+              input.disabled = false;
+            }
+          },
+        }, 'Save')
+      )
+    );
+    return li;
+  };
   const tone = r.score >= 85 ? 'good' : r.score >= 65 ? 'ok' : 'bad';
   return h(
     'div',
@@ -120,14 +159,16 @@ function cityReport(ui, r) {
     h(
       'div',
       { class: 'inbox' },
-      r.checks.map((c) =>
-        h(
+      r.checks.map((c) => {
+        const pill = h('span', { class: `pill ${c.count === 0 ? 'pass' : c.count / Math.max(1, r.total) > 0.25 ? 'fail' : 'warn'}` }, c.count.toLocaleString('en-ZA'));
+        const rows = c.key === 'hours' ? c.listings.map((l) => hoursRow(l, pill)) : c.listings.map(listingLink);
+        return h(
           'details',
           { class: 'card inbox-item' },
-          h('summary', {}, h('span', { class: `pill ${c.count === 0 ? 'pass' : c.count / Math.max(1, r.total) > 0.25 ? 'fail' : 'warn'}` }, c.count.toLocaleString('en-ZA')), h('span', { class: 'inbox-main' }, h('b', {}, c.label), h('span', { class: 'meta' }, c.why)), ui.icon('chevron', 16)),
-          h('div', { class: 'inbox-body' }, c.count ? h('ul', { class: 'linklist' }, c.listings.map(listingLink), more(c.count, c.listings.length)) : h('p', { class: 'msg ok' }, 'None. Nice.'))
-        )
-      )
+          h('summary', {}, pill, h('span', { class: 'inbox-main' }, h('b', {}, c.label), h('span', { class: 'meta' }, c.why)), ui.icon('chevron', 16)),
+          h('div', { class: 'inbox-body' }, c.count ? h('ul', { class: 'linklist' }, rows, more(c.count, c.listings.length)) : h('p', { class: 'msg ok' }, 'None. Nice.'))
+        );
+      })
     ),
     h('h2', { class: 'section-title' }, 'Possible duplicates'),
     h(
