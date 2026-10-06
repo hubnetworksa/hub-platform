@@ -80,12 +80,20 @@ export async function qualityReport(site: HubSite) {
   const L = (b: Biz, detail?: string): Listing => ({ slug: b.slug, name: b.name, suburb: b.suburb, ...(detail ? { detail } : {}) });
   const total = list.length;
 
+  // An admin can dismiss a flag for one business when there's genuinely
+  // nothing to fix (dismiss-check.ts) — e.g. "No opening hours" on a
+  // business that just doesn't have fixed hours. Folded into each check's
+  // own filter below, so a dismissed item also stops counting against the
+  // completeness score, not just the list.
+  const dismissedChecks = new Set((await rows<{ check_key: string; slug: string }>(site.db, `SELECT check_key, slug FROM dismissed_checks`)).map((r) => `${r.check_key}|${r.slug}`));
+  const notDismissed = (key: string) => (b: Biz) => !dismissedChecks.has(`${key}|${b.slug}`);
+
   const checks: { key: string; label: string; why: string; list: Biz[] }[] = [
-    { key: 'phone', label: 'No phone or WhatsApp', why: 'People can’t call; Google ranks listings without a phone lower.', list: list.filter((b) => !digits(b.phone) && !digits(b.whatsapp)) },
-    { key: 'hours', label: 'No opening hours', why: 'Hours are one of the most-looked-at details.', list: list.filter((b) => !b.hours || b.hours.trim().length < 3) },
-    { key: 'description', label: `Description under ${SHORT_DESC} characters`, why: 'Short pages are often left out of Google (thin content).', list: list.filter((b) => b.dl < SHORT_DESC) },
-    { key: 'address', label: 'No street address', why: 'Visitors can’t find them.', list: list.filter((b) => !b.address || b.address.trim().length < 5) },
-    { key: 'category', label: 'No category', why: 'They don’t appear on any category page.', list: list.filter((b) => !b.cats) },
+    { key: 'phone', label: 'No phone or WhatsApp', why: 'People can’t call; Google ranks listings without a phone lower.', list: list.filter((b) => !digits(b.phone) && !digits(b.whatsapp)).filter(notDismissed('phone')) },
+    { key: 'hours', label: 'No opening hours', why: 'Hours are one of the most-looked-at details.', list: list.filter((b) => !b.hours || b.hours.trim().length < 3).filter(notDismissed('hours')) },
+    { key: 'description', label: `Description under ${SHORT_DESC} characters`, why: 'Short pages are often left out of Google (thin content).', list: list.filter((b) => b.dl < SHORT_DESC).filter(notDismissed('description')) },
+    { key: 'address', label: 'No street address', why: 'Visitors can’t find them.', list: list.filter((b) => !b.address || b.address.trim().length < 5).filter(notDismissed('address')) },
+    { key: 'category', label: 'No category', why: 'They don’t appear on any category page.', list: list.filter((b) => !b.cats).filter(notDismissed('category')) },
   ];
   // Completeness: the share of these six that each listing has, averaged.
   const missing = new Map<number, number>();

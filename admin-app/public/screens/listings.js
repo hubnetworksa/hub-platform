@@ -91,12 +91,13 @@ function cityReport(ui, r) {
     });
     const saveBtn = h('button', { class: 'btn small', type: 'button' }, 'Save');
     const closeBtn = h('button', { class: 'btn small', type: 'button', style: 'color:var(--danger)' }, 'Mark closed');
+    const noInfoBtn = h('button', { class: 'btn small', type: 'button', title: 'No fixed hours to find — stop flagging this one' }, 'No information');
     const li = h(
       'li',
       {},
       h('a', { href: `${site}/business/${l.slug}/`, target: '_blank', rel: 'noopener' }, l.name),
       h('span', { class: 'meta' }, l.suburb ? ` · ${l.suburb}` : ''),
-      h('div', { style: 'display:flex;gap:7px;margin-top:6px;flex-wrap:wrap' }, input, saveBtn, closeBtn)
+      h('div', { style: 'display:flex;gap:7px;margin-top:6px;flex-wrap:wrap' }, input, saveBtn, closeBtn, noInfoBtn)
     );
     const done = () => {
       li.remove();
@@ -106,6 +107,7 @@ function cityReport(ui, r) {
       input.disabled = b;
       saveBtn.disabled = b;
       closeBtn.disabled = b;
+      noInfoBtn.disabled = b;
     };
     saveBtn.onclick = async () => {
       const hours = input.value.trim();
@@ -124,6 +126,16 @@ function cityReport(ui, r) {
       busy(true);
       try {
         await ui.api('/api/toggle-business-closed', 'POST', { site: r.site, slug: l.slug, closed: true });
+        done();
+      } catch (err) {
+        alert(err.message);
+        busy(false);
+      }
+    };
+    noInfoBtn.onclick = async () => {
+      busy(true);
+      try {
+        await ui.api('/api/dismiss-check', 'POST', { site: r.site, checkKey: 'hours', slug: l.slug });
         done();
       } catch (err) {
         alert(err.message);
