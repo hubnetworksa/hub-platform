@@ -77,15 +77,18 @@ async function siteInbox(s: HubSite): Promise<Item[]> {
     });
   }
 
+  // Contact-form messages only — a business enquiry goes straight to the
+  // business by email and is between them and the visitor; Hub Admin has
+  // no business seeing its content or replying to it on their behalf.
   for (const r of await rows<Record<string, string | number | null>>(
     s.db,
-    `SELECT id, kind, name, contact, topic, message, business_slug, business_name, emailed, created_at FROM messages WHERE status = 'open' ORDER BY created_at DESC LIMIT 100`
+    `SELECT id, kind, name, contact, topic, message, created_at FROM messages WHERE status = 'open' AND kind != 'enquiry' ORDER BY created_at DESC LIMIT 100`
   )) {
     out.push({
-      site: s.slug, type: 'message', id: Number(r.id), title: String(r.business_name ?? r.name ?? 'Contact form'), created_at: String(r.created_at), link: admin('enquiries'),
-      fields: f([['Kind', r.kind === 'enquiry' ? 'Enquiry to a business' : 'Contact form'], ['From', r.name], ['Contact', r.contact], ['Topic', r.topic], ['Business', r.business_slug ? `https://${s.domain}/business/${r.business_slug}/` : null]]),
+      site: s.slug, type: 'message', id: Number(r.id), title: String(r.name ?? 'Contact form'), created_at: String(r.created_at), link: admin('enquiries'),
+      fields: f([['Kind', 'Contact form'], ['From', r.name], ['Contact', r.contact], ['Topic', r.topic]]),
       text: (r.message as string) ?? null,
-      flags: r.kind === 'enquiry' && !Number(r.emailed) ? ['Never reached the business (no email on file)'] : [],
+      flags: [],
     });
   }
 

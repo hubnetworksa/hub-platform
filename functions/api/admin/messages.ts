@@ -54,14 +54,17 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return json({ ok: true });
   }
   // Answer the visitor by email (from Hub Admin's Inbox), then mark it done.
+  // Enquiries excluded: those are between the visitor and the business
+  // (already emailed straight to them) — admin never sees or replies to one.
   if (body.action === 'reply') {
     const text = typeof body.text === 'string' ? body.text.trim() : '';
     if (text.length < 2 || text.length > 5000) return json({ ok: false, error: 'The reply must be 2 to 5,000 characters.' }, 400);
     const msg = await db
-      .prepare('SELECT name, contact, topic, message, business_name FROM messages WHERE id = ?')
+      .prepare('SELECT kind, name, contact, topic, message, business_name FROM messages WHERE id = ?')
       .bind(id)
-      .first<{ name: string | null; contact: string; topic: string | null; message: string; business_name: string | null }>();
+      .first<{ kind: string; name: string | null; contact: string; topic: string | null; message: string; business_name: string | null }>();
     if (!msg) return json({ ok: false, error: 'That message no longer exists.' }, 404);
+    if (msg.kind === 'enquiry') return json({ ok: false, error: 'Business enquiries go straight to the business — admin cannot reply on their behalf.' }, 403);
     if (!looksLikeEmail(msg.contact)) return json({ ok: false, error: 'This message has no email address to reply to.' }, 400);
     const site = getSite(context.env.SITE);
     const quoted = msg.message.split('\n').map((l) => `> ${l}`).join('\n');

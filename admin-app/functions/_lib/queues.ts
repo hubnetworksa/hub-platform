@@ -39,11 +39,15 @@ export const QUEUES: [string, string, string, string][] = [
      FROM reports WHERE status = 'open' ORDER BY created_at DESC LIMIT 25`,
   ],
   [
+    // Contact-form messages only: a business enquiry is between the
+    // visitor and the business (emailed straight to them), and Hub Admin
+    // must neither surface it as a pending item nor let anyone reply to it
+    // on the business's behalf.
     'message',
     'Message',
     '/admin/enquiries/',
-    `SELECT COALESCE(business_name, name, 'Contact form') AS title, CASE kind WHEN 'enquiry' THEN 'Enquiry' ELSE 'Contact form' END AS detail, created_at
-     FROM messages WHERE status = 'open' ORDER BY created_at DESC LIMIT 25`,
+    `SELECT COALESCE(name, 'Contact form') AS title, 'Contact form' AS detail, created_at
+     FROM messages WHERE status = 'open' AND kind != 'enquiry' ORDER BY created_at DESC LIMIT 25`,
   ],
   [
     'review',
