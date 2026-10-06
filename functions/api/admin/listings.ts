@@ -76,11 +76,12 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     binds.push(tier);
   }
   if (status === 'hidden') where.push("b.status != 'published'");
+  else if (status === 'closed') where.push('b.closed_at IS NOT NULL');
   const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
 
   const rows = await db
     .prepare(
-      `SELECT b.id, b.slug, b.name, b.status, b.subscription_tier, b.phone, s.name AS suburb_name,
+      `SELECT b.id, b.slug, b.name, b.status, b.closed_at, b.subscription_tier, b.phone, s.name AS suburb_name,
               (SELECT c.name FROM business_categories bc JOIN categories c ON c.id = bc.category_id WHERE bc.business_id = b.id AND bc.is_primary = 1 LIMIT 1) AS category_name
        FROM businesses b LEFT JOIN suburbs s ON s.id = b.suburb_id
        ${whereSql}

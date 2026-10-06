@@ -15,7 +15,7 @@ import Icon from '../../components/Icon.astro';
           <input type="text" id="manage-search-input" autocomplete="off" placeholder="Filter by name, category or suburb…" style="flex:1;min-width:0;border:0;padding:12px 0;font-size:14px;outline:none;background:transparent;color:var(--text)" />
         </div>
         <div id="plan-filters" style="display:contents">
-          {['All', 'Featured', 'Verified', 'Basic', 'Hidden'].map((f) => (
+          {['All', 'Featured', 'Verified', 'Basic', 'Hidden', 'Closed'].map((f) => (
             <button type="button" data-plan-filter={f} style={`padding:11px 15px;border-radius:11px;cursor:pointer;font-size:13px;font-weight:800;border:2px solid ${f === 'All' ? 'var(--navy)' : 'var(--border)'};background:${f === 'All' ? 'var(--navy)' : '#fff'};color:${f === 'All' ? '#fff' : 'var(--navy)'}`}>{f}</button>
           ))}
         </div>
@@ -48,6 +48,7 @@ import Icon from '../../components/Icon.astro';
     slug: string;
     name: string;
     status: string;
+    closed_at: string | null;
     subscription_tier: number;
     phone: string | null;
     suburb_name: string | null;
@@ -66,10 +67,12 @@ import Icon from '../../components/Icon.astro';
     const plan = TIER_NAMES[tier] ?? 'Basic';
     const sub = [b.suburb_name, formatPhoneZA(b.phone)].filter(Boolean).join(' · ');
     const hidden = b.status !== 'published';
+    const closed = !!b.closed_at;
+    const badge = (text: string) => ` <span style="margin-left:6px;padding:2px 8px;border-radius:999px;background:var(--bg-subtle);color:var(--muted);font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;vertical-align:1px">${text}</span>`;
     return `
       <div class="admin-cols admin-row" style="gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);align-items:center">
         <div style="min-width:0">
-          <div style="font-size:14.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em">${esc(b.name)}${hidden ? ' <span style="margin-left:6px;padding:2px 8px;border-radius:999px;background:var(--bg-subtle);color:var(--muted);font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;vertical-align:1px">Hidden</span>' : ''}</div>
+          <div style="font-size:14.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em">${esc(b.name)}${hidden ? badge('Hidden') : ''}${closed ? badge('Closed') : ''}</div>
           <div style="font-size:12.5px;font-weight:600;color:var(--muted)">${esc(sub || (hidden ? 'Hidden' : `status: ${b.status}`))}</div>
         </div>
         <div class="admin-hide" style="min-width:0;font-size:13px;font-weight:700;color:var(--text)">${esc(b.category_name ?? '')}</div>
@@ -78,6 +81,7 @@ import Icon from '../../components/Icon.astro';
           <button data-cycle="${b.id}" class="admin-btn-plan" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);cursor:pointer">Plan</button>
           <button data-edit="${b.id}" style="padding:8px 11px;border:0;border-radius:8px;background:var(--navy);color:#fff;font-size:12px;font-weight:800;cursor:pointer">Edit</button>
           <button data-visibility="${b.id}" class="admin-btn-plan" title="${hidden ? 'Show this listing on the site again' : 'Take this listing off the site and keep it out of the research routines'}" style="padding:8px 11px;border:2px solid var(--navy);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);cursor:pointer">${hidden ? 'Unhide' : 'Hide'}</button>
+          <button data-closed="${b.id}" class="admin-btn-plan" title="${closed ? 'This business is open again' : 'The business has shut down for good — keeps it out of the public site and the research routines, same as Hide, but reopening it takes just one click'}" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:12px;font-weight:800;color:var(--navy);cursor:pointer">${closed ? 'Reopen' : 'Mark closed'}</button>
           <button data-delete="${b.id}" class="admin-btn-remove" style="padding:8px 11px;border:2px solid var(--border);border-radius:8px;background:#fff;color:var(--danger);font-size:12px;font-weight:800;cursor:pointer">Delete</button>
         </div>
       </div>`;
@@ -96,6 +100,7 @@ import Icon from '../../components/Icon.astro';
     const params = new URLSearchParams({ limit: String(PAGE), offset: String(append ? rows.length : 0) });
     if (q) params.set('q', q);
     if (planFilter === 'Hidden') params.set('status', 'hidden');
+    else if (planFilter === 'Closed') params.set('status', 'closed');
     else if (planFilter !== 'All') params.set('plan', planFilter);
     const res = await fetch(`/api/admin/listings?${params}`);
     const data = await res.json();
@@ -166,6 +171,24 @@ import Icon from '../../components/Icon.astro';
       if (!result.ok) {
         window.alert(String(result.error || 'Could not change that listing.'));
         visibilityBtn.disabled = false;
+        return;
+      }
+      load();
+      return;
+    }
+
+    const closedBtn = target.closest('button[data-closed]') as HTMLButtonElement | null;
+    if (closedBtn) {
+      const id = Number(closedBtn.dataset.closed);
+      const row = rows.find((r) => r.id === id);
+      if (!row) return;
+      const makeClosed = !row.closed_at;
+      if (makeClosed && !window.confirm(`Mark "${row.name}" as closed? It comes off the site and out of the research routines immediately — reopening it later takes one click.`)) return;
+      closedBtn.disabled = true;
+      const result = await postJson('/api/admin/toggle-business-closed', { businessId: id, closed: makeClosed });
+      if (!result.ok) {
+        window.alert(String(result.error || 'Could not change that listing.'));
+        closedBtn.disabled = false;
         return;
       }
       load();
