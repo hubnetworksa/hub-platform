@@ -114,14 +114,17 @@ export async function qualityReport(site: HubSite) {
     .sort((a, b) => (a.updated_at ?? '').localeCompare(b.updated_at ?? ''));
   const noViews = list.filter((b) => !views.get(b.id) && ageDays(b.created_at) > 90);
 
-  const combos = await rows<{ cat: string; cname: string; sub: string; sname: string; n: number }>(
+  // Just the counts — these pages are automatically noindexed and dropped
+  // from the sitemap below the same threshold (category/[slug]/[suburb].astro,
+  // src/lib/sitemap.ts), so there's nothing actionable to list here.
+  const combos = await rows<{ n: number }>(
     site.db,
-    `SELECT c.slug AS cat, c.name AS cname, s.slug AS sub, s.name AS sname, COUNT(*) AS n
+    `SELECT COUNT(*) AS n
      FROM businesses b JOIN business_categories bc ON bc.business_id = b.id JOIN categories c ON c.id = bc.category_id JOIN suburbs s ON s.id = b.suburb_id
      WHERE b.status = 'published' AND b.closed_at IS NULL AND b.is_test = 0
      GROUP BY c.id, s.id`
   );
-  const thin = combos.filter((c) => c.n <= 2).sort((a, b) => a.n - b.n || a.cname.localeCompare(b.cname));
+  const thinCount = combos.filter((c) => c.n <= 2).length;
 
   // Owners and enquiries: enquiries that never reached the business (no email
   // on file), unclaimed businesses that get enquiries, and approved listings
@@ -155,6 +158,6 @@ export async function qualityReport(site: HubSite) {
     duplicates: { count: dupes.length, groups: dupes.slice(0, 150) },
     stale: { days: STALE_DAYS, count: stale.length, listings: stale.slice(0, 150).map((b) => L(b, b.updated_at ? `last updated ${b.updated_at.slice(0, 10)}` : 'never updated')) },
     no_views: { count: noViews.length, listings: noViews.slice(0, 150).map((b) => L(b, b.tier ? 'paid plan' : undefined)) },
-    thin: { pages: combos.length, count: thin.length, list: thin.slice(0, 200).map((c) => ({ path: `/category/${c.cat}/${c.sub}/`, label: `${c.cname} in ${c.sname}`, n: c.n })) },
+    thin: { pages: combos.length, count: thinCount },
   };
 }
