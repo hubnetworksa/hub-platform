@@ -3,6 +3,7 @@ import { hubSites, json, type Env } from '../_lib/sites';
 import { jsonBody } from '../_lib/body';
 import { logActivity } from '../_lib/alerts';
 import { cityAdmin } from '../_lib/city-api';
+import { qualityReportKey } from '../_lib/quality';
 
 // Hides (or publishes again) several listings at once from the Listings
 // screen: POST { site, slugs: [...], status: 'hidden' | 'published' }, at most
@@ -33,6 +34,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     } else failed.push({ slug, error: r.error || `HTTP ${r.status}` });
   }
   // The quality report is out of date now: rebuild it next time it's opened.
-  if (done.length) await env.ADMIN_DB.prepare('DELETE FROM reports WHERE kind = ?').bind(`quality:${site.slug}`).run();
+  if (done.length) await env.ADMIN_DB.prepare('DELETE FROM reports WHERE kind = ?').bind(qualityReportKey(site.slug)).run();
   return json({ ok: failed.length === 0, done, failed, error: failed.length ? `${failed.length} couldn’t be changed: ${failed[0].error}` : undefined });
 };

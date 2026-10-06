@@ -1,7 +1,7 @@
 import type { PagesFunction } from '@cloudflare/workers-types';
 import { hubSites, json, count, type Env } from '../_lib/sites';
 import { readReport, writeReport } from '../_lib/alerts';
-import { qualityReport } from '../_lib/quality';
+import { qualityReport, qualityReportKey } from '../_lib/quality';
 
 // Listing quality per city (Listings screen). Each city's report is kept for
 // a day; ?refresh=<slug> rebuilds that city's now (at most every 10 minutes).
@@ -18,7 +18,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const sites = hubSites(env);
   const reports = await Promise.all(
     sites.map(async (s) => {
-      const kind = `quality:${s.slug}`;
+      const kind = qualityReportKey(s.slug);
       const cached = await readReport<Awaited<ReturnType<typeof qualityReport>>>(db, kind);
       const cachedAt = cached ? new Date(`${cached.updated_at.replace(' ', 'T')}Z`).getTime() : 0;
       const age = cached ? Date.now() - cachedAt : Infinity;

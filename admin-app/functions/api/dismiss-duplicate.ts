@@ -3,6 +3,7 @@ import { hubSites, json, type Env } from '../_lib/sites';
 import { jsonBody } from '../_lib/body';
 import { logActivity } from '../_lib/alerts';
 import { cityAdmin } from '../_lib/city-api';
+import { qualityReportKey } from '../_lib/quality';
 
 // Marks a "possible duplicate" group as not actually a duplicate, from the
 // Listings screen: POST { site, groupKey }. Goes through the site's own
@@ -20,6 +21,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!r.ok) return json({ ok: false, error: r.error || `${site.name} said no (${r.status}).` }, 502);
   await logActivity(env.ADMIN_DB, actor, site.slug, 'duplicate_dismissed', groupKey);
   // The quality report is out of date now: rebuild it next time it's opened.
-  await env.ADMIN_DB.prepare('DELETE FROM reports WHERE kind = ?').bind(`quality:${site.slug}`).run();
+  await env.ADMIN_DB.prepare('DELETE FROM reports WHERE kind = ?').bind(qualityReportKey(site.slug)).run();
   return json({ ok: true });
 };

@@ -3,7 +3,17 @@ import { rows, type HubSite } from './sites';
 // Listing quality for one city: how complete the published listings are,
 // likely duplicates, stale listings and thin pages. Built from a few reads of
 // the city database, so the Listings screen keeps one copy per city per day
-// (reports 'quality:<slug>') instead of re-reading on every visit.
+// (reports, keyed by qualityReportKey()) instead of re-reading on every visit.
+
+// Bump this whenever qualityReport()'s return shape changes (a field added,
+// removed or renamed). The cache key folds it in, so a stale cached report
+// from before the change is simply never read again — orphaned, not parsed
+// — instead of being served with a shape the current frontend doesn't
+// expect (seen for real: a cached report from before duplicate groups
+// carried `groupKey` made "Not duplicate" send groupKey: undefined, which
+// the city's endpoint correctly 400'd on empty/malformed input).
+const QUALITY_REPORT_VERSION = 2;
+export const qualityReportKey = (slug: string): string => `quality:${slug}:v${QUALITY_REPORT_VERSION}`;
 
 interface Biz {
   id: number;
