@@ -1,7 +1,7 @@
 // Shared build-time view of suburbs grouped into the site's browse regions
 // (src/site-content/<city>/areaGroups.ts), with real listing counts, real
 // suburb-sponsor status and real coordinates. Used by the suburb directory
-// index (/suburb/) and the suburb map (/suburb/map/).
+// index (/suburb/).
 import { suburbs, businessesInSuburb, sponsorFor, type Suburb } from './data';
 import { AREA_GROUPS, groupForSuburb } from '../site-content';
 

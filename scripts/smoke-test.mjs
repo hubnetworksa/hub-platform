@@ -50,7 +50,7 @@ try {
 
 // Every static route the site has, grouped by who should see it.
 const PUBLIC_ROUTES = [
-  '/', '/search/', '/suburb/', '/suburb/map/', '/category/', '/shopping-center/', '/events/', '/guides/', '/tourism/',
+  '/', '/search/', '/suburb/', '/category/', '/shopping-center/', '/events/', '/guides/', '/tourism/',
   '/news/', '/pricing/', '/advertise/', '/partners/', '/about/', '/contact/', '/privacy/', '/terms/', '/404.html',
   '/list-your-business/', '/list-your-business/contact/', '/list-your-business/review/', '/list-your-business/checkout/',
   '/report-listing/', '/request-removal/', '/login/', '/register/', '/forgot-password/', '/reset-password/',
@@ -74,7 +74,7 @@ const DETAIL_KINDS = [
   { prefix: '/guides/', listPage: '/guides/' },
   { prefix: '/tourism/', listPage: '/tourism/', skip: ['/tourism/itineraries/'] },
   { prefix: '/tourism/itineraries/', listPage: '/tourism/' },
-  { prefix: '/suburb/', listPage: '/suburb/', skip: ['/suburb/map/'] },
+  { prefix: '/suburb/', listPage: '/suburb/' },
   { prefix: '/category/', listPage: '/category/' },
   { prefix: '/shopping-center/', listPage: '/shopping-center/' },
   { prefix: '/section/', listPage: '/' },

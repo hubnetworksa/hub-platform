@@ -434,7 +434,6 @@ await section('Static and meta routes', async () => {
   await step(anon, 'GET', '/robots.txt', {}, contentTypeIs(/text\/plain/), 'robots');
   await step(anon, 'GET', '/manifest.webmanifest', {}, contentTypeIs(/manifest|json/), 'web app manifest');
   await step(anon, 'GET', '/service-worker.js', {}, contentTypeIs(/javascript/), 'service worker');
-  await step(anon, 'GET', '/suburb-boundaries.json', {}, contentTypeIs(/json/), 'suburb boundaries');
   await step(anon, 'GET', '/this-page-does-not-exist-launch-test/', {}, status(404), 'custom 404');
 });
 

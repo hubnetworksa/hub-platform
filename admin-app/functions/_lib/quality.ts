@@ -15,8 +15,6 @@ interface Biz {
   hours: string | null;
   website: string | null;
   address: string | null;
-  lat: number | null;
-  lng: number | null;
   dl: number;
   updated_at: string | null;
   verified_at: string | null;
@@ -54,7 +52,7 @@ const SHARED_DOMAINS = /(^|\.)(facebook\.com|instagram\.com|google\.com|wa\.me|l
 export async function qualityReport(site: HubSite) {
   const list = await rows<Biz>(
     site.db,
-    `SELECT b.id, b.slug, b.name, s.name AS suburb, b.phone, b.whatsapp, b.hours, b.website, b.address, b.lat, b.lng,
+    `SELECT b.id, b.slug, b.name, s.name AS suburb, b.phone, b.whatsapp, b.hours, b.website, b.address,
             length(COALESCE(b.description, '')) AS dl, b.updated_at, b.verified_at, b.created_at,
             COALESCE(b.subscription_tier, 0) AS tier, (b.owner_user_id IS NOT NULL) AS owned,
             (SELECT COUNT(*) FROM business_categories bc WHERE bc.business_id = b.id) AS cats
@@ -76,7 +74,6 @@ export async function qualityReport(site: HubSite) {
     { key: 'phone', label: 'No phone or WhatsApp', why: 'People can’t call; Google ranks listings without a phone lower.', list: list.filter((b) => !digits(b.phone) && !digits(b.whatsapp)) },
     { key: 'hours', label: 'No opening hours', why: 'Hours are one of the most-looked-at details.', list: list.filter((b) => !b.hours || b.hours.trim().length < 3) },
     { key: 'description', label: `Description under ${SHORT_DESC} characters`, why: 'Short pages are often left out of Google (thin content).', list: list.filter((b) => b.dl < SHORT_DESC) },
-    { key: 'location', label: 'No map location', why: 'They don’t show on maps or “near me” results.', list: list.filter((b) => b.lat == null || b.lng == null) },
     { key: 'address', label: 'No street address', why: 'Visitors can’t find them.', list: list.filter((b) => !b.address || b.address.trim().length < 5) },
     { key: 'category', label: 'No category', why: 'They don’t appear on any category page.', list: list.filter((b) => !b.cats) },
   ];

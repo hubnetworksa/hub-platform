@@ -1,6 +1,6 @@
 // Listings: how good each city's listings are. A completeness score, what's
-// missing (phone, hours, description, map location, address, category),
-// likely duplicates, stale listings, listings nobody has viewed, and thin
+// missing (phone, hours, description, address, category), likely
+// duplicates, stale listings, listings nobody has viewed, and thin
 // category-in-suburb pages. Each listing opens on the site; tick listings to
 // hide them in bulk (api/bulk-listings.ts); editing happens in that city's
 // admin (Businesses).
@@ -96,7 +96,7 @@ function cityReport(ui, r) {
           'div',
           {},
           h('h2', {}, 'Data quality'),
-          h('p', { class: 'sub' }, `${r.complete.toLocaleString('en-ZA')} of ${r.total.toLocaleString('en-ZA')} published listings have everything: a phone, hours, a proper description, a map location, an address and a category.`),
+          h('p', { class: 'sub' }, `${r.complete.toLocaleString('en-ZA')} of ${r.total.toLocaleString('en-ZA')} published listings have everything: a phone, hours, a proper description, an address and a category.`),
           h('a', { class: 'btn small', href: `${site}/admin/businesses/`, target: '_blank', rel: 'noopener' }, `Edit in ${ui.siteName(r.site)} admin`, ui.icon('ext', 13))
         )
       ),

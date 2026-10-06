@@ -22,9 +22,6 @@ export const NOINDEX_PATH_PREFIXES = [
   // checkout are its later steps).
   '/list-your-business/',
   '/events/add/',
-  // Kept in the codebase and still reachable by direct URL, but no longer
-  // linked from anywhere on the site — an unlisted page.
-  '/suburb/map/',
 ];
 
 // The only paths robots.txt disallows: the admin area and the
