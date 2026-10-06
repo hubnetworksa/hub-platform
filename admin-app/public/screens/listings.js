@@ -111,7 +111,7 @@ function cityReport(ui, r) {
             ['Possible duplicates', r.duplicates.count, 'groups'],
             [`Not updated in ${r.stale.days} days`, r.stale.count, 'listings'],
             ['No views in 90 days', r.no_views.count, 'listings'],
-            ['Thin pages (1–2 businesses)', r.thin.count, `of ${r.thin.pages} category-in-suburb pages`],
+            ['Thin pages (1–2 businesses)', r.thin.count, `of ${r.thin.pages} category-in-suburb pages — all noindexed, 0 indexed`],
           ].map(([label, n, unit]) => h('li', {}, h('span', { class: 'row-main' }, label), h('b', {}, n.toLocaleString('en-ZA')), h('span', { class: 'meta' }, unit)))
         )
       )
@@ -154,7 +154,7 @@ function cityReport(ui, r) {
     h(
       'section',
       { class: 'card' },
-      h('p', { class: 'sub', style: 'margin-top:0' }, `${r.thin.count} of ${r.thin.pages} “category in suburb” pages list only one or two businesses. Google often skips pages like these. Adding a few more businesses to the busiest ones (or better descriptions) helps the whole site.`),
+      h('p', { class: 'sub', style: 'margin-top:0' }, `${r.thin.count} of ${r.thin.pages} “category in suburb” pages list only one or two businesses. The site marks every one of these noindex and leaves it out of the sitemap, so 0 are indexed by Google — adding a few more businesses to the busiest ones (or better descriptions) is what gets a page indexed.`),
       r.thin.list.length ? h('ul', { class: 'linklist cols' }, r.thin.list.slice(0, 120).map((t) => h('li', {}, h('a', { href: `${site}${t.path}`, target: '_blank', rel: 'noopener' }, t.label), h('span', { class: 'meta' }, ` · ${t.n}`))), more(r.thin.count, Math.min(120, r.thin.list.length))) : null
     ),
     bar
