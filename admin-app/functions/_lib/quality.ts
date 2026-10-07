@@ -176,7 +176,7 @@ export async function qualityReport(site: HubSite) {
     total,
     score,
     complete,
-    checks: checks.map((c) => ({ key: c.key, label: c.label, why: c.why, count: c.list.length, listings: c.list.slice(0, 150).map((b) => L(b)) })),
+    checks: checks.map((c) => ({ key: c.key, label: c.label, why: c.why, count: c.list.length, listings: (c.key === 'hours' ? c.list : c.list.slice(0, 150)).map((b) => L(b)) })),
     duplicates: { count: dupes.length, groups: dupes.slice(0, 150) },
     stale: { days: STALE_DAYS, count: stale.length, listings: stale.slice(0, 150).map((b) => L(b, b.updated_at ? `last updated ${b.updated_at.slice(0, 10)}` : 'never updated')) },
     no_views: { count: noViews.length, listings: noViews.slice(0, 150).map((b) => L(b, b.tier ? 'paid plan' : undefined)) },
