@@ -6,13 +6,14 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: "audit (read-only) or fix-www"
+        description: "audit (read-only), fix-www, or fix-spf"
         required: true
         default: audit
         type: choice
         options:
           - audit
           - fix-www
+          - fix-spf
       sites:
         description: "Comma-separated cities (polokwane,pretoria,capetown)"
         required: false

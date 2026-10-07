@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 // Cloudflare zone checks and fixes for the three sites, run from
 // .github/workflows/cloudflare-admin.yml with the CI token (it never leaves
-// GitHub). Usage: node scripts/cloudflare-admin.mjs <audit|fix-www> [cities]
+// GitHub). Usage: node scripts/cloudflare-admin.mjs <audit|fix-www|fix-spf> [cities]
 //   audit    read-only: token scopes, apex/www DNS, security + SSL settings,
 //            Bot Fight Mode, custom firewall/rate-limit/redirect rules, and
 //            7 days of firewall events from Googlebot.
 //   fix-www  points www.<domain> at the site's Pages project (proxied CNAME),
 //            replacing whatever www record is there. The site's middleware
 //            then 301s www to the bare domain.
+//   fix-spf  adds include:amazonses.com to the domain's existing SPF TXT
+//            record, so Resend/SES mail stops landing in spam. No-op if the
+//            record already has it, or if there's no SPF record to fix.
 import { readFileSync } from 'node:fs';
 
 const TOKEN = process.env.CLOUDFLARE_API_TOKEN;
@@ -108,6 +111,25 @@ async function fixWww(site, zone) {
   console.log(`  ${cname ? 'update' : 'create'} CNAME ${name} -> ${target}: ${w.ok ? 'ok' : w.error}`);
 }
 
+async function fixSpf(site, zone) {
+  const name = site.domain;
+  const existing = await cf(`/zones/${zone.id}/dns_records?type=TXT&name=${name}`);
+  if (!existing.ok) { console.log(`  cannot read DNS: ${existing.error}`); return; }
+  const spf = existing.result.find((r) => r.content.startsWith('v=spf1'));
+  if (!spf) { console.log(`  no SPF record found for ${name} — nothing to fix`); return; }
+  if (spf.content.includes('include:amazonses.com')) {
+    console.log(`  ${name} SPF already includes amazonses.com, nothing to do`);
+    return;
+  }
+  const before = spf.content;
+  const after = before.replace(/(\s)([~+\-?]?all)$/, '$1include:amazonses.com $2');
+  console.log(`  ${name} SPF before: ${before}`);
+  console.log(`  ${name} SPF after:  ${after}`);
+  const body = { type: 'TXT', name: spf.name, content: after, ttl: spf.ttl, proxied: spf.proxied };
+  const w = await cf(`/zones/${zone.id}/dns_records/${spf.id}`, { method: 'PUT', body: JSON.stringify(body) });
+  console.log(`  update SPF ${name}: ${w.ok ? 'ok' : w.error}`);
+}
+
 const verify = await cf('/user/tokens/verify');
 console.log(`token: ${verify.ok ? verify.result.status : verify.error}`);
 for (const city of CITIES) {
@@ -117,6 +139,7 @@ for (const city of CITIES) {
     const zone = await zoneFor(site.domain);
     console.log(`  zone ${zone.status}, plan ${zone.plan?.name}`);
     if (action === 'fix-www') await fixWww(site, zone);
+    else if (action === 'fix-spf') await fixSpf(site, zone);
     else await audit(site, zone);
   } catch (err) {
     console.log(`  ERROR ${err.message}`);
