@@ -98,6 +98,9 @@ export interface Business {
   /** D1 datetime('now') text, UTC ("2026-09-21 04:27:50"). Optional: a
    *  database without it builds with no business <lastmod> in the sitemap. */
   updated_at?: string | null;
+  /** D1 datetime text: when a routine or the content upgrade last rewrote the
+   *  description (it doesn't touch updated_at). Used for the sitemap <lastmod>. */
+  description_enriched_at?: string | null;
 }
 
 /** The Featured tier's numeric value — gates the Photos gallery and

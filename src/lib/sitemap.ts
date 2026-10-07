@@ -73,11 +73,20 @@ export function isoFromDate(value: string | null | undefined): string | undefine
   return `${value}T00:00:00.000Z`;
 }
 
-/** Newest updated_at among the businesses a list page shows, else the build date. */
+/** When a business's page last changed: updated_at, or a later rewrite of its
+ *  description (the enrichment routines and content upgrade set only
+ *  description_enriched_at). */
+function businessUpdated(b: Business | undefined): string | undefined {
+  const updated = isoFromD1(b?.updated_at);
+  const described = isoFromD1(b?.description_enriched_at);
+  return updated && described ? (described > updated ? described : updated) : (updated ?? described);
+}
+
+/** Newest change among the businesses a list page shows, else the build date. */
 function newestUpdate(list: Business[]): string {
   let newest: string | undefined;
   for (const b of list) {
-    const iso = isoFromD1(b.updated_at);
+    const iso = businessUpdated(b);
     if (iso && (!newest || iso > newest)) newest = iso;
   }
   return newest ?? BUILD_DATE;
@@ -114,7 +123,7 @@ export function sitemapEntryFor(pathname: string): SitemapEntry | null {
     case 'business': {
       if (!slug) return { chunk: 'business', lastmod: newestUpdate(businesses) };
       const b = businessBySlug.get(slug);
-      return { chunk: 'business', lastmod: isoFromD1(b?.updated_at) };
+      return { chunk: 'business', lastmod: businessUpdated(b) };
     }
     case 'category': {
       if (!slug) return { chunk: 'category', lastmod: newestUpdate(businesses) };
