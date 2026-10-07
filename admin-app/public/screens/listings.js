@@ -122,7 +122,6 @@ function cityReport(ui, r) {
       }
     };
     closeBtn.onclick = async () => {
-      if (!confirm(`Mark "${l.name}" as closed? It comes off the site and out of the research routines immediately — reopening it later takes one click (Manage Businesses).`)) return;
       busy(true);
       try {
         await ui.api('/api/toggle-business-closed', 'POST', { site: r.site, slug: l.slug, closed: true });
