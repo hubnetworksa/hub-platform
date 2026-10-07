@@ -113,7 +113,7 @@ async function fixWww(site, zone) {
 
 async function fixSpf(site, zone) {
   const name = site.domain;
-  const existing = await cf(`/zones/${zone.id}/dns_records?type=TXT&name=${name}`);
+  const existing = await cf(`/zones/${zone.id}/dns_records?name=${name}&per_page=100`);
   if (!existing.ok) { console.log(`  cannot read DNS: ${existing.error}`); return; }
   const spf = existing.result.find((r) => r.content.startsWith('v=spf1'));
   if (!spf) { console.log(`  no SPF record found for ${name} — nothing to fix`); return; }
