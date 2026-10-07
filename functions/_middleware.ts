@@ -1,5 +1,6 @@
 import type { PagesFunction } from '@cloudflare/workers-types';
 import { getSite } from './_lib/site';
+import { removedListingTarget } from './_lib/removed-listings';
 
 interface Env {
   SITE: string;
@@ -37,6 +38,12 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     return Response.redirect(url.toString(), 301);
   }
   const res = await context.next();
+  // A removed business page: send visitors and Google to the closest live
+  // page instead of a 404 (functions/_lib/removed-listings.ts).
+  if (res.status === 404) {
+    const target = removedListingTarget(context.env.SITE, url.pathname);
+    if (target) return Response.redirect(new URL(target, url.origin).toString(), 301);
+  }
   // public/_headers only covers static assets; Function responses (the
   // emailed confirm/review pages, APIs, /media/) get the same baseline here.
   const out = new Response(res.body, res);
