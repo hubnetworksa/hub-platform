@@ -188,7 +188,13 @@ for (const slug of CITIES) {
   const old = prev.sites?.[slug];
   console.log(`${slug}: search analytics…`);
   const a = await analytics(prop, old);
-  console.log(`${slug}: ${a.daily.length} days, ${a.pagesSeen.length} days of pages seen. Inspecting pages…`);
+  console.log(`${slug}: ${a.daily.length} days, ${a.pagesSeen.length} days of pages seen.`);
+  // The last days in the log, so a drop can be checked without opening Hub Admin.
+  if (a.error) console.log(`${slug}: Search Console error: ${a.error}`);
+  console.log(`${slug}: data from ${a.daily[0]?.date ?? '-'} to ${a.daily.at(-1)?.date ?? '-'}; last 10 days (date clicks/impressions/pages seen):`);
+  const seenOn = new Map(a.pagesSeen.map((p) => [p.date, p.pages]));
+  for (const r of a.daily.slice(-10)) console.log(`  ${r.date} ${r.clicks}/${r.impressions}/${seenOn.get(r.date) ?? '-'}`);
+  console.log(`${slug}: inspecting pages…`);
   const ins = await inspections(site, prop, old?.inspections);
   console.log(`${slug}: inspected ${ins.inspectedToday ?? 0} pages today (${Object.keys(ins.map).length} of ${ins.sitemapUrls} known).`);
   out.sites[slug] = { property: prop, ...a, sitemapUrls: ins.sitemapUrls, inspections: ins.map };
