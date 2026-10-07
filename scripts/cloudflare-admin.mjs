@@ -115,14 +115,17 @@ async function fixSpf(site, zone) {
   const name = site.domain;
   const existing = await cf(`/zones/${zone.id}/dns_records?name=${name}&per_page=100`);
   if (!existing.ok) { console.log(`  cannot read DNS: ${existing.error}`); return; }
-  const spf = existing.result.find((r) => r.content.startsWith('v=spf1'));
+  const spf = existing.result.find((r) => r.content.includes('v=spf1'));
   if (!spf) { console.log(`  no SPF record found for ${name} — nothing to fix`); return; }
   if (spf.content.includes('include:amazonses.com')) {
     console.log(`  ${name} SPF already includes amazonses.com, nothing to do`);
     return;
   }
   const before = spf.content;
-  const after = before.replace(/(\s)([~+\-?]?all)$/, '$1include:amazonses.com $2');
+  // Cloudflare may return the TXT content wrapped in literal double quotes
+  // (e.g. `"v=spf1 ... ~all"`). Capture an optional trailing quote so the
+  // insert still lands before it, and preserve it (or its absence) as-is.
+  const after = before.replace(/(\s)([~+\-?]?all)("?)$/, '$1include:amazonses.com $2$3');
   console.log(`  ${name} SPF before: ${before}`);
   console.log(`  ${name} SPF after:  ${after}`);
   const body = { type: 'TXT', name: spf.name, content: after, ttl: spf.ttl, proxied: spf.proxied };
