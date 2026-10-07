@@ -2,3 +2,4 @@
 {"date": "2026-09-30T06:00:00Z", "action_taken": "fuel_not_due", "reason": "today is 2026-09-30; this months prices took effect Wednesday 2026-09-02, outside the routine window (that Wednesday and the two days after)."}
 {"date": "2026-10-01T06:00:00Z", "action_taken": "fuel_not_due", "reason": "today is 2026-10-01; this months prices take effect Wednesday 2026-10-07 (routine runs that day and the two after)."}
 {"date": "2026-10-02T06:00:00Z", "action_taken": "fuel_not_due", "reason": "today is 2026-10-02; this months prices take effect Wednesday 2026-10-07 (routine runs that day and the two after)."}
+{"date": "2026-10-07T06:00:00Z", "action_taken": "fuel_blocked", "period": "2026-10", "cities": [], "loaded": 0, "short_summary": "October prices found via search snippets (inland 95 R30.25, 93 R29.88; coastal 95 R29.38, 93 R29.09) but every source site is blocked by the egress proxy, so check-news --online cannot verify; no SQL pushed. Retry Thu/Fri."}
