@@ -108,6 +108,11 @@ export const HELP = {
   social: {
     title: 'Nothing posts automatically — copy a caption and post it yourself.',
   },
+  live: {
+    activeUsers: 'People on the site in the last 30 minutes, from Google Analytics.',
+    todaySoFar: 'Since midnight (South African time). Sessions from Google; views, taps and enquiries counted by your sites.',
+    pages: 'Pages people are on right now.',
+  },
   analytics: {
     sessions: 'Visits (a visitor’s activity within 30 minutes). Google Analytics counts these; views below are counted by your own sites.',
     users: 'Different people who visited. Sessions ÷ users = how often people come back.',

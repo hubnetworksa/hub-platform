@@ -517,13 +517,18 @@ async function renderOverview(view) {
   );
 
   const siteCards = h('div', { class: 'three' }, data.sites.map(siteCard));
+  const liveLine = h('div', { class: 'live-line-wrap' });
+  api('/api/analytics-live')
+    .then((d) => liveLine.replaceChildren(ui.liveCard(d, { compact: true })))
+    .catch(() => {});
 
-  fill(view, 
+  fill(view,
     mobileHead('Overview'),
     heroBanner(data, refresh),
     ...[await passkeyNudge()].filter(Boolean),
     briefingCard(),
     tiles,
+    liveLine,
     h('div', { class: 'section-title' }, 'Your sites'),
     siteCards,
     h('div', { class: 'section-title' }, 'Needs attention', help(HELP.overview.needsAttention)),
@@ -2129,7 +2134,67 @@ function tabs(list, opts = {}) {
   return h('div', { class: 'tabs' }, bar, panel);
 }
 
+// "Right now" live card (data from /api/analytics-live). compact: one line.
+function liveCard(data, { compact = false } = {}) {
+  const sites = data?.sites ?? [];
+  const L = HELP.live;
+  if (compact) {
+    const parts = sites.filter((s) => s.live).map((s) => `${s.name} ${fmt.int(s.live.activeUsers)}`);
+    if (!parts.length) return h('span');
+    return h('a', { class: 'live-line', href: '#/analytics' }, h('span', { class: 'live-dot', 'aria-hidden': 'true' }), h('b', {}, 'Right now: '), `${parts.join(' · ')} active`);
+  }
+  const spark = (vals, color) => {
+    const w = 120, ht = 28, max = Math.max(1, ...vals);
+    const pts = vals.map((v, i) => `${((i / Math.max(1, vals.length - 1)) * w).toFixed(1)},${(ht - 2 - (v / max) * (ht - 4)).toFixed(1)}`).join(' ');
+    const el = h('span', { class: 'sparkline', role: 'img', 'aria-label': 'Active users, last 30 minutes' });
+    el.innerHTML = `<svg viewBox="0 0 ${w} ${ht}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
+    return el;
+  };
+  const secs = data?.generatedAt ? Math.max(0, Math.round((Date.now() - new Date(data.generatedAt).getTime()) / 1000)) : null;
+  const col = (s) => {
+    const fp = s.firstParty ?? {};
+    const color = siteColor(s.slug);
+    const devTotal = (s.live?.devices ?? []).reduce((a, d) => a + d.users, 0);
+    return h(
+      'div',
+      { class: 'live-col' },
+      h(
+        'div',
+        { class: 'live-col-head' },
+        h('span', { class: 'city-dot', style: `background:${color}` }),
+        h('b', {}, s.name || siteName(s.slug)),
+        s.up && s.up.ok === false ? h('span', { class: 'pill fail' }, 'offline') : null
+      ),
+      s.live
+        ? [
+            h('div', { class: 'live-num' }, fmt.int(s.live.activeUsers), h('span', { class: 'live-unit' }, 'active', help(L.activeUsers))),
+            spark(s.live.byMinute ?? [], color),
+            h('div', { class: 'live-sub' }, 'Pages now', help(L.pages)),
+            h('ul', { class: 'live-pages' }, s.live.pages.length ? s.live.pages.slice(0, 3).map((p) => h('li', {}, h('span', {}, p.name || '(not set)'), h('b', {}, fmt.int(p.users)))) : h('li', { class: 'muted' }, 'No one right now')),
+            devTotal ? h('div', { class: 'live-devices' }, s.live.devices.map((d) => `${d.name} ${Math.round((d.users / devTotal) * 100)}%`).join(' · ')) : null,
+          ]
+        : h('p', { class: 'live-note' }, 'Live data needs the Google credentials on Hub Admin — the deploy sets them'),
+      h(
+        'div',
+        { class: 'live-today' },
+        h('div', { class: 'live-sub' }, 'Today so far', help(L.todaySoFar)),
+        h('span', {}, `${s.today ? fmt.int(s.today.sessions) : '–'} sessions`),
+        h('span', {}, `${fmt.int(fp.views ?? 0)} listing views`),
+        h('span', {}, `${fmt.int(fp.taps ?? 0)} contact taps`),
+        h('span', {}, `${fmt.int(fp.enquiries ?? 0)} enquiries`)
+      )
+    );
+  };
+  return h(
+    'section',
+    { class: 'card live-card' },
+    h('div', { class: 'live-head' }, h('span', { class: 'live-dot', 'aria-hidden': 'true' }), h('h2', {}, 'Right now'), h('span', { class: 'sub' }, secs == null ? '' : `updated ${secs}s ago`)),
+    h('div', { class: 'live-cols' }, sites.map(col))
+  );
+}
+
 const ui = {
+  liveCard,
   h, fill, icon, api, ago, siteColor, siteName, mobileHead, pageHead, errorBox, hashParams, store, motion,
   tile, help, HELP,
   charts: { lineChart, columnChart, barList, dataTable, fmt },

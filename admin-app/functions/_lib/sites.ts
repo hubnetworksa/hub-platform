@@ -25,6 +25,7 @@ export interface HubSite {
   dbName: string;
   domainLive: boolean;
   contactEmail: string;
+  gaPropertyId?: string;
   db: D1Database;
 }
 
@@ -38,6 +39,11 @@ export type Env = Record<string, unknown> & {
   // Resend key for the weekly summary email (Pages secret, from the GitHub
   // secret HUB_ADMIN_RESEND_KEY). Optional: without it there's no email.
   RESEND_API_KEY?: string;
+  // Google credentials for the live analytics card (Pages secrets, from the
+  // GitHub secrets the Google data workflow uses). Optional.
+  GOOGLE_CLIENT_ID?: string;
+  GOOGLE_CLIENT_SECRET?: string;
+  GOOGLE_REFRESH_TOKEN?: string;
 };
 
 /** The managed sites whose database is bound in this deployment. */
@@ -45,7 +51,7 @@ export function hubSites(env: Env): HubSite[] {
   return REGISTRY.flatMap(({ config, binding }) => {
     const db = env[binding] as D1Database | undefined;
     if (!db) return [];
-    return [{ slug: config.slug, name: config.siteName, city: config.cityLabel, domain: config.domain, accent: config.theme.accent, pagesProject: config.pagesProjectName, pagesDevHost: config.pagesDevHost, dbName: config.dbName, domainLive: !!config.domainLive, contactEmail: config.contactEmail, db }];
+    return [{ slug: config.slug, name: config.siteName, city: config.cityLabel, domain: config.domain, accent: config.theme.accent, pagesProject: config.pagesProjectName, pagesDevHost: config.pagesDevHost, dbName: config.dbName, domainLive: !!config.domainLive, contactEmail: config.contactEmail, gaPropertyId: (config as { googleAnalyticsPropertyId?: string }).googleAnalyticsPropertyId || undefined, db }];
   });
 }
 
