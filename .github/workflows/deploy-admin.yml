@@ -31,6 +31,7 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       HAS_SETUP_CODE: ${{ secrets.HUB_ADMIN_SETUP_CODE != '' }}
       HAS_RESEND_KEY: ${{ secrets.HUB_ADMIN_RESEND_KEY != '' }}
+      HAS_GOOGLE: ${{ secrets.GOOGLE_REFRESH_TOKEN != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -100,6 +101,29 @@ jobs:
         env:
           KEY: ${{ secrets.HUB_ADMIN_RESEND_KEY }}
         run: printf '%s' "$KEY" | ../node_modules/.bin/wrangler pages secret put RESEND_API_KEY --project-name=hub-admin
+
+      # Google credentials for the live "Right now" analytics card (the same
+      # secrets the Google data workflow uses). Encrypted Pages secrets.
+      - name: Set the Google client id
+        if: env.HAS_GOOGLE == 'true'
+        working-directory: admin-app
+        env:
+          KEY: ${{ secrets.GOOGLE_CLIENT_ID }}
+        run: printf '%s' "$KEY" | ../node_modules/.bin/wrangler pages secret put GOOGLE_CLIENT_ID --project-name=hub-admin
+
+      - name: Set the Google client secret
+        if: env.HAS_GOOGLE == 'true'
+        working-directory: admin-app
+        env:
+          KEY: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+        run: printf '%s' "$KEY" | ../node_modules/.bin/wrangler pages secret put GOOGLE_CLIENT_SECRET --project-name=hub-admin
+
+      - name: Set the Google refresh token
+        if: env.HAS_GOOGLE == 'true'
+        working-directory: admin-app
+        env:
+          KEY: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+        run: printf '%s' "$KEY" | ../node_modules/.bin/wrangler pages secret put GOOGLE_REFRESH_TOKEN --project-name=hub-admin
 
       # Run from admin-app/ so wrangler picks up admin-app/wrangler.jsonc
       # (bindings and vars) and admin-app/functions/.
