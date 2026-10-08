@@ -28,7 +28,7 @@ export async function render(view, ui) {
     );
     return;
   }
-  fill(view, head(d), tiles(ui, d), charts(ui, d), indexSection(ui, d), h('h2', { class: 'section-title' }, 'Search gaps'), gapsGoogle(ui, d), gapsOnSite(ui, d), analyticsNote(ui));
+  fill(view, head(d), tiles(ui, d), charts(ui, d), indexSection(ui, d), h('h2', { class: 'section-title' }, 'Search gaps'), gapsGoogle(ui, d), gapsOnSite(ui, d));
 }
 
 const sum = (list, k) => list.reduce((a, r) => a + (r[k] || 0), 0);
@@ -165,22 +165,5 @@ function gapsOnSite(ui, d) {
     rows.length
       ? h('ul', { class: 'linklist cols' }, rows.map((r) => h('li', {}, h('span', { class: 'inline-city' }, h('span', { class: 'city-dot', style: `background:${ui.siteColor(r.slug)}` }), h('b', {}, r.query)), h('span', { class: 'meta' }, ` · ${r.people} ${r.people === 1 ? 'person' : 'people'}, ${r.results} result${r.results === 1 ? '' : 's'}`))))
       : h('p', { class: 'msg ok' }, 'Nothing yet: every common search shows three or more businesses.')
-  );
-}
-
-function analyticsNote(ui) {
-  const { h } = ui;
-  return h(
-    'section',
-    { class: 'card', style: 'margin-top:16px' },
-    h('h3', { class: 'card-sub' }, 'Traffic for every page (Google Analytics)'),
-    h('p', { class: 'sub', style: 'margin-top:0' }, 'The sites already send visits to Google Analytics. To show them here (homepage, guides, events and news, not just business pages), the Google sign-in used by the reports needs read access to Analytics:'),
-    h(
-      'ol',
-      { class: 'steps' },
-      h('li', {}, 'Create a new refresh token for the same Google account with the extra scope “analytics.readonly” (the same way the Search Console token was made).'),
-      h('li', {}, 'Replace the GOOGLE_REFRESH_TOKEN repository secret with it.'),
-      h('li', {}, 'Tell Claude it’s done: the daily workflow then adds page traffic here.')
-    )
   );
 }
