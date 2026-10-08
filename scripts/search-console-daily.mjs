@@ -192,28 +192,6 @@ const kindOf = (path) => {
   return section[0].toUpperCase() + section.slice(1);
 };
 
-// Open PageRank: one call for every live domain. Returns { domain: {score, rank, checkedAt} }.
-async function openPageRank(domains) {
-  const key = process.env.OPENPAGERANK_API_KEY;
-  if (!key) {
-    console.log('Open PageRank: no OPENPAGERANK_API_KEY, skipped');
-    return {};
-  }
-  try {
-    const res = await fetch(`https://openpagerank.com/api/v1.0/getPageRank?${domains.map((d) => `domains[]=${encodeURIComponent(d)}`).join('&')}`, { headers: { 'API-OPR': key } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const j = await res.json();
-    const checkedAt = new Date().toISOString();
-    const o = {};
-    for (const r of j.response ?? []) if (r.status_code === 200) o[r.domain] = { score: Number(r.page_rank_decimal), rank: r.rank ? Number(r.rank) : null, checkedAt };
-    console.log(`Open PageRank: ${Object.keys(o).length} of ${domains.length} domains`);
-    return o;
-  } catch (e) {
-    console.warn(`Open PageRank failed: ${String(e?.message ?? e).slice(0, 120)}`);
-    return {};
-  }
-}
-
 // GA4 traffic (Analytics Data API). Never throws: a missing scope or access
 // shows up as { propertyId, error } so the rest of the report still goes out.
 async function ga4(propertyId) {
@@ -294,7 +272,6 @@ async function ga4(propertyId) {
 
 const out = { generatedAt: new Date().toISOString(), sites: {}, adsense: null };
 const liveDomains = CITIES.map((slug) => JSON.parse(readFileSync(join(ROOT, 'sites', `${slug}.json`), 'utf8'))).filter((x) => x.domainLive).map((x) => x.domain);
-const opr = await openPageRank(liveDomains);
 for (const slug of CITIES) {
   const site = JSON.parse(readFileSync(join(ROOT, 'sites', `${slug}.json`), 'utf8'));
   if (!site.domainLive) continue;
@@ -311,7 +288,7 @@ for (const slug of CITIES) {
   console.log(`${slug}: inspecting pages…`);
   const ins = await inspections(site, prop, old?.inspections);
   console.log(`${slug}: inspected ${ins.inspectedToday ?? 0} pages today (${Object.keys(ins.map).length} of ${ins.sitemapUrls} known).`);
-  out.sites[slug] = { property: prop, ...a, sitemapUrls: ins.sitemapUrls, inspections: ins.map, authority: opr[site.domain] ? { openPageRank: opr[site.domain] } : null };
+  out.sites[slug] = { property: prop, ...a, sitemapUrls: ins.sitemapUrls, inspections: ins.map };
   if (site.googleAnalyticsPropertyId) {
     const ga = await ga4(site.googleAnalyticsPropertyId);
     if (ga.error) console.warn(`${slug}: Google Analytics error: ${ga.error}`);
