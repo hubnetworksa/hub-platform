@@ -11,7 +11,7 @@ import { jsonBody } from '../_lib/body';
 //   GET ?site=&id=      one rep's detail from one city
 //   POST { site, action, ... }  suspend / reactivate / void / mark-paid on one city
 
-const EMPTY = { reps: 0, activeReps: 0, unpaidCents: 0, pendingCents: 0, mtdCents: 0 };
+const EMPTY = { reps: 0, activeReps: 0, unpaidCents: 0, pendingCents: 0, mtdCents: 0, paidOutCents: 0 };
 const maskAccount = (n: string | null): string | null => {
   const digits = (n ?? '').replace(/\D/g, '');
   return digits.length > 0 ? `****${digits.slice(-4)}` : null;
@@ -38,8 +38,10 @@ async function cityList(db: D1Database) {
     const masked = maskAccount(r.bank_account_number);
     return { id: r.id, code: r.code, email: r.email, status: r.status, createdAt: r.created_at, salesCount: r.sales_count, mtdCents: r.mtd_cents, lifetimeCents: r.lifetime_cents, unpaidCents: r.unpaid_cents, pendingCents: r.pending_cents, bankMasked: masked, hasBank: masked !== null };
   });
+  // Commission paid out by EFT this month (rep_payouts, period = YYYY-MM).
+  const paidOut = await db.prepare(`SELECT COALESCE(SUM(total_cents), 0) AS cents FROM rep_payouts WHERE period = strftime('%Y-%m', 'now')`).first<{ cents: number }>();
   return {
-    totals: { reps: reps.length, activeReps: reps.filter((r) => r.status === 'active').length, unpaidCents: reps.reduce((s, r) => s + r.unpaidCents, 0), pendingCents: reps.reduce((s, r) => s + r.pendingCents, 0), mtdCents: reps.reduce((s, r) => s + r.mtdCents, 0) },
+    totals: { paidOutCents: paidOut?.cents ?? 0, reps: reps.length, activeReps: reps.filter((r) => r.status === 'active').length, unpaidCents: reps.reduce((s, r) => s + r.unpaidCents, 0), pendingCents: reps.reduce((s, r) => s + r.pendingCents, 0), mtdCents: reps.reduce((s, r) => s + r.mtdCents, 0) },
     reps,
   };
 }
@@ -112,7 +114,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     })
   );
   const grand = cities.reduce(
-    (a, c) => ({ reps: a.reps + c.totals.reps, activeReps: a.activeReps + c.totals.activeReps, unpaidCents: a.unpaidCents + c.totals.unpaidCents, pendingCents: a.pendingCents + c.totals.pendingCents, mtdCents: a.mtdCents + c.totals.mtdCents }),
+    (a, c) => ({ reps: a.reps + c.totals.reps, activeReps: a.activeReps + c.totals.activeReps, unpaidCents: a.unpaidCents + c.totals.unpaidCents, pendingCents: a.pendingCents + c.totals.pendingCents, mtdCents: a.mtdCents + c.totals.mtdCents, paidOutCents: a.paidOutCents + c.totals.paidOutCents }),
     { ...EMPTY }
   );
   return json({ ok: true, cities, grand });

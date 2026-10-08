@@ -95,7 +95,7 @@ export async function qualityReport(site: HubSite) {
     { key: 'address', label: 'No street address', why: 'Visitors can’t find them.', list: list.filter((b) => !b.address || b.address.trim().length < 5).filter(notDismissed('address')) },
     { key: 'category', label: 'No category', why: 'They don’t appear on any category page.', list: list.filter((b) => !b.cats).filter(notDismissed('category')) },
   ];
-  // Completeness: the share of these six that each listing has, averaged.
+  // Completeness: the share of these five that each listing has, averaged.
   const missing = new Map<number, number>();
   for (const c of checks) for (const b of c.list) missing.set(b.id, (missing.get(b.id) ?? 0) + 1);
   const score = total ? Math.round((1 - [...missing.values()].reduce((a, n) => a + n, 0) / (total * checks.length)) * 100) : 100;

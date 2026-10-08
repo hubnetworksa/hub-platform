@@ -178,7 +178,7 @@ main { padding: 28px clamp(16px, 3vw, 40px) 60px; min-width: 0; }
 .status { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); }
 .status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--good); }
 .status.down::before { background: var(--critical); }
-.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 16px 0; }
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(76px, 1fr)); gap: 8px; margin: 16px 0; }
 .stats-row div { background: var(--surface-2); border-radius: 10px; padding: 9px 10px; }
 .stats-row b { display: block; font-size: 18px; }
 .stats-row span { font-size: 12px; color: var(--text-2); }
@@ -501,3 +501,27 @@ article.up, div.up:not(.delta) { border: 1px solid var(--border); border-radius:
 @media (max-width: 860px) { .bulkbar { bottom: 84px; } }
 .pick { display: inline-flex; align-items: center; margin-right: 6px; }
 .pick input { width: 16px; height: 16px; accent-color: var(--brand); }
+/* ── Help icons (help.js): the (i) beside a metric, and its floating bubble ── */
+.help { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; margin-left: 5px; padding: 0; width: 18px; height: 18px; border: 0; background: none; color: var(--muted); font: inherit; font-size: 14px; line-height: 1; cursor: help; border-radius: 50%; text-transform: none; letter-spacing: 0; font-weight: 600; }
+.help:hover, .help:focus-visible, .help.open { color: var(--brand); }
+.help:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+.help-tip {
+  position: fixed;
+  z-index: 60;
+  pointer-events: none;
+  display: none;
+  max-width: min(260px, calc(100vw - 16px));
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.totals-line { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 0 10px; font-size: 13px; color: var(--text-2); }
+.totals-line b { color: var(--text); }

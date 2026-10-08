@@ -20,7 +20,8 @@ export async function render(view, ui) {
   const month = new Date().toISOString().slice(0, 7);
   const thisMonth = d.sites.reduce((a, s) => a + s.revenue.filter((r) => r.m === month).reduce((b, r) => b + r.cents, 0), 0);
   const ads = adsenseTotals(d.adsense);
-  const tile = (label, value, note) => h('div', { class: 'tile' }, h('div', { class: 'label' }, label), h('div', { class: 'value' }, value), h('div', { class: 'delta' }, note));
+  const M = ui.HELP.money;
+  const tile = ui.tile;
 
   // Income per month, stacked by site.
   const months = [...Array(12).keys()].map((i) => {
@@ -42,11 +43,18 @@ export async function render(view, ui) {
     })
   );
 
-  const list = (title, items, empty, note) =>
+  // Paying customers split by what they bought (plans vs each kind of sponsor spot).
+  const productCard = h('section', { class: 'card' }, h('h2', { class: 'card-sub' }, 'Paying customers by product', ui.help(M.byProduct)));
+  const byProduct = {};
+  for (const s of d.sites) for (const p of s.by_product || []) byProduct[p.product] = (byProduct[p.product] || 0) + p.n;
+  const productBars = h('div');
+  productCard.append(productBars);
+  ui.charts.barList(productBars, { items: Object.entries(byProduct).sort((a, b) => b[1] - a[1]).map(([label, value]) => ({ label, value })) });
+  const list = (title, items, empty, note, helpText) =>
     h(
       'section',
       { class: 'card' },
-      h('h3', { class: 'card-sub' }, `${title} (${items.length})`),
+      h('h3', { class: 'card-sub' }, `${title} (${items.length})`, helpText ? ui.help(helpText) : null),
       items.length
         ? h('ul', { class: 'rows compact' }, items.map((x) => h('li', {}, h('span', { class: 'city-dot', style: `background:${ui.siteColor(x.site)}` }), h('div', { class: 'row-main' }, h('a', { href: `https://${x.domain}/business/${x.slug}/`, target: '_blank', rel: 'noopener' }, x.business), h('span', { class: 'meta' }, [x.product, x.period, x.note].filter(Boolean).join(' · '))), x.cents ? h('b', {}, R(x.cents)) : null)))
         : h('p', { class: 'msg ok' }, empty),
@@ -60,22 +68,22 @@ export async function render(view, ui) {
     h(
       'div',
       { class: 'tiles' },
-      tile('Income this month', R(thisMonth), 'plans, sponsor spots and events'),
-      tile('Monthly recurring income', R(sum('mrr_cents')), 'active plans and spots (yearly ÷ 12)'),
-      tile('Paying customers', String(sum('paying')), `${sum('new_this_month')} new, ${sum('cancelled_this_month')} cancelled this month`),
-      tile('AdSense (30 days)', ads ? ads.label30 : '–', ads ? `${ads.labelMonth} this month` : d.adsense?.error ? 'not connected' : 'arrives with the Google data')
+      tile('Income this month', R(thisMonth), 'plans, sponsor spots and events', M.income),
+      tile('Monthly recurring income', R(sum('mrr_cents')), 'active plans and sponsor spots (yearly ÷ 12)', M.mrr),
+      tile('Paying customers', String(sum('paying')), `${sum('new_this_month')} new, ${sum('cancelled_this_month')} cancelled this month`, M.paying),
+      tile('AdSense (30 days)', ads ? ads.label30 : '–', ads ? `${ads.labelMonth} this month` : d.adsense?.error ? 'not connected' : 'arrives with the Google data', M.adsense)
     ),
-    h('section', { class: 'card' }, h('h2', { class: 'card-sub' }, 'Income per month'), chart),
+    h('div', { class: 'two' }, h('section', { class: 'card' }, h('h2', { class: 'card-sub' }, 'Income per month'), chart), productCard),
     h('h2', { class: 'section-title' }, 'Follow up'),
     h(
       'div',
       { class: 'two' },
-      list('Payments that didn’t go through (60 days)', all('failed').map((f) => ({ ...f, product: f.status, note: f.paid_at?.slice(0, 10) })), 'None.'),
-      list('Renewal overdue', all('overdue'), 'None: every active plan has renewed.', 'Marked active, but no payment came in after the period ended. The PayFast subscription may have failed.')
+      list('Payments that didn’t go through (60 days)', all('failed').map((f) => ({ ...f, product: f.status, note: f.paid_at?.slice(0, 10) })), 'None.', null, M.failed),
+      list('Renewal overdue', all('overdue'), 'None: every active plan has renewed.', 'Marked active, but no payment came in after the period ended. The PayFast subscription may have failed.', M.overdue)
     ),
     h('div', { class: 'two', style: 'margin-top:16px' }, list('Ending or renewing in 14 days', all('ending_soon'), 'Nothing in the next two weeks.'), list('Cancelled this month', all('cancelled_this_month'), 'No cancellations this month.')),
     h('div', { style: 'margin-top:16px' }, list('New this month', all('new_this_month'), 'No new paid plans yet this month.')),
-    h('h2', { class: 'section-title' }, 'Who to offer a paid plan'),
+    h('h2', { class: 'section-title' }, 'Who to offer a paid plan', ui.help(M.upsell)),
     upsellCard(ui, d),
     h('h2', { class: 'section-title' }, 'AdSense'),
     adsenseCard(ui, d, ads)
