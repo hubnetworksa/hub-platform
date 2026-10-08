@@ -11,7 +11,7 @@
 //   #/inbox, #/health, #/listings, #/google, #/analytics, #/index-gate, #/money, #/activity, #/social
 import { lineChart, columnChart, barList, dataTable, fmt } from './charts.js';
 import { motion } from './motion.js';
-import { HELP, helpIcon } from './help.js';
+import { HELP, helpIcon, attachTip } from './help.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const h = (tag, attrs = {}, ...children) => {
@@ -58,6 +58,7 @@ const ICON = {
   plus: 'M12 5v14M5 12h14',
   trash: 'M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14',
   edit: 'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z',
+  moon: 'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z',
   refresh: 'M20 11a8 8 0 0 0-14.9-3.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.9 3.9L20 16M20 20v-4h-4',
 };
 function icon(name, size = 20) {
@@ -127,6 +128,10 @@ const store = {
     }
   },
 };
+// The sidebar's rail/full state is applied before anything is drawn, so the
+// shell never flashes at the wrong width. (The CSP forbids an inline <script>
+// in index.html; this is the earliest app code that runs.)
+if (store.get('hub.sidebar', 'full') === 'rail') document.documentElement.dataset.sidebar = 'rail';
 const state = {
   overview: null,
   stats: null,
@@ -212,32 +217,200 @@ function cycleTheme() {
   const next = order[(order.indexOf(store.get('hub.theme', 'auto')) + 1) % 3];
   store.set('hub.theme', next);
   applyTheme();
-  document.querySelectorAll('[data-theme-btn]').forEach((b) => (b.textContent = themeLabel()));
+  // Only the text buttons carry the label; the icon buttons keep their icon.
+  document.querySelectorAll('[data-theme-label]').forEach((b) => (b.textContent = themeLabel()));
+  document.querySelectorAll('[data-theme-btn]').forEach((b) => b.setAttribute('title', themeLabel()));
   route();
+}
+
+// ── Sidebar rail ───────────────────────────────────────────────────────────
+const isRail = () => document.documentElement.dataset.sidebar === 'rail';
+function setSidebar(rail) {
+  if (rail) document.documentElement.dataset.sidebar = 'rail';
+  else delete document.documentElement.dataset.sidebar;
+  store.set('hub.sidebar', rail ? 'rail' : 'full');
+  const t = $('[data-sidebar-toggle]');
+  if (t) {
+    t.setAttribute('aria-expanded', String(!rail));
+    t.setAttribute('aria-label', rail ? 'Expand sidebar' : 'Collapse sidebar');
+    t.setAttribute('data-tip', rail ? 'Expand sidebar  ( [ )' : 'Collapse sidebar  ( [ )');
+  }
+  // Re-place the nav highlight now and once the width transition is done.
+  setActive();
+  setTimeout(setActive, 200);
+}
+const typing = (el) => el instanceof Element && el.closest('input, textarea, select, [contenteditable=""], [contenteditable="true"]') !== null;
+let shortcutsBound = false;
+function bindShortcuts() {
+  if (shortcutsBound) return;
+  shortcutsBound = true;
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== '[' || e.ctrlKey || e.metaKey || e.altKey || typing(e.target)) return;
+    const side = $('.side');
+    if (!side || !side.offsetParent) return;
+    e.preventDefault();
+    setSidebar(!isRail());
+  });
+}
+
+// ── Top bar: title, site selector, updated, theme, account ────────────────
+let leaveFns = [];
+let siteListeners = [];
+let updatedAt = null;
+let navId = 0;
+
+function parseIso(iso) {
+  return new Date(iso.includes('T') ? iso : `${iso.replace(' ', 'T')}Z`);
+}
+function topbarSites() {
+  const live = state.overview?.sites ?? state.stats?.sites;
+  if (live?.length) {
+    const list = live.map((x) => ({ slug: x.slug, name: x.city || x.name || x.slug }));
+    store.set('hub.sites', JSON.stringify(list));
+    return list;
+  }
+  try {
+    const cached = JSON.parse(store.get('hub.sites', '[]'));
+    return Array.isArray(cached) ? cached : [];
+  } catch {
+    return [];
+  }
+}
+function syncSiteSelect() {
+  const sel = $('#tb-site');
+  if (!sel) return;
+  const list = topbarSites();
+  fill(sel, h('option', { value: 'all' }, 'All sites'), list.map((x) => h('option', { value: x.slug }, x.name)));
+  sel.value = list.some((x) => x.slug === state.site) ? state.site : 'all';
+}
+function onSiteSelect(e) {
+  state.site = e.target.value;
+  store.set('hub.site', state.site);
+  const ls = siteListeners.slice();
+  ls.forEach((fn) => fn(state.site));
+  // Site activity (not yet on the new skeleton) reads state.site when it draws.
+  if (!ls.length && currentRoute() === '#/stats') route();
+}
+function renderUpdated() {
+  const el = $('#tb-updated');
+  if (!el) return;
+  if (!updatedAt) {
+    el.textContent = '';
+    return;
+  }
+  const mins = Math.round((Date.now() - updatedAt.getTime()) / 60000);
+  el.textContent = mins < 1 ? 'Updated just now' : mins < 60 ? `Updated ${mins} min ago` : `Updated ${ago(updatedAt.toISOString())}`;
+}
+async function refreshNow() {
+  const btn = $('#tb-refresh');
+  if (btn) btn.disabled = true;
+  state.stats = null;
+  await loadOverview(true).catch(() => {});
+  if (btn) btn.disabled = false;
+  route();
+}
+function topbarSet({ title, context, actions } = {}) {
+  const h1 = $('#tb-title');
+  if (!h1) return;
+  fill(h1, title ?? '');
+  const plain = [title].flat(Infinity).filter((x) => typeof x === 'string').join('');
+  if (plain) document.title = `${plain} · Hub Admin`;
+  const c = $('#tb-context');
+  if (c) c.textContent = context || '';
+  const a = $('#tb-actions');
+  if (a) fill(a, actions ?? []);
+}
+
+// ── Phone "More" sheet ─────────────────────────────────────────────────────
+let sheetEl = null;
+function sheetKey(e) {
+  if (e.key === 'Escape') closeSheet();
+}
+function closeSheet() {
+  if (!sheetEl) return;
+  sheetEl.remove();
+  sheetEl = null;
+  document.removeEventListener('keydown', sheetKey);
+  const more = $('[data-more]');
+  if (more) {
+    more.setAttribute('aria-expanded', 'false');
+    more.focus({ preventScroll: true });
+  }
+}
+function openSheet() {
+  if (sheetEl) return closeSheet();
+  const cur = currentRoute();
+  const backdrop = h('div', { class: 'sheet-backdrop', onclick: closeSheet });
+  const sheet = h(
+    'div',
+    { class: 'sheet', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'All screens' },
+    h('div', { class: 'sheet-grab', 'aria-hidden': 'true' }),
+    h('p', { class: 'sheet-title' }, 'All screens'),
+    ROUTES.map(([href, label, ic]) => h('a', { href, 'aria-current': href === cur ? 'page' : null, onclick: () => setTimeout(closeSheet, 0) }, icon(ic), h('span', {}, label))),
+    h('hr'),
+    h('button', { type: 'button', class: 'sheet-btn', onclick: cycleTheme }, icon('moon'), h('span', { 'data-theme-label': '' }, themeLabel()))
+  );
+  sheetEl = h('div', {}, backdrop, sheet);
+  document.body.append(sheetEl);
+  document.addEventListener('keydown', sheetKey);
+  $('[data-more]')?.setAttribute('aria-expanded', 'true');
+  sheet.querySelector('a')?.focus({ preventScroll: true });
 }
 
 function buildShell() {
   applyTheme();
-  const link = (cls, [href, label, ic]) =>
-    h('a', { class: cls, href, 'data-route': href }, icon(ic), h('span', {}, label), href === '#/inbox' ? h('span', { class: 'nav-badge', 'data-badge': '', hidden: true }) : null);
-  const navLinks = (cls) => ROUTES.map((r) => link(cls, r));
-  const tabLinks = () => [...ROUTES.filter((r) => r[3]).map((r) => link('', r)), link('', ['#/more', 'More', 'grid'])];
-  const app = $('#app');
-  fill(app, 
+  const rail = isRail();
+  const link = (cls, [href, label, ic], withTip) => {
+    const a = h('a', { class: cls, href, 'data-route': href, 'aria-label': label }, icon(ic), h('span', { class: 'nav-label' }, label), href === '#/inbox' ? h('span', { class: 'nav-badge', 'data-badge': '', hidden: true }) : null);
+    if (withTip) attachTip(a, label, { side: 'right', active: isRail });
+    return a;
+  };
+  const navLinks = () => ROUTES.map((r) => link('nav-link', r, true));
+  const tabLinks = () => [
+    ...ROUTES.filter((r) => r[3]).map((r) => link('', r)),
+    h('button', { type: 'button', 'data-more': '', 'data-route': '#/more', 'aria-haspopup': 'dialog', 'aria-expanded': 'false', onclick: openSheet }, icon('grid'), h('span', {}, 'More')),
+  ];
+  const toggle = h('button', { type: 'button', class: 'side-btn side-toggle', 'data-sidebar-toggle': '', 'aria-expanded': String(!rail), 'aria-label': rail ? 'Expand sidebar' : 'Collapse sidebar', onclick: () => setSidebar(!isRail()) }, icon('chevron', 18), h('span', { class: 'nav-label' }, 'Collapse'));
+  attachTip(toggle, rail ? 'Expand sidebar  ( [ )' : 'Collapse sidebar  ( [ )', { side: 'right', active: isRail });
+  const themeSide = h('button', { type: 'button', class: 'side-btn', 'data-theme-btn': '', title: themeLabel(), 'aria-label': 'Change theme', onclick: cycleTheme }, icon('moon', 18), h('span', { class: 'nav-label', 'data-theme-label': '' }, themeLabel()));
+  attachTip(themeSide, 'Change theme', { side: 'right', active: isRail });
+  fill(
+    $('#app'),
     h(
       'div',
       { class: 'shell' },
       h(
         'aside',
         { class: 'side' },
-        h('div', { class: 'brand' }, h('img', { src: '/icons/logo-rounded.png', alt: '' }), h('div', {}, h('b', {}, 'Hub Admin'), h('small', {}, 'All sites'))),
-        navLinks('nav-link'),
-        h('div', { class: 'side-foot' }, h('button', { type: 'button', 'data-theme-btn': '', onclick: cycleTheme }, themeLabel()), h('span', { 'data-user': '' }))
+        h('div', { class: 'brand' }, h('img', { src: '/icons/logo-rounded.png', alt: '' }), h('div', { class: 'brand-text' }, h('b', {}, 'Hub Admin'), h('small', {}, 'All sites'))),
+        h('nav', { class: 'side-nav', 'aria-label': 'Screens' }, navLinks()),
+        h('div', { class: 'side-foot' }, themeSide, toggle, h('span', { class: 'user', 'data-user': '' }))
       ),
-      h('main', { id: 'view', tabindex: '-1' })
+      h(
+        'div',
+        { class: 'content' },
+        h(
+          'header',
+          { class: 'topbar' },
+          h('div', { class: 'tb-title' }, h('h1', { id: 'tb-title' }), h('p', { class: 'tb-context', id: 'tb-context' })),
+          h(
+            'div',
+            { class: 'tb-tools' },
+            h('div', { class: 'tb-actions', id: 'tb-actions' }),
+            h('select', { class: 'select tb-select', id: 'tb-site', 'aria-label': 'Site', onchange: onSiteSelect }),
+            h('button', { type: 'button', class: 'tb-btn tb-updated', id: 'tb-refresh', title: 'Refresh this screen', 'aria-label': 'Refresh', onclick: refreshNow }, h('span', { id: 'tb-updated' }), icon('refresh', 16)),
+            h('button', { type: 'button', class: 'tb-btn icon tb-theme', 'data-theme-btn': '', title: themeLabel(), 'aria-label': 'Change theme', onclick: cycleTheme }, '◐'),
+            h('a', { class: 'tb-btn icon tb-account', href: '#/settings', title: 'Settings and account', 'aria-label': 'Settings and account' }, icon('settings', 16))
+          )
+        ),
+        h('main', { id: 'view', tabindex: '-1' })
+      )
     ),
     h('nav', { class: 'tabbar', 'aria-label': 'Main' }, tabLinks())
   );
+  syncSiteSelect();
+  bindShortcuts();
+  if (!buildShell.timer) buildShell.timer = setInterval(renderUpdated, 30000);
 }
 
 function setActive() {
@@ -245,13 +418,13 @@ function setActive() {
   document.querySelectorAll('[data-route]').forEach((a) => {
     const r = a.getAttribute('data-route');
     // On phones, a screen that isn't on the tab bar lights up "More".
-    const on = r === cur || (r === '#/more' && a.closest('.tabbar') && !TAB_ROUTES.includes(cur));
+    const on = r === cur || (r === '#/more' && !!a.closest('.tabbar') && !TAB_ROUTES.includes(cur));
     if (on) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   });
   // The highlight slides to the active item (sidebar and phone tab bar).
   requestAnimationFrame(() => {
-    for (const nav of document.querySelectorAll('.side, .tabbar')) {
+    for (const nav of document.querySelectorAll('.side-nav, .tabbar')) {
       const active = nav.querySelector('[aria-current="page"]');
       if (active && active.offsetParent) motion.nav(nav, active);
     }
@@ -264,23 +437,22 @@ function watchView() {
   const view = $('#view');
   if (!view) return;
   new MutationObserver(() => {
-    if (!view.querySelector(':scope > .skeleton')) motion.page(view);
+    if (!view.querySelector(':scope > .skeleton')) motion.page(view, navId);
   }).observe(view, { childList: true });
 }
 window.addEventListener('resize', () => setActive());
 
-function mobileHead(title) {
-  return h(
-    'div',
-    { class: 'mobile-head' },
-    h('img', { src: '/icons/logo-rounded.png', alt: '' }),
-    h('b', {}, title),
-    h('button', { type: 'button', 'data-theme-btn': '', onclick: cycleTheme, 'aria-label': 'Change theme' }, '◐')
-  );
+// The old phone header is gone (the top bar covers it); kept as a no-op so
+// screens that still call it keep working.
+function mobileHead() {
+  return document.createDocumentFragment();
 }
 
+// Sets the top bar. Anything passed as `extra` (a refresh button, an
+// "updated" note) still shows, in a small row above the screen's content.
 function pageHead(title, sub, extra) {
-  return h('div', { class: 'page-head' }, h('div', {}, h('h1', {}, title), sub ? h('p', {}, sub) : null), extra || null);
+  ui.page({ title, context: sub });
+  return extra ? h('div', { class: 'page-actions' }, extra) : document.createDocumentFragment();
 }
 
 function errorBox(err) {
@@ -300,6 +472,7 @@ async function loadOverview(force) {
     if (changed) motion.badge(b);
   });
   document.querySelectorAll('[data-user]').forEach((u) => (u.textContent = state.username || ''));
+  syncSiteSelect();
   return state.overview;
 }
 
@@ -313,6 +486,7 @@ async function renderOverview(view) {
     return;
   }
   const sum = (k) => data.sites.reduce((a, s) => a + (s[k] || 0), 0);
+  if (data.generatedAt) ui.setUpdated(parseIso(data.generatedAt));
   const refresh = h(
     'button',
     {
@@ -1868,6 +2042,93 @@ function renderJoin(token) {
 // ── Router ─────────────────────────────────────────────────────────────────
 // Helpers the screen modules (screens/*.js) use, so they draw exactly like
 // the rest of the app.
+// ── Page skeleton helpers (shared by every screen) ─────────────────────────
+let tabSeq = 0;
+
+function kpis(items) {
+  if (items.length > 4) console.warn('ui.kpis: more than 4 tiles; keep it to four.');
+  return h('div', { class: 'kpis' }, items.map((i) => (i instanceof Node ? i : tile(...i))));
+}
+
+// A card with a consistent header row. `help` is the (i) text after the title.
+function card({ title, help: helpText, actions, body, sub } = {}) {
+  const head =
+    title || actions
+      ? h(
+          'div',
+          { class: 'card-head' },
+          h('div', {}, title ? h('h2', {}, title, helpText ? help(helpText) : null) : null, sub ? h('p', { class: 'sub' }, sub) : null),
+          actions ? h('div', { class: 'card-actions' }, actions) : null
+        )
+      : null;
+  return h('section', { class: 'card' }, head, body ?? null);
+}
+
+const stateBox = {
+  empty(text, action) {
+    const act = action instanceof Node ? action : action?.label ? h('button', { class: 'btn', type: 'button', onclick: action.onclick }, action.label) : null;
+    return h('div', { class: 'empty' }, text, act);
+  },
+  loading() {
+    return h('div', { class: 'skeleton', role: 'status', 'aria-label': 'Loading' });
+  },
+  error(err) {
+    return errorBox(err instanceof Error ? err : { message: String(err?.message ?? err) });
+  },
+};
+
+// Segmented control + one panel. tabs = [{ id, label, render: () => Node | Promise<Node> }].
+function tabs(list, opts = {}) {
+  const uid = `tabs${++tabSeq}`;
+  const saved = opts.store ? store.get(opts.store, null) : null;
+  let cur = list.find((t) => t.id === saved)?.id ?? list[0]?.id;
+  const bar = h('div', { class: 'tabs-bar', role: 'tablist' });
+  const panel = h('div', { class: 'tab-panel', role: 'tabpanel', tabindex: '-1', id: `${uid}-panel` });
+  const buttons = list.map((t) =>
+    h('button', { type: 'button', role: 'tab', id: `${uid}-${t.id}`, 'aria-controls': `${uid}-panel`, onclick: () => select(t.id) }, t.label)
+  );
+  const draw = () => {
+    const t = list.find((x) => x.id === cur);
+    if (!t) return fill(panel);
+    const id = cur;
+    panel.setAttribute('aria-labelledby', `${uid}-${id}`);
+    try {
+      const out = t.render();
+      if (out && typeof out.then === 'function') {
+        fill(panel, stateBox.loading());
+        out.then((n) => cur === id && fill(panel, n)).catch((e) => cur === id && fill(panel, stateBox.error(e)));
+      } else fill(panel, out);
+    } catch (e) {
+      fill(panel, stateBox.error(e));
+    }
+  };
+  const mark = () =>
+    buttons.forEach((b, i) => {
+      const on = list[i].id === cur;
+      b.setAttribute('aria-selected', String(on));
+      b.tabIndex = on ? 0 : -1;
+    });
+  function select(id, focus) {
+    if (id === cur && panel.firstChild) return;
+    cur = id;
+    if (opts.store) store.set(opts.store, id);
+    mark();
+    draw();
+    if (focus) buttons[list.findIndex((t) => t.id === id)]?.focus();
+  }
+  bar.addEventListener('keydown', (e) => {
+    const i = list.findIndex((t) => t.id === cur);
+    const to = e.key === 'ArrowRight' ? (i + 1) % list.length : e.key === 'ArrowLeft' ? (i - 1 + list.length) % list.length : e.key === 'Home' ? 0 : e.key === 'End' ? list.length - 1 : -1;
+    if (to < 0) return;
+    e.preventDefault();
+    select(list[to].id, true);
+  });
+  bar.append(...buttons);
+  mark();
+  draw();
+  return h('div', { class: 'tabs' }, bar, panel);
+}
+
 const ui = {
   h, fill, icon, api, ago, siteColor, siteName, mobileHead, pageHead, errorBox, hashParams, store, motion,
   tile, help, HELP,
@@ -1876,7 +2137,33 @@ const ui = {
     return state;
   },
   loadOverview,
+  // Page skeleton
+  page: (opts) => {
+    topbarSet(opts);
+    return null;
+  },
+  kpis,
+  card,
+  tabs,
+  onLeave: (fn) => {
+    leaveFns.push(fn);
+  },
+  // Global site selector (top bar)
+  site: () => state.site,
+  onSiteChange: (fn) => {
+    siteListeners.push(fn);
+    return () => {
+      siteListeners = siteListeners.filter((f) => f !== fn);
+    };
+  },
+  setUpdated: (date) => {
+    updatedAt = date instanceof Date ? date : date ? new Date(date) : null;
+    renderUpdated();
+  },
 };
+// `ui.state` is the app's data object (existing screens read it); the skeleton
+// helpers ui.state.empty / .loading / .error are attached to it here.
+Object.assign(state, { empty: stateBox.empty, loading: stateBox.loading, error: stateBox.error });
 const SCREENS = {
   '#/inbox': 'inbox',
   '#/health': 'health',
@@ -1922,6 +2209,23 @@ function route() {
   const view = $('#view');
   const r = currentRoute();
   routeSeq++;
+  navId++;
+  // Timers/listeners a screen registered belong to the screen being left.
+  const leaving = leaveFns;
+  leaveFns = [];
+  siteListeners = [];
+  for (const fn of leaving) {
+    try {
+      fn();
+    } catch {
+      /* a failed cleanup must not block navigation */
+    }
+  }
+  closeSheet();
+  updatedAt = null;
+  renderUpdated();
+  syncSiteSelect();
+  topbarSet({ title: ROUTES.find(([x]) => x === r)?.[1] ?? (r === '#/more' ? 'More' : '') });
   if (SCREENS[r]) renderScreen(view, SCREENS[r]);
   else if (r === '#/more') renderMore(view);
   else if (r === '#/stats') renderStats(view);
