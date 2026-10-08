@@ -10,12 +10,21 @@
 export const HELP = {
   overview: {
     needsAttention: 'Things waiting for a decision from you: new listings, claims, reports, messages, reviews, events. Clear these daily — owners are waiting.',
-    listings: 'Published listings visitors can see. Growth here is only good if the pages are real (see Indexing).',
+    listings: 'Published listings visitors can see. Growth here is only good if the pages are real (see Listings to fix).',
     paidPlans: 'Active Verified/Featured plans and sponsor spots, excluding free comps. Your recurring income base.',
     revenueMonth: 'Money received since the 1st (plans, sponsors, events). Compare with Monthly recurring on Money.',
     users: 'Accounts with a confirmed email. Owners and reps come from here.',
     online: 'Homepage answered in the last 5-minute check. Down = visitors and Google get errors.',
     indexable: 'Listings that currently pass the index gate. The number Google is allowed to show.',
+  },
+  indexGate: {
+    listings: 'Published listings scored out of 15 for real content. Low scores are the ones to improve first.',
+    weak: 'Listings scoring below the review score, excluding paid or claimed. Fix these to make the site look real.',
+    almost: 'Listings one point under the review score. Adding one missing item lifts them out of the weak list.',
+    protected: 'Pages with Google impressions in the last 90 days. They are never hidden, whatever the score.',
+    gate: 'Whether low scores are hidden from Google. Normally off: the score only guides which listings to improve.',
+    missing: 'What weak listings lack, most common first. Fixing the top item improves the most listings.',
+    weakest: 'The lowest-scoring listings, worst first. Open each and add the missing items.',
   },
   inbox: {
     // Keyed by the flag text the Inbox API sends.

@@ -4,11 +4,11 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
 import PlanBadge from '../../components/PlanBadge.astro';
 import AdUnit from '../../components/AdUnit.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, businessesInSuburbAndCategory, businessesInShoppingCenter, byPlanThenName, websiteUrl, isPaidListing, sponsorshipsHeldBy, reviewsFor, averageRating, reviewCount, logoFor, descriptionHtmlFor, summaryFor, whatsappFor, schemaTypeFor, businessIndexInfo } from '../../lib/data';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, businessesInSuburbAndCategory, businessesInShoppingCenter, byPlanThenName, websiteUrl, isPaidListing, sponsorshipsHeldBy, reviewsFor, averageRating, reviewCount, logoFor, descriptionHtmlFor, summaryFor, whatsappFor, schemaTypeFor, businessIndexInfo, businessesInSuburb, rankForLinking } from '../../lib/data';
 import { plainLine } from '../../lib/rich-text';
 import { hoursSummary, openingHoursSpecification } from '../../lib/openNow';
 import { businessTitle, businessDescription, titleIsShared } from '../../lib/businessMeta';
-import { regionLabel } from '../../site-content';
+import { regionLabel, groupForSuburb } from '../../site-content';
 import { WHATSAPP_ICON, WHATSAPP_GREEN } from '../../lib/whatsapp';
 import { synonymsFor, locationSynonymsFor } from '../../lib/categorySynonyms';
 import Icon from '../../components/Icon.astro';
@@ -75,8 +75,31 @@ const photos = photosFor(business).slice(0, PHOTO_CAP_BY_TIER[business.subscript
 // a paying business's page never sends visitors to its competitors.
 const primaryCat = cats[0];
 const sameCatSuburb = primaryCat && suburb ? businessesInSuburbAndCategory(suburb.id, primaryCat.id) : [];
-const nearby = isPaying ? [] : [...sameCatSuburb].filter((b) => b.id !== business.id).sort(byPlanThenName).slice(0, 6);
-const nearbyIds = new Set(nearby.map((b) => b.id));
+// Internal-linking modules (replace the old ~4-link block): same suburb +
+// category first, topped up from the suburb's area group then the whole city
+// when fewer than 4; then other listings in the suburb. Indexed first, paid,
+// name. Paying businesses never link to same-category competitors.
+const MODULE_MAX = 8;
+const moreInCategory = (() => {
+  if (isPaying || !primaryCat || !suburb) return [] as typeof businesses;
+  const others = (list: typeof businesses) => rankForLinking(list.filter((b) => b.id !== business.id));
+  const out = others(sameCatSuburb).slice(0, MODULE_MAX);
+  if (out.length < 4) {
+    const seen = new Set(out.map((b) => b.id));
+    const grp = groupForSuburb(suburb.slug);
+    const catAll = others(businessesInCategory(primaryCat.id)).filter((b) => !seen.has(b.id));
+    const inGroup = grp ? catAll.filter((b) => { const s = suburbFor(b); return s && grp.suburbSlugs.includes(s.slug); }) : [];
+    for (const b of [...inGroup, ...catAll]) {
+      if (out.length >= MODULE_MAX) break;
+      if (!out.some((o) => o.id === b.id)) out.push(b);
+    }
+  }
+  return out;
+})();
+const moreIds = new Set(moreInCategory.map((b) => b.id));
+const nearbyInSuburb = suburb
+  ? rankForLinking(businessesInSuburb(suburb.id).filter((b) => b.id !== business.id && !moreIds.has(b.id) && !(isPaying && primaryCat && categoriesFor(b)[0]?.id === primaryCat.id))).slice(0, MODULE_MAX)
+  : [];
 const hoursLine = hoursSummary(business.hours);
 const centreCount = center ? businessesInShoppingCenter(center.id).length : 0;
 // Only when the description says next to nothing: one plain sentence built
@@ -88,9 +111,6 @@ const contextSentence =
     ? `${business.name} is listed under ${primaryCat.name} in ${suburb.name}, ${site.cityLabel}${center ? `, at ${center.name}` : ''}.`
     : null;
 
-const similar = cats[0]
-  ? businessesInCategory(cats[0].id).filter((b) => b.id !== business.id && !nearbyIds.has(b.id)).slice(0, 4)
-  : [];
 
 const businessReviews = reviewsFor(business);
 const avgRating = averageRating(business);
@@ -103,7 +123,7 @@ function shortDate(iso: string): string {
 // still a paying customer) — or when a paid business is shown in the
 // "similar" list on this page. Both AdUnit placements below use this same
 // gate, as does BaseLayout's noAds (which also pauses AdSense ad requests).
-const showsPaid = isPaying || sponsorshipsHeldBy(business).length > 0 || similar.some(isPaidListing) || nearby.some(isPaidListing);
+const showsPaid = isPaying || sponsorshipsHeldBy(business).length > 0 || moreInCategory.some(isPaidListing) || nearbyInSuburb.some(isPaidListing);
 
 const keywords = [
   ...new Set(cats.flatMap((c) => [...synonymsFor(c.slug), ...locationSynonymsFor(c.name, site.cityLabel)])),
@@ -339,16 +359,6 @@ const metaDescription = businessDescription(metaInput);
                 </div>
               )}
             </dl>
-            {nearby.length > 0 && primaryCat && suburb && (
-              <>
-                <h3>More {primaryCat.name.toLowerCase()} in {suburb.name}</h3>
-                <ul class="listing-facts-nearby">
-                  {nearby.map((b) => (
-                    <li><a href={`/business/${b.slug}/`}>{b.name}</a></li>
-                  ))}
-                </ul>
-              </>
-            )}
           </section>
         )}
 
@@ -447,30 +457,47 @@ const metaDescription = businessDescription(metaInput);
           </form>
         </div>
 
-        {!isPaying && similar.length > 0 && (
+        {moreInCategory.length > 0 && suburb && (
           <>
             <div style="margin-top:26px;border-bottom:2px solid var(--navy);padding-bottom:10px">
-              <h2 style="margin:0;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Similar suppliers nearby</h2>
+              <h2 style="margin:0;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">More {primaryCat?.name.toLowerCase()} in {suburb?.name}</h2>
             </div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:14px">
-              {similar.map((b) => {
-                // With a logo, the name and meta sit in a column beside it.
-                const hasLogo = !!logoFor(b);
-                const IdWrap = hasLogo ? 'span' : Fragment;
-                const IdText = hasLogo ? 'span' : Fragment;
-                return (
-                <a href={`/business/${b.slug}/`} class="similar-business-card" style="border:2px solid var(--border);border-radius:var(--radius-lg);padding:16px;background:#fff;display:flex;flex-direction:column;gap:5px;text-decoration:none;box-shadow:var(--shadow)">
-                  <IdWrap {...(hasLogo ? { class: 'biz-id' } : {})}>
-                  <BusinessLogo business={b} size="card" />
-                  <IdText {...(hasLogo ? { class: 'biz-id-text', style: 'gap:5px' } : {})}>
-                  <span style="font-size:15.5px;font-weight:800;color:var(--navy);letter-spacing:-.01em">{b.name}</span>
-                  <span style="font-size:12.5px;font-weight:600;color:var(--muted)">{cats[0]?.name}{suburbFor(b) ? ` · ${suburbFor(b)!.name}` : ''}</span>
-                  </IdText>
-                  </IdWrap>
-                </a>
-                );
-              })}
+            <ul class="link-module">
+              {moreInCategory.map((b) => (
+                <li>
+                  <a href={`/business/${b.slug}/`} class="link-module-item">
+                    <BusinessLogo business={b} size="sm" />
+                    <span class="link-module-text">
+                      <span class="link-module-name">{b.name}</span>
+                      <span class="link-module-meta">{[categoriesFor(b)[0]?.name, suburbFor(b)?.name].filter(Boolean).join(' · ')}</span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <a href={`/suburb/${suburb.slug}/`} class="link-module-all">See all in {suburb.name} →</a>
+          </>
+        )}
+
+        {nearbyInSuburb.length > 0 && suburb && (
+          <>
+            <div style="margin-top:26px;border-bottom:2px solid var(--navy);padding-bottom:10px">
+              <h2 style="margin:0;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)">Nearby in {suburb?.name}</h2>
             </div>
+            <ul class="link-module">
+              {nearbyInSuburb.map((b) => (
+                <li>
+                  <a href={`/business/${b.slug}/`} class="link-module-item">
+                    <BusinessLogo business={b} size="sm" />
+                    <span class="link-module-text">
+                      <span class="link-module-name">{b.name}</span>
+                      <span class="link-module-meta">{[categoriesFor(b)[0]?.name, suburbFor(b)?.name].filter(Boolean).join(' · ')}</span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <a href={`/suburb/${suburb.slug}/`} class="link-module-all">See all in {suburb.name} →</a>
           </>
         )}
 
@@ -598,32 +625,52 @@ const metaDescription = businessDescription(metaInput);
     font-weight: 800;
     color: var(--navy);
   }
-  .listing-facts-nearby {
+  .link-module {
     list-style: none;
-    margin: 0;
+    margin: 14px 0 0;
     padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 10px;
+  }
+  .link-module-item {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .listing-facts-nearby a {
-    display: inline-block;
-    padding: 6px 11px;
-    border-radius: 999px;
-    border: 1.5px solid var(--border);
-    font-size: 13px;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: #fff;
     text-decoration: none;
+    min-height: 44px;
   }
-  .listing-facts-nearby a:hover {
+  .link-module-item:hover {
     border-color: var(--navy);
   }
-  .similar-business-card:hover {
-    border-color: var(--navy);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lift);
+  .link-module-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
   }
-  .similar-business-card {
-    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  .link-module-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .link-module-meta {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .link-module-all {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--accent);
+    text-decoration: none;
   }
   /* aspect-ratio + object-fit directly on a grid-item <img> with no
      explicit width doesn't stretch to fill the column — a replaced
