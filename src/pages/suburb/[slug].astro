@@ -7,7 +7,8 @@ import AdUnit from '../../components/AdUnit.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import Icon from '../../components/Icon.astro';
 import BusinessLogo from '../../components/BusinessLogo.astro';
-import { suburbs, businessesInSuburb, businessesInSuburbAndCategory, categoriesFor, categoryBySlug, FEATURED_TIER, type Business, isPaidListing, sponsorFor, withoutSponsors, averageRating, reviewCount, logoFor, cardBlurbFor, whatsappFor } from '../../lib/data';
+import { suburbs, businessesInSuburb, businessesInSuburbAndCategory, categoriesFor, categoryBySlug, FEATURED_TIER, type Business, isPaidListing, sponsorFor, withoutSponsors, averageRating, reviewCount, logoFor, cardBlurbFor, whatsappFor, rankForLinking } from '../../lib/data';
+import { MIN_CATEGORY_SUBURB_BUSINESSES } from '../../lib/sitemap';
 import WhatsAppButton from '../../components/WhatsAppButton.astro';
 import { groupForSuburb } from '../../site-content';
 import { CATEGORY_GROUPS } from '../../lib/categoryGroups';
@@ -52,6 +53,22 @@ const groups = CATEGORY_GROUPS.map((group) => {
     .sort((a, b) => a.name.localeCompare(b.name));
   return { slug: group.slug, name: group.name, iconPath: group.iconPath, subs, total: subs.reduce((sum, s) => sum + s.count, 0) };
 }).filter((g) => g.subs.length > 0);
+
+// "Businesses in <suburb>": every listing linked, grouped by primary category
+// (biggest first). A heading only links to the category-in-suburb page when
+// that page is indexable (same threshold as the sitemap); otherwise the
+// overflow link goes to the city-wide category page.
+const LISTED_PER_CATEGORY = 12;
+const byPrimaryCategory = new Map<string, { slug: string; name: string; list: Business[] }>();
+for (const b of businesses) {
+  const c = categoriesFor(b)[0];
+  if (!c) continue;
+  if (!byPrimaryCategory.has(c.slug)) byPrimaryCategory.set(c.slug, { slug: c.slug, name: c.name, list: [] });
+  byPrimaryCategory.get(c.slug)!.list.push(b);
+}
+const businessSections = [...byPrimaryCategory.values()]
+  .map((c) => ({ ...c, list: rankForLinking(c.list), linkable: businessesInSuburbAndCategory(suburb.id, categoryBySlug(c.slug)!.id).length >= MIN_CATEGORY_SUBURB_BUSINESSES }))
+  .sort((a, b) => b.list.length - a.list.length || a.name.localeCompare(b.name));
 
 const keywords = [
   ...new Set([...categoriesHere.keys()].flatMap((slug) => [...synonymsFor(slug), ...suburbSynonymsFor(categoriesHere.get(slug)!, suburb.name)])),
@@ -201,6 +218,30 @@ const asideHasContent = (adsEnabled && !showsPaid) || !suburbSponsor || nearbySu
               ))}
             </div>
           )}
+
+          {businessSections.length > 0 && (
+            <div id="businesses-in-suburb" style="margin-top:32px">
+              <h2 style="margin:0 0 4px;font-size:20px;letter-spacing:-.02em;color:var(--navy)">Businesses in {suburb.name}</h2>
+              {businessSections.map((sec) => (
+                <section style="margin-top:20px">
+                  <h3 style="margin:0 0 8px;padding-bottom:8px;border-bottom:2px solid var(--navy);font-size:16px;letter-spacing:-.015em;color:var(--navy)">
+                    {sec.linkable ? <a href={`/category/${sec.slug}/${suburb.slug}/`} style="color:var(--navy);text-decoration:none">{sec.name}</a> : sec.name}
+                    <span style="font-weight:600;color:var(--muted);font-size:13px"> ({sec.list.length})</span>
+                  </h3>
+                  <ul style="list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0 18px">
+                    {sec.list.slice(0, LISTED_PER_CATEGORY).map((b) => (
+                      <li style="border-bottom:1px solid var(--border)">
+                        <a href={`/business/${b.slug}/`} class="suburb-biz-row" style="display:block;padding:11px 2px;min-height:22px;font-size:14.5px;font-weight:700;color:var(--navy);text-decoration:none">{b.name}</a>
+                      </li>
+                    ))}
+                  </ul>
+                  {sec.list.length > LISTED_PER_CATEGORY && (
+                    <a href={sec.linkable ? `/category/${sec.slug}/${suburb.slug}/` : `/category/${sec.slug}/`} style="display:inline-block;margin-top:10px;font-size:13px;font-weight:800;color:var(--accent);text-decoration:none">See all {sec.list.length} →</a>
+                  )}
+                </section>
+              ))}
+            </div>
+          )}
         </div>
 
         {asideHasContent && (
@@ -251,6 +292,9 @@ const asideHasContent = (adsEnabled && !showsPaid) || !suburbSponsor || nearbySu
     #suburb-shell.has-aside {
       grid-template-columns: minmax(0, 1fr) 320px;
     }
+  }
+  .suburb-biz-row:hover {
+    text-decoration: underline;
   }
   .suburb-cat-sub:hover {
     background: var(--bg-subtle);
