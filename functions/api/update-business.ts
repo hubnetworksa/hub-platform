@@ -89,7 +89,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   // "genuinely zero traffic in the window" from "tracking only just went
   // live for this business" — the Overview tab shows "No data yet" only
   // for the latter, never a fabricated number for either.
-  let stats: { has_any: boolean; views: number; phone_clicks: number; website_clicks: number; search_appearances: number } | null = null;
+  let stats: { has_any: boolean; views: number; phone_clicks: number; website_clicks: number; whatsapp_clicks: number; search_appearances: number } | null = null;
   if (statsUnlocked) {
     const statsRows = await db
       .prepare(`SELECT event, COUNT(*) AS n FROM business_stats WHERE business_id = ? AND created_at > datetime('now', '-30 days') GROUP BY event`)
@@ -102,6 +102,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       views: statsByEvent.view ?? 0,
       phone_clicks: statsByEvent.phone_click ?? 0,
       website_clicks: statsByEvent.website_click ?? 0,
+      whatsapp_clicks: statsByEvent.whatsapp_click ?? 0,
       search_appearances: statsByEvent.search_appearance ?? 0,
     };
   }

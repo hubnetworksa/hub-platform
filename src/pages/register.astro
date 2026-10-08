@@ -48,6 +48,7 @@ import ShowPassword from '../components/ShowPassword.astro';
 </BaseLayout>
 
 <script>
+  import { gaEvent } from '../lib/ga';
   const form = document.getElementById('register-form') as HTMLFormElement;
   const status = document.getElementById('form-status')!;
   const next = new URLSearchParams(window.location.search).get('next');
@@ -69,6 +70,7 @@ import ShowPassword from '../components/ShowPassword.astro';
       });
       const result = await res.json();
       if (result.ok) {
+        gaEvent('sign_up', { method: 'email' });
         form.style.display = 'none';
         (document.querySelector('.divider') as HTMLElement).style.display = 'none';
         document.getElementById('google-btn')!.style.display = 'none';

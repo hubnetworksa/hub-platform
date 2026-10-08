@@ -1,4 +1,4 @@
-import type { PagesFunction } from '@cloudflare/workers-types';
+import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { hubSites, selectSites, rows, json, type Env, type HubSite } from '../_lib/sites';
 
 // Stats for the Stats screen: GET /api/stats?range=7|30|90&site=all|<slug>
@@ -169,6 +169,24 @@ async function searchConsole(): Promise<unknown[]> {
   } catch {
     return [];
   }
+}
+
+// First-party totals over the last `days` days for one site (used by the
+// Analytics funnel): listing views, contact taps by kind, enquiries, searches.
+export async function firstPartyTotals(db: D1Database, days: number) {
+  const since = `-${days} days`;
+  const [ev, enq] = await Promise.all([
+    rows<{ event: string; n: number }>(db, `SELECT event, COUNT(*) AS n FROM business_stats WHERE created_at >= datetime('now', ?) GROUP BY event`, since),
+    rows<{ n: number }>(db, `SELECT COUNT(*) AS n FROM messages WHERE kind = 'enquiry' AND created_at >= datetime('now', ?)`, since),
+  ]);
+  const get = (e: string) => Number(ev.find((r) => r.event === e)?.n ?? 0);
+  return {
+    range: days,
+    views: get('view'),
+    contacts: { phone: get('phone_click'), whatsapp: get('whatsapp_click'), website: get('website_click') },
+    enquiries: Number(enq[0]?.n ?? 0),
+    searches: get('search_appearance'),
+  };
 }
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {

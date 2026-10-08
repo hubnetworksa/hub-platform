@@ -5,6 +5,7 @@ import AdminShell from '../../components/AdminShell.astro';
 const tiles = [
   { key: 'views', label: 'Profile views', note: 'business page opened' },
   { key: 'phoneClicks', label: 'Phone clicks', note: 'tap-to-call' },
+  { key: 'whatsappClicks', label: 'WhatsApp clicks', note: 'chat button taps' },
   { key: 'websiteClicks', label: 'Website clicks', note: 'outbound to their site' },
   { key: 'searchAppearances', label: 'Search appearances', note: 'shown in results' },
   { key: 'enquiries', label: 'Enquiries sent', note: 'through listing forms', accent: true },
@@ -38,6 +39,7 @@ const tiles = [
                 <th style="padding:10px 12px">Plan</th>
                 <th style="padding:10px 12px;text-align:right">Views</th>
                 <th style="padding:10px 12px;text-align:right">Phone</th>
+                <th style="padding:10px 12px;text-align:right">WhatsApp</th>
                 <th style="padding:10px 12px;text-align:right">Website</th>
                 <th style="padding:10px 12px;text-align:right">Search</th>
                 <th style="padding:10px 18px;text-align:right">Enquiries</th>
@@ -69,6 +71,7 @@ const tiles = [
     subscription_tier: number;
     views: number;
     phone_clicks: number;
+    whatsapp_clicks: number;
     website_clicks: number;
     search_appearances: number;
     enquiries: number;
@@ -80,7 +83,7 @@ const tiles = [
     const res = await fetch('/api/admin/analytics');
     const data = await res.json();
     const totals = data.totals ?? {};
-    for (const key of ['views', 'phoneClicks', 'websiteClicks', 'searchAppearances', 'enquiries']) {
+    for (const key of ['views', 'phoneClicks', 'whatsappClicks', 'websiteClicks', 'searchAppearances', 'enquiries']) {
       document.getElementById(`stat-${key}`)!.textContent = fmt(totals[key] ?? 0);
     }
 
@@ -94,6 +97,7 @@ const tiles = [
           <td style="padding:12px"><span style="${planPillStyle(plan)}">${plan}</span></td>
           <td style="padding:12px;text-align:right;font-weight:700;color:var(--navy)">${fmt(r.views)}</td>
           <td style="padding:12px;text-align:right;font-weight:600">${fmt(r.phone_clicks)}</td>
+          <td style="padding:12px;text-align:right;font-weight:600">${fmt(r.whatsapp_clicks)}</td>
           <td style="padding:12px;text-align:right;font-weight:600">${fmt(r.website_clicks)}</td>
           <td style="padding:12px;text-align:right;font-weight:600">${fmt(r.search_appearances)}</td>
           <td style="padding:12px 18px;text-align:right;font-weight:700;color:var(--accent-hover)">${fmt(r.enquiries)}</td>
