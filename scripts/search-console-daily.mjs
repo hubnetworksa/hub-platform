@@ -101,8 +101,20 @@ async function analytics(prop, old) {
     .sort((a, b) => b.impressions - a.impressions)
     .slice(0, 40)
     .map((r) => ({ query: r.keys[0], impressions: r.impressions, clicks: r.clicks, position: Math.round(r.position * 10) / 10 }));
-  const top = (q.rows ?? []).slice(0, 25).map((r) => ({ query: r.keys[0], impressions: r.impressions, clicks: r.clicks, position: Math.round(r.position * 10) / 10 }));
-  return { daily, pagesSeen, gaps, top, error: byDate.error?.message ?? null };
+  // Top searches reflect NOW: last 7 days vs the 7 before.
+  const topWindow = { startDate: day(8), endDate: day(2), prevStartDate: day(15), prevEndDate: day(9) };
+  const [cur, prv] = await Promise.all([
+    g(base, { startDate: topWindow.startDate, endDate: topWindow.endDate, dimensions: ['query'], rowLimit: 1000 }),
+    g(base, { startDate: topWindow.prevStartDate, endDate: topWindow.prevEndDate, dimensions: ['query'], rowLimit: 1000 }),
+  ]);
+  const r1 = (n) => Math.round(n * 10) / 10;
+  const prevBy = new Map((prv.rows ?? []).map((r) => [r.keys[0], { impressions: r.impressions, clicks: r.clicks, position: r1(r.position) }]));
+  const top = (cur.rows ?? [])
+    .slice()
+    .sort((x, y) => y.impressions - x.impressions || y.clicks - x.clicks)
+    .slice(0, 25)
+    .map((r) => ({ query: r.keys[0], impressions: r.impressions, clicks: r.clicks, position: r1(r.position), prev: prevBy.get(r.keys[0]) ?? null }));
+  return { daily, pagesSeen, gaps, top, topWindow, error: byDate.error?.message ?? null };
 }
 
 const locs = (xml) => [...(xml || '').matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map((m) => m[1].replace(/&amp;/g, '&'));

@@ -195,14 +195,26 @@ function perSite(ui, d) {
           { class: 'tiles' },
           ui.tile('Protected pages', s.protectedPages ? f(s.protectedPages.count) : '–', h('div', { class: 'delta' }, s.protectedPages ? 'always kept in Google' : 'list not published yet'), H.protectedPages)
         ),
-        h('h4', { class: 'card-sub' }, 'Top Google searches', ui.help(H.topQueries)),
+        h('h4', { class: 'card-sub' }, 'Top Google searches (last 7 days)', ui.help(H.topQueries)),
+        s.top_window ? h('p', { class: 'sub', style: 'margin-top:0;opacity:.7' }, `${s.top_window.startDate} to ${s.top_window.endDate}, compared with ${s.top_window.prevStartDate} to ${s.top_window.prevEndDate}`) : null,
         s.top.length
           ? ui.charts.dataTable(
               [
-                { key: 'query', label: 'Query' },
+                { key: 'query', label: 'Search' },
+                { key: 'impressions', label: 'Impressions (7d)', help: H.impressions, num: true, format: f },
+                {
+                  key: 'prev',
+                  label: 'Previous 7d',
+                  num: true,
+                  render: (r) => {
+                    if (!r.prev) return document.createTextNode('—');
+                    const dl = r.impressions - r.prev.impressions;
+                    const span = h('span', {}, f(r.prev.impressions));
+                    if (dl !== 0) span.append(' ', h('small', { style: `opacity:.75;color:${dl > 0 ? 'var(--good, #1a7f37)' : 'var(--bad, #c0392b)'}` }, `${dl > 0 ? '▲' : '▼'}${f(Math.abs(dl))}`));
+                    return span;
+                  },
+                },
                 { key: 'clicks', label: 'Clicks', help: H.clicks, num: true, format: f },
-                { key: 'impressions', label: 'Impressions', help: H.impressions, num: true, format: f },
-                { key: 'ctr', label: 'CTR', help: H.ctr, num: true, render: (r) => document.createTextNode(`${((r.impressions ? r.clicks / r.impressions : 0) * 100).toFixed(1)}%`) },
                 { key: 'position', label: 'Position', help: H.position, num: true, format: (v) => v.toFixed(1) },
               ],
               s.top
