@@ -10,6 +10,9 @@ import siteSettingsRaw from '../data/site-settings.json';
 import eventsRaw from '../data/events.json';
 import newsRaw from '../data/news.json';
 import fuelRaw from '../data/fuel-prices.json';
+import protectedPagesRaw from '../data/protected-pages.json';
+import { scoreBusiness, indexDecision, type SignalKey } from './index-gate';
+import { indexMinScore } from './site-overrides';
 import { canFormatDescription, renderRichText, plainHtml, renderInline, plainLine } from './rich-text';
 import { centsToRand, monthlyAndYearly } from '../../functions/_lib/pricing';
 import { whatsappUrl } from './whatsapp';
@@ -337,6 +340,25 @@ export const businessesInShoppingCenter = (id: number) => businessesByShoppingCe
 // listed in the sitemap (or vice versa) is exactly the contradiction Google's
 // URL Inspection API flags.
 export const categoryHasBusinesses = (categoryId: number) => businessesInCategory(categoryId).length > 0;
+
+// Index gate (src/lib/index-gate.ts): the one place that decides whether a
+// business page is indexed. Used by business/[slug].astro (robots noindex) and
+// sitemap.ts (exclusion) so the two can never disagree. Protected = pages with
+// Search Console impressions in the last 90 days (prebuild writes the list);
+// without that list everything stays indexed.
+const protectedPages = protectedPagesRaw as { source: 'github' | 'missing'; generatedAt: string | null; paths: string[] };
+const protectedPaths = new Set(protectedPages.paths);
+const indexInfoCache = new Map<number, ReturnType<typeof businessIndexInfo>>();
+export function businessIndexInfo(b: Business): { score: number; max: number; decision: 'index' | 'noindex'; protected: boolean; paidOrClaimed: boolean; signals: Record<SignalKey, number> } {
+  const hit = indexInfoCache.get(b.id);
+  if (hit) return hit;
+  const { score, max, signals, paidOrClaimed } = scoreBusiness({ ...b, photoCount: photosFor(b).length, approvedReviewCount: reviewCount(b) });
+  const isProtected = protectedPaths.has('/business/' + b.slug + '/');
+  const decision = indexDecision({ score, threshold: indexMinScore, protected: isProtected, paidOrClaimed, listAvailable: protectedPages.source === 'github' });
+  const info = { score, max, decision, protected: isProtected, paidOrClaimed, signals };
+  indexInfoCache.set(b.id, info);
+  return info;
+}
 
 // Only meaningful when it actually has businesses linked — a shopping
 // centre imported from OSM with nothing nearby yet shouldn't be treated

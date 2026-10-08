@@ -1,5 +1,6 @@
 import siteSettingsRaw from '../data/site-settings.json';
 import site from '../site';
+import { MAX_SCORE, DEFAULT_MIN_SCORE } from './index-gate';
 
 // Build-time overrides edited on the admin "Site settings" and "Ads &
 // sponsors" tabs. They live in the `site_settings` key/value table and are
@@ -23,10 +24,16 @@ export const footerTagline = text('site_footer_tagline', site.footerTagline);
 /** Global display-ads switch from the Ads & sponsors tab. On unless explicitly switched off. */
 export const adsEnabled = settings.get('ads_enabled') !== '0';
 
+/** Minimum content score for a business page to be indexed (0 = index everything). */
+export const indexMinScore: number = (() => {
+  const n = Number(settings.get('index_min_score'));
+  return settings.has('index_min_score') && Number.isInteger(n) ? Math.min(MAX_SCORE, Math.max(0, n)) : DEFAULT_MIN_SCORE;
+})();
+
 /** Raw cents for a rate-card key, or null if it isn't configured. */
 export function settingCents(key: string): number | null {
   const n = Number(settings.get(key));
   return settings.has(key) && Number.isFinite(n) ? n : null;
 }
 
-export const siteOverrides = { siteName, cityLabel, footerTagline, adsEnabled };
+export const siteOverrides = { siteName, cityLabel, footerTagline, adsEnabled, indexMinScore };

@@ -262,7 +262,7 @@ export function columnChart(el, opts) {
         const r = Math.min(4, bw / 2, h);
         const by = sy(0) - h;
         const d = h <= 0 ? '' : `M${bx},${sy(0)} V${by + r} Q${bx},${by} ${bx + r},${by} H${bx + bw - r} Q${bx + bw},${by} ${bx + bw},${by + r} V${sy(0)} Z`;
-        if (d) svgEl('path', { d, fill: s.color }, svg);
+        if (d) svgEl('path', { d, fill: s.colorAt ? s.colorAt(i) : s.color }, svg);
         const hit = svgEl('rect', { x: bx - 1, y: m.t, width: bw + gap, height: ih, fill: 'transparent', tabindex: 0, 'aria-label': `${s.name}, ${xLong(xv)}: ${format(v)}` }, svg);
         const on = (e) => {
           const rect = hit.getBoundingClientRect();

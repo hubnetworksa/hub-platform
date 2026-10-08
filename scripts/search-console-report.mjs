@@ -14,6 +14,10 @@
 // Writes status/seo/report.md, status/seo/<YYYY-MM-DD>.json and
 // status/seo/latest.json. The previous latest.json (if any) is used for the
 // week-on-week comparison of the inspection sample.
+// Also writes status/seo/pages-with-impressions.<slug>.json per site: every
+// page path with Google impressions in the last 90 days, used by the index
+// gate to protect those pages from an automatic noindex (not written if the
+// 90-day fetch failed, so a good list is never clobbered).
 //
 // Credentials: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REFRESH_TOKEN,
 // or, when those aren't set, <secrets>/google-client.json (installed.*) and
@@ -149,6 +153,26 @@ function delta(cur, prev, { pct = false, invert = false } = {}) {
 const mdCell = (s) => String(s ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ');
 
 // ---------- search analytics ----------
+// Page URL -> decoded pathname with a trailing slash (file-like paths with a
+// dot in the last segment are left alone). Returns null for unparseable URLs.
+function normalisePath(u) {
+  try {
+    let p = decodeURIComponent(new URL(u).pathname);
+    if (!p.endsWith('/') && !p.split('/').pop().includes('.')) p += '/';
+    return p;
+  } catch {
+    return null;
+  }
+}
+function uniqueSortedPaths(rows) {
+  const set = new Set();
+  for (const r of rows || []) {
+    const p = normalisePath(r?.keys?.[0]);
+    if (p) set.add(p);
+  }
+  return [...set].sort();
+}
+
 async function searchAnalytics(prop) {
   const base = `https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(prop)}/searchAnalytics/query`;
   const totals = async (w) => {
@@ -198,6 +222,9 @@ async function searchAnalytics(prop) {
     byType: { current: byType(curP.rows || []), previous: byType(prevP.rows || []), d90: byType(p90.rows || []) },
     topQueries: (q.rows || []).map((r) => ({ query: r.keys[0], clicks: r.clicks, impressions: r.impressions, ctr: r.ctr, position: r.position })),
     topPages,
+    // Full 90-day list of page paths with impressions (null when the fetch
+    // failed). main() writes it to its own file and strips it from the entry.
+    protectedPaths: p90.error ? null : uniqueSortedPaths(p90.rows),
     errors: [curT.error, prevT.error, curP.error, prevP.error, p90.error, q.error?.message].filter(Boolean),
   };
 }
@@ -577,6 +604,17 @@ async function main() {
     const entry = { slug: s.slug, name: s.siteName || s.slug, domain: s.domain, property: prop };
     entry.searchAnalytics = await searchAnalytics(prop);
     console.error(`   search analytics: ${entry.searchAnalytics.pagesWithImpressions.d90} pages with impressions (90d)`);
+    if (Array.isArray(entry.searchAnalytics.protectedPaths)) {
+      mkdirSync(OUT_DIR, { recursive: true });
+      writeFileSync(
+        join(OUT_DIR, `pages-with-impressions.${s.slug}.json`),
+        JSON.stringify({ generatedAt: new Date().toISOString(), window: D90, paths: entry.searchAnalytics.protectedPaths }, null, 2) + '\n',
+      );
+      console.error(`   wrote pages-with-impressions.${s.slug}.json (${entry.searchAnalytics.protectedPaths.length} paths)`);
+    } else {
+      console.error(`   WARNING: 90-day page fetch failed; pages-with-impressions.${s.slug}.json not updated`);
+    }
+    delete entry.searchAnalytics.protectedPaths;
     entry.sitemaps = await sitemaps(prop);
     console.error(`   sitemaps: ${entry.sitemaps.error || entry.sitemaps.sitemaps.length}`);
     if (INSPECT) {

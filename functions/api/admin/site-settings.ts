@@ -2,6 +2,7 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { logActivity } from '../../_lib/activity-log';
 import { requestRebuild } from '../../_lib/deploy-hook';
+import { MAX_SCORE } from '../../../src/lib/index-gate';
 
 interface Env {
   DB: D1Database;
@@ -41,6 +42,10 @@ const TEXT_KEYS: Record<string, number> = {
 
 // Global display-ads switch: '1' on, '0' off (unset = on).
 const FLAG_KEYS = ['ads_enabled'];
+
+// Integer settings: key -> [min, max]. index_min_score is the content-score
+// threshold below which business pages are noindexed (src/lib/index-gate.ts).
+const INT_KEYS: Record<string, [number, number]> = { index_min_score: [0, MAX_SCORE] };
 
 // Backs the "Plans & pricing", "Ads & sponsors" and "Site settings" admin
 // pages. Prices are the only prices the whole Premium Listings system reads
@@ -103,6 +108,18 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     await upsert(db, key, body.value === '0' || body.value === false || body.value === 0 ? '0' : '1');
     await logActivity(db, 'settings_saved', null, `${key} set to ${body.value === '0' || body.value === false || body.value === 0 ? 'off' : 'on'} by admin (${user.email}).`);
     await requestRebuild(context.env, 'site settings changed');
+    return json({ ok: true });
+  }
+
+  if (key in INT_KEYS) {
+    const [min, max] = INT_KEYS[key];
+    const v = body.value;
+    if (typeof v !== 'number' || !Number.isInteger(v) || v < min || v > max) {
+      return json({ ok: false, error: `Value must be a whole number from ${min} to ${max}.` }, 400);
+    }
+    await upsert(db, key, String(v));
+    await logActivity(db, 'settings_saved', null, `${key} set to ${v} by admin (${user.email}).`);
+    await requestRebuild(context.env, 'index threshold changed');
     return json({ ok: true });
   }
 

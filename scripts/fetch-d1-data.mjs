@@ -24,6 +24,22 @@ const DB_NAME = site.dbName;
 // hours' cache instead of re-reading the whole live database on every push —
 // D1's free plan caps rows read per day across the whole account. The
 // workflow only sets this when the cache actually restored this site's data.
+// Pages with Google Search impressions (last 90 days) are protected from the
+// index gate. Written on every run, cached or not: the list comes from the
+// repo (status/seo/), not D1. Absent file => source 'missing', which makes the
+// gate keep every page indexed.
+async function writeProtectedPages() {
+  await mkdir(path.join(ROOT, 'src', 'data'), { recursive: true });
+  let out = { source: 'missing', generatedAt: null, paths: [] };
+  try {
+    const j = JSON.parse(await readFile(path.join(ROOT, 'status', 'seo', `pages-with-impressions.${SITE}.json`), 'utf8'));
+    if (Array.isArray(j.paths)) out = { source: 'github', generatedAt: j.generatedAt ?? null, paths: j.paths.filter((p) => typeof p === 'string') };
+  } catch {}
+  await writeFile(path.join(ROOT, 'src', 'data', 'protected-pages.json'), JSON.stringify(out, null, 2));
+  console.log(`protected pages: ${out.paths.length} (${out.source})`);
+}
+await writeProtectedPages();
+
 if (process.env.USE_CACHED_D1_DATA === 'true') {
   try {
     await readFile(path.join(ROOT, 'src', 'data', 'businesses.json'), 'utf8');

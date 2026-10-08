@@ -5,6 +5,8 @@ name: Search Console report
 # before), pages with impressions per page type, sitemap status, a URL
 # Inspection sample per sitemap type and AdSense site state. Commits
 # status/seo/report.md, status/seo/<date>.json and status/seo/latest.json.
+# Also status/seo/pages-with-impressions.<slug>.json per city (90-day pages with
+# impressions; protects them from the index gate's automatic noindex).
 #
 # Needs repo secrets GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET and
 # GOOGLE_REFRESH_TOKEN (an OAuth refresh token with the webmasters and
