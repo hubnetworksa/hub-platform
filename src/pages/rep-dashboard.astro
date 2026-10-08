@@ -1,0 +1,243 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../site';
+---
+
+<BaseLayout title="Rep dashboard" description={`Your ${site.siteName} sales rep dashboard.`} noindex={true}>
+  <main style="max-width:960px;margin:0 auto;padding:clamp(20px,3vw,36px) 16px 60px" data-site={site.siteName}>
+    <div id="loading" style="display:flex;align-items:center;gap:10px;color:var(--muted);font-weight:700;font-size:14px;padding:3rem 0"><span class="rd-spinner"></span>Loading…</div>
+
+    <div id="content" hidden>
+      <div id="welcome" hidden class="rd-banner" style="background:rgba(26,143,94,.12);color:#1a8f5e">Welcome aboard! Your rep code is ready. Share it to start earning.</div>
+      <div id="suspended" hidden class="rd-banner" style="background:rgba(194,56,56,.12);color:var(--danger)">Your rep account is suspended. New sales with your code will not earn commission. Contact us if you think this is a mistake.</div>
+
+      <div class="rd-card" style="padding:22px">
+        <div style="font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">Your rep code</div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px">
+          <span id="rep-code" style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:clamp(28px,6vw,40px);font-weight:800;letter-spacing:.12em;color:var(--navy)"></span>
+          <button type="button" id="copy-code" class="rd-btn">Copy code</button>
+        </div>
+        <div style="font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:20px">Your share link</div>
+        <div id="share-url" style="margin-top:6px;font-size:14px;font-weight:700;color:var(--navy);overflow-wrap:anywhere"></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+          <button type="button" id="copy-link" class="rd-btn">Copy link</button>
+          <a id="wa-link" class="rd-btn rd-btn-accent" target="_blank" rel="noopener">Share on WhatsApp</a>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:14px;margin-top:16px">
+        <div class="rd-card" style="padding:18px"><div class="rd-label">This month</div><div id="stat-month" class="rd-stat"></div></div>
+        <div class="rd-card" style="padding:18px"><div class="rd-label">Lifetime</div><div id="stat-lifetime" class="rd-stat"></div></div>
+        <div class="rd-card" style="padding:18px"><div class="rd-label">Awaiting payout</div><div id="stat-unpaid" class="rd-stat"></div></div>
+      </div>
+
+      <h2 class="rd-h2">Your sales</h2>
+      <div class="rd-card">
+        <div id="sales-wrap" style="overflow-x:auto"></div>
+        <div id="sales-empty" hidden style="padding:30px 18px;text-align:center;font-size:14px;font-weight:700;color:var(--muted)">No sales yet. Share your link with local businesses to get started.</div>
+      </div>
+
+      <h2 class="rd-h2">Payouts</h2>
+      <div class="rd-card">
+        <div id="payouts-list"></div>
+        <div id="payouts-empty" hidden style="padding:30px 18px;text-align:center;font-size:14px;font-weight:700;color:var(--muted)">No payouts yet. Payouts are made by EFT at the end of the month.</div>
+      </div>
+
+      <h2 class="rd-h2">Banking details</h2>
+      <div class="rd-card" style="padding:20px">
+        <div id="bank-warning" hidden class="rd-banner" style="background:rgba(156,95,0,.12);color:#9c5f00"></div>
+        <form id="bank-form" novalidate style="display:grid;gap:14px">
+          <label class="rd-field">Bank name<input name="bankName" maxlength="80" required autocomplete="off" /></label>
+          <label class="rd-field">Account holder<input name="accountHolder" maxlength="80" required autocomplete="off" /></label>
+          <label class="rd-field">Account number<input name="accountNumber" inputmode="numeric" maxlength="20" required autocomplete="off" /></label>
+          <label class="rd-field">Branch code (6 digits)<input name="branchCode" inputmode="numeric" maxlength="6" required autocomplete="off" /></label>
+          <label class="rd-field">Account type
+            <select name="accountType" required>
+              <option value="">Choose…</option>
+              <option value="cheque">Cheque / current</option>
+              <option value="savings">Savings</option>
+              <option value="transmission">Transmission</option>
+            </select>
+          </label>
+          <label style="display:flex;gap:10px;align-items:flex-start;font-size:13.5px;font-weight:600;color:var(--navy);line-height:1.45">
+            <input type="checkbox" name="consent" id="consent" style="margin-top:3px;flex-shrink:0" />
+            <span id="consent-text"></span>
+          </label>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <button type="submit" id="bank-submit" class="rd-btn rd-btn-accent">Save banking details</button>
+            <span id="bank-msg" style="font-size:13.5px;font-weight:700"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style is:global>
+  #content[hidden], #welcome[hidden], #suspended[hidden], #sales-empty[hidden], #payouts-empty[hidden], #bank-warning[hidden] { display: none !important; }
+  .rd-card { background: #fff; border: 2px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; }
+  .rd-banner { padding: 12px 16px; border-radius: 12px; font-size: 14px; font-weight: 800; margin-bottom: 16px; }
+  .rd-h2 { margin: 28px 0 12px; font-size: 20px; letter-spacing: -0.025em; color: var(--navy); }
+  .rd-label { font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .rd-stat { margin-top: 6px; font-size: clamp(24px, 5vw, 30px); font-weight: 800; letter-spacing: -0.02em; color: var(--navy); }
+  .rd-btn { display: inline-flex; align-items: center; justify-content: center; padding: 11px 16px; border: 2px solid var(--border); border-radius: 10px; background: #fff; color: var(--navy); font-size: 13.5px; font-weight: 800; font-family: inherit; cursor: pointer; text-decoration: none; }
+  .rd-btn:hover { border-color: var(--accent); }
+  .rd-btn-accent { background: var(--accent); border-color: var(--accent); color: var(--contrast); }
+  .rd-btn-accent:hover { background: var(--accent-hover); }
+  .rd-field { display: grid; gap: 6px; font-size: 13px; font-weight: 800; color: var(--navy); }
+  .rd-field input, .rd-field select { padding: 12px 13px; border: 2px solid var(--border); border-radius: 10px; font-size: 16px; font-family: inherit; background: #fff; color: var(--navy); width: 100%; box-sizing: border-box; }
+  .rd-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 560px; }
+  .rd-table th { text-align: left; padding: 11px 14px; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); background: var(--bg-subtle); }
+  .rd-table td { padding: 12px 14px; border-top: 1px solid var(--border); font-weight: 700; color: var(--navy); }
+  .rd-pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+  .rd-spinner { width: 16px; height: 16px; flex-shrink: 0; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: rd-spin 0.7s linear infinite; }
+  @keyframes rd-spin { to { transform: rotate(360deg); } }
+</style>
+
+<script>
+  const siteName = (document.querySelector('main') as HTMLElement).dataset.site ?? 'this site';
+  const $ = (id: string) => document.getElementById(id)!;
+
+  function esc(s: unknown): string {
+    return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function rand(cents: number): string {
+    return 'R' + Math.round(cents / 100).toLocaleString('en-ZA').replace(/ /g, ' ');
+  }
+  function parseDate(s: string | null): Date | null {
+    if (!s) return null;
+    const d = new Date(s.includes('T') ? s : s.replace(' ', 'T') + 'Z');
+    return isNaN(d.getTime()) ? null : d;
+  }
+  function fmtDate(s: string | null): string {
+    const d = parseDate(s);
+    return d ? d.toLocaleDateString('en-ZA', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+  }
+  function fmtPeriod(p: string): string {
+    const [y, m] = p.split('-').map(Number);
+    return y && m ? new Date(y, m - 1, 1).toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' }) : p;
+  }
+  const PILLS: Record<string, [string, string, string]> = {
+    approved: ['Approved', '#1a8f5e', 'rgba(26,143,94,.12)'],
+    paid: ['Paid', '#fff', 'var(--navy)'],
+    void: ['Void', 'var(--muted)', 'var(--bg-subtle)'],
+    pending: ['Pending', '#9c5f00', 'rgba(156,95,0,.12)'],
+  };
+  function pill(status: string): string {
+    const [label, color, bg] = PILLS[status] ?? PILLS.pending;
+    return `<span class="rd-pill" style="color:${color};background:${bg}">${label}</span>`;
+  }
+
+  async function copy(text: string, btn: HTMLElement, label: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      btn.textContent = 'Copied!';
+    } catch {
+      btn.textContent = 'Copy failed';
+    }
+    setTimeout(() => (btn.textContent = label), 1800);
+  }
+
+  type Sale = { id: number; clientName: string; productLabel: string; commissionCents: number; status: string; createdAt: string };
+  type Payout = { id: number; period: string; totalCents: number; reference: string | null; paidAt: string | null };
+
+  async function init() {
+    const res = await fetch('/api/rep/me');
+    if (res.status === 401) { window.location.href = '/login/?next=/rep-dashboard/'; return; }
+    if (res.status === 403) { window.location.href = '/become-a-rep/'; return; }
+    const data = await res.json();
+    if (!data.ok) { window.location.href = '/become-a-rep/'; return; }
+
+    $('loading').style.display = 'none';
+    $('content').hidden = false;
+
+    const { rep, stats } = data;
+    if (new URLSearchParams(location.search).get('welcome') === '1') $('welcome').hidden = false;
+    if (rep.status === 'suspended') $('suspended').hidden = false;
+
+    $('rep-code').textContent = rep.code;
+    $('share-url').textContent = rep.shareUrl;
+    const msg = `Get your business listed on ${siteName}: ${rep.shareUrl} (rep code ${rep.code})`;
+    ($('wa-link') as HTMLAnchorElement).href = 'https://wa.me/?text=' + encodeURIComponent(msg);
+    $('copy-code').addEventListener('click', (e) => copy(rep.code, e.currentTarget as HTMLElement, 'Copy code'));
+    $('copy-link').addEventListener('click', (e) => copy(rep.shareUrl, e.currentTarget as HTMLElement, 'Copy link'));
+
+    $('stat-month').textContent = rand(stats.monthCents);
+    $('stat-lifetime').textContent = rand(stats.lifetimeCents);
+    $('stat-unpaid').textContent = rand(stats.unpaidCents);
+
+    const sales = data.sales as Sale[];
+    if (sales.length === 0) {
+      $('sales-empty').hidden = false;
+    } else {
+      $('sales-wrap').innerHTML =
+        `<table class="rd-table"><thead><tr><th>Client</th><th>Product</th><th>Date</th><th style="text-align:right">Commission</th><th>Status</th></tr></thead><tbody>` +
+        sales.map((s) => `<tr><td>${esc(s.clientName)}</td><td>${esc(s.productLabel)}</td><td style="white-space:nowrap">${esc(fmtDate(s.createdAt))}</td><td style="text-align:right;white-space:nowrap">${rand(s.commissionCents)}</td><td>${pill(s.status)}</td></tr>`).join('') +
+        `</tbody></table>`;
+    }
+
+    const payouts = data.payouts as Payout[];
+    if (payouts.length === 0) {
+      $('payouts-empty').hidden = false;
+    } else {
+      $('payouts-list').innerHTML = payouts
+        .map((p, i) => `<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 18px;${i ? 'border-top:1px solid var(--border);' : ''}">
+          <div><div style="font-size:14.5px;font-weight:800;color:var(--navy)">${esc(fmtPeriod(p.period))}</div>
+          <div style="font-size:12.5px;font-weight:700;color:var(--muted);margin-top:2px">${p.reference ? 'Ref ' + esc(p.reference) : ''}${p.reference && p.paidAt ? ' · ' : ''}${esc(fmtDate(p.paidAt))}</div></div>
+          <div style="font-size:15px;font-weight:800;color:var(--navy)">${rand(p.totalCents)}</div></div>`)
+        .join('');
+    }
+
+    $('consent-text').textContent = `I consent to ${siteName} storing these details to pay my commission`;
+    const form = $('bank-form') as HTMLFormElement;
+    if (rep.bank) {
+      (form.elements.namedItem('bankName') as HTMLInputElement).value = rep.bank.bankName ?? '';
+      (form.elements.namedItem('accountHolder') as HTMLInputElement).value = rep.bank.accountHolder ?? '';
+      (form.elements.namedItem('accountNumber') as HTMLInputElement).value = rep.bank.accountNumber ?? '';
+      (form.elements.namedItem('branchCode') as HTMLInputElement).value = rep.bank.branchCode ?? '';
+      (form.elements.namedItem('accountType') as HTMLSelectElement).value = rep.bank.accountType ?? '';
+      if (rep.bankConsentAt) ($('consent') as HTMLInputElement).checked = true;
+    } else if (stats.unpaidCents > 0) {
+      $('bank-warning').textContent = `Add your banking details to receive ${rand(stats.unpaidCents)}.`;
+      $('bank-warning').hidden = false;
+    }
+
+    const FIELD_LABELS: Record<string, string> = {
+      bankName: 'Please enter your bank name.',
+      accountHolder: 'Please enter the account holder name.',
+      accountNumber: 'Account number must be 6 to 20 digits.',
+      branchCode: 'Branch code must be 6 digits.',
+      accountType: 'Please choose an account type.',
+      consent: 'Please tick the consent box.',
+    };
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const out = $('bank-msg');
+      const btn = $('bank-submit') as HTMLButtonElement;
+      out.style.color = 'var(--muted)';
+      out.textContent = 'Saving…';
+      btn.disabled = true;
+      const body = { ...Object.fromEntries(new FormData(form)), consent: ($('consent') as HTMLInputElement).checked };
+      try {
+        const r = await fetch('/api/rep/bank-details', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+        const j = await r.json().catch(() => ({}));
+        if (r.ok && j.ok) {
+          out.style.color = '#1a8f5e';
+          out.textContent = 'Banking details saved.';
+          $('bank-warning').hidden = true;
+        } else {
+          out.style.color = 'var(--danger)';
+          out.textContent = FIELD_LABELS[j.error as string] ?? 'Could not save. Please try again.';
+        }
+      } catch {
+        out.style.color = 'var(--danger)';
+        out.textContent = 'Could not save. Please try again.';
+      }
+      btn.disabled = false;
+    });
+  }
+
+  init().catch(() => {
+    $('loading').textContent = 'Could not load your dashboard. Please refresh.';
+  });
+</script>

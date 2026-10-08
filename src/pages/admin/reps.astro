@@ -1,0 +1,262 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdminShell from '../../components/AdminShell.astro';
+
+const tiles = [
+  { key: 'reps', label: 'Reps' },
+  { key: 'activeReps', label: 'Active' },
+  { key: 'mtdCents', label: 'Month-to-date commission' },
+  { key: 'unpaidCents', label: 'Unpaid balance', accent: true },
+];
+const th = 'padding:10px 12px';
+---
+
+<BaseLayout title="Sales reps" description="Sales rep commissions and payouts." noindex={true}>
+  <div id="loading" style="padding:3rem;color:var(--muted);text-align:center;">Loading…</div>
+
+  <div id="content" hidden>
+    <AdminShell active="reps" title="Sales reps" subtitle="Referral commissions, payouts and rep accounts">
+      <div id="list-view" style="display:flex;flex-direction:column;gap:16px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
+          {tiles.map((t) => (
+            <div style={`background:#fff;border:2px solid ${t.accent ? 'var(--accent)' : 'var(--border)'};border-radius:14px;padding:18px`}>
+              <div style={`font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:${t.accent ? 'var(--accent)' : 'var(--muted)'}`}>{t.label}</div>
+              <div id={`stat-${t.key}`} style="font-size:30px;font-weight:800;color:var(--navy);letter-spacing:-.03em;margin-top:8px;line-height:1">—</div>
+            </div>
+          ))}
+        </div>
+
+        <div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden">
+          <div style="padding:14px 18px;border-bottom:2px solid var(--navy)">
+            <h2 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">All reps</h2>
+          </div>
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:13.5px">
+              <thead>
+                <tr style="background:var(--bg-subtle);color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-align:left">
+                  <th style="padding:10px 18px">Code</th>
+                  <th style={th}>Email</th>
+                  <th style={th}>Joined</th>
+                  <th style={`${th};text-align:right`}>Sales</th>
+                  <th style={`${th};text-align:right`}>MTD</th>
+                  <th style={`${th};text-align:right`}>Lifetime</th>
+                  <th style={`${th};text-align:right`}>Unpaid</th>
+                  <th style={th}>Bank</th>
+                  <th style={th}>Status</th>
+                  <th style="padding:10px 18px">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="rep-list"></tbody>
+            </table>
+          </div>
+          <div id="rep-empty" hidden style="padding:40px 18px;text-align:center">
+            <div style="font-size:16px;font-weight:800;color:var(--navy)">No reps yet</div>
+            <div style="font-size:13.5px;font-weight:600;color:var(--muted);margin:5px auto 0;max-width:52ch;line-height:1.5">Reps appear here once someone signs up for the referral programme.</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="detail-view" style="display:none;flex-direction:column;gap:16px"></div>
+    </AdminShell>
+  </div>
+</BaseLayout>
+
+<script>
+  import { esc, randFromCents, fmtDate, statusPillStyle, requireAdmin, showContent, postJson } from '../../lib/admin-html';
+
+  interface Rep {
+    id: number;
+    code: string;
+    email: string;
+    status: string;
+    createdAt: string;
+    salesCount: number;
+    mtdCents: number;
+    lifetimeCents: number;
+    unpaidCents: number;
+    bankMasked: string | null;
+    hasBank: boolean;
+  }
+
+  const listView = document.getElementById('list-view')!;
+  const detailView = document.getElementById('detail-view')!;
+  let reps: Rep[] = [];
+  let openRepId: number | null = null;
+
+  const btn = (attrs: string, label: string, disabled = false, danger = false) =>
+    `<button type="button" ${attrs} ${disabled ? 'disabled' : ''} style="padding:6px 11px;border:2px solid ${danger ? 'var(--danger)' : 'var(--border)'};border-radius:8px;background:#fff;color:${danger ? 'var(--danger)' : 'var(--navy)'};font-size:12px;font-weight:800;cursor:${disabled ? 'not-allowed' : 'pointer'};opacity:${disabled ? '.45' : '1'};white-space:nowrap">${label}</button>`;
+  const pill = (status: string) => {
+    const tone = status === 'active' || status === 'paid' ? 'Paid' : status === 'approved' ? 'Answered' : status === 'void' ? 'Overdue' : 'Closed';
+    return `<span style="${statusPillStyle(tone)}">${esc(status)}</span>`;
+  };
+  const card = (title: string, inner: string) =>
+    `<div style="background:#fff;border:2px solid var(--border);border-radius:14px;overflow:hidden"><div style="padding:14px 18px;border-bottom:2px solid var(--navy)"><h2 style="margin:0;font-size:15px;color:var(--navy)">${title}</h2></div>${inner}</div>`;
+  const headRow = (cols: string[]) =>
+    `<tr style="background:var(--bg-subtle);color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-align:left">${cols.map((c) => `<th style="padding:10px 12px">${c}</th>`).join('')}</tr>`;
+
+  async function payRep(repId: number, email: string, unpaidCents: number) {
+    const reference = window.prompt('EFT reference');
+    if (reference === null) return;
+    if (!window.confirm(`Pay ${randFromCents(unpaidCents)} to ${email}?`)) return;
+    const r = await postJson('/api/admin/reps', { action: 'mark-paid', repId, reference });
+    if (!r.ok) {
+      window.alert(r.error === 'nothing_to_pay' ? 'Nothing to pay.' : r.error || 'Could not mark as paid.');
+      return;
+    }
+    await reload();
+  }
+
+  async function setStatus(repId: number, action: 'suspend' | 'reactivate') {
+    if (action === 'suspend' && !window.confirm('Suspend this rep? Their code will stop earning commission.')) return;
+    const r = await postJson('/api/admin/reps', { action, repId });
+    if (!r.ok) {
+      window.alert(r.error || 'Could not update the rep.');
+      return;
+    }
+    await reload();
+  }
+
+  async function reload() {
+    if (openRepId !== null) await openDetail(openRepId);
+    else await loadList();
+  }
+
+  async function loadList() {
+    const data = await (await fetch('/api/admin/reps')).json();
+    reps = data.reps ?? [];
+    const t = data.totals ?? {};
+    document.getElementById('stat-reps')!.textContent = String(t.reps ?? 0);
+    document.getElementById('stat-activeReps')!.textContent = String(t.activeReps ?? 0);
+    document.getElementById('stat-mtdCents')!.textContent = randFromCents(t.mtdCents ?? 0);
+    document.getElementById('stat-unpaidCents')!.textContent = randFromCents(t.unpaidCents ?? 0);
+    document.getElementById('rep-empty')!.hidden = reps.length > 0;
+    document.getElementById('rep-list')!.innerHTML = reps
+      .map((r) => {
+        const num = 'padding:12px;text-align:right;font-weight:600';
+        return `<tr style="border-top:1px solid var(--border)">
+          <td style="padding:12px 18px;font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:800;color:var(--navy)">${esc(r.code)}</td>
+          <td style="padding:12px;font-weight:600">${esc(r.email)}</td>
+          <td style="padding:12px;white-space:nowrap">${fmtDate(r.createdAt)}</td>
+          <td style="${num}">${r.salesCount}</td>
+          <td style="${num}">${randFromCents(r.mtdCents)}</td>
+          <td style="${num}">${randFromCents(r.lifetimeCents)}</td>
+          <td style="${num};color:var(--navy);font-weight:800">${randFromCents(r.unpaidCents)}</td>
+          <td style="padding:12px;${r.bankMasked ? 'font-family:ui-monospace,Menlo,Consolas,monospace' : 'color:var(--muted)'}">${r.bankMasked ? esc(r.bankMasked) : '—'}</td>
+          <td style="padding:12px">${pill(r.status)}</td>
+          <td style="padding:12px 18px"><div style="display:flex;gap:6px;flex-wrap:wrap">
+            ${btn(`data-view="${r.id}"`, 'View')}
+            ${btn(`data-status="${r.status === 'active' ? 'suspend' : 'reactivate'}" data-rep="${r.id}"`, r.status === 'active' ? 'Suspend' : 'Reactivate')}
+            ${btn(`data-pay="${r.id}"`, 'Mark paid', r.unpaidCents <= 0 || !r.hasBank)}
+          </div></td>
+        </tr>`;
+      })
+      .join('');
+  }
+
+  async function openDetail(id: number) {
+    const data = await (await fetch(`/api/admin/reps?id=${id}`)).json();
+    if (!data.ok) {
+      window.alert(data.error || 'Could not load rep.');
+      return;
+    }
+    openRepId = id;
+    const rep = data.rep;
+    const bank = rep.bank;
+    const field = (label: string, value: unknown) =>
+      `<div><div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)">${label}</div><div style="font-size:14px;font-weight:700;color:var(--navy);margin-top:3px;word-break:break-word">${value ? esc(value) : '—'}</div></div>`;
+
+    const header = `<div style="background:#fff;border:2px solid var(--border);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px">
+      <div><a href="#" id="back-link" style="font-size:13px;font-weight:800;color:var(--accent-hover);text-decoration:none">← Back to all reps</a></div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:20px;font-weight:800;color:var(--navy)">${esc(rep.code)}</span>
+        ${pill(rep.status)}
+        <span style="font-size:13.5px;font-weight:600">${esc(rep.email)}</span>
+        <span style="font-size:13px;font-weight:600;color:var(--muted)">Joined ${fmtDate(rep.createdAt)}</span>
+      </div>
+    </div>`;
+
+    const bankCard = card(
+      'Banking details',
+      bank
+        ? `<div style="padding:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px">
+            ${field('Bank', bank.bankName)}${field('Account holder', bank.accountHolder)}${field('Account number', bank.accountNumber)}${field('Branch code', bank.branchCode)}${field('Account type', bank.accountType)}${field('Consent given', bank.consentAt ? fmtDate(bank.consentAt) : '')}
+          </div>`
+        : `<div style="padding:24px 18px;color:var(--muted);font-weight:700">No banking details yet</div>`
+    );
+
+    const sales: any[] = data.sales ?? [];
+    const salesCard = card(
+      'Sales',
+      sales.length
+        ? `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13.5px"><thead>${headRow(['Client', 'Product', 'Date', 'Sale', 'Commission', 'Status', 'Payout ref', ''])}</thead><tbody>${sales
+            .map(
+              (s) => `<tr style="border-top:1px solid var(--border)">
+              <td style="padding:12px;font-weight:800;color:var(--navy)">${esc(s.clientName)}</td>
+              <td style="padding:12px">${esc(s.productLabel)}</td>
+              <td style="padding:12px;white-space:nowrap">${fmtDate(s.createdAt)}</td>
+              <td style="padding:12px;text-align:right">${randFromCents(s.saleAmountCents)}</td>
+              <td style="padding:12px;text-align:right;font-weight:800">${randFromCents(s.commissionCents)}</td>
+              <td style="padding:12px">${pill(s.status)}${s.voidReason ? `<div style="font-size:12px;color:var(--muted);margin-top:4px">${esc(s.voidReason)}</div>` : ''}</td>
+              <td style="padding:12px">${s.payoutReference ? esc(s.payoutReference) : '—'}</td>
+              <td style="padding:12px">${s.status === 'approved' || s.status === 'pending' ? btn(`data-void="${s.id}"`, 'Void', false, true) : ''}</td>
+            </tr>`
+            )
+            .join('')}</tbody></table></div>`
+        : `<div style="padding:24px 18px;color:var(--muted);font-weight:700">No sales yet</div>`
+    );
+
+    const payouts: any[] = data.payouts ?? [];
+    const payoutsCard = card(
+      'Payouts',
+      payouts.length
+        ? `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13.5px"><thead>${headRow(['Paid', 'Period', 'Amount', 'Reference', 'Paid by'])}</thead><tbody>${payouts
+            .map(
+              (p) => `<tr style="border-top:1px solid var(--border)">
+              <td style="padding:12px;white-space:nowrap">${fmtDate(p.paidAt)}</td>
+              <td style="padding:12px">${esc(p.period)}</td>
+              <td style="padding:12px;font-weight:800">${randFromCents(p.totalCents)}</td>
+              <td style="padding:12px">${p.reference ? esc(p.reference) : '—'}</td>
+              <td style="padding:12px">${esc(p.paidBy)}</td>
+            </tr>`
+            )
+            .join('')}</tbody></table></div>`
+        : `<div style="padding:24px 18px;color:var(--muted);font-weight:700">No payouts yet</div>`
+    );
+
+    detailView.innerHTML = header + bankCard + salesCard + payoutsCard;
+    listView.style.display = "none";
+    detailView.style.display = "flex";
+    window.scrollTo(0, 0);
+  }
+
+  document.addEventListener('click', async (e) => {
+    const el = (e.target as HTMLElement).closest('button, a#back-link') as HTMLElement | null;
+    if (!el || (el as HTMLButtonElement).disabled) return;
+    if (el.id === 'back-link') {
+      e.preventDefault();
+      openRepId = null;
+      detailView.style.display = "none";
+      listView.style.display = "flex";
+      await loadList();
+    } else if (el.dataset.view) {
+      await openDetail(Number(el.dataset.view));
+    } else if (el.dataset.status) {
+      await setStatus(Number(el.dataset.rep), el.dataset.status as 'suspend' | 'reactivate');
+    } else if (el.dataset.pay) {
+      const r = reps.find((x) => x.id === Number(el.dataset.pay));
+      if (r) await payRep(r.id, r.email, r.unpaidCents);
+    } else if (el.dataset.void) {
+      const reason = window.prompt('Reason');
+      if (reason === null) return;
+      const res = await postJson('/api/admin/reps', { action: 'void', commissionId: Number(el.dataset.void), reason });
+      if (!res.ok) window.alert(res.error || 'Could not void.');
+      await reload();
+    }
+  });
+
+  (async () => {
+    if (!(await requireAdmin('/admin/reps/'))) return;
+    showContent();
+    await loadList();
+  })();
+</script>

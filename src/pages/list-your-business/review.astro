@@ -59,6 +59,11 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
               </div>
               <a href="/pricing/" style="font-size:13.5px;font-weight:800;color:var(--accent);cursor:pointer">Change plan</a>
             </div>
+            <div id="rep-wrap" hidden>
+<label for="rep-code" style="display:block;margin-top:12px;font-size:13px;color:var(--muted)">Rep code <span style="font-weight:400">(optional)</span></label>
+<input id="rep-code" maxlength="12" autocapitalize="characters" autocomplete="off" placeholder="e.g. K7M3PQ" style="padding:12px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text);width:100%;box-sizing:border-box;margin-top:4px;max-width:260px;text-transform:uppercase">
+<span id="rep-status" style="display:block;margin-top:4px;font-size:12px"></span>
+            </div>
           </div>
 
           <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px">
@@ -132,7 +137,9 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
     formatHours,
     readPlans,
     readMap,
+  saveDraft,
   } from '../../lib/list-flow-client';
+  import { attachRepCodeField } from '../../lib/rep-code-client';
   import { renderRichText, renderInline, plainText, plainLine } from '../../lib/rich-text';
 
   const root = document.getElementById('flow-root') as HTMLElement;
@@ -183,6 +190,12 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
   const yearly = paid && draft.billing === 'yearly';
   $('plan-title').textContent = !paid ? `${plan.name} — Free` : yearly ? `${plan.name} — ${plan.yearlyAmount}/year, billed yearly` : `${plan.name} — ${plan.amount}/month`;
   $('plan-note').textContent = plan.summary;
+  const repWrap = $('rep-wrap');
+  repWrap.hidden = !paid;
+  const repInput = $('rep-code') as HTMLInputElement;
+  if (paid && draft.rep_code) repInput.value = draft.rep_code;
+  const getRepCode = attachRepCodeField(repInput, $('rep-status'));
+  repInput.addEventListener('input', () => saveDraft({ rep_code: getRepCode() }));
   $('go-btn').textContent = paid ? 'Continue to payment' : 'Send to review';
 
   $('back-btn').addEventListener('click', () => {
@@ -215,6 +228,7 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
           billing: yearly ? 'yearly' : 'monthly',
           company_url: draft.company_url,
           loadedAt: draft.loadedAt,
+          repCode: paid ? getRepCode() : '',
         }),
       });
       const result = (await res.json()) as { ok?: boolean; error?: string; reviewUrl?: string; redirectUrl?: string };

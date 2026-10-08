@@ -376,6 +376,11 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
               </div>
             </div>
             <div style="margin-top:12px"><BillingToggle note="2 months free" /></div>
+            <div style="margin-top:10px">
+<label for="rep-code" style="display:block;margin-top:12px;font-size:13px;color:var(--muted)">Rep code <span style="font-weight:400">(optional)</span></label>
+<input id="rep-code" maxlength="12" autocapitalize="characters" autocomplete="off" placeholder="e.g. K7M3PQ" style="padding:12px;border:2px solid var(--border);border-radius:10px;font-size:14.5px;outline:none;background:#fff;color:var(--text);width:100%;box-sizing:border-box;margin-top:4px;max-width:260px;text-transform:uppercase">
+<span id="rep-status" style="display:block;margin-top:4px;font-size:12px"></span>
+            </div>
             <p id="plan-status" role="status" style="margin:10px 0 0;font-size:13px;font-weight:700;color:var(--muted)"></p>
             <p style="margin:8px 0 0;font-size:13px;font-weight:600;color:var(--muted)">By paying you agree to the <a href="/terms/" style="color:var(--accent-hover);font-weight:800">Terms</a> and ask us to activate your plan immediately.</p>
             <p style="margin:8px 0 0;font-size:13px;font-weight:600;color:var(--muted)"><a href="/pricing/" style="color:var(--accent-hover);font-weight:800">Compare plans</a></p>
@@ -484,10 +489,12 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
 
 <script>
   import { currentBilling, onBillingChange } from '../../lib/billing-toggle';
+  import { attachRepCodeField } from '../../lib/rep-code-client';
   import { attachRichTextEditor } from '../../lib/rich-text-editor';
   import { canFormatDescription, SHORT_DESC_MAX, LONG_DESC_MAX } from '../../lib/rich-text';
   const params = new URLSearchParams(window.location.search);
   const businessId = params.get('id');
+  const getRepCode = attachRepCodeField(document.getElementById('rep-code') as HTMLInputElement, document.getElementById('rep-status')!);
   const main = document.getElementById('owner-main')!;
   const loading = document.getElementById('loading')!;
   const dashboard = document.getElementById('dashboard')!;
@@ -745,7 +752,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
         const res = await fetch('/api/subscribe/start', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ businessId: Number(businessId), tier: t, billing: currentBilling() }),
+          body: JSON.stringify({ businessId: Number(businessId), tier: t, billing: currentBilling(), repCode: getRepCode() }),
         });
         const result = await res.json();
         if (result.ok) window.location.href = result.redirectUrl;
@@ -897,7 +904,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
         const res = await fetch('/api/subscribe/start', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ businessId: Number(businessId), productType: 'tourism_sponsor', productTarget: target, billing: currentBilling() }),
+          body: JSON.stringify({ businessId: Number(businessId), productType: 'tourism_sponsor', productTarget: target, billing: currentBilling(), repCode: getRepCode() }),
         });
         const result = await res.json();
         if (result.ok) window.location.href = result.redirectUrl;

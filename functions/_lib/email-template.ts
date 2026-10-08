@@ -539,3 +539,104 @@ export function reportResolvedEmailHtml(site: Site, data: ReportResolvedEmailDat
 function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } as Record<string, string>)[c]!);
 }
+
+// ---- Sales rep emails (functions/_lib/reps.ts) ----
+
+function repShell(site: Site, heading: string, bodyHtml: string, ctaUrl: string, ctaLabel: string): string {
+  const t = site.theme;
+  const bannerUrl = `https://${site.domain}${site.bannerImage}`;
+  const logoUrl = `https://${site.domain}/logo-icon.png`;
+  return `<!doctype html>
+<html>
+<body style="margin:0;padding:0;background:${t.bgSubtle};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${t.bgSubtle};padding:24px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:${t.bgCard};border-radius:12px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.08);max-width:560px;">
+          <tr>
+            <td>
+              <img src="${bannerUrl}" width="560" alt="${escapeHtml(site.siteName)}" style="display:block;width:100%;max-width:560px;height:160px;object-fit:cover;">
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 32px 8px;">
+              <img src="${logoUrl}" width="36" height="41" alt="" style="display:block;margin-bottom:12px;">
+              <h1 style="margin:0 0 12px;font-size:20px;color:${t.navy};">${heading}</h1>
+              ${bodyHtml}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:8px 32px 28px;">
+              <a href="${ctaUrl}" style="display:inline-block;background:${t.accent};color:${t.accentContrast};text-decoration:none;font-weight:700;font-size:15px;padding:12px 24px;border-radius:8px;">${ctaLabel}</a>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:20px 0 0;color:${t.textMuted};font-size:12px;">${escapeHtml(site.siteName)} · ${escapeHtml(site.contactEmail)}</p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+function repP(site: Site, html: string): string {
+  return `<p style="margin:0 0 14px;color:${site.theme.textMuted};font-size:14px;line-height:1.55;">${html}</p>`;
+}
+
+export interface RepWelcomeEmailData {
+  code: string;
+  shareUrl: string;
+  dashboardUrl: string;
+}
+
+export function repWelcomeEmailHtml(site: Site, data: RepWelcomeEmailData): string {
+  const t = site.theme;
+  const body =
+    repP(site, 'Share your code with local businesses. When one buys a listing plan or sponsorship using it, you earn one month’s price of what they bought.') +
+    `<p style="margin:0 0 6px;color:${t.textMuted};font-size:12px;text-transform:uppercase;letter-spacing:0.04em;">Your code</p>` +
+    `<p style="margin:0 0 14px;font-size:30px;font-weight:800;letter-spacing:0.12em;color:${t.navy};">${escapeHtml(data.code)}</p>` +
+    repP(site, `Your share link: <a href="${escapeHtml(data.shareUrl)}" style="color:${t.accent};font-weight:700;">${escapeHtml(data.shareUrl)}</a>`) +
+    repP(site, 'You earn on the first payment only, not renewals. Commission is paid monthly by EFT once you have added your bank details on your dashboard.');
+  return repShell(site, `You’re now a ${escapeHtml(site.siteName)} sales rep`, body, data.dashboardUrl, 'Open your dashboard →');
+}
+
+export function repWelcomeEmailText(site: Site, data: RepWelcomeEmailData): string {
+  return `You're now a ${site.siteName} sales rep.\n\nShare your code with local businesses. When one buys a listing plan or sponsorship using it, you earn one month's price of what they bought.\n\nYour code: ${data.code}\nYour share link: ${data.shareUrl}\n\nYou earn on the first payment only, not renewals. Commission is paid monthly by EFT once you have added your bank details on your dashboard.\n\nDashboard: ${data.dashboardUrl}\n\nThe ${site.siteName} team`;
+}
+
+export interface RepSaleEmailData {
+  clientName: string;
+  productLabel: string;
+  commissionRand: string;
+  dashboardUrl: string;
+}
+
+export function repSaleEmailHtml(site: Site, data: RepSaleEmailData): string {
+  const strong = (s: string) => `<strong style="color:${site.theme.text};">${escapeHtml(s)}</strong>`;
+  const body =
+    repP(site, `${strong(data.clientName)} just bought ${strong(data.productLabel)} using your code.`) +
+    repP(site, `You earned ${strong('R' + data.commissionRand)}. It will be included in your next monthly payout.`);
+  return repShell(site, 'You made a sale', body, data.dashboardUrl, 'View your earnings →');
+}
+
+export function repSaleEmailText(site: Site, data: RepSaleEmailData): string {
+  return `You made a sale.\n\n${data.clientName} just bought ${data.productLabel} using your code.\n\nYou earned R${data.commissionRand}. It will be included in your next monthly payout.\n\nDashboard: ${data.dashboardUrl}\n\nThe ${site.siteName} team`;
+}
+
+export interface RepPayoutEmailData {
+  period: string;
+  totalRand: string;
+  reference: string | null;
+  dashboardUrl: string;
+}
+
+export function repPayoutEmailHtml(site: Site, data: RepPayoutEmailData): string {
+  const body =
+    repP(site, `We’ve paid <strong style="color:${site.theme.text};">R${escapeHtml(data.totalRand)}</strong> to your bank account for ${escapeHtml(data.period)}.`) +
+    (data.reference ? repP(site, `Payment reference: ${escapeHtml(data.reference)}`) : '');
+  return repShell(site, `Your ${escapeHtml(data.period)} commission has been paid`, body, data.dashboardUrl, 'View your earnings →');
+}
+
+export function repPayoutEmailText(site: Site, data: RepPayoutEmailData): string {
+  return `Your ${data.period} commission has been paid.\n\nWe've paid R${data.totalRand} to your bank account for ${data.period}.${data.reference ? `\nPayment reference: ${data.reference}` : ''}\n\nDashboard: ${data.dashboardUrl}\n\nThe ${site.siteName} team`;
+}

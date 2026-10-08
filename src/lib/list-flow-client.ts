@@ -33,6 +33,8 @@ export interface Draft {
   billing: 'monthly' | 'yearly';
   company_url: string; // honeypot — always empty for real users
   loadedAt: number;
+  /** Optional sales-rep code entered at the review step. */
+  rep_code: string;
   // step 2
   street: string;
   postal: string;
@@ -73,6 +75,7 @@ export function emptyDraft(): Draft {
     billing: 'monthly',
     company_url: '',
     loadedAt: Date.now(),
+    rep_code: '',
     street: '',
     postal: '',
     centre: '',

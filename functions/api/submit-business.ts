@@ -5,6 +5,7 @@ import { getSessionUser } from '../_lib/auth';
 import { signFields, buildCheckoutParams, payfastConfigured, checkoutFrequency, type PayfastEnv } from '../_lib/payfast';
 import { TIER_NAMES, tierPriceCents, centsToRand, parseBillingPeriod } from '../_lib/pricing';
 import { sendEmail } from '../_lib/send-email';
+import { resolveRepCode } from '../_lib/reps';
 import { escapeHtml } from '../../src/lib/business-submission';
 import { formatPhoneZA } from '../../src/lib/phone';
 import { plainLine, descriptionLimitError, toSingleParagraph, LONG_DESC_MAX, RAW_SLACK } from '../../src/lib/rich-text';
@@ -105,6 +106,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // submitter is logged in this lets the eventual published business show
   // up under their "My Businesses" once approved+confirmed.
   const sessionUser = await getSessionUser(context.request, db);
+  const repCode = await resolveRepCode(db, body.repCode, sessionUser?.id ?? null);
 
   // Plan chosen at signup (0=Basic/Free, 1=Verified, 2=Featured) — see the
   // Premium Listings v2 plan. Purely additive: an invalid/missing value or
@@ -129,10 +131,10 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const insert = await db
     .prepare(
       `INSERT INTO pending_submissions
-        (token, name, category_slug, suburb_slug, address, phone, email, website, description, short_description, submitted_by_user_id, chosen_tier, hours, shopping_center_slug, chosen_billing_period)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        (token, name, category_slug, suburb_slug, address, phone, email, website, description, short_description, submitted_by_user_id, chosen_tier, hours, shopping_center_slug, chosen_billing_period, rep_code)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
-    .bind(token, name, categorySlug, suburbSlug, address, phone, email, website, description, shortDescription, sessionUser?.id ?? null, chosenTier, hours, centre?.slug ?? null, billingPeriod)
+    .bind(token, name, categorySlug, suburbSlug, address, phone, email, website, description, shortDescription, sessionUser?.id ?? null, chosenTier, hours, centre?.slug ?? null, billingPeriod, repCode)
     .run();
   const submissionId = insert.meta.last_row_id;
 
@@ -153,6 +155,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     ...(description ? [`Description: ${plainLine(description)}`] : []),
     `Plan chosen: ${TIER_NAMES[chosenTier]}${yearly ? ' (billed yearly)' : ''}`,
     ...(sessionUser ? [`Submitted by account: ${sessionUser.email}`] : []),
+    ...(repCode ? [`Rep code: ${repCode}`] : []),
   ];
   await sendEmail(context.env, {
     from: `${site.siteName} <${site.contactEmail}>`,
@@ -171,7 +174,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // to the admin email above — returning it here would let the submitter
   // approve their own listing via /api/confirm-listing.
   if (chosenTier === 0 || !payfastConfigured(context.env)) {
-    return json({ ok: true });
+    return json({ ok: true, repApplied: !!repCode });
   }
 
   // Paid tier: build the PayFast checkout right here rather than a second
@@ -182,7 +185,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   // business-submission.ts's insertApprovedBusiness) via the
   // "submission:<id>" branch of subscribe/notify.ts.
   const priceCents = await tierPriceCents(db, chosenTier, billingPeriod);
-  if (!priceCents) return json({ ok: true });
+  if (!priceCents) return json({ ok: true, repApplied: !!repCode });
 
   const amount = centsToRand(priceCents);
   const mPaymentId = crypto.randomUUID();
@@ -221,7 +224,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const params = buildCheckoutParams(fields, signature);
   const redirectUrl = `https://${context.env.PAYFAST_HOST}/eng/process?${params.toString()}`;
 
-  return json({ ok: true, redirectUrl });
+  return json({ ok: true, redirectUrl, repApplied: !!repCode });
 };
 
 function json(data: unknown, status = 200): Response {

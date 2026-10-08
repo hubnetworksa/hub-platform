@@ -1,6 +1,7 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { getSite } from '../../_lib/site';
+import { resolveRepCode } from '../../_lib/reps';
 import { isValidSponsorTarget } from '../../_lib/sponsor-targets';
 import { signFields, buildCheckoutParams, payfastConfigured, checkoutFrequency, type PayfastEnv } from '../../_lib/payfast';
 import {
@@ -43,6 +44,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return json({ ok: false, error: 'Invalid request body.' }, 400);
   }
 
+  const repCode = await resolveRepCode(db, body.repCode, user.id);
   const businessId = Number(body.businessId);
   if (!businessId) return json({ ok: false, error: 'Missing business.' }, 400);
 
@@ -143,11 +145,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (!open) {
     await db
       .prepare(
-        `INSERT INTO subscriptions (business_id, tier, product_type, product_target, m_payment_id, status, billing_period)
-         VALUES (?, ?, ?, ?, ?, 'pending', ?)`
+        `INSERT INTO subscriptions (business_id, tier, product_type, product_target, m_payment_id, status, billing_period, rep_code)
+         VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)`
       )
-      .bind(businessId, tier, productType, productTarget, mPaymentId, billingPeriod)
+      .bind(businessId, tier, productType, productTarget, mPaymentId, billingPeriod, repCode)
       .run();
+  } else if (repCode) {
+    await db.prepare('UPDATE subscriptions SET rep_code = ? WHERE m_payment_id = ?').bind(repCode, mPaymentId).run();
   }
 
   const origin = new URL(context.request.url).origin;
@@ -178,7 +182,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const signature = await signFields(fields, context.env.PAYFAST_PASSPHRASE!);
   const params = buildCheckoutParams(fields, signature);
 
-  return json({ ok: true, redirectUrl: `https://${context.env.PAYFAST_HOST}/eng/process?${params.toString()}` });
+  return json({ ok: true, repApplied: !!repCode, redirectUrl: `https://${context.env.PAYFAST_HOST}/eng/process?${params.toString()}` });
 };
 
 function json(data: unknown, status = 200): Response {
