@@ -1,10 +1,17 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
+// Index-gate report. Response fields: threshold (active gate, 0 = off),
+// reviewThreshold (weak-listing cutoff, body/query `reviewThreshold` 1..15,
+// default REVIEW_SCORE), totals (indexed/noindex follow the active gate),
+// histogram, missingSignals (across weak listings), weakCount (score <
+// reviewThreshold, not paid/claimed), weakest (up to 50 lowest-scoring weak
+// listings), almost/almostCount (score === reviewThreshold-1, cap 50).
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { json } from '../../_lib/messages';
 import { getSite } from '../../_lib/site';
 import {
   MAX_SCORE,
   DEFAULT_MIN_SCORE,
+  REVIEW_SCORE,
   POINTS,
   SIGNAL_LABELS,
   scoreBusiness,
@@ -89,6 +96,20 @@ async function handle(context: Parameters<PagesFunction<Env>>[0]): Promise<Respo
 
   const site = getSite(context.env.SITE);
 
+  let reviewThreshold = REVIEW_SCORE;
+  {
+    let raw: unknown = new URL(context.request.url).searchParams.get('reviewThreshold');
+    if (raw == null && context.request.method === 'POST') {
+      try {
+        raw = ((await context.request.clone().json()) as { reviewThreshold?: unknown })?.reviewThreshold;
+      } catch {
+        // no body
+      }
+    }
+    const n = typeof raw === 'number' ? raw : Number.parseInt(String(raw ?? ''), 10);
+    if (Number.isInteger(n) && n >= 1 && n <= MAX_SCORE) reviewThreshold = n;
+  }
+
   let threshold = DEFAULT_MIN_SCORE;
   try {
     const row = await db.prepare(`SELECT value FROM site_settings WHERE key = 'index_min_score'`).first<{ value: string }>();
@@ -113,6 +134,8 @@ async function handle(context: Parameters<PagesFunction<Env>>[0]): Promise<Respo
   const histogram = Array.from({ length: MAX_SCORE + 1 }, (_, score) => ({ score, total: 0, forced: 0 }));
   const almost: Array<{ slug: string; name: string; suburb: string; score: number; missing: SignalKey[] }> = [];
   let almostCount = 0;
+  let weakCount = 0;
+  const weakest: Array<{ slug: string; name: string; suburb: string; score: number; missing: SignalKey[] }> = [];
   let indexed = 0;
   let protectedCount = 0;
   let paidCount = 0;
@@ -144,18 +167,20 @@ async function handle(context: Parameters<PagesFunction<Env>>[0]): Promise<Respo
     if (forced) bucket.forced++;
 
     const missing = missingSignals(res.signals);
-    if (decision === 'index') {
-      indexed++;
-    } else {
+    if (decision === 'index') indexed++;
+    if (!forced && res.score < reviewThreshold) {
+      weakCount++;
       for (const k of missing) missingCounts.set(k, (missingCounts.get(k) ?? 0) + 1);
+      weakest.push({ slug: r.slug, name: r.name, suburb: r.suburb ?? '', score: res.score, missing });
     }
-    if (!forced && res.score === threshold - 1) {
+    if (!forced && res.score === reviewThreshold - 1) {
       almostCount++;
       almost.push({ slug: r.slug, name: r.name, suburb: r.suburb ?? '', score: res.score, missing });
     }
   }
 
   almost.sort((a, b) => a.name.localeCompare(b.name));
+  weakest.sort((a, b) => a.score - b.score || a.name.localeCompare(b.name));
 
   const pointsFor = (k: SignalKey): number => (k === 'description' ? POINTS.descriptionLong : (POINTS as unknown as Record<string, number>)[k]);
 
@@ -164,6 +189,7 @@ async function handle(context: Parameters<PagesFunction<Env>>[0]): Promise<Respo
     site: site.slug,
     generatedAt: new Date().toISOString(),
     threshold,
+    reviewThreshold,
     max: MAX_SCORE,
     protectedList: { count: prot.set.size, source: prot.source, generatedAt: prot.generatedAt },
     totals: { listings: rows.length, indexed, noindex: rows.length - indexed, protected: protectedCount, paidOrClaimed: paidCount },
@@ -173,6 +199,8 @@ async function handle(context: Parameters<PagesFunction<Env>>[0]): Promise<Respo
       .sort((a, b) => b.count - a.count),
     almost: almost.slice(0, 50),
     almostCount,
+    weakCount,
+    weakest: weakest.slice(0, 50),
   });
 }
 
