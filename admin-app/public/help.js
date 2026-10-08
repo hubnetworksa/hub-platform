@@ -101,7 +101,7 @@ export const HELP = {
     leftOut: 'Indexing states per page type. "Discovered – not indexed" = Google will not spend crawl on it; thin content is the usual cause.',
     gapsGoogle: 'Queries where you rank 10+. Small content improvements move these first.',
     gapsOnSite: 'On-site searches with 1–2 results. Categories or suburbs worth filling.',
-    authority: "0–10 link-strength score from the open web graph. Benchmark only — Google doesn't use it. Watch the trend, not the number.",
+    authority: "Moz's 0–100 estimate of how strongly your domain is linked. Benchmark only — Google doesn't use it. Watch the trend, not the number.",
     protectedPages: 'Pages with Google impressions in 90 days. The index gate never hides these.',
     topQueries: 'What people searched on Google before clicking or seeing your site. Match these words in titles and descriptions.',
     checked: 'The day Google last inspected this page. Old dates mean the verdict may have changed.',
