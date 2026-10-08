@@ -12,7 +12,8 @@ interface SiteData {
   daily: { date: string; clicks: number; impressions: number; ctr: number; position: number }[];
   pagesSeen: { date: string; pages: number }[];
   gaps: { query: string; impressions: number; clicks: number; position: number }[];
-  top: { query: string; impressions: number; clicks: number; position: number }[];
+  top: { query: string; impressions: number; clicks: number; position: number; prev: { impressions: number; clicks: number; position: number } | null }[];
+  topWindow?: { startDate: string; endDate: string; prevStartDate: string; prevEndDate: string };
   sitemapUrls: number;
   inspections: Record<string, [string, string | null, string | null, string]>;
   error: string | null;
@@ -80,6 +81,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         pages_seen: d?.pagesSeen ?? [],
         gaps: d?.gaps ?? [],
         top: d?.top ?? [],
+        top_window: d?.topWindow ?? null,
         index,
         onsite_thin: onsite.filter((q) => q.results <= 2 && q.people >= 2).slice(0, 30),
         error: d?.error ?? null,

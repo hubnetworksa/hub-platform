@@ -46,7 +46,7 @@ export const HELP = {
     opens: 'Phones opening the site from its home-screen icon, per day. Rising opens mean installed users keep coming back.',
     tapRate: 'Contact taps ÷ views for a listing. High = the page convinces; low = page or business looks unconvincing.',
     searches: 'The exact words visitors type. Missing categories and gaps for new listings come from here.',
-    topQueries: 'What people typed in Google before clicking your site. Match these words in titles and descriptions.',
+    topQueries: 'Searches that showed your pages in the last 7 days vs the 7 before. A query that was high last month but is gone now is a page Google dropped.',
     enquiriesPerListing: 'Enquiries sent through this listing’s form in the period. Listings with views but none need a better page.',
     channelSplit: 'Phone, WhatsApp and website taps on this listing. Shows how its customers prefer to reach it.',
     paidVsFree: 'Average views and contact taps per listing, paid against free. Use the gap to show owners what a plan earns.',
@@ -102,7 +102,7 @@ export const HELP = {
     gapsGoogle: 'Queries where you rank 10+. Small content improvements move these first.',
     gapsOnSite: 'On-site searches with 1–2 results. Categories or suburbs worth filling.',
     protectedPages: 'Pages with Google impressions in 90 days. The index gate never hides these.',
-    topQueries: 'What people searched on Google before clicking or seeing your site. Match these words in titles and descriptions.',
+    topQueries: 'Searches that showed your pages in the last 7 days vs the 7 before. A query that was high last month but is gone now is a page Google dropped.',
     checked: 'The day Google last inspected this page. Old dates mean the verdict may have changed.',
   },
   social: {
