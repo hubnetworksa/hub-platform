@@ -180,7 +180,7 @@ const ROUTES = [
   ['#/listings', 'Listings', 'layers'],
   ['#/google', 'Google', 'globe'],
   ['#/analytics', 'Analytics', 'chart'],
-  ['#/index-gate', 'Indexing', 'globe'],
+  ['#/index-gate', 'Listings to fix', 'globe'],
   ['#/money', 'Money', 'receipt'],
   // Sales reps (#/reps) is hidden until the rep programme launches; re-add the route here.
   ['#/activity', 'Activity log', 'news'],

@@ -4,24 +4,27 @@ import { jsonBody } from '../_lib/body';
 import { readReport, writeReport, logActivity } from '../_lib/alerts';
 import { cityAdmin } from '../_lib/city-api';
 
-// Indexing screen: per-city content-score histogram from the city's
-// /api/admin/index-gate. Cached an hour in `reports` (kind index-gate:<slug>:v1);
+// Listings-to-fix screen: per-city content-score histogram from the city's
+// /api/admin/index-gate. Cached an hour in `reports` (kind index-gate:<slug>:v2);
 // ?refresh=<slug> rebuilds that city now.
-const key = (slug: string) => `index-gate:${slug}:v1`;
+const key = (slug: string) => `index-gate:${slug}:v2`;
 const TTL_MS = 3600_000;
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const env = context.env;
   const db = env.ADMIN_DB;
   const actor = String(context.data.email);
-  const refresh = new URL(context.request.url).searchParams.get('refresh');
+  const params = new URL(context.request.url).searchParams;
+  const refresh = params.get('refresh');
+  const reviewN = Number.parseInt(params.get('review') ?? '', 10);
+  const reviewThreshold = Number.isInteger(reviewN) && reviewN >= 1 && reviewN <= 15 ? reviewN : undefined;
   const sites = await Promise.all(
     hubSites(env).map(async (s) => {
       try {
         const cached = await readReport<Record<string, unknown>>(db, key(s.slug));
         const age = cached ? Date.now() - new Date(`${cached.updated_at.replace(' ', 'T')}Z`).getTime() : Infinity;
         if (cached && age < TTL_MS && refresh !== s.slug) return { ...cached.data, name: s.name, domain: s.domain, updated_at: cached.updated_at };
-        const r = await cityAdmin(db, s, actor, '/api/admin/index-gate', {});
+        const r = await cityAdmin(db, s, actor, '/api/admin/index-gate', reviewThreshold ? { reviewThreshold } : {});
         if (!r.ok) throw new Error(r.error || `${s.name} said no (${r.status}).`);
         const data = r.body as Record<string, unknown>;
         await writeReport(db, key(s.slug), data);

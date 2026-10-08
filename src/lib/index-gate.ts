@@ -1,5 +1,9 @@
 // Index gate: decides whether a business page is indexed by search engines.
 //
+// The gate is OFF by default (DEFAULT_MIN_SCORE = 0): nothing is noindexed
+// unless an admin sets `index_min_score` above 0. The score is mainly used
+// for the Hub Admin "Listings to fix" list (weak = below REVIEW_SCORE).
+//
 // Every listing gets a content score (0..MAX_SCORE) from the signals below.
 // Listings at or above the city threshold are indexed (robots meta + sitemap);
 // the rest stay live but carry `noindex, follow` and leave the sitemap. The
@@ -16,7 +20,9 @@
 import { plainLine, canFormatDescription } from './rich-text';
 
 export const MAX_SCORE = 15;
-export const DEFAULT_MIN_SCORE = 6;
+export const DEFAULT_MIN_SCORE = 0;
+// Score below which a listing counts as weak. Reporting only; never hides anything.
+export const REVIEW_SCORE = 6;
 export const POINTS = { descriptionLong: 5, descriptionMid: 2, hours: 2, phone: 1, website: 1, map: 1, media: 1, claimed: 2, reviews: 2 } as const;
 
 export type SignalKey = 'description' | 'hours' | 'phone' | 'website' | 'map' | 'media' | 'claimed' | 'reviews';

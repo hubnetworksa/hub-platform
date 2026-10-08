@@ -1,13 +1,13 @@
-// Indexing: which listings each city shows to Google (content score gate), and
-// the per-city threshold the owner can tune.
+// Listings to fix: content score per listing (out of 15). Information only;
+// the optional Google gate lives in a collapsed Advanced card.
 
 export async function render(view, ui) {
   const { h, fill, api, mobileHead, pageHead, errorBox } = ui;
-  const head = [mobileHead('Indexing'), pageHead('Indexing', 'Only listings with enough real content are shown to Google. Everything else stays live but hidden from Google’s index.')];
+  const head = [mobileHead('Listings to fix'), pageHead('Listings to fix', 'Every listing is scored out of 15 for real content. Nothing is hidden from Google — this screen shows what to improve.')];
   fill(view, head, h('div', { class: 'skeleton' }));
   let d;
   try {
-    d = await api('/api/index-gate');
+    d = await api('/api/index-gate?review=6');
   } catch (e) {
     fill(view, head, errorBox(e));
     return;
@@ -23,7 +23,7 @@ export async function render(view, ui) {
 
   async function reload(slug) {
     try {
-      const r = await api(`/api/index-gate?refresh=${encodeURIComponent(slug)}`);
+      const r = await api(`/api/index-gate?review=6&refresh=${encodeURIComponent(slug)}`);
       const s = r.sites.find((x) => x.slug === slug);
       if (s) paint(ui, slot[slug], s, reload);
     } catch {
@@ -38,29 +38,32 @@ function paint(ui, card, s, reload) {
   const color = ui.siteColor ? ui.siteColor(s.slug) : 'var(--s1)';
   const title = h('h3', { class: 'card-sub inline-city' }, h('span', { class: 'city-dot', style: `background:${color}` }), s.name || ui.siteName(s.slug));
   if (s.error) {
-    card.replaceChildren(title, h('p', { class: 'sub', style: 'margin-top:0' }, `Indexing data unavailable: ${s.error}`));
+    card.replaceChildren(title, h('p', { class: 'sub', style: 'margin-top:0' }, `Listing data unavailable: ${s.error}`));
     return;
   }
   const max = s.max ?? 15;
   const hist = s.histogram || [];
   const totalListings = s.totals?.listings ?? hist.reduce((a, x) => a + x.total, 0);
+  const review = s.reviewThreshold ?? 6;
+  const gateOn = (s.threshold ?? 0) > 0;
   const projected = (t) => hist.reduce((a, x) => a + (x.score >= t ? x.total : x.forced || 0), 0);
 
   const tile = (label, value, tip) => h('div', { class: 'tile', title: tip }, h('div', { class: 'label' }, label), h('div', { class: 'value' }, value));
   const tiles = h(
     'div',
     { class: 'tiles' },
-    tile('Indexed', f(s.totals?.indexed ?? 0), 'Listings Google is allowed to show'),
-    tile('Noindex', f(s.totals?.noindex ?? 0), 'Live for visitors, hidden from Google until improved'),
-    tile('Protected', f(s.totals?.protected ?? 0), 'Had Google impressions in the last 90 days — never hidden'),
-    tile('Threshold', String(s.threshold), 'Minimum content score (0–15) a listing needs')
+    tile('Listings', f(totalListings), ui.HELP.indexGate.listings),
+    tile('Weak', f(s.weakCount ?? 0), ui.HELP.indexGate.weak),
+    tile('Almost there', f(s.almostCount ?? 0), ui.HELP.indexGate.almost),
+    tile('Protected', f(s.totals?.protected ?? 0), ui.HELP.indexGate.protected)
   );
+  title.appendChild(h('span', { class: 'pill', title: ui.HELP.indexGate.gate, style: 'margin-left:8px;font-size:12px' }, gateOn ? `Google gate: on, threshold ${s.threshold}` : 'Google gate: off'));
 
   const chart = h('div');
   requestAnimationFrame(() => {
     ui.charts.columnChart(chart, {
       x: hist.map((x) => x.score),
-      series: [{ name: 'Listings', color, colorAt: (i) => (hist[i].score < s.threshold ? 'var(--muted)' : color), values: hist.map((x) => x.total) }],
+      series: [{ name: 'Listings', color, colorAt: (i) => (hist[i].score < review ? 'var(--muted)' : color), values: hist.map((x) => x.total) }],
       label: 'Listings per content score',
       height: 200,
     });
@@ -84,7 +87,7 @@ function paint(ui, card, s, reload) {
       onsubmit: async (e) => {
         e.preventDefault();
         const t = val();
-        if (!confirm(`Set ${s.name} threshold to ${t}? About ${f(projected(t))} of ${f(totalListings)} listings will be indexed. The site rebuilds within ~15 minutes.`)) return;
+        if (!confirm(`Set ${s.name} threshold to ${t}? About ${f(totalListings - projected(t))} of ${f(totalListings)} listings would be hidden from Google. The site rebuilds within ~15 minutes.`)) return;
         btn.disabled = true;
         try {
           await ui.api('/api/index-gate', 'POST', { site: s.slug, threshold: t });
@@ -107,33 +110,45 @@ function paint(ui, card, s, reload) {
 
   const labels = Object.fromEntries((s.missingSignals || []).map((m) => [m.key, m.label]));
   const almost = s.almost || [];
-  const table = almost.length
-    ? ui.charts.dataTable(
-        [
-          {
-            key: 'name',
-            label: 'Name',
-            render: (r) => h('a', { href: `https://${s.domain}/business/${r.slug}/`, target: '_blank', rel: 'noopener' }, r.name),
-          },
-          { key: 'suburb', label: 'Suburb' },
-          { key: 'score', label: 'Score', num: true },
-          { key: 'missingText', label: 'Missing' },
-        ],
-        almost.map((r) => ({ ...r, missingText: (r.missing || []).map((k) => labels[k] || k).join(', ') }))
-      )
-    : null;
+  const weakest = s.weakest || [];
+  const mkTable = (rows) =>
+    rows.length
+      ? ui.charts.dataTable(
+          [
+            {
+              key: 'name',
+              label: 'Name',
+              render: (r) => h('a', { href: `https://${s.domain}/business/${r.slug}/`, target: '_blank', rel: 'noopener' }, r.name),
+            },
+            { key: 'suburb', label: 'Suburb' },
+            { key: 'score', label: 'Score', num: true },
+            { key: 'missingText', label: 'Missing' },
+          ],
+          rows.map((r) => ({ ...r, missingText: (r.missing || []).map((k) => labels[k] || k).join(', ') }))
+        )
+      : null;
+  const table = mkTable(almost);
+  const weakTable = mkTable(weakest);
+  const advanced = h(
+    'details',
+    { class: 'advanced' },
+    h('summary', {}, 'Advanced: hide weak listings from Google'),
+    h('p', { class: 'banner' }, 'Off by owner decision — only turn on if you want listings below the score left out of Google.'),
+    form
+  );
+  const sect = (text, tip) => h('p', { class: 'sub' }, text + ' ', ui.help(tip));
 
   card.replaceChildren(
     title,
-    s.protectedList?.source === 'missing' ? h('p', { class: 'banner' }, 'No Search Console page list yet — the gate stays off for this city until the weekly Search Console report has run.') : null,
     tiles,
-    h('p', { class: 'sub' }, 'Listings per content score'),
+    sect('Listings per content score', ui.HELP.indexGate.listings),
     chart,
-    h('p', { class: 'sub' }, 'What noindexed listings are missing'),
+    sect('What weak listings are missing', ui.HELP.indexGate.missing),
     bars,
-    h('p', { class: 'sub' }, 'Threshold'),
-    form,
-    table ? h('p', { class: 'sub' }, `Almost there: listings one point short of the threshold — the quickest wins (${f(s.almostCount ?? almost.length)} in total)`) : null,
-    table
+    table ? sect(`Almost there: one point under the review score of ${review} (${f(s.almostCount ?? almost.length)} in total)`, ui.HELP.indexGate.almost) : null,
+    table,
+    weakTable ? sect(`Weakest listings (${f(s.weakCount ?? weakest.length)} below ${review})`, ui.HELP.indexGate.weakest) : null,
+    weakTable,
+    advanced
   );
 }
