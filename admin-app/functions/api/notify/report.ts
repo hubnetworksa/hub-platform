@@ -30,18 +30,5 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   }
   if (!data || typeof data !== 'object' || Array.isArray(data)) return json({ ok: false, error: 'Report must be an object.' }, 400);
   await writeReport(db, kind, data);
-  if (kind === 'google') {
-    const sites = (data as { sites?: Record<string, { authority?: { moz?: { da?: number; linkingDomains?: number | null; checkedAt?: string } } | null }> }).sites ?? {};
-    for (const [site, s] of Object.entries(sites)) {
-      const o = s?.authority?.moz;
-      if (!o || typeof o.da !== 'number' || !o.checkedAt) continue;
-      const day = new Date(o.checkedAt).toISOString().slice(0, 10);
-      await db
-        .prepare('INSERT INTO authority_daily (day, site, score, rank) VALUES (?, ?, ?, ?) ON CONFLICT(day, site) DO UPDATE SET score = excluded.score, rank = excluded.rank')
-        .bind(day, site, o.da, typeof o.linkingDomains === 'number' ? o.linkingDomains : null)
-        .run()
-        .catch(() => {});
-    }
-  }
   return json({ ok: true });
 };
