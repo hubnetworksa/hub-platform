@@ -8,7 +8,7 @@
 //   #/settings Settings: sign-in, password, weekly email, admins and push
 //              notifications on this device
 // The other screens are separate modules in screens/, loaded when opened:
-//   #/inbox, #/health, #/listings, #/google, #/analytics, #/index-gate, #/money, #/activity, #/social
+//   #/inbox, #/health, #/listings, #/google, #/recovery, #/analytics, #/index-gate, #/money, #/activity, #/social
 import { lineChart, columnChart, barList, dataTable, fmt } from './charts.js';
 import { motion } from './motion.js';
 import { HELP, helpIcon, attachTip } from './help.js';
@@ -184,6 +184,7 @@ const ROUTES = [
   ['#/health', 'Health', 'activity', true],
   ['#/listings', 'Listings', 'layers'],
   ['#/google', 'Google', 'globe'],
+  ['#/recovery', 'Site recovery', 'activity'],
   ['#/analytics', 'Analytics', 'chart'],
   ['#/index-gate', 'Listings to fix', 'globe'],
   ['#/money', 'Money', 'receipt'],
@@ -2256,6 +2257,7 @@ const SCREENS = {
   '#/health': 'health',
   '#/listings': 'listings',
   '#/google': 'google',
+  '#/recovery': 'recovery',
   '#/analytics': 'analytics',
   '#/index-gate': 'index-gate',
   '#/money': 'money',
