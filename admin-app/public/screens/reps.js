@@ -44,6 +44,7 @@ export async function render(view, ui) {
             { key: 'mtdCents', label: 'MTD', num: true, format: R },
             { key: 'lifetimeCents', label: 'Lifetime', num: true, format: R },
             { key: 'unpaidCents', label: 'Unpaid', num: true, format: R },
+            { key: 'pendingCents', label: 'Pending', num: true, format: R },
             { key: 'bankMasked', label: 'Bank', render: (r) => h('span', {}, r.bankMasked || '—') },
             { key: 'status', label: 'Status', render: (r) => pill(r.status) },
             {
@@ -80,7 +81,7 @@ export async function render(view, ui) {
     fill(
       view,
       head(),
-      h('div', { class: 'tiles' }, tile('Reps', ui.charts.fmt.int(d.grand.reps), 'across all cities'), tile('Active', ui.charts.fmt.int(d.grand.activeReps), 'not suspended'), tile('MTD commission', R(d.grand.mtdCents), 'this month'), tile('Unpaid balance', R(d.grand.unpaidCents), 'approved, not yet paid')),
+      h('div', { class: 'tiles' }, tile('Reps', ui.charts.fmt.int(d.grand.reps), 'across all cities'), tile('Active', ui.charts.fmt.int(d.grand.activeReps), 'not suspended'), tile('MTD commission', R(d.grand.mtdCents), 'this month'), tile('Unpaid balance', R(d.grand.unpaidCents), 'approved, not yet paid'), tile('Pending', R(d.grand.pendingCents), 'awaiting second payment')),
       d.cities.map(section)
     );
   }
@@ -117,11 +118,20 @@ export async function render(view, ui) {
               key: 'id',
               label: '',
               render: (s) =>
-                s.status === 'approved'
-                  ? h('button', { class: 'btn small danger', type: 'button', onclick: () => {
-                      const reason = (prompt('Reason for voiding this commission') || '').trim();
-                      if (reason) act({ site: c.slug, action: 'void', commissionId: s.id, reason }, () => detail(c, id));
-                    } },'Void')
+                s.status === 'approved' || s.status === 'pending'
+                  ? h(
+                      'span',
+                      { class: 'up-actions' },
+                      s.status === 'pending'
+                        ? h('button', { class: 'btn small', type: 'button', onclick: () => {
+                            if (confirm('Approve this commission now? It will count towards the next payout.')) act({ site: c.slug, action: 'approve', commissionId: s.id }, () => detail(c, id));
+                          } }, 'Approve')
+                        : null,
+                      h('button', { class: 'btn small danger', type: 'button', onclick: () => {
+                        const reason = (prompt('Reason for voiding this commission') || '').trim();
+                        if (reason) act({ site: c.slug, action: 'void', commissionId: s.id, reason }, () => detail(c, id));
+                      } }, 'Void')
+                    )
                   : h('span'),
             },
           ],
