@@ -368,6 +368,13 @@ export function shoppingCenterFor(business: Business): ShoppingCenter | undefine
   return shoppingCenterById.get(business.shopping_center_id);
 }
 
+/** Internal-linking order: listings the index gate lets into Google first,
+ *  then paid plans, then alphabetical. Returns a new array. */
+export function rankForLinking<T extends Business>(list: T[]): T[] {
+  const idx = (b: Business) => (businessIndexInfo(b).decision === 'index' ? 1 : 0);
+  return [...list].sort((a, b) => idx(b) - idx(a) || byPlanThenName(a, b));
+}
+
 export function businessesInSuburbAndCategory(suburbId: number, categoryId: number) {
   return businessesInCategory(categoryId).filter((b) => b.suburb_id === suburbId);
 }

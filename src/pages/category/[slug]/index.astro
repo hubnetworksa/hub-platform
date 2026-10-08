@@ -5,6 +5,7 @@ import SponsorBanner from '../../../components/SponsorBanner.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import SponsorSlot from '../../../components/SponsorSlot.astro';
 import { categories, businessesInCategory, categoryHasBusinesses, suburbFor, type Business, byPlanThenName, FEATURED_TIER, isPaidListing, sponsorFor, withoutSponsors, groupForCategory } from '../../../lib/data';
+import { groupForSuburb } from '../../../site-content';
 import { synonymsFor, locationSynonymsFor } from '../../../lib/categorySynonyms';
 import { collectionPageJsonLd } from '../../../lib/seo';
 import site from '../../../site';
@@ -26,6 +27,21 @@ for (const business of businesses) {
 }
 for (const g of bySuburb.values()) g.businesses.sort(byPlanThenName);
 const suburbGroups = [...bySuburb.values()].sort((a, b) => b.businesses.length - a.businesses.length);
+// Area sections (suburb groups / regions) with a jump-link row. Suburbs
+// without a group go under "Other areas". A section over 300 listings gets
+// per-suburb sub-headings. Order inside a suburb stays byPlanThenName.
+const SPLIT_OVER = 300;
+const areaMap = new Map<string, { slug: string; name: string; count: number; suburbs: typeof suburbGroups }>();
+for (const sg of suburbGroups) {
+  const ag = groupForSuburb(sg.slug);
+  const key = ag?.slug ?? 'other';
+  if (!areaMap.has(key)) areaMap.set(key, { slug: key, name: ag?.name ?? 'Other areas', count: 0, suburbs: [] });
+  const a = areaMap.get(key)!;
+  a.suburbs.push(sg);
+  a.count += sg.businesses.length;
+}
+const areaSections = [...areaMap.values()]
+  .sort((a, b) => (a.slug === 'other' ? 1 : b.slug === 'other' ? -1 : 0) || b.count - a.count || a.name.localeCompare(b.name));
 // "Top of your category page" for the Featured plan: every Featured
 // business in this category, above the suburb-by-suburb list.
 // Sponsor card wins: the category sponsor's banner is already at the top,
@@ -124,17 +140,37 @@ const showsPaid = businesses.some(isPaidListing) || !!categorySponsor;
           </p>
         </div>
       ) : (
-        suburbGroups.map((suburbGroup, i) => (
-          <div style={i > 0 ? 'margin-top:30px;' : ''}>
-            <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:10px;flex-wrap:wrap">
-              <h2 style="margin:0;font-size:18px;letter-spacing:-.02em;color:var(--navy)">{suburbGroup.name} <span style="font-weight:600;color:var(--muted);font-size:14px">({suburbGroup.businesses.length})</span></h2>
-              <a href={`/category/${category.slug}/${suburbGroup.slug}/`} style="font-size:13px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">View all →</a>
-            </div>
-            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:14px">
-              {suburbGroup.businesses.map((business) => <BusinessCard business={business} showSuburb={false} />)}
-            </div>
-          </div>
-        ))
+        <>
+          {areaSections.length > 1 && (
+            <nav aria-label="Jump to an area" style="display:flex;flex-wrap:wrap;gap:6px 14px;margin-bottom:20px;font-size:13.5px;font-weight:700">
+              {areaSections.map((area) => (
+                <a href={`#area-${area.slug}`} style="color:var(--navy);text-decoration:none;padding:4px 0">{area.name} <span style="color:var(--muted);font-weight:600">({area.count})</span></a>
+              ))}
+            </nav>
+          )}
+          {areaSections.map((area, ai) => (
+            <section id={`area-${area.slug}`} style={ai > 0 ? 'margin-top:36px;scroll-margin-top:16px' : 'scroll-margin-top:16px'}>
+              {areaSections.length > 1 && (
+                <h2 style="margin:0 0 4px;font-size:20px;letter-spacing:-.02em;color:var(--navy)">{area.name} <span style="font-weight:600;color:var(--muted);font-size:15px">({area.count})</span></h2>
+              )}
+              {area.suburbs.map((suburbGroup, i) => (
+                <div style={i > 0 || areaSections.length > 1 ? 'margin-top:22px;' : ''}>
+                  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;border-bottom:2px solid var(--navy);padding-bottom:10px;flex-wrap:wrap">
+                    {area.count > SPLIT_OVER || areaSections.length === 1 ? (
+                      <h3 style="margin:0;font-size:18px;letter-spacing:-.02em;color:var(--navy)">{suburbGroup.name} <span style="font-weight:600;color:var(--muted);font-size:14px">({suburbGroup.businesses.length})</span></h3>
+                    ) : (
+                      <h3 style="margin:0;font-size:16px;letter-spacing:-.02em;color:var(--navy)">{suburbGroup.name} <span style="font-weight:600;color:var(--muted);font-size:14px">({suburbGroup.businesses.length})</span></h3>
+                    )}
+                    <a href={`/category/${category.slug}/${suburbGroup.slug}/`} style="font-size:13px;font-weight:800;color:var(--accent);white-space:nowrap;text-decoration:none">View all →</a>
+                  </div>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:14px">
+                    {suburbGroup.businesses.map((business) => <BusinessCard business={business} showSuburb={false} />)}
+                  </div>
+                </div>
+              ))}
+            </section>
+          ))}
+        </>
       )}
 
       {!isEmpty && relatedCategories.length > 0 && group && (
