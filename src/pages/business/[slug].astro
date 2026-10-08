@@ -270,7 +270,7 @@ const metaDescription = businessDescription(metaInput);
                 </a>
               )}
               {mapsUrl && (
-                <a href={mapsUrl} target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:9px;padding:14px 16px;border-radius:11px;border:2px solid var(--border);color:var(--navy);font-size:14.5px;font-weight:800;text-decoration:none">
+                <a href={mapsUrl} target="_blank" rel="noopener noreferrer" data-track="directions_click" style="display:flex;align-items:center;gap:9px;padding:14px 16px;border-radius:11px;border:2px solid var(--border);color:var(--navy);font-size:14.5px;font-weight:800;text-decoration:none">
                   <Icon path="<path d='M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12Z'/><circle cx='12' cy='10' r='2.5'/>" size={17} />
                   Directions
                 </a>
@@ -991,7 +991,11 @@ const metaDescription = businessDescription(metaInput);
   })();
 </script>
 
-<script define:vars={{ businessSlug: business.slug }}>
+<script define:vars={{ businessSlug: business.slug, gaBusiness: { business_slug: business.slug, business_name: business.name, category: primaryCat?.name ?? '', suburb: suburb?.name ?? '' } }}>
+  // Inline script (define:vars), so it can't import src/lib/ga.ts; same guarded call.
+  function gaEvent(name, params) {
+    try { if (typeof window.gtag === 'function') window.gtag('event', name, params || {}); } catch {}
+  }
   // Sent by the website itself: the server saves the enquiry and emails it to
   // the business (or to us if no address is on file), so the business's email
   // is never placed in this page and the visitor's own email app is never opened.
@@ -1015,7 +1019,10 @@ const metaDescription = businessDescription(metaInput);
   track('view');
   document.addEventListener('click', (e) => {
     const el = e.target.closest('[data-track]');
-    if (el) track(el.dataset.track);
+    if (el) {
+      track(el.dataset.track);
+      gaEvent(el.dataset.track, gaBusiness);
+    }
   });
 
   const form = document.getElementById('enquiry-form');
@@ -1044,6 +1051,7 @@ const metaDescription = businessDescription(metaInput);
         const result = await res.json();
         if (result.ok) {
           form.reset();
+          gaEvent('generate_lead', { business_slug: businessSlug });
           status.textContent = 'Thank you — your enquiry has been sent.';
         } else {
           status.textContent = result.error || 'Something went wrong — please try again.';

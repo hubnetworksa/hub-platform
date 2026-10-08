@@ -98,6 +98,7 @@ const FIELD = 'padding:12px;border:2px solid var(--border);border-radius:10px;fo
 </BaseLayout>
 
 <script>
+  import { gaEvent } from '../../lib/ga';
   import { currentBilling, onBillingChange, setBilling } from '../../lib/billing-toggle';
 
   type Target = { slug: string; name: string };
@@ -259,6 +260,7 @@ const FIELD = 'padding:12px;border:2px solid var(--border);border-radius:10px;fo
       });
       const result = await res.json();
       if (result.ok) {
+        gaEvent('begin_checkout', { product: String(type), billing: currentBilling() });
         window.location.href = result.redirectUrl;
         return;
       }
