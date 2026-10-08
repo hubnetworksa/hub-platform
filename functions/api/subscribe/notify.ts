@@ -1,7 +1,7 @@
 import type { PagesFunction, D1Database, R2Bucket } from '@cloudflare/workers-types';
 import { buildItnSignatureString, cancelPayfastSubscription, md5, payfastConfigured, type PayfastEnv } from '../../_lib/payfast';
 import { logActivity } from '../../_lib/activity-log';
-import { recordRepCommission, productLabelFor } from '../../_lib/reps';
+import { recordRepCommission, productLabelFor, approveAndNotifyRepCommission, voidPendingRepCommission } from '../../_lib/reps';
 import {
   TIER_NAMES,
   tierPriceCents,
@@ -90,7 +90,25 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     return new Response('Server confirmation failed', { status: 400 });
   }
 
-  if (posted.payment_status !== 'COMPLETE') return new Response('OK', { status: 200 });
+  if (posted.payment_status !== 'COMPLETE') {
+    // CANCELLED is PayFast's clear "this subscription has been stopped"; FAILED
+    // can still be retried by PayFast, so it's left alone.
+    if (posted.payment_status === 'CANCELLED') {
+      try {
+        if (scope === 'submission') await voidPendingRepCommission(db, 'pending_submission', targetId, 'cancelled before second payment');
+        const sub = await db
+          .prepare('SELECT id, business_id FROM subscriptions WHERE m_payment_id = ?')
+          .bind(posted.m_payment_id ?? '')
+          .first<{ id: number; business_id: number }>();
+        if (sub && (scope === 'submission' || (scope === 'business' && sub.business_id === targetId))) {
+          await voidPendingRepCommission(db, 'subscription', sub.id, 'cancelled before second payment');
+        }
+      } catch (err) {
+        console.error('void pending rep commission on CANCELLED failed', err);
+      }
+    }
+    return new Response('OK', { status: 200 });
+  }
 
   const postedAmount = parseFloat(posted.amount_gross ?? posted.amount ?? '0');
 
@@ -494,6 +512,15 @@ async function recordRenewal(
       .run();
   }
   if (revive) await requestRebuild(env, 'lapsed subscription renewed');
+
+  // Second successful payment: approve the rep's pending commission. A
+  // signup-bought tier is relinked to its subscription when the listing is
+  // approved (src/lib/business-submission.ts), so one lookup covers both.
+  try {
+    await approveAndNotifyRepCommission(env, 'subscription', subscription.id);
+  } catch (err) {
+    console.error('approve rep commission on renewal failed', err);
+  }
 
   const label = subscription.product_type === 'tier' ? `Tier ${subscription.tier}` : `${subscription.product_type} (${subscription.product_target ?? 'n/a'})`;
   await logActivity(db, 'subscription_renewed', businessName, `${label} renewed via PayFast.`);

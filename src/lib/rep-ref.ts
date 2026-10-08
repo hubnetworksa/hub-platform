@@ -1,7 +1,7 @@
-// Remembers a sales-rep share code (?rep=CODE) for 30 days so it can pre-fill
+// Remembers a sales-rep share code (?rep=CODE) for 7 days so it can pre-fill
 // the optional "Rep code" field at checkout. Everything is best-effort.
 const KEY = 'hub_rep_ref';
-const TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 function normalise(raw: string): string | null {
   const code = raw.toUpperCase().replace(/[^A-Z0-9]/g, '');

@@ -35,6 +35,7 @@ interface PendingRow {
   m_payment_id: string | null;
   payment_status: string | null;
   payfast_token: string | null;
+  rep_code: string | null;
   hours: string | null;
   shopping_center_slug: string | null;
 }
@@ -53,7 +54,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const row = await db
     .prepare(
       `SELECT id, name, category_slug, suburb_slug, address, phone, email, website, description, short_description,
-              submitted_by_user_id, chosen_tier, chosen_billing_period, m_payment_id, payment_status, payfast_token, hours, shopping_center_slug
+              submitted_by_user_id, chosen_tier, chosen_billing_period, m_payment_id, payment_status, payfast_token, rep_code, hours, shopping_center_slug
        FROM pending_submissions WHERE owner_confirm_token = ?`
     )
     .bind(token)
@@ -104,6 +105,8 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     billingPeriod: row.chosen_billing_period,
     paidMPaymentId: row.payment_status === 'paid' ? row.m_payment_id : null,
       payfastToken: row.payfast_token,
+      submissionId: row.id,
+      repCode: row.rep_code,
     hours: row.hours,
     shoppingCenterId: await shoppingCenterIdForSlug(db, row.shopping_center_slug),
   }, { DB: db, MEDIA: context.env.MEDIA, RESEND_API_KEY: context.env.RESEND_API_KEY, SITE: context.env.SITE });

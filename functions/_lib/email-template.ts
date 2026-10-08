@@ -623,6 +623,22 @@ export function repSaleEmailText(site: Site, data: RepSaleEmailData): string {
   return `You made a sale.\n\n${data.clientName} just bought ${data.productLabel} using your code.\n\nYou earned R${data.commissionRand}. It will be included in your next monthly payout.\n\nDashboard: ${data.dashboardUrl}\n\nThe ${site.siteName} team`;
 }
 
+export interface RepBankChangedEmailData {
+  dashboardUrl: string;
+  contactEmail: string;
+}
+
+export function repBankChangedEmailHtml(site: Site, data: RepBankChangedEmailData): string {
+  const body =
+    repP(site, 'The banking details on your sales rep account were just updated.') +
+    repP(site, `<strong style="color:${site.theme.text};">If this wasn’t you, reply to this email immediately</strong> (${escapeHtml(data.contactEmail)}) so we can secure your account before any payout is made.`);
+  return repShell(site, 'Your banking details were updated', body, data.dashboardUrl, 'Open your dashboard →');
+}
+
+export function repBankChangedEmailText(site: Site, data: RepBankChangedEmailData): string {
+  return `Your banking details were updated.\n\nThe banking details on your sales rep account were just updated.\n\nIf this wasn't you, reply to this email immediately (${data.contactEmail}) so we can secure your account before any payout is made.\n\nDashboard: ${data.dashboardUrl}\n\nThe ${site.siteName} team`;
+}
+
 export interface RepPayoutEmailData {
   period: string;
   totalRand: string;

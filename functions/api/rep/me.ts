@@ -35,11 +35,12 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
          COALESCE(SUM(CASE WHEN status IN ('approved','paid') AND strftime('%Y-%m', created_at) = strftime('%Y-%m','now') THEN commission_cents END), 0) AS month_cents,
          COALESCE(SUM(CASE WHEN status IN ('approved','paid') THEN commission_cents END), 0) AS lifetime_cents,
          COALESCE(SUM(CASE WHEN status = 'approved' THEN commission_cents END), 0) AS unpaid_cents,
+         COALESCE(SUM(CASE WHEN status = 'pending' THEN commission_cents END), 0) AS pending_cents,
          COUNT(CASE WHEN status != 'void' THEN 1 END) AS sales_count
        FROM rep_commissions WHERE rep_id = ?`
     )
     .bind(rep.id)
-    .first<{ month_cents: number; lifetime_cents: number; unpaid_cents: number; sales_count: number }>();
+    .first<{ month_cents: number; lifetime_cents: number; unpaid_cents: number; pending_cents: number; sales_count: number }>();
 
   const sales = await db
     .prepare(
@@ -81,6 +82,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       monthCents: stats?.month_cents ?? 0,
       lifetimeCents: stats?.lifetime_cents ?? 0,
       unpaidCents: stats?.unpaid_cents ?? 0,
+      pendingCents: stats?.pending_cents ?? 0,
       salesCount: stats?.sales_count ?? 0,
     },
     sales: sales.results.map((s) => ({

@@ -1,9 +1,14 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser } from '../../_lib/auth';
 import { json, cleanText } from '../../_lib/messages';
+import { sendEmail } from '../../_lib/send-email';
+import { getSite } from '../../_lib/site';
+import { repBankChangedEmailHtml, repBankChangedEmailText } from '../../_lib/email-template';
 
 interface Env {
   DB: D1Database;
+  SITE?: string;
+  RESEND_API_KEY?: string;
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
@@ -39,5 +44,19 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     )
     .bind(bankName, accountHolder, accountNumber, branchCode, accountType, rep.id)
     .run();
+
+  try {
+    const site = getSite(context.env.SITE);
+    const data = { dashboardUrl: `https://${site.domain}/rep-dashboard/`, contactEmail: site.contactEmail };
+    await sendEmail(context.env, {
+      from: `${site.siteName} <${site.contactEmail}>`,
+      to: user.email,
+      subject: 'Your banking details were updated',
+      text: repBankChangedEmailText(site, data),
+      html: repBankChangedEmailHtml(site, data),
+    });
+  } catch {
+    /* best-effort notification */
+  }
   return json({ ok: true });
 };

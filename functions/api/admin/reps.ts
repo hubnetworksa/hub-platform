@@ -4,6 +4,7 @@ import { logActivity } from '../../_lib/activity-log';
 import { sendEmail } from '../../_lib/send-email';
 import { getSite } from '../../_lib/site';
 import { repPayoutEmailHtml, repPayoutEmailText } from '../../_lib/email-template';
+import { sendRepSaleEmail } from '../../_lib/reps';
 
 interface Env {
   DB: D1Database;
@@ -94,11 +95,12 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
               (SELECT COUNT(*) FROM rep_commissions c WHERE c.rep_id = r.id AND c.status <> 'void') AS sales_count,
               (SELECT COALESCE(SUM(c.commission_cents), 0) FROM rep_commissions c WHERE c.rep_id = r.id AND c.status IN ('approved','paid') AND strftime('%Y-%m', c.created_at) = strftime('%Y-%m', 'now')) AS mtd_cents,
               (SELECT COALESCE(SUM(c.commission_cents), 0) FROM rep_commissions c WHERE c.rep_id = r.id AND c.status IN ('approved','paid')) AS lifetime_cents,
-              (SELECT COALESCE(SUM(c.commission_cents), 0) FROM rep_commissions c WHERE c.rep_id = r.id AND c.status = 'approved') AS unpaid_cents
+              (SELECT COALESCE(SUM(c.commission_cents), 0) FROM rep_commissions c WHERE c.rep_id = r.id AND c.status = 'approved') AS unpaid_cents,
+              (SELECT COALESCE(SUM(c.commission_cents), 0) FROM rep_commissions c WHERE c.rep_id = r.id AND c.status = 'pending') AS pending_cents
        FROM sales_reps r JOIN users u ON u.id = r.user_id
        ORDER BY unpaid_cents DESC, r.created_at DESC`
     )
-    .all<{ id: number; code: string; status: string; created_at: string; bank_account_number: string | null; email: string; sales_count: number; mtd_cents: number; lifetime_cents: number; unpaid_cents: number }>();
+    .all<{ id: number; code: string; status: string; created_at: string; bank_account_number: string | null; email: string; sales_count: number; mtd_cents: number; lifetime_cents: number; unpaid_cents: number; pending_cents: number }>();
 
   const reps = rows.results.map((r) => {
     const masked = maskAccount(r.bank_account_number);
@@ -112,6 +114,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       mtdCents: r.mtd_cents,
       lifetimeCents: r.lifetime_cents,
       unpaidCents: r.unpaid_cents,
+      pendingCents: r.pending_cents,
       bankMasked: masked,
       hasBank: masked !== null,
     };
@@ -123,6 +126,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       reps: reps.length,
       activeReps: reps.filter((r) => r.status === 'active').length,
       unpaidCents: reps.reduce((s, r) => s + r.unpaidCents, 0),
+      pendingCents: reps.reduce((s, r) => s + r.pendingCents, 0),
       mtdCents: reps.reduce((s, r) => s + r.mtdCents, 0),
     },
     reps,
@@ -172,6 +176,25 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       .bind(reason || null, commissionId)
       .run();
     await logActivity(db, 'rep_commission_void', null, `Commission #${commissionId} voided by ${user.email}${reason ? `: ${reason}` : ''}.`);
+    return json({ ok: true });
+  }
+
+  if (action === 'approve') {
+    const commissionId = posInt(body.commissionId);
+    if (!commissionId) return json({ ok: false, error: 'Invalid commission.' }, 400);
+    const row = await db
+      .prepare(`SELECT rep_id, client_name, product_label, commission_cents, status FROM rep_commissions WHERE id = ?`)
+      .bind(commissionId)
+      .first<{ rep_id: number; client_name: string; product_label: string; commission_cents: number; status: string }>();
+    if (!row) return json({ ok: false, error: 'Commission not found.' }, 404);
+    if (row.status !== 'pending') return json({ ok: false, error: `Only pending commissions can be approved (this one is ${row.status}).` }, 400);
+    const res = await db
+      .prepare(`UPDATE rep_commissions SET status = 'approved', approved_at = datetime('now') WHERE id = ? AND status = 'pending'`)
+      .bind(commissionId)
+      .run();
+    if (res.meta.changes !== 1) return json({ ok: false, error: 'Commission is no longer pending.' }, 409);
+    await logActivity(db, 'rep_commission_approved', row.client_name, `Commission #${commissionId} approved by ${user.email}.`);
+    await sendRepSaleEmail(context.env, row.rep_id, row.client_name, row.product_label, row.commission_cents);
     return json({ ok: true });
   }
 

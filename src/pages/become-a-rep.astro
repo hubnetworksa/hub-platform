@@ -18,15 +18,16 @@ const table = rows.map((r) => ({ label: r.label, earn: priceRand(r.key) }));
 const steps = [
   { n: 1, title: 'Join and get your code', text: 'Sign in, tap the button below and your personal rep code and share link are ready instantly.' },
   { n: 2, title: 'Share your link or code', text: 'Send your link to local businesses, or give them your code to enter at checkout.' },
-  { n: 3, title: 'Get paid monthly', text: 'Commission is paid by EFT at the end of the month once your banking details are on file.' },
+  { n: 3, title: 'Get paid by EFT', text: 'Your commission shows as pending straight away and is confirmed when the business pays its second month. Approved commission is paid by EFT at month end, once your banking details are on file.' },
 ];
 
 const faqs = [
   { q: 'Does the buyer get a discount?', a: 'No. The business pays the normal price. Your commission is paid by us on top.' },
-  { q: 'Is it only the first payment?', a: 'Yes. You earn on the first payment only. Renewals do not earn commission.' },
-  { q: 'What if they pay yearly?', a: 'A yearly purchase still pays you one month’s price, the same as a monthly purchase.' },
+  { q: 'Is it only the first payment?', a: 'Only a business’s first paid purchase earns commission — one commission per new customer. Renewals and later purchases do not earn commission.' },
+  { q: 'When is my commission confirmed?', a: 'It shows as pending straight away and is confirmed when the business pays its second month (yearly plans: after 30 days). If the business cancels, expires or is refunded before then, the pending commission is voided.' },
+  { q: 'What if they pay yearly?', a: 'A yearly purchase still earns you one month’s price, the same as a monthly purchase. It is confirmed after 30 days if the business is still active.' },
   { q: 'Do events earn commission?', a: 'No. Event listings are excluded. Business plans and sponsorships earn commission.' },
-  { q: 'When and how do I get paid?', a: 'By EFT at the end of each month, once you have added your banking details on your rep dashboard.' },
+  { q: 'When and how do I get paid?', a: 'Approved commission is paid by EFT at month end, once you have added your banking details on your rep dashboard. Pending commission is not paid until it is confirmed.' },
   { q: 'Can I have more than one rep account?', a: 'No. There is one rep account per login.' },
   { q: 'Can I use my own code on my own business?', a: 'No. Your own code does not earn commission on a business you own.' },
 ];
@@ -37,7 +38,7 @@ const faqs = [
     <section style="text-align:center;padding:clamp(8px,2vw,20px) 0 28px">
       <h1 style="margin:0;font-size:clamp(28px,5vw,44px);letter-spacing:-.03em;color:var(--navy);line-height:1.1">Earn money introducing businesses to {site.siteName}</h1>
       <p style="margin:14px auto 0;max-width:56ch;font-size:clamp(15px,2vw,17px);font-weight:600;color:var(--muted);line-height:1.55">
-        Become a sales rep, share your link, and earn a month’s price every time a business buys a plan or sponsorship with your code.
+        Become a sales rep, share your link, and earn a month’s price when a new business buys a plan or sponsorship with your code.
       </p>
       <button type="button" id="rep-cta" class="rep-cta">Become a rep — it’s free</button>
       <p id="rep-cta-error" hidden style="margin:12px 0 0;font-size:13px;font-weight:700;color:var(--danger)"></p>
@@ -55,7 +56,7 @@ const faqs = [
     </div>
 
     <h2 style="margin:34px 0 6px;font-size:22px;letter-spacing:-.025em;color:var(--navy)">What you earn</h2>
-    <p style="margin:0 0 14px;font-size:14px;font-weight:600;color:var(--muted)">One month’s price of whatever the business buys, on their first payment.</p>
+    <p style="margin:0 0 14px;font-size:14px;font-weight:600;color:var(--muted)">You earn one month’s price of whatever the business buys. It shows as pending straight away and is confirmed when the business pays its second month (yearly plans: after 30 days). Only a business’s first paid purchase earns commission — one commission per new customer. Paid by EFT at month end.</p>
     <div style="background:#fff;border:2px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)">
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:14.5px">

@@ -6,6 +6,7 @@ const tiles = [
   { key: 'reps', label: 'Reps' },
   { key: 'activeReps', label: 'Active' },
   { key: 'mtdCents', label: 'Month-to-date commission' },
+  { key: 'pendingCents', label: 'Pending' },
   { key: 'unpaidCents', label: 'Unpaid balance', accent: true },
 ];
 const th = 'padding:10px 12px';
@@ -40,6 +41,7 @@ const th = 'padding:10px 12px';
                   <th style={`${th};text-align:right`}>Sales</th>
                   <th style={`${th};text-align:right`}>MTD</th>
                   <th style={`${th};text-align:right`}>Lifetime</th>
+                  <th style={`${th};text-align:right`}>Pending</th>
                   <th style={`${th};text-align:right`}>Unpaid</th>
                   <th style={th}>Bank</th>
                   <th style={th}>Status</th>
@@ -73,6 +75,7 @@ const th = 'padding:10px 12px';
     salesCount: number;
     mtdCents: number;
     lifetimeCents: number;
+    pendingCents: number;
     unpaidCents: number;
     bankMasked: string | null;
     hasBank: boolean;
@@ -128,6 +131,7 @@ const th = 'padding:10px 12px';
     document.getElementById('stat-reps')!.textContent = String(t.reps ?? 0);
     document.getElementById('stat-activeReps')!.textContent = String(t.activeReps ?? 0);
     document.getElementById('stat-mtdCents')!.textContent = randFromCents(t.mtdCents ?? 0);
+    document.getElementById('stat-pendingCents')!.textContent = randFromCents(t.pendingCents ?? 0);
     document.getElementById('stat-unpaidCents')!.textContent = randFromCents(t.unpaidCents ?? 0);
     document.getElementById('rep-empty')!.hidden = reps.length > 0;
     document.getElementById('rep-list')!.innerHTML = reps
@@ -140,6 +144,7 @@ const th = 'padding:10px 12px';
           <td style="${num}">${r.salesCount}</td>
           <td style="${num}">${randFromCents(r.mtdCents)}</td>
           <td style="${num}">${randFromCents(r.lifetimeCents)}</td>
+          <td style="${num}">${randFromCents(r.pendingCents ?? 0)}</td>
           <td style="${num};color:var(--navy);font-weight:800">${randFromCents(r.unpaidCents)}</td>
           <td style="padding:12px;${r.bankMasked ? 'font-family:ui-monospace,Menlo,Consolas,monospace' : 'color:var(--muted)'}">${r.bankMasked ? esc(r.bankMasked) : '—'}</td>
           <td style="padding:12px">${pill(r.status)}</td>
@@ -198,7 +203,7 @@ const th = 'padding:10px 12px';
               <td style="padding:12px;text-align:right;font-weight:800">${randFromCents(s.commissionCents)}</td>
               <td style="padding:12px">${pill(s.status)}${s.voidReason ? `<div style="font-size:12px;color:var(--muted);margin-top:4px">${esc(s.voidReason)}</div>` : ''}</td>
               <td style="padding:12px">${s.payoutReference ? esc(s.payoutReference) : '—'}</td>
-              <td style="padding:12px">${s.status === 'approved' || s.status === 'pending' ? btn(`data-void="${s.id}"`, 'Void', false, true) : ''}</td>
+              <td style="padding:12px"><div style="display:flex;gap:6px">${s.status === 'pending' ? btn(`data-approve="${s.id}"`, 'Approve') : ''}${s.status === 'approved' || s.status === 'pending' ? btn(`data-void="${s.id}"`, 'Void', false, true) : ''}</div></td>
             </tr>`
             )
             .join('')}</tbody></table></div>`
@@ -245,6 +250,11 @@ const th = 'padding:10px 12px';
     } else if (el.dataset.pay) {
       const r = reps.find((x) => x.id === Number(el.dataset.pay));
       if (r) await payRep(r.id, r.email, r.unpaidCents);
+    } else if (el.dataset.approve) {
+      if (!window.confirm('Approve this commission now? It will be included in the next payout.')) return;
+      const res = await postJson('/api/admin/reps', { action: 'approve', commissionId: Number(el.dataset.approve) });
+      if (!res.ok) window.alert(res.error || 'Could not approve.');
+      await reload();
     } else if (el.dataset.void) {
       const reason = window.prompt('Reason');
       if (reason === null) return;
