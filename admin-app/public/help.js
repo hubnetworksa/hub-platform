@@ -168,6 +168,11 @@ function place(btn) {
   const w = el.offsetWidth;
   const hgt = el.offsetHeight;
   // Stay inside the screen: shift left when the icon is near the right edge.
+  if (btn.getAttribute('data-tip-side') === 'right') {
+    el.style.left = `${Math.min(r.right + 8, window.innerWidth - w - 8)}px`;
+    el.style.top = `${Math.max(8, Math.min(r.top + r.height / 2 - hgt / 2, window.innerHeight - hgt - 8))}px`;
+    return;
+  }
   const left = Math.max(8, Math.min(r.left + r.width / 2 - w / 2, window.innerWidth - w - 8));
   const below = r.bottom + 8 + hgt <= window.innerHeight || r.top - 8 - hgt < 8;
   el.style.left = `${left}px`;
@@ -233,4 +238,25 @@ export function helpIcon(text) {
     refresh();
   });
   return btn;
+}
+
+/** Hover/focus tooltip (same bubble) on any element, e.g. a rail nav link.
+ *  `active()` lets the caller switch it off (labels are visible when the sidebar is full). */
+export function attachTip(el, text, { side = 'right', active = () => true } = {}) {
+  el.setAttribute('data-tip', text);
+  el.setAttribute('data-tip-side', side);
+  const on = () => {
+    if (!active()) return;
+    hovered = el;
+    refresh();
+  };
+  const off = () => {
+    if (hovered === el) hovered = null;
+    refresh();
+  };
+  el.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && on());
+  el.addEventListener('pointerleave', off);
+  el.addEventListener('focus', on);
+  el.addEventListener('blur', off);
+  return el;
 }

@@ -1,4 +1,6 @@
-// Hub Admin motion: GSAP-powered entrances and transitions.
+// Hub Admin motion: one page transition, one-time counters, the nav pill
+// slide, and small responses to actions (pop, shake, badge). Chart draw-ins
+// and the sign-in card are the only other movement.
 // Everything here is decoration: with GSAP missing or "reduce motion" on,
 // every function returns without touching the page, so content is always
 // visible in its final state.
@@ -6,16 +8,8 @@
 const gsap = () => window.gsap;
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const on = () => !!gsap() && !reduced();
-let scrollReady = false;
-function scroll() {
-  if (!scrollReady && window.ScrollTrigger && gsap()) {
-    gsap().registerPlugin(window.ScrollTrigger);
-    scrollReady = true;
-  }
-  return scrollReady ? window.ScrollTrigger : null;
-}
-
 const EASE = 'power3.out';
+let lastPageKey;
 
 // Numbers in tiles count up to their value, keeping prefixes/suffixes
 // ("R1,234", "44.2k", "39%").
@@ -35,44 +29,19 @@ function countUp(el, delay = 0) {
 }
 
 export const motion = {
-  // A whole screen arriving: heading, tiles, cards and lists rise into place.
-  page(root) {
+  // A screen arriving: the content fades in and rises 8px, once per
+  // navigation (`key` changes on every route change; later redraws of the
+  // same screen stay still). Tile numbers count up once on that first paint.
+  page(root, key) {
     if (!on() || !root) return;
+    if (key !== undefined) {
+      if (key === lastPageKey) return;
+      lastPageKey = key;
+    }
     const g = gsap();
-    // The previous screen's scroll reveals belong to elements that are gone.
-    window.ScrollTrigger?.getAll().forEach((t) => t.kill());
-    const head = root.querySelectorAll(':scope > .page-head, :scope > .mobile-head, :scope > .filters, :scope > .banner');
-    const tiles = root.querySelectorAll('.tiles > .tile');
-    const blocks = [...root.querySelectorAll('.card, .section-title, .group-title')].filter((el) => !el.closest('.tiles'));
-    const tl = g.timeline({ defaults: { ease: EASE } });
-    if (head.length) tl.from(head, { y: 14, autoAlpha: 0, duration: 0.45, stagger: 0.05 }, 0);
-    // The banner settles in (a slow zoom), then its text rises.
-    const hero = root.querySelector(':scope > .hero');
-    if (hero) {
-      tl.from(hero, { autoAlpha: 0, y: 12, duration: 0.5 }, 0)
-        .from(hero.querySelector('.hero-bg'), { scale: 1.14, duration: 1.8, ease: 'power2.out' }, 0)
-        .from(hero.querySelectorAll('.hero-content > *'), { y: 18, autoAlpha: 0, duration: 0.6, stagger: 0.08 }, 0.15);
-    }
-    if (tiles.length) {
-      tl.from(tiles, { y: 22, autoAlpha: 0, scale: 0.96, duration: 0.55, stagger: 0.06 }, 0.08);
-      tiles.forEach((t, i) => {
-        const v = t.querySelector('.value');
-        if (v) countUp(v, 0.15 + i * 0.06);
-      });
-    }
-    const st = scroll();
-    const above = blocks.filter((el) => el.getBoundingClientRect().top < window.innerHeight);
-    const below = blocks.filter((el) => !above.includes(el));
-    if (above.length) tl.from(above, { y: 26, autoAlpha: 0, duration: 0.6, stagger: 0.07 }, 0.12);
-    if (below.length && st) {
-      g.set(below, { y: 30, autoAlpha: 0 });
-      st.batch(below, { start: 'top 92%', once: true, onEnter: (els) => g.to(els, { y: 0, autoAlpha: 1, duration: 0.6, ease: EASE, stagger: 0.08 }) });
-    } else if (below.length) {
-      tl.from(below, { y: 26, autoAlpha: 0, duration: 0.6, stagger: 0.05 }, 0.3);
-    }
-    root.querySelectorAll('.stats-row b').forEach((b, i) => countUp(b, 0.25 + i * 0.03));
-    const rows = root.querySelectorAll('.queue > li, .up-list > .up, .launch > a, .device');
-    if (rows.length) tl.from([...rows].slice(0, 30), { x: -12, autoAlpha: 0, duration: 0.4, stagger: 0.025 }, 0.3);
+    g.fromTo(root, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.28, ease: EASE, clearProps: 'opacity,visibility,transform' });
+    root.querySelectorAll('.tiles .tile .value, .kpis .tile .value').forEach((v, i) => countUp(v, 0.05 + i * 0.04));
+    root.querySelectorAll('.stats-row b').forEach((b, i) => countUp(b, 0.1 + i * 0.03));
   },
 
   // The sign-in / setup card.
@@ -128,7 +97,7 @@ export const motion = {
   // Horizontal bar lists fill in.
   bars(container) {
     if (!on() || !container) return;
-    const fills = [...container.querySelectorAll('div[style*="width:"]')].filter((el) => el.parentElement?.style.background);
+    const fills = [...container.querySelectorAll('.barlist-fill')];
     gsap().from(fills, { width: 0, duration: 0.9, ease: 'power3.out', stagger: 0.06, delay: 0.2 });
   },
 
