@@ -27,7 +27,7 @@ if (!cfToken || !account) throw new Error('CLOUDFLARE_API_TOKEN and CLOUDFLARE_A
 const CITIES = ['pretoria', 'polokwane', 'capetown'];
 const INSPECT_PER_DAY = Number(process.env.INSPECT_PER_DAY || 150);
 const INSPECT_MINUTES = Number(process.env.INSPECT_MINUTES || 5);
-const KEY_PAGES = ['/', '/category/', '/suburb/', '/events/', '/news/', '/search/'];
+const KEY_PAGES = ['/', '/category/', '/suburb/', '/about/', '/events/', '/news/', '/search/'];
 
 const { GOOGLE_CLIENT_ID: id, GOOGLE_CLIENT_SECRET: secret, GOOGLE_REFRESH_TOKEN: refresh } = process.env;
 if (!id || !secret || !refresh) throw new Error('GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET and GOOGLE_REFRESH_TOKEN are required.');
