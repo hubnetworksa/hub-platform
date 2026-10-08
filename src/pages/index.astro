@@ -8,6 +8,7 @@ import PlanBadge from '../components/PlanBadge.astro';
 import BusinessLogo from '../components/BusinessLogo.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
 import { sponsorFor, withoutSponsors, eventsSorted, eventDateParts, logoFor, cardBlurbFor, whatsappFor } from '../lib/data';
+import { priceRand } from '../lib/data';
 import { suburbs, categories, businesses, businessesInSuburb, businessesInCategory, suburbFor, categoriesFor, FEATURED_TIER, newsSorted, newsDateShort, latestFuel, fuelPeriodLabel } from '../lib/data';
 import { CATEGORY_GROUPS } from '../lib/categoryGroups';
 import site from '../site';
@@ -218,6 +219,26 @@ const homeTitle = homeTitleCandidates.find((t) => t.length <= 60) ?? homeTitleCa
             <span style="font-size:12.5px;font-weight:700;color:var(--muted)">{groupCount(group)} businesses</span>
           </a>
         ))}
+      </div>
+    </section>
+
+    <section style="max-width:1200px;margin:0 auto;padding:clamp(34px,5vw,56px) 16px 0">
+      <div style="position:relative;overflow:hidden;border-radius:18px;background:var(--accent);color:var(--contrast);padding:clamp(26px,4.5vw,48px) clamp(20px,4vw,44px);box-shadow:0 10px 30px rgba(var(--accent-rgb),.28)">
+        <div aria-hidden="true" style="position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.14)"></div>
+        <div style="position:relative;max-width:760px">
+          <span style="display:inline-block;padding:5px 11px;border-radius:999px;background:rgba(var(--navy-rgb),.88);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase">Sales rep programme</span>
+          <h2 style="margin:14px 0 10px;color:inherit;font-size:clamp(26px,4.4vw,44px);line-height:1.05;letter-spacing:-.03em;text-wrap:balance">Earn {priceRand('price_featured_cents').replace(/\.00$/, '')} for every business you bring to {site.siteName}</h2>
+          <p style="margin:0 0 20px;color:inherit;opacity:.92;font-size:clamp(15px,1.7vw,17.5px);font-weight:600;line-height:1.5;max-width:56ch">Free to join. Share your code, a business signs up, you get their first month's fee — paid by EFT every month.</p>
+          <ul style="list-style:none;margin:0 0 24px;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13.5px;font-weight:800">
+            <li style="display:inline-flex;align-items:center;gap:6px"><span aria-hidden="true">✓</span>Free to join</li>
+            <li style="display:inline-flex;align-items:center;gap:6px"><span aria-hidden="true">✓</span>No cap on earnings</li>
+            <li style="display:inline-flex;align-items:center;gap:6px"><span aria-hidden="true">✓</span>Paid monthly</li>
+          </ul>
+          <div class="home-rep-actions" style="display:flex;flex-wrap:wrap;align-items:center;gap:12px 22px">
+            <a href="/become-a-rep/" class="home-rep-btn" style="padding:15px 26px;border-radius:11px;background:var(--navy);color:#fff;font-size:15px;font-weight:800;text-decoration:none;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.2)">Become a rep</a>
+            <a href="/become-a-rep/#how-it-works" class="home-rep-link" style="font-size:14.5px;font-weight:800;color:inherit;text-decoration:underline;text-underline-offset:3px">How it works</a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -543,5 +564,20 @@ const homeTitle = homeTitleCandidates.find((t) => t.length <= 60) ?? homeTitleCa
   }
   .home-suburb-chip:hover {
     border-color: var(--accent);
+  }
+  .home-rep-btn:hover {
+    background: #000;
+  }
+  .home-rep-link:hover {
+    text-decoration-thickness: 2px;
+  }
+  @media (max-width: 559px) {
+    .home-rep-actions {
+      flex-direction: column;
+      align-items: stretch !important;
+    }
+    .home-rep-actions .home-rep-link {
+      text-align: center;
+    }
   }
 </style>
