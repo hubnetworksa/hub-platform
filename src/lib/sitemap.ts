@@ -3,10 +3,10 @@
 // chunks hooks), so the sitemap is decided from the same build data the pages
 // are generated from (src/lib/data.ts), never a second copy of the rules.
 //
-// The pages themselves are untouched: a URL left out here still builds and
-// is still linked (the owner prefers that to hiding pages, see commit
-// 375d2875). Leaving a thin page out of the sitemap only stops us actively
-// asking Google to crawl it. Category x suburb combo pages are the one
+// Business pages scoring below the city's `index_min_score` carry noindex
+// and leave the sitemap on the same businessIndexInfo() rule (src/lib/
+// index-gate.ts); they stay live and linked, never deleted. This supersedes
+// the delete policy of commit 375d2875 (owner decision 8 Oct 2026). Category x suburb combo pages are the one
 // exception: those do carry noindex when thin (category/[slug]/[suburb].astro),
 // so this file excludes them from the sitemap on the exact same threshold —
 // otherwise a URL would be noindexed on the page yet still listed in the
@@ -24,6 +24,7 @@ import {
   businessesInSuburbAndCategory,
   businessesInShoppingCenter,
   categoryHasBusinesses,
+  businessIndexInfo,
   todaySast,
   type Business,
 } from './data';
@@ -123,6 +124,7 @@ export function sitemapEntryFor(pathname: string): SitemapEntry | null {
     case 'business': {
       if (!slug) return { chunk: 'business', lastmod: newestUpdate(businesses) };
       const b = businessBySlug.get(slug);
+      if (b && businessIndexInfo(b).decision === 'noindex') return null;
       return { chunk: 'business', lastmod: businessUpdated(b) };
     }
     case 'category': {

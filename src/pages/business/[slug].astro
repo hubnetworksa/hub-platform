@@ -4,7 +4,7 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ListReturn from '../../components/ListReturn.astro';
 import PlanBadge from '../../components/PlanBadge.astro';
 import AdUnit from '../../components/AdUnit.astro';
-import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, businessesInSuburbAndCategory, businessesInShoppingCenter, byPlanThenName, websiteUrl, isPaidListing, sponsorshipsHeldBy, reviewsFor, averageRating, reviewCount, logoFor, descriptionHtmlFor, summaryFor, whatsappFor, schemaTypeFor } from '../../lib/data';
+import { businesses, suburbFor, categoriesFor, shoppingCenterFor, parseSourceUrls, photosFor, FEATURED_TIER, businessesInCategory, businessesInSuburbAndCategory, businessesInShoppingCenter, byPlanThenName, websiteUrl, isPaidListing, sponsorshipsHeldBy, reviewsFor, averageRating, reviewCount, logoFor, descriptionHtmlFor, summaryFor, whatsappFor, schemaTypeFor, businessIndexInfo } from '../../lib/data';
 import { plainLine } from '../../lib/rich-text';
 import { hoursSummary, openingHoursSpecification } from '../../lib/openNow';
 import { businessTitle, businessDescription, titleIsShared } from '../../lib/businessMeta';
@@ -22,6 +22,7 @@ export function getStaticPaths() {
 }
 
 const { business } = Astro.props;
+const indexInfo = businessIndexInfo(business);
 const suburb = suburbFor(business);
 const cats = categoriesFor(business);
 
@@ -185,7 +186,7 @@ if (shared(plainTitle, () => undefined, 'plain')) {
 const metaDescription = businessDescription(metaInput);
 ---
 
-<BaseLayout title={pageTitle} titleOverride={pageTitle} description={metaDescription} canonical={canonicalUrl} noAds={showsPaid} ogImage={logo} ogImageSquare={!!logo} pageSchema={{ dateModified: isoFromD1(business.updated_at), mainEntity: { '@id': `${canonicalUrl}#business` } }}>
+<BaseLayout title={pageTitle} titleOverride={pageTitle} description={metaDescription} canonical={canonicalUrl} noAds={showsPaid} noindex={indexInfo.decision === 'noindex'} ogImage={logo} ogImageSquare={!!logo} pageSchema={{ dateModified: isoFromD1(business.updated_at), mainEntity: { '@id': `${canonicalUrl}#business` } }}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />
 
   <main style="max-width:1200px;margin:0 auto;padding:22px 20px 60px">
@@ -199,7 +200,7 @@ const metaDescription = businessDescription(metaInput);
       ]}
     />
 
-    <div id="profile-shell" data-business-id={business.id} style="display:grid;grid-template-columns:1fr;gap:24px;margin-top:16px">
+    <div id="profile-shell" data-business-id={business.id} data-index-score={indexInfo.score} data-index-decision={indexInfo.decision} style="display:grid;grid-template-columns:1fr;gap:24px;margin-top:16px">
       <div>
         <div class="biz-profile-card" style="border:2px solid var(--navy);border-radius:var(--radius-lg);background:#fff;box-shadow:var(--shadow)">
           {isFeatured && (
