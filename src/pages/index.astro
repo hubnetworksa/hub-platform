@@ -446,6 +446,7 @@ const homeTitle = homeTitleCandidates.find((t) => t.length <= 60) ?? homeTitleCa
 </script>
 
 <script>
+  import { gaEvent } from '../lib/ga';
   // Pick three Featured cards at random for this visit.
   const rotating = [...document.querySelectorAll<HTMLElement>('#home-featured-grid [data-rotate]')];
   if (rotating.length > 3) {
@@ -461,6 +462,7 @@ const homeTitle = homeTitleCandidates.find((t) => t.length <= 60) ?? homeTitleCa
     if (!el?.dataset.trackSlug) return;
     try {
       navigator.sendBeacon('/api/track-view', new Blob([JSON.stringify({ businessSlug: el.dataset.trackSlug, event: el.dataset.track })], { type: 'application/json' }));
+      gaEvent(el.dataset.track!, { business_slug: el.dataset.trackSlug, surface: 'home' });
     } catch {
       // A missed click count is never worth surfacing an error over.
     }

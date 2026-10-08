@@ -181,6 +181,39 @@ async function adsense() {
   };
 }
 
+// Same page-type grouping as admin-app/functions/api/google.ts (copied, not imported).
+const kindOf = (path) => {
+  const [section, , sub] = String(path).split('/').filter(Boolean);
+  if (!section) return 'Home';
+  if (section === 'business') return 'Business';
+  if (section === 'category') return sub ? 'Category in suburb' : 'Category';
+  if (section === 'suburb') return 'Suburb';
+  if (section === 'shopping-center') return 'Shopping centre';
+  return section[0].toUpperCase() + section.slice(1);
+};
+
+// Open PageRank: one call for every live domain. Returns { domain: {score, rank, checkedAt} }.
+async function openPageRank(domains) {
+  const key = process.env.OPENPAGERANK_API_KEY;
+  if (!key) {
+    console.log('Open PageRank: no OPENPAGERANK_API_KEY, skipped');
+    return {};
+  }
+  try {
+    const res = await fetch(`https://openpagerank.com/api/v1.0/getPageRank?${domains.map((d) => `domains[]=${encodeURIComponent(d)}`).join('&')}`, { headers: { 'API-OPR': key } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const j = await res.json();
+    const checkedAt = new Date().toISOString();
+    const o = {};
+    for (const r of j.response ?? []) if (r.status_code === 200) o[r.domain] = { score: Number(r.page_rank_decimal), rank: r.rank ? Number(r.rank) : null, checkedAt };
+    console.log(`Open PageRank: ${Object.keys(o).length} of ${domains.length} domains`);
+    return o;
+  } catch (e) {
+    console.warn(`Open PageRank failed: ${String(e?.message ?? e).slice(0, 120)}`);
+    return {};
+  }
+}
+
 // GA4 traffic (Analytics Data API). Never throws: a missing scope or access
 // shows up as { propertyId, error } so the rest of the report still goes out.
 async function ga4(propertyId) {
@@ -199,13 +232,69 @@ async function ga4(propertyId) {
     });
     const total = (rows) => ({ sessions: rows.reduce((x, r) => x + r.sessions, 0), users: rows.reduce((x, r) => x + r.users, 0), pageviews: rows.reduce((x, r) => x + r.pageviews, 0) });
     const topPages = (b.rows ?? []).map((r) => ({ path: r.dimensionValues[0].value, pageviews: n(r, 0), users: n(r, 1) }));
-    return { propertyId, daily, topPages, totals7: total(daily.slice(-7)), totals28: total(daily.slice(-28)), prev7: total(daily.slice(-14, -7)) };
+    const out = { propertyId, daily, topPages, totals7: total(daily.slice(-7)), totals28: total(daily.slice(-28)), prev7: total(daily.slice(-14, -7)) };
+    const errors = {};
+    const R28 = [{ startDate: '28daysAgo', endDate: 'yesterday' }];
+    const P28 = [{ startDate: '56daysAgo', endDate: '29daysAgo' }];
+    const run = async (name, body, map) => {
+      try {
+        const r = await g(url, { dateRanges: R28, ...body });
+        if (r.error) throw new Error(`${r.error.code ?? ''} ${r.error.message ?? 'error'}`.trim());
+        out[name] = map(r.rows ?? []);
+      } catch (e) {
+        errors[name] = String(e?.message ?? e).slice(0, 120);
+      }
+    };
+    const dim = (r, i) => r.dimensionValues?.[i]?.value ?? '';
+    const bySessions = { metric: { metricName: 'sessions' }, desc: true };
+    await run('channels', { dimensions: [{ name: 'sessionDefaultChannelGroup' }], metrics: [{ name: 'sessions' }, { name: 'activeUsers' }], orderBys: [bySessions], limit: 15 }, (rows) => rows.map((r) => ({ name: dim(r, 0), sessions: n(r, 0), users: n(r, 1) })));
+    await run('sources', { dimensions: [{ name: 'sessionSource' }, { name: 'sessionMedium' }], metrics: [{ name: 'sessions' }], orderBys: [bySessions], limit: 10 }, (rows) => rows.map((r) => ({ name: `${dim(r, 0)} / ${dim(r, 1)}`, sessions: n(r, 0) })));
+    await run('devices', { dimensions: [{ name: 'deviceCategory' }], metrics: [{ name: 'sessions' }], orderBys: [bySessions], limit: 10 }, (rows) => rows.map((r) => ({ name: dim(r, 0), sessions: n(r, 0) })));
+    await run('cities', { dimensions: [{ name: 'city' }], metrics: [{ name: 'sessions' }], dimensionFilter: { filter: { fieldName: 'country', stringFilter: { matchType: 'EXACT', value: 'South Africa' } } }, orderBys: [bySessions], limit: 15 }, (rows) => rows.map((r) => ({ name: dim(r, 0), sessions: n(r, 0) })));
+    await run('landing', { dimensions: [{ name: 'landingPage' }], metrics: [{ name: 'sessions' }], orderBys: [bySessions], limit: 40 }, (rows) => rows.map((r) => ({ path: dim(r, 0), sessions: n(r, 0), type: kindOf(dim(r, 0)) })));
+    await run('newVsReturning', { dimensions: [{ name: 'newVsReturning' }], metrics: [{ name: 'activeUsers' }], limit: 5 }, (rows) => {
+      const o = { new: 0, returning: 0 };
+      for (const r of rows) {
+        const k = dim(r, 0);
+        if (k === 'new') o.new += n(r, 0);
+        else if (k === 'returning') o.returning += n(r, 0);
+      }
+      return o;
+    });
+    try {
+      const metrics = ['engagementRate', 'averageSessionDuration', 'bounceRate', 'sessions', 'activeUsers'].map((name) => ({ name }));
+      const r = await g(url, { dateRanges: [...R28, ...P28], metrics });
+      if (r.error) throw new Error(`${r.error.code ?? ''} ${r.error.message ?? 'error'}`.trim());
+      // With two date ranges GA adds a "dateRange" dimension to every row.
+      const pick = (i) => {
+        const row = (r.rows ?? []).find((x) => dim(x, 0) === `date_range_${i}`) ?? (r.rows ?? [])[i] ?? {};
+        return { engagementRate: n(row, 0), averageSessionDuration: n(row, 1), bounceRate: n(row, 2), sessions: n(row, 3), users: n(row, 4) };
+      };
+      out.engagement = { cur: pick(0), prev: pick(1) };
+    } catch (e) {
+      errors.engagement = String(e?.message ?? e).slice(0, 120);
+    }
+    await run('byHour', { dimensions: [{ name: 'hour' }], metrics: [{ name: 'sessions' }], limit: 24 }, (rows) => {
+      const v = Array(24).fill(0);
+      for (const r of rows) if (Number(dim(r, 0)) < 24) v[Number(dim(r, 0))] = n(r, 0);
+      return v.map((sessions, hour) => ({ hour, sessions }));
+    });
+    await run('byWeekday', { dimensions: [{ name: 'dayOfWeek' }], metrics: [{ name: 'sessions' }], limit: 7 }, (rows) => {
+      const v = Array(7).fill(0);
+      for (const r of rows) if (Number(dim(r, 0)) < 7) v[Number(dim(r, 0))] = n(r, 0);
+      return v.map((sessions, day) => ({ day, sessions }));
+    });
+    await run('events', { dimensions: [{ name: 'eventName' }], metrics: [{ name: 'eventCount' }], orderBys: [{ metric: { metricName: 'eventCount' }, desc: true }], limit: 15 }, (rows) => rows.map((r) => ({ name: dim(r, 0), count: n(r, 0) })));
+    if (Object.keys(errors).length) out.errors = errors;
+    return out;
   } catch (e) {
     return { propertyId, error: String(e?.message ?? e).slice(0, 120) };
   }
 }
 
 const out = { generatedAt: new Date().toISOString(), sites: {}, adsense: null };
+const liveDomains = CITIES.map((slug) => JSON.parse(readFileSync(join(ROOT, 'sites', `${slug}.json`), 'utf8'))).filter((x) => x.domainLive).map((x) => x.domain);
+const opr = await openPageRank(liveDomains);
 for (const slug of CITIES) {
   const site = JSON.parse(readFileSync(join(ROOT, 'sites', `${slug}.json`), 'utf8'));
   if (!site.domainLive) continue;
@@ -222,7 +311,7 @@ for (const slug of CITIES) {
   console.log(`${slug}: inspecting pages…`);
   const ins = await inspections(site, prop, old?.inspections);
   console.log(`${slug}: inspected ${ins.inspectedToday ?? 0} pages today (${Object.keys(ins.map).length} of ${ins.sitemapUrls} known).`);
-  out.sites[slug] = { property: prop, ...a, sitemapUrls: ins.sitemapUrls, inspections: ins.map };
+  out.sites[slug] = { property: prop, ...a, sitemapUrls: ins.sitemapUrls, inspections: ins.map, authority: opr[site.domain] ? { openPageRank: opr[site.domain] } : null };
   if (site.googleAnalyticsPropertyId) {
     const ga = await ga4(site.googleAnalyticsPropertyId);
     if (ga.error) console.warn(`${slug}: Google Analytics error: ${ga.error}`);

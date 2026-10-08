@@ -1,4 +1,4 @@
-import type { PagesFunction } from '@cloudflare/workers-types';
+import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { hubSites, selectSites, rows, json, type Env, type HubSite } from '../_lib/sites';
 
 // Stats for the Stats screen: GET /api/stats?range=7|30|90&site=all|<slug>
@@ -43,7 +43,7 @@ async function siteStats(site: HubSite, range: number) {
   const db = site.db;
   const since = `-${range * 2} days`;
   const sinceCur = `-${range} days`;
-  const [daily, msgs, signups, installs, top, queries, cats, revenue] = await Promise.all([
+  const [daily, msgs, signups, installs, top, queries, cats, revenue, enqBy, groups, groupCounts] = await Promise.all([
     rows<{ d: string; event: string; n: number }>(
       db,
       `SELECT date(created_at) AS d, event, COUNT(*) AS n FROM business_stats WHERE created_at >= datetime('now', ?) GROUP BY d, event`,
@@ -52,9 +52,10 @@ async function siteStats(site: HubSite, range: number) {
     rows<{ d: string; n: number }>(db, `SELECT date(created_at) AS d, COUNT(*) AS n FROM messages WHERE kind = 'enquiry' AND created_at >= datetime('now', ?) GROUP BY d`, since),
     rows<{ d: string; n: number }>(db, `SELECT date(created_at) AS d, COUNT(*) AS n FROM users WHERE email_verified_at IS NOT NULL AND created_at >= datetime('now', ?) GROUP BY d`, since),
     rows<{ d: string; event: string; n: number }>(db, `SELECT date(created_at) AS d, event, COUNT(DISTINCT device_id) AS n FROM app_events WHERE created_at >= datetime('now', ?) GROUP BY d, event`, since),
-    rows<{ name: string; slug: string; views: number; contacts: number }>(
+    rows<{ name: string; slug: string; views: number; contacts: number; phone: number; whatsapp: number; website: number }>(
       db,
-      `SELECT b.name, b.slug, SUM(s.event = 'view') AS views, SUM(s.event IN ('phone_click', 'whatsapp_click', 'website_click')) AS contacts
+      `SELECT b.name, b.slug, SUM(s.event = 'view') AS views, SUM(s.event IN ('phone_click', 'whatsapp_click', 'website_click')) AS contacts,
+              SUM(s.event = 'phone_click') AS phone, SUM(s.event = 'whatsapp_click') AS whatsapp, SUM(s.event = 'website_click') AS website
        FROM business_stats s JOIN businesses b ON b.id = s.business_id
        WHERE s.created_at >= datetime('now', ?) GROUP BY s.business_id ORDER BY views DESC LIMIT 15`,
       sinceCur
@@ -82,6 +83,17 @@ async function siteStats(site: HubSite, range: number) {
          SELECT strftime('%Y-%m', paid_at) AS m, amount_cents FROM event_payments WHERE status = 'complete' AND paid_at >= date('now', 'start of month', '-11 months'))
        GROUP BY m`
     ),
+    // Enquiries per listing (the listing form records the slug).
+    rows<{ slug: string; n: number }>(db, `SELECT business_slug AS slug, COUNT(*) AS n FROM messages WHERE kind = 'enquiry' AND business_slug IS NOT NULL AND created_at >= datetime('now', ?) GROUP BY business_slug`, sinceCur),
+    // Paid vs free: views and contact taps in the period, and how many listings are in each group.
+    rows<{ paid: number; views: number; taps: number }>(
+      db,
+      `SELECT (COALESCE(b.subscription_tier, 0) > 0) AS paid, SUM(s.event = 'view') AS views, SUM(s.event IN ('phone_click', 'whatsapp_click', 'website_click')) AS taps
+       FROM business_stats s JOIN businesses b ON b.id = s.business_id
+       WHERE s.created_at >= datetime('now', ?) AND b.status = 'published' GROUP BY paid`,
+      sinceCur
+    ),
+    rows<{ paid: number; n: number }>(db, `SELECT (COALESCE(subscription_tier, 0) > 0) AS paid, COUNT(*) AS n FROM businesses WHERE status = 'published' AND closed_at IS NULL GROUP BY paid`),
   ]);
 
   const days = dayList(range * 2);
@@ -115,7 +127,8 @@ async function siteStats(site: HubSite, range: number) {
     // [previous period..., current period...]; the client splits at `range`.
     series: s,
     clicks,
-    top: top.map((t) => ({ ...t, url: `https://${site.domain}/business/${t.slug}/` })),
+    paidVsFree: [0, 1].map((p) => ({ paid: p === 1, listings: groupCounts.find((g) => Number(g.paid) === p)?.n ?? 0, views: groups.find((g) => Number(g.paid) === p)?.views ?? 0, taps: groups.find((g) => Number(g.paid) === p)?.taps ?? 0 })),
+    top: top.map((t) => ({ ...t, enquiries: enqBy.find((e) => e.slug === t.slug)?.n ?? 0, url: `https://${site.domain}/business/${t.slug}/` })),
     queries,
     categories: cats,
     revenue: months.map((m) => rev.get(m) ?? 0),
@@ -156,6 +169,24 @@ async function searchConsole(): Promise<unknown[]> {
   } catch {
     return [];
   }
+}
+
+// First-party totals over the last `days` days for one site (used by the
+// Analytics funnel): listing views, contact taps by kind, enquiries, searches.
+export async function firstPartyTotals(db: D1Database, days: number) {
+  const since = `-${days} days`;
+  const [ev, enq] = await Promise.all([
+    rows<{ event: string; n: number }>(db, `SELECT event, COUNT(*) AS n FROM business_stats WHERE created_at >= datetime('now', ?) GROUP BY event`, since),
+    rows<{ n: number }>(db, `SELECT COUNT(*) AS n FROM messages WHERE kind = 'enquiry' AND created_at >= datetime('now', ?)`, since),
+  ]);
+  const get = (e: string) => Number(ev.find((r) => r.event === e)?.n ?? 0);
+  return {
+    range: days,
+    views: get('view'),
+    contacts: { phone: get('phone_click'), whatsapp: get('whatsapp_click'), website: get('website_click') },
+    enquiries: Number(enq[0]?.n ?? 0),
+    searches: get('search_appearance'),
+  };
 }
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {

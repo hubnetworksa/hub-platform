@@ -5,6 +5,7 @@
 // business names and search queries are user data.
 
 import { motion } from './motion.js';
+import { helpIcon } from './help.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 
@@ -279,7 +280,7 @@ export function columnChart(el, opts) {
 }
 
 // ── Horizontal bar list (labels and values always visible) ─────────────────
-// opts: { items: [{ label, value, color?, sub? }], format }
+// opts: { items: [{ label, value, color?, sub?, help? }], format }
 export function barList(el, opts) {
   const { items, format = fmt.int } = opts;
   el.replaceChildren();
@@ -307,6 +308,7 @@ export function barList(el, opts) {
       s.textContent = it.sub;
       l.appendChild(s);
     }
+    if (it.help) l.appendChild(helpIcon(it.help));
     const v = document.createElement('b');
     v.style.fontVariantNumeric = 'tabular-nums';
     v.textContent = format(it.value);
@@ -324,8 +326,10 @@ export function barList(el, opts) {
 }
 
 // ── Data table (the accessible view of any chart) ──────────────────────────
-// columns: [{ key, label, num?, format? }]
-export function dataTable(columns, rowsData) {
+// columns: [{ key, label, num?, format?, help? }]. A plain string is shorthand
+// for { key: s, label: s }; `help` adds the (i) tooltip to the header.
+export function dataTable(rawColumns, rowsData) {
+  const columns = rawColumns.map((c) => (typeof c === 'string' ? { key: c, label: c } : c));
   const wrap = document.createElement('div');
   wrap.className = 'table-wrap';
   const table = document.createElement('table');
@@ -334,6 +338,7 @@ export function dataTable(columns, rowsData) {
   for (const c of columns) {
     const th = document.createElement('th');
     th.textContent = c.label;
+    if (c.help) th.appendChild(helpIcon(c.help));
     if (c.num) th.className = 'num';
     thead.appendChild(th);
   }

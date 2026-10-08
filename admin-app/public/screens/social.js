@@ -7,7 +7,7 @@ let current = null;
 
 export async function render(view, ui) {
   const { h, fill, api, mobileHead, pageHead, errorBox } = ui;
-  const head = () => [mobileHead('Social'), pageHead('Social', 'Facebook and Instagram for each city: setup, page links and ready-to-post captions.')];
+  const head = () => [mobileHead('Social'), pageHead(['Social', ui.help(ui.HELP.social.title)], 'Facebook and Instagram for each city: setup, page links and ready-to-post captions.')];
   fill(view, head(), h('div', { class: 'skeleton' }));
   let d;
   try {
@@ -119,12 +119,7 @@ function linksCard(ui, s) {
 
 function ideaCard(ui, it) {
   const { h } = ui;
-  return h(
-    'article',
-    { class: 'card idea' },
-    h('div', { class: 'up-top' }, h('span', { class: 'pill info' }, it.kind), h('a', { class: 'meta', href: it.link, target: '_blank', rel: 'noopener' }, 'Open page ', ui.icon('ext', 12))),
-    h('h3', {}, it.title),
-    h('pre', { class: 'caption' }, it.caption),
+  const copyBtn = (label, text) =>
     h(
       'button',
       {
@@ -133,14 +128,22 @@ function ideaCard(ui, it) {
         onclick: async (e) => {
           const btn = e.currentTarget;
           try {
-            await navigator.clipboard.writeText(it.caption);
+            await navigator.clipboard.writeText(text);
             btn.textContent = 'Copied ✓';
           } catch {
-            prompt('Copy this caption:', it.caption);
+            prompt('Copy this caption:', text);
           }
         },
       },
-      'Copy caption'
-    )
+      label
+    );
+  return h(
+    'article',
+    { class: 'card idea' },
+    h('div', { class: 'up-top' }, h('span', { class: 'pill info' }, it.kind), h('a', { class: 'meta', href: it.link, target: '_blank', rel: 'noopener' }, 'Open page ', ui.icon('ext', 12))),
+    h('h3', {}, it.title),
+    h('pre', { class: 'caption' }, it.caption),
+    // Each network gets its own tagged link, so Analytics can tell them apart.
+    h('div', { class: 'row' }, copyBtn('Copy for Facebook', it.caption), copyBtn('Copy for Instagram', it.captionIg || it.caption))
   );
 }

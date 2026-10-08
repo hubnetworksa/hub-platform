@@ -41,9 +41,38 @@ const LABELS = {
   upgrade_deleted: 'Upgrade deleted',
   admin_invited: 'Admin invited',
   admin_removed: 'Admin removed',
+  // Hub Admin's own actions
+  submission_approve: 'Listing approved (Hub Admin)',
+  submission_reject: 'Listing rejected (Hub Admin)',
+  claim_approve: 'Claim approved (Hub Admin)',
+  claim_reject: 'Claim rejected (Hub Admin)',
+  claim_dismiss: 'Expired claim dismissed',
+  event_approve: 'Event approved (Hub Admin)',
+  event_reject: 'Event rejected (Hub Admin)',
+  event_claim_approve: 'Event claim approved (Hub Admin)',
+  event_claim_reject: 'Event claim rejected (Hub Admin)',
+  review_approve: 'Review published',
+  review_reject: 'Review rejected',
+  report_resolve: 'Report resolved',
+  message_resolve: 'Message marked done',
+  message_reply: 'Message replied to',
+  social_step_done: 'Social setup step done',
+  index_threshold_set: 'Index threshold changed',
+  rep_suspend: 'Rep suspended',
+  rep_reactivate: 'Rep reactivated',
+  rep_mark_paid: 'Rep paid out',
+  rep_approve: 'Rep commission approved',
+  rep_void: 'Rep commission voided',
+  business_hidden: 'Listing hidden',
+  business_published: 'Listing published',
+  business_closed: 'Listing marked closed',
+  business_reopened: 'Listing reopened',
+  business_hours_set: 'Opening hours set',
+  check_dismissed: 'Quality check dismissed',
+  duplicate_dismissed: 'Duplicate dismissed',
 };
 const label = (k) => LABELS[k] ?? k.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
-const tone = (k) => (/refund|disputed|expired|cancelled|rejected|removed|deleted|escalated/.test(k) ? 'fail' : /approved|confirmed|received|activated|renewed|done|started/.test(k) ? 'pass' : '');
+const tone = (k) => (/refund|disputed|expired|cancelled|reject|removed|deleted|escalated|suspend|void|hidden|closed/.test(k) ? 'fail' : /approve|confirmed|received|activated|renewed|done|started|resolve|reply|paid|published|reactivate|reopened|set$/.test(k) ? 'pass' : '');
 const filter = { site: 'all', q: '', shown: 60 };
 
 export async function render(view, ui) {

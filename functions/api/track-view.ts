@@ -6,7 +6,7 @@ interface Env {
   SITE: string;
 }
 
-const EVENTS = new Set(['view', 'phone_click', 'website_click', 'search_appearance', 'whatsapp_click']);
+const EVENTS = new Set(['view', 'phone_click', 'website_click', 'search_appearance', 'whatsapp_click', 'directions_click']);
 // A single search can show many businesses at once; capped generously above
 // the site's own render cap (40 results + 1 pinned) so a legitimate full
 // page of results is never silently truncated.

@@ -29,6 +29,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
                 SUM(bs.event = 'view') AS views,
                 SUM(bs.event = 'phone_click') AS phone_clicks,
                 SUM(bs.event = 'website_click') AS website_clicks,
+                SUM(bs.event = 'whatsapp_click') AS whatsapp_clicks,
                 SUM(bs.event = 'search_appearance') AS search_appearances,
                 (SELECT COUNT(*) FROM messages m WHERE m.kind = 'enquiry' AND m.business_slug = b.slug AND m.created_at >= ${since}) AS enquiries
          FROM business_stats bs
@@ -40,7 +41,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       )
       .all<{
         id: number; name: string; slug: string; subscription_tier: number | null;
-        views: number | null; phone_clicks: number | null; website_clicks: number | null; search_appearances: number | null; enquiries: number | null;
+        views: number | null; phone_clicks: number | null; website_clicks: number | null; whatsapp_clicks: number | null; search_appearances: number | null; enquiries: number | null;
       }>(),
   ]);
 
@@ -54,6 +55,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       views: byEvent.view ?? 0,
       phoneClicks: byEvent.phone_click ?? 0,
       websiteClicks: byEvent.website_click ?? 0,
+      whatsappClicks: byEvent.whatsapp_click ?? 0,
       searchAppearances: byEvent.search_appearance ?? 0,
       enquiries: enquiryTotal?.n ?? 0,
     },
@@ -65,6 +67,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       views: r.views ?? 0,
       phone_clicks: r.phone_clicks ?? 0,
       website_clicks: r.website_clicks ?? 0,
+      whatsapp_clicks: r.whatsapp_clicks ?? 0,
       search_appearances: r.search_appearances ?? 0,
       enquiries: r.enquiries ?? 0,
     })),

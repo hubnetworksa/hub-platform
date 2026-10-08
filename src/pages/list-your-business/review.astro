@@ -128,6 +128,7 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
 </style>
 
 <script>
+  import { gaEvent } from '../../lib/ga';
   import {
     loadDraft,
     clearDraft,
@@ -240,6 +241,7 @@ const centreNames = Object.fromEntries(shoppingCenters.map((c) => [c.slug, c.nam
 
       // The listing is saved server-side (pending human review) and our team is
       // emailed by the server — the visitor's own email app is never opened.
+      gaEvent('submit_listing', { plan: String(draft.tier) });
       clearDraft();
 
       if (paid && result.redirectUrl) {

@@ -54,7 +54,7 @@ export const QUEUES: [string, string, string, string][] = [
     'Review',
     '/admin/reviews/',
     `SELECT b.name AS title, r.author_name AS detail, r.created_at FROM reviews r
-     JOIN businesses b ON b.id = r.business_id WHERE r.status = 'pending' ORDER BY r.created_at DESC LIMIT 25`,
+     JOIN businesses b ON b.id = r.business_id WHERE r.status = 'pending' OR r.flagged = 1 ORDER BY r.created_at DESC LIMIT 25`,
   ],
   [
     'event',
@@ -71,6 +71,30 @@ export const QUEUES: [string, string, string, string][] = [
      JOIN events e ON e.id = ec.event_id WHERE ec.status = 'pending' ORDER BY ec.created_at DESC LIMIT 25`,
   ],
 ];
+
+// True totals per type (the lists above are capped at 25 per type). Same
+// filters as QUEUES and as the Inbox, so the numbers always agree.
+const COUNTS: Record<string, string> = {
+  submission: `SELECT COUNT(*) AS n FROM pending_submissions WHERE owner_confirm_token IS NULL AND admin_approved_at IS NULL`,
+  claim: `SELECT COUNT(*) AS n FROM business_claims WHERE status = 'pending'`,
+  report: `SELECT COUNT(*) AS n FROM reports WHERE status = 'open'`,
+  message: `SELECT COUNT(*) AS n FROM messages WHERE status = 'open' AND kind != 'enquiry'`,
+  review: `SELECT COUNT(*) AS n FROM reviews WHERE status = 'pending' OR flagged = 1`,
+  event: `SELECT COUNT(*) AS n FROM event_submissions WHERE status = 'pending'`,
+  'event-claim': `SELECT COUNT(*) AS n FROM event_claims WHERE status = 'pending'`,
+};
+
+/** Uncapped count of waiting items per type on one site. */
+export async function siteQueueCounts(site: HubSite): Promise<Record<string, number>> {
+  const out: Record<string, number> = {};
+  await Promise.all(
+    Object.entries(COUNTS).map(async ([type, sql]) => {
+      const r = await rows<{ n: number }>(site.db, sql);
+      out[type] = Number(r[0]?.n) || 0;
+    })
+  );
+  return out;
+}
 
 /** Every pending item on one site, newest first per queue. */
 export async function siteQueue(site: HubSite): Promise<QueueItem[]> {

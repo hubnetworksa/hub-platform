@@ -239,6 +239,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
   import { createSearchClient, type SearchResult } from '../lib/search-client';
   import { openStatus } from '../lib/openNow';
   import { phoneHref } from '../lib/phone';
+  import { gaEvent } from '../lib/ga';
   import { WHATSAPP_ICON, WHATSAPP_GREEN } from '../lib/whatsapp';
 
   // define:vars would force this script to skip TS compilation (it's
@@ -605,6 +606,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     const mySeq = ++runSeq; const data = await loadIndex();
     const base = await search(data, words, suburbSlug);
     if (mySeq !== runSeq) return; // a newer keystroke superseded this one
+    if (track && q) gaEvent('search', { search_term: q.toLowerCase().slice(0, 80), result_count: base.length });
     const key = [q, suburbSlug, filterOpen.checked, filterVerified.checked, filterHours.checked].join('|');
     if (key !== lastKey) limit = PAGE;
     lastKey = key;
@@ -701,6 +703,7 @@ const showsPaid = businesses.some(isPaidListing) || sponsorships.some((s) => s.p
     if (!el?.dataset.trackSlug) return;
     try {
       navigator.sendBeacon('/api/track-view', new Blob([JSON.stringify({ businessSlug: el.dataset.trackSlug, event: el.dataset.track })], { type: 'application/json' }));
+      gaEvent(el.dataset.track!, { business_slug: el.dataset.trackSlug, surface: 'search' });
     } catch {
       // A missed click count is never worth surfacing an error over.
     }

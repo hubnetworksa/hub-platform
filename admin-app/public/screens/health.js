@@ -31,13 +31,13 @@ export async function render(view, ui, refresh = '') {
       h('div', { class: 'three' }, d.sites.map((s) => siteCard(ui, s))),
       h('h2', { class: 'section-title' }, 'Deploys & scheduled jobs'),
       workflowsCard(ui, d),
-      h('h2', { class: 'section-title' }, 'Database usage'),
+      h('h2', { class: 'section-title' }, 'Database usage', ui.help(ui.HELP.health.database)),
       usageCard(ui, d.d1),
       h('h2', { class: 'section-title' }, 'Routines'),
       routinesCard(ui, d.routines),
-      h('h2', { class: 'section-title' }, 'Security checks'),
+      h('h2', { class: 'section-title' }, 'Security checks', ui.help(ui.HELP.health.security)),
       securityCard(ui, d.security, () => render(view, ui, 'security')),
-      h('h2', { class: 'section-title' }, 'Broken links'),
+      h('h2', { class: 'section-title' }, 'Broken links', ui.help(ui.HELP.health.brokenLinks)),
       linksCard(ui, d.links)
     )
   );
@@ -49,19 +49,23 @@ function summary(ui, d) {
   const failing = d.workflows.filter((w) => w.conclusion === 'failure' || w.conclusion === 'timed_out').length;
   const today = d.d1.today.reduce((a, r) => a + r.rows_read, 0);
   const usagePct = Math.round((today / d.d1.limits.rows_read) * 100);
+  // Alerts fire on whichever of reads or writes is closer to its limit, so show both.
+  const writtenToday = d.d1.today.reduce((a, r) => a + r.rows_written, 0);
+  const writtenPct = Math.round((writtenToday / d.d1.limits.rows_written) * 100);
   const issues = d.security.checks.filter((c) => c.result !== 'pass').length;
   const late = routineRows(d.routines).filter((r) => r.status === 'late').length;
   const broken = d.links ? Object.values(d.links.sites ?? {}).reduce((a, s) => a + (s.broken?.length ?? 0), 0) : null;
-  const tile = (label, value, note, bad) => h('div', { class: `tile${bad ? ' bad' : ''}` }, h('div', { class: 'label' }, label), h('div', { class: 'value' }, value), h('div', { class: 'delta' }, note));
+  const H = ui.HELP.health;
+  const tile = (label, value, note, help, bad) => ui.tile(label, value, note, help, { bad });
   return h(
     'div',
     { class: 'tiles' },
-    tile('Sites up', `${up}/${d.sites.length}`, d.sites.every((s) => s.latest) ? 'checked every 5 min' : 'first checks pending', up < d.sites.length),
-    tile('Failing jobs', String(failing), failing ? 'see below' : 'all passing', failing > 0),
-    tile('Database today', d.d1.error ? '–' : `${usagePct}%`, d.d1.error ? 'needs permission' : 'of the free daily reads', usagePct >= 70),
-    tile('Late routines', String(late), late ? 'see below' : 'all on time', late > 0),
-    tile('Security', issues ? `${issues} to fix` : 'OK', issues ? 'see below' : 'all checks pass', issues > 0),
-    tile('Broken links', broken == null ? '–' : String(broken), broken == null ? 'first report Sunday' : 'on the sites', broken > 0)
+    tile('Sites up', `${up}/${d.sites.length}`, d.sites.every((s) => s.latest) ? 'checked every 5 min' : 'first checks pending', H.sitesUp, up < d.sites.length),
+    tile('Failing jobs', String(failing), failing ? 'see below' : 'all passing', H.failingJobs, failing > 0),
+    tile('Database today', d.d1.error ? '–' : `${usagePct}% / ${writtenPct}%`, d.d1.error ? 'needs permission' : 'rows read / written, of the free daily limit', H.database, Math.max(usagePct, writtenPct) >= 70),
+    tile('Late routines', String(late), late ? 'see below' : 'all on time', H.lateRoutines, late > 0),
+    tile('Security', issues ? `${issues} to fix` : 'OK', issues ? 'see below' : 'all checks pass', H.security, issues > 0),
+    tile('Broken links', broken == null ? '–' : String(broken), broken == null ? 'first report Sunday' : 'on the sites', H.brokenLinks, broken > 0)
   );
 }
 
@@ -87,8 +91,10 @@ function siteCard(ui, s) {
       'dl',
       { class: 'kv' },
       h('div', {}, h('dt', {}, 'Uptime 24 h'), h('dd', {}, pct(s.uptime_24h))),
-      h('div', {}, h('dt', {}, 'Uptime 7 days'), h('dd', {}, pct(s.uptime_7d))),
-      h('div', {}, h('dt', {}, 'Response'), h('dd', {}, ms(s.avg_ms_24h)))
+      h('div', {}, h('dt', {}, 'Uptime 7 days', ui.help(ui.HELP.health.uptime7)), h('dd', {}, pct(s.uptime_7d))),
+      h('div', {}, h('dt', {}, 'Response', ui.help(ui.HELP.health.response)), h('dd', {}, ms(s.avg_ms_24h))),
+      // db_ok is recorded separately from the homepage check.
+      h('div', {}, h('dt', {}, 'Database', ui.help(ui.HELP.health.dbAnswering)), h('dd', {}, !l ? '–' : l.db_ok ? 'Answering' : 'Not answering'))
     ),
     strip,
     h('div', { class: 'strip-legend' }, h('span', {}, '24 h ago'), h('span', {}, 'now')),
@@ -198,6 +204,16 @@ function usageCard(ui, d1) {
     label: 'Rows read per day',
     height: 200,
   });
+  const wChart = h('div', { style: 'margin-top:18px' });
+  card.append(h('h3', { class: 'card-sub' }, 'Rows written per day (all databases)', ui.help(ui.HELP.health.rowsWritten)), wChart);
+  ui.charts.columnChart(wChart, {
+    x: d1.daily.map((d) => d.day),
+    series: [{ name: 'Rows written', color: 'var(--s2)', values: d1.daily.map((d) => d.rows_written) }],
+    format: big,
+    xLabel: (v) => ui.charts.fmt.day(v),
+    label: 'Rows written per day',
+    height: 200,
+  });
   card.append(h('p', { class: 'note' }, `Free limit: ${big(d1.limits.rows_read)} rows read and ${big(d1.limits.rows_written)} rows written a day across all databases. Alerts at 70% and 90%.${d1.updated_at ? ` Updated ${ui.ago(d1.updated_at)}.` : ''}`));
   return card;
 }
@@ -222,7 +238,11 @@ function routinesCard(ui, routines) {
     ],
     rows.sort((a, b) => (a.status === 'late' ? -1 : 0) - (b.status === 'late' ? -1 : 0))
   );
-  return h('section', { class: 'card' }, table, h('p', { class: 'note' }, `From the routines’ own logs, checked daily${checked ? ` (last ${ui.ago(checked)})` : ''}. A routine that turns late sends a “routine” alert.`));
+  const paused = rows.filter((r) => r.status === 'off');
+  const pausedLine = paused.length
+    ? h('p', { class: 'sub', style: 'margin-top:0' }, h('b', {}, 'Routines paused'), ui.help(ui.HELP.health.pausedRoutines), `: ${[...new Set(paused.map((r) => ROUTINE_NAMES[r.routine] ?? r.routine))].join(', ')}`)
+    : null;
+  return h('section', { class: 'card' }, pausedLine, table, h('p', { class: 'note' }, `From the routines’ own logs, checked daily${checked ? ` (last ${ui.ago(checked)})` : ''}. A routine that turns late sends a “routine” alert.`));
 }
 
 function securityCard(ui, sec, recheck) {

@@ -28,7 +28,7 @@ export async function render(view, ui) {
     );
     return;
   }
-  fill(view, head(d), tiles(ui, d), charts(ui, d), indexSection(ui, d), h('h2', { class: 'section-title' }, 'Search gaps'), gapsGoogle(ui, d), gapsOnSite(ui, d));
+  fill(view, head(d), tiles(ui, d), charts(ui, d), perSite(ui, d), indexSection(ui, d), h('h2', { class: 'section-title' }, 'Search gaps'), gapsGoogle(ui, d), gapsOnSite(ui, d));
 }
 
 const sum = (list, k) => list.reduce((a, r) => a + (r[k] || 0), 0);
@@ -51,15 +51,16 @@ function tiles(ui, d) {
     const p = Math.round(((cur - prev) / prev) * 100);
     return h('div', { class: `delta ${p > 0 ? 'up' : p < 0 ? 'down' : ''}` }, `${p > 0 ? '▲' : p < 0 ? '▼' : '■'} ${Math.abs(p)}% vs the week before`);
   };
-  const tile = (label, value, d2) => h('div', { class: 'tile' }, h('div', { class: 'label' }, label), h('div', { class: 'value' }, value), d2);
+  const H = ui.HELP.google;
+  const tile = (label, value, d2, help) => ui.tile(label, value, d2, help);
   const f = ui.charts.fmt.int;
   return h(
     'div',
     { class: 'tiles' },
-    tile('Clicks from Google (7 days)', f(c7), delta(c7, p7)),
-    tile('Times shown in Google (7 days)', ui.charts.fmt.short(i7), delta(i7, pi7)),
-    tile('Pages seen in Google (latest day)', f(seen), seen28 ? h('div', { class: `delta ${seen >= seen28 ? 'up' : 'down'}` }, `${seen >= seen28 ? '▲' : '▼'} from ${f(seen28)} four weeks earlier`) : h('div', { class: 'delta' }, 'pages with at least one impression')),
-    tile('Pages Google has indexed', checked ? `${Math.round((indexed / checked) * 100)}%` : '–', h('div', { class: 'delta' }, `of the ${f(checked)} pages checked so far`))
+    tile('Clicks from Google (7 days)', f(c7), delta(c7, p7), H.clicks),
+    tile('Times shown in Google (7 days)', ui.charts.fmt.short(i7), delta(i7, pi7), H.impressions),
+    tile('Pages seen in Google (latest day)', f(seen), seen28 ? h('div', { class: `delta ${seen >= seen28 ? 'up' : 'down'}` }, `${seen >= seen28 ? '▲' : '▼'} from ${f(seen28)} four weeks earlier`) : h('div', { class: 'delta' }, 'pages with at least one impression'), H.pagesSeen),
+    tile('Pages Google has indexed', checked ? `${Math.round((indexed / checked) * 100)}%` : '–', h('div', { class: 'delta' }, `of the ${f(checked)} pages checked so far`), H.indexed)
   );
 }
 
@@ -76,19 +77,36 @@ function charts(ui, d) {
   const clicks = h('div');
   const impressions = h('div');
   const seen = h('div');
+  const ctr = h('div');
+  const pos = h('div');
+  const auth = h('div');
+  const H = ui.HELP.google;
+  const authDates = [...new Set(d.sites.flatMap((s) => s.authority.series.map((x) => x.day)))].sort();
   const out = h(
     'div',
     {},
-    h('div', { class: 'two' }, h('section', { class: 'card' }, h('h2', { class: 'card-sub' }, 'Clicks from Google per day'), clicks), h('section', { class: 'card' }, h('h2', { class: 'card-sub' }, 'Times shown in Google per day'), impressions)),
+    h('div', { class: 'two' }, h('section', { class: 'card' }, h('h2', { class: 'card-sub' }, 'Clicks from Google per day', ui.help(H.clicks)), clicks), h('section', { class: 'card' }, h('h2', { class: 'card-sub' }, 'Times shown in Google per day', ui.help(H.impressions)), impressions)),
     h(
       'section',
       { class: 'card', style: 'margin-top:16px' },
-      h('h2', { class: 'card-sub' }, 'Indexing trend: pages seen in Google per day'),
+      h('h2', { class: 'card-sub' }, 'Indexing trend: pages seen in Google per day', ui.help(H.pagesSeen)),
       h('p', { class: 'sub', style: 'margin-top:0' }, 'How many different pages of each site appeared in Google results each day. When Google drops pages from its index, this line falls first.'),
       seen
-    )
+    ),
+    h('div', { class: 'two', style: 'margin-top:16px' }, h('section', { class: 'card' }, h('h2', { class: 'card-sub' }, 'Click-through rate per day', ui.help(H.ctr)), ctr), h('section', { class: 'card' }, h('h2', { class: 'card-sub' }, 'Average position per day (lower is better)', ui.help(H.position)), pos)),
+    authDates.length
+      ? h('section', { class: 'card', style: 'margin-top:16px' }, h('h2', { class: 'card-sub' }, 'Authority (Open PageRank), last 90 days', ui.help(H.authority)), auth)
+      : null
   );
+  const pct = (v) => `${(v * 100).toFixed(1)}%`;
+  const authSeries = d.sites.map((s) => {
+    const m = new Map(s.authority.series.map((x) => [x.day, x.score]));
+    return { name: ui.siteName(s.slug), short: ui.siteName(s.slug), color: ui.siteColor(s.slug), values: authDates.map((x) => m.get(x) ?? 0) };
+  });
   requestAnimationFrame(() => {
+    lineChart(ctr, { x: dates, series: series('ctr'), format: pct, label: 'Click-through rate per day', height: 200 });
+    lineChart(pos, { x: dates, series: series('position'), format: (v) => v.toFixed(1), label: 'Average position per day (lower is better)', height: 200 });
+    if (authDates.length) lineChart(auth, { x: authDates, series: authSeries, format: (v) => v.toFixed(1), label: 'Open PageRank per day', height: 200 });
     lineChart(clicks, { x: dates, series: series('clicks'), label: 'Clicks per day', height: 220 });
     lineChart(impressions, { x: dates, series: series('impressions'), format: fmt.short, label: 'Impressions per day', height: 220 });
     lineChart(seen, { x: seenDates, series: series('pages', 'pages_seen'), label: 'Pages seen in Google per day', height: 240 });
@@ -103,7 +121,7 @@ function indexSection(ui, d) {
   return h(
     'div',
     {},
-    h('h2', { class: 'section-title' }, 'Pages Google leaves out'),
+    h('h2', { class: 'section-title' }, 'Pages Google leaves out', ui.help(ui.HELP.google.leftOut)),
     h(
       'div',
       { class: 'three' },
@@ -122,7 +140,7 @@ function indexSection(ui, d) {
                 'details',
                 { style: 'margin-top:12px' },
                 h('summary', {}, `${i.not_indexed_count.toLocaleString('en-ZA')} not in Google`),
-                h('ul', { class: 'linklist' }, i.not_indexed.slice(0, 150).map((p) => h('li', {}, h('a', { href: `https://${s.domain}${p.path}`, target: '_blank', rel: 'noopener' }, p.path), h('span', { class: 'meta' }, ` · ${p.kind} · ${p.state}${p.last_crawl ? ` · crawled ${p.last_crawl}` : ''}`))))
+                h('ul', { class: 'linklist' }, i.not_indexed.slice(0, 150).map((p) => h('li', {}, h('a', { href: `https://${s.domain}${p.path}`, target: '_blank', rel: 'noopener' }, p.path), h('span', { class: 'meta' }, ` · ${p.kind} · ${p.state}${p.last_crawl ? ` · crawled ${p.last_crawl}` : ''}${p.checked ? ` · checked ${p.checked}` : ''}`))))
               )
             : h('p', { class: 'msg ok' }, 'Every page checked is in Google.')
         );
@@ -138,15 +156,15 @@ function gapsGoogle(ui, d) {
   return h(
     'section',
     { class: 'card' },
-    h('h3', { class: 'card-sub' }, 'On Google: searches where you’re just off page one'),
+    h('h3', { class: 'card-sub' }, 'On Google: searches where you’re just off page one', ui.help(ui.HELP.google.gapsGoogle)),
     h('p', { class: 'sub', style: 'margin-top:0' }, 'People search for these and your site appears, but on page 2 or lower (last 30 days). A better page for each could bring real visitors.'),
     rows.length
       ? ui.charts.dataTable(
           [
             { key: 'query', label: 'Search', render: (r) => h('span', { class: 'inline-city' }, h('span', { class: 'city-dot', style: `background:${ui.siteColor(r.slug)}` }), r.query) },
-            { key: 'impressions', label: 'Shown', num: true, format: ui.charts.fmt.int },
-            { key: 'clicks', label: 'Clicks', num: true, format: ui.charts.fmt.int },
-            { key: 'position', label: 'Avg position', num: true, format: (v) => v.toFixed(1) },
+            { key: 'impressions', label: 'Shown', help: ui.HELP.google.impressions, num: true, format: ui.charts.fmt.int },
+            { key: 'clicks', label: 'Clicks', help: ui.HELP.google.clicks, num: true, format: ui.charts.fmt.int },
+            { key: 'position', label: 'Avg position', help: ui.HELP.google.position, num: true, format: (v) => v.toFixed(1) },
           ],
           rows
         )
@@ -160,10 +178,57 @@ function gapsOnSite(ui, d) {
   return h(
     'section',
     { class: 'card', style: 'margin-top:16px' },
-    h('h3', { class: 'card-sub' }, 'On your sites: searches with only one or two results'),
+    h('h3', { class: 'card-sub' }, 'On your sites: searches with only one or two results', ui.help(ui.HELP.google.gapsOnSite)),
     h('p', { class: 'sub', style: 'margin-top:0' }, 'What visitors searched for on the sites (last 30 days) that showed only one or two businesses. These tell you which businesses or categories to add next. (Searches with no results at all aren’t recorded by the sites yet.)'),
     rows.length
       ? h('ul', { class: 'linklist cols' }, rows.map((r) => h('li', {}, h('span', { class: 'inline-city' }, h('span', { class: 'city-dot', style: `background:${ui.siteColor(r.slug)}` }), h('b', {}, r.query)), h('span', { class: 'meta' }, ` · ${r.people} ${r.people === 1 ? 'person' : 'people'}, ${r.results} result${r.results === 1 ? '' : 's'}`))))
       : h('p', { class: 'msg ok' }, 'Nothing yet: every common search shows three or more businesses.')
+  );
+}
+
+function perSite(ui, d) {
+  const { h } = ui;
+  const H = ui.HELP.google;
+  const f = ui.charts.fmt.int;
+  return h(
+    'div',
+    {},
+    h('h2', { class: 'section-title' }, 'Per site'),
+    d.sites.map((s) => {
+      const a = s.authority;
+      const first = a.series[0];
+      const change = a.current && first ? a.current.score - first.score : null;
+      const authDelta = !a.current
+        ? h('div', { class: 'delta' }, 'not available yet')
+        : change === null
+          ? h('div', { class: 'delta' }, 'no earlier data')
+          : h('div', { class: `delta ${change > 0 ? 'up' : change < 0 ? 'down' : ''}` }, `${change > 0 ? '▲' : change < 0 ? '▼' : '■'} ${Math.abs(change).toFixed(1)} in 90 days`);
+      return h(
+        'section',
+        { class: 'card', style: 'margin-bottom:16px' },
+        h('h3', { class: 'card-sub inline-city' }, h('span', { class: 'city-dot', style: `background:${ui.siteColor(s.slug)}` }), ui.siteName(s.slug)),
+        s.error ? h('p', { class: 'sub', style: 'margin-top:0;opacity:.7' }, `Google data problem: ${s.error}`) : null,
+        h(
+          'div',
+          { class: 'tiles' },
+          ui.tile('Protected pages', s.protectedPages ? f(s.protectedPages.count) : '–', h('div', { class: 'delta' }, s.protectedPages ? 'always kept in Google' : 'list not published yet'), H.protectedPages),
+          ui.tile('Authority (Open PageRank)', a.current ? a.current.score.toFixed(1) : '–', authDelta, H.authority)
+        ),
+        a.current ? null : h('p', { class: 'note' }, 'Open PageRank needs a free API key — add OPENPAGERANK_API_KEY to the GitHub secrets; the daily Google job fills this in.'),
+        h('h4', { class: 'card-sub' }, 'Top Google searches', ui.help(H.topQueries)),
+        s.top.length
+          ? ui.charts.dataTable(
+              [
+                { key: 'query', label: 'Query' },
+                { key: 'clicks', label: 'Clicks', help: H.clicks, num: true, format: f },
+                { key: 'impressions', label: 'Impressions', help: H.impressions, num: true, format: f },
+                { key: 'ctr', label: 'CTR', help: H.ctr, num: true, render: (r) => document.createTextNode(`${((r.impressions ? r.clicks / r.impressions : 0) * 100).toFixed(1)}%`) },
+                { key: 'position', label: 'Position', help: H.position, num: true, format: (v) => v.toFixed(1) },
+              ],
+              s.top
+            )
+          : h('p', { class: 'sub' }, 'No searches recorded yet.')
+      );
+    })
   );
 }

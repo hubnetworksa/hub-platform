@@ -231,6 +231,7 @@ const asideHasContent = (adsEnabled && !showsPaid) || !suburbSponsor || nearbySu
 </BaseLayout>
 
 <script>
+  import { gaEvent } from '../../lib/ga';
   // WhatsApp clicks from the Featured strip count towards the owner's stats
   // (functions/api/track-view.ts), same as on the homepage cards.
   document.addEventListener('click', (e) => {
@@ -238,6 +239,7 @@ const asideHasContent = (adsEnabled && !showsPaid) || !suburbSponsor || nearbySu
     if (!el) return;
     try {
       navigator.sendBeacon('/api/track-view', new Blob([JSON.stringify({ businessSlug: el.dataset.trackSlug, event: el.dataset.track })], { type: 'application/json' }));
+      gaEvent(el.dataset.track!, { business_slug: el.dataset.trackSlug, surface: 'suburb' });
     } catch {
       // A missed click count is never worth surfacing an error over.
     }

@@ -25,8 +25,9 @@ export async function render(view, ui) {
   const head = () => [mobileHead('Inbox'), pageHead('Inbox', 'Everything waiting for you on every site. Open an item to see the details and approve, reject or reply right here.')];
   fill(view, head(), h('div', { class: 'skeleton' }));
   let items;
+  let totals = {};
   try {
-    ({ items } = await api('/api/inbox'));
+    ({ items, totals = {} } = await api('/api/inbox'));
   } catch (e) {
     fill(view, head(), errorBox(e));
     return;
@@ -36,7 +37,12 @@ export async function render(view, ui) {
   const draw = () => {
     const inSite = items.filter((i) => view_.site === 'all' || i.site === view_.site);
     const list = inSite.filter((i) => view_.type === 'all' || i.type === view_.type);
-    const count = (k) => inSite.filter((i) => k === 'all' || i.type === k).length;
+    const loaded = (k) => inSite.filter((i) => k === 'all' || i.type === k).length;
+    // The true number waiting (each type loads at most 100 rows per site).
+    const count = (k) => {
+      const real = Object.entries(totals).filter(([slug]) => view_.site === 'all' || slug === view_.site).reduce((a, [, t]) => a + (k === 'all' ? Object.values(t).reduce((x, y) => x + y, 0) : t[k] ?? 0), 0);
+      return Math.max(real, loaded(k));
+    };
     const shown = list.slice(0, view_.shown);
     fill(
       body,
@@ -47,6 +53,7 @@ export async function render(view, ui) {
         h('select', { class: 'select', 'aria-label': 'Filter by site', onchange: (e) => ((view_.site = e.target.value), (view_.shown = 30), draw()) }, h('option', { value: 'all' }, 'All sites'), sites.map((s) => h('option', { value: s.slug, selected: view_.site === s.slug }, s.city)))
       ),
       list.length ? h('div', { class: 'inbox' }, shown.map((it) => itemCard(ui, it, () => ((items = items.filter((x) => x !== it)), draw(), ui.loadOverview(true).catch(() => {}))))) : h('section', { class: 'card' }, h('div', { class: 'empty' }, h('b', {}, 'All clear'), 'Nothing is waiting for you here.')),
+      count(view_.type) > loaded(view_.type) ? h('p', { class: 'note' }, `Showing the newest ${loaded(view_.type)} of ${count(view_.type)}. Deal with some and refresh to see the rest.`) : null,
       list.length > shown.length ? h('div', { style: 'text-align:center;margin-top:14px' }, h('button', { class: 'btn', type: 'button', onclick: () => ((view_.shown += 30), draw()) }, `Show more (${list.length - shown.length} left)`)) : null
     );
   };
@@ -69,7 +76,10 @@ function itemCard(ui, it, onDone) {
         { class: 'inbox-main' },
         h('b', {}, it.title || '(untitled)'),
         h('span', { class: 'meta inline-city' }, h('span', { class: 'type-inline' }, `${LABEL[it.type] ?? it.type} · `), h('span', { class: 'city-dot', style: `background:${siteColor(it.site)}` }), siteName(it.site), ` · ${ui.ago(it.created_at)}`),
-        it.flags.length ? h('span', { class: 'chips' }, it.flags.map((f) => h('span', { class: `chip${/not|never|Older|already|Removal|Flagged/.test(f) ? ' hot' : ''}` }, f))) : null
+        it.flags.length ? h('span', { class: 'chips' }, it.flags.map((f) => {
+          const tip = Object.entries(ui.HELP.inbox.flags).find(([k]) => f.startsWith(k))?.[1];
+          return h('span', { class: `chip${/not|never|Older|already|Removal|Flagged/.test(f) ? ' hot' : ''}` }, f, tip ? ui.help(tip) : null);
+        })) : null
       ),
       ui.icon('chevron', 16)
     ),
