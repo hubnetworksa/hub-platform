@@ -113,6 +113,15 @@ export function legend(series, kind = 'line') {
   return wrap;
 }
 
+// Chart heights come from the two CSS tokens (--chart-lg 240px, --chart-sm 160px).
+// `height` (a number) still overrides, for callers that already pass one.
+function chartHeight(el, opts) {
+  if (typeof opts.height === 'number') return opts.height;
+  const token = opts.size === 'sm' ? '--chart-sm' : '--chart-lg';
+  const v = parseFloat(getComputedStyle(el).getPropertyValue(token));
+  return Number.isFinite(v) && v > 0 ? v : opts.size === 'sm' ? 160 : 240;
+}
+
 // Re-render on width change (cards resize with the window and the sidebar).
 function responsive(el, draw) {
   let w = 0;
@@ -128,10 +137,11 @@ function responsive(el, draw) {
 }
 
 // ── Line chart ─────────────────────────────────────────────────────────────
-// opts: { x: ['2026-09-01', ...], series: [{ name, color, values }], format, height }
+// opts: { x: ['2026-09-01', ...], series: [{ name, color, values }], format, size?: 'lg' | 'sm', height? }
 export function lineChart(el, opts) {
-  const { x, series, format = fmt.int, height = 230 } = opts;
+  const { x, series, format = fmt.int } = opts;
   el.classList.add('chart');
+  const height = chartHeight(el, opts);
   el.replaceChildren();
   if (series.length > 1) el.appendChild(legend(series));
   const holder = document.createElement('div');
@@ -227,10 +237,11 @@ export function lineChart(el, opts) {
 }
 
 // ── Grouped column chart ───────────────────────────────────────────────────
-// opts: { x: ['2026-01', ...], xLabel: fn, xLong: fn, series: [{ name, color, values }], format, height }
+// opts: { x: ['2026-01', ...], xLabel: fn, xLong: fn, series: [{ name, color, values }], format, height?, size?: 'lg' | 'sm' }
 export function columnChart(el, opts) {
-  const { x, series, format = fmt.int, height = 230, xLabel = (v) => v, xLong = xLabel } = opts;
+  const { x, series, format = fmt.int, xLabel = (v) => v, xLong = xLabel } = opts;
   el.classList.add('chart');
+  const height = chartHeight(el, opts);
   el.replaceChildren();
   if (series.length > 1) el.appendChild(legend(series, 'box'));
   const holder = document.createElement('div');
@@ -293,30 +304,32 @@ export function barList(el, opts) {
   }
   const max = Math.max(1, ...items.map((i) => i.value));
   const list = document.createElement('div');
-  list.style.display = 'grid';
-  list.style.gap = '10px';
+  list.className = 'barlist';
   for (const it of items) {
     const row = document.createElement('div');
+    row.className = 'barlist-row';
     const top = document.createElement('div');
-    top.style.cssText = 'display:flex;justify-content:space-between;gap:10px;font-size:13.5px;margin-bottom:4px';
+    top.className = 'barlist-top';
     const l = document.createElement('span');
-    l.style.cssText = 'font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+    l.className = 'barlist-label';
     l.textContent = it.label;
     if (it.sub) {
       const s = document.createElement('span');
-      s.style.cssText = 'color:var(--muted);font-weight:500;margin-left:6px';
+      s.className = 'barlist-sub';
       s.textContent = it.sub;
       l.appendChild(s);
     }
     if (it.help) l.appendChild(helpIcon(it.help));
     const v = document.createElement('b');
-    v.style.fontVariantNumeric = 'tabular-nums';
+    v.className = 'barlist-value';
     v.textContent = format(it.value);
     top.append(l, v);
     const track = document.createElement('div');
-    track.style.cssText = 'height:8px;background:var(--surface-2);border-radius:0 4px 4px 0';
+    track.className = 'barlist-track';
     const bar = document.createElement('div');
-    bar.style.cssText = `height:8px;border-radius:0 4px 4px 0;width:${Math.max(1, (it.value / max) * 100)}%;background:${it.color || 'var(--s1)'}`;
+    bar.className = 'barlist-fill';
+    bar.style.width = `${Math.max(1, (it.value / max) * 100)}%`;
+    if (it.color) bar.style.background = it.color;
     track.appendChild(bar);
     row.append(top, track);
     list.appendChild(row);

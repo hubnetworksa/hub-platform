@@ -189,6 +189,22 @@ export async function firstPartyTotals(db: D1Database, days: number) {
   };
 }
 
+// Same totals since a SQLite datetime expression (e.g. local midnight) instead
+// of a day count. `sinceExpr` is trusted code, never user input.
+export async function firstPartySince(db: D1Database, sinceExpr: string) {
+  const [ev, enq] = await Promise.all([
+    rows<{ event: string; n: number }>(db, `SELECT event, COUNT(*) AS n FROM business_stats WHERE created_at >= ${sinceExpr} GROUP BY event`),
+    rows<{ n: number }>(db, `SELECT COUNT(*) AS n FROM messages WHERE kind = 'enquiry' AND created_at >= ${sinceExpr}`),
+  ]);
+  const get = (e: string) => Number(ev.find((r) => r.event === e)?.n ?? 0);
+  return {
+    views: get('view'),
+    contacts: { phone: get('phone_click'), whatsapp: get('whatsapp_click'), website: get('website_click') },
+    enquiries: Number(enq[0]?.n ?? 0),
+    searches: get('search_appearance'),
+  };
+}
+
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const url = new URL(context.request.url);
   const range = RANGES.includes(Number(url.searchParams.get('range'))) ? Number(url.searchParams.get('range')) : 30;

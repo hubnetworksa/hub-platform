@@ -11,7 +11,7 @@
 //   #/inbox, #/health, #/listings, #/google, #/analytics, #/index-gate, #/money, #/activity, #/social
 import { lineChart, columnChart, barList, dataTable, fmt } from './charts.js';
 import { motion } from './motion.js';
-import { HELP, helpIcon } from './help.js';
+import { HELP, helpIcon, attachTip } from './help.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const h = (tag, attrs = {}, ...children) => {
@@ -58,6 +58,7 @@ const ICON = {
   plus: 'M12 5v14M5 12h14',
   trash: 'M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14',
   edit: 'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z',
+  moon: 'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z',
   refresh: 'M20 11a8 8 0 0 0-14.9-3.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.9 3.9L20 16M20 20v-4h-4',
 };
 function icon(name, size = 20) {
@@ -127,6 +128,10 @@ const store = {
     }
   },
 };
+// The sidebar's rail/full state is applied before anything is drawn, so the
+// shell never flashes at the wrong width. (The CSP forbids an inline <script>
+// in index.html; this is the earliest app code that runs.)
+if (store.get('hub.sidebar', 'full') === 'rail') document.documentElement.dataset.sidebar = 'rail';
 const state = {
   overview: null,
   stats: null,
@@ -212,32 +217,200 @@ function cycleTheme() {
   const next = order[(order.indexOf(store.get('hub.theme', 'auto')) + 1) % 3];
   store.set('hub.theme', next);
   applyTheme();
-  document.querySelectorAll('[data-theme-btn]').forEach((b) => (b.textContent = themeLabel()));
+  // Only the text buttons carry the label; the icon buttons keep their icon.
+  document.querySelectorAll('[data-theme-label]').forEach((b) => (b.textContent = themeLabel()));
+  document.querySelectorAll('[data-theme-btn]').forEach((b) => b.setAttribute('title', themeLabel()));
   route();
+}
+
+// ── Sidebar rail ───────────────────────────────────────────────────────────
+const isRail = () => document.documentElement.dataset.sidebar === 'rail';
+function setSidebar(rail) {
+  if (rail) document.documentElement.dataset.sidebar = 'rail';
+  else delete document.documentElement.dataset.sidebar;
+  store.set('hub.sidebar', rail ? 'rail' : 'full');
+  const t = $('[data-sidebar-toggle]');
+  if (t) {
+    t.setAttribute('aria-expanded', String(!rail));
+    t.setAttribute('aria-label', rail ? 'Expand sidebar' : 'Collapse sidebar');
+    t.setAttribute('data-tip', rail ? 'Expand sidebar  ( [ )' : 'Collapse sidebar  ( [ )');
+  }
+  // Re-place the nav highlight now and once the width transition is done.
+  setActive();
+  setTimeout(setActive, 200);
+}
+const typing = (el) => el instanceof Element && el.closest('input, textarea, select, [contenteditable=""], [contenteditable="true"]') !== null;
+let shortcutsBound = false;
+function bindShortcuts() {
+  if (shortcutsBound) return;
+  shortcutsBound = true;
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== '[' || e.ctrlKey || e.metaKey || e.altKey || typing(e.target)) return;
+    const side = $('.side');
+    if (!side || !side.offsetParent) return;
+    e.preventDefault();
+    setSidebar(!isRail());
+  });
+}
+
+// ── Top bar: title, site selector, updated, theme, account ────────────────
+let leaveFns = [];
+let siteListeners = [];
+let updatedAt = null;
+let navId = 0;
+
+function parseIso(iso) {
+  return new Date(iso.includes('T') ? iso : `${iso.replace(' ', 'T')}Z`);
+}
+function topbarSites() {
+  const live = state.overview?.sites ?? state.stats?.sites;
+  if (live?.length) {
+    const list = live.map((x) => ({ slug: x.slug, name: x.city || x.name || x.slug }));
+    store.set('hub.sites', JSON.stringify(list));
+    return list;
+  }
+  try {
+    const cached = JSON.parse(store.get('hub.sites', '[]'));
+    return Array.isArray(cached) ? cached : [];
+  } catch {
+    return [];
+  }
+}
+function syncSiteSelect() {
+  const sel = $('#tb-site');
+  if (!sel) return;
+  const list = topbarSites();
+  fill(sel, h('option', { value: 'all' }, 'All sites'), list.map((x) => h('option', { value: x.slug }, x.name)));
+  sel.value = list.some((x) => x.slug === state.site) ? state.site : 'all';
+}
+function onSiteSelect(e) {
+  state.site = e.target.value;
+  store.set('hub.site', state.site);
+  const ls = siteListeners.slice();
+  ls.forEach((fn) => fn(state.site));
+  // Site activity (not yet on the new skeleton) reads state.site when it draws.
+  if (!ls.length && currentRoute() === '#/stats') route();
+}
+function renderUpdated() {
+  const el = $('#tb-updated');
+  if (!el) return;
+  if (!updatedAt) {
+    el.textContent = '';
+    return;
+  }
+  const mins = Math.round((Date.now() - updatedAt.getTime()) / 60000);
+  el.textContent = mins < 1 ? 'Updated just now' : mins < 60 ? `Updated ${mins} min ago` : `Updated ${ago(updatedAt.toISOString())}`;
+}
+async function refreshNow() {
+  const btn = $('#tb-refresh');
+  if (btn) btn.disabled = true;
+  state.stats = null;
+  await loadOverview(true).catch(() => {});
+  if (btn) btn.disabled = false;
+  route();
+}
+function topbarSet({ title, context, actions } = {}) {
+  const h1 = $('#tb-title');
+  if (!h1) return;
+  fill(h1, title ?? '');
+  const plain = [title].flat(Infinity).filter((x) => typeof x === 'string').join('');
+  if (plain) document.title = `${plain} · Hub Admin`;
+  const c = $('#tb-context');
+  if (c) c.textContent = context || '';
+  const a = $('#tb-actions');
+  if (a) fill(a, actions ?? []);
+}
+
+// ── Phone "More" sheet ─────────────────────────────────────────────────────
+let sheetEl = null;
+function sheetKey(e) {
+  if (e.key === 'Escape') closeSheet();
+}
+function closeSheet() {
+  if (!sheetEl) return;
+  sheetEl.remove();
+  sheetEl = null;
+  document.removeEventListener('keydown', sheetKey);
+  const more = $('[data-more]');
+  if (more) {
+    more.setAttribute('aria-expanded', 'false');
+    more.focus({ preventScroll: true });
+  }
+}
+function openSheet() {
+  if (sheetEl) return closeSheet();
+  const cur = currentRoute();
+  const backdrop = h('div', { class: 'sheet-backdrop', onclick: closeSheet });
+  const sheet = h(
+    'div',
+    { class: 'sheet', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'All screens' },
+    h('div', { class: 'sheet-grab', 'aria-hidden': 'true' }),
+    h('p', { class: 'sheet-title' }, 'All screens'),
+    ROUTES.map(([href, label, ic]) => h('a', { href, 'aria-current': href === cur ? 'page' : null, onclick: () => setTimeout(closeSheet, 0) }, icon(ic), h('span', {}, label))),
+    h('hr'),
+    h('button', { type: 'button', class: 'sheet-btn', onclick: cycleTheme }, icon('moon'), h('span', { 'data-theme-label': '' }, themeLabel()))
+  );
+  sheetEl = h('div', {}, backdrop, sheet);
+  document.body.append(sheetEl);
+  document.addEventListener('keydown', sheetKey);
+  $('[data-more]')?.setAttribute('aria-expanded', 'true');
+  sheet.querySelector('a')?.focus({ preventScroll: true });
 }
 
 function buildShell() {
   applyTheme();
-  const link = (cls, [href, label, ic]) =>
-    h('a', { class: cls, href, 'data-route': href }, icon(ic), h('span', {}, label), href === '#/inbox' ? h('span', { class: 'nav-badge', 'data-badge': '', hidden: true }) : null);
-  const navLinks = (cls) => ROUTES.map((r) => link(cls, r));
-  const tabLinks = () => [...ROUTES.filter((r) => r[3]).map((r) => link('', r)), link('', ['#/more', 'More', 'grid'])];
-  const app = $('#app');
-  fill(app, 
+  const rail = isRail();
+  const link = (cls, [href, label, ic], withTip) => {
+    const a = h('a', { class: cls, href, 'data-route': href, 'aria-label': label }, icon(ic), h('span', { class: 'nav-label' }, label), href === '#/inbox' ? h('span', { class: 'nav-badge', 'data-badge': '', hidden: true }) : null);
+    if (withTip) attachTip(a, label, { side: 'right', active: isRail });
+    return a;
+  };
+  const navLinks = () => ROUTES.map((r) => link('nav-link', r, true));
+  const tabLinks = () => [
+    ...ROUTES.filter((r) => r[3]).map((r) => link('', r)),
+    h('button', { type: 'button', 'data-more': '', 'data-route': '#/more', 'aria-haspopup': 'dialog', 'aria-expanded': 'false', onclick: openSheet }, icon('grid'), h('span', {}, 'More')),
+  ];
+  const toggle = h('button', { type: 'button', class: 'side-btn side-toggle', 'data-sidebar-toggle': '', 'aria-expanded': String(!rail), 'aria-label': rail ? 'Expand sidebar' : 'Collapse sidebar', onclick: () => setSidebar(!isRail()) }, icon('chevron', 18), h('span', { class: 'nav-label' }, 'Collapse'));
+  attachTip(toggle, rail ? 'Expand sidebar  ( [ )' : 'Collapse sidebar  ( [ )', { side: 'right', active: isRail });
+  const themeSide = h('button', { type: 'button', class: 'side-btn', 'data-theme-btn': '', title: themeLabel(), 'aria-label': 'Change theme', onclick: cycleTheme }, icon('moon', 18), h('span', { class: 'nav-label', 'data-theme-label': '' }, themeLabel()));
+  attachTip(themeSide, 'Change theme', { side: 'right', active: isRail });
+  fill(
+    $('#app'),
     h(
       'div',
       { class: 'shell' },
       h(
         'aside',
         { class: 'side' },
-        h('div', { class: 'brand' }, h('img', { src: '/icons/logo-rounded.png', alt: '' }), h('div', {}, h('b', {}, 'Hub Admin'), h('small', {}, 'All sites'))),
-        navLinks('nav-link'),
-        h('div', { class: 'side-foot' }, h('button', { type: 'button', 'data-theme-btn': '', onclick: cycleTheme }, themeLabel()), h('span', { 'data-user': '' }))
+        h('div', { class: 'brand' }, h('img', { src: '/icons/logo-rounded.png', alt: '' }), h('div', { class: 'brand-text' }, h('b', {}, 'Hub Admin'), h('small', {}, 'All sites'))),
+        h('nav', { class: 'side-nav', 'aria-label': 'Screens' }, navLinks()),
+        h('div', { class: 'side-foot' }, themeSide, toggle, h('span', { class: 'user', 'data-user': '' }))
       ),
-      h('main', { id: 'view', tabindex: '-1' })
+      h(
+        'div',
+        { class: 'content' },
+        h(
+          'header',
+          { class: 'topbar' },
+          h('div', { class: 'tb-title' }, h('h1', { id: 'tb-title' }), h('p', { class: 'tb-context', id: 'tb-context' })),
+          h(
+            'div',
+            { class: 'tb-tools' },
+            h('div', { class: 'tb-actions', id: 'tb-actions' }),
+            h('select', { class: 'select tb-select', id: 'tb-site', 'aria-label': 'Site', onchange: onSiteSelect }),
+            h('button', { type: 'button', class: 'tb-btn tb-updated', id: 'tb-refresh', title: 'Refresh this screen', 'aria-label': 'Refresh', onclick: refreshNow }, h('span', { id: 'tb-updated' }), icon('refresh', 16)),
+            h('button', { type: 'button', class: 'tb-btn icon tb-theme', 'data-theme-btn': '', title: themeLabel(), 'aria-label': 'Change theme', onclick: cycleTheme }, '◐'),
+            h('a', { class: 'tb-btn icon tb-account', href: '#/settings', title: 'Settings and account', 'aria-label': 'Settings and account' }, icon('settings', 16))
+          )
+        ),
+        h('main', { id: 'view', tabindex: '-1' })
+      )
     ),
     h('nav', { class: 'tabbar', 'aria-label': 'Main' }, tabLinks())
   );
+  syncSiteSelect();
+  bindShortcuts();
+  if (!buildShell.timer) buildShell.timer = setInterval(renderUpdated, 30000);
 }
 
 function setActive() {
@@ -245,13 +418,13 @@ function setActive() {
   document.querySelectorAll('[data-route]').forEach((a) => {
     const r = a.getAttribute('data-route');
     // On phones, a screen that isn't on the tab bar lights up "More".
-    const on = r === cur || (r === '#/more' && a.closest('.tabbar') && !TAB_ROUTES.includes(cur));
+    const on = r === cur || (r === '#/more' && !!a.closest('.tabbar') && !TAB_ROUTES.includes(cur));
     if (on) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   });
   // The highlight slides to the active item (sidebar and phone tab bar).
   requestAnimationFrame(() => {
-    for (const nav of document.querySelectorAll('.side, .tabbar')) {
+    for (const nav of document.querySelectorAll('.side-nav, .tabbar')) {
       const active = nav.querySelector('[aria-current="page"]');
       if (active && active.offsetParent) motion.nav(nav, active);
     }
@@ -264,23 +437,22 @@ function watchView() {
   const view = $('#view');
   if (!view) return;
   new MutationObserver(() => {
-    if (!view.querySelector(':scope > .skeleton')) motion.page(view);
+    if (!view.querySelector(':scope > .skeleton')) motion.page(view, navId);
   }).observe(view, { childList: true });
 }
 window.addEventListener('resize', () => setActive());
 
-function mobileHead(title) {
-  return h(
-    'div',
-    { class: 'mobile-head' },
-    h('img', { src: '/icons/logo-rounded.png', alt: '' }),
-    h('b', {}, title),
-    h('button', { type: 'button', 'data-theme-btn': '', onclick: cycleTheme, 'aria-label': 'Change theme' }, '◐')
-  );
+// The old phone header is gone (the top bar covers it); kept as a no-op so
+// screens that still call it keep working.
+function mobileHead() {
+  return document.createDocumentFragment();
 }
 
+// Sets the top bar. Anything passed as `extra` (a refresh button, an
+// "updated" note) still shows, in a small row above the screen's content.
 function pageHead(title, sub, extra) {
-  return h('div', { class: 'page-head' }, h('div', {}, h('h1', {}, title), sub ? h('p', {}, sub) : null), extra || null);
+  ui.page({ title, context: sub });
+  return extra ? h('div', { class: 'page-actions' }, extra) : document.createDocumentFragment();
 }
 
 function errorBox(err) {
@@ -300,60 +472,54 @@ async function loadOverview(force) {
     if (changed) motion.badge(b);
   });
   document.querySelectorAll('[data-user]').forEach((u) => (u.textContent = state.username || ''));
+  syncSiteSelect();
   return state.overview;
 }
 
 async function renderOverview(view) {
-  fill(view, mobileHead('Overview'), pageHead('Overview', 'Everything across your sites that needs you, and how each site is doing.'), h('div', { class: 'skeleton' }));
+  ui.page({ title: 'Overview', context: 'What needs you today and how the sites are doing' });
+  fill(view, stateBox.loading());
   let data;
   try {
     data = await loadOverview();
   } catch (e) {
-    fill(view, mobileHead('Overview'), pageHead('Overview'), errorBox(e));
+    fill(view, stateBox.error(e));
     return;
   }
   const sum = (k) => data.sites.reduce((a, s) => a + (s[k] || 0), 0);
-  const refresh = h(
-    'button',
-    {
-      class: 'btn',
-      type: 'button',
-      onclick: async () => {
-        refresh.disabled = true;
-        try {
-          await loadOverview(true);
-          route();
-        } catch (e) {
-          alert(e.message);
-        }
-      },
-    },
-    icon('refresh', 16),
-    'Refresh'
-  );
+  if (data.generatedAt) ui.setUpdated(parseIso(data.generatedAt));
+  const waiting = data.queueTotal ?? data.queue.length;
+  // A notification can open the Overview on its queue.
+  if (hashParams().get('type')) store.set('hub.tab.overview', 'attention');
 
-  const tiles = h(
-    'div',
-    { class: 'tiles' },
-    tile('Needs attention', fmt.int(data.queueTotal ?? data.queue.length), null, HELP.overview.needsAttention),
-    tile('Live listings', fmt.int(sum('listings')), null, HELP.overview.listings),
-    tile('Paid plans', fmt.int(sum('paidPlans')), null, HELP.overview.paidPlans),
-    tile('Revenue this month', fmt.rand(sum('revenueMonthCents')), null, HELP.overview.revenueMonth),
-    tile('Registered users', fmt.int(sum('users')), null, HELP.overview.users)
-  );
+  const kpiRow = kpis([
+    ['Needs attention', fmt.int(waiting), null, HELP.overview.needsAttention],
+    ['Live listings', fmt.int(sum('listings')), null, HELP.overview.listings],
+    ['Paid plans', fmt.int(sum('paidPlans')), null, HELP.overview.paidPlans],
+    ['Revenue this month', fmt.rand(sum('revenueMonthCents')), null, HELP.overview.revenueMonth],
+  ]);
 
-  const siteCards = h('div', { class: 'three' }, data.sites.map(siteCard));
+  const liveLine = h('div', { class: 'live-line-wrap block' });
+  api('/api/analytics-live')
+    .then((d) => liveLine.replaceChildren(ui.liveCard(d, { compact: true })))
+    .catch(() => {});
 
-  fill(view, 
-    mobileHead('Overview'),
-    heroBanner(data, refresh),
-    ...[await passkeyNudge()].filter(Boolean),
-    briefingCard(),
-    tiles,
-    h('div', { class: 'section-title' }, 'Your sites'),
+  const siteCards = h('div', { class: 'three block' }, data.sites.map(siteCard));
+  const nudge = await passkeyNudge();
+
+  fill(
+    view,
+    nudge,
+    kpiRow,
+    liveLine,
     siteCards,
-    h('div', { class: 'section-title' }, 'Needs attention', help(HELP.overview.needsAttention)),
-    queueCard(data)
+    tabs(
+      [
+        { id: 'attention', label: waiting ? `Needs attention (${waiting})` : 'Needs attention', render: () => queueCard(data) },
+        { id: 'briefing', label: 'Today’s briefing', render: () => briefingCard() },
+      ],
+      { store: 'hub.tab.overview' }
+    )
   );
 }
 
@@ -406,26 +572,6 @@ function briefingCard() {
   return card;
 }
 
-// The Overview's header: the three-city banner with a greeting.
-function heroBanner(data, refresh) {
-  const hour = Number(new Date().toLocaleString('en-ZA', { hour: 'numeric', hour12: false, timeZone: 'Africa/Johannesburg' }));
-  const greeting = hour >= 5 && hour < 12 ? 'Good morning' : hour >= 12 && hour < 18 ? 'Good afternoon' : 'Good evening';
-  const waiting = data.queueTotal ?? data.queue.length;
-  refresh.classList.add('glass');
-  return h(
-    'section',
-    { class: 'hero', 'aria-label': 'Welcome' },
-    h('div', { class: 'hero-bg', 'aria-hidden': 'true' }),
-    h(
-      'div',
-      { class: 'hero-content' },
-      h('div', { class: 'hero-cities' }, data.sites.map((s) => h('span', {}, h('span', { class: 'city-dot', style: `background:${siteColor(s.slug)}` }), s.city))),
-      h('h1', {}, `${greeting}${state.username ? `, ${state.username}` : ''}`),
-      h('p', {}, waiting ? `${waiting} item${waiting === 1 ? '' : 's'} across your sites need${waiting === 1 ? 's' : ''} you.` : 'Everything across your sites is up to date.'),
-      h('div', { class: 'hero-actions' }, refresh, h('span', { class: 'hero-updated' }, `Updated ${ago(data.generatedAt)}`))
-    )
-  );
-}
 
 // One stat tile for every screen. `delta` is an element or a plain note
 // (string); `help` adds the (i) tooltip after the label; `opts.bad` marks it red.
@@ -481,11 +627,11 @@ function queueCard(data) {
     const items = data.queue.filter((it) => (state.queueType === 'all' || it.type === state.queueType) && (state.queueSite === 'all' || it.site === state.queueSite));
     // True counts per type (the list below holds only the newest 25 of each).
     const counts = Object.fromEntries(QUEUE_TYPES.map(([k]) => [k, data.sites.filter((s) => state.queueSite === 'all' || s.slug === state.queueSite).reduce((a, s) => a + (k === 'all' ? s.waiting ?? 0 : s.pending?.[k] ?? 0), 0)]));
-    const seg = h(
+    const chips = h(
       'div',
-      { class: 'seg', role: 'group', 'aria-label': 'Filter by type' },
+      { class: 'chip-bar', role: 'group', 'aria-label': 'Filter by type' },
       QUEUE_TYPES.filter(([k]) => k === 'all' || counts[k] > 0).map(([k, label]) =>
-        h('button', { type: 'button', 'aria-pressed': String(state.queueType === k), onclick: () => ((state.queueType = k), (state.queueShown = 20), draw()) }, `${label} (${counts[k]})`)
+        h('button', { type: 'button', class: 'chip-btn', 'aria-pressed': String(state.queueType === k), onclick: () => ((state.queueType = k), (state.queueShown = 20), draw()) }, `${label} ${counts[k]}`)
       )
     );
     const siteSel = h(
@@ -509,12 +655,12 @@ function queueCard(data) {
                 h('span', { class: 'type' }, it.label),
                 h(
                   'span',
-                  { style: 'min-width:0' },
+                  { class: 'queue-main' },
                   h('div', { class: 'title' }, it.title || '(untitled)'),
                   h(
                     'div',
                     { class: 'meta' },
-                    h('span', { style: 'display:inline-flex;align-items:center;gap:5px' }, h('span', { class: 'city-dot', style: `background:${siteColor(it.site)}` }), siteName(it.site)),
+                    h('span', { class: 'inline-city' }, h('span', { class: 'city-dot', style: `background:${siteColor(it.site)}` }), siteName(it.site)),
                     it.detail ? h('span', {}, `· ${it.detail}`) : null
                   )
                 ),
@@ -523,63 +669,70 @@ function queueCard(data) {
             )
           )
         )
-      : h('div', { class: 'empty' }, h('b', {}, 'All clear'), 'Nothing is waiting for you here.');
+      : stateBox.empty('Nothing is waiting for you here.');
     const more =
       items.length > shown.length
-        ? h('div', { style: 'text-align:center;margin-top:12px' }, h('button', { class: 'btn', type: 'button', onclick: () => ((state.queueShown += 20), draw()) }, `Show more (${items.length - shown.length} left)`))
+        ? h('div', { class: 'more-row' }, h('button', { class: 'btn', type: 'button', onclick: () => ((state.queueShown += 20), draw()) }, `Show more (${items.length - shown.length} left)`))
         : null;
     const capped = counts[state.queueType] > items.length ? h('p', { class: 'note' }, `Showing the newest ${items.length} of ${counts[state.queueType]}. Clear some and refresh to see the rest.`) : null;
-    fill(card, h('div', { class: 'filters' }, seg, siteSel), list, more, capped);
+    fill(card, h('div', { class: 'filters' }, chips, siteSel), list, more, capped);
   };
   draw();
   return card;
 }
 
 // ── Stats ──────────────────────────────────────────────────────────────────
+function rangeSeg(onPick) {
+  return h(
+    'div',
+    { class: 'seg', role: 'group', 'aria-label': 'Date range' },
+    [7, 30, 90].map((r) => h('button', { type: 'button', 'aria-pressed': String(state.range === r), onclick: () => onPick(r) }, `Last ${r} days`))
+  );
+}
+
+let statsSeq = 0;
 async function renderStats(view) {
-  const head = () =>
-    pageHead(
-      'Site activity',
-      'Visitors, contact taps, enquiries, searches and revenue across your sites.',
-      state.stats ? h('span', { class: 'updated' }, `Updated ${ago(state.stats.generatedAt)}`) : null
-    );
-  const filters = () =>
-    h(
-      'div',
-      { class: 'filters' },
-      h(
-        'div',
-        { class: 'seg', role: 'group', 'aria-label': 'Date range' },
-        [7, 30, 90].map((r) =>
-          h('button', { type: 'button', 'aria-pressed': String(state.range === r), onclick: () => ((state.range = r), store.set('hub.range', String(r)), loadStats(view)) }, `Last ${r} days`)
-        )
-      ),
-      h(
-        'select',
-        { class: 'select', 'aria-label': 'Site', onchange: (e) => ((state.site = e.target.value), store.set('hub.site', state.site), loadStats(view)) },
-        h('option', { value: 'all' }, 'All sites'),
-        (state.stats?.sites ?? state.overview?.sites ?? []).map((s) => h('option', { value: s.slug, selected: state.site === s.slug }, s.name))
-      )
-    );
-  fill(view, mobileHead('Site activity'), head(), filters(), h('div', { id: 'stats-body' }, h('div', { class: 'skeleton' })));
-  view._statsHead = head;
-  view._statsFilters = filters;
+  // The top bar's actions are hidden on phones, so the range buttons also sit
+  // in the page there.
+  const phoneRange = h('div', { class: 'phone-only block' });
+  const drawHead = () => {
+    const pick = (r) => {
+      state.range = r;
+      store.set('hub.range', String(r));
+      drawHead();
+      loadStats(view);
+    };
+    ui.page({ title: 'Site activity', context: 'Visitors, contact taps, enquiries, searches and sign-ups across your sites', actions: rangeSeg(pick) });
+    fill(phoneRange, rangeSeg(pick));
+  };
+  drawHead();
+  fill(view, phoneRange, h('div', { id: 'stats-body' }, stateBox.loading()));
+  // The top-bar site selector decides which site(s) this screen shows.
+  ui.onSiteChange(() => loadStats(view));
   await loadStats(view);
 }
 
 async function loadStats(view) {
   const body = $('#stats-body', view);
   if (!body) return;
-  body.style.opacity = '0.5';
+  const seq = ++statsSeq;
+  body.classList.add('is-loading');
+  let data;
   try {
-    state.stats = await api(`/api/stats?range=${state.range}&site=${encodeURIComponent(state.site)}`);
+    data = await api(`/api/stats?range=${state.range}&site=${encodeURIComponent(state.site)}`);
   } catch (e) {
-    body.style.opacity = '';
-    fill(body, errorBox(e));
+    if (seq !== statsSeq) return;
+    body.classList.remove('is-loading');
+    fill(body, stateBox.error(e));
     return;
   }
-  if (!state.stats.selected.includes(state.site) && state.site !== 'all') state.site = 'all';
-  fill(view, mobileHead('Site activity'), view._statsHead(), view._statsFilters(), drawStats());
+  if (seq !== statsSeq || !body.isConnected) return;
+  body.classList.remove('is-loading');
+  state.stats = data;
+  if (!data.selected.includes(state.site) && state.site !== 'all') state.site = 'all';
+  syncSiteSelect();
+  ui.setUpdated(parseIso(data.generatedAt));
+  fill(body, drawStats());
 }
 
 function drawStats() {
@@ -593,8 +746,9 @@ function drawStats() {
   const multi = d.perSite.length > 1;
   const seriesFor = (key) =>
     d.perSite.map((s) => ({ name: siteName(s.slug), short: siteName(s.slug), color: siteColor(s.slug), values: cur(s.series[key]) }));
+  const siteCell = (slug) => h('span', { class: 'inline-city nowrap' }, h('span', { class: 'city-dot', style: `background:${siteColor(slug)}` }), siteName(slug));
 
-  const kpi = (label, key, helpText, extra) => {
+  const kpi = (label, key, helpText) => {
     const c = sumSites(key, cur);
     const p = sumSites(key, prev);
     let delta = null;
@@ -604,25 +758,24 @@ function drawStats() {
       const arrow = c > p ? '▲' : c < p ? '▼' : '■';
       delta = h('div', { class: `delta ${dir}` }, pct === null ? `${arrow} new vs previous ${R} days` : `${arrow} ${Math.abs(pct)}% vs previous ${R} days`);
     }
-    return tile(label, fmt.int(c), extra ? h('div', {}, extra, delta) : delta, helpText);
+    return tile(label, fmt.int(c), delta, helpText);
   };
-  const opensTotal = sumSites('opens', cur);
 
+  // A card holding a chart, with a "Show table" switch when a table is given.
   const chartCard = (title, sub, draw, table, helpText) => {
     const holder = h('div');
     let showTable = false;
     const btn = h('button', { type: 'button', class: 'toggle-table', 'aria-pressed': 'false' }, 'Show table');
     const render = () => {
-      fill(holder, );
+      fill(holder);
       if (showTable) holder.appendChild(table());
       else draw(holder);
       btn.textContent = showTable ? 'Show chart' : 'Show table';
       btn.setAttribute('aria-pressed', String(showTable));
     };
     btn.addEventListener('click', () => ((showTable = !showTable), render()));
-    const card = h('section', { class: 'card' }, h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, title, helpText ? help(helpText) : null), sub ? h('p', { class: 'sub' }, sub) : null), table ? btn : null), holder);
     requestAnimationFrame(render);
-    return card;
+    return card({ title, help: helpText, sub, actions: table ? btn : null, body: holder });
   };
 
   const dailyTable = (key) => () =>
@@ -632,7 +785,36 @@ function drawStats() {
     );
 
   const lineCard = (title, sub, key, helpText) =>
-    chartCard(title, sub, (el) => lineChart(el, { x: days, series: seriesFor(key), label: title }), dailyTable(key), helpText);
+    chartCard(title, sub, (el) => lineChart(el, { x: days, series: seriesFor(key), label: title, size: 'sm' }), dailyTable(key), helpText);
+
+  // Primary: listing views and contact taps per day, all selected sites together.
+  const dayTotals = (key) => days.map((_, i) => d.perSite.reduce((a, s) => a + cur(s.series[key])[i], 0));
+  const viewsDaily = dayTotals('views');
+  const tapsDaily = dayTotals('contacts');
+  const primary = chartCard(
+    'Listing views and contact taps per day',
+    multi ? 'All selected sites together.' : 'Phone, WhatsApp and website taps on listings.',
+    (el) =>
+      lineChart(el, {
+        x: days,
+        series: [
+          { name: 'Listing views', short: 'Views', color: 'var(--s1)', values: viewsDaily },
+          { name: 'Contact taps', short: 'Taps', color: 'var(--s2)', values: tapsDaily },
+        ],
+        label: 'Listing views and contact taps per day',
+      }),
+    () =>
+      dataTable(
+        [
+          { key: 'day', label: 'Day', format: fmt.dayLong },
+          { key: 'views', label: 'Views', num: true, format: fmt.int },
+          { key: 'taps', label: 'Contact taps', num: true, format: fmt.int },
+          ...(multi ? d.perSite.flatMap((s) => [{ key: `v-${s.slug}`, label: `${siteName(s.slug)} views`, num: true, format: fmt.int }, { key: `t-${s.slug}`, label: `${siteName(s.slug)} taps`, num: true, format: fmt.int }]) : []),
+        ],
+        days.map((day, i) => Object.fromEntries([['day', day], ['views', viewsDaily[i]], ['taps', tapsDaily[i]], ...(multi ? d.perSite.flatMap((s) => [[`v-${s.slug}`, cur(s.series.views)[i]], [`t-${s.slug}`, cur(s.series.contacts)[i]]]) : [])])).reverse()
+      ),
+    HELP.siteActivity.views
+  );
 
   // Contact taps by type, summed across the selected sites.
   const clicks = d.perSite.reduce(
@@ -656,14 +838,14 @@ function drawStats() {
   const topTable = top.length
     ? dataTable(
         [
-          ...(multi ? [{ key: 'site', label: 'Site', render: (r) => h('span', { style: 'display:inline-flex;align-items:center;gap:6px;white-space:nowrap' }, h('span', { class: 'city-dot', style: `background:${siteColor(r.site)}` }), siteName(r.site)) }] : []),
+          ...(multi ? [{ key: 'site', label: 'Site', render: (r) => siteCell(r.site) }] : []),
           { key: 'name', label: 'Business', render: (r) => h('a', { href: r.url, target: '_blank', rel: 'noopener' }, r.name) },
           {
             key: 'views',
             label: 'Views',
             num: true,
             help: HELP.siteActivity.views,
-            render: (r) => h('span', { class: 'bar-cell', style: 'justify-content:flex-end' }, h('i', { style: `width:${Math.max(2, (r.views / topViews) * 80)}px;background:${siteColor(r.site)}` }), fmt.int(r.views)),
+            render: (r) => h('span', { class: 'bar-cell end' }, h('i', { style: `width:${Math.max(2, (r.views / topViews) * 80)}px;background:${siteColor(r.site)}` }), fmt.int(r.views)),
           },
           { key: 'contacts', label: 'Contact taps', num: true, format: fmt.int, help: HELP.siteActivity.contacts },
           { key: 'phone', label: 'Phone', num: true, format: fmt.int, help: HELP.siteActivity.channelSplit },
@@ -674,90 +856,111 @@ function drawStats() {
         ],
         top
       )
-    : h('p', { class: 'empty' }, 'No listing views recorded in this period yet.');
+    : stateBox.empty('No listing views recorded in this period yet.');
 
   // Paid vs free: average views and contact taps per listing, all selected sites.
   const pvf = (paid) => d.perSite.reduce((a, s) => { const g = (s.paidVsFree || []).find((x) => x.paid === paid) || { listings: 0, views: 0, taps: 0 }; return { listings: a.listings + g.listings, views: a.views + g.views, taps: a.taps + g.taps }; }, { listings: 0, views: 0, taps: 0 });
   const pvfRows = [['Paid listings', pvf(true)], ['Free listings', pvf(false)]].map(([label, g]) => ({ label, listings: g.listings, views: g.listings ? g.views / g.listings : 0, taps: g.listings ? g.taps / g.listings : 0 }));
   const oneDp = (v) => (v >= 10 ? Math.round(v).toLocaleString('en-ZA') : v.toFixed(1));
-  const pvfCard = h(
-    'section',
-    { class: 'card' },
-    h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Paid vs free', help(HELP.siteActivity.paidVsFree)), h('p', { class: 'sub' }, `Per listing, last ${R} days`))),
-    dataTable(
-      [
-        { key: 'label', label: 'Group' },
-        { key: 'listings', label: 'Listings', num: true, format: fmt.int },
-        { key: 'views', label: 'Views per listing', num: true, format: oneDp },
-        { key: 'taps', label: 'Contact taps per listing', num: true, format: oneDp },
-      ],
-      pvfRows
-    )
-  );
 
-  const wrap = h(
+  const sumKey = (key) => sumSites(key, cur);
+  const list = [
+    {
+      id: 'contact',
+      label: 'Contact split',
+      render: () =>
+        chartCard('How people make contact', `Last ${R} days`, (el) => barList(el, { items: clickItems }), () =>
+          dataTable([{ key: 'label', label: 'Channel' }, { key: 'value', label: 'Taps', num: true, format: fmt.int }], clickItems)
+        ),
+    },
+    {
+      id: 'categories',
+      label: 'Categories',
+      render: () =>
+        chartCard('Most-viewed categories', `Last ${R} days`, (el) => barList(el, { items: cats.map((c) => ({ label: c.key, value: c.n })) }), () =>
+          dataTable([{ key: 'key', label: 'Category' }, { key: 'n', label: 'Views', num: true, format: fmt.int }], cats)
+        ),
+    },
+    {
+      id: 'searches',
+      label: 'Searches',
+      render: () =>
+        h(
+          'div',
+          { class: 'stack' },
+          chartCard('What people search for', 'On-site searches, by people searching', (el) => barList(el, { items: queries.map((q) => ({ label: q.key, value: q.n })) }), () =>
+            dataTable([{ key: 'key', label: 'Search' }, { key: 'n', label: 'Searchers', num: true, format: fmt.int }], queries),
+            HELP.siteActivity.searches
+          ),
+          queriesCard(d)
+        ),
+    },
+    {
+      id: 'signups',
+      label: 'Sign-ups & app',
+      render: () =>
+        h(
+          'div',
+          { class: 'grid' },
+          lineCard('New users per day', `${fmt.int(sumKey('signups'))} in the last ${R} days`, 'signups', HELP.siteActivity.signups),
+          lineCard('App installs per day', `${fmt.int(sumKey('installs'))} installs. Phones that installed the site as an app.`, 'installs', HELP.siteActivity.installs),
+          lineCard('App opens per day', `${fmt.int(sumKey('opens'))} opens. Phones opening the site from its home-screen icon.`, 'opens', HELP.siteActivity.opens)
+        ),
+    },
+    {
+      id: 'listings',
+      label: 'Top listings',
+      render: () =>
+        h(
+          'div',
+          { class: 'stack' },
+          card({ title: 'Top listings', sub: `Most-viewed business pages, last ${R} days`, body: topTable }),
+          card({
+            title: 'Paid vs free',
+            help: HELP.siteActivity.paidVsFree,
+            sub: `Per listing, last ${R} days`,
+            body: dataTable(
+              [
+                { key: 'label', label: 'Group' },
+                { key: 'listings', label: 'Listings', num: true, format: fmt.int },
+                { key: 'views', label: 'Views per listing', num: true, format: oneDp },
+                { key: 'taps', label: 'Contact taps per listing', num: true, format: oneDp },
+              ],
+              pvfRows
+            ),
+          })
+        ),
+    },
+    {
+      id: 'revenue',
+      label: 'Revenue',
+      render: () =>
+        chartCard(
+          'Revenue by month',
+          `Last 12 months · ${fmt.rand(revTotal)} so far this month`,
+          (el) => columnChart(el, { x: d.months, series: revenueSeries, format: fmt.randShort, xLabel: fmt.month, xLong: fmt.monthLong, label: 'Revenue by month' }),
+          () =>
+            dataTable(
+              [{ key: 'm', label: 'Month', format: fmt.monthLong }, ...d.perSite.map((s) => ({ key: s.slug, label: siteName(s.slug), num: true, format: fmt.rand }))],
+              d.months.map((m, i) => Object.fromEntries([['m', m], ...d.perSite.map((s) => [s.slug, s.revenue[i]])])).reverse()
+            )
+        ),
+    },
+    { id: 'google', label: 'Google', render: () => googleTab(d) },
+  ];
+
+  return h(
     'div',
     {},
-    h(
-      'div',
-      { class: 'tiles' },
+    kpis([
       kpi('Listing views', 'views', HELP.siteActivity.views),
       kpi('Contact taps', 'contacts', HELP.siteActivity.contacts),
       kpi('Enquiries sent', 'enquiries', HELP.siteActivity.enquiries),
       kpi('Listing appearances in search', 'searches', HELP.siteActivity.searchAppearances),
-      kpi('New users', 'signups', HELP.siteActivity.signups),
-      kpi('App installs / opens', 'installs', HELP.siteActivity.installs, h('div', { class: 'delta' }, `${fmt.int(opensTotal)} opens`))
-    ),
-    h(
-      'div',
-      { class: 'two' },
-      lineCard('Listing views per day', multi ? 'Each line is one site.' : null, 'views'),
-      lineCard('Contact taps per day', 'Phone, WhatsApp and website taps on listings.', 'contacts')
-    ),
-    h('div', { style: 'height:16px' }),
-    h(
-      'div',
-      { class: 'three' },
-      chartCard('How people make contact', `Last ${R} days`, (el) => barList(el, { items: clickItems }), () =>
-        dataTable([{ key: 'label', label: 'Channel' }, { key: 'value', label: 'Taps', num: true, format: fmt.int }], clickItems)
-      ),
-      chartCard('Most-viewed categories', `Last ${R} days`, (el) => barList(el, { items: cats.map((c) => ({ label: c.key, value: c.n })) }), () =>
-        dataTable([{ key: 'key', label: 'Category' }, { key: 'n', label: 'Views', num: true, format: fmt.int }], cats)
-      ),
-      chartCard('What people search for', 'On-site searches, by people searching', (el) => barList(el, { items: queries.map((q) => ({ label: q.key, value: q.n })) }), () =>
-        dataTable([{ key: 'key', label: 'Search' }, { key: 'n', label: 'Searchers', num: true, format: fmt.int }], queries),
-        HELP.siteActivity.searches
-      )
-    ),
-    h('div', { style: 'height:16px' }),
-    h('section', { class: 'card' }, h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Top listings'), h('p', { class: 'sub' }, `Most-viewed business pages, last ${R} days`))), topTable),
-    h('div', { style: 'height:16px' }),
-    pvfCard,
-    h('div', { style: 'height:16px' }),
-    h(
-      'div',
-      { class: 'two' },
-      chartCard(
-        'Revenue by month',
-        `Last 12 months · ${fmt.rand(revTotal)} so far this month`,
-        (el) => columnChart(el, { x: d.months, series: revenueSeries, format: fmt.randShort, xLabel: fmt.month, xLong: fmt.monthLong, label: 'Revenue by month' }),
-        () =>
-          dataTable(
-            [{ key: 'm', label: 'Month', format: fmt.monthLong }, ...d.perSite.map((s) => ({ key: s.slug, label: siteName(s.slug), num: true, format: fmt.rand }))],
-            d.months.map((m, i) => Object.fromEntries([['m', m], ...d.perSite.map((s) => [s.slug, s.revenue[i]])])).reverse()
-          )
-      ),
-      h(
-        'div',
-        { class: 'grid' },
-        lineCard('New users per day', null, 'signups'),
-        lineCard('App installs per day', 'Phones that installed the site as an app.', 'installs', HELP.siteActivity.installs),
-        lineCard('App opens per day', 'Phones opening the site from its home-screen icon.', 'opens', HELP.siteActivity.opens)
-      )
-    ),
-    seoSection(d)
+    ]),
+    h('div', { class: 'block' }, primary),
+    tabs(list, { store: 'hub.tab.stats' })
   );
-  return wrap;
 }
 
 function mergeCounts(list) {
@@ -766,17 +969,19 @@ function mergeCounts(list) {
   return [...m.entries()].map(([key, n]) => ({ key, n })).sort((a, b) => b.n - a.n);
 }
 
+const siteLabel = (slug) => h('span', { class: 'inline-city nowrap' }, h('span', { class: 'city-dot', style: `background:${siteColor(slug)}` }), siteName(slug));
+
 // What people typed in Google before clicking through (weekly Search Console report).
 function queriesCard(d) {
-  const queries = d.seo.flatMap((s) => (s.topQueries || []).map((q) => ({ ...q, site: s.slug }))).sort((a, b) => b.clicks - a.clicks).slice(0, 15);
-  return h(
-    'section',
-    { class: 'card' },
-    h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Top searches on Google', help(HELP.siteActivity.topQueries)), h('p', { class: 'sub' }, 'Words people searched before clicking through to your sites'))),
-    queries.length
+  const queries = (d.seo ?? []).flatMap((s) => (s.topQueries || []).map((q) => ({ ...q, site: s.slug }))).sort((a, b) => b.clicks - a.clicks).slice(0, 15);
+  return card({
+    title: 'Top searches on Google',
+    help: HELP.siteActivity.topQueries,
+    sub: 'Words people searched before clicking through to your sites',
+    body: queries.length
       ? dataTable(
           [
-            { key: 'site', label: 'Site', render: (r) => h('span', { style: 'display:inline-flex;align-items:center;gap:6px;white-space:nowrap' }, h('span', { class: 'city-dot', style: `background:${siteColor(r.site)}` }), siteName(r.site)) },
+            { key: 'site', label: 'Site', render: (r) => siteLabel(r.site) },
             { key: 'query', label: 'Search' },
             { key: 'clicks', label: 'Clicks', num: true, format: fmt.int },
             { key: 'impressions', label: 'Impressions', num: true, format: fmt.int },
@@ -784,12 +989,13 @@ function queriesCard(d) {
           ],
           queries
         )
-      : h('p', { class: 'empty' }, 'No search data from Google yet.')
-  );
+      : stateBox.empty('No search data from Google yet.'),
+  });
 }
 
-function seoSection(d) {
-  if (!d.seo?.length) return h('div');
+// Google Search per site (weekly Search Console report) and the pages people clicked.
+function googleTab(d) {
+  if (!d.seo?.length) return stateBox.empty('No Google Search data yet. It arrives with the weekly Search Console report.');
   const order = d.sites.map((s) => s.slug);
   d.seo.sort((a, b) => order.indexOf(a.slug) - order.indexOf(b.slug));
   const win = d.seo.find((s) => s.window)?.window;
@@ -800,19 +1006,17 @@ function seoSection(d) {
     return h('div', { class: `delta ${v > 0 ? 'up' : v < 0 ? 'down' : ''}` }, `${v > 0 ? '▲' : v < 0 ? '▼' : '■'} ${Math.abs(v)}% vs previous 28 days`);
   };
   const cards = d.seo.map((s) =>
-    h(
-      'section',
-      { class: 'card' },
-      h('div', { class: 'top', style: 'display:flex;align-items:center;gap:8px;margin-bottom:12px' }, h('span', { class: 'city-dot', style: `background:${siteColor(s.slug)}` }), h('h2', {}, siteName(s.slug))),
-      h(
+    card({
+      title: siteLabel(s.slug),
+      body: h(
         'div',
-        { class: 'tiles', style: 'grid-template-columns:repeat(2,1fr);margin:0' },
+        { class: 'tiles tiles-2' },
         tile('Google clicks', fmt.int(s.clicks), deltaEl(s.clicks, s.prevClicks)),
         tile('Impressions', fmt.short(s.impressions), deltaEl(s.impressions, s.prevImpressions)),
         tile('Pages in results', fmt.int(s.pages)),
         tile('Avg. position', s.position ? s.position.toFixed(1) : '–')
-      )
-    )
+      ),
+    })
   );
   const pages = d.seo
     .flatMap((s) => s.topPages.map((p) => ({ ...p, site: s.slug })))
@@ -820,44 +1024,43 @@ function seoSection(d) {
     .slice(0, 15);
   return h(
     'div',
-    {},
-    h('div', { class: 'section-title' }, 'Google Search'),
+    { class: 'stack' },
     h('div', { class: d.seo.length > 1 ? 'three' : 'two' }, cards),
-    h('div', { style: 'height:16px' }),
-    queriesCard(d),
-    h('div', { style: 'height:16px' }),
-    h(
-      'section',
-      { class: 'card' },
-      h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Top pages on Google'), h('p', { class: 'sub' }, 'Pages people clicked on in Google search results'))),
-      dataTable(
-        [
-          { key: 'site', label: 'Site', render: (r) => h('span', { style: 'display:inline-flex;align-items:center;gap:6px;white-space:nowrap' }, h('span', { class: 'city-dot', style: `background:${siteColor(r.site)}` }), siteName(r.site)) },
-          { key: 'page', label: 'Page', render: (r) => h('a', { href: r.page.startsWith('http') ? r.page : `https://${(d.sites.find((x) => x.slug === r.site) || {}).domain}${r.page}`, target: '_blank', rel: 'noopener' }, r.page.replace(/^https?:\/\/[^/]+/, '') || '/') },
-          { key: 'clicks', label: 'Clicks', num: true, format: fmt.int },
-          { key: 'impressions', label: 'Impressions', num: true, format: fmt.int },
-          { key: 'position', label: 'Position', num: true, format: (v) => (v ? v.toFixed(1) : '–') },
-        ],
-        pages
+    card({
+      title: 'Top pages on Google',
+      sub: 'Pages people clicked on in Google search results',
+      body: h(
+        'div',
+        {},
+        dataTable(
+          [
+            { key: 'site', label: 'Site', render: (r) => siteLabel(r.site) },
+            { key: 'page', label: 'Page', render: (r) => h('a', { href: r.page.startsWith('http') ? r.page : `https://${(d.sites.find((x) => x.slug === r.site) || {}).domain}${r.page}`, target: '_blank', rel: 'noopener' }, r.page.replace(/^https?:\/\/[^/]+/, '') || '/') },
+            { key: 'clicks', label: 'Clicks', num: true, format: fmt.int },
+            { key: 'impressions', label: 'Impressions', num: true, format: fmt.int },
+            { key: 'position', label: 'Position', num: true, format: (v) => (v ? v.toFixed(1) : '–') },
+          ],
+          pages
+        ),
+        h('p', { class: 'note' }, `From the weekly Search Console report${win ? `, ${fmt.dayLong(win.startDate)} to ${fmt.dayLong(win.endDate)}` : ''}. Google's data runs about 3 days behind.`)
       ),
-      h('p', { class: 'note' }, `From the weekly Search Console report${win ? `, ${fmt.dayLong(win.startDate)} to ${fmt.dayLong(win.endDate)}` : ''}. Google's data runs about 3 days behind.`)
-    )
+    })
   );
 }
 
 // ── Manage ─────────────────────────────────────────────────────────────────
 async function renderManage(view) {
-  fill(view, mobileHead('Manage'), pageHead('Manage', 'Jump straight into any screen of any site’s admin.'), h('div', { class: 'skeleton' }));
+  ui.page({ title: 'Manage', context: 'Jump into any screen of any site’s admin; each opens in a new tab' });
+  fill(view, stateBox.loading());
   let data;
   try {
     data = await loadOverview();
   } catch (e) {
-    fill(view, mobileHead('Manage'), pageHead('Manage'), errorBox(e));
+    fill(view, stateBox.error(e));
     return;
   }
-  fill(view, 
-    mobileHead('Manage'),
-    pageHead('Manage', 'Jump straight into any screen of any site’s admin. Each opens in a new tab, already on that site.'),
+  fill(
+    view,
     h(
       'div',
       { class: 'grid' },
@@ -868,7 +1071,7 @@ async function renderManage(view) {
           h(
             'div',
             { class: 'card-head' },
-            h('div', { style: 'display:flex;align-items:center;gap:10px' }, h('span', { class: 'city-dot', style: `background:${siteColor(s.slug)}` }), h('div', {}, h('h2', {}, s.name), h('p', { class: 'sub' }, s.domain))),
+            h('div', { class: 'card-title-row' }, h('span', { class: 'city-dot', style: `background:${siteColor(s.slug)}` }), h('div', {}, h('h2', {}, s.name), h('p', { class: 'sub' }, s.domain))),
             h('a', { class: 'btn', href: `https://${s.domain}/`, target: '_blank', rel: 'noopener' }, icon('globe', 16), 'View site')
           ),
           h(
@@ -964,14 +1167,14 @@ function upgradeForm(sites, initial, onSaved, onCancel) {
 }
 
 async function renderUpgrades(view) {
-  const head = pageHead('To-do', 'Improvements to build on the sites. Add an idea, choose which sites it’s for, and move it along as it gets done.');
-  fill(view, mobileHead('To-do'), head, h('div', { class: 'skeleton' }));
+  ui.page({ title: 'To-do', context: 'Improvements to build on the sites; add an idea, pick the sites, move it along' });
+  fill(view, stateBox.loading());
   let sites;
   let list;
   try {
     [sites, list] = await Promise.all([sitesList(), api('/api/upgrades').then((r) => r.upgrades)]);
   } catch (e) {
-    fill(view, mobileHead('To-do'), head, errorBox(e));
+    fill(view, stateBox.error(e));
     return;
   }
   const listCard = h('section', { class: 'card', 'aria-label': 'Upgrades list' });
@@ -1143,7 +1346,7 @@ async function renderUpgrades(view) {
     fill(listCard, h('div', { class: 'filters' }, seg, siteSel, search), ...body);
   };
   draw();
-  fill(view, mobileHead('To-do'), head, h('div', { class: 'grid' }, addCard, listCard));
+  fill(view, h('div', { class: 'grid' }, addCard, listCard));
 }
 
 // ── Alerts (push notifications) ────────────────────────────────────────────
@@ -1188,8 +1391,8 @@ async function currentSubscription() {
 }
 
 async function renderAlerts(view) {
-  const head = pageHead('Settings', 'Sign-in, password and notifications.');
-  fill(view, mobileHead('Settings'), head, h('div', { class: 'skeleton' }));
+  ui.page({ title: 'Settings', context: 'Sign-in, password and notifications' });
+  fill(view, stateBox.loading());
   const account = await accountCards(view);
   const support = pushSupport();
   let sub = support === 'ok' ? await currentSubscription().catch(() => null) : null;
@@ -1201,7 +1404,7 @@ async function renderAlerts(view) {
       api('/api/notifications').then((r) => r.notifications),
     ]);
   } catch (e) {
-    fill(view, mobileHead('Settings'), head, errorBox(e));
+    fill(view, stateBox.error(e));
     return;
   }
   const mine = devices.find((d) => d.current);
@@ -1350,8 +1553,6 @@ async function renderAlerts(view) {
     : h('p', { class: 'empty' }, 'No alerts yet. They appear here as new items arrive.');
 
   fill(view, 
-    mobileHead('Settings'),
-    head,
     h(
       'div',
       { class: 'grid' },
@@ -1868,7 +2069,154 @@ function renderJoin(token) {
 // ── Router ─────────────────────────────────────────────────────────────────
 // Helpers the screen modules (screens/*.js) use, so they draw exactly like
 // the rest of the app.
+// ── Page skeleton helpers (shared by every screen) ─────────────────────────
+let tabSeq = 0;
+
+function kpis(items) {
+  if (items.length > 4) console.warn('ui.kpis: more than 4 tiles; keep it to four.');
+  return h('div', { class: 'kpis' }, items.map((i) => (i instanceof Node ? i : tile(...i))));
+}
+
+// A card with a consistent header row. `help` is the (i) text after the title.
+function card({ title, help: helpText, actions, body, sub } = {}) {
+  const head =
+    title || actions
+      ? h(
+          'div',
+          { class: 'card-head' },
+          h('div', {}, title ? h('h2', {}, title, helpText ? help(helpText) : null) : null, sub ? h('p', { class: 'sub' }, sub) : null),
+          actions ? h('div', { class: 'card-actions' }, actions) : null
+        )
+      : null;
+  return h('section', { class: 'card' }, head, body ?? null);
+}
+
+const stateBox = {
+  empty(text, action) {
+    const act = action instanceof Node ? action : action?.label ? h('button', { class: 'btn', type: 'button', onclick: action.onclick }, action.label) : null;
+    return h('div', { class: 'empty' }, text, act);
+  },
+  loading() {
+    return h('div', { class: 'skeleton', role: 'status', 'aria-label': 'Loading' });
+  },
+  error(err) {
+    return errorBox(err instanceof Error ? err : { message: String(err?.message ?? err) });
+  },
+};
+
+// Segmented control + one panel. tabs = [{ id, label, render: () => Node | Promise<Node> }].
+function tabs(list, opts = {}) {
+  const uid = `tabs${++tabSeq}`;
+  const saved = opts.store ? store.get(opts.store, null) : null;
+  let cur = list.find((t) => t.id === saved)?.id ?? list[0]?.id;
+  const bar = h('div', { class: 'tabs-bar', role: 'tablist' });
+  const panel = h('div', { class: 'tab-panel', role: 'tabpanel', tabindex: '-1', id: `${uid}-panel` });
+  const buttons = list.map((t) =>
+    h('button', { type: 'button', role: 'tab', id: `${uid}-${t.id}`, 'aria-controls': `${uid}-panel`, onclick: () => select(t.id) }, t.label)
+  );
+  const draw = () => {
+    const t = list.find((x) => x.id === cur);
+    if (!t) return fill(panel);
+    const id = cur;
+    panel.setAttribute('aria-labelledby', `${uid}-${id}`);
+    try {
+      const out = t.render();
+      if (out && typeof out.then === 'function') {
+        fill(panel, stateBox.loading());
+        out.then((n) => cur === id && fill(panel, n)).catch((e) => cur === id && fill(panel, stateBox.error(e)));
+      } else fill(panel, out);
+    } catch (e) {
+      fill(panel, stateBox.error(e));
+    }
+  };
+  const mark = () =>
+    buttons.forEach((b, i) => {
+      const on = list[i].id === cur;
+      b.setAttribute('aria-selected', String(on));
+      b.tabIndex = on ? 0 : -1;
+    });
+  function select(id, focus) {
+    if (id === cur && panel.firstChild) return;
+    cur = id;
+    if (opts.store) store.set(opts.store, id);
+    mark();
+    draw();
+    if (focus) buttons[list.findIndex((t) => t.id === id)]?.focus();
+  }
+  bar.addEventListener('keydown', (e) => {
+    const i = list.findIndex((t) => t.id === cur);
+    const to = e.key === 'ArrowRight' ? (i + 1) % list.length : e.key === 'ArrowLeft' ? (i - 1 + list.length) % list.length : e.key === 'Home' ? 0 : e.key === 'End' ? list.length - 1 : -1;
+    if (to < 0) return;
+    e.preventDefault();
+    select(list[to].id, true);
+  });
+  bar.append(...buttons);
+  mark();
+  draw();
+  return h('div', { class: 'tabs' }, bar, panel);
+}
+
+// "Right now" live card (data from /api/analytics-live). compact: one line.
+function liveCard(data, { compact = false } = {}) {
+  const sites = data?.sites ?? [];
+  const L = HELP.live;
+  if (compact) {
+    const parts = sites.filter((s) => s.live).map((s) => `${s.name} ${fmt.int(s.live.activeUsers)}`);
+    if (!parts.length) return h('span');
+    return h('a', { class: 'live-line', href: '#/analytics' }, h('span', { class: 'live-dot', 'aria-hidden': 'true' }), h('b', {}, 'Right now: '), `${parts.join(' · ')} active`);
+  }
+  const spark = (vals, color) => {
+    const w = 120, ht = 28, max = Math.max(1, ...vals);
+    const pts = vals.map((v, i) => `${((i / Math.max(1, vals.length - 1)) * w).toFixed(1)},${(ht - 2 - (v / max) * (ht - 4)).toFixed(1)}`).join(' ');
+    const el = h('span', { class: 'sparkline', role: 'img', 'aria-label': 'Active users, last 30 minutes' });
+    el.innerHTML = `<svg viewBox="0 0 ${w} ${ht}" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
+    return el;
+  };
+  const secs = data?.generatedAt ? Math.max(0, Math.round((Date.now() - new Date(data.generatedAt).getTime()) / 1000)) : null;
+  const col = (s) => {
+    const fp = s.firstParty ?? {};
+    const color = siteColor(s.slug);
+    const devTotal = (s.live?.devices ?? []).reduce((a, d) => a + d.users, 0);
+    return h(
+      'div',
+      { class: 'live-col' },
+      h(
+        'div',
+        { class: 'live-col-head' },
+        h('span', { class: 'city-dot', style: `background:${color}` }),
+        h('b', {}, s.name || siteName(s.slug)),
+        s.up && s.up.ok === false ? h('span', { class: 'pill fail' }, 'offline') : null
+      ),
+      s.live
+        ? [
+            h('div', { class: 'live-num' }, fmt.int(s.live.activeUsers), h('span', { class: 'live-unit' }, 'active', help(L.activeUsers))),
+            spark(s.live.byMinute ?? [], color),
+            h('div', { class: 'live-sub' }, 'Pages now', help(L.pages)),
+            h('ul', { class: 'live-pages' }, s.live.pages.length ? s.live.pages.slice(0, 3).map((p) => h('li', {}, h('span', {}, p.name || '(not set)'), h('b', {}, fmt.int(p.users)))) : h('li', { class: 'muted' }, 'No one right now')),
+            devTotal ? h('div', { class: 'live-devices' }, s.live.devices.map((d) => `${d.name} ${Math.round((d.users / devTotal) * 100)}%`).join(' · ')) : null,
+          ]
+        : h('p', { class: 'live-note' }, 'Live data needs the Google credentials on Hub Admin — the deploy sets them'),
+      h(
+        'div',
+        { class: 'live-today' },
+        h('div', { class: 'live-sub' }, 'Today so far', help(L.todaySoFar)),
+        h('span', {}, `${s.today ? fmt.int(s.today.sessions) : '–'} sessions`),
+        h('span', {}, `${fmt.int(fp.views ?? 0)} listing views`),
+        h('span', {}, `${fmt.int(fp.taps ?? 0)} contact taps`),
+        h('span', {}, `${fmt.int(fp.enquiries ?? 0)} enquiries`)
+      )
+    );
+  };
+  return h(
+    'section',
+    { class: 'card live-card' },
+    h('div', { class: 'live-head' }, h('span', { class: 'live-dot', 'aria-hidden': 'true' }), h('h2', {}, 'Right now'), h('span', { class: 'sub' }, secs == null ? '' : `updated ${secs}s ago`)),
+    h('div', { class: 'live-cols' }, sites.map(col))
+  );
+}
+
 const ui = {
+  liveCard,
   h, fill, icon, api, ago, siteColor, siteName, mobileHead, pageHead, errorBox, hashParams, store, motion,
   tile, help, HELP,
   charts: { lineChart, columnChart, barList, dataTable, fmt },
@@ -1876,7 +2224,33 @@ const ui = {
     return state;
   },
   loadOverview,
+  // Page skeleton
+  page: (opts) => {
+    topbarSet(opts);
+    return null;
+  },
+  kpis,
+  card,
+  tabs,
+  onLeave: (fn) => {
+    leaveFns.push(fn);
+  },
+  // Global site selector (top bar)
+  site: () => state.site,
+  onSiteChange: (fn) => {
+    siteListeners.push(fn);
+    return () => {
+      siteListeners = siteListeners.filter((f) => f !== fn);
+    };
+  },
+  setUpdated: (date) => {
+    updatedAt = date instanceof Date ? date : date ? new Date(date) : null;
+    renderUpdated();
+  },
 };
+// `ui.state` is the app's data object (existing screens read it); the skeleton
+// helpers ui.state.empty / .loading / .error are attached to it here.
+Object.assign(state, { empty: stateBox.empty, loading: stateBox.loading, error: stateBox.error });
 const SCREENS = {
   '#/inbox': 'inbox',
   '#/health': 'health',
@@ -1922,6 +2296,23 @@ function route() {
   const view = $('#view');
   const r = currentRoute();
   routeSeq++;
+  navId++;
+  // Timers/listeners a screen registered belong to the screen being left.
+  const leaving = leaveFns;
+  leaveFns = [];
+  siteListeners = [];
+  for (const fn of leaving) {
+    try {
+      fn();
+    } catch {
+      /* a failed cleanup must not block navigation */
+    }
+  }
+  closeSheet();
+  updatedAt = null;
+  renderUpdated();
+  syncSiteSelect();
+  topbarSet({ title: ROUTES.find(([x]) => x === r)?.[1] ?? (r === '#/more' ? 'More' : '') });
   if (SCREENS[r]) renderScreen(view, SCREENS[r]);
   else if (r === '#/more') renderMore(view);
   else if (r === '#/stats') renderStats(view);

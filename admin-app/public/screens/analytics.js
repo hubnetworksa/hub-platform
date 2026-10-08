@@ -14,15 +14,15 @@ export async function render(view, ui) {
   try {
     d = await api('/api/analytics');
   } catch (e) {
-    fill(view, head(), errorBox(e));
+    fill(view, head(), liveEl, errorBox(e));
     return;
   }
   if (!d.generated_at) {
-    fill(view, head(d), h('section', { class: 'card' }, h('div', { class: 'empty' }, h('b', {}, 'The first Analytics data arrives tomorrow morning'), 'The “Hub Admin Google data” workflow runs each morning at about 05:40. To fill this in now: GitHub → Actions → Hub Admin Google data → Run workflow.')));
+    fill(view, head(d), liveEl, h('section', { class: 'card' }, h('div', { class: 'empty' }, h('b', {}, 'The first Analytics data arrives tomorrow morning'), 'The “Hub Admin Google data” workflow runs each morning at about 05:40. To fill this in now: GitHub → Actions → Hub Admin Google data → Run workflow.')));
     return;
   }
   if (!d.sites.some((s) => s.analytics)) {
-    fill(view, head(d), setupNote(ui));
+    fill(view, head(d), liveEl, setupNote(ui));
     return;
   }
   let current = d.sites.find((s) => s.slug === (ui.store?.get ? ui.store.get('hub.analyticsSite', '') : ''))?.slug ?? d.sites[0].slug;
@@ -33,7 +33,7 @@ export async function render(view, ui) {
       { class: 'filters' },
       h('div', { class: 'seg', role: 'group', 'aria-label': 'Site' }, d.sites.map((x) => h('button', { type: 'button', 'aria-pressed': String(x.slug === current), onclick: () => ((current = x.slug), ui.store?.set && ui.store.set('hub.analyticsSite', current), draw()) }, ui.siteName(x.slug))))
     );
-    fill(view, head(d), tabs, siteBody(ui, s));
+    fill(view, head(d), liveEl, tabs, siteBody(ui, s));
   };
   draw();
 }
