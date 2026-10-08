@@ -192,24 +192,40 @@ const kindOf = (path) => {
   return section[0].toUpperCase() + section.slice(1);
 };
 
-// Open PageRank: one call for every live domain. Returns { domain: {score, rank, checkedAt} }.
-async function openPageRank(domains) {
-  const key = process.env.OPENPAGERANK_API_KEY;
-  if (!key) {
-    console.log('Open PageRank: no OPENPAGERANK_API_KEY, skipped');
+// Moz Domain Authority (Links API v2): one call for every live domain. Returns { domain: {da, pa, spamScore, linkingDomains, checkedAt} }.
+async function mozAuthority(domains) {
+  const id = process.env.MOZ_ACCESS_ID;
+  const secret = process.env.MOZ_SECRET_KEY;
+  if (!id || !secret) {
+    console.log('Moz: no MOZ_ACCESS_ID/MOZ_SECRET_KEY, skipped');
     return {};
   }
   try {
-    const res = await fetch(`https://openpagerank.com/api/v1.0/getPageRank?${domains.map((d) => `domains[]=${encodeURIComponent(d)}`).join('&')}`, { headers: { 'API-OPR': key } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetch('https://lsapi.seomoz.com/v2/url_metrics', {
+      method: 'POST',
+      headers: { Authorization: `Basic ${Buffer.from(`${id}:${secret}`).toString('base64')}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ targets: domains }),
+    });
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      console.warn(`Moz failed: HTTP ${res.status} ${body.slice(0, 200)}`);
+      return {};
+    }
     const j = await res.json();
     const checkedAt = new Date().toISOString();
+    const norm = (v) => String(v ?? '').toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '');
+    const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
+    const results = j.results ?? [];
     const o = {};
-    for (const r of j.response ?? []) if (r.status_code === 200) o[r.domain] = { score: Number(r.page_rank_decimal), rank: r.rank ? Number(r.rank) : null, checkedAt };
-    console.log(`Open PageRank: ${Object.keys(o).length} of ${domains.length} domains`);
+    domains.forEach((d, i) => {
+      const r = results.find((x) => x?.page && norm(x.page) === norm(d)) ?? results[i];
+      if (!r || num(r.domain_authority) === null) return;
+      o[d] = { da: r.domain_authority, pa: num(r.page_authority), spamScore: num(r.spam_score), linkingDomains: num(r.root_domains_to_root_domain), checkedAt };
+    });
+    console.log(`Moz: ${Object.keys(o).length} of ${domains.length} domains`);
     return o;
   } catch (e) {
-    console.warn(`Open PageRank failed: ${String(e?.message ?? e).slice(0, 120)}`);
+    console.warn(`Moz failed: ${String(e?.message ?? e).slice(0, 200)}`);
     return {};
   }
 }
@@ -294,7 +310,7 @@ async function ga4(propertyId) {
 
 const out = { generatedAt: new Date().toISOString(), sites: {}, adsense: null };
 const liveDomains = CITIES.map((slug) => JSON.parse(readFileSync(join(ROOT, 'sites', `${slug}.json`), 'utf8'))).filter((x) => x.domainLive).map((x) => x.domain);
-const opr = await openPageRank(liveDomains);
+const moz = await mozAuthority(liveDomains);
 for (const slug of CITIES) {
   const site = JSON.parse(readFileSync(join(ROOT, 'sites', `${slug}.json`), 'utf8'));
   if (!site.domainLive) continue;
@@ -311,7 +327,7 @@ for (const slug of CITIES) {
   console.log(`${slug}: inspecting pages…`);
   const ins = await inspections(site, prop, old?.inspections);
   console.log(`${slug}: inspected ${ins.inspectedToday ?? 0} pages today (${Object.keys(ins.map).length} of ${ins.sitemapUrls} known).`);
-  out.sites[slug] = { property: prop, ...a, sitemapUrls: ins.sitemapUrls, inspections: ins.map, authority: opr[site.domain] ? { openPageRank: opr[site.domain] } : null };
+  out.sites[slug] = { property: prop, ...a, sitemapUrls: ins.sitemapUrls, inspections: ins.map, authority: moz[site.domain] ? { moz: moz[site.domain] } : null };
   if (site.googleAnalyticsPropertyId) {
     const ga = await ga4(site.googleAnalyticsPropertyId);
     if (ga.error) console.warn(`${slug}: Google Analytics error: ${ga.error}`);

@@ -1,4 +1,4 @@
--- Domain authority (Open PageRank, 0-10) per site per day, filled from the
+-- Domain authority (Moz DA, 0-100; rank = linking domains) per site per day, filled from the
 -- daily Google report.
 CREATE TABLE authority_daily (
   day TEXT NOT NULL,

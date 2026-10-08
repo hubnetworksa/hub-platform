@@ -95,7 +95,7 @@ function charts(ui, d) {
     ),
     h('div', { class: 'two', style: 'margin-top:16px' }, h('section', { class: 'card' }, h('h2', { class: 'card-sub' }, 'Click-through rate per day', ui.help(H.ctr)), ctr), h('section', { class: 'card' }, h('h2', { class: 'card-sub' }, 'Average position per day (lower is better)', ui.help(H.position)), pos)),
     authDates.length
-      ? h('section', { class: 'card', style: 'margin-top:16px' }, h('h2', { class: 'card-sub' }, 'Authority (Open PageRank), last 90 days', ui.help(H.authority)), auth)
+      ? h('section', { class: 'card', style: 'margin-top:16px' }, h('h2', { class: 'card-sub' }, 'Authority (Moz DA), last 90 days', ui.help(H.authority)), auth)
       : null
   );
   const pct = (v) => `${(v * 100).toFixed(1)}%`;
@@ -106,7 +106,7 @@ function charts(ui, d) {
   requestAnimationFrame(() => {
     lineChart(ctr, { x: dates, series: series('ctr'), format: pct, label: 'Click-through rate per day', height: 200 });
     lineChart(pos, { x: dates, series: series('position'), format: (v) => v.toFixed(1), label: 'Average position per day (lower is better)', height: 200 });
-    if (authDates.length) lineChart(auth, { x: authDates, series: authSeries, format: (v) => v.toFixed(1), label: 'Open PageRank per day', height: 200 });
+    if (authDates.length) lineChart(auth, { x: authDates, series: authSeries, format: (v) => v.toFixed(1), label: 'Moz Domain Authority per day', height: 200 });
     lineChart(clicks, { x: dates, series: series('clicks'), label: 'Clicks per day', height: 220 });
     lineChart(impressions, { x: dates, series: series('impressions'), format: fmt.short, label: 'Impressions per day', height: 220 });
     lineChart(seen, { x: seenDates, series: series('pages', 'pages_seen'), label: 'Pages seen in Google per day', height: 240 });
@@ -197,7 +197,7 @@ function perSite(ui, d) {
     d.sites.map((s) => {
       const a = s.authority;
       const first = a.series[0];
-      const change = a.current && first ? a.current.score - first.score : null;
+      const change = a.current && first ? a.current.da - first.score : null;
       const authDelta = !a.current
         ? h('div', { class: 'delta' }, 'not available yet')
         : change === null
@@ -212,9 +212,13 @@ function perSite(ui, d) {
           'div',
           { class: 'tiles' },
           ui.tile('Protected pages', s.protectedPages ? f(s.protectedPages.count) : '–', h('div', { class: 'delta' }, s.protectedPages ? 'always kept in Google' : 'list not published yet'), H.protectedPages),
-          ui.tile('Authority (Open PageRank)', a.current ? a.current.score.toFixed(1) : '–', authDelta, H.authority)
+          ui.tile('Authority (Moz DA)', a.current ? a.current.da.toFixed(0) : '–', authDelta, H.authority)
         ),
-        a.current ? null : h('p', { class: 'note' }, 'Open PageRank needs a free API key — add OPENPAGERANK_API_KEY to the GitHub secrets; the daily Google job fills this in.'),
+        a.current
+          ? a.current.linkingDomains !== null || a.current.spamScore !== null
+            ? h('p', { class: 'note' }, [a.current.linkingDomains !== null ? `${f(a.current.linkingDomains)} linking domains` : null, a.current.spamScore !== null ? `spam ${a.current.spamScore}%` : null].filter(Boolean).join(' · '))
+            : null
+          : h('p', { class: 'note' }, 'Moz Domain Authority needs API credentials — add MOZ_ACCESS_ID and MOZ_SECRET_KEY to the GitHub secrets; the daily Google job fills this in.'),
         h('h4', { class: 'card-sub' }, 'Top Google searches', ui.help(H.topQueries)),
         s.top.length
           ? ui.charts.dataTable(

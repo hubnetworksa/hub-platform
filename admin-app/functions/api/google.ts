@@ -16,7 +16,7 @@ interface SiteData {
   sitemapUrls: number;
   inspections: Record<string, [string, string | null, string | null, string]>;
   error: string | null;
-  authority?: { openPageRank?: { score: number; rank: number | null; checkedAt: string } } | null;
+  authority?: { moz?: { da: number; pa: number | null; spamScore: number | null; linkingDomains: number | null; checkedAt: string } } | null;
 }
 
 async function protectedPages(slug: string): Promise<{ count: number; generatedAt: string | null } | null> {
@@ -74,7 +74,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
          GROUP BY lower(trim(query)) ORDER BY people DESC LIMIT 200`
       );
       const series = await rows<{ day: string; score: number }>(env.ADMIN_DB, `SELECT day, score FROM authority_daily WHERE site = ? AND day >= date('now', '-90 days') ORDER BY day`, s.slug);
-      const opr = d?.authority?.openPageRank;
+      const moz = d?.authority?.moz;
       const protectedP = await protectedPages(s.slug);
       return {
         slug: s.slug,
@@ -87,7 +87,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         onsite_thin: onsite.filter((q) => q.results <= 2 && q.people >= 2).slice(0, 30),
         error: d?.error ?? null,
         protectedPages: protectedP,
-        authority: { current: opr ? { score: opr.score, rank: opr.rank ?? null, checkedAt: opr.checkedAt } : null, series },
+        authority: { current: moz ? { da: moz.da, pa: moz.pa ?? null, spamScore: moz.spamScore ?? null, linkingDomains: moz.linkingDomains ?? null, checkedAt: moz.checkedAt } : null, series },
       };
     })
   );
