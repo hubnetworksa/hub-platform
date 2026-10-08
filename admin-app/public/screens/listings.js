@@ -143,6 +143,18 @@ function cityReport(ui, r) {
     };
     return li;
   };
+  // Indexed / Noindex totals (cached an hour by the Indexing screen's API).
+  const gateCount = h('b', {}, '…');
+  const gateNote = h('span', { class: 'meta' }, '');
+  const gateRow = h('li', {}, h('span', { class: 'row-main' }, 'Index gate', ui.help(ui.HELP.listings.indexScore)), gateCount, gateNote, h('a', { class: 'meta', href: '#/index-gate' }, 'Open Indexing'));
+  ui.api('/api/index-gate')
+    .then((g) => {
+      const x = g.sites.find((s) => s.slug === r.site);
+      if (!x || x.error || !x.totals) throw new Error(x?.error || 'no data');
+      gateCount.textContent = `${x.totals.indexed.toLocaleString('en-ZA')} indexed`;
+      gateNote.textContent = `${x.totals.noindex.toLocaleString('en-ZA')} noindex`;
+    })
+    .catch(() => ((gateCount.textContent = '–'), (gateNote.textContent = 'not available yet')));
   const tone = r.score >= 85 ? 'good' : r.score >= 65 ? 'ok' : 'bad';
   return h(
     'div',
@@ -157,7 +169,7 @@ function cityReport(ui, r) {
         h(
           'div',
           {},
-          h('h2', {}, 'Data quality'),
+          h('h2', {}, 'Data quality', ui.help(ui.HELP.listings.quality)),
           h('p', { class: 'sub' }, `${r.complete.toLocaleString('en-ZA')} of ${r.total.toLocaleString('en-ZA')} published listings have everything: a phone, hours, a proper description, an address and a category.`),
           h('a', { class: 'btn small', href: `${site}/admin/businesses/`, target: '_blank', rel: 'noopener' }, `Edit in ${ui.siteName(r.site)} admin`, ui.icon('ext', 13))
         )
@@ -170,11 +182,13 @@ function cityReport(ui, r) {
           'ul',
           { class: 'rows compact' },
           [
-            ['Possible duplicates', r.duplicates.count, 'groups'],
-            [`Not updated in ${r.stale.days} days`, r.stale.count, 'listings'],
-            ['No views in 90 days', r.no_views.count, 'listings'],
-            ['Thin pages (1–2 businesses)', r.thin.count, `of ${r.thin.pages} pages, 0 indexed`],
-          ].map(([label, n, unit]) => h('li', {}, h('span', { class: 'row-main' }, label), h('b', {}, n.toLocaleString('en-ZA')), h('span', { class: 'meta' }, unit)))
+            ['Possible duplicates', r.duplicates.count, 'groups', ui.HELP.listings.duplicates],
+            [`Not updated in ${r.stale.days} days`, r.stale.count, 'listings', ui.HELP.listings.stale],
+            ['No views in 90 days', r.no_views.count, 'listings', ui.HELP.listings.noViews],
+            ['Thin pages (1–2 businesses)', r.thin.count, `of ${r.thin.pages} pages, always noindexed`, ui.HELP.listings.thin],
+          ].map(([label, n, unit, tip]) => h('li', {}, h('span', { class: 'row-main' }, label, ui.help(tip)), h('b', {}, n.toLocaleString('en-ZA')), h('span', { class: 'meta' }, unit))),
+          // Per-listing scores aren't available yet: show the city's totals from the Indexing screen.
+          gateRow
         )
       )
     ),
@@ -193,7 +207,7 @@ function cityReport(ui, r) {
         );
       })
     ),
-    h('h2', { class: 'section-title' }, 'Possible duplicates'),
+    h('h2', { class: 'section-title' }, 'Possible duplicates', ui.help(ui.HELP.listings.duplicates)),
     h(
       'section',
       { class: 'card' },
@@ -240,8 +254,8 @@ function cityReport(ui, r) {
     h(
       'div',
       { class: 'two' },
-      h('section', { class: 'card' }, h('h3', { class: 'card-sub' }, `Not updated in ${r.stale.days} days (${r.stale.count})`), r.stale.count ? h('ul', { class: 'linklist' }, r.stale.listings.slice(0, 50).map(listingLink), more(r.stale.count, 50)) : h('p', { class: 'msg ok' }, 'None.'), h('p', { class: 'note' }, 'Worth checking these are still open: the closed-business routine also looks for them.')),
-      h('section', { class: 'card' }, h('h3', { class: 'card-sub' }, `No views in 90 days (${r.no_views.count})`), r.no_views.count ? h('ul', { class: 'linklist' }, r.no_views.listings.slice(0, 50).map(listingLink), more(r.no_views.count, 50)) : h('p', { class: 'msg ok' }, 'None.'), h('p', { class: 'note' }, 'Listed for more than 90 days with no visits at all: usually a missing description or a very niche category.'))
+      h('section', { class: 'card' }, h('h3', { class: 'card-sub' }, `Not updated in ${r.stale.days} days (${r.stale.count})`, ui.help(ui.HELP.listings.stale)), r.stale.count ? h('ul', { class: 'linklist' }, r.stale.listings.slice(0, 50).map(listingLink), more(r.stale.count, 50)) : h('p', { class: 'msg ok' }, 'None.'), h('p', { class: 'note' }, 'Worth checking these are still open: the closed-business routine also looks for them.')),
+      h('section', { class: 'card' }, h('h3', { class: 'card-sub' }, `No views in 90 days (${r.no_views.count})`, ui.help(ui.HELP.listings.noViews)), r.no_views.count ? h('ul', { class: 'linklist' }, r.no_views.listings.slice(0, 50).map(listingLink), more(r.no_views.count, 50)) : h('p', { class: 'msg ok' }, 'None.'), h('p', { class: 'note' }, 'Listed for more than 90 days with no visits at all: usually a missing description or a very niche category.'))
     ),
     ownersSection(ui, r, site, listingLink),
     bar
@@ -257,7 +271,7 @@ function ownersSection(ui, r, site, listingLink) {
   return h(
     'div',
     {},
-    h('h2', { class: 'section-title' }, 'Owners and enquiries'),
+    h('h2', { class: 'section-title' }, 'Owners and enquiries', ui.help(ui.HELP.listings.unclaimed)),
     h(
       'div',
       { class: 'three' },

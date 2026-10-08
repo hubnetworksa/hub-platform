@@ -8,7 +8,8 @@ export async function render(view, ui) {
   const head = () => [mobileHead('Sales reps'), pageHead('Sales reps', 'Reps who sell plans on commission: sales, what they’re owed, and payouts.')];
   const R = (c) => ui.charts.fmt.rand(c || 0);
   const date = (s) => (s ? String(s).slice(0, 10) : '–');
-  const tile = (label, value, note) => h('div', { class: 'tile' }, h('div', { class: 'label' }, label), h('div', { class: 'value' }, value), h('div', { class: 'delta' }, note));
+  const RH = ui.HELP.reps;
+  const tile = ui.tile;
   const pill = (status) => h('span', { class: `pill ${{ active: 'pass', approved: 'info', paid: 'pass', pending: 'warn', suspended: 'fail', void: 'fail' }[status] || ''}` }, status);
 
   async function act(payload, done) {
@@ -40,11 +41,11 @@ export async function render(view, ui) {
             { key: 'code', label: 'Code', render: (r) => h('code', {}, r.code) },
             { key: 'email', label: 'Email' },
             { key: 'createdAt', label: 'Joined', format: date },
-            { key: 'salesCount', label: 'Sales', num: true, format: ui.charts.fmt.int },
-            { key: 'mtdCents', label: 'MTD', num: true, format: R },
+            { key: 'salesCount', label: 'Sales', num: true, format: ui.charts.fmt.int, help: RH.sales },
+            { key: 'mtdCents', label: 'MTD', num: true, format: R, help: RH.mtd },
             { key: 'lifetimeCents', label: 'Lifetime', num: true, format: R },
-            { key: 'unpaidCents', label: 'Unpaid', num: true, format: R },
-            { key: 'pendingCents', label: 'Pending', num: true, format: R },
+            { key: 'unpaidCents', label: 'Unpaid', num: true, format: R, help: RH.unpaid },
+            { key: 'pendingCents', label: 'Pending', num: true, format: R, help: RH.pending },
             { key: 'bankMasked', label: 'Bank', render: (r) => h('span', {}, r.bankMasked || '—') },
             { key: 'status', label: 'Status', render: (r) => pill(r.status) },
             {
@@ -76,12 +77,17 @@ export async function render(view, ui) {
           ],
           c.reps
         );
-      return h('section', { class: 'card' }, h('h2', { class: 'card-sub' }, c.name), body);
+      // This city's totals (returned by the API for every city).
+      const t = c.totals;
+      const totalsLine = c.ok && t
+        ? h('p', { class: 'totals-line' }, h('span', {}, h('b', {}, ui.charts.fmt.int(t.reps)), ' reps (', ui.charts.fmt.int(t.activeReps), ' active)'), h('span', {}, 'MTD ', h('b', {}, R(t.mtdCents))), h('span', {}, 'Unpaid ', h('b', {}, R(t.unpaidCents))), h('span', {}, 'Pending ', h('b', {}, R(t.pendingCents))), h('span', {}, 'Paid out this month ', h('b', {}, R(t.paidOutCents))))
+        : null;
+      return h('section', { class: 'card' }, h('h2', { class: 'card-sub' }, c.name), totalsLine, body);
     };
     fill(
       view,
       head(),
-      h('div', { class: 'tiles' }, tile('Reps', ui.charts.fmt.int(d.grand.reps), 'across all cities'), tile('Active', ui.charts.fmt.int(d.grand.activeReps), 'not suspended'), tile('MTD commission', R(d.grand.mtdCents), 'this month'), tile('Unpaid balance', R(d.grand.unpaidCents), 'approved, not yet paid'), tile('Pending', R(d.grand.pendingCents), 'awaiting second payment')),
+      h('div', { class: 'tiles' }, tile('Reps', ui.charts.fmt.int(d.grand.reps), 'across all cities'), tile('Active', ui.charts.fmt.int(d.grand.activeReps), 'not suspended'), tile('MTD commission', R(d.grand.mtdCents), 'this month', RH.mtd), tile('Unpaid balance', R(d.grand.unpaidCents), 'approved, not yet paid', RH.unpaid), tile('Paid-out this month', R(d.grand.paidOutCents), 'by EFT', RH.paidOut), tile('Pending', R(d.grand.pendingCents), 'awaiting second payment', RH.pending)),
       d.cities.map(section)
     );
   }
@@ -114,6 +120,7 @@ export async function render(view, ui) {
             { key: 'commissionCents', label: 'Commission', num: true, format: R },
             { key: 'status', label: 'Status', render: (s) => h('span', {}, pill(s.status), s.voidReason ? ` ${s.voidReason}` : '') },
             { key: 'payoutReference', label: 'Payout ref', render: (s) => h('span', {}, s.payoutReference || '—') },
+            { key: 'paidAt', label: 'Paid', format: date, help: RH.paidAt },
             {
               key: 'id',
               label: '',

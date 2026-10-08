@@ -30,6 +30,7 @@ interface Sub {
   current_period_end: string | null;
   cancelled_at: string | null;
   last_cents: number | null;
+  m_payment_id: string | null;
 }
 
 async function upsell(s: HubSite) {
@@ -48,7 +49,7 @@ async function upsell(s: HubSite) {
 async function siteMoney(env: Env, s: HubSite) {
   const subs = await rows<Sub>(
     s.db,
-    `SELECT s.id, b.name AS business, b.slug, s.tier, s.product_type, s.billing_period, s.status, s.started_at, s.current_period_end, s.cancelled_at,
+    `SELECT s.id, s.m_payment_id, b.name AS business, b.slug, s.tier, s.product_type, s.billing_period, s.status, s.started_at, s.current_period_end, s.cancelled_at,
             (SELECT p.amount_cents FROM payments p WHERE p.subscription_id = s.id AND p.status = 'COMPLETE' ORDER BY p.paid_at DESC LIMIT 1) AS last_cents
      FROM subscriptions s JOIN businesses b ON b.id = s.business_id
      WHERE s.status IN ('active', 'cancelled') OR s.started_at >= date('now', '-90 days') OR s.cancelled_at >= date('now', '-90 days')`
@@ -89,7 +90,8 @@ async function siteMoney(env: Env, s: HubSite) {
     slug: s.slug,
     domain: s.domain,
     mrr_cents: Math.round(mrr),
-    paying: live.length,
+    // Distinct businesses with an active paid plan, free comps excluded (the Overview's rule).
+    paying: new Set(subs.filter((x) => x.status === 'active' && !(x.m_payment_id ?? '').startsWith('admin-comp-')).map((x) => x.slug)).size,
     by_product: Object.entries(live.reduce<Record<string, number>>((m, x) => ((m[label(x)] = (m[label(x)] ?? 0) + 1), m), {})).map(([product, n]) => ({ product, n })),
     new_this_month: subs.filter((x) => (x.started_at ?? '').startsWith(month)).map((x) => item(x, `started ${x.started_at?.slice(0, 10)}`)),
     cancelled_this_month: subs.filter((x) => (x.cancelled_at ?? '').startsWith(month)).map((x) => item(x, `cancelled ${x.cancelled_at?.slice(0, 10)}`)),

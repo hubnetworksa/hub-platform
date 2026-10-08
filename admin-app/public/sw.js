@@ -3,8 +3,8 @@
 // open; the saved copy is only used offline (or if the network takes over
 // 4 seconds). Images and the vendored libraries come from the cache and are
 // refreshed in the background. Bump VERSION when the precached list changes.
-const VERSION = 'hub-admin-v6';
-const SHELL = ['/', '/styles.css', '/app.js', '/charts.js', '/motion.js', '/vendor/gsap.min.js', '/vendor/ScrollTrigger.min.js', '/manifest.webmanifest', '/icons/logo-rounded.png', '/icons/icon-192.png'];
+const VERSION = 'hub-admin-v7';
+const SHELL = ['/', '/styles.css', '/app.js', '/charts.js', '/help.js', '/motion.js', '/vendor/gsap.min.js', '/vendor/ScrollTrigger.min.js', '/manifest.webmanifest', '/icons/logo-rounded.png', '/icons/icon-192.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

@@ -1,11 +1,13 @@
 import type { PagesFunction } from '@cloudflare/workers-types';
 import { hubSites, json, rows, type Env, type HubSite } from '../../_lib/sites';
+import { siteQueueCounts } from '../../_lib/queues';
 
 // The Inbox: every waiting item on every site with its full details (the
 // listing that was submitted, the review text, the message, the reason for a
-// report, ...), so you can decide without opening each site. Acting on an
-// item still happens in that site's own admin (each item links there).
-// Read-only: nothing here changes a city database.
+// report, ...), so you can decide without opening each site. The buttons
+// (approve, reject, resolve, reply) act through inbox/act.ts. Each type is
+// capped at 100 rows per site; `totals` is the true count per site and type,
+// so the screen can say when the cap is hit.
 
 interface Item {
   site: string;
@@ -135,6 +137,7 @@ async function siteInbox(s: HubSite): Promise<Item[]> {
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const lists = await Promise.all(hubSites(context.env).map(siteInbox));
+  const counts = await Promise.all(hubSites(context.env).map(async (s) => [s.slug, await siteQueueCounts(s)] as const));
   const items = lists.flat().sort((a, b) => b.created_at.localeCompare(a.created_at));
-  return json({ ok: true, items });
+  return json({ ok: true, items, totals: Object.fromEntries(counts) });
 };

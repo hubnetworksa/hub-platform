@@ -76,7 +76,11 @@ async function ideas(s: HubSite) {
     const link = utm(`${base}/news/${n.slug}/`, 'news');
     out.push({ kind: 'News', title: n.title, link, caption: `📰 ${n.title}\n\n${n.summary}\n\nRead more 👉 ${link}` });
   }
-  return out;
+  // Instagram gets its own tagged link so its visits aren't counted as Facebook's.
+  return out.map((o) => {
+    const linkIg = o.link.replace('utm_source=facebook', 'utm_source=instagram');
+    return { ...o, linkIg, captionIg: o.caption.split(o.link).join(linkIg) };
+  });
 }
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
