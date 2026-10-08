@@ -12,10 +12,11 @@
 //   inspections Google's own verdict for the site's pages (URL Inspection),
 //               up to 150 pages a day per site (5 minutes each),
 //               never-checked and oldest-checked first
+//   analytics   GA4 sessions, users and page views per day, top pages (Data API)
 //   adsense     estimated earnings, page views and clicks per day and site
 //
 // Same credentials as the weekly report (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET,
-// GOOGLE_REFRESH_TOKEN with the webmasters and adsense.readonly scopes).
+// GOOGLE_REFRESH_TOKEN with the webmasters, adsense.readonly and analytics.readonly scopes).
 import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -180,6 +181,30 @@ async function adsense() {
   };
 }
 
+// GA4 traffic (Analytics Data API). Never throws: a missing scope or access
+// shows up as { propertyId, error } so the rest of the report still goes out.
+async function ga4(propertyId) {
+  try {
+    const url = `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`;
+    const [a, b] = await Promise.all([
+      g(url, { dateRanges: [{ startDate: '90daysAgo', endDate: 'yesterday' }], dimensions: [{ name: 'date' }], metrics: [{ name: 'sessions' }, { name: 'activeUsers' }, { name: 'screenPageViews' }], orderBys: [{ dimension: { dimensionName: 'date' } }], limit: 100 }),
+      g(url, { dateRanges: [{ startDate: '28daysAgo', endDate: 'yesterday' }], dimensions: [{ name: 'pagePath' }], metrics: [{ name: 'screenPageViews' }, { name: 'activeUsers' }], orderBys: [{ metric: { metricName: 'screenPageViews' }, desc: true }], limit: 25 }),
+    ]);
+    const bad = a.error || b.error;
+    if (bad) return { propertyId, error: `${bad.code ?? ''} ${String(bad.message ?? 'error').slice(0, 120)}`.trim() };
+    const n = (r, i) => Number(r.metricValues?.[i]?.value ?? 0);
+    const daily = (a.rows ?? []).map((r) => {
+      const d = r.dimensionValues[0].value;
+      return { date: `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}`, sessions: n(r, 0), users: n(r, 1), pageviews: n(r, 2) };
+    });
+    const total = (rows) => ({ sessions: rows.reduce((x, r) => x + r.sessions, 0), users: rows.reduce((x, r) => x + r.users, 0), pageviews: rows.reduce((x, r) => x + r.pageviews, 0) });
+    const topPages = (b.rows ?? []).map((r) => ({ path: r.dimensionValues[0].value, pageviews: n(r, 0), users: n(r, 1) }));
+    return { propertyId, daily, topPages, totals7: total(daily.slice(-7)), totals28: total(daily.slice(-28)), prev7: total(daily.slice(-14, -7)) };
+  } catch (e) {
+    return { propertyId, error: String(e?.message ?? e).slice(0, 120) };
+  }
+}
+
 const out = { generatedAt: new Date().toISOString(), sites: {}, adsense: null };
 for (const slug of CITIES) {
   const site = JSON.parse(readFileSync(join(ROOT, 'sites', `${slug}.json`), 'utf8'));
@@ -198,6 +223,12 @@ for (const slug of CITIES) {
   const ins = await inspections(site, prop, old?.inspections);
   console.log(`${slug}: inspected ${ins.inspectedToday ?? 0} pages today (${Object.keys(ins.map).length} of ${ins.sitemapUrls} known).`);
   out.sites[slug] = { property: prop, ...a, sitemapUrls: ins.sitemapUrls, inspections: ins.map };
+  if (site.googleAnalyticsPropertyId) {
+    const ga = await ga4(site.googleAnalyticsPropertyId);
+    if (ga.error) console.warn(`${slug}: Google Analytics error: ${ga.error}`);
+    else console.log(`${slug}: Google Analytics ${ga.daily.length} days, ${ga.totals7.sessions} sessions in the last 7.`);
+    out.sites[slug].analytics = ga;
+  }
 }
 out.adsense = await adsense();
 console.log(`AdSense: ${out.adsense.error ?? `${out.adsense.daily.length} rows`}`);
