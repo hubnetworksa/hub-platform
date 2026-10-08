@@ -15,6 +15,10 @@ export const DISABLED_ROUTINES = {
   // validate.mjs also rejects any SQL that sets description or description_enriched_at, and
   // a trigger (db/migrations/<city>/*_block_routine_description_rewrites.sql) drops such writes.
   enrichment: 'The enrichment routine is disabled: routines must never change an existing business description, hours or email. Log a not-due line and stop; write no SQL.',
+  // Paused by the owner on 8 Oct 2026 while PretoriaHub recovers from the September 2026
+  // spam update: no new business pages on any site until the existing ones are richer.
+  discovery: 'Business discovery is paused on every site: no new businesses are to be added. Log a not-due line and stop; write no SQL.',
+  centres: 'The shopping-centres routine is paused on every site: no new tenants or centres are to be added. Log a not-due line and stop; write no SQL.',
 };
 export const ROOT = process.cwd();
 
