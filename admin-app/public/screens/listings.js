@@ -3,38 +3,54 @@
 // duplicates, stale listings, listings nobody has viewed, and thin
 // category-in-suburb pages. Each listing opens on the site; tick listings to
 // hide them in bulk (api/bulk-listings.ts); editing happens in that city's
-// admin (Businesses).
+// admin (Businesses). One city at a time, chosen with the top-bar site selector.
 
-let current = null;
-
-export async function render(view, ui, refresh) {
-  const { h, fill, api, mobileHead, pageHead, errorBox } = ui;
-  const head = () => [mobileHead('Listings'), pageHead('Listings', 'How complete and tidy each city’s listings are, and what to fix first.')];
-  if (!view.querySelector('.listings')) fill(view, head(), h('div', { class: 'skeleton' }));
+export async function render(view, ui) {
+  const { h, fill, api } = ui;
+  ui.page({ title: 'Listings', context: 'How complete and tidy each city’s listings are, and what to fix first.' });
+  fill(view, ui.state.loading());
   let d;
-  try {
+  const load = async (refresh) => {
     d = await api(`/api/listings${refresh ? `?refresh=${refresh}` : ''}`);
+  };
+  try {
+    await load();
   } catch (e) {
-    fill(view, head(), errorBox(e));
+    fill(view, ui.state.error(e));
     return;
   }
-  if (!current || !d.reports.some((r) => r.site === current)) current = d.reports[0]?.site;
-  const body = h('div', { class: 'listings' });
+  if (!d.reports.length) {
+    fill(view, ui.state.empty('No listing reports yet.'));
+    return;
+  }
   const draw = () => {
-    const r = d.reports.find((x) => x.site === current);
-    fill(
-      body,
-      h(
-        'div',
-        { class: 'filters' },
-        h('div', { class: 'seg', role: 'group', 'aria-label': 'City' }, d.reports.map((x) => h('button', { type: 'button', 'aria-pressed': String(x.site === current), onclick: () => ((current = x.site), draw()) }, `${ui.siteName(x.site)} · ${x.score}%`))),
-        h('span', { class: 'updated' }, `Worked out ${ui.ago(r.updated_at)} · `, h('button', { class: 'linkish', type: 'button', onclick: (e) => ((e.currentTarget.disabled = true), render(view, ui, r.site)) }, 'Recheck now'))
-      ),
-      cityReport(ui, r)
+    const site = ui.site();
+    const r = d.reports.find((x) => x.site === site) ?? d.reports[0];
+    const recheck = h(
+      'button',
+      {
+        class: 'btn small',
+        type: 'button',
+        onclick: async (e) => {
+          const btn = e.currentTarget;
+          btn.disabled = true;
+          try {
+            await load(r.site);
+            draw();
+          } catch (err) {
+            btn.disabled = false;
+            alert(err.message);
+          }
+        },
+      },
+      'Recheck now'
     );
+    ui.page({ title: 'Listings', context: 'How complete and tidy each city’s listings are, and what to fix first.', actions: [h('span', { class: 'updated' }, `${ui.siteName(r.site)} · worked out ${ui.ago(r.updated_at)}`), recheck] });
+    ui.setUpdated(r.updated_at);
+    fill(view, cityReport(ui, r));
   };
+  ui.onSiteChange(draw);
   draw();
-  fill(view, head(), body);
 }
 
 function cityReport(ui, r) {
@@ -84,20 +100,16 @@ function cityReport(ui, r) {
   // The "No opening hours" check's own row: type them in and save right
   // here, instead of opening the full Edit modal just for one field.
   const hoursRow = (l, pill) => {
-    const input = h('input', {
-      type: 'text',
-      placeholder: 'e.g. Mon–Fri 08:00–17:00, Sat 09:00–13:00',
-      style: 'flex:1;min-width:180px;padding:6px 9px;border:2px solid var(--border);border-radius:7px;font:inherit;font-size:12.5px;color:var(--text);background:var(--bg-card)',
-    });
+    const input = h('input', { class: 'input', type: 'text', placeholder: 'e.g. Mon–Fri 08:00–17:00, Sat 09:00–13:00', 'aria-label': `Opening hours for ${l.name}` });
     const saveBtn = h('button', { class: 'btn small', type: 'button' }, 'Save');
-    const closeBtn = h('button', { class: 'btn small', type: 'button', style: 'color:var(--danger)' }, 'Mark closed');
+    const closeBtn = h('button', { class: 'btn small danger', type: 'button' }, 'Mark closed');
     const noInfoBtn = h('button', { class: 'btn small', type: 'button', title: 'No fixed hours to find — stop flagging this one' }, 'No information');
     const li = h(
       'li',
       {},
       h('a', { href: `${site}/business/${l.slug}/`, target: '_blank', rel: 'noopener' }, l.name),
       h('span', { class: 'meta' }, l.suburb ? ` · ${l.suburb}` : ''),
-      h('div', { style: 'display:flex;gap:7px;margin-top:6px;flex-wrap:wrap' }, input, saveBtn, closeBtn, noInfoBtn)
+      h('div', { class: 'filters' }, input, saveBtn, closeBtn, noInfoBtn)
     );
     const done = () => {
       li.remove();
@@ -143,141 +155,194 @@ function cityReport(ui, r) {
     };
     return li;
   };
-  // Indexed / Noindex totals (cached an hour by the Indexing screen's API).
-  const gateCount = h('b', {}, '…');
-  const gateNote = h('span', { class: 'meta' }, '');
-  const gateRow = h('li', {}, h('span', { class: 'row-main' }, 'Index gate', ui.help(ui.HELP.listings.indexScore)), gateCount, gateNote, h('a', { class: 'meta', href: '#/index-gate' }, 'Open Indexing'));
-  ui.api('/api/index-gate')
-    .then((g) => {
-      const x = g.sites.find((s) => s.slug === r.site);
-      if (!x || x.error || !x.totals) throw new Error(x?.error || 'no data');
-      gateCount.textContent = `${x.totals.indexed.toLocaleString('en-ZA')} indexed`;
-      gateNote.textContent = `${x.totals.noindex.toLocaleString('en-ZA')} noindex`;
-    })
-    .catch(() => ((gateCount.textContent = '–'), (gateNote.textContent = 'not available yet')));
+  const f = (n) => n.toLocaleString('en-ZA');
+  const checkPill = (c) => h('span', { class: `pill ${c.count === 0 ? 'pass' : c.count / Math.max(1, r.total) > 0.25 ? 'fail' : 'warn'}` }, f(c.count));
+
+  // ── KPIs ──
+  const unclaimed = r.owners ? r.owners.unclaimed.length : null;
+  const kpis = ui.kpis([
+    ['Quality score', `${r.score}%`, `${f(r.complete)} of ${f(r.total)} listings complete`, ui.HELP.listings.quality],
+    ['Possible duplicates', f(r.duplicates.count), 'groups to check', ui.HELP.listings.duplicates],
+    [`Not updated ${r.stale.days} days`, f(r.stale.count), 'listings', ui.HELP.listings.stale],
+    ['Unclaimed', unclaimed == null ? '–' : f(unclaimed), 'getting enquiries', ui.HELP.listings.unclaimed],
+  ]);
+
+  // ── Primary: score ring + what's missing bars ──
   const tone = r.score >= 85 ? 'good' : r.score >= 65 ? 'ok' : 'bad';
+  const bars = h('div');
+  ui.charts.barList(bars, { items: r.checks.map((c) => ({ label: c.label, value: c.count, color: c.count === 0 ? 'var(--good)' : c.count / Math.max(1, r.total) > 0.25 ? 'var(--critical)' : 'var(--warn)' })) });
+  const primary = ui.card({
+    title: 'Data quality',
+    help: ui.HELP.listings.quality,
+    actions: h('a', { class: 'btn small', href: `${site}/admin/businesses/`, target: '_blank', rel: 'noopener' }, `Edit in ${ui.siteName(r.site)} admin`, ui.icon('ext', 13)),
+    body: h(
+      'div',
+      { class: 'two' },
+      h(
+        'div',
+        { class: 'score-card' },
+        h('div', { class: `score-ring ${tone}`, style: `--p:${r.score}`, role: 'img', 'aria-label': `Data quality ${r.score}%` }, h('b', {}, `${r.score}%`)),
+        h('p', { class: 'sub' }, `${f(r.complete)} of ${f(r.total)} published listings have everything: a phone, hours, a proper description, an address and a category.`)
+      ),
+      h('div', {}, h('h3', {}, 'What’s missing'), bars)
+    ),
+  });
+
+  // ── Tabs ──
+  const hoursTab = () => {
+    const c = r.checks.find((x) => x.key === 'hours');
+    if (!c) return ui.state.empty('No opening-hours check for this city.');
+    const pill = checkPill(c);
+    return ui.card({
+      title: c.label,
+      sub: c.why,
+      actions: pill,
+      body: c.count ? h('ul', { class: 'linklist' }, c.listings.map((l) => hoursRow(l, pill)), more(c.count, c.listings.length)) : h('p', { class: 'msg ok' }, 'None. Nice.'),
+    });
+  };
+  const basicsTab = () => {
+    const others = r.checks.filter((x) => x.key !== 'hours');
+    if (!others.length) return ui.state.empty('No other checks for this city.');
+    return h(
+      'div',
+      { class: 'inbox' },
+      others.map((c) =>
+        h(
+          'details',
+          { class: 'card inbox-item' },
+          h('summary', {}, checkPill(c), h('span', { class: 'inbox-main' }, h('b', {}, c.label), h('span', { class: 'meta' }, c.why)), ui.icon('chevron', 16)),
+          h('div', { class: 'inbox-body' }, c.count ? h('ul', { class: 'linklist' }, c.listings.map(listingLink), more(c.count, c.listings.length)) : h('p', { class: 'msg ok' }, 'None. Nice.'))
+        )
+      )
+    );
+  };
+  const dupTab = () =>
+    ui.card({
+      title: 'Possible duplicates',
+      help: ui.HELP.listings.duplicates,
+      body: h(
+        'div',
+        {},
+        r.duplicates.groups.length
+          ? h(
+              'ul',
+              { class: 'rows' },
+              r.duplicates.groups.map((g) => {
+                const li = h(
+                  'li',
+                  {},
+                  h('div', { class: 'row-main' }, h('span', { class: 'meta' }, `${g.reason}${g.reason === 'Same name in the same suburb' ? '' : `: ${g.key}`}`), h('ul', { class: 'linklist' }, g.listings.map(listingLink))),
+                  h(
+                    'button',
+                    {
+                      class: 'btn small',
+                      type: 'button',
+                      onclick: async (e) => {
+                        if (!confirm('Mark this as not a duplicate? It won’t be flagged again.')) return;
+                        // Captured now: e.currentTarget is only live for the
+                        // synchronous part of the handler — by the time the
+                        // awaited call below resolves it's already null.
+                        const btn = e.currentTarget;
+                        btn.disabled = true;
+                        try {
+                          await ui.api('/api/dismiss-duplicate', 'POST', { site: r.site, groupKey: g.groupKey });
+                          li.remove();
+                        } catch (err) {
+                          alert(err.message);
+                          btn.disabled = false;
+                        }
+                      },
+                    },
+                    'Not duplicate'
+                  )
+                );
+                return li;
+              })
+            )
+          : ui.state.empty('No duplicates found. Same phone, same website or same name in the same suburb.'),
+        h('p', { class: 'note' }, 'Branches of one business can share a phone or website: only merge or hide the ones that are really the same place.')
+      ),
+    });
+  const staleTab = () => {
+    // Indexed / Noindex totals (cached an hour by the Indexing screen's API).
+    const gateCount = h('b', {}, '…');
+    const gateNote = h('span', { class: 'meta' }, '');
+    const gateRow = h('li', {}, h('span', { class: 'row-main' }, 'Index gate', ui.help(ui.HELP.listings.indexScore)), gateCount, gateNote, h('a', { class: 'meta', href: '#/index-gate' }, 'Open Listings to fix'));
+    ui.api('/api/index-gate')
+      .then((g) => {
+        const x = g.sites.find((s) => s.slug === r.site);
+        if (!x || x.error || !x.totals) throw new Error(x?.error || 'no data');
+        gateCount.textContent = `${x.totals.indexed.toLocaleString('en-ZA')} indexed`;
+        gateNote.textContent = `${x.totals.noindex.toLocaleString('en-ZA')} noindex`;
+      })
+      .catch(() => ((gateCount.textContent = '–'), (gateNote.textContent = 'not available yet')));
+    const tidy = ui.card({
+      title: 'Tidy-up',
+      body: h(
+        'ul',
+        { class: 'rows compact' },
+        [
+          ['Possible duplicates', r.duplicates.count, 'groups', ui.HELP.listings.duplicates],
+          [`Not updated in ${r.stale.days} days`, r.stale.count, 'listings', ui.HELP.listings.stale],
+          ['No views in 90 days', r.no_views.count, 'listings', ui.HELP.listings.noViews],
+          ['Thin pages (1–2 businesses)', r.thin.count, `of ${r.thin.pages} pages, always noindexed`, ui.HELP.listings.thin],
+        ].map(([label, n, unit, tip]) => h('li', {}, h('span', { class: 'row-main' }, label, ui.help(tip)), h('b', {}, f(n)), h('span', { class: 'meta' }, unit))),
+        // Per-listing scores aren't available yet: show the city's totals from the Indexing screen.
+        gateRow
+      ),
+    });
+    return h(
+      'div',
+      { class: 'stack' },
+      tidy,
+      h(
+        'div',
+        { class: 'two' },
+        ui.card({
+          title: `Not updated in ${r.stale.days} days (${f(r.stale.count)})`,
+          help: ui.HELP.listings.stale,
+          body: h('div', {}, r.stale.count ? h('ul', { class: 'linklist' }, r.stale.listings.slice(0, 50).map(listingLink), more(r.stale.count, 50)) : h('p', { class: 'msg ok' }, 'None.'), h('p', { class: 'note' }, 'Worth checking these are still open: the closed-business routine also looks for them.')),
+        }),
+        ui.card({
+          title: `No views in 90 days (${f(r.no_views.count)})`,
+          help: ui.HELP.listings.noViews,
+          body: h('div', {}, r.no_views.count ? h('ul', { class: 'linklist' }, r.no_views.listings.slice(0, 50).map(listingLink), more(r.no_views.count, 50)) : h('p', { class: 'msg ok' }, 'None.'), h('p', { class: 'note' }, 'Listed for more than 90 days with no visits at all: usually a missing description or a very niche category.')),
+        })
+      )
+    );
+  };
+  const ownersTab = () => ownersSection(ui, r, listingLink);
+
   return h(
     'div',
     {},
-    h(
-      'div',
-      { class: 'two' },
-      h(
-        'section',
-        { class: 'card score-card' },
-        h('div', { class: `score-ring ${tone}`, style: `--p:${r.score}`, role: 'img', 'aria-label': `Data quality ${r.score}%` }, h('b', {}, `${r.score}%`)),
-        h(
-          'div',
-          {},
-          h('h2', {}, 'Data quality', ui.help(ui.HELP.listings.quality)),
-          h('p', { class: 'sub' }, `${r.complete.toLocaleString('en-ZA')} of ${r.total.toLocaleString('en-ZA')} published listings have everything: a phone, hours, a proper description, an address and a category.`),
-          h('a', { class: 'btn small', href: `${site}/admin/businesses/`, target: '_blank', rel: 'noopener' }, `Edit in ${ui.siteName(r.site)} admin`, ui.icon('ext', 13))
-        )
-      ),
-      h(
-        'section',
-        { class: 'card' },
-        h('h2', { class: 'card-sub' }, 'Tidy-up'),
-        h(
-          'ul',
-          { class: 'rows compact' },
-          [
-            ['Possible duplicates', r.duplicates.count, 'groups', ui.HELP.listings.duplicates],
-            [`Not updated in ${r.stale.days} days`, r.stale.count, 'listings', ui.HELP.listings.stale],
-            ['No views in 90 days', r.no_views.count, 'listings', ui.HELP.listings.noViews],
-            ['Thin pages (1–2 businesses)', r.thin.count, `of ${r.thin.pages} pages, always noindexed`, ui.HELP.listings.thin],
-          ].map(([label, n, unit, tip]) => h('li', {}, h('span', { class: 'row-main' }, label, ui.help(tip)), h('b', {}, n.toLocaleString('en-ZA')), h('span', { class: 'meta' }, unit))),
-          // Per-listing scores aren't available yet: show the city's totals from the Indexing screen.
-          gateRow
-        )
-      )
+    kpis,
+    primary,
+    ui.tabs(
+      [
+        { id: 'hours', label: 'Hours', render: hoursTab },
+        { id: 'basics', label: 'Missing basics', render: basicsTab },
+        { id: 'duplicates', label: 'Duplicates', render: dupTab },
+        { id: 'stale', label: 'Stale & unseen', render: staleTab },
+        { id: 'owners', label: 'Owners & enquiries', render: ownersTab },
+      ],
+      { store: 'hub.tab.listings' }
     ),
-    h('h2', { class: 'section-title' }, 'What’s missing'),
-    h(
-      'div',
-      { class: 'inbox' },
-      r.checks.map((c) => {
-        const pill = h('span', { class: `pill ${c.count === 0 ? 'pass' : c.count / Math.max(1, r.total) > 0.25 ? 'fail' : 'warn'}` }, c.count.toLocaleString('en-ZA'));
-        const rows = c.key === 'hours' ? c.listings.map((l) => hoursRow(l, pill)) : c.listings.map(listingLink);
-        return h(
-          'details',
-          { class: 'card inbox-item' },
-          h('summary', {}, pill, h('span', { class: 'inbox-main' }, h('b', {}, c.label), h('span', { class: 'meta' }, c.why)), ui.icon('chevron', 16)),
-          h('div', { class: 'inbox-body' }, c.count ? h('ul', { class: 'linklist' }, rows, more(c.count, c.listings.length)) : h('p', { class: 'msg ok' }, 'None. Nice.'))
-        );
-      })
-    ),
-    h('h2', { class: 'section-title' }, 'Possible duplicates', ui.help(ui.HELP.listings.duplicates)),
-    h(
-      'section',
-      { class: 'card' },
-      r.duplicates.groups.length
-        ? h(
-            'ul',
-            { class: 'rows' },
-            r.duplicates.groups.map((g) => {
-              const li = h(
-                'li',
-                {},
-                h('div', { class: 'row-main' }, h('span', { class: 'meta' }, `${g.reason}${g.reason === 'Same name in the same suburb' ? '' : `: ${g.key}`}`), h('ul', { class: 'linklist' }, g.listings.map(listingLink))),
-                h(
-                  'button',
-                  {
-                    class: 'btn small',
-                    type: 'button',
-                    onclick: async (e) => {
-                      if (!confirm('Mark this as not a duplicate? It won’t be flagged again.')) return;
-                      // Captured now: e.currentTarget is only live for the
-                      // synchronous part of the handler — by the time the
-                      // awaited call below resolves it's already null.
-                      const btn = e.currentTarget;
-                      btn.disabled = true;
-                      try {
-                        await ui.api('/api/dismiss-duplicate', 'POST', { site: r.site, groupKey: g.groupKey });
-                        li.remove();
-                      } catch (err) {
-                        alert(err.message);
-                        btn.disabled = false;
-                      }
-                    },
-                  },
-                  'Not duplicate'
-                )
-              );
-              return li;
-            })
-          )
-        : h('div', { class: 'empty' }, h('b', {}, 'No duplicates found'), 'Same phone, same website or same name in the same suburb.'),
-      h('p', { class: 'note' }, 'Branches of one business can share a phone or website: only merge or hide the ones that are really the same place.')
-    ),
-    h('h2', { class: 'section-title' }, 'Stale and unseen'),
-    h(
-      'div',
-      { class: 'two' },
-      h('section', { class: 'card' }, h('h3', { class: 'card-sub' }, `Not updated in ${r.stale.days} days (${r.stale.count})`, ui.help(ui.HELP.listings.stale)), r.stale.count ? h('ul', { class: 'linklist' }, r.stale.listings.slice(0, 50).map(listingLink), more(r.stale.count, 50)) : h('p', { class: 'msg ok' }, 'None.'), h('p', { class: 'note' }, 'Worth checking these are still open: the closed-business routine also looks for them.')),
-      h('section', { class: 'card' }, h('h3', { class: 'card-sub' }, `No views in 90 days (${r.no_views.count})`, ui.help(ui.HELP.listings.noViews)), r.no_views.count ? h('ul', { class: 'linklist' }, r.no_views.listings.slice(0, 50).map(listingLink), more(r.no_views.count, 50)) : h('p', { class: 'msg ok' }, 'None.'), h('p', { class: 'note' }, 'Listed for more than 90 days with no visits at all: usually a missing description or a very niche category.'))
-    ),
-    ownersSection(ui, r, site, listingLink),
     bar
   );
 }
 
-function ownersSection(ui, r, site, listingLink) {
+function ownersSection(ui, r, listingLink) {
   const { h } = ui;
   const o = r.owners;
-  if (!o) return null;
-  const card = (title, items, row, empty, note) =>
-    h('section', { class: 'card' }, h('h3', { class: 'card-sub' }, `${title} (${items.length})`), items.length ? h('ul', { class: 'linklist' }, items.map(row)) : h('p', { class: 'msg ok' }, empty), note ? h('p', { class: 'note' }, note) : null);
+  if (!o) return ui.state.empty('No owner data for this city yet.');
+  const card = (title, items, row, empty, note, tip) =>
+    ui.card({ title: `${title} (${items.length})`, help: tip, body: h('div', {}, items.length ? h('ul', { class: 'linklist' }, items.map(row)) : h('p', { class: 'msg ok' }, empty), note ? h('p', { class: 'note' }, note) : null) });
   return h(
     'div',
-    {},
-    h('h2', { class: 'section-title' }, 'Owners and enquiries', ui.help(ui.HELP.listings.unclaimed)),
-    h(
-      'div',
-      { class: 'three' },
-      card('Enquiries that never reached the business', o.unreached, (x) => listingLink({ slug: x.slug, name: x.name, detail: `${x.n} enquir${x.n === 1 ? 'y' : 'ies'}, last ${ui.ago(x.last)}` }), 'None: every enquiry was emailed on.', 'No email address on file, so visitors’ enquiries went nowhere (last 60 days). Find an email for these, or the business loses customers.'),
-      card('Unclaimed businesses getting enquiries', o.unclaimed, (x) => listingLink({ slug: x.slug, name: x.name, detail: `${x.n} enquir${x.n === 1 ? 'y' : 'ies'}` }), 'None.', 'Good candidates to contact: invite them to claim their free listing (and later, a paid plan).'),
-      card('Owners who never confirmed', o.unconfirmed, (x) => h('li', {}, h('b', {}, x.name), h('span', { class: 'meta' }, ` · approved ${ui.ago(x.approved)}${x.reminded ? `, reminded ${ui.ago(x.reminded)}` : ''}`)), 'None waiting.', 'Approved listings still waiting for the owner to confirm by email. Resend the email from the site’s Submissions screen.')
-    )
+    { class: 'three' },
+    card('Enquiries that never reached the business', o.unreached, (x) => listingLink({ slug: x.slug, name: x.name, detail: `${x.n} enquir${x.n === 1 ? 'y' : 'ies'}, last ${ui.ago(x.last)}` }), 'None: every enquiry was emailed on.', 'No email address on file, so visitors’ enquiries went nowhere (last 60 days). Find an email for these, or the business loses customers.'),
+    card('Unclaimed businesses getting enquiries', o.unclaimed, (x) => listingLink({ slug: x.slug, name: x.name, detail: `${x.n} enquir${x.n === 1 ? 'y' : 'ies'}` }), 'None.', 'Good candidates to contact: invite them to claim their free listing (and later, a paid plan).', ui.HELP.listings.unclaimed),
+    card('Owners who never confirmed', o.unconfirmed, (x) => h('li', {}, h('b', {}, x.name), h('span', { class: 'meta' }, ` · approved ${ui.ago(x.approved)}${x.reminded ? `, reminded ${ui.ago(x.reminded)}` : ''}`)), 'None waiting.', 'Approved listings still waiting for the owner to confirm by email. Resend the email from the site’s Submissions screen.')
   );
 }

@@ -612,3 +612,26 @@ article.up, div.up:not(.delta) { border: 1px solid var(--line); border-radius: v
 .live-line-wrap:not(:empty) { margin-top: var(--sp-3); }
 .live-line { display: inline-flex; align-items: center; gap: var(--sp-2); font-size: var(--t-xs); color: var(--ink-2); text-decoration: none; }
 .live-line:hover { color: var(--ink); }
+
+/* Screen helpers (Overview, Inbox, Site activity, Health) */
+.block { margin-bottom: var(--sp-5); }
+.block:empty { display: none; }
+.phone-only { display: none; }
+@media (max-width: 860px) { .phone-only { display: block; } .phone-only .seg { display: flex; } .phone-only .seg button { flex: 1; min-height: 36px; } }
+.is-loading { opacity: 0.5; transition: opacity 0.2s; }
+.nowrap { white-space: nowrap; }
+.bar-cell.end { justify-content: flex-end; }
+.tiles.tiles-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 0; }
+.card-title-row { display: flex; align-items: center; gap: var(--sp-3); }
+.queue-main { min-width: 0; }
+.more-row { text-align: center; margin-top: var(--sp-3); }
+/* Filter chips (Inbox types, Overview queue) */
+.chip-bar { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+.chip-btn { min-height: 34px; padding: 0 var(--sp-3); border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink-2); font-size: var(--t-sm); font-weight: 500; cursor: pointer; font-variant-numeric: tabular-nums; }
+.chip-btn:hover { color: var(--ink); background: var(--surface-2); }
+.chip-btn[aria-pressed='true'] { background: var(--action); border-color: var(--action); color: var(--action-ink); }
+@media (max-width: 860px) {
+  .chip-bar { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
+  .chip-bar::-webkit-scrollbar { display: none; }
+  .chip-btn { flex: none; min-height: 40px; }
+}
