@@ -9,7 +9,26 @@ const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export async function render(view, ui) {
   const { h, fill, api, mobileHead, pageHead, errorBox } = ui;
   const head = (d) => [mobileHead('Analytics'), pageHead('Analytics', 'Who visits each site and what they look at, from Google Analytics. Every figure covers the last 28 days.', d?.generated_at ? h('span', { class: 'updated' }, `Analytics data from ${ui.ago(d.generated_at)}`) : null)];
-  fill(view, head(), h('div', { class: 'skeleton' }));
+
+  // "Right now": live GA4 + first-party numbers, refreshed every minute while
+  // this screen is open and visible. The slot keeps its place across redraws.
+  const liveEl = h('div', { class: 'live-slot' });
+  const loadLive = async () => {
+    try {
+      const live = await api('/api/analytics-live');
+      liveEl.replaceChildren(ui.liveCard(live));
+    } catch (e) {
+      liveEl.replaceChildren(h('p', { class: 'sub' }, `Live data unavailable: ${e.message || e}`));
+    }
+  };
+  loadLive();
+  const timer = setInterval(() => {
+    if (document.visibilityState !== 'visible' || !view.contains(liveEl)) return;
+    loadLive();
+  }, 60_000);
+  ui.onLeave?.(() => clearInterval(timer));
+
+  fill(view, head(), liveEl, h('div', { class: 'skeleton' }));
   let d;
   try {
     d = await api('/api/analytics');
