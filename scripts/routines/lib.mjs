@@ -18,6 +18,7 @@ export const DISABLED_ROUTINES = {
   // Paused by the owner on 8 Oct 2026 while PretoriaHub recovers from the September 2026
   // spam update: no new business pages on any site until the existing ones are richer.
   discovery: 'Business discovery is paused on every site: no new businesses are to be added. Log a not-due line and stop; write no SQL.',
+  centres: 'The shopping-centres routine is paused on every site: no new tenants or centres are to be added. Log a not-due line and stop; write no SQL.',
 };
 export const ROOT = process.cwd();
 
