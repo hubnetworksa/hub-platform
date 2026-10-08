@@ -19,19 +19,20 @@ const LABEL = { submission: 'New listing', claim: 'Business claim', report: 'Rep
 const view_ = { type: 'all', site: 'all', shown: 30 };
 
 export async function render(view, ui) {
-  const { h, fill, api, mobileHead, pageHead, errorBox } = ui;
+  const { h, fill, api } = ui;
   const t = ui.hashParams().get('type');
   if (t && TYPES.some(([k]) => k === t)) view_.type = t;
-  const head = () => [mobileHead('Inbox'), pageHead('Inbox', 'Everything waiting for you on every site. Open an item to see the details and approve, reject or reply right here.')];
-  fill(view, head(), h('div', { class: 'skeleton' }));
+  ui.page({ title: 'Inbox', context: 'Everything waiting for a decision' });
+  fill(view, ui.state.loading());
   let items;
   let totals = {};
   try {
     ({ items, totals = {} } = await api('/api/inbox'));
   } catch (e) {
-    fill(view, head(), errorBox(e));
+    fill(view, ui.state.error(e));
     return;
   }
+  ui.setUpdated(new Date());
   const body = h('div');
   const sites = ui.state.overview?.sites ?? [];
   const draw = () => {
@@ -49,16 +50,16 @@ export async function render(view, ui) {
       h(
         'div',
         { class: 'filters' },
-        h('div', { class: 'seg', role: 'group', 'aria-label': 'Filter by type' }, TYPES.filter(([k]) => k === 'all' || count(k)).map(([k, label]) => h('button', { type: 'button', 'aria-pressed': String(view_.type === k), onclick: () => ((view_.type = k), (view_.shown = 30), draw()) }, `${label} (${count(k)})`))),
+        h('div', { class: 'chip-bar', role: 'group', 'aria-label': 'Filter by type' }, TYPES.filter(([k]) => k === 'all' || count(k)).map(([k, label]) => h('button', { type: 'button', class: 'chip-btn', 'aria-pressed': String(view_.type === k), onclick: () => ((view_.type = k), (view_.shown = 30), draw()) }, `${label} ${count(k)}`))),
         h('select', { class: 'select', 'aria-label': 'Filter by site', onchange: (e) => ((view_.site = e.target.value), (view_.shown = 30), draw()) }, h('option', { value: 'all' }, 'All sites'), sites.map((s) => h('option', { value: s.slug, selected: view_.site === s.slug }, s.city)))
       ),
-      list.length ? h('div', { class: 'inbox' }, shown.map((it) => itemCard(ui, it, () => ((items = items.filter((x) => x !== it)), draw(), ui.loadOverview(true).catch(() => {}))))) : h('section', { class: 'card' }, h('div', { class: 'empty' }, h('b', {}, 'All clear'), 'Nothing is waiting for you here.')),
+      list.length ? h('div', { class: 'inbox' }, shown.map((it) => itemCard(ui, it, () => ((items = items.filter((x) => x !== it)), draw(), ui.loadOverview(true).catch(() => {}))))) : ui.card({ body: h('div', { class: 'empty' }, h('b', {}, 'All clear'), 'Nothing is waiting for you here.') }),
       count(view_.type) > loaded(view_.type) ? h('p', { class: 'note' }, `Showing the newest ${loaded(view_.type)} of ${count(view_.type)}. Deal with some and refresh to see the rest.`) : null,
-      list.length > shown.length ? h('div', { style: 'text-align:center;margin-top:14px' }, h('button', { class: 'btn', type: 'button', onclick: () => ((view_.shown += 30), draw()) }, `Show more (${list.length - shown.length} left)`)) : null
+      list.length > shown.length ? h('div', { class: 'more-row' }, h('button', { class: 'btn', type: 'button', onclick: () => ((view_.shown += 30), draw()) }, `Show more (${list.length - shown.length} left)`)) : null
     );
   };
   draw();
-  fill(view, head(), body);
+  fill(view, body);
 }
 
 function itemCard(ui, it, onDone) {

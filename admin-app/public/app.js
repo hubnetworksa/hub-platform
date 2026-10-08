@@ -477,62 +477,49 @@ async function loadOverview(force) {
 }
 
 async function renderOverview(view) {
-  fill(view, mobileHead('Overview'), pageHead('Overview', 'Everything across your sites that needs you, and how each site is doing.'), h('div', { class: 'skeleton' }));
+  ui.page({ title: 'Overview', context: 'What needs you today and how the sites are doing' });
+  fill(view, stateBox.loading());
   let data;
   try {
     data = await loadOverview();
   } catch (e) {
-    fill(view, mobileHead('Overview'), pageHead('Overview'), errorBox(e));
+    fill(view, stateBox.error(e));
     return;
   }
   const sum = (k) => data.sites.reduce((a, s) => a + (s[k] || 0), 0);
   if (data.generatedAt) ui.setUpdated(parseIso(data.generatedAt));
-  const refresh = h(
-    'button',
-    {
-      class: 'btn',
-      type: 'button',
-      onclick: async () => {
-        refresh.disabled = true;
-        try {
-          await loadOverview(true);
-          route();
-        } catch (e) {
-          alert(e.message);
-        }
-      },
-    },
-    icon('refresh', 16),
-    'Refresh'
-  );
+  const waiting = data.queueTotal ?? data.queue.length;
+  // A notification can open the Overview on its queue.
+  if (hashParams().get('type')) store.set('hub.tab.overview', 'attention');
 
-  const tiles = h(
-    'div',
-    { class: 'tiles' },
-    tile('Needs attention', fmt.int(data.queueTotal ?? data.queue.length), null, HELP.overview.needsAttention),
-    tile('Live listings', fmt.int(sum('listings')), null, HELP.overview.listings),
-    tile('Paid plans', fmt.int(sum('paidPlans')), null, HELP.overview.paidPlans),
-    tile('Revenue this month', fmt.rand(sum('revenueMonthCents')), null, HELP.overview.revenueMonth),
-    tile('Registered users', fmt.int(sum('users')), null, HELP.overview.users)
-  );
+  const kpiRow = kpis([
+    ['Needs attention', fmt.int(waiting), null, HELP.overview.needsAttention],
+    ['Live listings', fmt.int(sum('listings')), null, HELP.overview.listings],
+    ['Paid plans', fmt.int(sum('paidPlans')), null, HELP.overview.paidPlans],
+    ['Revenue this month', fmt.rand(sum('revenueMonthCents')), null, HELP.overview.revenueMonth],
+  ]);
 
-  const siteCards = h('div', { class: 'three' }, data.sites.map(siteCard));
-  const liveLine = h('div', { class: 'live-line-wrap' });
+  const liveLine = h('div', { class: 'live-line-wrap block' });
   api('/api/analytics-live')
     .then((d) => liveLine.replaceChildren(ui.liveCard(d, { compact: true })))
     .catch(() => {});
 
-  fill(view,
-    mobileHead('Overview'),
-    heroBanner(data, refresh),
-    ...[await passkeyNudge()].filter(Boolean),
-    briefingCard(),
-    tiles,
+  const siteCards = h('div', { class: 'three block' }, data.sites.map(siteCard));
+  const nudge = await passkeyNudge();
+
+  fill(
+    view,
+    nudge,
+    kpiRow,
     liveLine,
-    h('div', { class: 'section-title' }, 'Your sites'),
     siteCards,
-    h('div', { class: 'section-title' }, 'Needs attention', help(HELP.overview.needsAttention)),
-    queueCard(data)
+    tabs(
+      [
+        { id: 'attention', label: waiting ? `Needs attention (${waiting})` : 'Needs attention', render: () => queueCard(data) },
+        { id: 'briefing', label: 'Today’s briefing', render: () => briefingCard() },
+      ],
+      { store: 'hub.tab.overview' }
+    )
   );
 }
 
@@ -585,26 +572,6 @@ function briefingCard() {
   return card;
 }
 
-// The Overview's header: the three-city banner with a greeting.
-function heroBanner(data, refresh) {
-  const hour = Number(new Date().toLocaleString('en-ZA', { hour: 'numeric', hour12: false, timeZone: 'Africa/Johannesburg' }));
-  const greeting = hour >= 5 && hour < 12 ? 'Good morning' : hour >= 12 && hour < 18 ? 'Good afternoon' : 'Good evening';
-  const waiting = data.queueTotal ?? data.queue.length;
-  refresh.classList.add('glass');
-  return h(
-    'section',
-    { class: 'hero', 'aria-label': 'Welcome' },
-    h('div', { class: 'hero-bg', 'aria-hidden': 'true' }),
-    h(
-      'div',
-      { class: 'hero-content' },
-      h('div', { class: 'hero-cities' }, data.sites.map((s) => h('span', {}, h('span', { class: 'city-dot', style: `background:${siteColor(s.slug)}` }), s.city))),
-      h('h1', {}, `${greeting}${state.username ? `, ${state.username}` : ''}`),
-      h('p', {}, waiting ? `${waiting} item${waiting === 1 ? '' : 's'} across your sites need${waiting === 1 ? 's' : ''} you.` : 'Everything across your sites is up to date.'),
-      h('div', { class: 'hero-actions' }, refresh, h('span', { class: 'hero-updated' }, `Updated ${ago(data.generatedAt)}`))
-    )
-  );
-}
 
 // One stat tile for every screen. `delta` is an element or a plain note
 // (string); `help` adds the (i) tooltip after the label; `opts.bad` marks it red.
@@ -660,11 +627,11 @@ function queueCard(data) {
     const items = data.queue.filter((it) => (state.queueType === 'all' || it.type === state.queueType) && (state.queueSite === 'all' || it.site === state.queueSite));
     // True counts per type (the list below holds only the newest 25 of each).
     const counts = Object.fromEntries(QUEUE_TYPES.map(([k]) => [k, data.sites.filter((s) => state.queueSite === 'all' || s.slug === state.queueSite).reduce((a, s) => a + (k === 'all' ? s.waiting ?? 0 : s.pending?.[k] ?? 0), 0)]));
-    const seg = h(
+    const chips = h(
       'div',
-      { class: 'seg', role: 'group', 'aria-label': 'Filter by type' },
+      { class: 'chip-bar', role: 'group', 'aria-label': 'Filter by type' },
       QUEUE_TYPES.filter(([k]) => k === 'all' || counts[k] > 0).map(([k, label]) =>
-        h('button', { type: 'button', 'aria-pressed': String(state.queueType === k), onclick: () => ((state.queueType = k), (state.queueShown = 20), draw()) }, `${label} (${counts[k]})`)
+        h('button', { type: 'button', class: 'chip-btn', 'aria-pressed': String(state.queueType === k), onclick: () => ((state.queueType = k), (state.queueShown = 20), draw()) }, `${label} ${counts[k]}`)
       )
     );
     const siteSel = h(
@@ -688,12 +655,12 @@ function queueCard(data) {
                 h('span', { class: 'type' }, it.label),
                 h(
                   'span',
-                  { style: 'min-width:0' },
+                  { class: 'queue-main' },
                   h('div', { class: 'title' }, it.title || '(untitled)'),
                   h(
                     'div',
                     { class: 'meta' },
-                    h('span', { style: 'display:inline-flex;align-items:center;gap:5px' }, h('span', { class: 'city-dot', style: `background:${siteColor(it.site)}` }), siteName(it.site)),
+                    h('span', { class: 'inline-city' }, h('span', { class: 'city-dot', style: `background:${siteColor(it.site)}` }), siteName(it.site)),
                     it.detail ? h('span', {}, `· ${it.detail}`) : null
                   )
                 ),
@@ -702,63 +669,70 @@ function queueCard(data) {
             )
           )
         )
-      : h('div', { class: 'empty' }, h('b', {}, 'All clear'), 'Nothing is waiting for you here.');
+      : stateBox.empty('Nothing is waiting for you here.');
     const more =
       items.length > shown.length
-        ? h('div', { style: 'text-align:center;margin-top:12px' }, h('button', { class: 'btn', type: 'button', onclick: () => ((state.queueShown += 20), draw()) }, `Show more (${items.length - shown.length} left)`))
+        ? h('div', { class: 'more-row' }, h('button', { class: 'btn', type: 'button', onclick: () => ((state.queueShown += 20), draw()) }, `Show more (${items.length - shown.length} left)`))
         : null;
     const capped = counts[state.queueType] > items.length ? h('p', { class: 'note' }, `Showing the newest ${items.length} of ${counts[state.queueType]}. Clear some and refresh to see the rest.`) : null;
-    fill(card, h('div', { class: 'filters' }, seg, siteSel), list, more, capped);
+    fill(card, h('div', { class: 'filters' }, chips, siteSel), list, more, capped);
   };
   draw();
   return card;
 }
 
 // ── Stats ──────────────────────────────────────────────────────────────────
+function rangeSeg(onPick) {
+  return h(
+    'div',
+    { class: 'seg', role: 'group', 'aria-label': 'Date range' },
+    [7, 30, 90].map((r) => h('button', { type: 'button', 'aria-pressed': String(state.range === r), onclick: () => onPick(r) }, `Last ${r} days`))
+  );
+}
+
+let statsSeq = 0;
 async function renderStats(view) {
-  const head = () =>
-    pageHead(
-      'Site activity',
-      'Visitors, contact taps, enquiries, searches and revenue across your sites.',
-      state.stats ? h('span', { class: 'updated' }, `Updated ${ago(state.stats.generatedAt)}`) : null
-    );
-  const filters = () =>
-    h(
-      'div',
-      { class: 'filters' },
-      h(
-        'div',
-        { class: 'seg', role: 'group', 'aria-label': 'Date range' },
-        [7, 30, 90].map((r) =>
-          h('button', { type: 'button', 'aria-pressed': String(state.range === r), onclick: () => ((state.range = r), store.set('hub.range', String(r)), loadStats(view)) }, `Last ${r} days`)
-        )
-      ),
-      h(
-        'select',
-        { class: 'select', 'aria-label': 'Site', onchange: (e) => ((state.site = e.target.value), store.set('hub.site', state.site), loadStats(view)) },
-        h('option', { value: 'all' }, 'All sites'),
-        (state.stats?.sites ?? state.overview?.sites ?? []).map((s) => h('option', { value: s.slug, selected: state.site === s.slug }, s.name))
-      )
-    );
-  fill(view, mobileHead('Site activity'), head(), filters(), h('div', { id: 'stats-body' }, h('div', { class: 'skeleton' })));
-  view._statsHead = head;
-  view._statsFilters = filters;
+  // The top bar's actions are hidden on phones, so the range buttons also sit
+  // in the page there.
+  const phoneRange = h('div', { class: 'phone-only block' });
+  const drawHead = () => {
+    const pick = (r) => {
+      state.range = r;
+      store.set('hub.range', String(r));
+      drawHead();
+      loadStats(view);
+    };
+    ui.page({ title: 'Site activity', context: 'Visitors, contact taps, enquiries, searches and sign-ups across your sites', actions: rangeSeg(pick) });
+    fill(phoneRange, rangeSeg(pick));
+  };
+  drawHead();
+  fill(view, phoneRange, h('div', { id: 'stats-body' }, stateBox.loading()));
+  // The top-bar site selector decides which site(s) this screen shows.
+  ui.onSiteChange(() => loadStats(view));
   await loadStats(view);
 }
 
 async function loadStats(view) {
   const body = $('#stats-body', view);
   if (!body) return;
-  body.style.opacity = '0.5';
+  const seq = ++statsSeq;
+  body.classList.add('is-loading');
+  let data;
   try {
-    state.stats = await api(`/api/stats?range=${state.range}&site=${encodeURIComponent(state.site)}`);
+    data = await api(`/api/stats?range=${state.range}&site=${encodeURIComponent(state.site)}`);
   } catch (e) {
-    body.style.opacity = '';
-    fill(body, errorBox(e));
+    if (seq !== statsSeq) return;
+    body.classList.remove('is-loading');
+    fill(body, stateBox.error(e));
     return;
   }
-  if (!state.stats.selected.includes(state.site) && state.site !== 'all') state.site = 'all';
-  fill(view, mobileHead('Site activity'), view._statsHead(), view._statsFilters(), drawStats());
+  if (seq !== statsSeq || !body.isConnected) return;
+  body.classList.remove('is-loading');
+  state.stats = data;
+  if (!data.selected.includes(state.site) && state.site !== 'all') state.site = 'all';
+  syncSiteSelect();
+  ui.setUpdated(parseIso(data.generatedAt));
+  fill(body, drawStats());
 }
 
 function drawStats() {
@@ -772,8 +746,9 @@ function drawStats() {
   const multi = d.perSite.length > 1;
   const seriesFor = (key) =>
     d.perSite.map((s) => ({ name: siteName(s.slug), short: siteName(s.slug), color: siteColor(s.slug), values: cur(s.series[key]) }));
+  const siteCell = (slug) => h('span', { class: 'inline-city nowrap' }, h('span', { class: 'city-dot', style: `background:${siteColor(slug)}` }), siteName(slug));
 
-  const kpi = (label, key, helpText, extra) => {
+  const kpi = (label, key, helpText) => {
     const c = sumSites(key, cur);
     const p = sumSites(key, prev);
     let delta = null;
@@ -783,25 +758,24 @@ function drawStats() {
       const arrow = c > p ? '▲' : c < p ? '▼' : '■';
       delta = h('div', { class: `delta ${dir}` }, pct === null ? `${arrow} new vs previous ${R} days` : `${arrow} ${Math.abs(pct)}% vs previous ${R} days`);
     }
-    return tile(label, fmt.int(c), extra ? h('div', {}, extra, delta) : delta, helpText);
+    return tile(label, fmt.int(c), delta, helpText);
   };
-  const opensTotal = sumSites('opens', cur);
 
+  // A card holding a chart, with a "Show table" switch when a table is given.
   const chartCard = (title, sub, draw, table, helpText) => {
     const holder = h('div');
     let showTable = false;
     const btn = h('button', { type: 'button', class: 'toggle-table', 'aria-pressed': 'false' }, 'Show table');
     const render = () => {
-      fill(holder, );
+      fill(holder);
       if (showTable) holder.appendChild(table());
       else draw(holder);
       btn.textContent = showTable ? 'Show chart' : 'Show table';
       btn.setAttribute('aria-pressed', String(showTable));
     };
     btn.addEventListener('click', () => ((showTable = !showTable), render()));
-    const card = h('section', { class: 'card' }, h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, title, helpText ? help(helpText) : null), sub ? h('p', { class: 'sub' }, sub) : null), table ? btn : null), holder);
     requestAnimationFrame(render);
-    return card;
+    return card({ title, help: helpText, sub, actions: table ? btn : null, body: holder });
   };
 
   const dailyTable = (key) => () =>
@@ -811,7 +785,36 @@ function drawStats() {
     );
 
   const lineCard = (title, sub, key, helpText) =>
-    chartCard(title, sub, (el) => lineChart(el, { x: days, series: seriesFor(key), label: title }), dailyTable(key), helpText);
+    chartCard(title, sub, (el) => lineChart(el, { x: days, series: seriesFor(key), label: title, size: 'sm' }), dailyTable(key), helpText);
+
+  // Primary: listing views and contact taps per day, all selected sites together.
+  const dayTotals = (key) => days.map((_, i) => d.perSite.reduce((a, s) => a + cur(s.series[key])[i], 0));
+  const viewsDaily = dayTotals('views');
+  const tapsDaily = dayTotals('contacts');
+  const primary = chartCard(
+    'Listing views and contact taps per day',
+    multi ? 'All selected sites together.' : 'Phone, WhatsApp and website taps on listings.',
+    (el) =>
+      lineChart(el, {
+        x: days,
+        series: [
+          { name: 'Listing views', short: 'Views', color: 'var(--s1)', values: viewsDaily },
+          { name: 'Contact taps', short: 'Taps', color: 'var(--s2)', values: tapsDaily },
+        ],
+        label: 'Listing views and contact taps per day',
+      }),
+    () =>
+      dataTable(
+        [
+          { key: 'day', label: 'Day', format: fmt.dayLong },
+          { key: 'views', label: 'Views', num: true, format: fmt.int },
+          { key: 'taps', label: 'Contact taps', num: true, format: fmt.int },
+          ...(multi ? d.perSite.flatMap((s) => [{ key: `v-${s.slug}`, label: `${siteName(s.slug)} views`, num: true, format: fmt.int }, { key: `t-${s.slug}`, label: `${siteName(s.slug)} taps`, num: true, format: fmt.int }]) : []),
+        ],
+        days.map((day, i) => Object.fromEntries([['day', day], ['views', viewsDaily[i]], ['taps', tapsDaily[i]], ...(multi ? d.perSite.flatMap((s) => [[`v-${s.slug}`, cur(s.series.views)[i]], [`t-${s.slug}`, cur(s.series.contacts)[i]]]) : [])])).reverse()
+      ),
+    HELP.siteActivity.views
+  );
 
   // Contact taps by type, summed across the selected sites.
   const clicks = d.perSite.reduce(
@@ -835,14 +838,14 @@ function drawStats() {
   const topTable = top.length
     ? dataTable(
         [
-          ...(multi ? [{ key: 'site', label: 'Site', render: (r) => h('span', { style: 'display:inline-flex;align-items:center;gap:6px;white-space:nowrap' }, h('span', { class: 'city-dot', style: `background:${siteColor(r.site)}` }), siteName(r.site)) }] : []),
+          ...(multi ? [{ key: 'site', label: 'Site', render: (r) => siteCell(r.site) }] : []),
           { key: 'name', label: 'Business', render: (r) => h('a', { href: r.url, target: '_blank', rel: 'noopener' }, r.name) },
           {
             key: 'views',
             label: 'Views',
             num: true,
             help: HELP.siteActivity.views,
-            render: (r) => h('span', { class: 'bar-cell', style: 'justify-content:flex-end' }, h('i', { style: `width:${Math.max(2, (r.views / topViews) * 80)}px;background:${siteColor(r.site)}` }), fmt.int(r.views)),
+            render: (r) => h('span', { class: 'bar-cell end' }, h('i', { style: `width:${Math.max(2, (r.views / topViews) * 80)}px;background:${siteColor(r.site)}` }), fmt.int(r.views)),
           },
           { key: 'contacts', label: 'Contact taps', num: true, format: fmt.int, help: HELP.siteActivity.contacts },
           { key: 'phone', label: 'Phone', num: true, format: fmt.int, help: HELP.siteActivity.channelSplit },
@@ -853,90 +856,111 @@ function drawStats() {
         ],
         top
       )
-    : h('p', { class: 'empty' }, 'No listing views recorded in this period yet.');
+    : stateBox.empty('No listing views recorded in this period yet.');
 
   // Paid vs free: average views and contact taps per listing, all selected sites.
   const pvf = (paid) => d.perSite.reduce((a, s) => { const g = (s.paidVsFree || []).find((x) => x.paid === paid) || { listings: 0, views: 0, taps: 0 }; return { listings: a.listings + g.listings, views: a.views + g.views, taps: a.taps + g.taps }; }, { listings: 0, views: 0, taps: 0 });
   const pvfRows = [['Paid listings', pvf(true)], ['Free listings', pvf(false)]].map(([label, g]) => ({ label, listings: g.listings, views: g.listings ? g.views / g.listings : 0, taps: g.listings ? g.taps / g.listings : 0 }));
   const oneDp = (v) => (v >= 10 ? Math.round(v).toLocaleString('en-ZA') : v.toFixed(1));
-  const pvfCard = h(
-    'section',
-    { class: 'card' },
-    h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Paid vs free', help(HELP.siteActivity.paidVsFree)), h('p', { class: 'sub' }, `Per listing, last ${R} days`))),
-    dataTable(
-      [
-        { key: 'label', label: 'Group' },
-        { key: 'listings', label: 'Listings', num: true, format: fmt.int },
-        { key: 'views', label: 'Views per listing', num: true, format: oneDp },
-        { key: 'taps', label: 'Contact taps per listing', num: true, format: oneDp },
-      ],
-      pvfRows
-    )
-  );
 
-  const wrap = h(
+  const sumKey = (key) => sumSites(key, cur);
+  const list = [
+    {
+      id: 'contact',
+      label: 'Contact split',
+      render: () =>
+        chartCard('How people make contact', `Last ${R} days`, (el) => barList(el, { items: clickItems }), () =>
+          dataTable([{ key: 'label', label: 'Channel' }, { key: 'value', label: 'Taps', num: true, format: fmt.int }], clickItems)
+        ),
+    },
+    {
+      id: 'categories',
+      label: 'Categories',
+      render: () =>
+        chartCard('Most-viewed categories', `Last ${R} days`, (el) => barList(el, { items: cats.map((c) => ({ label: c.key, value: c.n })) }), () =>
+          dataTable([{ key: 'key', label: 'Category' }, { key: 'n', label: 'Views', num: true, format: fmt.int }], cats)
+        ),
+    },
+    {
+      id: 'searches',
+      label: 'Searches',
+      render: () =>
+        h(
+          'div',
+          { class: 'stack' },
+          chartCard('What people search for', 'On-site searches, by people searching', (el) => barList(el, { items: queries.map((q) => ({ label: q.key, value: q.n })) }), () =>
+            dataTable([{ key: 'key', label: 'Search' }, { key: 'n', label: 'Searchers', num: true, format: fmt.int }], queries),
+            HELP.siteActivity.searches
+          ),
+          queriesCard(d)
+        ),
+    },
+    {
+      id: 'signups',
+      label: 'Sign-ups & app',
+      render: () =>
+        h(
+          'div',
+          { class: 'grid' },
+          lineCard('New users per day', `${fmt.int(sumKey('signups'))} in the last ${R} days`, 'signups', HELP.siteActivity.signups),
+          lineCard('App installs per day', `${fmt.int(sumKey('installs'))} installs. Phones that installed the site as an app.`, 'installs', HELP.siteActivity.installs),
+          lineCard('App opens per day', `${fmt.int(sumKey('opens'))} opens. Phones opening the site from its home-screen icon.`, 'opens', HELP.siteActivity.opens)
+        ),
+    },
+    {
+      id: 'listings',
+      label: 'Top listings',
+      render: () =>
+        h(
+          'div',
+          { class: 'stack' },
+          card({ title: 'Top listings', sub: `Most-viewed business pages, last ${R} days`, body: topTable }),
+          card({
+            title: 'Paid vs free',
+            help: HELP.siteActivity.paidVsFree,
+            sub: `Per listing, last ${R} days`,
+            body: dataTable(
+              [
+                { key: 'label', label: 'Group' },
+                { key: 'listings', label: 'Listings', num: true, format: fmt.int },
+                { key: 'views', label: 'Views per listing', num: true, format: oneDp },
+                { key: 'taps', label: 'Contact taps per listing', num: true, format: oneDp },
+              ],
+              pvfRows
+            ),
+          })
+        ),
+    },
+    {
+      id: 'revenue',
+      label: 'Revenue',
+      render: () =>
+        chartCard(
+          'Revenue by month',
+          `Last 12 months · ${fmt.rand(revTotal)} so far this month`,
+          (el) => columnChart(el, { x: d.months, series: revenueSeries, format: fmt.randShort, xLabel: fmt.month, xLong: fmt.monthLong, label: 'Revenue by month' }),
+          () =>
+            dataTable(
+              [{ key: 'm', label: 'Month', format: fmt.monthLong }, ...d.perSite.map((s) => ({ key: s.slug, label: siteName(s.slug), num: true, format: fmt.rand }))],
+              d.months.map((m, i) => Object.fromEntries([['m', m], ...d.perSite.map((s) => [s.slug, s.revenue[i]])])).reverse()
+            )
+        ),
+    },
+    { id: 'google', label: 'Google', render: () => googleTab(d) },
+  ];
+
+  return h(
     'div',
     {},
-    h(
-      'div',
-      { class: 'tiles' },
+    kpis([
       kpi('Listing views', 'views', HELP.siteActivity.views),
       kpi('Contact taps', 'contacts', HELP.siteActivity.contacts),
       kpi('Enquiries sent', 'enquiries', HELP.siteActivity.enquiries),
       kpi('Listing appearances in search', 'searches', HELP.siteActivity.searchAppearances),
-      kpi('New users', 'signups', HELP.siteActivity.signups),
-      kpi('App installs / opens', 'installs', HELP.siteActivity.installs, h('div', { class: 'delta' }, `${fmt.int(opensTotal)} opens`))
-    ),
-    h(
-      'div',
-      { class: 'two' },
-      lineCard('Listing views per day', multi ? 'Each line is one site.' : null, 'views'),
-      lineCard('Contact taps per day', 'Phone, WhatsApp and website taps on listings.', 'contacts')
-    ),
-    h('div', { style: 'height:16px' }),
-    h(
-      'div',
-      { class: 'three' },
-      chartCard('How people make contact', `Last ${R} days`, (el) => barList(el, { items: clickItems }), () =>
-        dataTable([{ key: 'label', label: 'Channel' }, { key: 'value', label: 'Taps', num: true, format: fmt.int }], clickItems)
-      ),
-      chartCard('Most-viewed categories', `Last ${R} days`, (el) => barList(el, { items: cats.map((c) => ({ label: c.key, value: c.n })) }), () =>
-        dataTable([{ key: 'key', label: 'Category' }, { key: 'n', label: 'Views', num: true, format: fmt.int }], cats)
-      ),
-      chartCard('What people search for', 'On-site searches, by people searching', (el) => barList(el, { items: queries.map((q) => ({ label: q.key, value: q.n })) }), () =>
-        dataTable([{ key: 'key', label: 'Search' }, { key: 'n', label: 'Searchers', num: true, format: fmt.int }], queries),
-        HELP.siteActivity.searches
-      )
-    ),
-    h('div', { style: 'height:16px' }),
-    h('section', { class: 'card' }, h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Top listings'), h('p', { class: 'sub' }, `Most-viewed business pages, last ${R} days`))), topTable),
-    h('div', { style: 'height:16px' }),
-    pvfCard,
-    h('div', { style: 'height:16px' }),
-    h(
-      'div',
-      { class: 'two' },
-      chartCard(
-        'Revenue by month',
-        `Last 12 months · ${fmt.rand(revTotal)} so far this month`,
-        (el) => columnChart(el, { x: d.months, series: revenueSeries, format: fmt.randShort, xLabel: fmt.month, xLong: fmt.monthLong, label: 'Revenue by month' }),
-        () =>
-          dataTable(
-            [{ key: 'm', label: 'Month', format: fmt.monthLong }, ...d.perSite.map((s) => ({ key: s.slug, label: siteName(s.slug), num: true, format: fmt.rand }))],
-            d.months.map((m, i) => Object.fromEntries([['m', m], ...d.perSite.map((s) => [s.slug, s.revenue[i]])])).reverse()
-          )
-      ),
-      h(
-        'div',
-        { class: 'grid' },
-        lineCard('New users per day', null, 'signups'),
-        lineCard('App installs per day', 'Phones that installed the site as an app.', 'installs', HELP.siteActivity.installs),
-        lineCard('App opens per day', 'Phones opening the site from its home-screen icon.', 'opens', HELP.siteActivity.opens)
-      )
-    ),
-    seoSection(d)
+    ]),
+    h('div', { class: 'block' }, primary),
+    tabs(list, { store: 'hub.tab.stats' })
   );
-  return wrap;
 }
 
 function mergeCounts(list) {
@@ -945,17 +969,19 @@ function mergeCounts(list) {
   return [...m.entries()].map(([key, n]) => ({ key, n })).sort((a, b) => b.n - a.n);
 }
 
+const siteLabel = (slug) => h('span', { class: 'inline-city nowrap' }, h('span', { class: 'city-dot', style: `background:${siteColor(slug)}` }), siteName(slug));
+
 // What people typed in Google before clicking through (weekly Search Console report).
 function queriesCard(d) {
-  const queries = d.seo.flatMap((s) => (s.topQueries || []).map((q) => ({ ...q, site: s.slug }))).sort((a, b) => b.clicks - a.clicks).slice(0, 15);
-  return h(
-    'section',
-    { class: 'card' },
-    h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Top searches on Google', help(HELP.siteActivity.topQueries)), h('p', { class: 'sub' }, 'Words people searched before clicking through to your sites'))),
-    queries.length
+  const queries = (d.seo ?? []).flatMap((s) => (s.topQueries || []).map((q) => ({ ...q, site: s.slug }))).sort((a, b) => b.clicks - a.clicks).slice(0, 15);
+  return card({
+    title: 'Top searches on Google',
+    help: HELP.siteActivity.topQueries,
+    sub: 'Words people searched before clicking through to your sites',
+    body: queries.length
       ? dataTable(
           [
-            { key: 'site', label: 'Site', render: (r) => h('span', { style: 'display:inline-flex;align-items:center;gap:6px;white-space:nowrap' }, h('span', { class: 'city-dot', style: `background:${siteColor(r.site)}` }), siteName(r.site)) },
+            { key: 'site', label: 'Site', render: (r) => siteLabel(r.site) },
             { key: 'query', label: 'Search' },
             { key: 'clicks', label: 'Clicks', num: true, format: fmt.int },
             { key: 'impressions', label: 'Impressions', num: true, format: fmt.int },
@@ -963,12 +989,13 @@ function queriesCard(d) {
           ],
           queries
         )
-      : h('p', { class: 'empty' }, 'No search data from Google yet.')
-  );
+      : stateBox.empty('No search data from Google yet.'),
+  });
 }
 
-function seoSection(d) {
-  if (!d.seo?.length) return h('div');
+// Google Search per site (weekly Search Console report) and the pages people clicked.
+function googleTab(d) {
+  if (!d.seo?.length) return stateBox.empty('No Google Search data yet. It arrives with the weekly Search Console report.');
   const order = d.sites.map((s) => s.slug);
   d.seo.sort((a, b) => order.indexOf(a.slug) - order.indexOf(b.slug));
   const win = d.seo.find((s) => s.window)?.window;
@@ -979,19 +1006,17 @@ function seoSection(d) {
     return h('div', { class: `delta ${v > 0 ? 'up' : v < 0 ? 'down' : ''}` }, `${v > 0 ? '▲' : v < 0 ? '▼' : '■'} ${Math.abs(v)}% vs previous 28 days`);
   };
   const cards = d.seo.map((s) =>
-    h(
-      'section',
-      { class: 'card' },
-      h('div', { class: 'top', style: 'display:flex;align-items:center;gap:8px;margin-bottom:12px' }, h('span', { class: 'city-dot', style: `background:${siteColor(s.slug)}` }), h('h2', {}, siteName(s.slug))),
-      h(
+    card({
+      title: siteLabel(s.slug),
+      body: h(
         'div',
-        { class: 'tiles', style: 'grid-template-columns:repeat(2,1fr);margin:0' },
+        { class: 'tiles tiles-2' },
         tile('Google clicks', fmt.int(s.clicks), deltaEl(s.clicks, s.prevClicks)),
         tile('Impressions', fmt.short(s.impressions), deltaEl(s.impressions, s.prevImpressions)),
         tile('Pages in results', fmt.int(s.pages)),
         tile('Avg. position', s.position ? s.position.toFixed(1) : '–')
-      )
-    )
+      ),
+    })
   );
   const pages = d.seo
     .flatMap((s) => s.topPages.map((p) => ({ ...p, site: s.slug })))
@@ -999,44 +1024,43 @@ function seoSection(d) {
     .slice(0, 15);
   return h(
     'div',
-    {},
-    h('div', { class: 'section-title' }, 'Google Search'),
+    { class: 'stack' },
     h('div', { class: d.seo.length > 1 ? 'three' : 'two' }, cards),
-    h('div', { style: 'height:16px' }),
-    queriesCard(d),
-    h('div', { style: 'height:16px' }),
-    h(
-      'section',
-      { class: 'card' },
-      h('div', { class: 'card-head' }, h('div', {}, h('h2', {}, 'Top pages on Google'), h('p', { class: 'sub' }, 'Pages people clicked on in Google search results'))),
-      dataTable(
-        [
-          { key: 'site', label: 'Site', render: (r) => h('span', { style: 'display:inline-flex;align-items:center;gap:6px;white-space:nowrap' }, h('span', { class: 'city-dot', style: `background:${siteColor(r.site)}` }), siteName(r.site)) },
-          { key: 'page', label: 'Page', render: (r) => h('a', { href: r.page.startsWith('http') ? r.page : `https://${(d.sites.find((x) => x.slug === r.site) || {}).domain}${r.page}`, target: '_blank', rel: 'noopener' }, r.page.replace(/^https?:\/\/[^/]+/, '') || '/') },
-          { key: 'clicks', label: 'Clicks', num: true, format: fmt.int },
-          { key: 'impressions', label: 'Impressions', num: true, format: fmt.int },
-          { key: 'position', label: 'Position', num: true, format: (v) => (v ? v.toFixed(1) : '–') },
-        ],
-        pages
+    card({
+      title: 'Top pages on Google',
+      sub: 'Pages people clicked on in Google search results',
+      body: h(
+        'div',
+        {},
+        dataTable(
+          [
+            { key: 'site', label: 'Site', render: (r) => siteLabel(r.site) },
+            { key: 'page', label: 'Page', render: (r) => h('a', { href: r.page.startsWith('http') ? r.page : `https://${(d.sites.find((x) => x.slug === r.site) || {}).domain}${r.page}`, target: '_blank', rel: 'noopener' }, r.page.replace(/^https?:\/\/[^/]+/, '') || '/') },
+            { key: 'clicks', label: 'Clicks', num: true, format: fmt.int },
+            { key: 'impressions', label: 'Impressions', num: true, format: fmt.int },
+            { key: 'position', label: 'Position', num: true, format: (v) => (v ? v.toFixed(1) : '–') },
+          ],
+          pages
+        ),
+        h('p', { class: 'note' }, `From the weekly Search Console report${win ? `, ${fmt.dayLong(win.startDate)} to ${fmt.dayLong(win.endDate)}` : ''}. Google's data runs about 3 days behind.`)
       ),
-      h('p', { class: 'note' }, `From the weekly Search Console report${win ? `, ${fmt.dayLong(win.startDate)} to ${fmt.dayLong(win.endDate)}` : ''}. Google's data runs about 3 days behind.`)
-    )
+    })
   );
 }
 
 // ── Manage ─────────────────────────────────────────────────────────────────
 async function renderManage(view) {
-  fill(view, mobileHead('Manage'), pageHead('Manage', 'Jump straight into any screen of any site’s admin.'), h('div', { class: 'skeleton' }));
+  ui.page({ title: 'Manage', context: 'Jump into any screen of any site’s admin; each opens in a new tab' });
+  fill(view, stateBox.loading());
   let data;
   try {
     data = await loadOverview();
   } catch (e) {
-    fill(view, mobileHead('Manage'), pageHead('Manage'), errorBox(e));
+    fill(view, stateBox.error(e));
     return;
   }
-  fill(view, 
-    mobileHead('Manage'),
-    pageHead('Manage', 'Jump straight into any screen of any site’s admin. Each opens in a new tab, already on that site.'),
+  fill(
+    view,
     h(
       'div',
       { class: 'grid' },
@@ -1047,7 +1071,7 @@ async function renderManage(view) {
           h(
             'div',
             { class: 'card-head' },
-            h('div', { style: 'display:flex;align-items:center;gap:10px' }, h('span', { class: 'city-dot', style: `background:${siteColor(s.slug)}` }), h('div', {}, h('h2', {}, s.name), h('p', { class: 'sub' }, s.domain))),
+            h('div', { class: 'card-title-row' }, h('span', { class: 'city-dot', style: `background:${siteColor(s.slug)}` }), h('div', {}, h('h2', {}, s.name), h('p', { class: 'sub' }, s.domain))),
             h('a', { class: 'btn', href: `https://${s.domain}/`, target: '_blank', rel: 'noopener' }, icon('globe', 16), 'View site')
           ),
           h(
@@ -1143,14 +1167,14 @@ function upgradeForm(sites, initial, onSaved, onCancel) {
 }
 
 async function renderUpgrades(view) {
-  const head = pageHead('To-do', 'Improvements to build on the sites. Add an idea, choose which sites it’s for, and move it along as it gets done.');
-  fill(view, mobileHead('To-do'), head, h('div', { class: 'skeleton' }));
+  ui.page({ title: 'To-do', context: 'Improvements to build on the sites; add an idea, pick the sites, move it along' });
+  fill(view, stateBox.loading());
   let sites;
   let list;
   try {
     [sites, list] = await Promise.all([sitesList(), api('/api/upgrades').then((r) => r.upgrades)]);
   } catch (e) {
-    fill(view, mobileHead('To-do'), head, errorBox(e));
+    fill(view, stateBox.error(e));
     return;
   }
   const listCard = h('section', { class: 'card', 'aria-label': 'Upgrades list' });
@@ -1322,7 +1346,7 @@ async function renderUpgrades(view) {
     fill(listCard, h('div', { class: 'filters' }, seg, siteSel, search), ...body);
   };
   draw();
-  fill(view, mobileHead('To-do'), head, h('div', { class: 'grid' }, addCard, listCard));
+  fill(view, h('div', { class: 'grid' }, addCard, listCard));
 }
 
 // ── Alerts (push notifications) ────────────────────────────────────────────
@@ -1367,8 +1391,8 @@ async function currentSubscription() {
 }
 
 async function renderAlerts(view) {
-  const head = pageHead('Settings', 'Sign-in, password and notifications.');
-  fill(view, mobileHead('Settings'), head, h('div', { class: 'skeleton' }));
+  ui.page({ title: 'Settings', context: 'Sign-in, password and notifications' });
+  fill(view, stateBox.loading());
   const account = await accountCards(view);
   const support = pushSupport();
   let sub = support === 'ok' ? await currentSubscription().catch(() => null) : null;
@@ -1380,7 +1404,7 @@ async function renderAlerts(view) {
       api('/api/notifications').then((r) => r.notifications),
     ]);
   } catch (e) {
-    fill(view, mobileHead('Settings'), head, errorBox(e));
+    fill(view, stateBox.error(e));
     return;
   }
   const mine = devices.find((d) => d.current);
@@ -1529,8 +1553,6 @@ async function renderAlerts(view) {
     : h('p', { class: 'empty' }, 'No alerts yet. They appear here as new items arrive.');
 
   fill(view, 
-    mobileHead('Settings'),
-    head,
     h(
       'div',
       { class: 'grid' },
