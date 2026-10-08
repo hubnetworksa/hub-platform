@@ -11,7 +11,7 @@ import { jsonBody } from '../_lib/body';
 //   GET ?site=&id=      one rep's detail from one city
 //   POST { site, action, ... }  suspend / reactivate / void / mark-paid on one city
 
-const EMPTY = { reps: 0, activeReps: 0, unpaidCents: 0, mtdCents: 0 };
+const EMPTY = { reps: 0, activeReps: 0, unpaidCents: 0, pendingCents: 0, mtdCents: 0 };
 const maskAccount = (n: string | null): string | null => {
   const digits = (n ?? '').replace(/\D/g, '');
   return digits.length > 0 ? `****${digits.slice(-4)}` : null;
@@ -28,17 +28,18 @@ async function cityList(db: D1Database) {
               (SELECT COUNT(*) FROM rep_commissions c WHERE c.rep_id = r.id AND c.status <> 'void') AS sales_count,
               (SELECT COALESCE(SUM(c.commission_cents), 0) FROM rep_commissions c WHERE c.rep_id = r.id AND c.status IN ('approved','paid') AND strftime('%Y-%m', c.created_at) = strftime('%Y-%m', 'now')) AS mtd_cents,
               (SELECT COALESCE(SUM(c.commission_cents), 0) FROM rep_commissions c WHERE c.rep_id = r.id AND c.status IN ('approved','paid')) AS lifetime_cents,
-              (SELECT COALESCE(SUM(c.commission_cents), 0) FROM rep_commissions c WHERE c.rep_id = r.id AND c.status = 'approved') AS unpaid_cents
+              (SELECT COALESCE(SUM(c.commission_cents), 0) FROM rep_commissions c WHERE c.rep_id = r.id AND c.status = 'approved') AS unpaid_cents,
+              (SELECT COALESCE(SUM(c.commission_cents), 0) FROM rep_commissions c WHERE c.rep_id = r.id AND c.status = 'pending') AS pending_cents
        FROM sales_reps r JOIN users u ON u.id = r.user_id
        ORDER BY unpaid_cents DESC, r.created_at DESC`
     )
-    .all<{ id: number; code: string; status: string; created_at: string; bank_account_number: string | null; email: string; sales_count: number; mtd_cents: number; lifetime_cents: number; unpaid_cents: number }>();
+    .all<{ id: number; code: string; status: string; created_at: string; bank_account_number: string | null; email: string; sales_count: number; mtd_cents: number; lifetime_cents: number; unpaid_cents: number; pending_cents: number }>();
   const reps = rows.results.map((r) => {
     const masked = maskAccount(r.bank_account_number);
-    return { id: r.id, code: r.code, email: r.email, status: r.status, createdAt: r.created_at, salesCount: r.sales_count, mtdCents: r.mtd_cents, lifetimeCents: r.lifetime_cents, unpaidCents: r.unpaid_cents, bankMasked: masked, hasBank: masked !== null };
+    return { id: r.id, code: r.code, email: r.email, status: r.status, createdAt: r.created_at, salesCount: r.sales_count, mtdCents: r.mtd_cents, lifetimeCents: r.lifetime_cents, unpaidCents: r.unpaid_cents, pendingCents: r.pending_cents, bankMasked: masked, hasBank: masked !== null };
   });
   return {
-    totals: { reps: reps.length, activeReps: reps.filter((r) => r.status === 'active').length, unpaidCents: reps.reduce((s, r) => s + r.unpaidCents, 0), mtdCents: reps.reduce((s, r) => s + r.mtdCents, 0) },
+    totals: { reps: reps.length, activeReps: reps.filter((r) => r.status === 'active').length, unpaidCents: reps.reduce((s, r) => s + r.unpaidCents, 0), pendingCents: reps.reduce((s, r) => s + r.pendingCents, 0), mtdCents: reps.reduce((s, r) => s + r.mtdCents, 0) },
     reps,
   };
 }
@@ -111,7 +112,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     })
   );
   const grand = cities.reduce(
-    (a, c) => ({ reps: a.reps + c.totals.reps, activeReps: a.activeReps + c.totals.activeReps, unpaidCents: a.unpaidCents + c.totals.unpaidCents, mtdCents: a.mtdCents + c.totals.mtdCents }),
+    (a, c) => ({ reps: a.reps + c.totals.reps, activeReps: a.activeReps + c.totals.activeReps, unpaidCents: a.unpaidCents + c.totals.unpaidCents, pendingCents: a.pendingCents + c.totals.pendingCents, mtdCents: a.mtdCents + c.totals.mtdCents }),
     { ...EMPTY }
   );
   return json({ ok: true, cities, grand });
@@ -135,6 +136,16 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
           ? await db.prepare(`UPDATE sales_reps SET status = 'suspended', suspended_at = datetime('now') WHERE id = ?`).bind(repId).run()
           : await db.prepare(`UPDATE sales_reps SET status = 'active', suspended_at = NULL WHERE id = ?`).bind(repId).run();
       if (!res.meta.changes) return json({ ok: false, error: 'Rep not found.' }, 404);
+      return json({ ok: true });
+    }
+
+    if (action === 'approve') {
+      const commissionId = posInt(body.commissionId);
+      if (!commissionId) return json({ ok: false, error: 'Invalid commission.' }, 400);
+      const row = await db.prepare(`SELECT status FROM rep_commissions WHERE id = ?`).bind(commissionId).first<{ status: string }>();
+      if (!row) return json({ ok: false, error: 'Commission not found.' }, 404);
+      if (row.status !== 'pending') return json({ ok: false, error: 'Only pending commissions can be approved.' }, 400);
+      await db.prepare(`UPDATE rep_commissions SET status = 'approved', approved_at = datetime('now') WHERE id = ? AND status = 'pending'`).bind(commissionId).run();
       return json({ ok: true });
     }
 
