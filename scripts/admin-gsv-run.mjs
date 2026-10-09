@@ -38,12 +38,12 @@ if (!key) throw new Error('Could not read the notify key.');
 if (process.env.GITHUB_ACTIONS) console.log(`::add-mask::${key}`);
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-// The server does at most 3 checks per site per call (6 total), each with one
-// retry and a 12s timeout (see admin-app/functions/_lib/gsv.ts) — worst case
-// around 2.5 minutes for a call; 3 minutes leaves real headroom. One
-// slow/aborted call must not take down the whole scheduled run, so it's
-// caught below, not thrown.
-const CALL_TIMEOUT_MS = 180_000;
+// The server does at most 3 checks per site per call, across 3 sites (up to
+// 9 total), each with one retry and a 12s timeout (see
+// admin-app/functions/_lib/gsv.ts) — worst case a little under 4 minutes for
+// a call; 5 minutes leaves real headroom. One slow/aborted call must not
+// take down the whole scheduled run, so it's caught below, not thrown.
+const CALL_TIMEOUT_MS = 300_000;
 // High enough that a run can actually reach the configured batchSizePerSite
 // (up to 500) in typical conditions — the real backstop against a run
 // dragging on is the job's own 30-minute timeout in admin-gsv.yml, not this
