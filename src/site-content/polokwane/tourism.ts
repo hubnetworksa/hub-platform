@@ -226,7 +226,9 @@ export const ATTRACTIONS: Attraction[] = [
     ],
     address: { streetAddress: 'The Ranch Resort, N1 South', addressLocality: 'Polokwane', addressRegion: 'Limpopo', addressCountry: 'ZA' },
     geo: { lat: -24.0870, lng: 29.3660 },
-    imageNeeded: 'Real photo of The Ranch golf course or resort grounds — no generic golf/resort stock imagery.',
+    imageUrl: '/media/tourism/the-ranch-golf-course.jpg',
+    imageCredit: 'Photo: Quadtripplea / Wikimedia Commons, CC BY-SA 3.0 — aerial view of the course and resort',
+    imageSourceUrl: 'https://commons.wikimedia.org/wiki/File:Theranchresortsignatureshotmay2010.JPG',
   },
   {
     slug: 'magoebaskloof-debengeni-falls',
