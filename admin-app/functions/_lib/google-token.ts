@@ -12,7 +12,18 @@ export async function getAccessToken(env: Env): Promise<string> {
   const body = new URLSearchParams({ client_id: id, client_secret: secret, refresh_token: refresh, grant_type: 'refresh_token' });
   let res!: Response;
   for (let attempt = 0; attempt < 2; attempt++) {
-    res = await fetch('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15_000);
+    try {
+      res = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body,
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timer);
+    }
     if (res.status < 500) break;
   }
   const j = (await res.json().catch(() => ({}))) as { access_token?: string; expires_in?: number };
