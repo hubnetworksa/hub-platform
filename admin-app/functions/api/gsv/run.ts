@@ -3,11 +3,10 @@ import { hubSites, json, rows, type Env } from '../../_lib/sites';
 import { notifyKeyOk } from '../../_lib/notify-key';
 import { getGsvConfig, discoverUrls, claimUrl, checkOne, bumpGsvQuota, upsertGsvDaily, pruneGsvChecks, type GsvCheckRow } from '../../_lib/gsv';
 
-// The ~every-3-hours Google Visibility run, called by
+// The ~every-2-hours Google Visibility run, called by
 // .github/workflows/admin-gsv.yml (via scripts/admin-gsv-run.mjs) with
-// X-Notify-Key (see _lib/notify-key.ts). Per site (Pretoria, Polokwane only —
-// Cape Town is excluded per the brief, including when its DB binding is
-// simply absent):
+// X-Notify-Key (see _lib/notify-key.ts). Per site (Pretoria, Polokwane,
+// Cape Town — a site is simply skipped if its DB binding is absent):
 //   - discovers newly published business URLs (inserted as 'pending')
 //   - works through the due list — pending first, then longest-not-indexed,
 //     then oldest-checked — via Search Console's URL Inspection API
@@ -26,7 +25,7 @@ import { getGsvConfig, discoverUrls, claimUrl, checkOne, bumpGsvQuota, upsertGsv
 // is left due. Likewise, a quota/rate signal only stops THAT site's budget —
 // Google's quota is per property, so one site running out says nothing
 // about the other's.
-const SITES = ['pretoria', 'polokwane'];
+const SITES = ['pretoria', 'polokwane', 'capetown'];
 const CHECKS_PER_SITE_PER_CALL = 3;
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {

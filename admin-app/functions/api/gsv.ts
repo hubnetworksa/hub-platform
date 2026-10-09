@@ -19,7 +19,7 @@ import { getGsvConfig, setGsvConfig, getGsvQuota, claimUrl, checkOne, reasonLabe
 // The single-URL-check logic (claim + Inspection call + write) lives in
 // _lib/gsv.ts's checkOne, shared with the batch worker at api/gsv/run.ts.
 
-const SITES = ['pretoria', 'polokwane'];
+const SITES = ['pretoria', 'polokwane', 'capetown'];
 const PER_PAGE = 20;
 
 interface UrlRow {
