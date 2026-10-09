@@ -38,8 +38,12 @@ if (!key) throw new Error('Could not read the notify key.');
 if (process.env.GITHUB_ACTIONS) console.log(`::add-mask::${key}`);
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const CALL_TIMEOUT_MS = 30_000;
-const MAX_ITERATIONS = 30;
+// The server does at most 5 checks per call, each with one retry and a 12s
+// timeout (see admin-app/functions/_lib/gsv.ts) — worst case around 2 minutes
+// for a call; 3 minutes leaves real headroom. One slow/aborted call must not
+// take down the whole scheduled run, so it's caught below, not thrown.
+const CALL_TIMEOUT_MS = 180_000;
+const MAX_ITERATIONS = 60;
 
 async function runOnce() {
   const controller = new AbortController();
@@ -61,10 +65,20 @@ async function runOnce() {
 const totals = {};
 let pruned = 0;
 let iterations = 0;
+let totalChecked = 0;
 let more = true;
 while (more && iterations < MAX_ITERATIONS) {
   iterations++;
-  const out = await runOnce();
+  let out;
+  try {
+    out = await runOnce();
+  } catch (e) {
+    // A single call timing out (or any other transport failure) shouldn't
+    // fail the whole job if earlier calls already made progress — the next
+    // scheduled run picks up exactly where this one left off either way.
+    console.log(`Call ${iterations} failed: ${e.message || e}. Stopping for this run.`);
+    break;
+  }
   if (out.skipped) {
     console.log(`Skipped: ${out.reason}.`);
     break;
@@ -79,6 +93,7 @@ while (more && iterations < MAX_ITERATIONS) {
     t.checked += s.checked;
     t.calls += s.calls;
     t.stoppedEarly = s.stoppedEarly;
+    totalChecked += s.checked;
     if (s.moreWork) more = true;
   }
   pruned = out.pruned ?? pruned;
@@ -89,3 +104,9 @@ for (const [slug, t] of Object.entries(totals)) {
   console.log(`${slug}: discovered ${t.discovered}, due ${t.due}, checked ${t.checked} (${t.calls} call(s))${t.stoppedEarly ? ' — stopped early (quota/rate)' : ''}.`);
 }
 console.log(`Pruned ${pruned} old check(s) across ${iterations} request(s).`);
+
+// Only fail the Action loudly when nothing at all happened (e.g. the very
+// first call never got through) — anything checked counts as a real run.
+if (iterations === 0 || (totalChecked === 0 && Object.keys(totals).length === 0)) {
+  process.exitCode = 1;
+}

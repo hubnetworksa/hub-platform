@@ -23,7 +23,7 @@ import { getGsvConfig, discoverUrls, claimUrl, checkOne, bumpGsvQuota, upsertGsv
 // each call fast and bounded, until the run's batchSizePerSite target is
 // reached or nothing is left due.
 const SITES = ['pretoria', 'polokwane'];
-const MAX_CHECKS_PER_CALL = 12;
+const MAX_CHECKS_PER_CALL = 5;
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const env = context.env;
