@@ -1,5 +1,5 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
-import { verifyPassword, hashPassword, needsRehash, rotateSession, sessionCookie, isAdminEmail } from '../_lib/auth';
+import { verifyPassword, hashPassword, needsRehash, rotateSession, sessionCookie, adminMarkerCookie, isAdminEmail } from '../_lib/auth';
 import { rateLimited } from '../_lib/messages';
 import { sendVerificationEmail, safeNext } from '../_lib/email-verification';
 import { getSite } from '../_lib/site';
@@ -53,7 +53,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     await db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').bind(await hashPassword(password), user.id).run();
   }
   const token = await rotateSession(db, context.request, user.id);
-  return json({ ok: true, isAdmin: isAdminEmail(email) }, 200, { 'Set-Cookie': sessionCookie(token) });
+  // Admin marker cookie (on for admins, explicitly cleared otherwise) so admin
+// browsing is excluded from stats and GA.
+  const res = json({ ok: true, isAdmin: isAdminEmail(email) }, 200, { 'Set-Cookie': sessionCookie(token) });
+  res.headers.append('Set-Cookie', adminMarkerCookie(isAdminEmail(email)));
+  return res;
 };
 
 function json(data: unknown, status = 200, headers: Record<string, string> = {}): Response {

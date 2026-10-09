@@ -79,6 +79,15 @@ export function sessionCookie(token: string): string {
   return `${SESSION_COOKIE}=${token}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${SESSION_DAYS * 24 * 60 * 60}`;
 }
 
+// Admins are excluded from first-party stats and Google Analytics so their own
+// browsing doesn't count. This marker is deliberately NOT HttpOnly: the page
+// script (BaseLayout) must read it to skip loading gtag.
+export function adminMarkerCookie(on: boolean): string {
+  return on
+    ? 'hub_admin=1; Path=/; Max-Age=2592000; SameSite=Lax; Secure'
+    : 'hub_admin=; Path=/; Max-Age=0; SameSite=Lax; Secure';
+}
+
 export function clearSessionCookie(): string {
   return `${SESSION_COOKIE}=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0`;
 }

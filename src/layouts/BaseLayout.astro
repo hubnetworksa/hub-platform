@@ -172,7 +172,9 @@ const themeCss = `:root {
     {site.googleAnalyticsId && (
       <script async src={`https://www.googletagmanager.com/gtag/js?id=${site.googleAnalyticsId}`}></script>
       <script define:vars={{ gaId: site.googleAnalyticsId, prodHost: site.domain }}>
-        if (location.hostname === prodHost) {
+        // Logged-in admins carry a hub_admin=1 marker cookie; skip GA for them so
+        // their own browsing doesn't count (gaEvent() is a no-op without gtag).
+        if (location.hostname === prodHost && !/(?:^|;\s*)hub_admin=1(?:;|$)/.test(document.cookie)) {
           window.dataLayer = window.dataLayer || [];
           function gtag() { dataLayer.push(arguments); }
           gtag('js', new Date());
