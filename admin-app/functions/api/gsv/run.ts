@@ -18,12 +18,16 @@ import { getGsvConfig, discoverUrls, claimUrl, checkOne, bumpGsvQuota, upsertGsv
 // loop (an earlier version tried a 4-minute wall-clock budget inside one
 // request and it simply hung until the caller's HTTP client timed out at 5
 // minutes, with nothing ever written). So each call here only advances the
-// queue by MAX_CHECKS_PER_CALL total (across both sites combined) and reports
-// `moreWork` per site; the trigger script calls this endpoint repeatedly,
-// each call fast and bounded, until the run's batchSizePerSite target is
-// reached or nothing is left due.
+// queue by a small, fixed amount PER SITE (not shared — a shared budget let
+// whichever site has the bigger backlog starve the other one completely,
+// since it always exhausted the budget first) and reports `moreWork` per
+// site; the trigger script calls this endpoint repeatedly, each call fast
+// and bounded, until the run's batchSizePerSite target is reached or nothing
+// is left due. Likewise, a quota/rate signal only stops THAT site's budget —
+// Google's quota is per property, so one site running out says nothing
+// about the other's.
 const SITES = ['pretoria', 'polokwane'];
-const MAX_CHECKS_PER_CALL = 5;
+const CHECKS_PER_SITE_PER_CALL = 3;
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const env = context.env;
@@ -36,7 +40,6 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const sites = hubSites(env).filter((s) => SITES.includes(s.slug));
   const today = new Date().toISOString().slice(0, 10);
   const perSite: Record<string, unknown> = {};
-  let budget = MAX_CHECKS_PER_CALL;
 
   for (const site of sites) {
     const siteUrl = `sc-domain:${site.domain}`;
@@ -51,6 +54,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         site.slug,
         config.batchSizePerSite
       );
+      let budget = CHECKS_PER_SITE_PER_CALL;
       let checked = 0;
       let calls = 0;
       let stoppedEarly = false;
@@ -66,7 +70,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         checked++;
         if (outcome.quotaOrRate) {
           stoppedEarly = true;
-          budget = 0; // don't let the other site burn through its share either
+          budget = 0; // stop THIS site's budget only — the other site's quota is separate
           break;
         }
       }

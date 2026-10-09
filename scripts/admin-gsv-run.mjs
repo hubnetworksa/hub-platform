@@ -38,10 +38,11 @@ if (!key) throw new Error('Could not read the notify key.');
 if (process.env.GITHUB_ACTIONS) console.log(`::add-mask::${key}`);
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-// The server does at most 5 checks per call, each with one retry and a 12s
-// timeout (see admin-app/functions/_lib/gsv.ts) — worst case around 2 minutes
-// for a call; 3 minutes leaves real headroom. One slow/aborted call must not
-// take down the whole scheduled run, so it's caught below, not thrown.
+// The server does at most 3 checks per site per call (6 total), each with one
+// retry and a 12s timeout (see admin-app/functions/_lib/gsv.ts) — worst case
+// around 2.5 minutes for a call; 3 minutes leaves real headroom. One
+// slow/aborted call must not take down the whole scheduled run, so it's
+// caught below, not thrown.
 const CALL_TIMEOUT_MS = 180_000;
 const MAX_ITERATIONS = 60;
 
