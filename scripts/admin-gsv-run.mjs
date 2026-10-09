@@ -45,11 +45,20 @@ if (!key) throw new Error('Could not read the notify key.');
 if (process.env.GITHUB_ACTIONS) console.log(`::add-mask::${key}`);
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-// The server does at most 3 checks per site per call, across 3 sites (up to
-// 9 total), each with one retry and a 12s timeout (see
-// admin-app/functions/_lib/gsv.ts) — worst case a little under 4 minutes for
-// a call; 5 minutes leaves real headroom. One slow/aborted call must not
-// take down the whole scheduled run, so it's caught below, not thrown.
+// The server now does up to 45 checks per site per call (9 concurrent
+// chunks of 5), across all 3 sites run concurrently too, each check with
+// one retry and a 12s timeout (see admin-app/functions/_lib/gsv.ts and the
+// worst-case math in admin-app/functions/api/gsv/run.ts's top comment).
+// One chunk's worst case is ~25.5s (12s timeout + 1.5s retry delay +
+// another 12s timeout) regardless of chunk size, since the chunk's checks
+// run concurrently; 9 chunks sequential is 9 * 25.5s = 229.5s worst case
+// for one site, and since sites run concurrently that's also the worst
+// case for the whole call — identical to the OLD worst case (3 sites
+// sequential * 3 checks sequential * 25.5s = 229.5s) that this 300s timeout
+// was already sized for, so 300s still leaves the same ~70.5s (~31%)
+// headroom even though each call now gets through 15x more checks per
+// site. One slow/aborted call must not take down the whole scheduled run,
+// so it's caught below, not thrown.
 const CALL_TIMEOUT_MS = 300_000;
 // High enough that a run can actually reach the configured batchSizePerSite
 // (up to 500) in typical conditions — the real backstop against a run

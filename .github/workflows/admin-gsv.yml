@@ -11,11 +11,30 @@ name: Hub Admin Google Visibility
 # one of them down. This cadence (12 runs/day) is tuned to use nearly all of
 # that allowance per site without wasting runs once a day's quota is spent
 # (the run itself detects that and stops early; see run.ts's `stoppedEarly`).
-# At the default per-site batch this gives Polokwane (~1,200 pages) a full
-# daily recheck, and Pretoria (~5,800) and Cape Town (~2,100) a full recheck
-# roughly every 3 days and 1-2 days respectively, continuously — the fastest
-# any site this size can be, free or paid, since the cap is Google's, not
-# ours.
+#
+# run.ts now checks each site's claimed URLs CONCURRENTLY, in chunks of 5, up
+# to 45 per site per call, with all 3 sites also run concurrently (not the
+# old one-at-a-time, one-site-at-a-time version) — see run.ts's and
+# scripts/admin-gsv-run.mjs's top comments for the worst-case timing math.
+# Measured real-world latency is ~10-12s per check, so one concurrent chunk
+# of 5 realistically finishes in ~12-14s (bounded by the slowest of the 5,
+# not their sum); 9 chunks sequential is ~110-130s per site, and since sites
+# run concurrently that's also ~110-150s for the whole call once DB
+# overhead and the trigger script's 1.5s inter-call sleep are folded in. A
+# 30-minute job fits roughly 1800s / ~150s ≈ 10-12 calls, each getting
+# through up to 45 checks/site while the backlog lasts, so ≈ 450-540
+# checks/site in a single run — comfortably past Google's 2,000/site/day cap
+# within the first ~4 of the day's 12 runs (≈ 2,000 / 500 ≈ 4 runs, so within
+# about 8 hours). In other words: unlike before this change (where our own
+# throughput was the bottleneck, well under the 2,000/day cap, and a full
+# Pretoria sweep took many days), Google's daily cap is now the real limit,
+# so the cadence below is an honest estimate, not an aspirational one. At
+# the default per-site batch this gives Polokwane (~1,200 pages) a full
+# daily recheck (under the 2,000 cap on its own), Cape Town (~2,100) a full
+# recheck roughly every day to a day and a bit (2,100 / 2,000 ≈ 1.05 days),
+# and Pretoria (~5,800) a full recheck roughly every 3 days (5,800 / 2,000 ≈
+# 2.9 days) — the fastest any site this size can be, free or paid, since the
+# cap is Google's, not ours.
 #
 # Needs the Cloudflare pair, to read Hub Admin's trigger key (the same key
 # the 5-minute notifier uses).
