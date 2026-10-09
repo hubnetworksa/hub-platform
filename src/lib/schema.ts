@@ -26,6 +26,9 @@ export function organizationJsonLd() {
     logo: { '@type': 'ImageObject', url: `${siteUrl}${versioned('/logo-icon.png')}` },
     // Published on /contact/ and /advertise/.
     email: site.contactEmail,
+    // The verified Google Business Profile for this hub: tells Google the
+    // profile and the website are the same organisation.
+    ...(site.googleBusinessProfileUrl ? { sameAs: [site.googleBusinessProfileUrl] } : {}),
     ...(tradingName ? { parentOrganization: { '@type': 'Organization', name: tradingName } } : {}),
   };
 }
