@@ -1,5 +1,5 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
-import { rotateSession, sessionCookie, isAdminEmail } from '../../../_lib/auth';
+import { rotateSession, sessionCookie, adminMarkerCookie, isAdminEmail } from '../../../_lib/auth';
 import { sendEmail } from '../../../_lib/send-email';
 import { getSite } from '../../../_lib/site';
 
@@ -93,11 +93,10 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   // The admin account always lands on the admin dashboard, regardless of
   // whatever `next` the login page carried through.
   const finalRedirect = isAdminEmail(email) ? '/admin/' : redirectTo;
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: finalRedirect,
-      'Set-Cookie': sessionCookie(token),
-    },
-  });
+  // Admin marker cookie: admins are excluded from stats and GA (cleared for
+  // non-admins so a previous admin login on this browser doesn't linger).
+  const headers = new Headers({ Location: finalRedirect });
+  headers.append('Set-Cookie', sessionCookie(token));
+  headers.append('Set-Cookie', adminMarkerCookie(isAdminEmail(email)));
+  return new Response(null, { status: 302, headers });
 };

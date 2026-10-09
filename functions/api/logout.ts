@@ -1,5 +1,5 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
-import { clearSessionCookie } from '../_lib/auth';
+import { clearSessionCookie, adminMarkerCookie } from '../_lib/auth';
 
 interface Env {
   DB: D1Database;
@@ -11,7 +11,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const token = match?.split('=')[1];
   if (token) await context.env.DB.prepare('DELETE FROM sessions WHERE token = ?').bind(token).run();
 
-  return new Response(JSON.stringify({ ok: true }), {
-    headers: { 'Content-Type': 'application/json', 'Set-Cookie': clearSessionCookie() },
-  });
+  // Also drop the admin stats/GA exclusion marker.
+  const headers = new Headers({ 'Content-Type': 'application/json' });
+  headers.append('Set-Cookie', clearSessionCookie());
+  headers.append('Set-Cookie', adminMarkerCookie(false));
+  return new Response(JSON.stringify({ ok: true }), { headers });
 };
