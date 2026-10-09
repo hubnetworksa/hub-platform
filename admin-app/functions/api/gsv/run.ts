@@ -56,26 +56,22 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       let budget = CHECKS_PER_SITE_PER_CALL;
       let checked = 0;
       let calls = 0;
-      let stoppedEarly = false;
+      let quotaHit = false; // a real Google quota/rate signal — NOT the same as this call's normal budget running out
       for (const row of due) {
-        if (budget <= 0) {
-          stoppedEarly = true;
-          break;
-        }
+        if (budget <= 0) break; // normal per-call budget spent; more due work just continues on the next call
         if (!(await claimUrl(db, row.id))) continue; // claimed by an overlapping run
         calls++;
         budget--;
         const outcome = await checkOne(env, db, row, siteUrl);
         checked++;
         if (outcome.quotaOrRate) {
-          stoppedEarly = true;
-          budget = 0; // stop THIS site's budget only — the other site's quota is separate
-          break;
+          quotaHit = true;
+          break; // stop THIS site's budget only — the other site's quota is separate
         }
       }
       if (calls) await bumpGsvQuota(db, site.slug, today, calls);
       await upsertGsvDaily(db, site, today);
-      perSite[site.slug] = { discovered, due: due.length, checked, calls, stoppedEarly, moreWork: !stoppedEarly ? checked < due.length : false };
+      perSite[site.slug] = { discovered, due: due.length, checked, calls, stoppedEarly: quotaHit, moreWork: !quotaHit && checked < due.length };
     } catch (e) {
       perSite[site.slug] = { error: e instanceof Error ? e.message : String(e) };
     }
