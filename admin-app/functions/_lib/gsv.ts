@@ -173,7 +173,9 @@ export async function discoverUrls(adminDb: D1Database, site: HubSite): Promise<
     `SELECT id, slug, name FROM businesses WHERE status = 'published' AND closed_at IS NULL AND is_test = 0`
   );
   let inserted = 0;
-  const CHUNK = 50;
+  // D1 caps bound parameters at 100 per query; 5 columns per row means at
+  // most 20 rows fit, so 18 leaves headroom.
+  const CHUNK = 18;
   for (let i = 0; i < bizRows.length; i += CHUNK) {
     const chunk = bizRows.slice(i, i + CHUNK);
     const placeholders = chunk.map(() => '(?, ?, ?, ?, ?)').join(', ');
