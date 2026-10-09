@@ -86,14 +86,35 @@ export function mapInspectionResponse(r: unknown): InspectionOutcome {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/** POST with the same retry-on-429/5xx shape as scripts/search-console-daily.mjs's g(). */
+const INSPECT_TIMEOUT_MS = 15_000;
+
+/**
+ * POST with the same retry-on-429/5xx shape as scripts/search-console-daily.mjs's
+ * g(), plus a hard per-attempt timeout. Cloudflare Pages Functions cannot afford
+ * an indefinitely-hanging subrequest — a single stuck fetch here would otherwise
+ * wedge the whole /api/gsv/run invocation past the platform's own limits.
+ */
 async function inspect(token: string, url: string, siteUrl: string): Promise<unknown> {
   for (let attempt = 0; ; attempt++) {
-    const res = await fetch('https://searchconsole.googleapis.com/v1/urlInspection/index:inspect', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ inspectionUrl: url, siteUrl, languageCode: 'en-US' }),
-    });
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), INSPECT_TIMEOUT_MS);
+    let res: Response;
+    try {
+      res = await fetch('https://searchconsole.googleapis.com/v1/urlInspection/index:inspect', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ inspectionUrl: url, siteUrl, languageCode: 'en-US' }),
+        signal: controller.signal,
+      });
+    } catch (e) {
+      clearTimeout(timer);
+      if (attempt < 2) {
+        await sleep(1500 * (attempt + 1));
+        continue;
+      }
+      return { error: { message: e instanceof Error ? `${e.name}: ${e.message}` : String(e) } };
+    }
+    clearTimeout(timer);
     const j = (await res.json().catch(() => ({ error: { message: `HTTP ${res.status}` } }))) as { error?: { message?: string } };
     if ((res.status === 429 || res.status >= 500) && attempt < 3) {
       await sleep(2000 * (attempt + 1) ** 2);
