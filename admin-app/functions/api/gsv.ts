@@ -2,12 +2,13 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { hubSites, json, rows, count, type Env } from '../_lib/sites';
 import { jsonBody } from '../_lib/body';
 import { logActivity } from '../_lib/alerts';
-import { getGsvConfig, setGsvConfig, getGsvQuota, claimUrl, checkOne, type GsvCheckRow, type GsvConfig } from '../_lib/gsv';
+import { getGsvConfig, setGsvConfig, getGsvQuota, claimUrl, checkOne, reasonLabel, type GsvCheckRow, type GsvConfig } from '../_lib/gsv';
 
 // Google Visibility screen API (session-gated like every other admin-app
 // handler — not in _middleware.ts's PUBLIC_API list). One file, query-param
 // branching on GET since there's no /api/gsv/<sub> route file:
 //   GET /api/gsv?summary=1                       -> KPI totals, last run, quota, config
+//   GET /api/gsv?bySite=1                          -> per-site status totals + not_indexed reason breakdown
 //   GET /api/gsv?history=<id>                     -> recent gsv_checks for one URL
 //   GET /api/gsv?trend=1&site=&from=&to=           -> gsv_daily rows for the chart
 //   GET /api/gsv?site=&status=&q=&sort=&page=      -> the URLs table (default mode)
@@ -125,6 +126,47 @@ async function summaryMode(db: D1Database): Promise<Response> {
   });
 }
 
+function titleCase(slug: string): string {
+  return slug.replace(/(^|-)([a-z])/g, (_m, sep, c) => (sep ? ' ' : '') + c.toUpperCase());
+}
+
+async function bySiteMode(env: Env, db: D1Database): Promise<Response> {
+  const names = new Map(hubSites(env).map((s) => [s.slug, s.name]));
+  const sites = [] as Array<{
+    slug: string;
+    name: string;
+    indexed: number;
+    notIndexed: number;
+    pending: number;
+    unknown: number;
+    pctIndexed: number;
+    reasons: { coverageState: string; label: string; count: number }[];
+  }>;
+  for (const slug of SITES) {
+    const counts = await rows<{ status: string; n: number }>(db, `SELECT status, COUNT(*) n FROM gsv_urls WHERE site = ? GROUP BY status`, slug);
+    const by: Record<string, number> = { pending: 0, indexed: 0, not_indexed: 0, unknown: 0 };
+    for (const r of counts) by[r.status] = r.n;
+    const base = by.indexed + by.not_indexed;
+    const pctIndexed = base > 0 ? Math.round((by.indexed / base) * 1000) / 10 : 0;
+    const reasonRows = await rows<{ coverage_state: string | null; n: number }>(
+      db,
+      `SELECT coverage_state, COUNT(*) n FROM gsv_urls WHERE site = ? AND status = 'not_indexed' GROUP BY coverage_state ORDER BY n DESC LIMIT 12`,
+      slug
+    );
+    sites.push({
+      slug,
+      name: names.get(slug) ?? titleCase(slug),
+      indexed: by.indexed,
+      notIndexed: by.not_indexed,
+      pending: by.pending,
+      unknown: by.unknown,
+      pctIndexed,
+      reasons: reasonRows.map((r) => ({ coverageState: r.coverage_state ?? '', label: reasonLabel(r.coverage_state), count: r.n })),
+    });
+  }
+  return json({ ok: true, sites });
+}
+
 async function historyMode(db: D1Database, idRaw: string | null): Promise<Response> {
   const id = Number.parseInt(idRaw ?? '', 10);
   if (!Number.isInteger(id) || id <= 0) return json({ ok: false, error: 'Invalid id.' }, 400);
@@ -158,6 +200,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const db = context.env.ADMIN_DB;
   const q = new URL(context.request.url).searchParams;
   if (q.get('summary') === '1') return summaryMode(db);
+  if (q.get('bySite') === '1') return bySiteMode(context.env, db);
   if (q.has('history')) return historyMode(db, q.get('history'));
   if (q.get('trend') === '1') return trendMode(db, q);
   return listMode(db, q);
