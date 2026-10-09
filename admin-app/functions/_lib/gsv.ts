@@ -86,16 +86,24 @@ export function mapInspectionResponse(r: unknown): InspectionOutcome {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-const INSPECT_TIMEOUT_MS = 15_000;
+const INSPECT_TIMEOUT_MS = 12_000;
+// One retry only, short fixed delay — unlike scripts/search-console-daily.mjs's
+// patient exponential backoff (fine in a leisurely GitHub Actions job), this
+// runs inside a request /api/gsv/run must keep small and predictable; a slow
+// URL should fall back to 'unknown' quickly, not spend a minute retrying,
+// since the outer per-call budget (MAX_CHECKS_PER_CALL in run.ts) and the
+// trigger script's own retry-by-looping already cover it on the next call.
+const MAX_ATTEMPTS = 2;
+const RETRY_DELAY_MS = 1500;
 
 /**
- * POST with the same retry-on-429/5xx shape as scripts/search-console-daily.mjs's
- * g(), plus a hard per-attempt timeout. Cloudflare Pages Functions cannot afford
- * an indefinitely-hanging subrequest — a single stuck fetch here would otherwise
- * wedge the whole /api/gsv/run invocation past the platform's own limits.
+ * POST with a hard per-attempt timeout (Cloudflare Pages Functions cannot
+ * afford an indefinitely-hanging subrequest — a single stuck fetch here would
+ * otherwise wedge the whole /api/gsv/run invocation past what the trigger
+ * script and the platform can tolerate).
  */
 async function inspect(token: string, url: string, siteUrl: string): Promise<unknown> {
-  for (let attempt = 0; ; attempt++) {
+  for (let attempt = 1; ; attempt++) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), INSPECT_TIMEOUT_MS);
     let res: Response;
@@ -108,16 +116,16 @@ async function inspect(token: string, url: string, siteUrl: string): Promise<unk
       });
     } catch (e) {
       clearTimeout(timer);
-      if (attempt < 2) {
-        await sleep(1500 * (attempt + 1));
+      if (attempt < MAX_ATTEMPTS) {
+        await sleep(RETRY_DELAY_MS);
         continue;
       }
       return { error: { message: e instanceof Error ? `${e.name}: ${e.message}` : String(e) } };
     }
     clearTimeout(timer);
     const j = (await res.json().catch(() => ({ error: { message: `HTTP ${res.status}` } }))) as { error?: { message?: string } };
-    if ((res.status === 429 || res.status >= 500) && attempt < 3) {
-      await sleep(2000 * (attempt + 1) ** 2);
+    if ((res.status === 429 || res.status >= 500) && attempt < MAX_ATTEMPTS) {
+      await sleep(RETRY_DELAY_MS);
       continue;
     }
     if (!res.ok) j.error ||= { message: `HTTP ${res.status}` };
