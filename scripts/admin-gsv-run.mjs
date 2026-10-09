@@ -21,7 +21,14 @@ const base = `https://api.cloudflare.com/client/v4/accounts/${account}/d1/databa
 const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
 
 async function cf(url, init) {
-  const res = await fetch(url, { ...init, headers });
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), 20_000);
+  let res;
+  try {
+    res = await fetch(url, { ...init, headers, signal: controller.signal });
+  } finally {
+    clearTimeout(t);
+  }
   const body = await res.json().catch(() => ({}));
   if (!res.ok || body.success === false) throw new Error(`Cloudflare API ${res.status}: ${JSON.stringify(body.errors ?? []).slice(0, 300)}`);
   return body.result;
@@ -54,12 +61,22 @@ const MAX_ITERATIONS = 200;
 async function runOnce() {
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort(), CALL_TIMEOUT_MS);
+  // AbortController alone isn't a guaranteed bound — a run on 2026-10-09
+  // stalled silently for ~28 minutes past this timeout with nothing logged,
+  // so the script's own timer must be the thing that actually gives up,
+  // independent of whether fetch ever notices the abort signal.
+  const hardTimeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error(`/api/gsv/run did not respond within ${CALL_TIMEOUT_MS / 1000}s`)), CALL_TIMEOUT_MS + 5_000)
+  );
   try {
-    const res = await fetch(`${adminUrl}/api/gsv/run`, {
-      method: 'POST',
-      headers: { 'X-Hub-Admin': '1', 'X-Notify-Key': key, 'Content-Type': 'application/json' },
-      signal: controller.signal,
-    });
+    const res = await Promise.race([
+      fetch(`${adminUrl}/api/gsv/run`, {
+        method: 'POST',
+        headers: { 'X-Hub-Admin': '1', 'X-Notify-Key': key, 'Content-Type': 'application/json' },
+        signal: controller.signal,
+      }),
+      hardTimeout,
+    ]);
     const out = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(`Hub Admin returned ${res.status}: ${JSON.stringify(out).slice(0, 300)}`);
     return out;
@@ -75,6 +92,9 @@ let totalChecked = 0;
 let more = true;
 while (more && iterations < MAX_ITERATIONS) {
   iterations++;
+  // A timestamped line per call — the only way to tell, from the Action log
+  // alone, which call a stall happened on (see the hardTimeout comment above).
+  console.log(`[${new Date().toISOString()}] call ${iterations}…`);
   let out;
   try {
     out = await runOnce();
