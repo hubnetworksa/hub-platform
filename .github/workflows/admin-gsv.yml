@@ -1,0 +1,45 @@
+name: Hub Admin Google Visibility
+
+# Every 3 hours: works through Pretoria and Polokwane's published business
+# URLs with Search Console's URL Inspection API
+# (admin-app/functions/api/gsv/run.ts), batched and time-boxed so nothing is
+# lost across runs. Cape Town is excluded per the brief. Nothing is
+# committed: the data lives in Hub Admin's own database
+# (gsv_urls / gsv_checks / gsv_daily), read by the #/gsv screen.
+#
+# Needs the Cloudflare pair, to read Hub Admin's trigger key (the same key
+# the 5-minute notifier uses).
+
+on:
+  schedule:
+    - cron: "10 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: admin-gsv
+  cancel-in-progress: false
+
+jobs:
+  gsv:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout the script
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/admin-gsv-run.mjs
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run the Google Visibility check
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/admin-gsv-run.mjs
