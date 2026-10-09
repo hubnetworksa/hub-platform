@@ -1,18 +1,26 @@
 name: Hub Admin Google Visibility
 
-# Every 3 hours: works through Pretoria and Polokwane's published business
+# Every 2 hours: works through Pretoria and Polokwane's published business
 # URLs with Search Console's URL Inspection API
 # (admin-app/functions/api/gsv/run.ts), batched and time-boxed so nothing is
 # lost across runs. Cape Town is excluded per the brief. Nothing is
 # committed: the data lives in Hub Admin's own database
 # (gsv_urls / gsv_checks / gsv_daily), read by the #/gsv screen.
 #
+# Google hard-caps the Inspection API at 2,000 checks/site/day — this cadence
+# (12 runs/day) is tuned to use nearly all of that allowance without wasting
+# runs once a day's quota is spent (the run itself detects that and stops
+# early; see run.ts's `stoppedEarly`). At the default per-site batch this
+# gives Polokwane (~1,200 pages) a full daily recheck and Pretoria (~5,800)
+# a full recheck roughly every 3 days, continuously — the fastest any site
+# this size can be, free or paid, since the cap is Google's, not ours.
+#
 # Needs the Cloudflare pair, to read Hub Admin's trigger key (the same key
 # the 5-minute notifier uses).
 
 on:
   schedule:
-    - cron: "10 */3 * * *"
+    - cron: "10 */2 * * *"
   workflow_dispatch:
 
 permissions:
@@ -25,7 +33,7 @@ concurrency:
 jobs:
   gsv:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - name: Checkout the script
         uses: actions/checkout@v4
