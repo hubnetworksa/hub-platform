@@ -122,6 +122,9 @@ export const HELP = {
   gsv: {
     indexed: 'Google says this page can appear in results. A live Search Console verdict, not a scrape.',
     notIndexed: 'Google says this page cannot appear in results yet. Open it to see the reason and fix it.',
+    onGoogle: 'Pages Google has verified it can show in results for this site.',
+    notOnGoogle: 'Pages Google has checked but will not show yet. See the reasons below for why.',
+    reasons: "Why Google isn't showing pages it has looked at. Click a page row in the URLs tab for its exact reason.",
     percentIndexed: 'Indexed ÷ (Indexed + Not indexed) × 100. Pending and Unknown pages are left out of this share.',
     checked24h: 'URLs Google was asked about in the last 24 hours. Shows the checker is actually running.',
     pending: 'Published pages never yet checked. New and newly-published pages are always checked first.',

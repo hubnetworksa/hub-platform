@@ -84,6 +84,45 @@ export function mapInspectionResponse(r: unknown): InspectionOutcome {
   return { status, coverageState, quotaOrRate: false, errorMessage: null };
 }
 
+// ── Coverage-state reasons, plain-language ──
+// Google's own documented coverage states for the URL Inspection API
+// (indexStatusResult.coverageState), lowercase-trimmed keys so lookup is
+// case/whitespace-insensitive. Used by the "By site" tab's reason breakdown
+// to explain *why* a page is not_indexed without making the owner read
+// Google's jargon.
+export const COVERAGE_REASON_LABELS: Record<string, string> = {
+  'url is unknown to google': 'Google has never seen this page.',
+  'discovered - currently not indexed': "Google found the link but hasn't crawled it yet — usually a crawl-priority issue.",
+  'crawled - currently not indexed': 'Google crawled it but chose not to index it — usually a content-quality decision.',
+  "excluded by 'noindex' tag": 'The page itself tells Google not to index it.',
+  'page with redirect': 'This URL redirects elsewhere, so Google indexes the destination instead.',
+  'duplicate, submitted url not selected as canonical': 'Google treats this as a duplicate of another page and indexed that one instead.',
+  'duplicate without user-selected canonical': 'Google sees this as a duplicate and picked a different canonical page.',
+  'soft 404': 'Google thinks this page looks empty or like an error page.',
+  'not found (404)': 'The page returned a real 404 when Google tried to crawl it.',
+  'blocked by robots.txt': 'robots.txt tells Google not to crawl this page.',
+  'blocked due to unauthorized request (401)': 'The page asked for a login or returned a 401, so Google could not read it.',
+  'blocked due to access forbidden (403)': 'The server returned a 403 and refused Google access to this page.',
+  'server error (5xx)': "The server was erroring when Google tried to crawl it — Google will retry, but it hasn't indexed it yet.",
+  'redirect error': "The page's redirect was broken or looped, so Google couldn't follow it to a final destination.",
+  'blocked by page removal tool': "Someone used Search Console's removal tool to temporarily hide this page from results.",
+  "excluded by 'unavailable_after' tag": "The page set an expiry date telling Google to stop showing it, and that date has passed.",
+  'not found (404) and other 4xx/5xx': 'The page returned an error when Google tried to crawl it.',
+};
+
+/**
+ * Plain-language explanation for a raw coverage_state string (case/whitespace
+ * insensitive). Falls back to the raw string when it's not a state we've
+ * mapped, and to a fixed message when there's no coverage_state at all
+ * (indexed/pending/unknown rows, or a not_indexed row from before this map
+ * covered that state).
+ */
+export function reasonLabel(coverageState: string | null): string {
+  if (!coverageState || !coverageState.trim()) return 'No reason recorded';
+  const key = coverageState.trim().toLowerCase();
+  return COVERAGE_REASON_LABELS[key] ?? coverageState;
+}
+
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 const INSPECT_TIMEOUT_MS = 12_000;

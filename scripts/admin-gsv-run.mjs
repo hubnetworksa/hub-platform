@@ -44,7 +44,12 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // slow/aborted call must not take down the whole scheduled run, so it's
 // caught below, not thrown.
 const CALL_TIMEOUT_MS = 180_000;
-const MAX_ITERATIONS = 60;
+// High enough that a run can actually reach the configured batchSizePerSite
+// (up to 500) in typical conditions — the real backstop against a run
+// dragging on is the job's own 30-minute timeout in admin-gsv.yml, not this
+// number; a cancelled run loses nothing (every check commits immediately)
+// and the next scheduled trigger just continues from where it left off.
+const MAX_ITERATIONS = 200;
 
 async function runOnce() {
   const controller = new AbortController();

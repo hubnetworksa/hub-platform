@@ -68,6 +68,7 @@ export async function render(view, ui) {
       trendCard(ui),
       ui.tabs(
         [
+          { id: 'by-site', label: 'By site', render: () => bySiteTab(ui, H) },
           { id: 'urls', label: 'URLs', render: () => urlsTab(ui, tableState, selected) },
           { id: 'settings', label: 'Settings', render: () => settingsTab(ui, summary, H) },
         ],
@@ -165,6 +166,74 @@ function trendCard(ui) {
     title: 'Index status over time',
     sub: site === 'all' ? 'Last 30 days, all sites' : `Last 30 days, ${ui.siteName(site)}`,
     body: holder,
+  });
+}
+
+// "By site" tab: /api/gsv?bySite=1 returns, for each site, its status totals
+// plus a breakdown of not_indexed rows by Google's coverage_state (mapped to
+// a plain-language label in _lib/gsv.ts's reasonLabel). Unlike the KPI block
+// and trend chart above, this always shows every site regardless of the
+// top-bar site selector — the point of the tab is comparing sites.
+function bySiteTab(ui, H) {
+  const { h, fill, api } = ui;
+  const root = h('div', { class: 'stack' });
+  fill(root, ui.state.loading());
+
+  (async () => {
+    let sites;
+    try {
+      const d = await api('/api/gsv?bySite=1');
+      sites = d.sites;
+    } catch (e) {
+      fill(root, ui.state.error(e));
+      return;
+    }
+    if (!root.isConnected) return;
+    if (!sites.length) {
+      fill(root, ui.state.empty('No sites configured.'));
+      return;
+    }
+    fill(root, sites.map((s) => siteBreakdownCard(ui, s, H)));
+  })();
+
+  return root;
+}
+
+function siteBreakdownCard(ui, s, H) {
+  const { h } = ui;
+  const f = ui.charts.fmt.int;
+  const totalSeen = s.indexed + s.notIndexed + s.unknown;
+
+  const kpiRow = ui.kpis([
+    ['On Google', f(s.indexed), null, H.onGoogle],
+    ['Not on Google', f(s.notIndexed), null, H.notOnGoogle],
+    ['Pending', f(s.pending), null, H.pending],
+    ['Unknown', f(s.unknown), null, H.unknown],
+  ]);
+
+  let rest;
+  if (totalSeen === 0) {
+    rest = ui.state.empty('No pages checked yet for this site — everything is still pending.');
+  } else if (!s.notIndexed) {
+    rest = h('p', { class: 'msg ok' }, 'Everything checked so far is on Google.');
+  } else {
+    const bars = h('div');
+    ui.charts.barList(bars, {
+      items: s.reasons.map((r) => ({
+        label: r.label,
+        value: r.count,
+        // The raw Google term, shown only when it differs from the plain
+        // label, for anyone who wants the literal coverage_state string.
+        sub: r.coverageState && r.coverageState !== r.label ? r.coverageState : undefined,
+      })),
+    });
+    rest = h('div', {}, h('h3', {}, 'Why pages aren’t on Google', ui.help(H.reasons)), bars);
+  }
+
+  return ui.card({
+    title: s.name,
+    sub: totalSeen > 0 ? `${s.pctIndexed}% of checked pages are on Google` : null,
+    body: h('div', {}, kpiRow, rest),
   });
 }
 
