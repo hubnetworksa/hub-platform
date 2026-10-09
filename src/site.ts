@@ -110,6 +110,8 @@ export interface Site {
    *  their own instructions, not site-wide. */
   impactSiteVerification: string | null;
   googleAnalyticsId: string | null;
+  /** Public Google Maps link of the hub's verified Business Profile (sameAs in structured data). */
+  googleBusinessProfileUrl?: string | null;
   adsensePublisherId: string | null;
   /** AdSense ad-unit slot IDs (the numeric data-ad-slot from the AdSense
    *  dashboard) per placement. null = no manual unit there. */
