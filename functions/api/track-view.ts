@@ -1,5 +1,6 @@
 import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { visitorHash } from '../_lib/messages';
+import { getSessionUser, isAdminEmail } from '../_lib/auth';
 
 interface Env {
   DB: D1Database;
@@ -59,6 +60,12 @@ function cleanQuery(v: unknown): string | null {
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
+  // Admins are excluded from stats so their own browsing doesn't count. No
+  // session cookie means no DB lookup (fast path for ordinary visitors).
+  if (/(?:^|;\s*)session=/.test(context.request.headers.get('Cookie') ?? '')) {
+    const user = await getSessionUser(context.request, context.env.DB);
+    if (user && isAdminEmail(user.email)) return new Response(null, { status: 204 });
+  }
   let body: Record<string, unknown>;
   try {
     body = await context.request.json();
