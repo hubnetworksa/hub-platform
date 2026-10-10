@@ -66,9 +66,12 @@ export const motion = {
   brief(card) {
     if (!on() || !card) return;
     const g = gsap();
+    // Top-level lines only, and never more than about 1.5 s in all: the full
+    // briefing can run to dozens of lines.
+    const lines = card.querySelectorAll('.brief-block h3, .brief-list > li');
     g.timeline({ defaults: { ease: EASE } })
       .from(card.querySelector('.brief-headline'), { y: 10, autoAlpha: 0, duration: 0.6 })
-      .from(card.querySelectorAll('.brief-block h3, .brief-list li'), { y: 8, autoAlpha: 0, duration: 0.4, stagger: 0.06 }, 0.2);
+      .from(lines, { y: 8, autoAlpha: 0, duration: 0.4, stagger: Math.min(0.06, 1.5 / Math.max(lines.length, 1)) }, 0.2);
   },
 
   // A shake for a wrong password / refused form.

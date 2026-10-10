@@ -119,7 +119,10 @@ export async function gatherFacts(env: Env) {
 export interface Briefing {
   headline: string;
   needs_you: { text: string; site: string }[];
-  sites: { slug: string; summary: string }[];
+  // `details`: the site in depth (traffic, Google, money, listings, health).
+  sites: { slug: string; summary: string; details?: string[] }[];
+  // Whole-operation sections (Google, money, website health, routines, ...).
+  sections?: { title: string; items: string[] }[];
   worth_knowing: string[];
 }
 
@@ -156,12 +159,25 @@ export function validateBriefing(raw: unknown, slugs: string[]): { briefing: Bri
   const headline = str(r.headline, 300);
   if (!headline) return { error: '"headline" is required (one sentence).' };
   if (!Array.isArray(r.needs_you) || !Array.isArray(r.sites) || !Array.isArray(r.worth_knowing)) return { error: '"needs_you", "sites" and "worth_knowing" must be arrays.' };
-  const needs = r.needs_you.slice(0, 6).map((n) => ({ text: str((n as Record<string, unknown>)?.text, 300), site: str((n as Record<string, unknown>)?.site, 30) }));
+  const needs = r.needs_you.slice(0, 10).map((n) => ({ text: str((n as Record<string, unknown>)?.text, 400), site: str((n as Record<string, unknown>)?.site, 30) }));
   if (needs.some((n) => !n.text || !(n.site === 'all' || slugs.includes(n.site)))) return { error: `Each "needs_you" item needs "text" and "site" (one of: ${[...slugs, 'all'].join(', ')}).` };
-  const sites = r.sites.map((x) => ({ slug: str((x as Record<string, unknown>)?.slug, 30), summary: str((x as Record<string, unknown>)?.summary, 400) }));
+  const lines = (v: unknown, n: number, max: number) => (Array.isArray(v) ? v.slice(0, n).map((x) => str(x, max)).filter(Boolean) : []);
+  const sites = r.sites.map((x) => {
+    const o = (x ?? {}) as Record<string, unknown>;
+    const details = lines(o.details, 14, 400);
+    return { slug: str(o.slug, 30), summary: str(o.summary, 800), ...(details.length ? { details } : {}) };
+  });
   if (sites.length !== slugs.length || sites.some((x, i) => x.slug !== slugs[i] || !x.summary)) return { error: `"sites" must have one entry per site, in this order: ${slugs.join(', ')}, each with a "summary".` };
-  const worth = r.worth_knowing.slice(0, 4).map((w) => str(w, 300)).filter(Boolean);
-  return { briefing: { headline, needs_you: needs, sites, worth_knowing: worth } };
+  if (r.sections !== undefined && !Array.isArray(r.sections)) return { error: '"sections" must be an array of { "title", "items" }.' };
+  const sections = (Array.isArray(r.sections) ? r.sections : [])
+    .slice(0, 10)
+    .map((x) => {
+      const o = (x ?? {}) as Record<string, unknown>;
+      return { title: str(o.title, 60), items: lines(o.items, 12, 400) };
+    })
+    .filter((x) => x.title && x.items.length);
+  const worth = lines(r.worth_knowing, 8, 400);
+  return { briefing: { headline, needs_you: needs, sites, ...(sections.length ? { sections } : {}), worth_knowing: worth } };
 }
 
 /** Saves today's briefing from the routine (replacing an earlier one today). */

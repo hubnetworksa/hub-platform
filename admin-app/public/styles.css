@@ -486,6 +486,9 @@ details > summary { cursor: pointer; font-weight: 500; padding: 4px 0; }
 .brief-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
 .brief-list li { display: flex; gap: 10px; align-items: baseline; line-height: 1.45; color: var(--ink); }
 .brief-list .city-dot { transform: translateY(1px); }
+.brief-site { min-width: 0; display: grid; gap: 6px; }
+.brief-sub { margin: 0; padding-left: 18px; display: grid; gap: 4px; color: var(--ink-2); font-size: var(--t-md); }
+.brief-sub li { display: list-item; }
 .brief-list .bullet { width: 6px; height: 6px; border-radius: 50%; background: var(--action); flex: none; transform: translateY(-2px); }
 .brief-loading { display: flex; gap: 6px; padding: var(--sp-2) 0; }
 .brief-loading span { width: 8px; height: 8px; border-radius: 50%; background: var(--action); animation: brief-dot 1.2s infinite ease-in-out; }

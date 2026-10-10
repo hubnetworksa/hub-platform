@@ -555,7 +555,24 @@ function briefingCard() {
       x.needs_you.length
         ? h('div', { class: 'brief-block' }, h('h3', {}, 'Needs you today'), h('ul', { class: 'brief-list' }, x.needs_you.map((n) => h('li', {}, n.site && n.site !== 'all' ? h('span', { class: 'city-dot', style: `background:${siteColor(n.site)}` }) : h('span', { class: 'city-dot', style: 'background:var(--muted)' }), h('span', {}, n.text)))))
         : null,
-      h('div', { class: 'brief-block' }, h('h3', {}, 'Your sites'), h('ul', { class: 'brief-list' }, x.sites.map((s) => h('li', {}, h('span', { class: 'city-dot', style: `background:${siteColor(s.slug)}` }), h('span', {}, h('b', {}, siteName(s.slug)), ` ${s.summary}`))))),
+      h(
+        'div',
+        { class: 'brief-block' },
+        h('h3', {}, 'Your sites'),
+        h(
+          'ul',
+          { class: 'brief-list' },
+          x.sites.map((s) =>
+            h(
+              'li',
+              {},
+              h('span', { class: 'city-dot', style: `background:${siteColor(s.slug)}` }),
+              h('div', { class: 'brief-site' }, h('span', {}, h('b', {}, siteName(s.slug)), ` ${s.summary}`), s.details?.length ? h('ul', { class: 'brief-sub' }, s.details.map((d) => h('li', {}, d))) : null)
+            )
+          )
+        )
+      ),
+      (x.sections || []).map((sec) => h('div', { class: 'brief-block' }, h('h3', {}, sec.title), h('ul', { class: 'brief-list dots' }, sec.items.map((w) => h('li', {}, h('span', { class: 'bullet' }), h('span', {}, w)))))),
       x.worth_knowing.length ? h('div', { class: 'brief-block' }, h('h3', {}, 'Worth knowing'), h('ul', { class: 'brief-list dots' }, x.worth_knowing.map((w) => h('li', {}, h('span', { class: 'bullet' }), h('span', {}, w))))) : null,
       b.pending ? h('p', { class: 'note' }, 'Claude’s briefing for today arrives at about 6am; this summary is built from the live numbers until then.') : null
     );
