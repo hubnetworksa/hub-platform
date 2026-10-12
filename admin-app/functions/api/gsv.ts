@@ -36,6 +36,7 @@ interface UrlRow {
   consecutive_not_indexed: number;
   total_indexed_checks: number;
   total_not_indexed_checks: number;
+  name_position: number | null;
 }
 
 function toApiRow(r: UrlRow) {
@@ -52,11 +53,18 @@ function toApiRow(r: UrlRow) {
     consecutiveNotIndexed: r.consecutive_not_indexed,
     totalIndexed: r.total_indexed_checks,
     totalNotIndexed: r.total_not_indexed_checks,
+    // Google's own recorded position for a search of this business's exact
+    // NAME (Search Console Performance API; see _lib/name-position.ts) —
+    // separate from `status`, which is this URL's index verdict, not a
+    // ranking. Null when never checked or when no searches were recorded.
+    namePosition: r.name_position,
   };
 }
 
 const SORT_COLUMNS: Record<string, string> = {
-  name: 'name',
+  // gsv_urls.name because listMode's query now LEFT JOINs name_position,
+  // which also has a `name` column.
+  name: 'gsv_urls.name',
   status: 'status',
   lastAttemptAt: 'last_attempt_at',
   lastSuccessAt: 'last_success_at',
@@ -75,7 +83,9 @@ function buildWhere(q: URLSearchParams): { clause: string; params: unknown[] } {
   const params: unknown[] = [];
   const site = q.get('site');
   if (site && site !== 'all') {
-    clauses.push('site = ?');
+    // Qualified with gsv_urls. because listMode's query LEFT JOINs
+    // name_position, which also has a `site` column.
+    clauses.push('gsv_urls.site = ?');
     params.push(site);
   }
   const status = q.get('status');
@@ -86,7 +96,9 @@ function buildWhere(q: URLSearchParams): { clause: string; params: unknown[] } {
   const search = q.get('q');
   if (search) {
     const like = `%${search.replace(/[%_]/g, '')}%`;
-    clauses.push('(name LIKE ? OR url LIKE ?)');
+    // gsv_urls.name because name_position also has a `name` column (url is
+    // unique to gsv_urls, no qualification needed).
+    clauses.push('(gsv_urls.name LIKE ? OR url LIKE ?)');
     params.push(like, like);
   }
   return { clause: clauses.length ? `WHERE ${clauses.join(' AND ')}` : '', params };
@@ -97,7 +109,21 @@ async function listMode(db: D1Database, q: URLSearchParams): Promise<Response> {
   const page = Math.max(1, Number.parseInt(q.get('page') ?? '1', 10) || 1);
   const total = await count(db, `SELECT COUNT(*) FROM gsv_urls ${clause}`, ...params);
   const order = sortClause(q.get('sort'));
-  const rowsOut = await rows<UrlRow>(db, `SELECT * FROM gsv_urls ${clause} ${order} LIMIT ? OFFSET ?`, ...params, PER_PAGE, (page - 1) * PER_PAGE);
+  // LEFT JOIN name_position for the owner-requested "what does a search of
+  // this business's own NAME actually show" number alongside the existing
+  // index-status table (see _lib/name-position.ts). gsv_urls.* (not bare *)
+  // plus an aliased name_position.position, since both tables have
+  // overlapping column names (site, business_id, slug, name) that would
+  // otherwise collide.
+  const rowsOut = await rows<UrlRow>(
+    db,
+    `SELECT gsv_urls.*, name_position.position AS name_position FROM gsv_urls
+     LEFT JOIN name_position ON name_position.site = gsv_urls.site AND name_position.business_id = gsv_urls.business_id
+     ${clause} ${order} LIMIT ? OFFSET ?`,
+    ...params,
+    PER_PAGE,
+    (page - 1) * PER_PAGE
+  );
   return json({ ok: true, total, rows: rowsOut.map(toApiRow) });
 }
 
