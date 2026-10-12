@@ -80,6 +80,17 @@ function positionCell(ui, r) {
   return h('span', { class: 'meta' }, 'Not checked yet');
 }
 
+// Same three states as positionCell, for the date of the last real
+// impression rather than the aggregate number — a business can have a
+// decent position while its underlying impressions are weeks old, which is
+// exactly the gap this column exists to surface.
+function lastImpressionCell(ui, r) {
+  const { h } = ui;
+  if (r.lastImpressionDate) return h('span', {}, ui.ago(r.lastImpressionDate));
+  if (r.checkedAt) return h('span', { class: 'meta' }, 'No data');
+  return h('span', { class: 'meta' }, 'Not checked yet');
+}
+
 function businessesTab(ui, state) {
   const { h, fill, api } = ui;
   const root = h('div', { class: 'stack' });
@@ -145,6 +156,7 @@ function businessesTab(ui, state) {
         ? [h('td', {}, h('span', { class: 'inline-city nowrap' }, h('span', { class: 'city-dot', style: `background:${ui.siteColor(r.site)}` }), ui.siteName(r.site)))]
         : []),
       h('td', { class: 'num' }, positionCell(ui, r)),
+      h('td', {}, lastImpressionCell(ui, r)),
       h('td', { class: 'num' }, r.impressions != null ? ui.charts.fmt.int(r.impressions) : ''),
       h('td', { class: 'num' }, r.clicks != null ? ui.charts.fmt.int(r.clicks) : ''),
       h('td', {}, r.checkedAt ? ui.ago(r.checkedAt) : '')
@@ -169,6 +181,7 @@ function businessesTab(ui, state) {
           thSort('name', 'Business name'),
           ...(showSite ? [h('th', {}, 'Site')] : []),
           thSort('position', 'Position', ui.help(ui.HELP.namePosition.position)),
+          thSort('lastImpressionDate', 'Last impression'),
           thSort('impressions', 'Impressions'),
           thSort('clicks', 'Clicks'),
           thSort('checkedAt', 'Last checked')

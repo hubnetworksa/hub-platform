@@ -28,6 +28,7 @@ interface PositionRow {
   position: number | null;
   impressions: number | null;
   clicks: number | null;
+  last_impression_date: string | null;
   checked_at: string | null;
 }
 
@@ -42,6 +43,7 @@ function toApiRow(r: PositionRow, domainBySite: Map<string, string>) {
     position: r.position,
     impressions: r.impressions,
     clicks: r.clicks,
+    lastImpressionDate: r.last_impression_date,
     checkedAt: r.checked_at,
   };
 }
@@ -51,6 +53,7 @@ const SORT_COLUMNS: Record<string, string> = {
   position: 'position',
   impressions: 'impressions',
   clicks: 'clicks',
+  lastImpressionDate: 'last_impression_date',
   checkedAt: 'checked_at',
 };
 
