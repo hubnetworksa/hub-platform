@@ -56,6 +56,22 @@ function sumByDay(rows) {
   return byDay;
 }
 
+// Sums /api/gsv?transitions=1 rows (newlyIndexed/newlyNotIndexed) across
+// sites into one point per day — the same idea as sumByDay above, kept as
+// its own small helper rather than extending sumByDay because transitions
+// rows have a different shape (no indexed/notIndexed/unknown/pending/checked
+// fields to sum).
+function sumTransitionsByDay(rows) {
+  const byDay = new Map();
+  for (const r of rows) {
+    const cur = byDay.get(r.day) || { newlyIndexed: 0, newlyNotIndexed: 0 };
+    cur.newlyIndexed += r.newlyIndexed;
+    cur.newlyNotIndexed += r.newlyNotIndexed;
+    byDay.set(r.day, cur);
+  }
+  return byDay;
+}
+
 function pctIndexedOf(indexed, notIndexed) {
   const base = indexed + notIndexed;
   return base > 0 ? Math.round((indexed / base) * 1000) / 10 : 0;
@@ -287,14 +303,21 @@ function byDayTab(ui, H) {
   fill(root, ui.state.loading());
 
   (async () => {
-    let rows;
+    let rows, transitions;
     try {
       const to = new Date().toISOString().slice(0, 10);
       const from = new Date(Date.now() - 30 * 86_400_000).toISOString().slice(0, 10);
       const q = new URLSearchParams({ trend: '1', from, to });
       if (site !== 'all') q.set('site', site);
-      const d = await api(`/api/gsv?${q.toString()}`);
+      // Same site-param handling as the trend fetch above — transitions is
+      // the gross "became indexed" / "dropped" count per (day, site), which
+      // the net day-over-day change in the trend rows can hide (10 pages
+      // becoming indexed while 8 different ones drop nets to +2, not 10).
+      const qt = new URLSearchParams({ transitions: '1', from, to });
+      if (site !== 'all') qt.set('site', site);
+      const [d, dt] = await Promise.all([api(`/api/gsv?${q.toString()}`), api(`/api/gsv?${qt.toString()}`)]);
       rows = d.rows;
+      transitions = dt.rows;
     } catch (e) {
       fill(root, ui.state.error(e));
       return;
@@ -304,6 +327,9 @@ function byDayTab(ui, H) {
       fill(root, ui.state.empty('No trend data yet. It appears once URLs have been checked.'));
       return;
     }
+
+    const transByKey = new Map();
+    for (const t of transitions) transByKey.set(`${t.day}|${t.site}`, t);
 
     // Walk each site's rows oldest-first so "previous day" is simple, and
     // compute pctIndexed the same way kpiBlock() does, before sorting the
@@ -319,7 +345,8 @@ function byDayTab(ui, H) {
       let prev = null;
       for (const r of list) {
         const pctIndexed = pctIndexedOf(r.indexed, r.notIndexed);
-        withDelta.push({ ...r, pctIndexed, prev });
+        const trans = transByKey.get(`${r.day}|${r.site}`);
+        withDelta.push({ ...r, pctIndexed, prev, newlyIndexed: trans?.newlyIndexed ?? 0, newlyNotIndexed: trans?.newlyNotIndexed ?? 0 });
         prev = { indexed: r.indexed, notIndexed: r.notIndexed, unknown: r.unknown, pending: r.pending, pctIndexed };
       }
     }
@@ -341,6 +368,17 @@ function byDayTab(ui, H) {
       ['Not indexed', f(latestDay.notIndexed), countDelta(h, latestDay.notIndexed, prevDay?.notIndexed ?? null, true), H.notIndexed],
       ['% indexed', `${latestPct}%`, pctDelta(h, latestPct, prevPct), H.percentIndexed],
       ['Checked', f(latestDay.checked), countDelta(h, latestDay.checked, prevDay?.checked ?? null, false)],
+    ]);
+
+    // A second small tile row (ui.kpis warns above 4 tiles) for the day's
+    // gross transition counts — shown alongside each other, not just the
+    // gain alone, so real two-way churn (e.g. 10 newly indexed, 8 dropped)
+    // doesn't read as a flat "+2" the way the Indexed tile's own delta would.
+    const transByDay = sumTransitionsByDay(transitions);
+    const latestTrans = transByDay.get(days[days.length - 1]) || { newlyIndexed: 0, newlyNotIndexed: 0 };
+    const transTileRow = ui.kpis([
+      ['Newly on Google', f(latestTrans.newlyIndexed), null, H.newlyIndexed],
+      ['Dropped from Google', f(latestTrans.newlyNotIndexed), null, H.newlyNotIndexed],
     ]);
 
     // Grouped bars read best over ~2 weeks; all 30 days of 4 series each
@@ -378,6 +416,12 @@ function byDayTab(ui, H) {
       countCol('notIndexed', 'Not indexed', true),
       countCol('unknown', 'Unknown', true),
       countCol('pending', 'Pending', true),
+      // Raw per-day gross counts, not a delta — the number itself already
+      // IS the day's change (how many pages moved status since their own
+      // last check), unlike the breakdown columns above which are point-in-
+      // time totals that need a delta to show movement.
+      { key: 'newlyIndexed', label: 'Newly on Google', num: true, format: ui.charts.fmt.int, help: H.newlyIndexed },
+      { key: 'newlyNotIndexed', label: 'Dropped', num: true, format: ui.charts.fmt.int, help: H.newlyNotIndexed },
       {
         key: 'pctIndexed',
         label: '% indexed',
@@ -389,6 +433,7 @@ function byDayTab(ui, H) {
     fill(
       root,
       tileRow,
+      transTileRow,
       h('div', { class: 'block' }, h('h3', {}, `Index status per day (last ${chartDays.length} days)`), chartEl),
       ui.charts.dataTable(columns, withDelta)
     );

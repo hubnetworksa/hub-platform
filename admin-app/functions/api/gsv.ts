@@ -11,6 +11,7 @@ import { getGsvConfig, setGsvConfig, getGsvQuota, claimUrl, checkOne, reasonLabe
 //   GET /api/gsv?bySite=1                          -> per-site status totals + not_indexed reason breakdown
 //   GET /api/gsv?history=<id>                     -> recent gsv_checks for one URL
 //   GET /api/gsv?trend=1&site=&from=&to=           -> gsv_daily rows for the chart
+//   GET /api/gsv?transitions=1&site=&from=&to=     -> per-day "became indexed"/"dropped" counts
 //   GET /api/gsv?site=&status=&q=&sort=&page=      -> the URLs table (default mode)
 //   POST { action: 'check', id }                   -> immediate live inspection
 //   POST { action: 'recheck', ids: [...] }         -> up to 25 ids per call
@@ -196,6 +197,36 @@ async function trendMode(db: D1Database, q: URLSearchParams): Promise<Response> 
   return json({ ok: true, rows: rowsOut.map((r) => ({ day: r.day, site: r.site, indexed: r.indexed, notIndexed: r.not_indexed, unknown: r.unknown, pending: r.pending, checked: r.checked })) });
 }
 
+// gsv_checks.prev_status (added by migration 0010) is the status that URL
+// had immediately before THIS check — set from GsvCheckRow.status, which is
+// always a fresh read of gsv_urls at claim time, so it reflects real history
+// from the moment this shipped forward. Rows from before the migration have
+// prev_status = NULL and are simply excluded by date range (from defaults to
+// 30 days back), since this only reports transitions tracked going forward.
+async function transitionsMode(db: D1Database, q: URLSearchParams): Promise<Response> {
+  const site = q.get('site');
+  const from = q.get('from') || new Date(Date.now() - 30 * 86_400_000).toISOString().slice(0, 10);
+  const to = q.get('to') || new Date().toISOString().slice(0, 10);
+  const clauses = ['date(c.checked_at) >= ?', 'date(c.checked_at) <= ?'];
+  const params: unknown[] = [from, to];
+  if (site && site !== 'all') {
+    clauses.push('u.site = ?');
+    params.push(site);
+  }
+  const rowsOut = await rows<{ day: string; site: string; newlyIndexed: number; newlyNotIndexed: number }>(
+    db,
+    `SELECT date(c.checked_at) AS day, u.site AS site,
+       SUM(CASE WHEN c.status = 'indexed' AND (c.prev_status IS NULL OR c.prev_status != 'indexed') THEN 1 ELSE 0 END) AS newlyIndexed,
+       SUM(CASE WHEN c.status != 'indexed' AND c.prev_status = 'indexed' THEN 1 ELSE 0 END) AS newlyNotIndexed
+     FROM gsv_checks c JOIN gsv_urls u ON u.id = c.gsv_url_id
+     WHERE ${clauses.join(' AND ')}
+     GROUP BY day, site
+     ORDER BY day ASC`,
+    ...params
+  );
+  return json({ ok: true, rows: rowsOut });
+}
+
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const db = context.env.ADMIN_DB;
   const q = new URL(context.request.url).searchParams;
@@ -203,6 +234,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   if (q.get('bySite') === '1') return bySiteMode(context.env, db);
   if (q.has('history')) return historyMode(db, q.get('history'));
   if (q.get('trend') === '1') return trendMode(db, q);
+  if (q.get('transitions') === '1') return transitionsMode(db, q);
   return listMode(db, q);
 };
 
@@ -211,7 +243,7 @@ async function doCheck(env: Env, actor: string, body: Record<string, unknown>): 
   if (!Number.isInteger(id) || id <= 0) return json({ ok: false, error: 'Invalid id.' }, 400);
   const db = env.ADMIN_DB;
   const row = await db
-    .prepare(`SELECT id, site, url, consecutive_not_indexed, total_indexed_checks, total_not_indexed_checks FROM gsv_urls WHERE id = ?`)
+    .prepare(`SELECT id, site, url, status, consecutive_not_indexed, total_indexed_checks, total_not_indexed_checks FROM gsv_urls WHERE id = ?`)
     .bind(id)
     .first<GsvCheckRow>();
   if (!row) return json({ ok: false, error: 'Not found.' }, 404);
@@ -234,7 +266,7 @@ async function doRecheck(env: Env, actor: string, body: Record<string, unknown>)
   const failed: { id: number; error: string }[] = [];
   for (const id of ids) {
     const row = await db
-      .prepare(`SELECT id, site, url, consecutive_not_indexed, total_indexed_checks, total_not_indexed_checks FROM gsv_urls WHERE id = ?`)
+      .prepare(`SELECT id, site, url, status, consecutive_not_indexed, total_indexed_checks, total_not_indexed_checks FROM gsv_urls WHERE id = ?`)
       .bind(id)
       .first<GsvCheckRow>();
     if (!row) {
