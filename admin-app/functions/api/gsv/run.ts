@@ -72,7 +72,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         const discovered = await discoverUrls(db, site);
         const due = await rows<GsvCheckRow>(
           db,
-          `SELECT id, site, url, consecutive_not_indexed, total_indexed_checks, total_not_indexed_checks
+          `SELECT id, site, url, status, consecutive_not_indexed, total_indexed_checks, total_not_indexed_checks
            FROM gsv_urls WHERE site = ?
            ORDER BY (status = 'pending') DESC, (status = 'not_indexed') DESC, last_attempt_at ASC
            LIMIT ?`,
