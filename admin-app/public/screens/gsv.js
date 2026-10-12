@@ -129,6 +129,7 @@ export async function render(view, ui) {
         [
           { id: 'by-site', label: 'By site', render: () => bySiteTab(ui, H) },
           { id: 'by-day', label: 'By day', render: () => byDayTab(ui, H) },
+          { id: 'newly-on-google', label: 'Newly on Google', render: () => newlyOnGoogleTab(ui, H) },
           { id: 'urls', label: 'URLs', render: () => urlsTab(ui, tableState, selected) },
           { id: 'settings', label: 'Settings', render: () => settingsTab(ui, summary, H) },
         ],
@@ -443,6 +444,94 @@ function byDayTab(ui, H) {
     title: 'Index status by day',
     help: H.byDay,
     sub: site === 'all' ? 'Last 30 days, all sites — one row per site per day' : `Last 30 days, ${ui.siteName(site)}`,
+    body: root,
+  });
+}
+
+// "Newly on Google" tab: a dedicated BI view built only from
+// /api/gsv?transitions=1 rows — the same gross per-day gain/drop counts
+// byDayTab's second tile row and two table columns already surface, but
+// here always split per site, charted, and ranked, instead of living as
+// two numbers in a table. This tab deliberately ignores the top-bar site
+// selector (ui.site() is never read here) because the whole point is
+// seeing all 3 sites' daily movement together, which "All sites"
+// elsewhere on this screen either sums away or buries in a 3-row table.
+function newlyOnGoogleTab(ui, H) {
+  const { h, fill, api } = ui;
+  const f = ui.charts.fmt.int;
+  const root = h('div', { class: 'stack' });
+  fill(root, ui.state.loading());
+
+  (async () => {
+    let rows;
+    try {
+      const to = new Date().toISOString().slice(0, 10);
+      const from = new Date(Date.now() - 30 * 86_400_000).toISOString().slice(0, 10);
+      // No `site` param, ever — this fetch always covers every site.
+      const d = await api(`/api/gsv?transitions=1&from=${from}&to=${to}`);
+      rows = d.rows;
+    } catch (e) {
+      fill(root, ui.state.error(e));
+      return;
+    }
+    if (!root.isConnected) return;
+    if (!rows.length) {
+      fill(root, ui.state.empty('No transition data yet. It appears once URLs have been checked for a few days.'));
+      return;
+    }
+
+    // Sites in the same alphabetical order byDayTab's table falls back to
+    // when ties need breaking, so the two tabs read consistently.
+    const sites = [...new Set(rows.map((r) => r.site))].sort((a, b) => ui.siteName(a).localeCompare(ui.siteName(b)));
+    const days = [...new Set(rows.map((r) => r.day))].sort();
+    const byKey = new Map(rows.map((r) => [`${r.day}|${r.site}`, r]));
+    const valueAt = (site, day, key) => byKey.get(`${day}|${site}`)?.[key] ?? 0;
+
+    const totalIndexed = rows.reduce((a, r) => a + r.newlyIndexed, 0);
+    const totalDropped = rows.reduce((a, r) => a + r.newlyNotIndexed, 0);
+    const netChange = totalIndexed - totalDropped;
+    const lastDay = days[days.length - 1];
+    const todayIndexed = rows.filter((r) => r.day === lastDay).reduce((a, r) => a + r.newlyIndexed, 0);
+
+    const kpiRow = ui.kpis([
+      ['Newly on Google (30 days)', f(totalIndexed), null, H.newlyIndexed],
+      ['Dropped (30 days)', f(totalDropped), null, H.newlyNotIndexed],
+      ['Net change (30 days)', `${netChange > 0 ? '+' : ''}${f(netChange)}`, null, H.netChange],
+      [`Newly on Google, ${ui.charts.fmt.day(lastDay)}`, f(todayIndexed), null, H.newlyIndexed],
+    ]);
+
+    // Same per-site series shape google.js's series() helper builds for its
+    // own line charts: one { name, short, color, values } per site, colored
+    // and labelled by the app-wide siteColor/siteName so site identity stays
+    // consistent with every other chart in the app.
+    const seriesFor = (key) =>
+      sites.map((s) => ({ name: ui.siteName(s), short: ui.siteName(s), color: ui.siteColor(s), values: days.map((d) => valueAt(s, d, key)) }));
+
+    const gainChart = h('div');
+    const dropChart = h('div');
+    requestAnimationFrame(() => {
+      ui.charts.lineChart(gainChart, { x: days, series: seriesFor('newlyIndexed'), label: 'Newly on Google per day, per site', size: 'sm' });
+      ui.charts.lineChart(dropChart, { x: days, series: seriesFor('newlyNotIndexed'), label: 'Dropped from Google per day, per site', size: 'sm' });
+    });
+
+    const leaderboard = h('div');
+    ui.charts.barList(leaderboard, {
+      items: sites.map((s) => ({ label: ui.siteName(s), value: rows.filter((r) => r.site === s).reduce((a, r) => a + r.newlyIndexed, 0), color: ui.siteColor(s) })),
+    });
+
+    fill(
+      root,
+      kpiRow,
+      ui.card({ title: 'Newly on Google, per site', sub: 'Last 30 days, one line per site.', body: gainChart }),
+      ui.card({ title: 'Dropped from Google, per site', sub: 'Last 30 days, one line per site.', body: dropChart }),
+      ui.card({ title: 'Total newly on Google by site (last 30 days)', sub: 'For exact day-by-day numbers, see the By day tab.', body: leaderboard })
+    );
+  })();
+
+  return ui.card({
+    title: 'Newly on Google',
+    help: H.newlyIndexed,
+    sub: 'Always all 3 sites, broken out — unlike every other tab here, this one ignores the site selector above on purpose.',
     body: root,
   });
 }
