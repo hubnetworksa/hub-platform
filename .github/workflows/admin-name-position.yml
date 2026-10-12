@@ -1,0 +1,65 @@
+name: Hub Admin Name Position
+
+# Every 3 hours: works through Pretoria, Polokwane and Cape Town's published
+# businesses, asking Search Console's Performance API what position Google
+# actually shows when someone searches that exact business's NAME
+# (admin-app/functions/api/name-position/run.ts) — see
+# admin-app/migrations/0011_name_position.sql for why this is a different,
+# more honest number than the existing "average position" KPI. Nothing is
+# committed: the data lives in Hub Admin's own database (name_position),
+# read by the admin screen and surfaced alongside the Google Visibility
+# URLs table.
+#
+# Cron offset: minute :20 (not :10, which is GSV's own offset, and not a
+# minute that would start this job in the same minute as admin-gsv.yml's
+# every-2-hours run) on a 3-hour cadence (not GSV's 2-hour one), so the two
+# heavy batch workflows don't contend for the same window. The 5-minute
+# notifier (admin-notify.yml, "*/5 * * * *") is lightweight enough that
+# sharing a trigger minute with it isn't a real concern the way two
+# multi-minute batch jobs overlapping would be.
+#
+# Unlike URL Inspection's clean 2,000 checks/site/day cap (see
+# admin-gsv.yml's comment), the Performance API's quota is documented by
+# Google only as a "load" cost, not a flat per-day count — so the real safe
+# throughput here isn't precisely known yet. The batch size
+# (name_position_config.batchSizePerSite, default 300/site/run) is
+# deliberately conservative and adjustable from the admin UI without a
+# redeploy, same as every other knob in this system; this cadence can be
+# tightened once real-world behaviour (or a quota/rate error) says it's safe to.
+#
+# Needs the Cloudflare pair, to read Hub Admin's trigger key (the same key
+# the 5-minute notifier uses).
+
+on:
+  schedule:
+    - cron: "20 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: admin-name-position
+  cancel-in-progress: false
+
+jobs:
+  name-position:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout the script
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/admin-name-position-run.mjs
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Run the name position check
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/admin-name-position-run.mjs
