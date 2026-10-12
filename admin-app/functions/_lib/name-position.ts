@@ -65,35 +65,58 @@ export interface NamePositionOutcome {
   position: number | null;
   impressions: number | null;
   clicks: number | null;
+  lastImpressionDate: string | null;
   quotaOrRate: boolean;
   errorMessage: string | null;
 }
 
 /**
  * Maps a raw searchAnalytics.query response (or its error shape) to a
- * reading: a present row with real impressions -> its
- * position/impressions/clicks; no rows, OR a row with zero impressions
- * (confirmed in production: a non-matching dimensionFilterGroups filter
- * still comes back as one degenerate `{impressions:0, clicks:0, position:0}`
- * row rather than an empty `rows` array) -> position null, impressions/
- * clicks 0, NOT an error, since "no recorded searches for this exact name"
- * is itself meaningful and a literal position of 0 would be nonsensical (a
- * page can't rank "0th"); an API error -> null fields with errorMessage set
- * so the caller can tell the two apart (see checkOnePosition).
+ * reading. The query now asks for one row per day (`dimensions: ['date']`,
+ * see queryPerformance), so this aggregates across rows instead of reading
+ * one: rows with real impressions -> summed impressions/clicks, the
+ * impressions-weighted average position (the same math Google's own
+ * aggregate "position" already uses internally, so this reproduces what the
+ * old single-row call returned), and the most recent date among them; no
+ * rows, OR every row has zero impressions (confirmed in production: a
+ * non-matching dimensionFilterGroups filter still comes back as one
+ * degenerate `{impressions:0, clicks:0, position:0}` row per day rather than
+ * an absent row) -> position null, impressions/clicks 0, lastImpressionDate
+ * null, NOT an error, since "no recorded searches for this exact name" is
+ * itself meaningful and a literal position of 0 would be nonsensical (a page
+ * can't rank "0th"); an API error -> null fields with errorMessage set so
+ * the caller can tell the two apart (see checkOnePosition).
  */
 export function mapPerformanceResponse(r: unknown): NamePositionOutcome {
-  const obj = r as { error?: { message?: unknown }; rows?: Array<{ position?: unknown; impressions?: unknown; clicks?: unknown }> } | null | undefined;
+  const obj = r as {
+    error?: { message?: unknown };
+    rows?: Array<{ keys?: unknown; position?: unknown; impressions?: unknown; clicks?: unknown }>;
+  } | null | undefined;
   if (obj?.error) {
     const message = typeof obj.error.message === 'string' ? obj.error.message : 'Performance API error.';
-    return { position: null, impressions: null, clicks: null, quotaOrRate: /quota|rate/i.test(message), errorMessage: message };
+    return { position: null, impressions: null, clicks: null, lastImpressionDate: null, quotaOrRate: /quota|rate/i.test(message), errorMessage: message };
   }
-  const row = obj?.rows?.[0];
-  const impressions = typeof row?.impressions === 'number' ? row.impressions : 0;
-  if (!row || impressions === 0) return { position: null, impressions: 0, clicks: 0, quotaOrRate: false, errorMessage: null };
+  const noData = { position: null, impressions: 0, clicks: 0, lastImpressionDate: null, quotaOrRate: false, errorMessage: null };
+  const rowsIn = obj?.rows ?? [];
+  const withData = rowsIn.filter((row) => (typeof row?.impressions === 'number' ? row.impressions : 0) > 0);
+  if (!withData.length) return noData;
+  let impressions = 0;
+  let clicks = 0;
+  let weightedPosition = 0;
+  let lastImpressionDate: string | null = null;
+  for (const row of withData) {
+    const rowImpressions = row.impressions as number;
+    impressions += rowImpressions;
+    clicks += typeof row.clicks === 'number' ? row.clicks : 0;
+    if (typeof row.position === 'number') weightedPosition += row.position * rowImpressions;
+    const date = Array.isArray(row.keys) ? row.keys[0] : undefined;
+    if (typeof date === 'string' && (lastImpressionDate === null || date > lastImpressionDate)) lastImpressionDate = date;
+  }
   return {
-    position: typeof row.position === 'number' ? row.position : null,
+    position: impressions > 0 ? weightedPosition / impressions : null,
     impressions,
-    clicks: typeof row.clicks === 'number' ? row.clicks : null,
+    clicks,
+    lastImpressionDate,
     quotaOrRate: false,
     errorMessage: null,
   };
@@ -127,10 +150,13 @@ async function queryPerformance(token: string, siteUrl: string, name: string): P
   const body = {
     startDate,
     endDate,
-    // No `dimensions` — one aggregate row for everything matching this exact
-    // query string, not grouped by query (there's only one query here).
+    // dimensions: ['date'] -> one row per day with any data (days with zero
+    // impressions for this filtered query are simply absent, not returned as
+    // zero-rows), so we can read the last real impression date, not just the
+    // 28-day blend. rowLimit 28 covers the whole window with no pagination.
+    dimensions: ['date'],
     dimensionFilterGroups: [{ filters: [{ dimension: 'query', operator: 'equals', expression: name }] }],
-    rowLimit: 1,
+    rowLimit: 28,
   };
   for (let attempt = 1; ; attempt++) {
     const controller = new AbortController();
@@ -198,7 +224,7 @@ export async function checkOnePosition(env: Env, db: D1Database, row: NamePositi
     const token = await getAccessToken(env);
     outcome = mapPerformanceResponse(await queryPerformance(token, siteUrl, row.name));
   } catch (e) {
-    outcome = { position: null, impressions: null, clicks: null, quotaOrRate: false, errorMessage: e instanceof Error ? e.message : String(e) };
+    outcome = { position: null, impressions: null, clicks: null, lastImpressionDate: null, quotaOrRate: false, errorMessage: e instanceof Error ? e.message : String(e) };
   }
   if (outcome.errorMessage) {
     await db
@@ -207,8 +233,10 @@ export async function checkOnePosition(env: Env, db: D1Database, row: NamePositi
       .run();
   } else {
     await db
-      .prepare(`UPDATE name_position SET position = ?, impressions = ?, clicks = ?, checked_at = datetime('now'), claimed_at = NULL, updated_at = datetime('now') WHERE id = ?`)
-      .bind(outcome.position, outcome.impressions, outcome.clicks, row.id)
+      .prepare(
+        `UPDATE name_position SET position = ?, impressions = ?, clicks = ?, last_impression_date = ?, checked_at = datetime('now'), claimed_at = NULL, updated_at = datetime('now') WHERE id = ?`
+      )
+      .bind(outcome.position, outcome.impressions, outcome.clicks, outcome.lastImpressionDate, row.id)
       .run();
   }
   return outcome;
