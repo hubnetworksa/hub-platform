@@ -38,6 +38,49 @@ function statusPill(ui, row) {
   return h('span', { class: cls }, statusLabel(row.status));
 }
 
+// Sums gsv_daily rows across sites into one point per day — the same
+// aggregation trendCard and byDayTab both need for "All sites" (and is a
+// no-op when the rows already belong to a single site), so it lives here
+// once instead of twice.
+function sumByDay(rows) {
+  const byDay = new Map();
+  for (const r of rows) {
+    const cur = byDay.get(r.day) || { indexed: 0, notIndexed: 0, unknown: 0, pending: 0, checked: 0 };
+    cur.indexed += r.indexed;
+    cur.notIndexed += r.notIndexed;
+    cur.unknown += r.unknown;
+    cur.pending += r.pending;
+    cur.checked += r.checked;
+    byDay.set(r.day, cur);
+  }
+  return byDay;
+}
+
+function pctIndexedOf(indexed, notIndexed) {
+  const base = indexed + notIndexed;
+  return base > 0 ? Math.round((indexed / base) * 1000) / 10 : 0;
+}
+
+// Arrow + up/down class both follow "is this the good direction", not the
+// raw numeric sign — same convention as google.js's position delta (lower
+// position is better, so a decrease still shows ▲/up there). Shared by the
+// by-day stat tiles and the by-day table cells so the good/bad rule only
+// lives in one place.
+function countDelta(h, cur, prev, invert) {
+  if (prev == null) return h('div', { class: 'delta' }, 'no earlier data');
+  const diff = cur - prev;
+  if (diff === 0) return h('div', { class: 'delta' }, '■ 0');
+  const good = invert ? diff < 0 : diff > 0;
+  return h('div', { class: `delta ${good ? 'up' : 'down'}` }, `${good ? '▲' : '▼'} ${Math.abs(diff)}`);
+}
+function pctDelta(h, cur, prev) {
+  if (prev == null) return h('div', { class: 'delta' }, 'no earlier data');
+  const diff = Math.round((cur - prev) * 10) / 10;
+  if (diff === 0) return h('div', { class: 'delta' }, '■ 0pp');
+  const good = diff > 0;
+  return h('div', { class: `delta ${good ? 'up' : 'down'}` }, `${good ? '▲' : '▼'} ${Math.abs(diff)}pp`);
+}
+
 export async function render(view, ui) {
   const { h, fill, api } = ui;
   const H = ui.HELP.gsv;
@@ -136,15 +179,7 @@ function trendCard(ui) {
       ui.fill(holder, ui.state.empty('No trend data yet. It appears once URLs have been checked.'));
       return;
     }
-    const byDay = new Map();
-    for (const r of rows) {
-      const cur = byDay.get(r.day) || { indexed: 0, notIndexed: 0, unknown: 0, pending: 0 };
-      cur.indexed += r.indexed;
-      cur.notIndexed += r.notIndexed;
-      cur.unknown += r.unknown;
-      cur.pending += r.pending;
-      byDay.set(r.day, cur);
-    }
+    const byDay = sumByDay(rows);
     const days = [...byDay.keys()].sort();
     const chart = h('div');
     ui.fill(holder, chart);
@@ -246,6 +281,7 @@ function siteBreakdownCard(ui, s, H) {
 // day-over-day delta computed against that same site's own previous day.
 function byDayTab(ui, H) {
   const { h, fill, api } = ui;
+  const f = ui.charts.fmt.int;
   const site = ui.site();
   const root = h('div');
   fill(root, ui.state.loading());
@@ -282,37 +318,56 @@ function byDayTab(ui, H) {
       list.sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : 0));
       let prev = null;
       for (const r of list) {
-        const base = r.indexed + r.notIndexed;
-        const pctIndexed = base > 0 ? Math.round((r.indexed / base) * 1000) / 10 : 0;
+        const pctIndexed = pctIndexedOf(r.indexed, r.notIndexed);
         withDelta.push({ ...r, pctIndexed, prev });
         prev = { indexed: r.indexed, notIndexed: r.notIndexed, unknown: r.unknown, pending: r.pending, pctIndexed };
       }
     }
     withDelta.sort((a, b) => (a.day < b.day ? 1 : a.day > b.day ? -1 : ui.siteName(a.site).localeCompare(ui.siteName(b.site))));
 
-    // Arrow + up/down class both follow "is this the good direction", not
-    // the raw numeric sign — same convention as google.js's position delta
-    // (lower position is better, so a decrease still shows ▲/up there).
-    const countDelta = (cur, prev, invert) => {
-      if (prev == null) return h('div', { class: 'delta' }, 'no earlier data');
-      const diff = cur - prev;
-      if (diff === 0) return h('div', { class: 'delta' }, '■ 0');
-      const good = invert ? diff < 0 : diff > 0;
-      return h('div', { class: `delta ${good ? 'up' : 'down'}` }, `${good ? '▲' : '▼'} ${Math.abs(diff)}`);
-    };
-    const pctDelta = (cur, prev) => {
-      if (prev == null) return h('div', { class: 'delta' }, 'no earlier data');
-      const diff = Math.round((cur - prev) * 10) / 10;
-      if (diff === 0) return h('div', { class: 'delta' }, '■ 0pp');
-      const good = diff > 0;
-      return h('div', { class: `delta ${good ? 'up' : 'down'}` }, `${good ? '▲' : '▼'} ${Math.abs(diff)}pp`);
-    };
+    // Headline tiles + chart both read the same across-sites-per-day totals
+    // that trendCard's chart already uses for "All sites" (sumByDay); for a
+    // single site that's just that site's own rows, one per day, so no
+    // special-casing is needed here either.
+    const byDay = sumByDay(rows);
+    const days = [...byDay.keys()].sort();
+    const latestDay = byDay.get(days[days.length - 1]);
+    const prevDay = days.length > 1 ? byDay.get(days[days.length - 2]) : null;
+    const latestPct = pctIndexedOf(latestDay.indexed, latestDay.notIndexed);
+    const prevPct = prevDay ? pctIndexedOf(prevDay.indexed, prevDay.notIndexed) : null;
+
+    const tileRow = ui.kpis([
+      ['Indexed', f(latestDay.indexed), countDelta(h, latestDay.indexed, prevDay?.indexed ?? null, false), H.indexed],
+      ['Not indexed', f(latestDay.notIndexed), countDelta(h, latestDay.notIndexed, prevDay?.notIndexed ?? null, true), H.notIndexed],
+      ['% indexed', `${latestPct}%`, pctDelta(h, latestPct, prevPct), H.percentIndexed],
+      ['Checked', f(latestDay.checked), countDelta(h, latestDay.checked, prevDay?.checked ?? null, false)],
+    ]);
+
+    // Grouped bars read best over ~2 weeks; all 30 days of 4 series each
+    // would crowd the bars down to slivers, and the table below still has
+    // the full 30 days for anyone who needs them.
+    const chartDays = days.slice(-14);
+    const chartEl = h('div');
+    requestAnimationFrame(() =>
+      ui.charts.columnChart(chartEl, {
+        x: chartDays,
+        series: [
+          { name: 'Indexed', short: 'Indexed', color: 'var(--good)', values: chartDays.map((d) => byDay.get(d).indexed) },
+          { name: 'Not indexed', short: 'Not idx.', color: 'var(--critical)', values: chartDays.map((d) => byDay.get(d).notIndexed) },
+          { name: 'Unknown', short: 'Unknown', color: 'var(--muted)', values: chartDays.map((d) => byDay.get(d).unknown) },
+          { name: 'Pending', short: 'Pending', color: 'var(--action)', values: chartDays.map((d) => byDay.get(d).pending) },
+        ],
+        xLabel: ui.charts.fmt.day,
+        xLong: ui.charts.fmt.dayLong,
+        label: 'Index status per day',
+      })
+    );
 
     const countCol = (key, label, invert) => ({
       key,
       label,
       num: true,
-      render: (r) => h('div', {}, String(r[key]), countDelta(r[key], r.prev ? r.prev[key] : null, invert)),
+      render: (r) => h('div', {}, String(r[key]), countDelta(h, r[key], r.prev ? r.prev[key] : null, invert)),
     });
 
     const columns = [
@@ -327,11 +382,16 @@ function byDayTab(ui, H) {
         key: 'pctIndexed',
         label: '% indexed',
         num: true,
-        render: (r) => h('div', {}, `${r.pctIndexed}%`, pctDelta(r.pctIndexed, r.prev ? r.prev.pctIndexed : null)),
+        render: (r) => h('div', {}, `${r.pctIndexed}%`, pctDelta(h, r.pctIndexed, r.prev ? r.prev.pctIndexed : null)),
       },
     ];
 
-    fill(root, ui.charts.dataTable(columns, withDelta));
+    fill(
+      root,
+      tileRow,
+      h('div', { class: 'block' }, h('h3', {}, `Index status per day (last ${chartDays.length} days)`), chartEl),
+      ui.charts.dataTable(columns, withDelta)
+    );
   })();
 
   return ui.card({
