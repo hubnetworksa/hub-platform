@@ -71,11 +71,15 @@ export interface NamePositionOutcome {
 
 /**
  * Maps a raw searchAnalytics.query response (or its error shape) to a
- * reading: a present row -> its position/impressions/clicks; no rows (the
- * query matched, Google just has nothing for it) -> all null, NOT an error,
- * since "no recorded searches for this exact name" is itself meaningful;
- * an API error -> null fields with errorMessage set so the caller can tell
- * the two apart (see checkOnePosition).
+ * reading: a present row with real impressions -> its
+ * position/impressions/clicks; no rows, OR a row with zero impressions
+ * (confirmed in production: a non-matching dimensionFilterGroups filter
+ * still comes back as one degenerate `{impressions:0, clicks:0, position:0}`
+ * row rather than an empty `rows` array) -> position null, impressions/
+ * clicks 0, NOT an error, since "no recorded searches for this exact name"
+ * is itself meaningful and a literal position of 0 would be nonsensical (a
+ * page can't rank "0th"); an API error -> null fields with errorMessage set
+ * so the caller can tell the two apart (see checkOnePosition).
  */
 export function mapPerformanceResponse(r: unknown): NamePositionOutcome {
   const obj = r as { error?: { message?: unknown }; rows?: Array<{ position?: unknown; impressions?: unknown; clicks?: unknown }> } | null | undefined;
@@ -84,10 +88,11 @@ export function mapPerformanceResponse(r: unknown): NamePositionOutcome {
     return { position: null, impressions: null, clicks: null, quotaOrRate: /quota|rate/i.test(message), errorMessage: message };
   }
   const row = obj?.rows?.[0];
-  if (!row) return { position: null, impressions: null, clicks: null, quotaOrRate: false, errorMessage: null };
+  const impressions = typeof row?.impressions === 'number' ? row.impressions : 0;
+  if (!row || impressions === 0) return { position: null, impressions: 0, clicks: 0, quotaOrRate: false, errorMessage: null };
   return {
     position: typeof row.position === 'number' ? row.position : null,
-    impressions: typeof row.impressions === 'number' ? row.impressions : null,
+    impressions,
     clicks: typeof row.clicks === 'number' ? row.clicks : null,
     quotaOrRate: false,
     errorMessage: null,
