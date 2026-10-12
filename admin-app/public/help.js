@@ -138,6 +138,7 @@ export const HELP = {
     byDay: 'One row per day, each count compared to the day before. With all sites selected, rows are split per site instead of summed.',
     newlyIndexed: 'Pages that moved from not-indexed or never-checked to indexed since their own last check — not just today’s net change, which can hide real gains.',
     newlyNotIndexed: 'Pages that moved from indexed to not-indexed since their own last check — shown alongside Newly on Google so churn both ways is visible.',
+    netChange: 'Newly on Google minus Dropped over the period. Positive means more pages joined Google than left it; negative means the reverse.',
   },
   social: {
     title: 'Nothing posts automatically — copy a caption and post it yourself.',
