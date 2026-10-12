@@ -69,6 +69,7 @@ export async function render(view, ui) {
       ui.tabs(
         [
           { id: 'by-site', label: 'By site', render: () => bySiteTab(ui, H) },
+          { id: 'by-day', label: 'By day', render: () => byDayTab(ui, H) },
           { id: 'urls', label: 'URLs', render: () => urlsTab(ui, tableState, selected) },
           { id: 'settings', label: 'Settings', render: () => settingsTab(ui, summary, H) },
         ],
@@ -234,6 +235,110 @@ function siteBreakdownCard(ui, s, H) {
     title: s.name,
     sub: totalSeen > 0 ? `${s.pctIndexed}% of checked pages are on Google` : null,
     body: h('div', {}, kpiRow, rest),
+  });
+}
+
+// "By day" tab: the same /api/gsv?trend=1 rows as trendCard's chart above,
+// but as a table — good for reading exact numbers and comparing specific
+// days, which the chart is bad at. Unlike trendCard, "All sites" does NOT
+// sum across sites (that would hide exactly the per-site comparison this
+// tab is for) — instead it's one row per (day, site), with each site's
+// day-over-day delta computed against that same site's own previous day.
+function byDayTab(ui, H) {
+  const { h, fill, api } = ui;
+  const site = ui.site();
+  const root = h('div');
+  fill(root, ui.state.loading());
+
+  (async () => {
+    let rows;
+    try {
+      const to = new Date().toISOString().slice(0, 10);
+      const from = new Date(Date.now() - 30 * 86_400_000).toISOString().slice(0, 10);
+      const q = new URLSearchParams({ trend: '1', from, to });
+      if (site !== 'all') q.set('site', site);
+      const d = await api(`/api/gsv?${q.toString()}`);
+      rows = d.rows;
+    } catch (e) {
+      fill(root, ui.state.error(e));
+      return;
+    }
+    if (!root.isConnected) return;
+    if (!rows.length) {
+      fill(root, ui.state.empty('No trend data yet. It appears once URLs have been checked.'));
+      return;
+    }
+
+    // Walk each site's rows oldest-first so "previous day" is simple, and
+    // compute pctIndexed the same way kpiBlock() does, before sorting the
+    // combined set newest-first for display.
+    const bySite = new Map();
+    for (const r of rows) {
+      if (!bySite.has(r.site)) bySite.set(r.site, []);
+      bySite.get(r.site).push(r);
+    }
+    const withDelta = [];
+    for (const list of bySite.values()) {
+      list.sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : 0));
+      let prev = null;
+      for (const r of list) {
+        const base = r.indexed + r.notIndexed;
+        const pctIndexed = base > 0 ? Math.round((r.indexed / base) * 1000) / 10 : 0;
+        withDelta.push({ ...r, pctIndexed, prev });
+        prev = { indexed: r.indexed, notIndexed: r.notIndexed, unknown: r.unknown, pending: r.pending, pctIndexed };
+      }
+    }
+    withDelta.sort((a, b) => (a.day < b.day ? 1 : a.day > b.day ? -1 : ui.siteName(a.site).localeCompare(ui.siteName(b.site))));
+
+    // Arrow + up/down class both follow "is this the good direction", not
+    // the raw numeric sign — same convention as google.js's position delta
+    // (lower position is better, so a decrease still shows ▲/up there).
+    const countDelta = (cur, prev, invert) => {
+      if (prev == null) return h('div', { class: 'delta' }, 'no earlier data');
+      const diff = cur - prev;
+      if (diff === 0) return h('div', { class: 'delta' }, '■ 0');
+      const good = invert ? diff < 0 : diff > 0;
+      return h('div', { class: `delta ${good ? 'up' : 'down'}` }, `${good ? '▲' : '▼'} ${Math.abs(diff)}`);
+    };
+    const pctDelta = (cur, prev) => {
+      if (prev == null) return h('div', { class: 'delta' }, 'no earlier data');
+      const diff = Math.round((cur - prev) * 10) / 10;
+      if (diff === 0) return h('div', { class: 'delta' }, '■ 0pp');
+      const good = diff > 0;
+      return h('div', { class: `delta ${good ? 'up' : 'down'}` }, `${good ? '▲' : '▼'} ${Math.abs(diff)}pp`);
+    };
+
+    const countCol = (key, label, invert) => ({
+      key,
+      label,
+      num: true,
+      render: (r) => h('div', {}, String(r[key]), countDelta(r[key], r.prev ? r.prev[key] : null, invert)),
+    });
+
+    const columns = [
+      { key: 'day', label: 'Day', format: ui.charts.fmt.day },
+      ...(site === 'all' ? [{ key: 'site', label: 'Site', render: (r) => document.createTextNode(ui.siteName(r.site)) }] : []),
+      { key: 'checked', label: 'Checked', num: true, format: ui.charts.fmt.int },
+      countCol('indexed', 'Indexed', false),
+      countCol('notIndexed', 'Not indexed', true),
+      countCol('unknown', 'Unknown', true),
+      countCol('pending', 'Pending', true),
+      {
+        key: 'pctIndexed',
+        label: '% indexed',
+        num: true,
+        render: (r) => h('div', {}, `${r.pctIndexed}%`, pctDelta(r.pctIndexed, r.prev ? r.prev.pctIndexed : null)),
+      },
+    ];
+
+    fill(root, ui.charts.dataTable(columns, withDelta));
+  })();
+
+  return ui.card({
+    title: 'Index status by day',
+    help: H.byDay,
+    sub: site === 'all' ? 'Last 30 days, all sites — one row per site per day' : `Last 30 days, ${ui.siteName(site)}`,
+    body: root,
   });
 }
 
