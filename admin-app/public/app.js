@@ -60,6 +60,7 @@ const ICON = {
   edit: 'M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z',
   moon: 'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z',
   refresh: 'M20 11a8 8 0 0 0-14.9-3.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.9 3.9L20 16M20 20v-4h-4',
+  search: 'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM16 16l5 5',
 };
 function icon(name, size = 20) {
   const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -186,6 +187,7 @@ const ROUTES = [
   ['#/google', 'Google', 'globe'],
   ['#/recovery', 'Site recovery', 'activity'],
   ['#/gsv', 'Google Visibility', 'globe'],
+  ['#/name-position', 'Name Search Rank', 'search'],
   ['#/analytics', 'Analytics', 'chart'],
   ['#/index-gate', 'Listings to fix', 'globe'],
   ['#/money', 'Money', 'receipt'],
@@ -2277,6 +2279,7 @@ const SCREENS = {
   '#/google': 'google',
   '#/recovery': 'recovery',
   '#/gsv': 'gsv',
+  '#/name-position': 'name-position',
   '#/analytics': 'analytics',
   '#/index-gate': 'index-gate',
   '#/money': 'money',

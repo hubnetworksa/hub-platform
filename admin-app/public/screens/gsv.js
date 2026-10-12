@@ -712,6 +712,11 @@ function urlsTab(ui, state, selected) {
       h('td', {}, statusPill(ui, r)),
       h('td', {}, r.lastAttemptAt ? ui.ago(r.lastAttemptAt) : 'never'),
       h('td', {}, r.consecutiveNotIndexed > 0 ? String(r.consecutiveNotIndexed) : ''),
+      // namePosition comes from the joined name_position table (see
+      // api/gsv.ts) and has no checked-for-this-field timestamp of its own
+      // here, unlike the dedicated Name Search Rank screen — so null just
+      // reads as "no data" rather than distinguishing "never checked".
+      h('td', { class: 'num' }, r.namePosition != null ? h('span', {}, r.namePosition.toFixed(1)) : h('span', { class: 'meta' }, 'No data')),
       h(
         'td',
         {},
@@ -767,6 +772,7 @@ function urlsTab(ui, state, selected) {
           thSort('status', 'Status'),
           thSort('lastAttemptAt', 'Last checked'),
           thSort('consecutiveNotIndexed', 'Consecutive not-indexed', ui.help(ui.HELP.gsv.consecutiveNotIndexed)),
+          h('th', { class: 'num' }, 'Name rank', ui.help(ui.HELP.namePosition.position)),
           h('th', {}, 'Actions', ui.help(ui.HELP.gsv.searchGoogleLink))
         )
       ),
