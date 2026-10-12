@@ -8,9 +8,13 @@ import { getGsvConfig, discoverUrls, claimUrl, checkOne, bumpGsvQuota, upsertGsv
 // X-Notify-Key (see _lib/notify-key.ts). Per site (Pretoria, Polokwane,
 // Cape Town — a site is simply skipped if its DB binding is absent):
 //   - discovers newly published business URLs (inserted as 'pending')
-//   - works through the due list — pending first, then longest-not-indexed,
-//     then oldest-checked — via Search Console's URL Inspection API
-//     (_lib/gsv.ts's checkOne, shared with the admin "Check now"/"Recheck")
+//   - works through the due list — pending first, then not_indexed/unknown
+//     (unknown gets the same priority as not_indexed, not left to the back
+//     of the oldest-checked queue, since a failed check — timeout/quota/
+//     Google 5xx — deserves a prompt retry just as much as a real "not
+//     indexed" verdict does), then oldest-checked — via Search Console's
+//     URL Inspection API (_lib/gsv.ts's checkOne, shared with the admin
+//     "Check now"/"Recheck")
 //   - stops that site's loop early (resumes next call) on a quota/rate error
 //
 // A single Cloudflare Pages Function invocation CANNOT sustain a multi-minute
@@ -74,7 +78,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
           db,
           `SELECT id, site, url, status, consecutive_not_indexed, total_indexed_checks, total_not_indexed_checks
            FROM gsv_urls WHERE site = ?
-           ORDER BY (status = 'pending') DESC, (status = 'not_indexed') DESC, last_attempt_at ASC
+           ORDER BY (status = 'pending') DESC, (status IN ('not_indexed', 'unknown')) DESC, last_attempt_at ASC
            LIMIT ?`,
           site.slug,
           config.batchSizePerSite
