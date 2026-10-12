@@ -200,9 +200,12 @@ async function trendMode(db: D1Database, q: URLSearchParams): Promise<Response> 
 // gsv_checks.prev_status (added by migration 0010) is the status that URL
 // had immediately before THIS check — set from GsvCheckRow.status, which is
 // always a fresh read of gsv_urls at claim time, so it reflects real history
-// from the moment this shipped forward. Rows from before the migration have
-// prev_status = NULL and are simply excluded by date range (from defaults to
-// 30 days back), since this only reports transitions tracked going forward.
+// from the moment this shipped forward. Rows from before the migration (or
+// from before a Pages deploy picked up the change) have prev_status = NULL,
+// meaning "we don't know what this URL was before" — NOT "it wasn't
+// indexed before". Both CASE branches require prev_status IS NOT NULL so a
+// NULL row contributes to neither newlyIndexed nor newlyNotIndexed, instead
+// of being miscounted as a transition that was never actually observed.
 async function transitionsMode(db: D1Database, q: URLSearchParams): Promise<Response> {
   const site = q.get('site');
   const from = q.get('from') || new Date(Date.now() - 30 * 86_400_000).toISOString().slice(0, 10);
@@ -216,7 +219,7 @@ async function transitionsMode(db: D1Database, q: URLSearchParams): Promise<Resp
   const rowsOut = await rows<{ day: string; site: string; newlyIndexed: number; newlyNotIndexed: number }>(
     db,
     `SELECT date(c.checked_at) AS day, u.site AS site,
-       SUM(CASE WHEN c.status = 'indexed' AND (c.prev_status IS NULL OR c.prev_status != 'indexed') THEN 1 ELSE 0 END) AS newlyIndexed,
+       SUM(CASE WHEN c.status = 'indexed' AND c.prev_status IS NOT NULL AND c.prev_status != 'indexed' THEN 1 ELSE 0 END) AS newlyIndexed,
        SUM(CASE WHEN c.status != 'indexed' AND c.prev_status = 'indexed' THEN 1 ELSE 0 END) AS newlyNotIndexed
      FROM gsv_checks c JOIN gsv_urls u ON u.id = c.gsv_url_id
      WHERE ${clauses.join(' AND ')}
