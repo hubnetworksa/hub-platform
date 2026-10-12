@@ -3,6 +3,7 @@ import { cancelPayfastSubscription, payfastConfigured, type PayfastEnv } from '.
 import { sendEmail } from './send-email';
 import { logActivity } from './activity-log';
 import type { Site } from './site';
+import { voidRepCommission } from './reps';
 
 export interface PaidSubmission {
   id: number;
@@ -27,6 +28,12 @@ export async function closePaidSubmission(
   why: string
 ): Promise<void> {
   if (row.payment_status !== 'paid') return;
+
+  try {
+    await voidRepCommission(db, 'pending_submission', row.id, why);
+  } catch (err) {
+    console.error('voidRepCommission failed', err);
+  }
 
   let billing = 'No PayFast subscription token was captured — check the PayFast dashboard and cancel it there.';
   if (row.payfast_token && payfastConfigured(env)) {

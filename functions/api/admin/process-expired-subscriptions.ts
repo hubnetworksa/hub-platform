@@ -2,11 +2,14 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { logActivity } from '../../_lib/activity-log';
 import { requestRebuild, flushPendingRebuild } from '../../_lib/deploy-hook';
 import { safeEqual } from '../../_lib/timing';
+import { approveAndNotifyRepCommission, voidPendingRepCommission } from '../../_lib/reps';
 
 interface Env {
   DB: D1Database;
   CRON_SECRET?: string;
   GITHUB_DISPATCH_TOKEN?: string;
+  SITE?: string;
+  RESEND_API_KEY?: string;
 }
 
 // Daily sweep (same CRON_SECRET-gated pattern as process-owner-reminders):
@@ -50,6 +53,11 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   let downgraded = 0;
   for (const row of expiredTiers.results) {
+    const tierSubs = await db
+      .prepare(`SELECT id FROM subscriptions WHERE business_id = ? AND product_type = 'tier' AND status IN ('active', 'cancelled')`)
+      .bind(row.id)
+      .all<{ id: number }>();
+    for (const s of tierSubs.results) await voidPendingRepCommission(db, 'subscription', s.id, 'expired before second payment');
     await db
       .prepare(`UPDATE businesses SET subscription_tier = 0, subscription_status = 'expired' WHERE id = ?`)
       .bind(row.id)
@@ -77,9 +85,41 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 
   let slotsFreed = 0;
   for (const row of expiredSlots.results) {
+    await voidPendingRepCommission(db, 'subscription', row.id, 'expired before second payment');
     await db.prepare(`UPDATE subscriptions SET status = 'expired' WHERE id = ?`).bind(row.id).run();
     await logActivity(db, 'sponsorship_expired', row.name, `${row.product_type} (${row.product_target ?? 'n/a'}) period ended — slot is open again.`);
     slotsFreed++;
+  }
+
+  // Yearly purchases have no second payment for 12 months, so their rep
+  // commission is approved here once the sale has stood for 30 days and the
+  // plan is still active (a cancelled/expired one was voided above).
+  let repApproved = 0;
+  try {
+    const yearlySubs = await db
+      .prepare(
+        `SELECT c.source_id FROM rep_commissions c JOIN subscriptions s ON s.id = c.source_id
+         WHERE c.source_type = 'subscription' AND c.status = 'pending'
+           AND s.billing_period = 'yearly' AND s.status = 'active'
+           AND datetime(c.created_at) <= datetime('now', '-30 days')`
+      )
+      .all<{ source_id: number }>();
+    for (const r of yearlySubs.results) if (await approveAndNotifyRepCommission(context.env, 'subscription', r.source_id)) repApproved++;
+
+    // Signup-bought tiers still awaiting listing approval: the commission is
+    // still keyed to the pending_submissions row. Once approved it is relinked
+    // to the subscription (src/lib/business-submission.ts) and handled above.
+    const yearlySignups = await db
+      .prepare(
+        `SELECT c.source_id FROM rep_commissions c
+         WHERE c.source_type = 'pending_submission' AND c.status = 'pending'
+           AND datetime(c.created_at) <= datetime('now', '-30 days')
+           AND EXISTS (SELECT 1 FROM pending_submissions ps WHERE ps.id = c.source_id AND ps.chosen_billing_period = 'yearly' AND ps.payment_status = 'paid')`
+      )
+      .all<{ source_id: number }>();
+    for (const r of yearlySignups.results) if (await approveAndNotifyRepCommission(context.env, 'pending_submission', r.source_id)) repApproved++;
+  } catch (err) {
+    console.error('yearly rep commission approval failed', err);
   }
 
   // Badges, "Featured this month" and sponsor slots are baked into the
@@ -87,7 +127,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (downgraded || slotsFreed) await requestRebuild(context.env, 'subscriptions expired');
   const rebuilt = await flushPendingRebuild(context.env);
 
-  return json({ ok: true, downgraded, slotsFreed, rebuilt });
+  return json({ ok: true, downgraded, slotsFreed, repApproved, rebuilt });
 };
 
 function json(data: unknown, status = 200): Response {

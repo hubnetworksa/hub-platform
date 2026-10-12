@@ -51,7 +51,7 @@ try {
 // Every static route the site has, grouped by who should see it.
 const PUBLIC_ROUTES = [
   '/', '/search/', '/suburb/', '/category/', '/shopping-center/', '/events/', '/guides/', '/tourism/',
-  '/news/', '/pricing/', '/advertise/', '/partners/', '/about/', '/contact/', '/privacy/', '/terms/', '/404.html',
+  '/news/', '/pricing/', '/become-a-rep/', '/advertise/', '/partners/', '/about/', '/contact/', '/privacy/', '/terms/', '/404.html',
   '/list-your-business/', '/list-your-business/contact/', '/list-your-business/review/', '/list-your-business/checkout/',
   '/report-listing/', '/request-removal/', '/login/', '/register/', '/forgot-password/', '/reset-password/',
 ];
@@ -59,7 +59,7 @@ const PUBLIC_ROUTES = [
 // signed out too (they must still render, with a sign-in prompt).
 const ACCOUNT_ROUTES = [
   '/events/add/', '/my-businesses/', '/my-businesses/claim/', '/my-businesses/edit/', '/my-businesses/sponsor/',
-  '/my-events/', '/my-events/claim/', '/my-events/edit/',
+  '/my-events/', '/my-events/claim/', '/my-events/edit/', '/rep-dashboard/',
 ];
 const ADMIN_ROUTES = [
   '/admin/', '/admin/activity/', '/admin/ads-sponsors/', '/admin/analytics/', '/admin/businesses/', '/admin/claims/',

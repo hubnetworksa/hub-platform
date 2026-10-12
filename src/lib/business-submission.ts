@@ -52,6 +52,10 @@ export interface ApprovedListing {
    *  the subscription can actually be cancelled later — without it a Cancel
    *  button can only update our database while PayFast keeps billing. */
   payfastToken?: string | null;
+  /** The pending submission's id and rep referral code, so a rep commission
+   *  recorded against the submission is relinked to the new subscription. */
+  submissionId?: number | null;
+  repCode?: string | null;
 }
 
 /** The published listing a new submission for `name` in `suburbSlug` would be
@@ -172,11 +176,27 @@ async function applyChosenTier(db: D1Database, businessId: number, listing: Appr
 
   const sub = await db
     .prepare(
-      `INSERT INTO subscriptions (business_id, tier, product_type, m_payment_id, payfast_token, status, started_at, current_period_end, billing_period)
-       VALUES (?, ?, 'tier', ?, ?, 'active', datetime('now'), datetime('now', ?), ?)`
+      `INSERT INTO subscriptions (business_id, tier, product_type, m_payment_id, payfast_token, status, started_at, current_period_end, billing_period, rep_code)
+       VALUES (?, ?, 'tier', ?, ?, 'active', datetime('now'), datetime('now', ?), ?, ?)`
     )
-    .bind(businessId, tier, listing.paidMPaymentId, listing.payfastToken ?? null, interval, billingPeriod)
+    .bind(businessId, tier, listing.paidMPaymentId, listing.payfastToken ?? null, interval, billingPeriod, listing.repCode ?? null)
     .run();
+
+  // Signup commissions were recorded against the pending submission; from
+  // here on they are ordinary subscription commissions.
+  if (listing.submissionId) {
+    try {
+      await db
+        .prepare(
+          `UPDATE rep_commissions SET source_type = 'subscription', source_id = ?
+           WHERE source_type = 'pending_submission' AND source_id = ? AND status IN ('pending','approved')`
+        )
+        .bind(sub.meta.last_row_id, listing.submissionId)
+        .run();
+    } catch (err) {
+      console.error('relink rep commission to subscription failed', err);
+    }
+  }
 
   await db
     .prepare(`UPDATE businesses SET subscription_tier = ?, subscription_status = 'active', subscription_expires_at = datetime('now', ?) WHERE id = ?`)

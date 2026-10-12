@@ -2,6 +2,7 @@ import type { PagesFunction, D1Database } from '@cloudflare/workers-types';
 import { getSessionUser, isAdminEmail } from '../../_lib/auth';
 import { cancelPayfastSubscription, payfastConfigured, type PayfastEnv } from '../../_lib/payfast';
 import { logActivity } from '../../_lib/activity-log';
+import { voidPendingRepCommission } from '../../_lib/reps';
 
 interface Env extends PayfastEnv {
   DB: D1Database;
@@ -61,6 +62,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   if (subscription.product_type === 'tier') {
     await db.prepare(`UPDATE businesses SET subscription_status = 'cancelled' WHERE id = ?`).bind(businessId).run();
   }
+  await voidPendingRepCommission(db, 'subscription', subscription.id, 'cancelled before second payment');
   await logActivity(db, 'subscription_cancelled', business.name, `${subscription.product_type} cancelled via PayFast — stays active until the paid period ends.`);
 
   return json({ ok: true });
