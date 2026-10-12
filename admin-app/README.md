@@ -83,12 +83,19 @@ Apple only delivers web notifications to apps added to the Home Screen: open the
 
 ## Morning briefing (Claude routine)
 
-The Overview opens with **Today's briefing**: a headline, what needs you today, a line per site and anything worth knowing. It's written every morning by a **Claude routine** (a scheduled Claude session on the owner's account, like the research routines), so there's no API key and no per-request cost.
+The Overview opens with **Today's briefing**: a headline, what needs you today, each site in depth, whole-operation sections and anything worth knowing. It's written every morning by a **Claude routine** (a scheduled Claude session on the owner's account, like the research routines), so there's no API key and no per-request cost.
 
 1. At about 05:52 South African time the routine fetches the morning's facts: `GET /api/briefing/facts`.
-2. It writes the briefing as JSON and posts it: `POST /api/briefing/submit`. The app checks the shape (one line per site, in order; every "needs you" item names a site or `all`), stores it with the facts it was written from (`daily_briefings`), and on the first delivery of the day notifies devices with **Morning briefing** alerts on. A rejected briefing returns the reason, so the routine fixes it and sends it again.
+2. It writes the briefing as JSON and posts it: `POST /api/briefing/submit`. The app checks the shape, stores it with the facts it was written from (`daily_briefings`), and on the first delivery of the day notifies devices with **Morning briefing** alerts on. A rejected briefing returns the reason, so the routine fixes it and sends it again.
 3. Until the day's briefing arrives, the card shows a plain summary computed from the live numbers.
+
+The shape: `headline`; `needs_you` (up to 10, each with a `site` slug or `all`); `sites` (one per site, in order, each a `summary` plus up to 14 `details` lines); optional `sections` (up to 10 of `{ title, items }`, up to 12 items each); `worth_knowing` (up to 8).
 
 Both endpoints need the routine's key in an `X-Briefing-Key` header (10 attempts an hour per connection). Only its SHA-256 hash is in the repo (`BRIEFING_KEY_HASH` in `wrangler.jsonc`); the key itself is only in the routine's prompt. To change the key: generate a new one, put its hash in `wrangler.jsonc`, deploy, and update the routine's prompt.
 
-Facts sent to the routine: per-site counts (views, contact taps, searches, enquiries, sign-ups, installs: last 24 hours vs the previous 24 and the 7-day average), items waiting and how long, business names that are new or most viewed, top searches, revenue, renewals, the weekly Search Console totals and open upgrades. No visitor names, emails, phone numbers or message text (`functions/_lib/briefing.ts`).
+Facts sent to the routine (`functions/_lib/briefing-facts.ts`, kept in `reports` as `briefing_facts` so the submit step doesn't read every database again):
+
+- **Each site in depth:** the last 24 hours vs the previous 24 and the 7-day average; the last 7 days vs the 7 before for every tracked event (views, each kind of contact tap, search appearances), enquiries, contact-form messages, sign-ups and installs; most-viewed and most-contacted listings and categories; top on-site searches and searches with two or fewer results; whether the key pages (home, categories, suburbs, about, events, news, search, shopping centres, tourism, guides) answer; uptime and speed over 24 hours and 7 days; content (live, new, closed, claimed and paid listings, categories and suburbs in use, shopping centres, upcoming and past events, latest news, reviews, users); money (month to date vs last month, paid and free plans, starts, cancellations, overdue renewals, failed payments, plans ending in 14 days); listing quality (the Listings screen's completeness, duplicates, stale listings, no views, thin pages, unclaimed businesses getting enquiries); Google (Search Console 7 days vs 7, top queries, opportunities, pages seen, indexing states, the index gate, the 14-day recovery trend), GA4 (sessions, users, page views, engagement, channels, sources, devices, top and landing pages) and AdSense (7 days vs 7); the weekly broken-links crawl; routine health.
+- **The whole operation:** GitHub workflow failures and the latest run of each workflow, Cloudflare D1 usage against the free limits, security checks, open and recently finished upgrades, Hub Admin actions in the last 24 hours (counts only), and yesterday's headline and to-dos.
+
+No visitor or admin names, emails, phone numbers or message text.

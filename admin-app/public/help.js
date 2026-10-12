@@ -135,6 +135,7 @@ export const HELP = {
     batchSize: 'How many URLs each site checks per run. Higher clears the backlog sooner but spends more of today’s quota.',
     interval: 'Hours between automatic check runs. Lower checks more often but spends the quota faster.',
     quota: "Search Console's free limit: about 2,000 URL Inspection calls per site per day. Checking pauses if it's hit.",
+    byDay: 'One row per day, each count compared to the day before. With all sites selected, rows are split per site instead of summed.',
   },
   social: {
     title: 'Nothing posts automatically — copy a caption and post it yourself.',
