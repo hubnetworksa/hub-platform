@@ -140,6 +140,15 @@ export const HELP = {
     newlyNotIndexed: 'Pages that moved from indexed to not-indexed since their own last check — shown alongside Newly on Google so churn both ways is visible.',
     netChange: 'Newly on Google minus Dropped over the period. Positive means more pages joined Google than left it; negative means the reverse.',
   },
+  namePosition: {
+    withData: 'Businesses where Google recorded an actual ranking for a search of their exact name.',
+    noData: 'Google checked but recorded no searches for this exact name. Normal — most names aren’t searched directly.',
+    neverChecked: 'Businesses the checker hasn’t queried yet. They get a reading on an upcoming run.',
+    avgPosition: 'Average rank among businesses with a reading. Most businesses have none, so this covers a small slice.',
+    position: 'Google’s own recorded rank for a search of this exact name — not the blended average-position KPI elsewhere.',
+    batchSize: 'How many businesses each site checks per run. Higher clears the backlog sooner but spends more quota.',
+    interval: 'Hours between automatic check runs. Lower checks more often but spends the quota faster.',
+  },
   social: {
     title: 'Nothing posts automatically — copy a caption and post it yourself.',
   },
