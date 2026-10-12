@@ -6,6 +6,7 @@ import { priceRand, yearlyPriceRand, sponsorships } from '../../lib/data';
 import { TOURISM } from '../../site-content/tourism';
 import site from '../../site';
 import { SHORT_DESC_MAX, LONG_DESC_MAX, RAW_SLACK } from '../../lib/rich-text';
+import { WHATSAPP_ICON, WHATSAPP_GREEN } from '../../lib/whatsapp';
 
 // One icon per tab and per card-section header, so the sidebar and the
 // section headers read at a glance instead of as plain text — same
@@ -157,22 +158,46 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
               <p id="search-terms-locked" hidden style={emptyNote}>The words people searched to find you show here on a paid plan. <a href="#billing" data-goto="billing" style="color:var(--accent-hover);font-weight:800">Upgrade under Billing</a>.</p>
             </div>
 
-            <!-- Backlink badge: free for every plan. The snippet is a plain followed link on purpose. -->
+            <!-- Backlink badge: free for every plan. The snippet is a plain followed link on purpose.
+                 Three ways to share the same page link: a plain copyable link, a WhatsApp share
+                 (generic wa.me/?text=, so the owner picks who to send it to — not the business's
+                 own chat number, that's whatsappUrl() elsewhere), and the embed-code badge. -->
             <div id="badge-card" data-domain={site.domain} data-site-name={site.siteName} style={`${cardBox};margin-top:14px;box-shadow:var(--shadow)`}>
               <div class="owner-section-head" style="padding:14px 18px;border-bottom:2px solid var(--navy);display:flex;align-items:center;gap:9px">
                 <span style="color:var(--accent)"><Icon path={SECTION_ICONS.link} size={17} /></span>
-                <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Get more customers: add our badge to your website</h3>
+                <h3 style="margin:0;font-size:15px;letter-spacing:-.015em;color:var(--navy)">Get more customers: share your page</h3>
               </div>
-              <div class="badge-body" style="padding:18px;display:grid;gap:16px;align-items:center">
-                <div style="display:flex;align-items:center;justify-content:center;padding:18px;border-radius:12px;background:var(--bg-subtle);border:1px dashed var(--border)">
-                  <img src="/badge.svg" width="180" height="56" alt={`Find us on ${site.siteName}`} style="display:block;max-width:100%;height:auto" />
+              <div style="padding:18px;display:flex;flex-direction:column;gap:22px">
+                <div>
+                  <p style="margin:0 0 8px;font-size:13.5px;font-weight:800;color:var(--navy)">Your page link</p>
+                  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                    <span id="badge-link" style="flex:1;min-width:200px;padding:11px 12px;border:2px solid var(--border);border-radius:10px;background:var(--bg-subtle);color:var(--navy);font-size:13px;font-weight:600;word-break:break-all;user-select:all"></span>
+                    <button id="badge-link-copy" type="button" style="padding:10px 16px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;cursor:pointer">Copy link</button>
+                  </div>
+                  <span id="badge-link-copied" role="status" aria-live="polite" style="display:block;margin-top:6px;font-size:13px;font-weight:800;color:var(--accent-hover)"></span>
                 </div>
-                <div style="min-width:0">
-                  <p style="margin:0 0 10px;font-size:13.5px;line-height:1.55;color:var(--text)">Paste this code into your website (footer or contact page). It shows the badge and links visitors straight to your {site.siteName} page.</p>
-                  <pre id="badge-snippet" aria-label="Badge HTML code" style="margin:0;padding:11px 12px;border:2px solid var(--border);border-radius:10px;background:var(--bg-subtle);color:var(--navy);font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-all;user-select:all"></pre>
-                  <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap">
-                    <button id="badge-copy" type="button" style="padding:10px 16px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;cursor:pointer">Copy code</button>
-                    <span id="badge-copied" role="status" aria-live="polite" style="font-size:13px;font-weight:800;color:var(--accent-hover)"></span>
+
+                <div>
+                  <p style="margin:0 0 8px;font-size:13.5px;font-weight:800;color:var(--navy)">Share on WhatsApp</p>
+                  <a id="badge-whatsapp" href="#" target="_blank" rel="noopener" style={`display:inline-flex;align-items:center;gap:9px;padding:11px 16px;border-radius:10px;background:${WHATSAPP_GREEN};color:#fff;font-size:13.5px;font-weight:800;text-decoration:none`}>
+                    <Icon path={WHATSAPP_ICON} size={16} /> Share on WhatsApp
+                  </a>
+                </div>
+
+                <div>
+                  <p style="margin:0 0 10px;font-size:13.5px;font-weight:800;color:var(--navy)">Add to website</p>
+                  <div class="badge-body" style="display:grid;gap:16px;align-items:center">
+                    <div style="display:flex;align-items:center;justify-content:center;padding:18px;border-radius:12px;background:var(--bg-subtle);border:1px dashed var(--border)">
+                      <img src="/badge.svg" width="180" height="56" alt={`Find us on ${site.siteName}`} style="display:block;max-width:100%;height:auto" />
+                    </div>
+                    <div style="min-width:0">
+                      <p style="margin:0 0 10px;font-size:13.5px;line-height:1.55;color:var(--text)">Paste this code into your website (footer or contact page). It shows the badge and links visitors straight to your {site.siteName} page.</p>
+                      <pre id="badge-snippet" aria-label="Badge HTML code" style="margin:0;padding:11px 12px;border:2px solid var(--border);border-radius:10px;background:var(--bg-subtle);color:var(--navy);font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-all;user-select:all"></pre>
+                      <div style="display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap">
+                        <button id="badge-copy" type="button" style="padding:10px 16px;border:0;border-radius:10px;background:var(--accent);color:var(--contrast);font-size:13.5px;font-weight:800;cursor:pointer">Copy code</button>
+                        <span id="badge-copied" role="status" aria-live="polite" style="font-size:13px;font-weight:800;color:var(--accent-hover)"></span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -455,7 +480,7 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
   .logo-btn:disabled { background: var(--bg-subtle); color: var(--muted); cursor: not-allowed; }
   #whatsapp-lock[hidden], #whatsapp-locked[hidden], #desc-locked[hidden], #logo-lock[hidden], #logo-locked[hidden], #logo-status[hidden], #logo-remove[hidden], #logo-preview-lg[hidden], #logo-preview-sm[hidden], #logo-empty-lg[hidden], #logo-empty-sm[hidden] { display: none !important; }
   .badge-body { grid-template-columns: 1fr; }
-  #badge-copy:hover { background: var(--accent-hover) !important; }
+  #badge-copy:hover, #badge-link-copy:hover { background: var(--accent-hover) !important; }
   @media (min-width: 900px) {
     .badge-body { grid-template-columns: 240px minmax(0, 1fr); }
   }
@@ -646,35 +671,44 @@ const emptyNote = 'padding:26px 18px;text-align:center;font-size:13.5px;font-wei
     const card = document.getElementById('badge-card')!;
     const domain = card.dataset.domain!;
     const siteName = card.dataset.siteName!;
-    const snippet = `<a href="https://${domain}/business/${encodeURIComponent(b.slug)}/" target="_blank" rel="noopener"><img src="https://${domain}/badge.svg" alt="Find us on ${esc(siteName)}" width="180" height="56"></a>`;
+    const url = `https://${domain}/business/${encodeURIComponent(b.slug)}/`;
+    document.getElementById('badge-link')!.textContent = url;
+    (document.getElementById('badge-whatsapp') as HTMLAnchorElement).href =
+      `https://wa.me/?text=${encodeURIComponent(`Check out ${b.name} on ${siteName}: ${url}`)}`;
+    const snippet = `<a href="${url}" target="_blank" rel="noopener"><img src="https://${domain}/badge.svg" alt="Find us on ${esc(siteName)}" width="180" height="56"></a>`;
     document.getElementById('badge-snippet')!.textContent = snippet;
   }
-  {
-    const btn = document.getElementById('badge-copy') as HTMLButtonElement;
-    const code = document.getElementById('badge-snippet')!;
-    const status = document.getElementById('badge-copied')!;
+  // Copy-to-clipboard for the plain link and the embed code: same clipboard
+  // API + execCommand fallback, wired twice so copying one never clobbers
+  // the other's "Copied!" state.
+  function wireCopyButton(btnId: string, sourceId: string, statusId: string, idleLabel: string, statusMsg: string) {
+    const btn = document.getElementById(btnId) as HTMLButtonElement;
+    const source = document.getElementById(sourceId)!;
+    const status = document.getElementById(statusId)!;
     let timer: number | undefined;
     btn.addEventListener('click', async () => {
       try {
-        await navigator.clipboard.writeText(code.textContent ?? '');
+        await navigator.clipboard.writeText(source.textContent ?? '');
       } catch {
-        // Older browsers / insecure contexts: select the code and copy that.
+        // Older browsers / insecure contexts: select the text and copy that.
         const range = document.createRange();
-        range.selectNodeContents(code);
+        range.selectNodeContents(source);
         const sel = window.getSelection();
         sel?.removeAllRanges();
         sel?.addRange(range);
         document.execCommand('copy');
       }
       btn.textContent = 'Copied!';
-      status.textContent = 'Code copied. Paste it into your website.';
+      status.textContent = statusMsg;
       clearTimeout(timer);
       timer = window.setTimeout(() => {
-        btn.textContent = 'Copy code';
+        btn.textContent = idleLabel;
         status.textContent = '';
       }, 2500);
     });
   }
+  wireCopyButton('badge-copy', 'badge-snippet', 'badge-copied', 'Copy code', 'Code copied. Paste it into your website.');
+  wireCopyButton('badge-link-copy', 'badge-link', 'badge-link-copied', 'Copy link', 'Link copied.');
 
   // ---- Visibility ----
   // Two independent things can pull a listing off the public site without
