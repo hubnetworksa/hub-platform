@@ -136,6 +136,8 @@ export const HELP = {
     interval: 'Hours between automatic check runs. Lower checks more often but spends the quota faster.',
     quota: "Search Console's free limit: about 2,000 URL Inspection calls per site per day. Checking pauses if it's hit.",
     byDay: 'One row per day, each count compared to the day before. With all sites selected, rows are split per site instead of summed.',
+    newlyIndexed: 'Pages that moved from not-indexed or never-checked to indexed since their own last check — not just today’s net change, which can hide real gains.',
+    newlyNotIndexed: 'Pages that moved from indexed to not-indexed since their own last check — shown alongside Newly on Google so churn both ways is visible.',
   },
   social: {
     title: 'Nothing posts automatically — copy a caption and post it yourself.',

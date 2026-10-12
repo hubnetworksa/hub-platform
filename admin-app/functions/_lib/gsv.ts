@@ -190,6 +190,7 @@ export interface GsvCheckRow {
   id: number;
   site: string;
   url: string;
+  status: string;
   consecutive_not_indexed: number;
   total_indexed_checks: number;
   total_not_indexed_checks: number;
@@ -214,8 +215,8 @@ export async function claimUrl(db: D1Database, id: number): Promise<boolean> {
 export async function checkOne(env: Env, db: D1Database, row: GsvCheckRow, siteUrl: string): Promise<InspectionOutcome & { durationMs: number }> {
   const outcome = await inspectUrl(env, row.url, siteUrl);
   await db
-    .prepare(`INSERT INTO gsv_checks (gsv_url_id, status, coverage_state, duration_ms, error) VALUES (?, ?, ?, ?, ?)`)
-    .bind(row.id, outcome.status, outcome.coverageState, outcome.durationMs, outcome.errorMessage)
+    .prepare(`INSERT INTO gsv_checks (gsv_url_id, status, coverage_state, duration_ms, error, prev_status) VALUES (?, ?, ?, ?, ?, ?)`)
+    .bind(row.id, outcome.status, outcome.coverageState, outcome.durationMs, outcome.errorMessage, row.status)
     .run();
   const succeeded = outcome.status !== 'unknown';
   const consecutiveNotIndexed = outcome.status === 'not_indexed' ? row.consecutive_not_indexed + 1 : outcome.status === 'indexed' ? 0 : row.consecutive_not_indexed;
