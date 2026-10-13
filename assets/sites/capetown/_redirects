@@ -1,0 +1,9 @@
+# Cloudflare Pages redirects.
+# Sales rep programme: taken out of production (was live without an
+# authorized launch decision, 8-13 Oct 2026). Pages, admin and API are left
+# intact — only public access is redirected — so it's a one-line revert of
+# this file to relaunch once there's an explicit go-ahead.
+/become-a-rep/   /  302
+/become-a-rep    /  302
+/rep-dashboard/  /  302
+/rep-dashboard   /  302
