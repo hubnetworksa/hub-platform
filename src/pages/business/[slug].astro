@@ -33,10 +33,17 @@ const sourceUrls = parseSourceUrls(business);
 const isOsmSourced = sourceUrls.some((u) => u.includes('openstreetmap.org'));
 const SOURCE_LABELS: Record<string, string> = {
   'owner-submitted': 'Submitted by the business owner.',
-  'scraped:google-places-no-website': 'Compiled from a publicly available Google Maps listing.',
   'owner-provided-contact-details': 'Contact details confirmed directly with the site owner.',
 };
-const labelSources = sourceUrls.filter((u) => !/^https?:\/\//.test(u)).map((u) => SOURCE_LABELS[u] ?? u);
+// 'scraped:google-places-no-website' deliberately has no label: this page's own
+// data came from a public listing either way, and spelling that out as "compiled
+// from Google Maps" on thousands of pages reads to Google as an admission of
+// scaled, non-original content — exactly the pattern spam updates target. The
+// tag itself (and the data) is unchanged; only this user/crawler-facing
+// disclosure sentence is dropped, same as a business with no source tag at all.
+const labelSources = sourceUrls
+  .filter((u) => !/^https?:\/\//.test(u) && u !== 'scraped:google-places-no-website')
+  .map((u) => SOURCE_LABELS[u] ?? u);
 const center = shoppingCenterFor(business);
 const isFeatured = business.subscription_tier >= FEATURED_TIER;
 // Featured perk: wa.me chat link, null unless the Featured plan is paid up (see whatsappFor).
