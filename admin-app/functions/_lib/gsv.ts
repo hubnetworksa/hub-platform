@@ -235,8 +235,24 @@ export async function checkOne(env: Env, db: D1Database, row: GsvCheckRow, siteU
   return outcome;
 }
 
-/** Discovers newly published business URLs and inserts them as 'pending' (existing rows untouched). */
+// How often discoverUrls() actually scans the businesses table, per site,
+// stamped in `settings` (see getSetting/setSetting in ./alerts). api/gsv/run.ts
+// calls discoverUrls() unconditionally on every loop iteration of a scheduled
+// run (often dozens of times, a few seconds apart) to keep this function
+// correct no matter how often it's called, not because callers are expected
+// to behave — the trigger script runs every 2-3 hours, so 30 minutes still
+// guarantees discovery runs near the start of every scheduled run while
+// killing the redundant re-scans on every subsequent iteration within it.
+const DISCOVERY_INTERVAL_MS = 30 * 60 * 1000;
+
+/** Discovers newly published business URLs and inserts them as 'pending' (existing rows untouched).
+ *  Self-rate-limited to once per DISCOVERY_INTERVAL_MS per site; returns 0 without scanning when
+ *  called again too soon. */
 export async function discoverUrls(adminDb: D1Database, site: HubSite): Promise<number> {
+  const stampKey = `gsv_discovered_at:${site.slug}`;
+  const lastRun = await getSetting(adminDb, stampKey);
+  if (lastRun && Date.now() - new Date(lastRun).getTime() < DISCOVERY_INTERVAL_MS) return 0;
+
   const bizRows = await rows<{ id: number; slug: string; name: string }>(
     site.db,
     `SELECT id, slug, name FROM businesses WHERE status = 'published' AND closed_at IS NULL AND is_test = 0`
@@ -253,6 +269,7 @@ export async function discoverUrls(adminDb: D1Database, site: HubSite): Promise<
     const r = await adminDb.prepare(`INSERT OR IGNORE INTO gsv_urls (site, business_id, slug, name, url) VALUES ${placeholders}`).bind(...binds).run();
     inserted += r.meta.changes ?? 0;
   }
+  await setSetting(adminDb, stampKey, new Date().toISOString());
   return inserted;
 }
 

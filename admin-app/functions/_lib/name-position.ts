@@ -242,8 +242,25 @@ export async function checkOnePosition(env: Env, db: D1Database, row: NamePositi
   return outcome;
 }
 
-/** Discovers newly published businesses and inserts them as never-checked rows (existing rows untouched). */
+// How often discoverNamePositions() actually scans the businesses table, per
+// site, stamped in `settings` (see getSetting/setSetting in ./alerts).
+// api/name-position/run.ts calls discoverNamePositions() unconditionally on
+// every loop iteration of a scheduled run (often dozens of times, a few
+// seconds apart) to keep this function correct no matter how often it's
+// called, not because callers are expected to behave — the trigger script
+// runs every 2-3 hours, so 30 minutes still guarantees discovery runs near
+// the start of every scheduled run while killing the redundant re-scans on
+// every subsequent iteration within it.
+const DISCOVERY_INTERVAL_MS = 30 * 60 * 1000;
+
+/** Discovers newly published businesses and inserts them as never-checked rows (existing rows untouched).
+ *  Self-rate-limited to once per DISCOVERY_INTERVAL_MS per site; returns 0 without scanning when
+ *  called again too soon. */
 export async function discoverNamePositions(adminDb: D1Database, site: HubSite): Promise<number> {
+  const stampKey = `name_position_discovered_at:${site.slug}`;
+  const lastRun = await getSetting(adminDb, stampKey);
+  if (lastRun && Date.now() - new Date(lastRun).getTime() < DISCOVERY_INTERVAL_MS) return 0;
+
   const bizRows = await rows<{ id: number; slug: string; name: string }>(
     site.db,
     `SELECT id, slug, name FROM businesses WHERE status = 'published' AND closed_at IS NULL AND is_test = 0`
@@ -262,5 +279,6 @@ export async function discoverNamePositions(adminDb: D1Database, site: HubSite):
     const r = await adminDb.prepare(`INSERT OR IGNORE INTO name_position (site, business_id, slug, name) VALUES ${placeholders}`).bind(...binds).run();
     inserted += r.meta.changes ?? 0;
   }
+  await setSetting(adminDb, stampKey, new Date().toISOString());
   return inserted;
 }
