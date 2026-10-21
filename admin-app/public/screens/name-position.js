@@ -36,6 +36,7 @@ export async function render(view, ui) {
   const draw = () => {
     fill(
       view,
+      pausedBanner(ui, summary),
       kpiBlock(ui, summary, H),
       ui.tabs(
         [
@@ -50,6 +51,21 @@ export async function render(view, ui) {
   // (summaryMode has no site filter), so there's nothing else to refetch.
   ui.onSiteChange(draw);
   draw();
+}
+
+// Shown above the KPIs on every tab (not just Settings) whenever checking is
+// paused, since the data on this whole screen is frozen while it's off and
+// that needs to be obvious no matter which tab someone lands on. Settings'
+// own pause/resume toggle and status line are untouched by this.
+function pausedBanner(ui, summary) {
+  const { h } = ui;
+  if (summary.config.enabled !== false) return null;
+  return h(
+    'div',
+    { class: 'banner err', role: 'alert' },
+    h('div', { style: 'font-size:var(--t-2xl);font-weight:700' }, 'SWITCHED OFF'),
+    h('div', {}, 'Checking is paused. The numbers below are frozen and will not update until this is turned back on.')
+  );
 }
 
 function kpiBlock(ui, summary, H) {
