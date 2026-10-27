@@ -1,0 +1,74 @@
+name: Daily visitor
+
+# Once a day per site, at a random hour (and a random minute within it), opens
+# a few pages of each live site in a real browser from a different IP address
+# (scripts/daily-visitor.mjs). It runs every hour but only does anything in
+# the hour picked for that site today; every other run stops after a few
+# seconds without installing anything. A page that fails to load fails the
+# workflow, which makes GitHub email the account that owns the schedule.
+#
+# Different IPs: add a repository secret VISITOR_PROXIES with one proxy URL
+# per line (http://user:pass@host:port). Without it the visit uses the GitHub
+# runner's own address.
+#
+# The visitor identifies itself (User-Agent "HubDailyVisitor") and blocks
+# Analytics, AdSense and the site's own view counters, so it never counts as
+# a real visitor anywhere.
+
+on:
+  schedule:
+    - cron: "7 * * * *"
+  workflow_dispatch:
+    inputs:
+      site:
+        description: "Visit just this site now (capetown, pretoria, polokwane); blank = all"
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  visit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      VISITOR_PROXIES: ${{ secrets.VISITOR_PROXIES }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Is a site due this hour?
+        id: due
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run=yes" >> "$GITHUB_OUTPUT"
+          else
+            sites=$(node scripts/daily-visitor.mjs --due --list)
+            echo "Due this hour: ${sites:-none}"
+            [ -n "$sites" ] && echo "run=yes" >> "$GITHUB_OUTPUT" || echo "run=no" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node
+        if: steps.due.outputs.run == 'yes'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.due.outputs.run == 'yes'
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Visit
+        if: steps.due.outputs.run == 'yes'
+        env:
+          SITE_INPUT: ${{ github.event.inputs.site }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            site="$SITE_INPUT"
+            node scripts/daily-visitor.mjs ${site:+--site "$site"}
+          else
+            node scripts/daily-visitor.mjs --due
+          fi
