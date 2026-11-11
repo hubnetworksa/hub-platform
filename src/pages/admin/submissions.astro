@@ -55,7 +55,7 @@ import AdminShell from '../../components/AdminShell.astro';
     id: number; token: string; name: string; category_slug: string; suburb_slug: string;
     category_name: string | null; suburb_name: string | null;
     address: string | null; phone: string | null; email: string | null; website: string | null;
-    description: string; status: string; chosen_tier: number;
+    description: string; status: string; chosen_tier: number; payment_status: string | null;
     admin_approved_at: string | null;
   }
 
@@ -88,6 +88,11 @@ import AdminShell from '../../components/AdminShell.astro';
     const meta = [s.category_name ?? s.category_slug, s.suburb_name ?? s.suburb_slug].filter(Boolean).join(' · ');
     const contact = [s.address, formatPhoneZA(s.phone), s.email, s.website].filter(Boolean).join(' · ');
     const plan = TIER_NAMES[s.chosen_tier] ?? 'Basic';
+    const unpaidTier = s.chosen_tier > 0 && s.payment_status !== 'paid';
+    const planLabel = unpaidTier ? `${plan} unpaid → Basic` : plan;
+    const planBadgeStyle = unpaidTier
+      ? 'padding:3px 9px;border-radius:999px;background:rgba(194,56,56,.12);color:var(--danger);font-size:11px;font-weight:800'
+      : 'padding:3px 9px;border-radius:999px;background:rgba(var(--accent-rgb),.12);color:var(--accent-hover);font-size:11px;font-weight:800';
     return `
       <div style="padding:18px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;">
         <div style="min-width:0;display:flex;align-items:flex-start;gap:10px;">
@@ -95,7 +100,7 @@ import AdminShell from '../../components/AdminShell.astro';
           <div style="min-width:0;">
             <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
               <span style="font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.015em">${esc(s.name)}</span>
-              <span style="padding:3px 9px;border-radius:999px;background:rgba(var(--accent-rgb),.12);color:var(--accent-hover);font-size:11px;font-weight:800">${plan}</span>
+              <span style="${planBadgeStyle}">${esc(planLabel)}</span>
               ${!canAct ? `<span style="padding:3px 9px;border-radius:999px;background:var(--bg-subtle);color:var(--muted);font-size:11px;font-weight:800;">${esc(s.status)}</span>` : ''}
             </div>
             <div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:4px;overflow-wrap:break-word;">${esc(meta)}</div>

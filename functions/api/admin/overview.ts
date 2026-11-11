@@ -20,7 +20,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const submissions = await db
     .prepare(
       `SELECT ps.id, ps.token, ps.name, ps.category_slug, ps.suburb_slug, ps.address, ps.phone, ps.email, ps.website, ps.description,
-              ps.owner_confirm_token, ps.admin_approved_at, ps.created_at, ps.chosen_tier,
+              ps.owner_confirm_token, ps.admin_approved_at, ps.created_at, ps.chosen_tier, ps.payment_status,
               c.name AS category_name, s.name AS suburb_name
        FROM pending_submissions ps
        LEFT JOIN categories c ON c.slug = ps.category_slug
@@ -31,6 +31,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       id: number; token: string; name: string; category_slug: string; suburb_slug: string;
       address: string | null; phone: string | null; email: string | null; website: string | null;
       description: string; owner_confirm_token: string | null; admin_approved_at: string | null; created_at: string; chosen_tier: number;
+      payment_status: string | null;
       category_name: string | null; suburb_name: string | null;
     }>();
 
