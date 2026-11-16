@@ -1,42 +1,43 @@
 # Search Console indexing report
 
-Generated 2026-10-19T11:57:38.500Z by `scripts/search-console-report.mjs`. Search windows: last 28 days 2026-09-19 to 2026-10-16 vs previous 2026-08-22 to 2026-09-18 (data lags about 3 days). URL Inspection samples up to 8 URLs per sitemap type.
+Generated 2026-11-16T14:37:15.257Z by `scripts/search-console-report.mjs`. Search windows: last 28 days 2026-10-17 to 2026-11-13 vs previous 2026-09-19 to 2026-10-16 (data lags about 3 days). URL Inspection samples up to 8 URLs per sitemap type.
 
 ## Summary
 
-- **TheCapeTownHub**: 279 clicks (up from 0), 102,136 impressions (up from 17), 2,357 pages with impressions (was 7) over 28 days vs the 28 before.
-  - Since last report (2026-10-12): pages with impressions (28d) 2,348 -> 2,357.
-  - Mostly not indexed in the sample: category (3/8 indexed; mostly "Submitted and indexed"), category-suburb (3/8 indexed; mostly "URL is unknown to Google"), guides (2/7 indexed; mostly "Crawled - currently not indexed"), news (1/8 indexed; mostly "Crawled - currently not indexed"), tourism (0/8 indexed; mostly "Crawled - currently not indexed").
-  - Key pages not indexed: /category/ ("Crawled - currently not indexed").
-- **PolokwaneHub**: 89 clicks (down from 126), 13,171 impressions (down from 19,891), 576 pages with impressions (was 380) over 28 days vs the 28 before.
-  - Since last report (2026-10-12): pages with impressions (28d) 583 -> 576.
-  - Mostly not indexed in the sample: business (0/8 indexed; mostly "Discovered - currently not indexed"), category (1/8 indexed; mostly "Discovered - currently not indexed"), category-suburb (2/8 indexed; mostly "Discovered - currently not indexed").
-- **PretoriaHub**: 192 clicks (down from 602), 36,183 impressions (down from 104,435), 3,656 pages with impressions (was 5,157) over 28 days vs the 28 before.
-  - Since last report (2026-10-12): pages with impressions (28d) 4,438 -> 3,656.
-  - Mostly not indexed in the sample: pages (0/8 indexed; mostly "URL is unknown to Google"), category-suburb (2/8 indexed; mostly "URL is unknown to Google"), events (0/8 indexed; mostly "Discovered - currently not indexed"), guides (0/7 indexed; mostly "Discovered - currently not indexed"), news (0/8 indexed; mostly "URL is unknown to Google"), shopping-centre (3/8 indexed; mostly "Submitted and indexed"), suburb (3/8 indexed; mostly "URL is unknown to Google"), tourism (0/8 indexed; mostly "URL is unknown to Google").
+- **TheCapeTownHub**: 2 clicks (down from 279), 247 impressions (down from 102,136), 120 pages with impressions (was 2,357) over 28 days vs the 28 before.
+  - Since last report (2026-10-19): pages with impressions (28d) 2,357 -> 120.
+  - Mostly not indexed in the sample: pages (2/8 indexed; mostly "Crawled - currently not indexed"), business (3/8 indexed; mostly "Crawled - currently not indexed"), category (1/8 indexed; mostly "URL is unknown to Google"), events (3/8 indexed; mostly "Crawled - currently not indexed"), guides (2/7 indexed; mostly "Crawled - currently not indexed"), news (1/8 indexed; mostly "URL is unknown to Google"), suburb (2/8 indexed; mostly "URL is unknown to Google"), tourism (0/8 indexed; mostly "Crawled - currently not indexed").
+  - Key pages not indexed: /category/ ("Crawled - currently not indexed"), /about/ ("Crawled - currently not indexed").
+- **PolokwaneHub**: 12 clicks (down from 89), 354 impressions (down from 13,171), 166 pages with impressions (was 576) over 28 days vs the 28 before.
+  - Since last report (2026-10-19): pages with impressions (28d) 576 -> 166.
+  - Mostly not indexed in the sample: business (3/8 indexed; mostly "Discovered - currently not indexed"), category-suburb (2/8 indexed; mostly "Discovered - currently not indexed"), news (3/8 indexed; mostly "Discovered - currently not indexed").
+- **PretoriaHub**: 19 clicks (down from 192), 553 impressions (down from 36,183), 333 pages with impressions (was 3,656) over 28 days vs the 28 before.
+  - Since last report (2026-10-19): pages with impressions (28d) 3,656 -> 333.
+  - Mostly not indexed in the sample: pages (0/8 indexed; mostly "URL is unknown to Google"), business (3/8 indexed; mostly "URL is unknown to Google"), category (1/8 indexed; mostly "Crawled - currently not indexed"), category-suburb (1/8 indexed; mostly "URL is unknown to Google"), events (0/8 indexed; mostly "Discovered - currently not indexed"), guides (0/7 indexed; mostly "Discovered - currently not indexed"), news (0/8 indexed; mostly "URL is unknown to Google"), tourism (0/8 indexed; mostly "URL is unknown to Google").
   - Key pages not indexed: /category/ ("Crawled - currently not indexed"), /suburb/ ("Crawled - currently not indexed"), /about/ ("Crawled - currently not indexed").
 
 **Suggested actions**
 
-- TheCapeTownHub: some sampled **category** URLs in the sitemap are noindexed — remove noindexed URLs from the sitemap.
-- TheCapeTownHub: most sampled **category-suburb** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
-- TheCapeTownHub: **events** pages are crawled but not indexed — Google sees them as low value; add unique content (descriptions, photos, reviews) or noindex the thinnest ones.
+- TheCapeTownHub: **pages** pages are crawled but not indexed — Google sees them as low value; add unique content (descriptions, photos, reviews) or noindex the thinnest ones.
+- TheCapeTownHub: **business** pages are crawled but not indexed — Google sees them as low value; add unique content (descriptions, photos, reviews) or noindex the thinnest ones.
+- TheCapeTownHub: most sampled **category** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
 - TheCapeTownHub: **guides** pages are crawled but not indexed — Google sees them as low value; add unique content (descriptions, photos, reviews) or noindex the thinnest ones.
-- TheCapeTownHub: **news** pages are crawled but not indexed — Google sees them as low value; add unique content (descriptions, photos, reviews) or noindex the thinnest ones.
+- TheCapeTownHub: most sampled **news** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
 - TheCapeTownHub: most sampled **suburb** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
 - TheCapeTownHub: **tourism** pages are crawled but not indexed — Google sees them as low value; add unique content (descriptions, photos, reviews) or noindex the thinnest ones.
 - PolokwaneHub: **pages** pages are discovered but not crawled — crawl budget/priority issue; strengthen internal links to them and trim thin or near-duplicate pages of that type.
 - PolokwaneHub: **business** pages are discovered but not crawled — crawl budget/priority issue; strengthen internal links to them and trim thin or near-duplicate pages of that type.
-- PolokwaneHub: **category** pages are discovered but not crawled — crawl budget/priority issue; strengthen internal links to them and trim thin or near-duplicate pages of that type.
 - PolokwaneHub: **category-suburb** pages are discovered but not crawled — crawl budget/priority issue; strengthen internal links to them and trim thin or near-duplicate pages of that type.
+- PolokwaneHub: **news** pages are discovered but not crawled — crawl budget/priority issue; strengthen internal links to them and trim thin or near-duplicate pages of that type.
 - PretoriaHub: most sampled **pages** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
 - PretoriaHub: most sampled **business** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
+- PretoriaHub: **category** pages are crawled but not indexed — Google sees them as low value; add unique content (descriptions, photos, reviews) or noindex the thinnest ones.
 - PretoriaHub: most sampled **category-suburb** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
 - PretoriaHub: **events** pages are discovered but not crawled — crawl budget/priority issue; strengthen internal links to them and trim thin or near-duplicate pages of that type.
 - PretoriaHub: **guides** pages are discovered but not crawled — crawl budget/priority issue; strengthen internal links to them and trim thin or near-duplicate pages of that type.
 - PretoriaHub: most sampled **news** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
 - PretoriaHub: most sampled **tourism** URLs are unknown to Google — make sure they are linked internally (hub/listing pages) and in the submitted sitemap index; consider requesting indexing for a few key ones.
-- AdSense: polokwanehub.com is GETTING_READY — check the Sites page in AdSense.
+- AdSense: polokwanehub.com is NEEDS_ATTENTION — check the Sites page in AdSense.
 - AdSense: thecapetownhub.com is GETTING_READY — check the Sites page in AdSense.
 
 ## TheCapeTownHub (thecapetownhub.com)
@@ -45,55 +46,55 @@ Generated 2026-10-19T11:57:38.500Z by `scripts/search-console-report.mjs`. Searc
 
 | Metric | Last 28d | Previous 28d |
 |---|---:|---:|
-| Clicks | 279 (+279) | 0 |
-| Impressions | 102,136 (+102,119 / +600700%) | 17 |
-| CTR | 0.27% (+0.27pp) | 0.00% |
-| Avg position | 9.0 (+1.3) | 7.7 |
-| Pages with impressions | 2,357 (+2,350 / +33571%) | 7 |
+| Clicks | 2 (-277 / -99%) | 279 |
+| Impressions | 247 (-101,889 / -100%) | 102,136 |
+| CTR | 0.81% (+0.54pp) | 0.27% |
+| Avg position | 14.3 (+5.3) | 9.0 |
+| Pages with impressions | 120 (-2,237 / -95%) | 2,357 |
 
-Pages with impressions over 90 days: **2,357**.
+Pages with impressions over 90 days: **2,359**.
 
 ### Pages with impressions by type
 
 | Type | Sitemap URLs | Pages 28d | Prev 28d | Pages 90d | Clicks 28d | Impr. 28d |
 |---|---:|---:|---:|---:|---:|---:|
-| home | - | 2 | 0 | 2 | 3 | 17 |
-| business | 2,139 | 1,971 | 7 | 1,971 | 208 | 91,888 |
-| category | 78 | 5 | 0 | 5 | 0 | 109 |
-| category-suburb | 189 | 107 | 0 | 107 | 5 | 693 |
-| suburb | 169 | 59 | 0 | 59 | 5 | 806 |
-| shopping-center | 173 | 161 | 0 | 161 | 57 | 9,012 |
-| section | - | 5 | 0 | 5 | 0 | 63 |
-| events | 28 | 24 | 0 | 24 | 2 | 224 |
-| news | 12 | 5 | 0 | 5 | 0 | 26 |
-| guides | 7 | 4 | 0 | 4 | 0 | 8 |
-| tourism | 10 | 8 | 0 | 8 | 0 | 34 |
-| other | - | 6 | 0 | 6 | 0 | 16 |
+| home | - | 1 | 2 | 2 | 2 | 19 |
+| business | 2,139 | 105 | 1,971 | 1,972 | 0 | 226 |
+| category | 78 | 0 | 5 | 5 | 0 | 0 |
+| category-suburb | 189 | 3 | 107 | 108 | 0 | 4 |
+| suburb | 169 | 3 | 59 | 59 | 0 | 4 |
+| shopping-center | 173 | 3 | 161 | 161 | 0 | 4 |
+| section | - | 1 | 5 | 5 | 0 | 1 |
+| events | 14 | 0 | 24 | 24 | 0 | 0 |
+| news | 30 | 0 | 5 | 5 | 0 | 0 |
+| guides | 7 | 0 | 4 | 4 | 0 | 0 |
+| tourism | 10 | 1 | 8 | 8 | 0 | 1 |
+| other | - | 3 | 6 | 6 | 0 | 5 |
 
 ### URL Inspection sample
 
-| Group | Sampled | Indexed | Crawled - currently not indexed | Excluded by ‘noindex’ tag | Submitted and indexed | URL is unknown to Google |
-|---|---:|---:|---:|---:|---:|---:|
-| key-pages | 4 | 3 | 1 |  | 3 |  |
-| pages | 8 | 4 | 2 |  | 4 | 2 |
-| business | 8 | 5 | 1 |  | 5 | 2 |
-| category | 8 | 3 |  | 2 | 3 | 3 |
-| category-suburb | 8 | 3 |  |  | 3 | 5 |
-| events | 8 | 4 | 4 |  | 4 |  |
-| guides | 7 | 2 | 5 |  | 2 |  |
-| news | 8 | 1 | 7 |  | 1 |  |
-| shopping-centre | 8 | 6 | 1 |  | 6 | 1 |
-| suburb | 8 | 4 |  |  | 4 | 4 |
-| tourism | 8 | 0 | 6 |  |  | 2 |
+| Group | Sampled | Indexed | Crawled - currently not indexed | Submitted and indexed | URL is unknown to Google |
+|---|---:|---:|---:|---:|---:|
+| key-pages | 4 | 2 | 2 | 2 |  |
+| pages | 8 | 2 | 4 | 2 | 2 |
+| business | 8 | 3 | 4 | 3 | 1 |
+| category | 8 | 1 | 1 | 1 | 6 |
+| category-suburb | 8 | 4 | 1 | 4 | 3 |
+| events | 8 | 3 | 3 | 3 | 2 |
+| guides | 7 | 2 | 5 | 2 |  |
+| news | 8 | 1 | 2 | 1 | 5 |
+| shopping-centre | 8 | 5 | 3 | 5 |  |
+| suburb | 8 | 2 | 2 | 2 | 4 |
+| tourism | 8 | 0 | 6 |  | 2 |
 
-Sample indexed rate: 42% (35/83); last report 64% (52/81).
+Sample indexed rate: 30% (25/83); last report 42% (35/83).
 
 <details><summary>Key pages</summary>
 
-- /: Submitted and indexed (last crawl 2026-10-14)
+- /: Submitted and indexed (last crawl 2026-11-07)
 - /category/: Crawled - currently not indexed (last crawl 2026-10-12)
 - /suburb/: Submitted and indexed (last crawl 2026-09-20)
-- /about/: Submitted and indexed (last crawl 2026-09-18)
+- /about/: Crawled - currently not indexed (last crawl 2026-11-01)
 
 </details>
 
@@ -101,48 +102,45 @@ Sample indexed rate: 42% (35/83); last report 64% (52/81).
 
 | Sitemap | Last downloaded | Errors | Warnings | Submitted | Pending |
 |---|---|---:|---:|---:|---|
-| https://thecapetownhub.com/sitemap-index.xml (index) | 2026-10-17 | 0 | 0 | 2,820 |  |
-| &nbsp;&nbsp;└ https://thecapetownhub.com/sitemap-0.xml | 2026-10-09 | 0 | 0 | 2,820 |  |
+| https://thecapetownhub.com/sitemap-index.xml (index) | 2026-11-14 | 0 | 0 | 2,820 |  |
+| &nbsp;&nbsp;└ https://thecapetownhub.com/sitemap-0.xml | 2026-11-06 | 0 | 0 | 2,820 |  |
 
 ### Top queries (28 days)
 
 | Query | Clicks | Impressions | CTR | Position |
 |---|---:|---:|---:|---:|
-| absolute dental glencairn | 3 | 29 | 10.34% | 3.5 |
-| dawood butchery delft main road | 3 | 12 | 25.00% | 8.8 |
-| erica square | 3 | 472 | 0.64% | 6.1 |
-| bothasig square | 2 | 110 | 1.82% | 10.3 |
-| bothasig square directory | 2 | 47 | 4.26% | 4.5 |
-| checkers westgate mall | 2 | 646 | 0.31% | 3.2 |
-| fnb greenpoint contact number | 2 | 63 | 3.17% | 5.2 |
-| mr chips cape town | 2 | 12 | 16.67% | 7.6 |
-| pep charlesville cape town | 2 | 50 | 4.00% | 5.0 |
-| 306 restaurant and lounge | 1 | 9 | 11.11% | 12.0 |
-| amazing store cape town | 1 | 4 | 25.00% | 3.0 |
-| athlone pharmacy trading hours | 1 | 28 | 3.57% | 5.3 |
-| beta kem pharmacy | 1 | 4 | 25.00% | 7.5 |
-| beth brower books for sale | 1 | 1 | 100.00% | 5.0 |
-| blue route mall shops | 1 | 1 | 100.00% | 1.0 |
+| business directory cape town | 0 | 1 | 0.00% | 80.0 |
+| businesses in cape town | 0 | 2 | 0.00% | 95.0 |
+| cape town businesses | 0 | 1 | 0.00% | 89.0 |
+| inn hair | 0 | 1 | 0.00% | 1.0 |
+| jet delft mall | 0 | 2 | 0.00% | 1.0 |
+| lw trading | 0 | 1 | 0.00% | 3.0 |
+| small businesses in cape town | 0 | 2 | 0.00% | 72.0 |
+| small businesses near me | 0 | 1 | 0.00% | 25.0 |
+| sorbet man cape quarter contact | 0 | 8 | 0.00% | 55.5 |
+| sorbet rondebosch contact | 0 | 2 | 0.00% | 57.0 |
+| sorbet rondebosch number | 0 | 6 | 0.00% | 53.2 |
+| spar pharmacy bergvliet | 0 | 1 | 0.00% | 41.0 |
 
 ### Top pages (28 days)
 
 | Page | Clicks | Impressions | CTR | Position |
 |---|---:|---:|---:|---:|
-| /shopping-center/erica-square-belhar/ | 9 | 810 | 1.11% | 6.3 |
-| /shopping-center/bothasig-square-bothasig/ | 6 | 302 | 1.99% | 8.3 |
-| /business/dawood-butchery-delft/ | 4 | 118 | 3.39% | 8.6 |
-| /shopping-center/cavalier-shopping-centre-belhar/ | 4 | 85 | 4.71% | 6.1 |
-| /shopping-center/avonwood-square-elsies-river/ | 3 | 324 | 0.93% | 6.9 |
-| /business/johnny-foxs-pub-restaurant-bothasig/ | 3 | 157 | 1.91% | 8.6 |
-| /business/lizelle-van-viegen-physiotherapist-bothasig/ | 3 | 43 | 6.98% | 6.1 |
-| /business/checkers-westgate-mall-westgate/ | 2 | 875 | 0.23% | 5.0 |
-| /shopping-center/waterstone-village-somerset-west/ | 2 | 442 | 0.45% | 7.0 |
-| /business/fnb-greenpoint-green-point/ | 2 | 293 | 0.68% | 7.3 |
-| /business/southern-boards-hardware-wetton/ | 2 | 249 | 0.80% | 5.1 |
-| /shopping-center/westlake-shopping-centre-westlake/ | 2 | 215 | 0.93% | 8.1 |
-| /business/virgin-active-steenberg-westlake/ | 2 | 165 | 1.21% | 11.1 |
-| /business/mr-price-khayelitsha-mall-khayelitsha/ | 2 | 156 | 1.28% | 8.0 |
-| /business/pep-charlesville-mall-matroosfontein/ | 2 | 141 | 1.42% | 5.4 |
+| / | 2 | 19 | 10.53% | 39.5 |
+| /business/usave-rugby-rugby/ | 0 | 34 | 0.00% | 8.3 |
+| /business/pick-n-pay-3arts-village-plumstead/ | 0 | 17 | 0.00% | 8.4 |
+| /business/pick-n-pay-steenberg-village-tokai/ | 0 | 10 | 0.00% | 10.0 |
+| /business/sorbet-man-cape-quarter-de-waterkant/ | 0 | 8 | 0.00% | 55.5 |
+| /business/sorbet-salon-rondebosch/ | 0 | 8 | 0.00% | 54.1 |
+| /business/atlantic-meat-maitland/ | 0 | 6 | 0.00% | 9.8 |
+| /business/blou-winkel-kraaifontein/ | 0 | 6 | 0.00% | 6.0 |
+| /business/going-under-clothing-nyanga-junction-manenberg/ | 0 | 5 | 0.00% | 10.2 |
+| /business/bp-rocklands-service-station-rocklands/ | 0 | 4 | 0.00% | 8.0 |
+| /business/pep-lansdowne-corner-lansdowne/ | 0 | 4 | 0.00% | 11.5 |
+| /business/the-courier-guy-mandela-park/ | 0 | 4 | 0.00% | 8.5 |
+| /business/mcdonalds-the-junxion-philippi/ | 0 | 3 | 0.00% | 7.7 |
+| /business/medirite-pharmacy-bishop-lavis-bishop-lavis/ | 0 | 3 | 0.00% | 11.0 |
+| /business/usave-ottery/ | 0 | 3 | 0.00% | 10.0 |
 
 ## PolokwaneHub (polokwanehub.com)
 
@@ -150,55 +148,55 @@ Sample indexed rate: 42% (35/83); last report 64% (52/81).
 
 | Metric | Last 28d | Previous 28d |
 |---|---:|---:|
-| Clicks | 89 (-37 / -29%) | 126 |
-| Impressions | 13,171 (-6,720 / -34%) | 19,891 |
-| CTR | 0.68% (+0.04pp) | 0.63% |
-| Avg position | 8.0 (-0.3) | 8.3 |
-| Pages with impressions | 576 (+196 / +52%) | 380 |
+| Clicks | 12 (-77 / -87%) | 89 |
+| Impressions | 354 (-12,817 / -97%) | 13,171 |
+| CTR | 3.39% (+2.71pp) | 0.68% |
+| Avg position | 13.8 (+5.8) | 8.0 |
+| Pages with impressions | 166 (-410 / -71%) | 576 |
 
-Pages with impressions over 90 days: **653**.
+Pages with impressions over 90 days: **711**.
 
 ### Pages with impressions by type
 
 | Type | Sitemap URLs | Pages 28d | Prev 28d | Pages 90d | Clicks 28d | Impr. 28d |
 |---|---:|---:|---:|---:|---:|---:|
-| home | - | 2 | 2 | 3 | 40 | 258 |
-| business | 1,202 | 390 | 277 | 443 | 31 | 9,466 |
-| category | 96 | 14 | 19 | 20 | 1 | 89 |
-| category-suburb | 126 | 83 | 7 | 83 | 1 | 192 |
-| suburb | 40 | 28 | 34 | 37 | 7 | 2,376 |
-| shopping-center | 32 | 16 | 17 | 17 | 9 | 853 |
-| section | - | 6 | 7 | 7 | 1 | 230 |
-| events | 11 | 9 | 0 | 9 | 0 | 51 |
-| news | 7 | 5 | 0 | 5 | 0 | 21 |
-| guides | 7 | 5 | 0 | 5 | 0 | 9 |
-| tourism | 14 | 13 | 8 | 13 | 2 | 199 |
-| other | - | 5 | 9 | 11 | 0 | 69 |
+| home | - | 2 | 2 | 3 | 9 | 144 |
+| business | 1,205 | 112 | 390 | 499 | 2 | 300 |
+| category | 96 | 3 | 14 | 20 | 1 | 17 |
+| category-suburb | 126 | 8 | 83 | 84 | 0 | 16 |
+| suburb | 40 | 11 | 28 | 38 | 0 | 76 |
+| shopping-center | 32 | 4 | 16 | 17 | 0 | 15 |
+| section | - | 6 | 6 | 7 | 0 | 32 |
+| events | 7 | 5 | 9 | 9 | 1 | 10 |
+| news | 14 | 4 | 5 | 5 | 0 | 19 |
+| guides | 7 | 3 | 5 | 5 | 0 | 6 |
+| tourism | 14 | 4 | 13 | 13 | 0 | 19 |
+| other | - | 4 | 5 | 11 | 0 | 57 |
 
 ### URL Inspection sample
 
-| Group | Sampled | Indexed | Discovered - currently not indexed | Submitted and indexed | URL is unknown to Google |
-|---|---:|---:|---:|---:|---:|
-| key-pages | 4 | 4 |  | 4 |  |
-| pages | 8 | 4 | 4 | 4 |  |
-| business | 8 | 0 | 6 |  | 2 |
-| category | 8 | 1 | 6 | 1 | 1 |
-| category-suburb | 8 | 2 | 6 | 2 |  |
-| events | 8 | 6 | 2 | 6 |  |
-| guides | 7 | 6 | 1 | 6 |  |
-| news | 7 | 5 | 2 | 5 |  |
-| shopping-centre | 8 | 4 | 3 | 4 | 1 |
-| suburb | 8 | 7 | 1 | 7 |  |
-| tourism | 8 | 7 | 1 | 7 |  |
+| Group | Sampled | Indexed | Crawled - currently not indexed | Discovered - currently not indexed | Submitted and indexed | URL is unknown to Google |
+|---|---:|---:|---:|---:|---:|---:|
+| key-pages | 4 | 4 |  |  | 4 |  |
+| pages | 8 | 4 |  | 4 | 4 |  |
+| business | 8 | 3 |  | 5 | 3 |  |
+| category | 8 | 4 |  | 3 | 4 | 1 |
+| category-suburb | 8 | 2 |  | 5 | 2 | 1 |
+| events | 7 | 5 |  | 2 | 5 |  |
+| guides | 7 | 6 |  | 1 | 6 |  |
+| news | 8 | 3 | 1 | 4 | 3 |  |
+| shopping-centre | 8 | 5 |  | 2 | 5 | 1 |
+| suburb | 8 | 7 |  | 1 | 7 |  |
+| tourism | 8 | 7 |  | 1 | 7 |  |
 
-Sample indexed rate: 56% (46/82); last report 61% (49/80).
+Sample indexed rate: 61% (50/82); last report 56% (46/82).
 
 <details><summary>Key pages</summary>
 
-- /: Submitted and indexed (last crawl 2026-10-17)
-- /category/: Submitted and indexed (last crawl 2026-10-15)
-- /suburb/: Submitted and indexed (last crawl 2026-10-15)
-- /about/: Submitted and indexed (last crawl 2026-10-15)
+- /: Submitted and indexed (last crawl 2026-11-05)
+- /category/: Submitted and indexed (last crawl 2026-11-13)
+- /suburb/: Submitted and indexed (last crawl 2026-11-14)
+- /about/: Submitted and indexed (last crawl 2026-11-12)
 
 </details>
 
@@ -206,49 +204,49 @@ Sample indexed rate: 56% (46/82); last report 61% (49/80).
 
 | Sitemap | Last downloaded | Errors | Warnings | Submitted | Pending |
 |---|---|---:|---:|---:|---|
-| https://polokwanehub.com/sitemap-index.xml (index) | 2026-10-18 | 0 | 0 | 1,545 |  |
-| &nbsp;&nbsp;└ https://polokwanehub.com/sitemap-0.xml | 2026-10-18 | 0 | 0 | 1,545 |  |
-| https://polokwanehub.com/sitemap-0.xml | 2026-10-18 | 0 | 0 | 1,545 |  |
+| https://polokwanehub.com/sitemap-index.xml (index) | 2026-11-10 | 0 | 0 | 1,552 |  |
+| &nbsp;&nbsp;└ https://polokwanehub.com/sitemap-0.xml | 2026-11-14 | 0 | 0 | 1,552 |  |
+| https://polokwanehub.com/sitemap-0.xml | 2026-11-14 | 0 | 0 | 1,552 |  |
 
 ### Top queries (28 days)
 
 | Query | Clicks | Impressions | CTR | Position |
 |---|---:|---:|---:|---:|
-| polokwane business directory | 26 | 76 | 34.21% | 2.3 |
-| polokwane businesses | 3 | 11 | 27.27% | 9.5 |
-| polokwane hub | 2 | 13 | 15.38% | 5.1 |
-| abundance city church | 1 | 12 | 8.33% | 10.6 |
-| best bake bakery polokwane | 1 | 1 | 100.00% | 26.0 |
-| best bake polokwane | 1 | 14 | 7.14% | 8.9 |
-| business near me | 1 | 4 | 25.00% | 4.8 |
-| butchery polokwane | 1 | 1 | 100.00% | 1.0 |
-| c4azy store | 1 | 1 | 100.00% | 2.0 |
-| dischem platinum park | 1 | 14 | 7.14% | 9.4 |
-| fnb | 1 | 1 | 100.00% | 1.0 |
-| fnb mankweng | 1 | 4 | 25.00% | 1.5 |
-| lighthouse mall polokwane | 1 | 7 | 14.29% | 11.1 |
-| medleb private hospital | 1 | 39 | 2.56% | 10.2 |
-| pick n pay mall of the north | 1 | 131 | 0.76% | 7.9 |
+| polokwane business directory | 4 | 19 | 21.05% | 2.6 |
+| businesses in polokwane | 1 | 2 | 50.00% | 31.0 |
+| activities in polokwane | 0 | 1 | 0.00% | 69.0 |
+| bendor park polokwane | 0 | 1 | 0.00% | 70.0 |
+| business around me | 0 | 1 | 0.00% | 1.0 |
+| cbd polokwane | 0 | 1 | 0.00% | 61.0 |
+| cotton on mall of the north | 0 | 17 | 0.00% | 7.4 |
+| dalmada filling station | 0 | 1 | 0.00% | 24.0 |
+| dalmada lodges polokwane | 0 | 1 | 0.00% | 54.0 |
+| dis chem mall of the north | 0 | 1 | 0.00% | 43.0 |
+| dischem mall of the north | 0 | 1 | 0.00% | 53.0 |
+| g fox polokwane | 0 | 1 | 0.00% | 49.0 |
+| ga mphahlele seleteng | 0 | 2 | 0.00% | 59.5 |
+| image travel and tours | 0 | 1 | 0.00% | 9.0 |
+| istore mall of the south | 0 | 1 | 0.00% | 65.0 |
 
 ### Top pages (28 days)
 
 | Page | Clicks | Impressions | CTR | Position |
 |---|---:|---:|---:|---:|
-| / | 40 | 219 | 18.26% | 4.4 |
-| /business/best-bake-bakery-nirvana/ | 3 | 140 | 2.14% | 7.8 |
-| /shopping-center/seshego-circle-seshego/ | 3 | 59 | 5.08% | 7.2 |
-| /suburb/ladanna/ | 2 | 204 | 0.98% | 9.1 |
-| /business/vodacom-shop-schoeman-street-polokwane-central/ | 2 | 65 | 3.08% | 9.5 |
-| /business/foschini-paledi-mall-mankweng/ | 2 | 45 | 4.44% | 4.6 |
-| /business/fnb-mankweng-turfloop-plaza-mankweng/ | 2 | 40 | 5.00% | 3.4 |
-| /suburb/polokwane-central/ | 1 | 450 | 0.22% | 9.0 |
-| /shopping-center/ | 1 | 388 | 0.26% | 9.3 |
-| /suburb/lebowakgomo/ | 1 | 342 | 0.29% | 9.9 |
-| /business/pick-n-pay-mall-of-the-north-bendor/ | 1 | 333 | 0.30% | 8.2 |
-| /business/woolworths-the-greenery-polokwane-central/ | 1 | 290 | 0.34% | 5.1 |
-| /suburb/bendor/ | 1 | 265 | 0.38% | 8.9 |
-| /business/shoprite-mankweng-turfloop-plaza-mankweng/ | 1 | 163 | 0.61% | 6.1 |
-| /business/woolworths-paledi-mall-mankweng/ | 1 | 148 | 0.68% | 5.4 |
+| / | 5 | 56 | 8.93% | 9.7 |
+| / | 4 | 88 | 4.55% | 14.1 |
+| /events/baobab-night-market-2026-12-18/ | 1 | 5 | 20.00% | 7.4 |
+| /business/rdp-solutions-bendor/ | 1 | 4 | 25.00% | 31.5 |
+| /category/construction-claims-management/ | 1 | 3 | 33.33% | 40.0 |
+| /business/senhor-peri-peri-thornhill-estate/ | 1 | 2 | 50.00% | 80.5 |
+| /business/postnet-paledi-mall-mankweng/ | 0 | 34 | 0.00% | 13.2 |
+| /business/cotton-on-mall-of-the-north-bendor/ | 0 | 28 | 0.00% | 12.7 |
+| /suburb/polokwane-central/ | 0 | 23 | 0.00% | 15.1 |
+| /about/ | 0 | 15 | 0.00% | 3.8 |
+| /contact/ | 0 | 15 | 0.00% | 6.6 |
+| /advertise/ | 0 | 14 | 0.00% | 8.3 |
+| /category/ | 0 | 13 | 0.00% | 5.6 |
+| /news/ | 0 | 13 | 0.00% | 6.8 |
+| /privacy/ | 0 | 13 | 0.00% | 4.0 |
 
 ## PretoriaHub (pretoriahub.com)
 
@@ -256,30 +254,30 @@ Sample indexed rate: 56% (46/82); last report 61% (49/80).
 
 | Metric | Last 28d | Previous 28d |
 |---|---:|---:|
-| Clicks | 192 (-410 / -68%) | 602 |
-| Impressions | 36,183 (-68,252 / -65%) | 104,435 |
-| CTR | 0.53% (-0.05pp) | 0.58% |
-| Avg position | 8.2 (-0.8) | 9.0 |
-| Pages with impressions | 3,656 (-1,501 / -29%) | 5,157 |
+| Clicks | 19 (-173 / -90%) | 192 |
+| Impressions | 553 (-35,630 / -98%) | 36,183 |
+| CTR | 3.44% (+2.91pp) | 0.53% |
+| Avg position | 10.8 (+2.6) | 8.2 |
+| Pages with impressions | 333 (-3,323 / -91%) | 3,656 |
 
-Pages with impressions over 90 days: **5,485**.
+Pages with impressions over 90 days: **5,515**.
 
 ### Pages with impressions by type
 
 | Type | Sitemap URLs | Pages 28d | Prev 28d | Pages 90d | Clicks 28d | Impr. 28d |
 |---|---:|---:|---:|---:|---:|---:|
-| home | - | 1 | 1 | 1 | 2 | 185 |
-| business | 5,829 | 3,079 | 4,328 | 4,568 | 176 | 30,328 |
-| category | 77 | 38 | 50 | 50 | 3 | 617 |
-| category-suburb | 566 | 360 | 593 | 670 | 16 | 1,597 |
-| suburb | 219 | 104 | 101 | 106 | 8 | 1,783 |
-| shopping-center | 116 | 68 | 73 | 79 | 13 | 2,173 |
-| section | - | 4 | 5 | 5 | 3 | 555 |
-| events | 24 | 0 | 0 | 0 | 0 | 0 |
-| news | 24 | 0 | 0 | 0 | 0 | 0 |
+| home | - | 2 | 1 | 2 | 4 | 129 |
+| business | 5,830 | 264 | 3,079 | 4,587 | 16 | 547 |
+| category | 77 | 6 | 38 | 50 | 0 | 27 |
+| category-suburb | 566 | 33 | 360 | 678 | 1 | 136 |
+| suburb | 219 | 21 | 104 | 106 | 2 | 39 |
+| shopping-center | 116 | 5 | 68 | 79 | 0 | 5 |
+| section | - | 0 | 4 | 5 | 0 | 0 |
+| events | 16 | 1 | 0 | 1 | 0 | 3 |
+| news | 55 | 0 | 0 | 0 | 0 | 0 |
 | guides | 7 | 0 | 0 | 0 | 0 | 0 |
-| tourism | 10 | 0 | 0 | 0 | 0 | 0 |
-| other | - | 2 | 6 | 6 | 0 | 19 |
+| tourism | 10 | 1 | 0 | 1 | 0 | 3 |
+| other | - | 0 | 2 | 6 | 0 | 0 |
 
 ### URL Inspection sample
 
@@ -287,23 +285,23 @@ Pages with impressions over 90 days: **5,485**.
 |---|---:|---:|---:|---:|---:|---:|
 | key-pages | 4 | 1 | 3 |  | 1 |  |
 | pages | 8 | 0 | 2 |  |  | 6 |
-| business | 8 | 4 |  |  | 4 | 4 |
-| category | 8 | 4 | 3 |  | 4 | 1 |
-| category-suburb | 8 | 2 | 2 |  | 2 | 4 |
-| events | 8 | 0 |  | 5 |  | 3 |
-| guides | 7 | 0 |  | 5 |  | 2 |
+| business | 8 | 3 | 1 |  | 3 | 4 |
+| category | 8 | 1 | 6 |  | 1 | 1 |
+| category-suburb | 8 | 1 | 2 |  | 1 | 5 |
+| events | 8 | 0 |  | 7 |  | 1 |
+| guides | 7 | 0 |  | 6 |  | 1 |
 | news | 8 | 0 |  |  |  | 8 |
-| shopping-centre | 8 | 3 | 3 |  | 3 | 2 |
-| suburb | 8 | 3 | 1 | 1 | 3 | 3 |
+| shopping-centre | 8 | 4 | 1 |  | 4 | 3 |
+| suburb | 8 | 4 | 3 |  | 4 | 1 |
 | tourism | 8 | 0 |  |  |  | 8 |
 
-Sample indexed rate: 20% (17/83); last report 22% (18/81).
+Sample indexed rate: 17% (14/83); last report 20% (17/83).
 
 <details><summary>Key pages</summary>
 
-- /: Submitted and indexed (last crawl 2026-10-19)
-- /category/: Crawled - currently not indexed (last crawl 2026-10-13)
-- /suburb/: Crawled - currently not indexed (last crawl 2026-10-13)
+- /: Submitted and indexed (last crawl 2026-11-10)
+- /category/: Crawled - currently not indexed (last crawl 2026-10-23)
+- /suburb/: Crawled - currently not indexed (last crawl 2026-10-23)
 - /about/: Crawled - currently not indexed (last crawl 2026-09-15)
 
 </details>
@@ -312,48 +310,48 @@ Sample indexed rate: 20% (17/83); last report 22% (18/81).
 
 | Sitemap | Last downloaded | Errors | Warnings | Submitted | Pending |
 |---|---|---:|---:|---:|---|
-| https://pretoriahub.com/sitemap-0.xml | 2026-10-18 | 0 | 0 | 6,886 |  |
-| https://pretoriahub.com/sitemap-index.xml (index) | 2026-10-08 | 0 | 0 | 0 |  |
+| https://pretoriahub.com/sitemap-index.xml (index) | 2026-10-27 | 0 | 0 | 0 |  |
+| https://pretoriahub.com/sitemap-0.xml | 2026-11-14 | 0 | 0 | 6,905 |  |
 
 ### Top queries (28 days)
 
 | Query | Clicks | Impressions | CTR | Position |
 |---|---:|---:|---:|---:|
-| jfs technology | 2 | 5 | 40.00% | 4.2 |
-| pltfrm hazeldean | 2 | 379 | 0.53% | 6.4 |
-| ajmer eldo | 1 | 19 | 5.26% | 9.2 |
-| aluminum profiles for sale | 1 | 1 | 100.00% | 2.0 |
-| avondale ice cream | 1 | 26 | 3.85% | 6.2 |
-| bestway design studio | 1 | 2 | 50.00% | 3.0 |
-| biltong shop near me | 1 | 1 | 100.00% | 1.0 |
-| boma midstream trading hours | 1 | 14 | 7.14% | 9.2 |
-| bougainville shopping centre directory | 1 | 4 | 25.00% | 3.3 |
-| chips away | 1 | 10 | 10.00% | 4.0 |
-| chipsaway | 1 | 2 | 50.00% | 4.0 |
-| clothing junction pretoria | 1 | 2 | 50.00% | 10.0 |
-| clubview shopping centre | 1 | 6 | 16.67% | 7.8 |
-| coalvest | 1 | 9 | 11.11% | 4.4 |
-| dry cleaners near me | 1 | 3 | 33.33% | 2.7 |
+| plumber centurion | 1 | 1 | 100.00% | 1.0 |
+| blom lifestyle | 0 | 1 | 0.00% | 77.0 |
+| blooming essentials | 0 | 1 | 0.00% | 4.0 |
+| bos electronics | 0 | 1 | 0.00% | 1.0 |
+| business in pretoria | 0 | 1 | 0.00% | 61.0 |
+| businesses in gauteng | 0 | 1 | 0.00% | 1.0 |
+| businesses in pretoria | 0 | 2 | 0.00% | 141.0 |
+| businesses in south africa | 0 | 1 | 0.00% | 23.0 |
+| businesses near me | 0 | 1 | 0.00% | 1.0 |
+| companies in pretoria | 0 | 10 | 0.00% | 79.7 |
+| construction companies in centurion | 0 | 1 | 0.00% | 81.0 |
+| do they sell to the public | 0 | 1 | 0.00% | 4.0 |
+| engen dam motors | 0 | 1 | 0.00% | 1.0 |
+| harness group africa | 0 | 2 | 0.00% | 1.0 |
+| interesting businesses in pretoria | 0 | 2 | 0.00% | 82.5 |
 
 ### Top pages (28 days)
 
 | Page | Clicks | Impressions | CTR | Position |
 |---|---:|---:|---:|---:|
-| /shopping-center/eldoraigne-village-shopping-centre-eldoraigne/ | 3 | 142 | 2.11% | 6.0 |
-| /business/rymar-gas-hardware-east-lynne/ | 3 | 94 | 3.19% | 4.3 |
-| /business/sg-synergy-group-pty-ltd-philip-nel-park/ | 3 | 12 | 25.00% | 4.3 |
-| /business/pltfrm-hazeldean-hazeldean/ | 2 | 453 | 0.44% | 6.6 |
-| / | 2 | 185 | 1.08% | 12.2 |
-| /business/avondale-factory-shop-silvertondale/ | 2 | 132 | 1.52% | 6.2 |
-| /business/the-golfers-club-centurion-centurion-golf-estate/ | 2 | 99 | 2.02% | 5.5 |
-| /business/tulip-laundromat-ninapark/ | 2 | 42 | 4.76% | 3.1 |
-| /business/gear-city-tyres-silverton-silverton/ | 2 | 35 | 5.71% | 3.8 |
-| /business/henzel-annlin/ | 2 | 27 | 7.41% | 5.0 |
-| /business/chips-away-centurion/ | 2 | 23 | 8.70% | 4.7 |
-| /category/pharmacies/midrand/ | 2 | 23 | 8.70% | 3.9 |
-| /business/outlaw-earthworx-rietfontein/ | 2 | 22 | 9.09% | 7.0 |
-| /category/accountants/laudium/ | 2 | 22 | 9.09% | 3.0 |
-| /business/steel-axis-amandasig/ | 2 | 21 | 9.52% | 9.0 |
+| / | 4 | 128 | 3.13% | 18.0 |
+| /suburb/olievenhoutbosch/ | 2 | 3 | 66.67% | 6.0 |
+| /business/samrand-plumber-inc-brooklands-lifestyle-estate/ | 1 | 17 | 5.88% | 3.6 |
+| /business/stheminfra-business-solutions-pty-ltd-akasia/ | 1 | 6 | 16.67% | 18.0 |
+| /business/ampath-southdowns-southdowns/ | 1 | 3 | 33.33% | 6.3 |
+| /business/equator-foods-pty-florauna/ | 1 | 3 | 33.33% | 1.7 |
+| /business/soap-world-mayville-factory-shop-eloffsdal/ | 1 | 3 | 33.33% | 12.3 |
+| /business/baasc-industries-centurion-golf-estate/ | 1 | 1 | 100.00% | 2.0 |
+| /business/ballantyne-brands-weavind-park/ | 1 | 1 | 100.00% | 1.0 |
+| /business/beyer-group-sinoville/ | 1 | 1 | 100.00% | 8.0 |
+| /business/cabac-engineering-electrical-pty-ltd-willow-park-manor/ | 1 | 1 | 100.00% | 16.0 |
+| /business/dadas-shoes-pretoria-central/ | 1 | 1 | 100.00% | 8.0 |
+| /business/friday-club-network-blue-valley-golf-estate/ | 1 | 1 | 100.00% | 24.0 |
+| /business/lacious-truking-projects-karenpark/ | 1 | 1 | 100.00% | 2.0 |
+| /business/nm-tech-laudium/ | 1 | 1 | 100.00% | 2.0 |
 
 ## AdSense
 
@@ -361,7 +359,7 @@ Account accounts/pub-7239595592067933 (READY).
 
 | Site | State | Auto ads |
 |---|---|---|
-| polokwanehub.com | GETTING_READY | off |
+| polokwanehub.com | NEEDS_ATTENTION | off |
 | pretoriahub.com | READY | off |
 | thecapetownhub.com | GETTING_READY | off |
 
